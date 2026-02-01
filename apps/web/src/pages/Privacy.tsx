@@ -1,10 +1,11 @@
+import type { FC, ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { Header } from '@/components/Header'
 import { LandingFooter } from '@/components/LandingFooter'
 import { PageBackground } from '@/components/PageBackground'
 import { PageTitle } from '@/components/PageTitle'
 
-export default function Privacy() {
+const Privacy: FC = (): ReactNode => {
   return (
     <div className="relative flex min-h-screen flex-col bg-[#0a0a0f] text-white">
       <PageTitle title="Privacy Policy" />
@@ -167,3 +168,5 @@ export default function Privacy() {
     </div>
   )
 }
+
+export default Privacy

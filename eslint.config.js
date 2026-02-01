@@ -27,6 +27,22 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      '@typescript-eslint/ban-ts-comment': 'off',
+      indent: ['error', 4],
+      'linebreak-style': 'off',
+      quotes: ['error', 'single'],
+      semi: ['error', 'never'],
+      'comma-dangle': ['error', 'never'],
+      'jsx-quotes': ['error', 'prefer-single'],
+      'no-multiple-empty-lines': [
+        'error',
+        {
+          max: 1,
+          maxEOF: 0,
+          maxBOF: 0,
+        },
+      ],
+      'eol-last': ['error', 'never'],
     },
   },
   {

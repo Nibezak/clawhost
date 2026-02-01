@@ -50,6 +50,13 @@
       "when": 1769972000000,
       "tag": "0006_rename_instances_to_claws",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1769980000000,
+      "tag": "0007_add_gateway_token",
+      "breakpoints": true
     }
   ]
 }

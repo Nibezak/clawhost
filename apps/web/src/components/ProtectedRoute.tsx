@@ -1,3 +1,5 @@
+import type { FC, ReactNode } from 'react'
+import type { ProtectedRouteProps } from '@/ts/Interfaces'
 import { Navigate } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
@@ -6,7 +8,7 @@ import { PageBackground } from '@/components/PageBackground'
 import { Logo } from '@/components/Logo'
 import { CircleNotch } from '@phosphor-icons/react'
 
-export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
+const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }): ReactNode => {
   const { user, loading } = useAuth()
 
   if (loading) {
@@ -30,3 +32,5 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
 
   return <>{children}</>
 }
+
+export default ProtectedRoute

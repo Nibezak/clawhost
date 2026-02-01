@@ -1,7 +1,8 @@
+import type { FC, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
 
-export function Footer() {
+const Footer: FC = (): ReactNode => {
   return (
     <footer className="relative mt-auto border-t border-white/10">
       <div className="mx-auto max-w-6xl px-6 py-6">
@@ -34,3 +35,5 @@ export function Footer() {
     </footer>
   )
 }
+
+export { Footer }

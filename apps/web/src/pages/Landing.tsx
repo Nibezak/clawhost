@@ -1,3 +1,4 @@
+import type { FC, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -88,7 +89,7 @@ function getFaqs() {
   ]
 }
 
-export default function Landing() {
+const Landing: FC = (): ReactNode => {
   const { user } = useAuth()
   const { data: plans, isLoading: plansLoading } = usePlans()
 
@@ -731,3 +732,5 @@ export default function Landing() {
     </div>
   )
 }
+
+export default Landing

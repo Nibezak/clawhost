@@ -4,7 +4,7 @@ import { db } from '../../db'
 import { claws, volumes } from '../../db/schema'
 import { hetzner } from '../../services/hetzner'
 import { cloudflare } from '../../services/cloudflare'
-import { DOMAIN } from './helpers'
+import { DOMAIN } from './helpers/index'
 
 const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {
   try {

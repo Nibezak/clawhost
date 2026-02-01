@@ -1,6 +1,7 @@
+import type { FC, ReactNode } from 'react'
 import type { PageHeaderProps } from '@/ts/Interfaces'
 
-export function PageHeader({ title, description, action }: PageHeaderProps) {
+const PageHeader: FC<PageHeaderProps> = ({ title, description, action }): ReactNode => {
   return (
     <div className="mb-6 flex items-center justify-between">
       <div>
@@ -11,3 +12,5 @@ export function PageHeader({ title, description, action }: PageHeaderProps) {
     </div>
   )
 }
+
+export { PageHeader }

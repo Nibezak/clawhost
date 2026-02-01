@@ -1,9 +1,10 @@
+import type { FC, ReactNode } from 'react'
 import type { ErrorStateProps } from '@/ts/Interfaces'
 import { t } from '@openclaw/i18n'
 import { Button } from '@/components/ui/button'
 import { WarningCircle, ArrowClockwise } from '@phosphor-icons/react'
 
-export function ErrorState({ title, description, onRetry }: ErrorStateProps) {
+const ErrorState: FC<ErrorStateProps> = ({ title, description, onRetry }): ReactNode => {
   return (
     <div className="py-12 text-center">
       <div className="bg-destructive/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
@@ -22,3 +23,5 @@ export function ErrorState({ title, description, onRetry }: ErrorStateProps) {
     </div>
   )
 }
+
+export { ErrorState }

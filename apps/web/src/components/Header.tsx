@@ -1,3 +1,4 @@
+import type { FC, ReactNode } from 'react'
 import type { HeaderProps } from '@/ts/Interfaces'
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
@@ -18,7 +19,7 @@ import { Logo } from '@/components/Logo'
 import { ROUTES } from '@/lib/routes'
 import { HardDrive, Key, User, SignOut, Lightning } from '@phosphor-icons/react'
 
-export function Header({ showNavLinks = false, navLinks = [], activeSection = '' }: HeaderProps) {
+const Header: FC<HeaderProps> = ({ showNavLinks = false, navLinks = [], activeSection = '' }): ReactNode => {
   const { user, loading: authLoading, signOut } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
@@ -163,3 +164,5 @@ export function Header({ showNavLinks = false, navLinks = [], activeSection = ''
     </header>
   )
 }
+
+export { Header }

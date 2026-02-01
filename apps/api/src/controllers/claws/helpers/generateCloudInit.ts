@@ -1,30 +1,10 @@
-// Generate a readable slug from claw ID (deterministic, 7 chars)
-export function generateSlug(id: string): string {
-  const chars = 'abcdefghjkmnpqrstuvwxyz23456789' // Removed confusing chars: i, l, o, 0, 1
-  let hash = 0
-  for (let i = 0; i < id.length; i++) {
-    hash = (hash << 5) - hash + id.charCodeAt(i)
-    hash = hash & hash
-  }
-  let slug = ''
-  let num = Math.abs(hash)
-  for (let i = 0; i < 7; i++) {
-    slug += chars[num % chars.length]
-    num = Math.floor(num / chars.length) + id.charCodeAt(i % id.length)
-  }
-  return slug
-}
-
-// Generate a secure random password
-export function generatePassword(length = 16): string {
-  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'
-  const array = new Uint8Array(length)
-  crypto.getRandomValues(array)
-  return Array.from(array, (byte) => chars[byte % chars.length]).join('')
-}
-
 // Generate cloud-init script with subdomain and SSL
-export function generateCloudInit(rootPassword: string, subdomain: string, domain: string): string {
+export function generateCloudInit(
+  rootPassword: string,
+  subdomain: string,
+  domain: string,
+  gatewayToken: string
+): string {
   const fullDomain = `${subdomain}.${domain}`
 
   // Note: Using template literal, variables like $http_upgrade need escaping
@@ -72,15 +52,14 @@ runcmd:
   # Create OpenClaw directories and config
   - mkdir -p /home/openclaw/.openclaw
 
-  # Generate a random token for gateway auth and trust nginx proxy
+  # Configure gateway with auth token (passed from API)
   - |
-    TOKEN=\\$(openssl rand -hex 32)
-    cat > /home/openclaw/.openclaw/openclaw.json << OCCONFIG
+    cat > /home/openclaw/.openclaw/openclaw.json << 'OCCONFIG'
     {
       "gateway": {
         "mode": "local",
         "auth": {
-          "token": "\\$TOKEN"
+          "token": "${gatewayToken}"
         },
         "trustedProxies": ["127.0.0.1", "::1"]
       }
@@ -172,5 +151,3 @@ runcmd:
 final_message: "OpenClaw instance ready! Access dashboard at https://${fullDomain}/"
 `
 }
-
-export const DOMAIN = 'clawhost.cloud'

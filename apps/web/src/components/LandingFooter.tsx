@@ -1,9 +1,10 @@
+import type { FC, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Logo } from '@/components/Logo'
 import { ROUTES } from '@/lib/routes'
 import { GithubLogo, XLogo } from '@phosphor-icons/react'
 
-export function LandingFooter() {
+const LandingFooter: FC = (): ReactNode => {
   return (
     <footer className="border-t border-white/5 px-6 py-16">
       <div className="mx-auto max-w-6xl">
@@ -134,3 +135,5 @@ export function LandingFooter() {
     </footer>
   )
 }
+
+export { LandingFooter }

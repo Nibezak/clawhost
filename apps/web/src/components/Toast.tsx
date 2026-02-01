@@ -1,3 +1,4 @@
+import type { FC, ReactNode } from 'react'
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, Warning, X, Info } from '@phosphor-icons/react'
@@ -24,7 +25,7 @@ const iconColors = {
   info: 'text-blue-400',
 }
 
-export function Toast() {
+const Toast: FC = (): ReactNode => {
   const { toast, hideToast } = useUIStore()
 
   useEffect(() => {
@@ -62,3 +63,5 @@ export function Toast() {
     </AnimatePresence>
   )
 }
+
+export { Toast }

@@ -1,3 +1,4 @@
+import type { FC, ReactNode } from 'react'
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
@@ -15,7 +16,7 @@ import { PageBackground } from '@/components/PageBackground'
 import { PageTitle } from '@/components/PageTitle'
 import { Envelope, CircleNotch } from '@phosphor-icons/react'
 
-export default function Login() {
+const Login: FC = (): ReactNode => {
   const [email, setEmail] = useState('')
   const [sent, setSent] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -208,3 +209,5 @@ export default function Login() {
     </div>
   )
 }
+
+export default Login

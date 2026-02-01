@@ -120,6 +120,8 @@ export const en = {
     created: 'Created',
     sshKey: 'SSH Key',
     storage: 'Storage',
+    gatewayToken: 'Gateway Token',
+    gatewayTokenDescription: 'Use this token to authenticate with your gateway',
     status: {
       running: 'Running',
       stopped: 'Stopped',

@@ -1,3 +1,4 @@
+import type { FC, ReactNode } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { AuthProvider } from '@/lib/auth'
 import { ScrollToTop } from '@/components/ScrollToTop'
@@ -13,7 +14,7 @@ import Privacy from '@/pages/Privacy'
 import NotFound from '@/pages/NotFound'
 import ProtectedRoute from '@/components/ProtectedRoute'
 
-export default function App() {
+const App: FC = (): ReactNode => {
   return (
     <AuthProvider>
       <ScrollToTop />
@@ -52,3 +53,5 @@ export default function App() {
     </AuthProvider>
   )
 }
+
+export default App

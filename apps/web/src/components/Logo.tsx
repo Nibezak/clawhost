@@ -1,6 +1,7 @@
+import type { FC, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 
-export function Logo() {
+const Logo: FC = (): ReactNode => {
   return (
     <Link to="/" className="flex items-center gap-2 transition hover:opacity-80">
       <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-7 w-7">
@@ -40,3 +41,5 @@ export function Logo() {
     </Link>
   )
 }
+
+export { Logo }

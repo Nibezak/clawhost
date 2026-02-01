@@ -1,10 +1,13 @@
+import type { FC, ReactNode } from 'react'
 import type { PageTitleProps } from '@/ts/Interfaces'
 import { useEffect } from 'react'
 
-export function PageTitle({ title }: PageTitleProps) {
+const PageTitle: FC<PageTitleProps> = ({ title }): ReactNode => {
   useEffect(() => {
     document.title = `${title} - ClawHost`
   }, [title])
 
   return null
 }
+
+export { PageTitle }

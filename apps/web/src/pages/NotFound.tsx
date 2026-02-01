@@ -1,3 +1,4 @@
+import type { FC, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
@@ -9,7 +10,7 @@ import { PageTitle } from '@/components/PageTitle'
 import { ROUTES } from '@/lib/routes'
 import { House, MagnifyingGlass } from '@phosphor-icons/react'
 
-export default function NotFound() {
+const NotFound: FC = (): ReactNode => {
   return (
     <div className="relative flex min-h-screen flex-col bg-[#0a0a0f] text-white">
       <PageTitle title="Page Not Found" />
@@ -46,3 +47,5 @@ export default function NotFound() {
     </div>
   )
 }
+
+export default NotFound

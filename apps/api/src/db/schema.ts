@@ -21,6 +21,7 @@ export const claws = pgTable('claws', {
   rootPassword: text('root_password'),
   sshKeyId: text('ssh_key_id').references(() => sshKeys.id),
   subdomain: text('subdomain'), // Unique subdomain slug (e.g., "abc123" for abc123.clawhost.cloud)
+  gatewayToken: text('gateway_token'), // Token for authenticating with the gateway
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 

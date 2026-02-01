@@ -105,6 +105,63 @@ interface MyComponentProps { // DO NOT USE - put in @/ts/Interfaces.ts
 - Component Props: `HeaderProps`, `EmptyStateProps`, `ClawCardProps`, etc.
 - Hook Data Types: `CreateClawData`, `CreateSSHKeyData`, etc.
 
+### React Component Function Pattern
+
+**CRITICAL: All React functional components must use the `const ComponentName: FC = (): ReactNode => { ... }` pattern with a separate export at the end.**
+
+**For components without props:**
+
+```typescript
+import type { FC, ReactNode } from 'react'
+
+const MyComponent: FC = (): ReactNode => {
+  return <div>Content</div>
+}
+
+export default MyComponent
+// or for named exports: export { MyComponent }
+```
+
+**For components with props:**
+
+```typescript
+import type { FC, ReactNode } from 'react'
+import type { MyComponentProps } from '@/ts/Interfaces'
+
+const MyComponent: FC<MyComponentProps> = ({ title, description }): ReactNode => {
+  return (
+    <div>
+      <h1>{title}</h1>
+      <p>{description}</p>
+    </div>
+  )
+}
+
+export default MyComponent
+```
+
+**INCORRECT patterns - Never use:**
+
+```typescript
+// DO NOT USE - function declaration with inline export
+export default function MyComponent() { ... }
+
+// DO NOT USE - function declaration without FC type
+function MyComponent() { ... }
+
+// DO NOT USE - arrow function without FC type
+const MyComponent = () => { ... }
+```
+
+**Key rules:**
+
+1. Always import `FC` and `ReactNode` from 'react' using `import type`
+2. Use `FC` for components without props, `FC<PropsType>` for components with props
+3. Always include `: ReactNode` as the return type annotation
+4. Use `export default ComponentName` at the end of the file for default exports
+5. Use `export { ComponentName }` for named exports
+6. Internal/helper components within a file should also follow this pattern
+
 ### File Organization
 
 **API Controllers** (`apps/api/src/controllers/`):
@@ -285,10 +342,11 @@ import { t } from '@openclaw/i18n'
 2. **Use `@/` imports in web app** - Always use path aliases, never relative imports
 3. **Centralize types in `@/ts/`** - Never define types/interfaces inline; add to Types.ts or Interfaces.ts
 4. **Use `import type` for types** - Always use `import type` syntax and place at top of file
-5. **Follow existing patterns** - Match the style of surrounding code
-6. **Keep it simple** - Avoid over-engineering or adding unnecessary abstractions
-7. **Controllers handle logic** - Routes should be thin wrappers
-8. **Use RequestClient** - For API calls, use the shared HTTP client
-9. **Zustand for state** - Don't introduce additional state management
-10. **shadcn/ui components** - Prefer existing UI components over custom ones
-11. **Use translations for all text** - Never hardcode user-facing text; always use `t()` from `@openclaw/i18n`
+5. **Use FC pattern for components** - Always use `const ComponentName: FC = (): ReactNode => { ... }` with `export default ComponentName` at the end
+6. **Follow existing patterns** - Match the style of surrounding code
+7. **Keep it simple** - Avoid over-engineering or adding unnecessary abstractions
+8. **Controllers handle logic** - Routes should be thin wrappers
+9. **Use RequestClient** - For API calls, use the shared HTTP client
+10. **Zustand for state** - Don't introduce additional state management
+11. **shadcn/ui components** - Prefer existing UI components over custom ones
+12. **Use translations for all text** - Never hardcode user-facing text; always use `t()` from `@openclaw/i18n`

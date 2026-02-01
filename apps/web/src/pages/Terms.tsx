@@ -1,10 +1,11 @@
+import type { FC, ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { Header } from '@/components/Header'
 import { LandingFooter } from '@/components/LandingFooter'
 import { PageBackground } from '@/components/PageBackground'
 import { PageTitle } from '@/components/PageTitle'
 
-export default function Terms() {
+const Terms: FC = (): ReactNode => {
   return (
     <div className="relative flex min-h-screen flex-col bg-[#0a0a0f] text-white">
       <PageTitle title="Terms of Service" />
@@ -125,3 +126,5 @@ export default function Terms() {
     </div>
   )
 }
+
+export default Terms

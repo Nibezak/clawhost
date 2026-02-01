@@ -1,9 +1,10 @@
+import type { FC, ReactNode } from 'react'
+import type { Claw } from '@/lib/api'
 import { useState, useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
-import type { Claw } from '@/lib/api'
 import { useUIStore } from '@/lib/store'
 import { useProfile, useUpdateProfile, CLAWS_QUERY_KEY } from '@/hooks'
 import { Button } from '@/components/ui/button'
@@ -17,7 +18,7 @@ import { PageTitle } from '@/components/PageTitle'
 import { CircleNotch, HardDrive, Calendar } from '@phosphor-icons/react'
 import { PageHeader } from '@/components/PageHeader'
 
-export default function Account() {
+const Account: FC = (): ReactNode => {
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const { showToast } = useUIStore()
@@ -152,3 +153,5 @@ export default function Account() {
     </div>
   )
 }
+
+export default Account

@@ -24,6 +24,7 @@ export interface Claw {
   sshKeyId: string | null
   hetznerServerId: string | null
   subdomain: string | null
+  gatewayToken: string | null
   volumes?: Volume[]
   createdAt: string
 }
@@ -194,6 +195,10 @@ export interface CreateSSHKeyModalProps {
 export interface GeneratedKeyPair {
   publicKey: string
   privateKey: string
+}
+
+export interface ProtectedRouteProps {
+  children: ReactNode
 }
 
 // ============================================

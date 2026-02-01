@@ -1,3 +1,4 @@
+import type { FC, ReactNode } from 'react'
 import type {
   CreateSSHKeyModalProps,
   GeneratedKeyPair,
@@ -40,101 +41,7 @@ import {
 } from '@phosphor-icons/react'
 import { PageHeader } from '@/components/PageHeader'
 
-export default function SSHKeys() {
-  const [showCreate, setShowCreate] = useState(false)
-
-  const { data: sshKeys, isLoading, isError, refetch, cachedCount } = useSSHKeys()
-  const skeletonCount = cachedCount > 0 ? cachedCount : 2
-
-  return (
-    <div className="relative flex min-h-screen flex-col bg-[#0a0a0f] text-white">
-      <PageTitle title={t('sshKeys.title')} />
-      <PageBackground />
-      <Header />
-
-      <motion.main
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="relative mx-auto w-full max-w-6xl flex-1 px-6 py-8"
-      >
-        <PageHeader
-          title={t('sshKeys.title')}
-          description={t('sshKeys.description')}
-          action={
-            <Button onClick={() => setShowCreate(true)}>
-              <PlusCircle className="h-5 w-5" weight="bold" />
-              {t('sshKeys.addSshKey')}
-            </Button>
-          }
-        />
-
-        {/* SSH Keys container */}
-        <div className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
-          {/* How it works */}
-          <div className="mb-6 rounded-lg border border-white/5 bg-white/5 p-4">
-            <h3 className="mb-2 font-semibold">{t('sshKeys.howSshKeysWork')}</h3>
-            <ol className="text-muted-foreground list-inside list-decimal space-y-1 text-sm">
-              <li>{t('sshKeys.step1')}</li>
-              <li>
-                {t('sshKeys.step2').split('public key')[0]}<strong className="text-white">public key</strong>{t('sshKeys.step2').split('public key')[1] || ' here'}
-              </li>
-              <li>{t('sshKeys.step3')}</li>
-              <li>
-                {t('sshKeys.step4')}{' '}
-                <code className="rounded bg-white/10 px-1">{t('sshKeys.step4Command')}</code> {t('sshKeys.step4Suffix')}
-              </li>
-            </ol>
-          </div>
-
-          {/* SSH Keys list */}
-          {isError ? (
-            <ErrorState
-              title={t('errors.failedToLoadSSHKeys')}
-              description={t('errors.failedToLoadSSHKeysDescription')}
-              onRetry={() => refetch()}
-            />
-          ) : isLoading && skeletonCount === 0 ? (
-            <EmptyState
-              icon={<Key className="text-primary h-10 w-10" />}
-              title={t('sshKeys.noSshKeysYet')}
-              description={t('sshKeys.noSshKeysDescription')}
-              actionLabel={t('sshKeys.addSshKey')}
-              onAction={() => setShowCreate(true)}
-            />
-          ) : isLoading ? (
-            <div className="space-y-4">
-              {Array.from({ length: skeletonCount }).map((_, i) => (
-                <SSHKeySkeleton key={i} />
-              ))}
-            </div>
-          ) : sshKeys?.length === 0 ? (
-            <EmptyState
-              icon={<Key className="text-primary h-10 w-10" />}
-              title={t('sshKeys.noSshKeysYet')}
-              description={t('sshKeys.noSshKeysDescription')}
-              actionLabel={t('sshKeys.addSshKey')}
-              onAction={() => setShowCreate(true)}
-            />
-          ) : (
-            <div className="space-y-4">
-              {sshKeys?.map((key) => (
-                <SSHKeyCard key={key.id} sshKey={key} />
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Create modal */}
-        {showCreate && <CreateSSHKeyModal onClose={() => setShowCreate(false)} />}
-      </motion.main>
-
-      <LandingFooter />
-    </div>
-  )
-}
-
-function SSHKeySkeleton() {
+const SSHKeySkeleton: FC = (): ReactNode => {
   return (
     <Card>
       <CardContent className="py-4">
@@ -153,7 +60,7 @@ function SSHKeySkeleton() {
   )
 }
 
-function SSHKeyCard({ sshKey }: SSHKeyCardProps) {
+const SSHKeyCard: FC<SSHKeyCardProps> = ({ sshKey }): ReactNode => {
   const deleteMutation = useDeleteSSHKey()
 
   return (
@@ -192,7 +99,7 @@ function SSHKeyCard({ sshKey }: SSHKeyCardProps) {
   )
 }
 
-function CreateSSHKeyModal({ onClose }: CreateSSHKeyModalProps) {
+const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({ onClose }): ReactNode => {
   const [mode, setMode] = useState<SSHKeyModalMode>('upload')
   const [name, setName] = useState('')
   const [publicKey, setPublicKey] = useState('')
@@ -531,3 +438,99 @@ function CreateSSHKeyModal({ onClose }: CreateSSHKeyModalProps) {
     </Dialog>
   )
 }
+
+const SSHKeys: FC = (): ReactNode => {
+  const [showCreate, setShowCreate] = useState(false)
+
+  const { data: sshKeys, isLoading, isError, refetch, cachedCount } = useSSHKeys()
+  const skeletonCount = cachedCount > 0 ? cachedCount : 2
+
+  return (
+    <div className="relative flex min-h-screen flex-col bg-[#0a0a0f] text-white">
+      <PageTitle title={t('sshKeys.title')} />
+      <PageBackground />
+      <Header />
+
+      <motion.main
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="relative mx-auto w-full max-w-6xl flex-1 px-6 py-8"
+      >
+        <PageHeader
+          title={t('sshKeys.title')}
+          description={t('sshKeys.description')}
+          action={
+            <Button onClick={() => setShowCreate(true)}>
+              <PlusCircle className="h-5 w-5" weight="bold" />
+              {t('sshKeys.addSshKey')}
+            </Button>
+          }
+        />
+
+        {/* SSH Keys container */}
+        <div className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+          {/* How it works */}
+          <div className="mb-6 rounded-lg border border-white/5 bg-white/5 p-4">
+            <h3 className="mb-2 font-semibold">{t('sshKeys.howSshKeysWork')}</h3>
+            <ol className="text-muted-foreground list-inside list-decimal space-y-1 text-sm">
+              <li>{t('sshKeys.step1')}</li>
+              <li>
+                {t('sshKeys.step2').split('public key')[0]}<strong className="text-white">public key</strong>{t('sshKeys.step2').split('public key')[1] || ' here'}
+              </li>
+              <li>{t('sshKeys.step3')}</li>
+              <li>
+                {t('sshKeys.step4')}{' '}
+                <code className="rounded bg-white/10 px-1">{t('sshKeys.step4Command')}</code> {t('sshKeys.step4Suffix')}
+              </li>
+            </ol>
+          </div>
+
+          {/* SSH Keys list */}
+          {isError ? (
+            <ErrorState
+              title={t('errors.failedToLoadSSHKeys')}
+              description={t('errors.failedToLoadSSHKeysDescription')}
+              onRetry={() => refetch()}
+            />
+          ) : isLoading && skeletonCount === 0 ? (
+            <EmptyState
+              icon={<Key className="text-primary h-10 w-10" />}
+              title={t('sshKeys.noSshKeysYet')}
+              description={t('sshKeys.noSshKeysDescription')}
+              actionLabel={t('sshKeys.addSshKey')}
+              onAction={() => setShowCreate(true)}
+            />
+          ) : isLoading ? (
+            <div className="space-y-4">
+              {Array.from({ length: skeletonCount }).map((_, i) => (
+                <SSHKeySkeleton key={i} />
+              ))}
+            </div>
+          ) : sshKeys?.length === 0 ? (
+            <EmptyState
+              icon={<Key className="text-primary h-10 w-10" />}
+              title={t('sshKeys.noSshKeysYet')}
+              description={t('sshKeys.noSshKeysDescription')}
+              actionLabel={t('sshKeys.addSshKey')}
+              onAction={() => setShowCreate(true)}
+            />
+          ) : (
+            <div className="space-y-4">
+              {sshKeys?.map((key) => (
+                <SSHKeyCard key={key.id} sshKey={key} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Create modal */}
+        {showCreate && <CreateSSHKeyModal onClose={() => setShowCreate(false)} />}
+      </motion.main>
+
+      <LandingFooter />
+    </div>
+  )
+}
+
+export default SSHKeys

@@ -4,7 +4,7 @@ import { db } from '../../db'
 import { claws, sshKeys, volumes } from '../../db/schema'
 import { hetzner } from '../../services/hetzner'
 import { cloudflare } from '../../services/cloudflare'
-import { generateSlug, generatePassword, generateCloudInit, DOMAIN } from './helpers'
+import { generateSlug, generatePassword, generateCloudInit, generateToken, DOMAIN } from './helpers/index'
 
 const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
   try {
@@ -48,8 +48,11 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
       }
     }
 
-    // Generate cloud-init with subdomain for SSL
-    const cloudInitScript = generateCloudInit(finalPassword, subdomain, DOMAIN)
+    // Generate gateway token for owner authentication
+    const gatewayToken = generateToken()
+
+    // Generate cloud-init with subdomain for SSL and gateway token
+    const cloudInitScript = generateCloudInit(finalPassword, subdomain, DOMAIN, gatewayToken)
 
     // Create in Hetzner with our password and optional SSH key
     const { serverId, ip } = await hetzner.createServer(
@@ -84,6 +87,7 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
       rootPassword: finalPassword,
       sshKeyId: sshKeyId || null,
       subdomain,
+      gatewayToken,
     })
 
     // Create volume if requested
@@ -131,6 +135,7 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
       url: `https://${subdomain}.${DOMAIN}`,
       createdAt: new Date().toISOString(),
       rootPassword: finalPassword,
+      gatewayToken,
       volume: createdVolume,
     })
   } catch (err) {

@@ -1,4 +1,6 @@
-export function PageBackground() {
+import type { FC, ReactNode } from 'react'
+
+const PageBackground: FC = (): ReactNode => {
   return (
     <>
       {/* Fixed gradient background */}
@@ -8,3 +10,5 @@ export function PageBackground() {
     </>
   )
 }
+
+export { PageBackground }
