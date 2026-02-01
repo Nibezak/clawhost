@@ -1,7 +1,8 @@
 node_modules
 dist
-.env.*
 .turbo
 *.log
 .DS_Store
 *-firebase-adminsdk-*.json
+**/.env
+**/.env.*
