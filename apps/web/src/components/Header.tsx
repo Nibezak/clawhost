@@ -1,10 +1,9 @@
 import type { HeaderProps } from '@/ts/Interfaces'
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
 import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
-import { api } from '@/lib/api'
+import { useProfile } from '@/hooks'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -35,9 +34,7 @@ export function Header({ showNavLinks = false, navLinks = [], activeSection = ''
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const { data: profile, isLoading: profileLoading } = useQuery({
-    queryKey: ['profile'],
-    queryFn: api.getProfile,
+  const { data: profile, isLoading: profileLoading } = useProfile({
     enabled: !!user,
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   })

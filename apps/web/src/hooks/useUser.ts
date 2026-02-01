@@ -5,11 +5,12 @@ import { api } from '@/lib/api'
 export const PROFILE_QUERY_KEY = ['profile'] as const
 export const USER_STATS_QUERY_KEY = ['userStats'] as const
 
-export function useProfile(options?: { enabled?: boolean }) {
+export function useProfile(options?: { enabled?: boolean; staleTime?: number }) {
   return useQuery({
     queryKey: PROFILE_QUERY_KEY,
     queryFn: api.getProfile,
     enabled: options?.enabled ?? true,
+    staleTime: options?.staleTime,
   })
 }
 
