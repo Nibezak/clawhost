@@ -1,14 +1,20 @@
+import type {
+  CreateSSHKeyModalProps,
+  GeneratedKeyPair,
+  SSHKeyCardProps,
+} from '@/ts/Interfaces'
+import type { CopiedFieldType, SSHKeyModalMode } from '@/ts/Types'
 import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
-import { api, SSHKey } from '../lib/api'
+import { t } from '@openclaw/i18n'
 import { useUIStore } from '@/lib/store'
+import { useSSHKeys, useCreateSSHKey, useDeleteSSHKey } from '@/hooks'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/components/ui/alert'  // Keep for warnings only
+import { Alert, AlertDescription } from '@/components/ui/alert' // Keep for warnings only
 import { EmptyState } from '@/components/EmptyState'
 import { ErrorState } from '@/components/ErrorState'
 import { Header } from '@/components/Header'
@@ -35,27 +41,14 @@ import {
 import { PageHeader } from '@/components/PageHeader'
 
 export default function SSHKeys() {
-  const queryClient = useQueryClient()
   const [showCreate, setShowCreate] = useState(false)
 
-  const {
-    data: sshKeys,
-    isLoading,
-    isError,
-    refetch,
-  } = useQuery({
-    queryKey: ['sshKeys'],
-    queryFn: api.getSSHKeys,
-    placeholderData: (previousData) => previousData,
-  })
-
-  // Use cached count for skeleton loading
-  const cachedKeys = queryClient.getQueryData<SSHKey[]>(['sshKeys'])
-  const skeletonCount = cachedKeys !== undefined ? cachedKeys.length : 2
+  const { data: sshKeys, isLoading, isError, refetch, cachedCount } = useSSHKeys()
+  const skeletonCount = cachedCount > 0 ? cachedCount : 2
 
   return (
-<div className="relative min-h-screen bg-[#0a0a0f] text-white flex flex-col">
-      <PageTitle title="SSH Keys" />
+    <div className="relative flex min-h-screen flex-col bg-[#0a0a0f] text-white">
+      <PageTitle title={t('sshKeys.title')} />
       <PageBackground />
       <Header />
 
@@ -63,45 +56,50 @@ export default function SSHKeys() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="relative flex-1 max-w-6xl mx-auto px-6 py-8 w-full"
+        className="relative mx-auto w-full max-w-6xl flex-1 px-6 py-8"
       >
         <PageHeader
-          title="SSH Keys"
-          description="Manage SSH keys for passwordless login to your instances"
+          title={t('sshKeys.title')}
+          description={t('sshKeys.description')}
           action={
             <Button onClick={() => setShowCreate(true)}>
-              <PlusCircle className="w-5 h-5" weight="bold" />
-              Add SSH Key
+              <PlusCircle className="h-5 w-5" weight="bold" />
+              {t('sshKeys.addSshKey')}
             </Button>
           }
         />
 
         {/* SSH Keys container */}
-        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-6">
+        <div className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
           {/* How it works */}
-          <div className="mb-6 p-4 bg-white/5 rounded-lg border border-white/5">
-            <h3 className="font-semibold mb-2">How SSH keys work</h3>
-            <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
-              <li>Generate an SSH key pair on your computer (or use an existing one)</li>
-              <li>Add the <strong className="text-white">public key</strong> here</li>
-              <li>Select the key when creating a new instance</li>
-              <li>Connect with <code className="bg-white/10 px-1 rounded">ssh root@your-server-ip</code> - no password needed!</li>
+          <div className="mb-6 rounded-lg border border-white/5 bg-white/5 p-4">
+            <h3 className="mb-2 font-semibold">{t('sshKeys.howSshKeysWork')}</h3>
+            <ol className="text-muted-foreground list-inside list-decimal space-y-1 text-sm">
+              <li>{t('sshKeys.step1')}</li>
+              <li>
+                {t('sshKeys.step2').split('public key')[0]}<strong className="text-white">public key</strong>{t('sshKeys.step2').split('public key')[1] || ' here'}
+              </li>
+              <li>{t('sshKeys.step3')}</li>
+              <li>
+                {t('sshKeys.step4')}{' '}
+                <code className="rounded bg-white/10 px-1">{t('sshKeys.step4Command')}</code> {t('sshKeys.step4Suffix')}
+              </li>
             </ol>
           </div>
 
           {/* SSH Keys list */}
           {isError ? (
             <ErrorState
-              title="Failed to load SSH keys"
-              description="We couldn't load your SSH keys. Please check your connection and try again."
+              title={t('errors.failedToLoadSSHKeys')}
+              description={t('errors.failedToLoadSSHKeysDescription')}
               onRetry={() => refetch()}
             />
           ) : isLoading && skeletonCount === 0 ? (
             <EmptyState
-              icon={<Key className="w-10 h-10 text-primary" />}
-              title="No SSH keys yet"
-              description="Add an SSH key to enable passwordless login to your instances"
-              actionLabel="Add SSH Key"
+              icon={<Key className="text-primary h-10 w-10" />}
+              title={t('sshKeys.noSshKeysYet')}
+              description={t('sshKeys.noSshKeysDescription')}
+              actionLabel={t('sshKeys.addSshKey')}
               onAction={() => setShowCreate(true)}
             />
           ) : isLoading ? (
@@ -112,10 +110,10 @@ export default function SSHKeys() {
             </div>
           ) : sshKeys?.length === 0 ? (
             <EmptyState
-              icon={<Key className="w-10 h-10 text-primary" />}
-              title="No SSH keys yet"
-              description="Add an SSH key to enable passwordless login to your instances"
-              actionLabel="Add SSH Key"
+              icon={<Key className="text-primary h-10 w-10" />}
+              title={t('sshKeys.noSshKeysYet')}
+              description={t('sshKeys.noSshKeysDescription')}
+              actionLabel={t('sshKeys.addSshKey')}
               onAction={() => setShowCreate(true)}
             />
           ) : (
@@ -128,9 +126,7 @@ export default function SSHKeys() {
         </div>
 
         {/* Create modal */}
-        {showCreate && (
-          <CreateSSHKeyModal onClose={() => setShowCreate(false)} />
-        )}
+        {showCreate && <CreateSSHKeyModal onClose={() => setShowCreate(false)} />}
       </motion.main>
 
       <LandingFooter />
@@ -144,7 +140,7 @@ function SSHKeySkeleton() {
       <CardContent className="py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Skeleton className="w-10 h-10 rounded-full" />
+            <Skeleton className="h-10 w-10 rounded-full" />
             <div className="space-y-2">
               <Skeleton className="h-5 w-32" />
               <Skeleton className="h-4 w-48" />
@@ -157,27 +153,20 @@ function SSHKeySkeleton() {
   )
 }
 
-function SSHKeyCard({ sshKey }: { sshKey: SSHKey }) {
-  const queryClient = useQueryClient()
-
-  const deleteMutation = useMutation({
-    mutationFn: () => api.deleteSSHKey(sshKey.id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['sshKeys'] }),
-  })
+function SSHKeyCard({ sshKey }: SSHKeyCardProps) {
+  const deleteMutation = useDeleteSSHKey()
 
   return (
     <Card>
       <CardContent className="py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-muted flex items-center justify-center rounded-full">
-              <Key className="w-5 h-5 text-muted-foreground" />
+            <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-full">
+              <Key className="text-muted-foreground h-5 w-5" />
             </div>
             <div>
               <h3 className="font-semibold">{sshKey.name}</h3>
-              <p className="text-muted-foreground text-sm font-mono">
-                {sshKey.fingerprint}
-              </p>
+              <p className="text-muted-foreground font-mono text-sm">{sshKey.fingerprint}</p>
             </div>
           </div>
 
@@ -185,16 +174,16 @@ function SSHKeyCard({ sshKey }: { sshKey: SSHKey }) {
             variant="ghost"
             size="icon"
             onClick={() => {
-              if (confirm('Are you sure you want to delete this SSH key?')) {
-                deleteMutation.mutate()
+              if (confirm(t('sshKeys.deleteConfirmation'))) {
+                deleteMutation.mutate(sshKey.id)
               }
             }}
             disabled={deleteMutation.isPending}
           >
             {deleteMutation.isPending ? (
-              <CircleNotch className="w-5 h-5 animate-spin" />
+              <CircleNotch className="h-5 w-5 animate-spin" />
             ) : (
-              <Trash className="w-5 h-5 text-destructive" />
+              <Trash className="text-destructive h-5 w-5" />
             )}
           </Button>
         </div>
@@ -203,27 +192,34 @@ function SSHKeyCard({ sshKey }: { sshKey: SSHKey }) {
   )
 }
 
-function CreateSSHKeyModal({ onClose }: { onClose: () => void }) {
-  const [mode, setMode] = useState<'upload' | 'generate'>('upload')
+function CreateSSHKeyModal({ onClose }: CreateSSHKeyModalProps) {
+  const [mode, setMode] = useState<SSHKeyModalMode>('upload')
   const [name, setName] = useState('')
   const [publicKey, setPublicKey] = useState('')
-  const [generatedKeys, setGeneratedKeys] = useState<{ publicKey: string; privateKey: string } | null>(null)
-  const [copied, setCopied] = useState<'command' | 'private' | null>(null)
+  const [generatedKeys, setGeneratedKeys] = useState<GeneratedKeyPair | null>(null)
+  const [copied, setCopied] = useState<CopiedFieldType>(null)
   const [keyGenError, setKeyGenError] = useState('')
-  const queryClient = useQueryClient()
   const { showToast } = useUIStore()
 
-  const createMutation = useMutation({
-    mutationFn: () => api.createSSHKey({ name, publicKey: mode === 'generate' && generatedKeys ? generatedKeys.publicKey : publicKey }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sshKeys'] })
-      showToast('SSH key added successfully!', 'success')
-      onClose()
-    },
-    onError: (err: Error) => {
-      showToast(err.message || 'Failed to add SSH key.', 'error')
-    },
-  })
+  const createMutation = useCreateSSHKey()
+
+  const handleCreate = () => {
+    createMutation.mutate(
+      {
+        name,
+        publicKey: mode === 'generate' && generatedKeys ? generatedKeys.publicKey : publicKey,
+      },
+      {
+        onSuccess: () => {
+          showToast(t('sshKeys.sshKeyAddedSuccessfully'), 'success')
+          onClose()
+        },
+        onError: (err: Error) => {
+          showToast(err.message || t('errors.failedToAddSSHKey'), 'error')
+        },
+      }
+    )
+  }
 
   const generateKeyPair = async () => {
     try {
@@ -258,7 +254,7 @@ function CreateSSHKeyModal({ onClose }: { onClose: () => void }) {
         privateKey: pemPrivateKey,
       })
     } catch (err) {
-      setKeyGenError('Failed to generate key pair. Please generate keys locally instead.')
+      setKeyGenError(t('errors.failedToGenerateKeyPair'))
     }
   }
 
@@ -283,33 +279,35 @@ function CreateSSHKeyModal({ onClose }: { onClose: () => void }) {
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Add SSH Key</DialogTitle>
-          <DialogDescription>
-            Add an SSH key for passwordless authentication
-          </DialogDescription>
+          <DialogTitle>{t('sshKeys.addSshKeyModalTitle')}</DialogTitle>
+          <DialogDescription>{t('sshKeys.addSshKeyModalDescription')}</DialogDescription>
         </DialogHeader>
 
         {/* Mode selector */}
-        <div className="flex gap-2 p-1 bg-muted rounded-lg">
+        <div className="bg-muted flex gap-2 rounded-lg p-1">
           <button
             type="button"
             onClick={() => setMode('upload')}
-            className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition ${
-              mode === 'upload' ? 'bg-background shadow' : 'text-muted-foreground hover:text-foreground'
+            className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition ${
+              mode === 'upload'
+                ? 'bg-background shadow'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            I have an SSH key
+            {t('sshKeys.iHaveAnSshKey')}
           </button>
           <button
             type="button"
             onClick={() => setMode('generate')}
-            className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition ${
-              mode === 'generate' ? 'bg-background shadow' : 'text-muted-foreground hover:text-foreground'
+            className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition ${
+              mode === 'generate'
+                ? 'bg-background shadow'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            Generate new key
+            {t('sshKeys.generateNewKey')}
           </button>
         </div>
 
@@ -323,40 +321,44 @@ function CreateSSHKeyModal({ onClose }: { onClose: () => void }) {
           <form
             onSubmit={(e) => {
               e.preventDefault()
-              createMutation.mutate()
+              handleCreate()
             }}
             className="space-y-4"
           >
             <div className="space-y-2">
-              <Label>Name</Label>
+              <Label>{t('sshKeys.name')}</Label>
               <Input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="My MacBook"
+                placeholder={t('sshKeys.namePlaceholder')}
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label>Public Key</Label>
+              <Label>{t('sshKeys.publicKey')}</Label>
               <textarea
-                className="w-full h-32 px-3 py-2 border rounded-md bg-background text-sm font-mono resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+                className="bg-background focus:ring-primary h-32 w-full resize-none rounded-md border px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2"
                 value={publicKey}
                 onChange={(e) => setPublicKey(e.target.value)}
-                placeholder="ssh-rsa AAAA... or ssh-ed25519 AAAA..."
+                placeholder={t('sshKeys.publicKeyPlaceholder')}
                 required
               />
               <p className="text-muted-foreground text-xs">
-                Find your public key at <code className="bg-muted px-1 rounded">~/.ssh/id_ed25519.pub</code> or <code className="bg-muted px-1 rounded">~/.ssh/id_rsa.pub</code>
+                {t('sshKeys.publicKeyHint')}{' '}
+                <code className="bg-muted rounded px-1">{t('sshKeys.publicKeyPath1')}</code> or{' '}
+                <code className="bg-muted rounded px-1">{t('sshKeys.publicKeyPath2')}</code>
               </p>
             </div>
 
             <Card className="bg-muted/50">
               <CardContent className="py-3">
-                <p className="text-sm text-muted-foreground mb-2">Don't have an SSH key? Generate one:</p>
+                <p className="text-muted-foreground mb-2 text-sm">
+                  {t('sshKeys.dontHaveSshKey')}
+                </p>
                 <div className="flex items-center gap-2">
-                  <code className="flex-1 text-xs bg-background p-2 rounded font-mono overflow-x-auto">
+                  <code className="bg-background flex-1 overflow-x-auto rounded p-2 font-mono text-xs">
                     {sshKeygenCommand}
                   </code>
                   <Button
@@ -365,7 +367,11 @@ function CreateSSHKeyModal({ onClose }: { onClose: () => void }) {
                     size="icon"
                     onClick={() => copyToClipboard(sshKeygenCommand, 'command')}
                   >
-                    {copied === 'command' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                    {copied === 'command' ? (
+                      <Check className="h-4 w-4" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
                   </Button>
                 </div>
               </CardContent>
@@ -373,16 +379,16 @@ function CreateSSHKeyModal({ onClose }: { onClose: () => void }) {
 
             <div className="flex gap-3">
               <Button type="button" variant="outline" className="flex-1" onClick={onClose}>
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button type="submit" className="flex-1" disabled={createMutation.isPending}>
                 {createMutation.isPending ? (
                   <>
-                    <CircleNotch className="w-4 h-4 mr-2 animate-spin" />
-                    Adding...
+                    <CircleNotch className="mr-2 h-4 w-4 animate-spin" />
+                    {t('sshKeys.adding')}
                   </>
                 ) : (
-                  'Add Key'
+                  t('common.addKey')
                 )}
               </Button>
             </div>
@@ -390,12 +396,12 @@ function CreateSSHKeyModal({ onClose }: { onClose: () => void }) {
         ) : (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Key Name</Label>
+              <Label>{t('sshKeys.keyName')}</Label>
               <Input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="My Generated Key"
+                placeholder={t('sshKeys.keyNamePlaceholder')}
                 required
               />
             </div>
@@ -403,16 +409,15 @@ function CreateSSHKeyModal({ onClose }: { onClose: () => void }) {
             {!generatedKeys ? (
               <>
                 <Alert>
-                  <Warning className="w-4 h-4" />
+                  <Warning className="h-4 w-4" />
                   <AlertDescription>
-                    <strong>Important:</strong> After generating, you must download and save your private key.
-                    We cannot recover it if you lose it!
+                    <strong>Important:</strong> {t('sshKeys.importantAfterGenerating')}
                   </AlertDescription>
                 </Alert>
 
                 <Button onClick={generateKeyPair} className="w-full" disabled={!name}>
-                  <Key className="w-4 h-4 mr-2" />
-                  Generate Key Pair
+                  <Key className="mr-2 h-4 w-4" />
+                  {t('sshKeys.generateKeyPair')}
                 </Button>
 
                 <div className="relative">
@@ -420,15 +425,17 @@ function CreateSSHKeyModal({ onClose }: { onClose: () => void }) {
                     <span className="w-full border-t" />
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-background px-2 text-muted-foreground">Or generate locally (recommended)</span>
+                    <span className="bg-background text-muted-foreground px-2">
+                      {t('sshKeys.orGenerateLocallyRecommended')}
+                    </span>
                   </div>
                 </div>
 
                 <Card className="bg-muted/50">
                   <CardContent className="py-3">
-                    <p className="text-sm text-muted-foreground mb-2">Run this in your terminal:</p>
+                    <p className="text-muted-foreground mb-2 text-sm">{t('sshKeys.runThisInYourTerminal')}</p>
                     <div className="flex items-center gap-2">
-                      <code className="flex-1 text-xs bg-background p-2 rounded font-mono overflow-x-auto">
+                      <code className="bg-background flex-1 overflow-x-auto rounded p-2 font-mono text-xs">
                         {sshKeygenCommand}
                       </code>
                       <Button
@@ -437,11 +444,15 @@ function CreateSSHKeyModal({ onClose }: { onClose: () => void }) {
                         size="icon"
                         onClick={() => copyToClipboard(sshKeygenCommand, 'command')}
                       >
-                        {copied === 'command' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        {copied === 'command' ? (
+                          <Check className="h-4 w-4" />
+                        ) : (
+                          <Copy className="h-4 w-4" />
+                        )}
                       </Button>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-2">
-                      Then switch to "I have an SSH key" and paste the public key.
+                    <p className="text-muted-foreground mt-2 text-xs">
+                      {t('sshKeys.thenSwitchToIHave')}
                     </p>
                   </CardContent>
                 </Card>
@@ -449,42 +460,45 @@ function CreateSSHKeyModal({ onClose }: { onClose: () => void }) {
             ) : (
               <>
                 <Alert variant="destructive">
-                  <Warning className="w-4 h-4" />
+                  <Warning className="h-4 w-4" />
                   <AlertDescription>
-                    <strong>Save your private key NOW!</strong> Download it before closing this dialog.
-                    You will not be able to see it again.
+                    {t('sshKeys.savePrivateKeyNow')}
                   </AlertDescription>
                 </Alert>
 
                 <div className="space-y-2">
-                  <Label>Private Key (keep secret!)</Label>
+                  <Label>{t('sshKeys.privateKeyKeepSecret')}</Label>
                   <div className="relative">
                     <textarea
-                      className="w-full h-24 px-3 py-2 border rounded-md bg-background text-xs font-mono resize-none"
+                      className="bg-background h-24 w-full resize-none rounded-md border px-3 py-2 font-mono text-xs"
                       value={generatedKeys.privateKey}
                       readOnly
                     />
                   </div>
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm" onClick={downloadPrivateKey}>
-                      <Download className="w-4 h-4 mr-2" />
-                      Download Private Key
+                      <Download className="mr-2 h-4 w-4" />
+                      {t('sshKeys.downloadPrivateKey')}
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => copyToClipboard(generatedKeys.privateKey, 'private')}
                     >
-                      {copied === 'private' ? <Check className="w-4 h-4 mr-2" /> : <Copy className="w-4 h-4 mr-2" />}
-                      Copy
+                      {copied === 'private' ? (
+                        <Check className="mr-2 h-4 w-4" />
+                      ) : (
+                        <Copy className="mr-2 h-4 w-4" />
+                      )}
+                      {t('common.copy')}
                     </Button>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Public Key (will be saved)</Label>
+                  <Label>{t('sshKeys.publicKeyWillBeSaved')}</Label>
                   <textarea
-                    className="w-full h-16 px-3 py-2 border rounded-md bg-muted text-xs font-mono resize-none"
+                    className="bg-muted h-16 w-full resize-none rounded-md border px-3 py-2 font-mono text-xs"
                     value={generatedKeys.publicKey}
                     readOnly
                   />
@@ -492,20 +506,20 @@ function CreateSSHKeyModal({ onClose }: { onClose: () => void }) {
 
                 <div className="flex gap-3">
                   <Button type="button" variant="outline" className="flex-1" onClick={onClose}>
-                    Cancel
+                    {t('common.cancel')}
                   </Button>
                   <Button
                     className="flex-1"
-                    onClick={() => createMutation.mutate()}
+                    onClick={() => handleCreate()}
                     disabled={createMutation.isPending}
                   >
                     {createMutation.isPending ? (
                       <>
-                        <CircleNotch className="w-4 h-4 mr-2 animate-spin" />
-                        Saving...
+                        <CircleNotch className="mr-2 h-4 w-4 animate-spin" />
+                        {t('sshKeys.saving')}
                       </>
                     ) : (
-                      'Save Public Key'
+                      t('sshKeys.savePublicKey')
                     )}
                   </Button>
                 </div>

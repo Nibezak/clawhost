@@ -7,10 +7,7 @@ import { verifyToken } from './services/firebase'
 import { db } from './db'
 import { users } from './db/schema'
 import { eq } from 'drizzle-orm'
-import instancesRoutes from './routes/instances'
-import plansRoutes from './routes/plans'
-import sshKeysRoutes from './routes/ssh-keys'
-import usersRoutes from './routes/users'
+import { clawsRoutes, plansRoutes, sshKeysRoutes, usersRoutes } from './routes'
 
 const app = new Hono<{ Variables: { userId: string } }>()
 
@@ -45,11 +42,7 @@ app.use('/api/*', async (c, next) => {
     }
 
     // Ensure user exists in our database
-    const existingUser = await db
-      .select()
-      .from(users)
-      .where(eq(users.id, decoded.uid))
-      .limit(1)
+    const existingUser = await db.select().from(users).where(eq(users.id, decoded.uid)).limit(1)
 
     if (!existingUser[0]) {
       await db.insert(users).values({
@@ -67,7 +60,7 @@ app.use('/api/*', async (c, next) => {
 })
 
 // Protected routes
-app.route('/api/instances', instancesRoutes)
+app.route('/api/claws', clawsRoutes)
 app.route('/api/ssh-keys', sshKeysRoutes)
 app.route('/api/users', usersRoutes)
 

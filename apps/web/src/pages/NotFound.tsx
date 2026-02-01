@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { t } from '@openclaw/i18n'
 import { Button } from '@/components/ui/button'
 import { Header } from '@/components/Header'
 import { LandingFooter } from '@/components/LandingFooter'
@@ -10,7 +11,7 @@ import { House, MagnifyingGlass } from '@phosphor-icons/react'
 
 export default function NotFound() {
   return (
-    <div className="relative min-h-screen bg-[#0a0a0f] text-white flex flex-col">
+    <div className="relative flex min-h-screen flex-col bg-[#0a0a0f] text-white">
       <PageTitle title="Page Not Found" />
       <PageBackground />
       <Header />
@@ -19,23 +20,23 @@ export default function NotFound() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="relative flex-1 flex items-center justify-center px-6 py-8"
+        className="relative flex flex-1 items-center justify-center px-6 py-8"
       >
-        <div className="text-center max-w-md">
-          <div className="w-24 h-24 bg-gradient-to-br from-primary/20 to-primary/5 rounded-full flex items-center justify-center mx-auto mb-8">
-            <MagnifyingGlass className="w-12 h-12 text-primary" />
+        <div className="max-w-md text-center">
+          <div className="from-primary/20 to-primary/5 mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br">
+            <MagnifyingGlass className="text-primary h-12 w-12" />
           </div>
 
-          <h1 className="font-clash text-6xl font-bold mb-4">404</h1>
-          <h2 className="text-xl font-semibold mb-2">Page not found</h2>
+          <h1 className="font-clash mb-4 text-6xl font-bold">404</h1>
+          <h2 className="mb-2 text-xl font-semibold">{t('errors.notFound')}</h2>
           <p className="text-muted-foreground mb-8">
-            The page you're looking for doesn't exist or has been moved.
+            {t('errors.pageNotFoundDescription')}
           </p>
 
           <Button size="lg" asChild>
             <Link to={ROUTES.HOME}>
-              <House className="w-5 h-5" weight="regular" />
-              Go to Homepage
+              <House className="h-5 w-5" weight="regular" />
+              {t('errors.goToHomepage')}
             </Link>
           </Button>
         </div>

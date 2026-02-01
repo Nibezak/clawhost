@@ -1,31 +1,32 @@
 import { Link } from 'react-router-dom'
+import { t } from '@openclaw/i18n'
 
 export function Footer() {
   return (
-    <footer className="relative border-t border-white/10 mt-auto">
-      <div className="max-w-6xl mx-auto px-6 py-6">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} ClawHost. All rights reserved.
+    <footer className="relative mt-auto border-t border-white/10">
+      <div className="mx-auto max-w-6xl px-6 py-6">
+        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+          <p className="text-muted-foreground text-sm">
+            &copy; {new Date().getFullYear()} {t('footer.copyright')}
           </p>
           <div className="flex items-center gap-6">
             <Link
               to="/terms"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground hover:text-foreground text-sm transition-colors"
             >
-              Terms of Service
+              {t('footer.termsOfService')}
             </Link>
             <Link
               to="/privacy"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground hover:text-foreground text-sm transition-colors"
             >
-              Privacy Policy
+              {t('footer.privacyPolicy')}
             </Link>
             <a
               href="mailto:support@clawhost.cloud"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground hover:text-foreground text-sm transition-colors"
             >
-              Get in Touch
+              {t('footer.getInTouch')}
             </a>
           </div>
         </div>

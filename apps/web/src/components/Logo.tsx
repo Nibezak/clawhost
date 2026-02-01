@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom'
 
 export function Logo() {
   return (
-    <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition">
-      <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-7 h-7">
+    <Link to="/" className="flex items-center gap-2 transition hover:opacity-80">
+      <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-7 w-7">
         {/* Lobster Claw Silhouette */}
         <path
           d="M60 10 C30 10 15 35 15 55 C15 75 30 95 45 100 L45 110 L55 110 L55 100 C55 100 60 102 65 100 L65 110 L75 110 L75 100 C90 95 105 75 105 55 C105 35 90 10 60 10Z"
@@ -34,7 +34,7 @@ export function Logo() {
           </linearGradient>
         </defs>
       </svg>
-      <span className="text-lg font-semibold font-clash">
+      <span className="font-clash text-lg font-semibold">
         claw<span className="text-muted-foreground">host</span>
       </span>
     </Link>

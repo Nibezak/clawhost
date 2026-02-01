@@ -43,19 +43,18 @@ export function Toast() {
           initial={{ opacity: 0, y: -20, x: '-50%' }}
           animate={{ opacity: 1, y: 0, x: '-50%' }}
           exit={{ opacity: 0, y: -20, x: '-50%' }}
-          className="fixed top-6 left-1/2 z-[100]"
+          className="fixed left-1/2 top-6 z-[100]"
         >
-          <div className={`flex items-center gap-3 px-4 py-3 rounded-lg border backdrop-blur-sm shadow-lg ${colors[toast.type]}`}>
+          <div
+            className={`flex items-center gap-3 rounded-lg border px-4 py-3 shadow-lg backdrop-blur-sm ${colors[toast.type]}`}
+          >
             {(() => {
               const Icon = icons[toast.type]
-              return <Icon className={`w-5 h-5 ${iconColors[toast.type]}`} weight="fill" />
+              return <Icon className={`h-5 w-5 ${iconColors[toast.type]}`} weight="fill" />
             })()}
             <span className="text-sm font-medium text-white">{toast.message}</span>
-            <button
-              onClick={hideToast}
-              className="ml-2 text-gray-400 hover:text-white transition"
-            >
-              <X className="w-4 h-4" />
+            <button onClick={hideToast} className="ml-2 text-gray-400 transition hover:text-white">
+              <X className="h-4 w-4" />
             </button>
           </div>
         </motion.div>

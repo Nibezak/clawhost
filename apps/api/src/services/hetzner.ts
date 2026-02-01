@@ -114,9 +114,7 @@ export const hetzner = {
   },
 
   async getServer(serverId: string): Promise<{ status: string; ip: string }> {
-    const data = await getClient().get<{ server: HetznerServer }>(
-      `/servers/${serverId}`
-    )
+    const data = await getClient().get<{ server: HetznerServer }>(`/servers/${serverId}`)
     return {
       status: data.server.status,
       ip: data.server.public_net.ipv4.ip,
@@ -152,9 +150,7 @@ export const hetzner = {
       priceMonthly: number
     }>
   > {
-    const data = await getClient().get<{ server_types: ServerType[] }>(
-      '/server_types'
-    )
+    const data = await getClient().get<{ server_types: ServerType[] }>('/server_types')
 
     return data.server_types.map((t) => {
       const ashPrice = t.prices.find((p) => p.location === 'ash')
@@ -197,9 +193,7 @@ export const hetzner = {
       createdAt: string
     }>
   > {
-    const data = await getClient().get<{ ssh_keys: HetznerSSHKey[] }>(
-      '/ssh_keys'
-    )
+    const data = await getClient().get<{ ssh_keys: HetznerSSHKey[] }>('/ssh_keys')
 
     return data.ssh_keys.map((k) => ({
       id: k.id,
@@ -214,10 +208,10 @@ export const hetzner = {
     name: string,
     publicKey: string
   ): Promise<{ id: number; name: string; fingerprint: string }> {
-    const data = await getClient().post<{ ssh_key: HetznerSSHKey }>(
-      '/ssh_keys',
-      { name, public_key: publicKey }
-    )
+    const data = await getClient().post<{ ssh_key: HetznerSSHKey }>('/ssh_keys', {
+      name,
+      public_key: publicKey,
+    })
 
     return {
       id: data.ssh_key.id,
@@ -232,9 +226,7 @@ export const hetzner = {
 
   // Volumes
   async getVolumePricing(): Promise<{ pricePerGbMonthly: number }> {
-    const data = await getClient().get<{ pricing: { volume: VolumePricing } }>(
-      '/pricing'
-    )
+    const data = await getClient().get<{ pricing: { volume: VolumePricing } }>('/pricing')
     return {
       pricePerGbMonthly: parseFloat(data.pricing.volume.price_per_gb_month.gross),
     }
@@ -258,10 +250,7 @@ export const hetzner = {
       body.server = serverId
     }
 
-    const data = await getClient().post<{ volume: HetznerVolume }>(
-      '/volumes',
-      body
-    )
+    const data = await getClient().post<{ volume: HetznerVolume }>('/volumes', body)
 
     return {
       id: data.volume.id,
@@ -291,9 +280,7 @@ export const hetzner = {
     status: string
     serverId: number | null
   }> {
-    const data = await getClient().get<{ volume: HetznerVolume }>(
-      `/volumes/${volumeId}`
-    )
+    const data = await getClient().get<{ volume: HetznerVolume }>(`/volumes/${volumeId}`)
     return {
       id: data.volume.id,
       size: data.volume.size,

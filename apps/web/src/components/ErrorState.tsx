@@ -1,30 +1,22 @@
+import type { ErrorStateProps } from '@/ts/Interfaces'
+import { t } from '@openclaw/i18n'
 import { Button } from '@/components/ui/button'
 import { WarningCircle, ArrowClockwise } from '@phosphor-icons/react'
 
-interface ErrorStateProps {
-  title?: string
-  description?: string
-  onRetry?: () => void
-}
-
-export function ErrorState({
-  title = 'Something went wrong',
-  description = 'We couldn\'t load the data. Please try again.',
-  onRetry,
-}: ErrorStateProps) {
+export function ErrorState({ title, description, onRetry }: ErrorStateProps) {
   return (
     <div className="py-12 text-center">
-      <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4">
-        <WarningCircle className="w-8 h-8 text-destructive" />
+      <div className="bg-destructive/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
+        <WarningCircle className="text-destructive h-8 w-8" />
       </div>
-      <h3 className="text-lg font-semibold mb-2">{title}</h3>
-      <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
-        {description}
+      <h3 className="mb-2 text-lg font-semibold">{title || t('errors.somethingWentWrong')}</h3>
+      <p className="text-muted-foreground mx-auto mb-6 max-w-sm">
+        {description || t('errors.couldNotLoadData')}
       </p>
       {onRetry && (
         <Button variant="outline" onClick={onRetry}>
-          <ArrowClockwise className="w-4 h-4" />
-          Try again
+          <ArrowClockwise className="h-4 w-4" />
+          {t('common.tryAgain')}
         </Button>
       )}
     </div>

@@ -20,7 +20,7 @@ export class RequestClient {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       ...(this.config.getHeaders ? await this.config.getHeaders() : {}),
-      ...(init.headers as Record<string, string> || {}),
+      ...((init.headers as Record<string, string>) || {}),
     }
 
     const res = await fetch(`${this.config.baseUrl}${endpoint}`, {
@@ -43,7 +43,10 @@ export class RequestClient {
     }
 
     if (!res.ok) {
-      const errorData = data as { error?: string | { message?: string; code?: string }; message?: string }
+      const errorData = data as {
+        error?: string | { message?: string; code?: string }
+        message?: string
+      }
       let errorMessage = `Request failed: ${res.status}`
 
       if (typeof errorData?.error === 'string') {

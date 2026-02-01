@@ -19,10 +19,7 @@ function getZoneId() {
 
 export const cloudflare = {
   // Create DNS A record for subdomain
-  async createDNSRecord(
-    subdomain: string,
-    ip: string
-  ): Promise<{ id: string; name: string }> {
+  async createDNSRecord(subdomain: string, ip: string): Promise<{ id: string; name: string }> {
     const client = getClient()
     const zoneId = getZoneId()
 
@@ -66,9 +63,7 @@ export const cloudflare = {
   },
 
   // Find DNS record by subdomain
-  async findDNSRecord(
-    subdomain: string
-  ): Promise<{ id: string; ip: string } | null> {
+  async findDNSRecord(subdomain: string): Promise<{ id: string; ip: string } | null> {
     const client = getClient()
     const zoneId = getZoneId()
     const fullName = `${subdomain}.clawhost.cloud`

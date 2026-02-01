@@ -34,11 +34,11 @@ openclaw.anywhere/
 
 You'll need accounts and API credentials for:
 
-| Service | Purpose | What You Need |
-|---------|---------|---------------|
-| [Hetzner Cloud](https://console.hetzner.cloud/) | Server provisioning | API Token |
-| [Firebase](https://console.firebase.google.com/) | Authentication | Project credentials |
-| [Cloudflare](https://dash.cloudflare.com/) | DNS management | API Token + Zone ID |
+| Service                                          | Purpose             | What You Need       |
+| ------------------------------------------------ | ------------------- | ------------------- |
+| [Hetzner Cloud](https://console.hetzner.cloud/)  | Server provisioning | API Token           |
+| [Firebase](https://console.firebase.google.com/) | Authentication      | Project credentials |
+| [Cloudflare](https://dash.cloudflare.com/)       | DNS management      | API Token + Zone ID |
 
 ## Setup
 
@@ -139,6 +139,7 @@ pnpm dev
 ```
 
 This starts:
+
 - API server at `http://localhost:2222`
 - Web app at `http://localhost:1111`
 
@@ -202,6 +203,7 @@ The default 20% markup on Hetzner prices can be adjusted in `apps/api/src/routes
 ### Cloud-Init Script
 
 The instance initialization script at `scripts/cloud-init.yaml` installs:
+
 - Node.js 22
 - Nginx with reverse proxy
 - Let's Encrypt SSL certificates
@@ -214,36 +216,38 @@ Modify this file to customize what gets installed on new instances.
 
 ### Public
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/plans` | Available server types |
-| GET | `/api/plans/locations` | Available regions |
-| GET | `/api/plans/volume-pricing` | Volume pricing |
+| Method | Endpoint                    | Description            |
+| ------ | --------------------------- | ---------------------- |
+| GET    | `/api/plans`                | Available server types |
+| GET    | `/api/plans/locations`      | Available regions      |
+| GET    | `/api/plans/volume-pricing` | Volume pricing         |
 
 ### Protected (requires auth)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/instances` | List instances |
-| POST | `/api/instances` | Create instance |
-| DELETE | `/api/instances/:id` | Delete instance |
-| POST | `/api/instances/:id/start` | Start instance |
-| POST | `/api/instances/:id/stop` | Stop instance |
-| POST | `/api/instances/:id/restart` | Restart instance |
-| GET | `/api/ssh-keys` | List SSH keys |
-| POST | `/api/ssh-keys` | Create SSH key |
-| DELETE | `/api/ssh-keys/:id` | Delete SSH key |
-| GET | `/api/users/me` | Current user |
-| PUT | `/api/users/me` | Update profile |
+| Method | Endpoint                     | Description      |
+| ------ | ---------------------------- | ---------------- |
+| GET    | `/api/instances`             | List instances   |
+| POST   | `/api/instances`             | Create instance  |
+| DELETE | `/api/instances/:id`         | Delete instance  |
+| POST   | `/api/instances/:id/start`   | Start instance   |
+| POST   | `/api/instances/:id/stop`    | Stop instance    |
+| POST   | `/api/instances/:id/restart` | Restart instance |
+| GET    | `/api/ssh-keys`              | List SSH keys    |
+| POST   | `/api/ssh-keys`              | Create SSH key   |
+| DELETE | `/api/ssh-keys/:id`          | Delete SSH key   |
+| GET    | `/api/users/me`              | Current user     |
+| PUT    | `/api/users/me`              | Update profile   |
 
 ## Tech Stack
 
 **Backend**
+
 - [Hono](https://hono.dev/) - Web framework
 - [Drizzle ORM](https://orm.drizzle.team/) - Database ORM
 - [Firebase Admin](https://firebase.google.com/docs/admin/setup) - Auth verification
 
 **Frontend**
+
 - [React](https://react.dev/) - UI framework
 - [Vite](https://vitejs.dev/) - Build tool
 - [Tailwind CSS](https://tailwindcss.com/) - Styling

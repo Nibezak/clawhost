@@ -7,7 +7,7 @@ export const users = pgTable('users', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 
-export const instances = pgTable('instances', {
+export const claws = pgTable('claws', {
   id: text('id').primaryKey(),
   userId: text('user_id')
     .notNull()
@@ -41,7 +41,7 @@ export const volumes = pgTable('volumes', {
   userId: text('user_id')
     .notNull()
     .references(() => users.id),
-  instanceId: text('instance_id').references(() => instances.id),
+  clawId: text('claw_id').references(() => claws.id),
   name: text('name').notNull(),
   size: integer('size').notNull(), // Size in GB
   hetznerVolumeId: integer('hetzner_volume_id'),

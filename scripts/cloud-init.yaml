@@ -128,4 +128,4 @@ runcmd:
   - nginx -t && systemctl reload nginx
   - systemctl enable nginx
 
-final_message: "OpenClaw instance ready! Access dashboard at http://<ip>/"
+final_message: 'OpenClaw instance ready! Access dashboard at http://<ip>/'

@@ -6,7 +6,7 @@ import { PageTitle } from '@/components/PageTitle'
 
 export default function Terms() {
   return (
-<div className="relative min-h-screen bg-[#0a0a0f] text-white flex flex-col">
+    <div className="relative flex min-h-screen flex-col bg-[#0a0a0f] text-white">
       <PageTitle title="Terms of Service" />
       <PageBackground />
       <Header />
@@ -15,30 +15,34 @@ export default function Terms() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="relative flex-1 max-w-3xl mx-auto px-6 py-12"
+        className="relative mx-auto max-w-3xl flex-1 px-6 py-12"
       >
-        <h1 className="font-clash text-4xl font-bold mb-2">Terms of Service</h1>
+        <h1 className="font-clash mb-2 text-4xl font-bold">Terms of Service</h1>
         <p className="text-muted-foreground mb-12">Last updated: February 1, 2026</p>
 
         <div className="prose prose-invert prose-sm max-w-none space-y-8">
           <section>
-            <h2 className="text-xl font-semibold mb-3">1. Acceptance of Terms</h2>
+            <h2 className="mb-3 text-xl font-semibold">1. Acceptance of Terms</h2>
             <p className="text-muted-foreground leading-relaxed">
-              By accessing and using ClawHost ("Service"), you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to these terms, please do not use our Service.
+              By accessing and using ClawHost ("Service"), you accept and agree to be bound by the
+              terms and provisions of this agreement. If you do not agree to these terms, please do
+              not use our Service.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3">2. Description of Service</h2>
+            <h2 className="mb-3 text-xl font-semibold">2. Description of Service</h2>
             <p className="text-muted-foreground leading-relaxed">
-              ClawHost provides one-click OpenClaw VPN deployment on dedicated VPS servers. We enable users to deploy, manage, and connect to pre-configured OpenClaw servers for secure, private browsing.
+              ClawHost provides one-click OpenClaw VPN deployment on dedicated VPS servers. We
+              enable users to deploy, manage, and connect to pre-configured OpenClaw servers for
+              secure, private browsing.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3">3. User Responsibilities</h2>
+            <h2 className="mb-3 text-xl font-semibold">3. User Responsibilities</h2>
             <p className="text-muted-foreground leading-relaxed">You agree to:</p>
-            <ul className="list-disc list-inside text-muted-foreground space-y-2 mt-2">
+            <ul className="text-muted-foreground mt-2 list-inside list-disc space-y-2">
               <li>Provide accurate and complete registration information</li>
               <li>Maintain the security of your account credentials</li>
               <li>Use the Service in compliance with all applicable laws</li>
@@ -48,9 +52,9 @@ export default function Terms() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3">4. Prohibited Uses</h2>
+            <h2 className="mb-3 text-xl font-semibold">4. Prohibited Uses</h2>
             <p className="text-muted-foreground leading-relaxed">You may not use our Service to:</p>
-            <ul className="list-disc list-inside text-muted-foreground space-y-2 mt-2">
+            <ul className="text-muted-foreground mt-2 list-inside list-disc space-y-2">
               <li>Distribute malware, viruses, or any harmful software</li>
               <li>Conduct denial-of-service attacks or network abuse</li>
               <li>Send spam or unsolicited communications</li>
@@ -61,42 +65,52 @@ export default function Terms() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3">5. Payment and Billing</h2>
+            <h2 className="mb-3 text-xl font-semibold">5. Payment and Billing</h2>
             <p className="text-muted-foreground leading-relaxed">
-              Services are billed on a pay-as-you-go basis. You agree to pay all fees associated with your use of the Service. Prices are subject to change with reasonable notice. Failure to pay may result in suspension or termination of your account.
+              Services are billed on a pay-as-you-go basis. You agree to pay all fees associated
+              with your use of the Service. Prices are subject to change with reasonable notice.
+              Failure to pay may result in suspension or termination of your account.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3">6. Service Availability</h2>
+            <h2 className="mb-3 text-xl font-semibold">6. Service Availability</h2>
             <p className="text-muted-foreground leading-relaxed">
-              We strive to maintain high availability but do not guarantee uninterrupted access to the Service. We reserve the right to modify, suspend, or discontinue any part of the Service at any time with or without notice.
+              We strive to maintain high availability but do not guarantee uninterrupted access to
+              the Service. We reserve the right to modify, suspend, or discontinue any part of the
+              Service at any time with or without notice.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3">7. Limitation of Liability</h2>
+            <h2 className="mb-3 text-xl font-semibold">7. Limitation of Liability</h2>
             <p className="text-muted-foreground leading-relaxed">
-              To the maximum extent permitted by law, ClawHost shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly.
+              To the maximum extent permitted by law, ClawHost shall not be liable for any indirect,
+              incidental, special, consequential, or punitive damages, or any loss of profits or
+              revenues, whether incurred directly or indirectly.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3">8. Termination</h2>
+            <h2 className="mb-3 text-xl font-semibold">8. Termination</h2>
             <p className="text-muted-foreground leading-relaxed">
-              We may terminate or suspend your account and access to the Service immediately, without prior notice, for conduct that we believe violates these Terms or is harmful to other users, us, or third parties, or for any other reason.
+              We may terminate or suspend your account and access to the Service immediately,
+              without prior notice, for conduct that we believe violates these Terms or is harmful
+              to other users, us, or third parties, or for any other reason.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3">9. Changes to Terms</h2>
+            <h2 className="mb-3 text-xl font-semibold">9. Changes to Terms</h2>
             <p className="text-muted-foreground leading-relaxed">
-              We reserve the right to modify these terms at any time. We will notify users of any material changes via email or through the Service. Continued use of the Service after such modifications constitutes acceptance of the updated terms.
+              We reserve the right to modify these terms at any time. We will notify users of any
+              material changes via email or through the Service. Continued use of the Service after
+              such modifications constitutes acceptance of the updated terms.
             </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-3">10. Contact Information</h2>
+            <h2 className="mb-3 text-xl font-semibold">10. Contact Information</h2>
             <p className="text-muted-foreground leading-relaxed">
               If you have any questions about these Terms, please contact us at{' '}
               <a href="mailto:legal@clawhost.cloud" className="text-primary hover:underline">

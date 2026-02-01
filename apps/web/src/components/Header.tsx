@@ -1,8 +1,10 @@
+import type { HeaderProps } from '@/ts/Interfaces'
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { useAuth } from '../lib/auth'
-import { api } from '../lib/api'
+import { t } from '@openclaw/i18n'
+import { useAuth } from '@/lib/auth'
+import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -16,12 +18,6 @@ import {
 import { Logo } from '@/components/Logo'
 import { ROUTES } from '@/lib/routes'
 import { HardDrive, Key, User, SignOut, Lightning } from '@phosphor-icons/react'
-
-interface HeaderProps {
-  showNavLinks?: boolean
-  navLinks?: { label: string; href: string; id: string }[]
-  activeSection?: string
-}
 
 export function Header({ showNavLinks = false, navLinks = [], activeSection = '' }: HeaderProps) {
   const { user, loading: authLoading, signOut } = useAuth()
@@ -61,24 +57,24 @@ export function Header({ showNavLinks = false, navLinks = [], activeSection = ''
   const isLandingPage = location.pathname === '/'
 
   return (
-    <header className={`${isLandingPage ? 'fixed' : 'relative'} top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      scrolled
-        ? 'border-b border-white/10 bg-[#0a0a0f]/80 backdrop-blur-xl'
-        : 'border-b border-transparent bg-transparent'
-    }`}>
-      <div className="max-w-6xl mx-auto px-6 py-4 grid grid-cols-[auto_1fr_auto] items-center gap-4">
+    <header
+      className={`${isLandingPage ? 'fixed' : 'relative'} left-0 right-0 top-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? 'border-b border-white/10 bg-[#0a0a0f]/80 backdrop-blur-xl'
+          : 'border-b border-transparent bg-transparent'
+      }`}
+    >
+      <div className="mx-auto grid max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-4 px-6 py-4">
         <Logo />
 
         {showNavLinks && navLinks.length > 0 ? (
-          <nav className="hidden md:flex items-center justify-center gap-6">
+          <nav className="hidden items-center justify-center gap-6 md:flex">
             {navLinks.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
                 className={`text-sm font-medium transition ${
-                  activeSection === link.id
-                    ? 'text-white'
-                    : 'text-gray-400 hover:text-white'
+                  activeSection === link.id ? 'text-white' : 'text-gray-400 hover:text-white'
                 }`}
               >
                 {link.label}
@@ -91,53 +87,57 @@ export function Header({ showNavLinks = false, navLinks = [], activeSection = ''
 
         <div className="flex items-center gap-3">
           {authLoading || (user && !isProfileReady) ? (
-            <div className="flex items-center gap-2 px-1.5 h-7 min-w-[100px]">
-              <Skeleton className="w-7 h-7 rounded-full bg-white/10 shrink-0" />
-              <Skeleton className="w-16 h-4 rounded bg-white/10 hidden sm:block" />
+            <div className="flex h-7 min-w-[100px] items-center gap-2 px-1.5">
+              <Skeleton className="h-7 w-7 shrink-0 rounded-full bg-white/10" />
+              <Skeleton className="hidden h-4 w-16 rounded bg-white/10 sm:block" />
             </div>
           ) : user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="flex items-center gap-2 px-1.5 py-1.5 hover:bg-white/10 min-w-[100px] justify-start">
-                  <Avatar className="w-7 h-7">
-                    <AvatarFallback className="bg-gradient-to-br from-[#ef5350] to-[#c62828] text-white text-xs">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex min-w-[100px] items-center justify-start gap-2 px-1.5 py-1.5 hover:bg-white/10"
+                >
+                  <Avatar className="h-7 w-7">
+                    <AvatarFallback className="bg-gradient-to-br from-[#ef5350] to-[#c62828] text-xs text-white">
                       {getInitials(displayName)}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="text-sm text-gray-300 hidden sm:block max-w-[120px] truncate">
+                  <span className="hidden max-w-[120px] truncate text-sm text-gray-300 sm:block">
                     {displayName}
                   </span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-[#151518] border-white/10">
+              <DropdownMenuContent align="end" className="w-56 border-white/10 bg-[#151518]">
                 <DropdownMenuItem
                   onClick={() => navigate(ROUTES.CLAWS)}
-                  className={`text-gray-300 focus:text-white focus:bg-white/10 ${location.pathname === ROUTES.CLAWS ? 'bg-white/10' : ''}`}
+                  className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.CLAWS ? 'bg-white/10' : ''}`}
                 >
-                  <HardDrive className="w-4 h-4 mr-2" />
-                  Claws
+                  <HardDrive className="mr-2 h-4 w-4" />
+                  {t('nav.claws')}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => navigate(ROUTES.SSH_KEYS)}
-                  className={`text-gray-300 focus:text-white focus:bg-white/10 ${location.pathname === ROUTES.SSH_KEYS ? 'bg-white/10' : ''}`}
+                  className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.SSH_KEYS ? 'bg-white/10' : ''}`}
                 >
-                  <Key className="w-4 h-4 mr-2" />
-                  SSH Keys
+                  <Key className="mr-2 h-4 w-4" />
+                  {t('nav.sshKeys')}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => navigate(ROUTES.ACCOUNT)}
-                  className={`text-gray-300 focus:text-white focus:bg-white/10 ${location.pathname === ROUTES.ACCOUNT ? 'bg-white/10' : ''}`}
+                  className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.ACCOUNT ? 'bg-white/10' : ''}`}
                 >
-                  <User className="w-4 h-4 mr-2" />
-                  Account
+                  <User className="mr-2 h-4 w-4" />
+                  {t('nav.account')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-white/10" />
                 <DropdownMenuItem
                   onClick={signOut}
-                  className="text-red-400 focus:text-red-400 focus:bg-white/10"
+                  className="text-red-400 focus:bg-white/10 focus:text-red-400"
                 >
-                  <SignOut className="w-4 h-4 mr-2" />
-                  Sign out
+                  <SignOut className="mr-2 h-4 w-4" />
+                  {t('nav.signOut')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -145,14 +145,18 @@ export function Header({ showNavLinks = false, navLinks = [], activeSection = ''
             <div className="flex items-center gap-2">
               <Link
                 to={ROUTES.LOGIN}
-                className="text-sm text-gray-400 hover:text-white transition px-3 py-1.5 hidden sm:block"
+                className="hidden px-3 py-1.5 text-sm text-gray-400 transition hover:text-white sm:block"
               >
-                Login
+                {t('nav.login')}
               </Link>
-              <Button size="sm" className="bg-gradient-to-r from-[#ef5350] to-[#c62828] hover:opacity-90 text-white border-0 px-4 gap-2" asChild>
+              <Button
+                size="sm"
+                className="gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] px-4 text-white hover:opacity-90"
+                asChild
+              >
                 <Link to={ROUTES.LOGIN}>
-                  <Lightning className="w-4 h-4" weight="fill" />
-                  Deploy OpenClaw
+                  <Lightning className="h-4 w-4" weight="fill" />
+                  {t('nav.deployOpenClaw')}
                 </Link>
               </Button>
             </div>

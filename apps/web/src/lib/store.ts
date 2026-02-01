@@ -1,31 +1,9 @@
+import type { PreferencesState, UIState } from '@/ts/Interfaces'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-export type ToastType = 'success' | 'error' | 'warning' | 'info'
-export type ViewMode = 'list' | 'grid'
-
-interface ToastData {
-  message: string
-  type: ToastType
-  duration?: number
-}
-
-interface UIState {
-  // Modal states
-  isCreateModalOpen: boolean
-  setCreateModalOpen: (open: boolean) => void
-
-  // Toast/notification state
-  toast: ToastData | null
-  showToast: (message: string, type?: ToastType, duration?: number) => void
-  hideToast: () => void
-}
-
-interface PreferencesState {
-  // View mode for instances
-  instancesViewMode: ViewMode
-  setInstancesViewMode: (mode: ViewMode) => void
-}
+// Re-export types for backward compatibility
+export type { ToastType, ViewMode } from '@/ts/Types'
 
 export const useUIStore = create<UIState>((set) => ({
   // Modal states

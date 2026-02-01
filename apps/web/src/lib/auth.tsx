@@ -1,21 +1,15 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import type { ReactNode } from 'react'
+import type { User } from 'firebase/auth'
+import type { AuthContextType } from '@/ts/Interfaces'
+import { createContext, useContext, useEffect, useState } from 'react'
 import {
-  User,
   onAuthStateChanged,
   signInWithEmailLink,
   sendSignInLinkToEmail,
   isSignInWithEmailLink,
   signOut as firebaseSignOut,
 } from 'firebase/auth'
-import { auth } from './firebase'
-
-interface AuthContextType {
-  user: User | null
-  loading: boolean
-  sendOtp: (email: string) => Promise<void>
-  verifyOtp: (email: string) => Promise<void>
-  signOut: () => Promise<void>
-}
+import { auth } from '@/lib/firebase'
 
 const AuthContext = createContext<AuthContextType | null>(null)
 

@@ -1,19 +1,11 @@
-import { ReactNode } from 'react'
-
-interface PageHeaderProps {
-  title: string
-  description?: string
-  action?: ReactNode
-}
+import type { PageHeaderProps } from '@/ts/Interfaces'
 
 export function PageHeader({ title, description, action }: PageHeaderProps) {
   return (
-    <div className="flex items-center justify-between mb-6">
+    <div className="mb-6 flex items-center justify-between">
       <div>
         <h2 className="font-clash text-2xl font-bold">{title}</h2>
-        {description && (
-          <p className="text-gray-400 text-base mt-1">{description}</p>
-        )}
+        {description && <p className="mt-1 text-base text-gray-400">{description}</p>}
       </div>
       {action}
     </div>

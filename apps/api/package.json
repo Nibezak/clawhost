@@ -13,6 +13,7 @@
   "dependencies": {
     "@hono/node-server": "^1.13.0",
     "@neondatabase/serverless": "^0.10.0",
+    "@openclaw/i18n": "workspace:*",
     "@openclaw/shared": "workspace:*",
     "cloudflare": "^5.2.0",
     "dotenv": "^16.4.5",

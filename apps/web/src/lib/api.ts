@@ -1,5 +1,17 @@
+import type {
+  Claw,
+  Location,
+  Plan,
+  SSHKey,
+  UserProfile,
+  UserStats,
+  VolumePricing,
+} from '@/ts/Interfaces'
 import { RequestClient } from '@openclaw/shared'
-import { auth } from './firebase'
+import { auth } from '@/lib/firebase'
+
+// Re-export types for backward compatibility
+export type { Claw, Location, Plan, SSHKey, UserProfile, UserStats, Volume, VolumePricing } from '@/ts/Interfaces'
 
 // Helper to wait for auth to be ready
 const getAuthToken = async (): Promise<string | null> => {
@@ -18,7 +30,10 @@ const getAuthToken = async (): Promise<string | null> => {
       clearTimeout(timeout)
       unsubscribe()
       if (user) {
-        user.getIdToken().then(resolve).catch(() => resolve(null))
+        user
+          .getIdToken()
+          .then(resolve)
+          .catch(() => resolve(null))
       } else {
         resolve(null)
       }
@@ -34,94 +49,29 @@ const client = new RequestClient({
   },
 })
 
-export interface Volume {
-  id: string
-  name: string
-  size: number
-  status: string
-}
-
-export interface Instance {
-  id: string
-  name: string
-  // Hetzner statuses: initializing, starting, running, stopping, off, deleting, migrating, rebuilding, unknown
-  status: 'initializing' | 'starting' | 'running' | 'stopping' | 'off' | 'stopped' | 'deleting' | 'migrating' | 'rebuilding' | 'unknown' | 'creating'
-  ip: string | null
-  planId: string
-  location: string | null
-  rootPassword: string | null
-  sshKeyId: string | null
-  hetznerServerId: string | null
-  subdomain: string | null
-  volumes?: Volume[]
-  createdAt: string
-}
-
-export interface VolumePricing {
-  pricePerGbMonthly: number
-  minSize: number
-  maxSize: number
-}
-
-export interface Plan {
-  id: string
-  name: string
-  cpu: number
-  memory: number
-  disk: number
-  priceHourly: number
-  priceMonthly: number
-  architecture: string
-}
-
-export interface Location {
-  id: string
-  name: string
-  city: string
-  country: string
-}
-
-export interface SSHKey {
-  id: string
-  name: string
-  fingerprint: string
-  publicKey: string
-  createdAt: string
-}
-
-export interface UserProfile {
-  id: string
-  email: string
-  name: string | null
-  createdAt: string
-}
-
-export interface UserStats {
-  instanceCount: number
-}
-
 export const api = {
   // Plans & Locations
   getPlans: () => client.get<Plan[]>('/plans'),
   getLocations: () => client.get<Location[]>('/plans/locations'),
   getVolumePricing: () => client.get<VolumePricing>('/plans/volume-pricing'),
 
-  // Instances
-  getInstances: (sync?: boolean) => client.get<Instance[]>(`/instances${sync ? '?sync=true' : ''}`),
-  getInstance: (id: string, sync?: boolean) => client.get<Instance>(`/instances/${id}${sync ? '?sync=true' : ''}`),
-  syncInstance: (id: string) => client.post<Instance>(`/instances/${id}/sync`),
-  createInstance: (data: {
+  // Claws
+  getClaws: (sync?: boolean) => client.get<Claw[]>(`/claws${sync ? '?sync=true' : ''}`),
+  getClaw: (id: string, sync?: boolean) =>
+    client.get<Claw>(`/claws/${id}${sync ? '?sync=true' : ''}`),
+  syncClaw: (id: string) => client.post<Claw>(`/claws/${id}/sync`),
+  createClaw: (data: {
     name: string
     planId: string
     location: string
     password?: string
     sshKeyId?: string
     volumeSize?: number
-  }) => client.post<Instance>('/instances', data),
-  startInstance: (id: string) => client.post<void>(`/instances/${id}/start`),
-  stopInstance: (id: string) => client.post<void>(`/instances/${id}/stop`),
-  restartInstance: (id: string) => client.post<void>(`/instances/${id}/restart`),
-  deleteInstance: (id: string) => client.delete<void>(`/instances/${id}`),
+  }) => client.post<Claw>('/claws', data),
+  startClaw: (id: string) => client.post<void>(`/claws/${id}/start`),
+  stopClaw: (id: string) => client.post<void>(`/claws/${id}/stop`),
+  restartClaw: (id: string) => client.post<void>(`/claws/${id}/restart`),
+  deleteClaw: (id: string) => client.delete<void>(`/claws/${id}`),
 
   // SSH Keys
   getSSHKeys: () => client.get<SSHKey[]>('/ssh-keys'),
@@ -131,7 +81,6 @@ export const api = {
 
   // User Profile
   getProfile: () => client.get<UserProfile>('/users/me'),
-  updateProfile: (data: { name?: string }) =>
-    client.put<UserProfile>('/users/me', data),
+  updateProfile: (data: { name?: string }) => client.put<UserProfile>('/users/me', data),
   getUserStats: () => client.get<UserStats>('/users/me/stats'),
 }

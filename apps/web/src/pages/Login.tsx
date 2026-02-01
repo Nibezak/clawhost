@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { isSignInWithEmailLink } from 'firebase/auth'
-import { useAuth } from '../lib/auth'
-import { auth } from '../lib/firebase'
+import { t } from '@openclaw/i18n'
+import { useAuth } from '@/lib/auth'
+import { auth } from '@/lib/firebase'
 import { useUIStore } from '@/lib/store'
 import { ROUTES } from '@/lib/routes'
 import { Button } from '@/components/ui/button'
@@ -35,7 +36,7 @@ export default function Login() {
     }
   }, [user, navigate])
 
-useEffect(() => {
+  useEffect(() => {
     if (isSignInWithEmailLink(auth, window.location.href)) {
       const storedEmail = window.localStorage.getItem('emailForSignIn')
       // Also get stored plan from localStorage (we store it when sending OTP)
@@ -48,7 +49,7 @@ useEffect(() => {
         verifyOtp(storedEmail)
           .then(() => {
             window.localStorage.removeItem('planForSignIn')
-            showToast('Welcome back.', 'success')
+            showToast(t('auth.welcomeBack'), 'success')
             navigate(redirectUrl)
           })
           .catch((err) => showToast(err.message, 'error'))
@@ -64,7 +65,7 @@ useEffect(() => {
           verifyOtp(inputEmail)
             .then(() => {
               window.localStorage.removeItem('planForSignIn')
-              showToast('Welcome back.', 'success')
+              showToast(t('auth.welcomeBack'), 'success')
               navigate(redirectUrl)
             })
             .catch((err) => showToast(err.message, 'error'))
@@ -77,7 +78,7 @@ useEffect(() => {
     }
   }, [verifyOtp, navigate, showToast])
 
-const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
@@ -98,22 +99,22 @@ const handleSubmit = async (e: React.FormEvent) => {
   // Show verifying state when coming back from email link
   if (loading && verifyingEmail) {
     return (
-      <div className="relative min-h-screen bg-[#0a0a0f] text-white flex items-center justify-center px-4">
-        <PageTitle title="Signing In" />
+      <div className="relative flex min-h-screen items-center justify-center bg-[#0a0a0f] px-4 text-white">
+        <PageTitle title={t('auth.signingIn')} />
         <PageBackground />
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="relative max-w-md w-full p-8 rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-sm"
+          className="relative w-full max-w-md rounded-xl border border-white/10 bg-white/[0.02] p-8 backdrop-blur-sm"
         >
           <div className="text-center">
-            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CircleNotch className="w-8 h-8 text-[#ef5350] animate-spin" />
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-white/5">
+              <CircleNotch className="h-8 w-8 animate-spin text-[#ef5350]" />
             </div>
-            <h1 className="font-clash text-2xl font-bold mb-2">Signing you in</h1>
+            <h1 className="font-clash mb-2 text-2xl font-bold">{t('auth.signingYouIn')}</h1>
             <p className="text-gray-400">
-              Logging in as <span className="text-white font-medium">{verifyingEmail}</span>
+              {t('auth.loggingInAs')} <span className="font-medium text-white">{verifyingEmail}</span>
             </p>
           </div>
         </motion.div>
@@ -123,25 +124,25 @@ const handleSubmit = async (e: React.FormEvent) => {
 
   if (sent) {
     return (
-      <div className="relative min-h-screen bg-[#0a0a0f] text-white flex items-center justify-center px-4">
-        <PageTitle title="Check Your Email" />
+      <div className="relative flex min-h-screen items-center justify-center bg-[#0a0a0f] px-4 text-white">
+        <PageTitle title={t('auth.checkYourEmail')} />
         <PageBackground />
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="relative max-w-md w-full p-8 rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-sm"
+          className="relative w-full max-w-md rounded-xl border border-white/10 bg-white/[0.02] p-8 backdrop-blur-sm"
         >
           <div className="text-center">
-            <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Envelope className="w-8 h-8 text-[#ef5350]" />
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-white/5">
+              <Envelope className="h-8 w-8 text-[#ef5350]" />
             </div>
-            <h1 className="font-clash text-2xl font-bold mb-2">Check your email</h1>
-            <p className="text-gray-400 mb-4">
-              We sent a login link to <span className="text-white font-medium">{email}</span>
+            <h1 className="font-clash mb-2 text-2xl font-bold">{t('auth.checkYourEmailHeading')}</h1>
+            <p className="mb-4 text-gray-400">
+              {t('auth.sentLoginLink')} <span className="font-medium text-white">{email}</span>
             </p>
-            <p className="text-gray-500 text-sm">
-              Click the link in the email to sign in. You can close this tab.
+            <p className="text-sm text-gray-500">
+              {t('auth.clickLinkToSignIn')}
             </p>
           </div>
         </motion.div>
@@ -150,54 +151,56 @@ const handleSubmit = async (e: React.FormEvent) => {
   }
 
   return (
-    <div className="relative min-h-screen bg-[#0a0a0f] text-white flex items-center justify-center px-4">
-      <PageTitle title="Sign In" />
+    <div className="relative flex min-h-screen items-center justify-center bg-[#0a0a0f] px-4 text-white">
+      <PageTitle title={t('auth.signIn')} />
       <PageBackground />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="relative max-w-md w-full"
+        className="relative w-full max-w-md"
       >
-        <div className="flex flex-col items-center mb-8">
+        <div className="mb-8 flex flex-col items-center">
           <div className="mb-6">
             <Logo />
           </div>
-          <p className="text-gray-400">Sign in to deploy OpenClaw</p>
+          <p className="text-gray-400">{t('auth.signInToDeployOpenClaw')}</p>
         </div>
 
-<div className="p-8 rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-sm">
+        <div className="rounded-xl border border-white/10 bg-white/[0.02] p-8 backdrop-blur-sm">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-gray-300">Email address</Label>
+              <Label htmlFor="email" className="text-gray-300">
+                {t('auth.emailAddress')}
+              </Label>
               <Input
                 type="email"
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder={t('auth.emailPlaceholder')}
                 required
-                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#ef5350]/50 focus:ring-[#ef5350]/20"
+                className="border-white/10 bg-white/5 text-white placeholder:text-gray-500 focus:border-[#ef5350]/50 focus:ring-[#ef5350]/20"
               />
             </div>
 
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-[#ef5350] to-[#c62828] hover:opacity-90 text-white border-0 gap-2"
+              className="w-full gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90"
               disabled={loading}
             >
               {loading ? (
                 <>
                   <CircleNotch className="h-4 w-4 animate-spin" />
-                  Sending...
+                  {t('auth.sending')}
                 </>
               ) : (
-                'Continue with Email'
+                t('auth.continueWithEmail')
               )}
             </Button>
 
-            <p className="text-gray-500 text-sm text-center">
-              We'll send you a magic link to sign in. No password needed.
+            <p className="text-center text-sm text-gray-500">
+              {t('auth.magicLinkDescription')}
             </p>
           </form>
         </div>
