@@ -75,7 +75,7 @@ const LandingFooter: FC = (): ReactNode => {
             <ul className="space-y-3 text-sm">
               <li>
                 <Link to="/#how-it-works" className="text-gray-400 transition hover:text-white">
-                  How it works
+                  How it Works
                 </Link>
               </li>
               <li>

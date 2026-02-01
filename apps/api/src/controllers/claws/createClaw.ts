@@ -61,7 +61,7 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
       location,
       finalPassword,
       hetznerSshKeyIds,
-      process.env.HETZNER_SNAPSHOT_ID,
+      '',
       cloudInitScript
     )
 

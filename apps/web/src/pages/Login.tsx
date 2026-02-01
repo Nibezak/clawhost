@@ -181,12 +181,13 @@ const Login: FC = (): ReactNode => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t('auth.emailPlaceholder')}
                 required
-                className="border-white/10 bg-white/5 text-white placeholder:text-gray-500 focus:border-[#ef5350]/50 focus:ring-[#ef5350]/20"
+                className="h-11 border-white/10 bg-white/5 text-white placeholder:text-gray-500 focus:border-[#ef5350]/50 focus:ring-[#ef5350]/20"
               />
             </div>
 
             <Button
               type="submit"
+              size="lg"
               className="w-full gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90"
               disabled={loading}
             >

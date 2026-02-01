@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Header } from '@/components/Header'
 import { LandingFooter } from '@/components/LandingFooter'
+import { MockClawCard } from '@/components/MockClawCard'
+import { mockClaws } from '@/data'
 import { useAuth } from '@/lib/auth'
 import { ROUTES } from '@/lib/routes'
 import { usePlans } from '@/hooks'
@@ -25,6 +27,9 @@ import {
   CaretDown,
   Quotes,
   GithubLogo,
+  CreditCard,
+  Link as LinkIcon,
+  ArrowsClockwise,
 } from '@phosphor-icons/react'
 
 function getTestimonials() {
@@ -222,8 +227,8 @@ const Landing: FC = (): ReactNode => {
               className="flex items-center gap-8 text-center md:gap-16"
             >
               <div>
-                <div className="font-clash text-3xl font-bold text-white md:text-4xl">&lt;60s</div>
-                <div className="text-sm text-gray-500">{t('landing.deployTime')}</div>
+                <div className="font-clash text-3xl font-bold text-white md:text-4xl">$5/mo</div>
+                <div className="text-sm text-gray-500">{t('landing.startingPrice')}</div>
               </div>
               <div className="h-12 w-px bg-white/10" />
               <div>
@@ -232,8 +237,8 @@ const Landing: FC = (): ReactNode => {
               </div>
               <div className="h-12 w-px bg-white/10" />
               <div>
-                <div className="font-clash text-3xl font-bold text-white md:text-4xl">100%</div>
-                <div className="text-sm text-gray-500">{t('landing.yourData')}</div>
+                <div className="font-clash text-3xl font-bold text-white md:text-4xl">Zero</div>
+                <div className="text-sm text-gray-500">{t('landing.zeroConfig')}</div>
               </div>
             </motion.div>
           </div>
@@ -251,11 +256,11 @@ const Landing: FC = (): ReactNode => {
                 <div className="h-3 w-3 rounded-full bg-[#ff5f57]" />
                 <div className="h-3 w-3 rounded-full bg-[#febc2e]" />
                 <div className="h-3 w-3 rounded-full bg-[#28c840]" />
-                <div className="flex-1" />
-                <div className="flex items-center gap-2 rounded-md bg-white/5 px-3 py-1 text-xs text-gray-400">
+                <div className="ml-4 flex items-center gap-2 rounded-md bg-white/5 px-3 py-1 text-xs text-gray-400">
                   <Lock className="h-3 w-3" />
                   clawhost.cloud/claws
                 </div>
+                <div className="flex-1" />
               </div>
               {/* Dashboard Content */}
               <div className="p-6">
@@ -267,7 +272,7 @@ const Landing: FC = (): ReactNode => {
                   </div>
                   <Link
                     to={user ? ROUTES.CLAWS : ROUTES.LOGIN}
-                    className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#ef5350] to-[#c62828] px-3 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
+                    className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#ef5350] to-[#c62828] px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
                   >
                     <Lightning className="h-4 w-4" weight="fill" />
                     {t('landing.deployNew')}
@@ -275,42 +280,9 @@ const Landing: FC = (): ReactNode => {
                 </div>
                 {/* Instance Cards */}
                 <div className="space-y-3">
-                  {/* Instance 1 */}
-                  <div className="flex items-center gap-4 rounded-lg border border-white/10 bg-white/[0.02] p-4">
-                    <div className="h-2 w-2 animate-pulse rounded-full bg-green-400" />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-white">prod-vpn-eu</span>
-                        <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs text-green-400">
-                          {t('landing.running')}
-                        </span>
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        Frankfurt, Germany • 2 vCPU • 4GB RAM
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm text-white">45.33.21.98</div>
-                      <div className="text-xs text-gray-500">24ms latency</div>
-                    </div>
-                  </div>
-                  {/* Instance 2 */}
-                  <div className="flex items-center gap-4 rounded-lg border border-white/10 bg-white/[0.02] p-4">
-                    <div className="h-2 w-2 animate-pulse rounded-full bg-green-400" />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-white">dev-vpn-us</span>
-                        <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs text-green-400">
-                          {t('landing.running')}
-                        </span>
-                      </div>
-                      <div className="text-sm text-gray-500">New York, USA • 1 vCPU • 2GB RAM</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm text-white">192.241.145.32</div>
-                      <div className="text-xs text-gray-500">12ms latency</div>
-                    </div>
-                  </div>
+                  {mockClaws.map((claw) => (
+                    <MockClawCard key={claw.id} claw={claw} />
+                  ))}
                 </div>
               </div>
             </div>
@@ -398,8 +370,8 @@ const Landing: FC = (): ReactNode => {
               },
               {
                 icon: Lock,
-                title: t('landing.truePrivacy'),
-                description: t('landing.truePrivacyDescription'),
+                title: t('landing.ownedData'),
+                description: t('landing.ownedDataDescription'),
               },
               {
                 icon: Gauge,
@@ -417,9 +389,24 @@ const Landing: FC = (): ReactNode => {
                 description: t('landing.fullSshAccessDescription'),
               },
               {
+                icon: CreditCard,
+                title: t('landing.payAsYouGo'),
+                description: t('landing.payAsYouGoDescription'),
+              },
+              {
+                icon: LinkIcon,
+                title: t('landing.customSubdomains'),
+                description: t('landing.customSubdomainsDescription'),
+              },
+              {
                 icon: ShieldCheck,
-                title: t('landing.wireGuardBuiltIn'),
-                description: t('landing.wireGuardBuiltInDescription'),
+                title: t('landing.secure'),
+                description: t('landing.secureDescription'),
+              },
+              {
+                icon: ArrowsClockwise,
+                title: t('landing.autoUpdates'),
+                description: t('landing.autoUpdatesDescription'),
               },
             ].map((feature, i) => (
               <div key={i} className="rounded-xl border border-white/10 bg-white/[0.02] p-6">

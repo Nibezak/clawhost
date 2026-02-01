@@ -53,7 +53,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
-  PlusCircle,
+  Lightning,
   HardDrive,
   Play,
   Square,
@@ -940,6 +940,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
               onChange={(e) => setName(e.target.value)}
               placeholder={t('createClaw.clawNamePlaceholder')}
               required
+              className="h-11"
             />
           </div>
 
@@ -1307,7 +1308,7 @@ const Dashboard: FC = (): ReactNode => {
       >
         {/* Title + Create button */}
         <PageHeader
-          title={t('dashboard.yourClaws')}
+          title={t('dashboard.title')}
           description={`${claws?.length ?? 0} ${claws?.length === 1 ? t('dashboard.claw') : t('dashboard.clawsPlural')}`}
           action={
             <div className="flex items-center gap-2">
@@ -1334,9 +1335,13 @@ const Dashboard: FC = (): ReactNode => {
                   <SquaresFour className="h-4 w-4" weight="bold" />
                 </button>
               </div>
-              <Button onClick={() => setShowCreate(true)}>
-                <PlusCircle className="h-5 w-5" weight="bold" />
-                {t('dashboard.newClaw')}
+              <Button
+                size="lg"
+                className="gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90"
+                onClick={() => setShowCreate(true)}
+              >
+                <Lightning className="h-4 w-4" weight="fill" />
+                {t('createClaw.title')}
               </Button>
             </div>
           }
