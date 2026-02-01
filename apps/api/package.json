@@ -1,0 +1,29 @@
+{
+  "name": "api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.0",
+    "@neondatabase/serverless": "^0.10.0",
+    "@openclaw/shared": "workspace:*",
+    "cloudflare": "^5.2.0",
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.36.0",
+    "firebase-admin": "^13.0.0",
+    "hono": "^4.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "drizzle-kit": "^0.28.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.3"
+  }
+}
