@@ -1,6 +1,6 @@
 import type { MockClawData } from '@/components/MockClawCard'
 
-export const mockClaws: MockClawData[] = [
+export const initialMockClaws: MockClawData[] = [
   {
     id: '1',
     name: 'personal-claw',

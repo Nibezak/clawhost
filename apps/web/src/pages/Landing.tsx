@@ -1,4 +1,5 @@
 import type { FC, ReactNode } from 'react'
+import type { MockClawData } from '@/components/MockClawCard'
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -8,7 +9,8 @@ import { Badge } from '@/components/ui/badge'
 import { Header } from '@/components/Header'
 import { LandingFooter } from '@/components/LandingFooter'
 import { MockClawCard } from '@/components/MockClawCard'
-import { mockClaws } from '@/data'
+import { initialMockClaws } from '@/data'
+import { useUIStore } from '@/lib/store'
 import { useAuth } from '@/lib/auth'
 import { ROUTES } from '@/lib/routes'
 import { usePlans } from '@/hooks'
@@ -97,9 +99,47 @@ function getFaqs() {
 const Landing: FC = (): ReactNode => {
   const { user } = useAuth()
   const { data: plans, isLoading: plansLoading } = usePlans()
+  const { showToast } = useUIStore()
 
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [activeSection, setActiveSection] = useState('')
+  const [mockClaws, setMockClaws] = useState<MockClawData[]>(initialMockClaws)
+
+  // Interactive demo handlers
+  const handleStart = (id: string) => {
+    setMockClaws((prev) =>
+      prev.map((claw) => (claw.id === id ? { ...claw, status: 'running' } : claw))
+    )
+    showToast('Claw started!', 'success')
+  }
+
+  const handleStop = (id: string) => {
+    setMockClaws((prev) =>
+      prev.map((claw) => (claw.id === id ? { ...claw, status: 'stopped' } : claw))
+    )
+    showToast('Claw stopped!', 'success')
+  }
+
+  const handleRestart = (id: string) => {
+    setMockClaws((prev) =>
+      prev.map((claw) => (claw.id === id ? { ...claw, status: 'restarting' } : claw))
+    )
+    showToast('Restarting claw...', 'success')
+    // After 2 seconds, set back to running
+    setTimeout(() => {
+      setMockClaws((prev) =>
+        prev.map((claw) => (claw.id === id ? { ...claw, status: 'running' } : claw))
+      )
+      showToast('Claw restarted!', 'success')
+    }, 2000)
+  }
+
+  const handleDelete = (id: string) => {
+    setMockClaws((prev) => prev.filter((claw) => claw.id !== id))
+    showToast('Claw deleted!', 'success')
+  }
+
+  const runningCount = mockClaws.filter((c) => c.status === 'running').length
 
   useEffect(() => {
     const handleScroll = () => {
@@ -268,7 +308,11 @@ const Landing: FC = (): ReactNode => {
                 <div className="mb-6 flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-semibold text-white">{t('landing.dashboardPreviewTitle')}</h3>
-                    <p className="text-sm text-gray-500">{t('landing.dashboardPreviewSubtitle')}</p>
+                    <p className="text-sm text-gray-500">
+                      {mockClaws.length > 0
+                        ? `${runningCount} running, ${mockClaws.length} total`
+                        : t('dashboard.noClawsYet')}
+                    </p>
                   </div>
                   <Link
                     to={user ? ROUTES.CLAWS : ROUTES.LOGIN}
@@ -280,9 +324,40 @@ const Landing: FC = (): ReactNode => {
                 </div>
                 {/* Instance Cards */}
                 <div className="space-y-3">
-                  {mockClaws.map((claw) => (
-                    <MockClawCard key={claw.id} claw={claw} />
-                  ))}
+                  <AnimatePresence mode="popLayout">
+                    {mockClaws.length > 0 ? (
+                      mockClaws.map((claw) => (
+                        <motion.div
+                          key={claw.id}
+                          layout
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.95, height: 0 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <MockClawCard
+                            claw={claw}
+                            onStart={handleStart}
+                            onStop={handleStop}
+                            onRestart={handleRestart}
+                            onDelete={handleDelete}
+                          />
+                        </motion.div>
+                      ))
+                    ) : (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="flex flex-col items-center justify-center py-12 text-center"
+                      >
+                        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/5">
+                          <HardDrives className="h-8 w-8 text-gray-500" />
+                        </div>
+                        <h4 className="mb-2 text-lg font-semibold text-white">{t('dashboard.noClawsYet')}</h4>
+                        <p className="max-w-xs text-sm text-gray-500">{t('dashboard.noClawsDescription')}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
             </div>

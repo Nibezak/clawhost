@@ -1,3 +1,4 @@
+export * as auth from './auth'
 export * as users from './users'
 export * as claws from './claws'
 export * as plans from './plans'

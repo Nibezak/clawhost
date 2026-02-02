@@ -6,7 +6,7 @@ import { verifyToken } from './services/firebase'
 import { db } from './db'
 import { users } from './db/schema'
 import { eq } from 'drizzle-orm'
-import { clawsRoutes, plansRoutes, sshKeysRoutes, usersRoutes } from './routes'
+import { authRoutes, clawsRoutes, plansRoutes, sshKeysRoutes, usersRoutes } from './routes'
 
 const app = new Hono<{ Variables: { userId: string } }>()
 
@@ -18,12 +18,13 @@ app.use('*', cors())
 app.get('/', (c) => c.json({ status: 'ok' }))
 
 // Public routes
-app.route('/api/plans', plansRoutes)
+app.route('/auth', authRoutes)
+app.route('/plans', plansRoutes)
 
 // Auth middleware for protected routes
-app.use('/api/*', async (c, next) => {
-  // Skip auth for plans (public route)
-  if (c.req.path === '/api/plans') {
+app.use('/*', async (c, next) => {
+  // Skip auth for public routes
+  if (c.req.path === '/' || c.req.path.startsWith('/auth') || c.req.path.startsWith('/plans')) {
     return next()
   }
 
@@ -59,8 +60,8 @@ app.use('/api/*', async (c, next) => {
 })
 
 // Protected routes
-app.route('/api/claws', clawsRoutes)
-app.route('/api/ssh-keys', sshKeysRoutes)
-app.route('/api/users', usersRoutes)
+app.route('/claws', clawsRoutes)
+app.route('/ssh-keys', sshKeysRoutes)
+app.route('/users', usersRoutes)
 
 export default app

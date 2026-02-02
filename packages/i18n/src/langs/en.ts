@@ -236,23 +236,22 @@ export const en = {
         running: 'Running',
         latency: 'latency',
         howItWorks: 'How it Works',
-        threeStepsToPrivacy: 'Three steps to privacy',
+        threeStepsToPrivacy: 'Three steps to AI',
         howItWorksDescription:
-            'From zero to fully encrypted connection in under a minute',
-        step1Title: 'Choose your VPS',
+            'From zero to a fully deployed OpenClaw you can use for all your tasks.',
+        step1Title: 'Choose Your OpenClaw',
         step1Description:
             'Pick from 10+ global locations. We spin up a dedicated VPS just for you in seconds.',
-        step2Title: 'We configure OpenClaw',
+        step2Title: 'We Handle It',
         step2Description:
             'OpenClaw is automatically installed and configured. No manual setup required.',
-        step3Title: 'Configure & Use',
+        step3Title: 'You Use It',
         step3Description:
             'Access OpenClaw via your custom subdomain, configure it how you want, and start using it.',
         features: 'Features',
         whyClawHost: 'Why ClawHost over self-hosting?',
         featuresDescription:
             'All the benefits of your own VPN, without the hassle of manual server configuration.',
-        zeroConfig: 'Zero Config',
         zeroConfigDescription:
             'Skip hours of server setup. OpenClaw is pre-installed and ready in under 60 seconds.',
         ownedData: '100% Owned Data',
@@ -282,23 +281,23 @@ export const en = {
         testimonials: 'Testimonials',
         whatPeopleSay: 'What people say',
         testimonialsDescription:
-            "Join thousands who've taken control of their privacy",
+            "Join thousands who've deployed their own AI infrastructure",
         testimonial1Quote:
-            "Finally, a VPN I actually own. Setup took 30 seconds and I've been running it for months without issues.",
+            "Finally, my own AI server. Setup took 30 seconds and I've been running it for months without issues.",
         testimonial1Author: 'Alex Chen',
         testimonial1Role: 'Software Developer',
         testimonial2Quote:
-            "Switched from NordVPN. Way faster speeds since I'm not sharing with thousands of other users.",
+            "No more sharing resources with others. My OpenClaw instance handles everything I throw at it.",
         testimonial2Author: 'Maria Santos',
         testimonial2Role: 'Digital Nomad',
         testimonial3Quote:
-            "The one-click deploy is legit. I'm not technical at all but got my VPN running in under a minute.",
+            "The one-click deploy is legit. I'm not technical at all but got my OpenClaw running in under a minute.",
         testimonial3Author: 'James Wilson',
         testimonial3Role: 'Freelancer',
         testimonial4Quote:
-            "Love that I can see exactly what's running on my server. Total transparency, unlike commercial VPNs.",
+            "Love that I can see exactly what's running on my server. Full control over my AI setup.",
         testimonial4Author: 'Sophie Kim',
-        testimonial4Role: 'Privacy Advocate',
+        testimonial4Role: 'AI Enthusiast',
         pricing: 'Pricing',
         simpleTransparentPricing: 'Simple, transparent pricing',
         pricingDescription:

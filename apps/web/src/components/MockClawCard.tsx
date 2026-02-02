@@ -23,12 +23,13 @@ import {
   Copy,
   Check,
   Terminal,
+  CircleNotch,
 } from '@phosphor-icons/react'
 
 interface MockClawData {
   id: string
   name: string
-  status: 'running' | 'stopped'
+  status: 'running' | 'stopped' | 'restarting'
   subdomain: string
   ip: string
   location: string
@@ -39,16 +40,21 @@ interface MockClawData {
 
 interface MockClawCardProps {
   claw: MockClawData
+  onStart?: (id: string) => void
+  onStop?: (id: string) => void
+  onRestart?: (id: string) => void
+  onDelete?: (id: string) => void
 }
 
-const MockClawCard: FC<MockClawCardProps> = ({ claw }): ReactNode => {
+const MockClawCard: FC<MockClawCardProps> = ({ claw, onStart, onStop, onRestart, onDelete }): ReactNode => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [copiedField, setCopiedField] = useState<string | null>(null)
   const { showToast } = useUIStore()
 
   const statusConfig = {
-    running: { color: 'bg-green-500', bgColor: 'bg-green-500/10', label: t('dashboard.status.running') },
-    stopped: { color: 'bg-gray-400', bgColor: 'bg-gray-400/10', label: t('dashboard.status.stopped') },
+    running: { color: 'bg-green-500', bgColor: 'bg-green-500/10', label: t('dashboard.status.running'), pulse: false },
+    stopped: { color: 'bg-gray-400', bgColor: 'bg-gray-400/10', label: t('dashboard.status.stopped'), pulse: false },
+    restarting: { color: 'bg-yellow-500', bgColor: 'bg-yellow-500/10', label: 'Restarting', pulse: true },
   }
 
   const status = statusConfig[claw.status]
@@ -58,6 +64,16 @@ const MockClawCard: FC<MockClawCardProps> = ({ claw }): ReactNode => {
     setCopiedField(label)
     showToast(t('common.copiedWithLabel', { label }), 'success')
     setTimeout(() => setCopiedField(null), 2000)
+  }
+
+  const handleConnect = () => {
+    navigator.clipboard.writeText(`ssh root@${claw.ip}`)
+    showToast('SSH command copied!', 'success')
+  }
+
+  const handleCopyPassword = () => {
+    navigator.clipboard.writeText('Cl@wH0st2024!')
+    showToast('Password copied!', 'success')
   }
 
   const CopyableField: FC<{ label: string; value: string }> = ({ label, value }): ReactNode => (
@@ -91,7 +107,7 @@ const MockClawCard: FC<MockClawCardProps> = ({ claw }): ReactNode => {
                 <Desktop className="text-muted-foreground h-6 w-6" />
               </div>
               <div
-                className={`border-background absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 ${status.color}`}
+                className={`border-background absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 ${status.color} ${status.pulse ? 'animate-pulse' : ''}`}
               />
             </div>
 
@@ -102,7 +118,8 @@ const MockClawCard: FC<MockClawCardProps> = ({ claw }): ReactNode => {
                 <span
                   className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${status.bgColor}`}
                 >
-                  <span className={`h-1.5 w-1.5 rounded-full ${status.color} mr-1.5`} />
+                  {status.pulse && <CircleNotch className="mr-1.5 h-3 w-3 animate-spin" />}
+                  {!status.pulse && <span className={`h-1.5 w-1.5 rounded-full ${status.color} mr-1.5`} />}
                   {status.label}
                 </span>
               </div>
@@ -128,48 +145,46 @@ const MockClawCard: FC<MockClawCardProps> = ({ claw }): ReactNode => {
             {/* Actions menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <DotsThreeOutline className="h-5 w-5" />
+                <Button variant="ghost" size="icon" disabled={claw.status === 'restarting'}>
+                  {claw.status === 'restarting' ? (
+                    <CircleNotch className="h-5 w-5 animate-spin" />
+                  ) : (
+                    <DotsThreeOutline className="h-5 w-5" />
+                  )}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 {claw.status === 'stopped' ? (
-                  <DropdownMenuItem onClick={() => showToast(`Starting ${claw.name}...`, 'success')}>
+                  <DropdownMenuItem onClick={() => onStart?.(claw.id)}>
                     <Play className="mr-2 h-4 w-4" />
                     {t('dashboard.start')}
                   </DropdownMenuItem>
-                ) : (
+                ) : claw.status === 'running' ? (
                   <>
-                    <DropdownMenuItem onClick={() => showToast(`Stopping ${claw.name}...`, 'success')}>
+                    <DropdownMenuItem onClick={() => onStop?.(claw.id)}>
                       <Square className="mr-2 h-4 w-4" />
                       {t('dashboard.stop')}
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => showToast(`Restarting ${claw.name}...`, 'success')}>
+                    <DropdownMenuItem onClick={() => onRestart?.(claw.id)}>
                       <ArrowClockwise className="mr-2 h-4 w-4" />
                       {t('dashboard.restart')}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => {
-                      navigator.clipboard.writeText(`ssh root@${claw.ip}`)
-                      showToast('SSH command copied!', 'success')
-                    }}>
+                    <DropdownMenuItem onClick={handleConnect}>
                       <Terminal className="mr-2 h-4 w-4" />
                       {t('dashboard.connect')}
                     </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleCopyPassword}>
+                      <Copy className="mr-2 h-4 w-4" />
+                      {t('dashboard.copyPassword')}
+                    </DropdownMenuItem>
                   </>
-                )}
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => {
-                  navigator.clipboard.writeText('mock-password-123')
-                  showToast('Password copied!', 'success')
-                }}>
-                  <Copy className="mr-2 h-4 w-4" />
-                  {t('dashboard.copyPassword')}
-                </DropdownMenuItem>
+                ) : null}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   className="text-destructive focus:text-destructive"
-                  onClick={() => showToast(`This is a demo - ${claw.name} was not deleted`, 'warning')}
+                  onClick={() => onDelete?.(claw.id)}
                 >
                   <Trash className="mr-2 h-4 w-4" />
                   {t('common.delete')}
