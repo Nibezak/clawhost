@@ -1,0 +1,48 @@
+import type { MockClawData } from '@/components/MockClawCard'
+
+export const initialMockClaws: MockClawData[] = [
+  {
+    id: '1',
+    name: 'personal-claw',
+    status: 'running',
+    subdomain: 'personal-claw',
+    ip: '45.33.21.98',
+    location: 'Frankfurt, Germany',
+    locationFlag: '🇩🇪',
+    plan: 'CX22',
+    planDetails: '2 vCPU, 4GB',
+  },
+  {
+    id: '2',
+    name: 'experimental',
+    status: 'running',
+    subdomain: 'experimental',
+    ip: '192.241.145.32',
+    location: 'Ashburn, USA',
+    locationFlag: '🇺🇸',
+    plan: 'CX11',
+    planDetails: '1 vCPU, 2GB',
+  },
+  {
+    id: '3',
+    name: 'research-pro',
+    status: 'stopped',
+    subdomain: 'research-pro',
+    ip: '49.12.234.89',
+    location: 'Helsinki, Finland',
+    locationFlag: '🇫🇮',
+    plan: 'CX21',
+    planDetails: '2 vCPU, 4GB',
+  },
+  {
+    id: '4',
+    name: 'company-bot',
+    status: 'running',
+    subdomain: 'company-bot',
+    ip: '95.217.45.123',
+    location: 'Singapore',
+    locationFlag: '🇸🇬',
+    plan: 'CX21',
+    planDetails: '2 vCPU, 4GB',
+  },
+]

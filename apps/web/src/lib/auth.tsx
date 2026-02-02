@@ -5,18 +5,13 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import {
   onAuthStateChanged,
   signInWithEmailLink,
-  sendSignInLinkToEmail,
   isSignInWithEmailLink,
   signOut as firebaseSignOut,
 } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
+import { api } from '@/lib/api'
 
 const AuthContext = createContext<AuthContextType | null>(null)
-
-const actionCodeSettings = {
-  url: typeof window !== 'undefined' ? `${window.location.origin}/login` : '',
-  handleCodeInApp: true,
-}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
@@ -31,7 +26,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const sendOtp = async (email: string) => {
-    await sendSignInLinkToEmail(auth, email, actionCodeSettings)
+    const redirectUrl = `${window.location.origin}/login`
+    await api.sendMagicLink(email, redirectUrl)
     window.localStorage.setItem('emailForSignIn', email)
   }
 

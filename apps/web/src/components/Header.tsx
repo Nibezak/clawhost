@@ -148,7 +148,7 @@ const Header: FC<HeaderProps> = ({ showNavLinks = false, navLinks = [], activeSe
                 {t('nav.login')}
               </Link>
               <Button
-                size="sm"
+                size="lg"
                 className="gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] px-4 text-white hover:opacity-90"
                 asChild
               >

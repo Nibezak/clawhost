@@ -49,7 +49,16 @@ const client = new RequestClient({
   },
 })
 
+// Public API client (no auth required)
+const publicClient = new RequestClient({
+  baseUrl: '/api',
+})
+
 export const api = {
+  // Auth (public)
+  sendMagicLink: (email: string, redirectUrl: string) =>
+    publicClient.post<{ success: boolean }>('/auth/send-magic-link', { email, redirectUrl }),
+
   // Plans & Locations
   getPlans: () => client.get<Plan[]>('/plans'),
   getLocations: () => client.get<Location[]>('/plans/locations'),

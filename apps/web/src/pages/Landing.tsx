@@ -1,4 +1,5 @@
 import type { FC, ReactNode } from 'react'
+import type { MockClawData } from '@/components/MockClawCard'
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -7,6 +8,9 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Header } from '@/components/Header'
 import { LandingFooter } from '@/components/LandingFooter'
+import { MockClawCard } from '@/components/MockClawCard'
+import { initialMockClaws } from '@/data'
+import { useUIStore } from '@/lib/store'
 import { useAuth } from '@/lib/auth'
 import { ROUTES } from '@/lib/routes'
 import { usePlans } from '@/hooks'
@@ -25,6 +29,9 @@ import {
   CaretDown,
   Quotes,
   GithubLogo,
+  CreditCard,
+  Link as LinkIcon,
+  ArrowsClockwise,
 } from '@phosphor-icons/react'
 
 function getTestimonials() {
@@ -92,9 +99,47 @@ function getFaqs() {
 const Landing: FC = (): ReactNode => {
   const { user } = useAuth()
   const { data: plans, isLoading: plansLoading } = usePlans()
+  const { showToast } = useUIStore()
 
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [activeSection, setActiveSection] = useState('')
+  const [mockClaws, setMockClaws] = useState<MockClawData[]>(initialMockClaws)
+
+  // Interactive demo handlers
+  const handleStart = (id: string) => {
+    setMockClaws((prev) =>
+      prev.map((claw) => (claw.id === id ? { ...claw, status: 'running' } : claw))
+    )
+    showToast('Claw started!', 'success')
+  }
+
+  const handleStop = (id: string) => {
+    setMockClaws((prev) =>
+      prev.map((claw) => (claw.id === id ? { ...claw, status: 'stopped' } : claw))
+    )
+    showToast('Claw stopped!', 'success')
+  }
+
+  const handleRestart = (id: string) => {
+    setMockClaws((prev) =>
+      prev.map((claw) => (claw.id === id ? { ...claw, status: 'restarting' } : claw))
+    )
+    showToast('Restarting claw...', 'success')
+    // After 2 seconds, set back to running
+    setTimeout(() => {
+      setMockClaws((prev) =>
+        prev.map((claw) => (claw.id === id ? { ...claw, status: 'running' } : claw))
+      )
+      showToast('Claw restarted!', 'success')
+    }, 2000)
+  }
+
+  const handleDelete = (id: string) => {
+    setMockClaws((prev) => prev.filter((claw) => claw.id !== id))
+    showToast('Claw deleted!', 'success')
+  }
+
+  const runningCount = mockClaws.filter((c) => c.status === 'running').length
 
   useEffect(() => {
     const handleScroll = () => {
@@ -222,8 +267,8 @@ const Landing: FC = (): ReactNode => {
               className="flex items-center gap-8 text-center md:gap-16"
             >
               <div>
-                <div className="font-clash text-3xl font-bold text-white md:text-4xl">&lt;60s</div>
-                <div className="text-sm text-gray-500">{t('landing.deployTime')}</div>
+                <div className="font-clash text-3xl font-bold text-white md:text-4xl">$5/mo</div>
+                <div className="text-sm text-gray-500">{t('landing.startingPrice')}</div>
               </div>
               <div className="h-12 w-px bg-white/10" />
               <div>
@@ -232,8 +277,8 @@ const Landing: FC = (): ReactNode => {
               </div>
               <div className="h-12 w-px bg-white/10" />
               <div>
-                <div className="font-clash text-3xl font-bold text-white md:text-4xl">100%</div>
-                <div className="text-sm text-gray-500">{t('landing.yourData')}</div>
+                <div className="font-clash text-3xl font-bold text-white md:text-4xl">Zero</div>
+                <div className="text-sm text-gray-500">{t('landing.zeroConfig')}</div>
               </div>
             </motion.div>
           </div>
@@ -251,11 +296,11 @@ const Landing: FC = (): ReactNode => {
                 <div className="h-3 w-3 rounded-full bg-[#ff5f57]" />
                 <div className="h-3 w-3 rounded-full bg-[#febc2e]" />
                 <div className="h-3 w-3 rounded-full bg-[#28c840]" />
-                <div className="flex-1" />
-                <div className="flex items-center gap-2 rounded-md bg-white/5 px-3 py-1 text-xs text-gray-400">
+                <div className="ml-4 flex items-center gap-2 rounded-md bg-white/5 px-3 py-1 text-xs text-gray-400">
                   <Lock className="h-3 w-3" />
                   clawhost.cloud/claws
                 </div>
+                <div className="flex-1" />
               </div>
               {/* Dashboard Content */}
               <div className="p-6">
@@ -263,11 +308,15 @@ const Landing: FC = (): ReactNode => {
                 <div className="mb-6 flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-semibold text-white">{t('landing.dashboardPreviewTitle')}</h3>
-                    <p className="text-sm text-gray-500">{t('landing.dashboardPreviewSubtitle')}</p>
+                    <p className="text-sm text-gray-500">
+                      {mockClaws.length > 0
+                        ? `${runningCount} running, ${mockClaws.length} total`
+                        : t('dashboard.noClawsYet')}
+                    </p>
                   </div>
                   <Link
                     to={user ? ROUTES.CLAWS : ROUTES.LOGIN}
-                    className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#ef5350] to-[#c62828] px-3 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
+                    className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#ef5350] to-[#c62828] px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
                   >
                     <Lightning className="h-4 w-4" weight="fill" />
                     {t('landing.deployNew')}
@@ -275,42 +324,40 @@ const Landing: FC = (): ReactNode => {
                 </div>
                 {/* Instance Cards */}
                 <div className="space-y-3">
-                  {/* Instance 1 */}
-                  <div className="flex items-center gap-4 rounded-lg border border-white/10 bg-white/[0.02] p-4">
-                    <div className="h-2 w-2 animate-pulse rounded-full bg-green-400" />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-white">prod-vpn-eu</span>
-                        <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs text-green-400">
-                          {t('landing.running')}
-                        </span>
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        Frankfurt, Germany • 2 vCPU • 4GB RAM
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm text-white">45.33.21.98</div>
-                      <div className="text-xs text-gray-500">24ms latency</div>
-                    </div>
-                  </div>
-                  {/* Instance 2 */}
-                  <div className="flex items-center gap-4 rounded-lg border border-white/10 bg-white/[0.02] p-4">
-                    <div className="h-2 w-2 animate-pulse rounded-full bg-green-400" />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-white">dev-vpn-us</span>
-                        <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs text-green-400">
-                          {t('landing.running')}
-                        </span>
-                      </div>
-                      <div className="text-sm text-gray-500">New York, USA • 1 vCPU • 2GB RAM</div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm text-white">192.241.145.32</div>
-                      <div className="text-xs text-gray-500">12ms latency</div>
-                    </div>
-                  </div>
+                  <AnimatePresence mode="popLayout">
+                    {mockClaws.length > 0 ? (
+                      mockClaws.map((claw) => (
+                        <motion.div
+                          key={claw.id}
+                          layout
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.95, height: 0 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          <MockClawCard
+                            claw={claw}
+                            onStart={handleStart}
+                            onStop={handleStop}
+                            onRestart={handleRestart}
+                            onDelete={handleDelete}
+                          />
+                        </motion.div>
+                      ))
+                    ) : (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="flex flex-col items-center justify-center py-12 text-center"
+                      >
+                        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/5">
+                          <HardDrives className="h-8 w-8 text-gray-500" />
+                        </div>
+                        <h4 className="mb-2 text-lg font-semibold text-white">{t('dashboard.noClawsYet')}</h4>
+                        <p className="max-w-xs text-sm text-gray-500">{t('dashboard.noClawsDescription')}</p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
             </div>
@@ -398,8 +445,8 @@ const Landing: FC = (): ReactNode => {
               },
               {
                 icon: Lock,
-                title: t('landing.truePrivacy'),
-                description: t('landing.truePrivacyDescription'),
+                title: t('landing.ownedData'),
+                description: t('landing.ownedDataDescription'),
               },
               {
                 icon: Gauge,
@@ -417,9 +464,24 @@ const Landing: FC = (): ReactNode => {
                 description: t('landing.fullSshAccessDescription'),
               },
               {
+                icon: CreditCard,
+                title: t('landing.payAsYouGo'),
+                description: t('landing.payAsYouGoDescription'),
+              },
+              {
+                icon: LinkIcon,
+                title: t('landing.customSubdomains'),
+                description: t('landing.customSubdomainsDescription'),
+              },
+              {
                 icon: ShieldCheck,
-                title: t('landing.wireGuardBuiltIn'),
-                description: t('landing.wireGuardBuiltInDescription'),
+                title: t('landing.secure'),
+                description: t('landing.secureDescription'),
+              },
+              {
+                icon: ArrowsClockwise,
+                title: t('landing.autoUpdates'),
+                description: t('landing.autoUpdatesDescription'),
               },
             ].map((feature, i) => (
               <div key={i} className="rounded-xl border border-white/10 bg-white/[0.02] p-6">
