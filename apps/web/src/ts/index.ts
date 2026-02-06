@@ -14,6 +14,8 @@ export type {
   Location,
   Plan,
   SSHKey,
+  BillingHistoryResponse,
+  BillingOrder,
   UserProfile,
   UserStats,
   Volume,

@@ -1,6 +1,7 @@
-import type { Claw, CreateClawData } from '@/ts/Interfaces'
+import type { Claw, CreateClawData, PurchaseClawData } from '@/ts/Interfaces'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api'
+import { USER_STATS_QUERY_KEY } from './useUser'
 
 export const CLAWS_QUERY_KEY = ['claws'] as const
 
@@ -22,6 +23,7 @@ export function useClaws(options?: { sync?: boolean; refetchInterval?: number | 
     queryKey: CLAWS_QUERY_KEY,
     queryFn: () => api.getClaws(shouldSync),
     placeholderData: (previousData) => previousData,
+    staleTime: Infinity,
     refetchInterval,
   })
 }
@@ -41,7 +43,15 @@ export function useCreateClaw() {
     mutationFn: (data: CreateClawData) => api.createClaw(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: CLAWS_QUERY_KEY })
+      queryClient.invalidateQueries({ queryKey: USER_STATS_QUERY_KEY })
     },
+  })
+}
+
+export function usePurchaseClaw() {
+  return useMutation({
+    mutationFn: (data: PurchaseClawData) => api.purchaseClaw(data),
+    // No cache invalidation here - user will be redirected to checkout
   })
 }
 
@@ -85,6 +95,7 @@ export function useDeleteClaw() {
     mutationFn: (id: string) => api.deleteClaw(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: CLAWS_QUERY_KEY })
+      queryClient.invalidateQueries({ queryKey: USER_STATS_QUERY_KEY })
     },
   })
 }

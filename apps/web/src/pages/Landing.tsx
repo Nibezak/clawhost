@@ -13,7 +13,7 @@ import { initialMockClaws } from '@/data'
 import { useUIStore } from '@/lib/store'
 import { useAuth } from '@/lib/auth'
 import { ROUTES } from '@/lib/routes'
-import { usePlans } from '@/hooks'
+import { usePlans, useGitHubStars, GITHUB_REPO_URL } from '@/hooks'
 import {
   ShieldCheck,
   Globe,
@@ -32,6 +32,8 @@ import {
   CreditCard,
   Link as LinkIcon,
   ArrowsClockwise,
+  X,
+  Star,
 } from '@phosphor-icons/react'
 
 function getTestimonials() {
@@ -99,6 +101,7 @@ function getFaqs() {
 const Landing: FC = (): ReactNode => {
   const { user } = useAuth()
   const { data: plans, isLoading: plansLoading } = usePlans()
+  const { data: gitHubStars } = useGitHubStars()
   const { showToast } = useUIStore()
 
   const [openFaq, setOpenFaq] = useState<number | null>(null)
@@ -144,7 +147,7 @@ const Landing: FC = (): ReactNode => {
   useEffect(() => {
     const handleScroll = () => {
       // Determine active section
-      const sections = ['how-it-works', 'features', 'testimonials', 'pricing', 'faq']
+      const sections = ['how-it-works', 'features', 'testimonials', 'pricing', 'comparison', 'faq']
       for (const section of sections.reverse()) {
         const el = document.getElementById(section)
         if (el && window.scrollY >= el.offsetTop - 100) {
@@ -158,14 +161,13 @@ const Landing: FC = (): ReactNode => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Add $20 for VPN pre-installed
-  const VPN_FEE = 20
 
   const navLinks = [
     { label: t('landing.howItWorks'), href: '#how-it-works', id: 'how-it-works' },
     { label: t('landing.features'), href: '#features', id: 'features' },
     { label: t('landing.testimonials'), href: '#testimonials', id: 'testimonials' },
     { label: t('landing.pricing'), href: '#pricing', id: 'pricing' },
+    { label: t('landing.comparison'), href: '#comparison', id: 'comparison' },
     { label: t('landing.faqTitle'), href: '#faq', id: 'faq' },
   ]
 
@@ -238,7 +240,7 @@ const Landing: FC = (): ReactNode => {
               >
                 <Link to={user ? ROUTES.CLAWS : ROUTES.LOGIN}>
                   <Lightning className="h-5 w-5" weight="fill" />
-                  {user ? t('landing.goToClaws') : t('nav.deployOpenClaw')}
+                  {t('nav.deployOpenClaw')}
                 </Link>
               </Button>
               <Button
@@ -248,13 +250,18 @@ const Landing: FC = (): ReactNode => {
                 asChild
               >
                 <a
-                  href="https://github.com/clawhost/openclaw"
+                  href={GITHUB_REPO_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <GithubLogo className="h-5 w-5" weight="fill" />
                   {t('landing.selfHost')}
-                  <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs">2.4k</span>
+                  {gitHubStars && (
+                    <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-2 py-0.5 text-xs">
+                      {gitHubStars.formatted}
+                      <span className="text-[12px]">★</span>
+                    </span>
+                  )}
                 </a>
               </Button>
             </motion.div>
@@ -267,13 +274,18 @@ const Landing: FC = (): ReactNode => {
               className="flex items-center gap-8 text-center md:gap-16"
             >
               <div>
-                <div className="font-clash text-3xl font-bold text-white md:text-4xl">$5/mo</div>
+                <div className="font-clash text-3xl font-bold text-white md:text-4xl">$10/mo</div>
                 <div className="text-sm text-gray-500">{t('landing.startingPrice')}</div>
               </div>
               <div className="h-12 w-px bg-white/10" />
               <div>
-                <div className="font-clash text-3xl font-bold text-white md:text-4xl">10+</div>
+                <div className="font-clash text-3xl font-bold text-white md:text-4xl">6</div>
                 <div className="text-sm text-gray-500">{t('landing.locations')}</div>
+              </div>
+              <div className="h-12 w-px bg-white/10" />
+              <div>
+                <div className="font-clash text-3xl font-bold text-white md:text-4xl">15+</div>
+                <div className="text-sm text-gray-500">{t('landing.servers')}</div>
               </div>
               <div className="h-12 w-px bg-white/10" />
               <div>
@@ -545,7 +557,7 @@ const Landing: FC = (): ReactNode => {
               {t('landing.simpleTransparentPricing')}
             </h2>
             <p className="mx-auto max-w-xl text-lg text-[#8892b0]">
-              {t('landing.pricingDescription')} (+${VPN_FEE}/mo).
+              {t('landing.pricingDescription')}
             </p>
           </div>
 
@@ -572,18 +584,15 @@ const Landing: FC = (): ReactNode => {
                         {t('landing.storageColumn')}
                       </th>
                       <th className="font-clash px-4 py-4 text-center font-semibold text-white">
-                        {t('landing.hourlyColumn')}
-                      </th>
-                      <th className="font-clash px-4 py-4 text-center font-semibold text-white">
                         {t('landing.monthlyColumn')}
                       </th>
                       <th className="px-4 py-4 text-right"></th>
                     </tr>
                   </thead>
                   <tbody>
-                    {plans.map((plan, index) => {
-                      const totalMonthly = Math.round(plan.priceMonthly + VPN_FEE)
-                      const isRecommended = index === 1
+                    {plans.map((plan) => {
+                      const totalMonthly = Math.round(plan.priceMonthly)
+                      const isRecommended = plan.id === 'cax41'
 
                       return (
                         <tr
@@ -605,9 +614,6 @@ const Landing: FC = (): ReactNode => {
                           <td className="px-4 py-4 text-center text-gray-300">{plan.cpu}</td>
                           <td className="px-4 py-4 text-center text-gray-300">{plan.memory} GB</td>
                           <td className="px-4 py-4 text-center text-gray-300">{plan.disk} GB</td>
-                          <td className="px-4 py-4 text-center text-sm text-gray-400">
-                            ${plan.priceHourly.toFixed(3)}/hr
-                          </td>
                           <td className="px-4 py-4 text-center">
                             <span className="font-clash font-bold text-white">${totalMonthly}</span>
                             <span className="text-sm text-gray-500">/mo</span>
@@ -656,10 +662,6 @@ const Landing: FC = (): ReactNode => {
                   </div>
                   <div className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-green-400" />
-                    <span>{t('landing.hourlyBilling')}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-green-400" />
                     <span>{t('landing.cancelAnytime')}</span>
                   </div>
                 </div>
@@ -670,6 +672,126 @@ const Landing: FC = (): ReactNode => {
               {t('errors.unableToLoadPricing')}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Comparison */}
+      <section id="comparison" className="relative scroll-mt-20 border-t border-white/5 px-6 py-24">
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-16 text-center">
+            <Badge variant="outline" className="mb-4 border-white/10 bg-white/5 text-gray-300">
+              {t('landing.comparison')}
+            </Badge>
+            <h2 className="font-clash mb-4 bg-gradient-to-b from-white to-gray-400 bg-clip-text text-4xl font-bold text-transparent md:text-5xl">
+              {t('landing.comparisonTitle')}
+            </h2>
+            <p className="mx-auto max-w-xl text-lg text-[#8892b0]">
+              {t('landing.comparisonDescription')}
+            </p>
+          </div>
+
+          <div className="overflow-hidden rounded-xl border border-white/10">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-white/10 bg-white/[0.02]">
+                  <th className="px-6 py-4">
+                    <div className="flex items-center justify-center">
+                      <img src="https://cdn.clawhost.cloud/assets/clawhost-logo-light.png" alt="ClawHost" className="h-6" />
+                    </div>
+                  </th>
+                  <th className="px-6 py-4 text-center">
+                    <span className="font-medium text-gray-400">{t('landing.others')}</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                <tr>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <Check className="h-5 w-5 flex-shrink-0 text-green-400" />
+                      <span className="text-white">{t('landing.comparisonPricingUs')}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <X className="h-5 w-5 flex-shrink-0 text-red-400" />
+                      <span className="text-gray-400">{t('landing.comparisonPricingOthers')}</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr className="bg-white/[0.01]">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <Check className="h-5 w-5 flex-shrink-0 text-green-400" />
+                      <span className="text-white">{t('landing.comparisonOwnershipUs')}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <X className="h-5 w-5 flex-shrink-0 text-red-400" />
+                      <span className="text-gray-400">{t('landing.comparisonOwnershipOthers')}</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <Check className="h-5 w-5 flex-shrink-0 text-green-400" />
+                      <span className="text-white">{t('landing.comparisonControlUs')}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <X className="h-5 w-5 flex-shrink-0 text-red-400" />
+                      <span className="text-gray-400">{t('landing.comparisonControlOthers')}</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr className="bg-white/[0.01]">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <Check className="h-5 w-5 flex-shrink-0 text-green-400" />
+                      <span className="text-white">{t('landing.comparisonUsageUs')}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <X className="h-5 w-5 flex-shrink-0 text-red-400" />
+                      <span className="text-gray-400">{t('landing.comparisonUsageOthers')}</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <Check className="h-5 w-5 flex-shrink-0 text-green-400" />
+                      <span className="text-white">{t('landing.comparisonVariantsUs')}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <X className="h-5 w-5 flex-shrink-0 text-red-400" />
+                      <span className="text-gray-400">{t('landing.comparisonVariantsOthers')}</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr className="bg-white/[0.01]">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <Check className="h-5 w-5 flex-shrink-0 text-green-400" />
+                      <span className="text-white">{t('landing.comparisonMultipleUs')}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <X className="h-5 w-5 flex-shrink-0 text-red-400" />
+                      <span className="text-gray-400">{t('landing.comparisonMultipleOthers')}</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </section>
 
@@ -752,7 +874,7 @@ const Landing: FC = (): ReactNode => {
               >
                 <Link to={user ? ROUTES.CLAWS : ROUTES.LOGIN}>
                   <Lightning className="h-5 w-5" weight="fill" />
-                  {user ? t('landing.goToClaws') : t('landing.deployOpenClawNow')}
+                  {t('landing.deployOpenClawNow')}
                 </Link>
               </Button>
               <Button
@@ -762,7 +884,7 @@ const Landing: FC = (): ReactNode => {
                 asChild
               >
                 <a
-                  href="https://github.com/clawhost/openclaw"
+                  href={GITHUB_REPO_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

@@ -1,33 +1,41 @@
 import type { FC, ReactNode } from 'react'
-import type { Claw } from '@/lib/api'
+import type { BillingOrder } from '@/ts/Interfaces'
 import { useState, useEffect } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
 import { useUIStore } from '@/lib/store'
-import { useProfile, useUpdateProfile, CLAWS_QUERY_KEY } from '@/hooks'
+import { useProfile, useUpdateProfile, useUserStats, useBillingHistory } from '@/hooks'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Header } from '@/components/Header'
 import { LandingFooter } from '@/components/LandingFooter'
 import { PageBackground } from '@/components/PageBackground'
 import { PageTitle } from '@/components/PageTitle'
-import { CircleNotch, HardDrive, Calendar } from '@phosphor-icons/react'
+import { CircleNotch, Calendar, Key, Receipt, CaretLeft, CaretRight } from '@phosphor-icons/react'
+import { ClawMascot } from '@/components/ClawMascot'
+import { EmptyState } from '@/components/EmptyState'
+import { ErrorState } from '@/components/ErrorState'
 import { PageHeader } from '@/components/PageHeader'
 
 const Account: FC = (): ReactNode => {
-  const { user } = useAuth()
-  const queryClient = useQueryClient()
+  const { user, loading: authLoading } = useAuth()
   const { showToast } = useUIStore()
 
   const [name, setName] = useState('')
   const [hasChanges, setHasChanges] = useState(false)
+  const [billingPage, setBillingPage] = useState(1)
 
   // Fetch profile to get name
   const { data: profile } = useProfile({ enabled: !!user })
+  const { data: userStats, isLoading: isStatsLoading } = useUserStats()
+  const billingSkeletonCount = userStats?.orderCount ?? 0
+  const knowsBillingCount = !isStatsLoading && userStats !== undefined
+  const { data: billingData, isLoading: isBillingLoading, isError: isBillingError } = useBillingHistory(billingPage)
 
   // Initialize name from profile when loaded
   useEffect(() => {
@@ -35,9 +43,6 @@ const Account: FC = (): ReactNode => {
       setName(profile.name)
     }
   }, [profile?.name])
-
-  // Use cached claws data from Dashboard
-  const claws = queryClient.getQueryData<Claw[]>(CLAWS_QUERY_KEY)
 
   const updateMutation = useUpdateProfile()
 
@@ -83,6 +88,38 @@ const Account: FC = (): ReactNode => {
     })
   }
 
+  const formatCurrency = (amount: number, currency: string) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency.toUpperCase(),
+    }).format(amount / 100)
+  }
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'paid':
+        return <Badge className="border-green-500/30 bg-green-500/20 text-green-400">{t('account.statusPaid')}</Badge>
+      case 'pending':
+        return <Badge className="border-yellow-500/30 bg-yellow-500/20 text-yellow-400">{t('account.statusPending')}</Badge>
+      case 'refunded':
+        return <Badge className="border-red-500/30 bg-red-500/20 text-red-400">{t('account.statusRefunded')}</Badge>
+      case 'partially_refunded':
+        return <Badge className="border-orange-500/30 bg-orange-500/20 text-orange-400">{t('account.statusPartiallyRefunded')}</Badge>
+      default:
+        return <Badge variant="outline">{status}</Badge>
+    }
+  }
+
+  const getBillingReasonLabel = (reason: string) => {
+    switch (reason) {
+      case 'purchase': return t('account.billingReasonPurchase')
+      case 'subscription_create': return t('account.billingReasonSubscriptionCreate')
+      case 'subscription_cycle': return t('account.billingReasonSubscriptionCycle')
+      case 'subscription_update': return t('account.billingReasonSubscriptionUpdate')
+      default: return reason
+    }
+  }
+
   const joinedDate = user?.metadata?.creationTime
 
   return (
@@ -97,10 +134,17 @@ const Account: FC = (): ReactNode => {
         transition={{ duration: 0.4 }}
         className="relative mx-auto w-full max-w-6xl flex-1 px-6 py-8"
       >
+        {authLoading || !profile ? (
+          <div className="flex min-h-[60vh] items-center justify-center">
+            <CircleNotch className="text-primary h-8 w-8 animate-spin" />
+          </div>
+        ) : (
+          <>
         <PageHeader title={t('account.accountSettings')} description={t('account.manageYourAccount')} />
 
         <div className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
-          <h3 className="mb-6 font-semibold">{t('account.profileInformation')}</h3>
+          <h3 className="mb-1 font-semibold">{t('account.profileInformation')}</h3>
+          <p className="text-muted-foreground mb-6 text-sm">{t('account.profileDescription')}</p>
 
           <div className="mb-8 flex items-start gap-6">
             <Avatar className="h-20 w-20">
@@ -119,15 +163,19 @@ const Account: FC = (): ReactNode => {
                   <span>{t('account.joined')} {formatDate(joinedDate)}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <HardDrive className="h-4 w-4" />
-                  <span>{claws?.length ?? 0} {t('account.claws')}</span>
+                  <ClawMascot className="h-4 w-4" />
+                  <span>{userStats?.clawCount ?? 0} {t('account.claws')}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Key className="h-4 w-4" />
+                  <span>{userStats?.sshKeyCount ?? 0} {t('account.sshKeys')}</span>
                 </div>
               </div>
             </div>
           </div>
 
           <div className="space-y-6">
-            <div className="space-y-2">
+            <div className="max-w-xs space-y-2">
               <Label htmlFor="name">{t('account.displayName')}</Label>
               <Input
                 id="name"
@@ -147,6 +195,114 @@ const Account: FC = (): ReactNode => {
             </div>
           </div>
         </div>
+
+        {/* Billing History Section */}
+        <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+          <h3 className="mb-1 font-semibold">{t('account.billingHistory')}</h3>
+          <p className="text-muted-foreground mb-6 text-sm">{t('account.billingDescription')}</p>
+
+          {isBillingLoading && knowsBillingCount && billingSkeletonCount === 0 ? (
+            <EmptyState
+              icon={<Receipt className="text-primary h-10 w-10" />}
+              title={t('account.noBillingHistory')}
+              description={t('account.noBillingHistoryDescription')}
+            />
+          ) : isBillingLoading && billingSkeletonCount > 0 ? (
+            <div className="space-y-3">
+              {Array.from({ length: Math.min(billingSkeletonCount, 10) }).map((_, i) => (
+                <div key={i} className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] p-4">
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-3 w-24" />
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-5 w-14 rounded-full" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : isBillingLoading ? (
+            <div className="space-y-3">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] p-4">
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-3 w-24" />
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-5 w-14 rounded-full" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : isBillingError ? (
+            <ErrorState
+              title={t('account.failedToLoadBilling')}
+            />
+          ) : !billingData?.items.length ? (
+            <EmptyState
+              icon={<Receipt className="text-primary h-10 w-10" />}
+              title={t('account.noBillingHistory')}
+              description={t('account.noBillingHistoryDescription')}
+            />
+          ) : (
+            <>
+              <div className="space-y-2">
+                {billingData.items.map((order: BillingOrder) => (
+                  <div
+                    key={order.id}
+                    className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] p-4 transition-colors hover:bg-white/[0.04]"
+                  >
+                    <div>
+                      <p className="text-sm font-medium">
+                        {order.productName || getBillingReasonLabel(order.billingReason)}
+                      </p>
+                      <p className="text-muted-foreground text-xs">
+                        {formatDate(order.createdAt)}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span className="text-sm font-medium">
+                        {formatCurrency(order.totalAmount, order.currency)}
+                      </span>
+                      {getStatusBadge(order.status)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {billingData.totalPages > 1 && (
+                <div className="mt-4 flex items-center justify-between">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setBillingPage((p) => Math.max(1, p - 1))}
+                    disabled={billingPage <= 1}
+                  >
+                    <CaretLeft className="mr-1 h-4 w-4" />
+                    {t('account.previousPage')}
+                  </Button>
+                  <span className="text-muted-foreground text-sm">
+                    {t('account.pageOf', { page: String(billingPage), totalPages: String(billingData.totalPages) })}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setBillingPage((p) => Math.min(billingData.totalPages, p + 1))}
+                    disabled={billingPage >= billingData.totalPages}
+                  >
+                    {t('account.nextPage')}
+                    <CaretRight className="ml-1 h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+          </>
+        )}
       </motion.main>
 
       <LandingFooter />

@@ -4,6 +4,7 @@ import { db } from '../../db'
 import { claws, volumes } from '../../db/schema'
 import { hetzner } from '../../services/hetzner'
 import { cloudflare } from '../../services/cloudflare'
+import { subscriptions } from '../../lib/polar'
 import { DOMAIN } from './helpers/index'
 
 const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {
@@ -19,6 +20,18 @@ const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {
 
     if (!claw[0]) {
       return c.json({ error: 'Claw not found' }, 404)
+    }
+
+    // Cancel subscription in Polar (if exists)
+    if (claw[0].polarSubscriptionId) {
+      try {
+        // Immediately revoke the subscription (stops billing immediately)
+        await subscriptions.revoke(claw[0].polarSubscriptionId)
+        console.log(`Revoked subscription ${claw[0].polarSubscriptionId}`)
+      } catch (subErr) {
+        console.error('Failed to cancel subscription:', subErr)
+        // Continue with deletion even if subscription cancellation fails
+      }
     }
 
     // Get associated volumes

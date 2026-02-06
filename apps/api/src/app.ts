@@ -6,7 +6,7 @@ import { verifyToken } from './services/firebase'
 import { db } from './db'
 import { users } from './db/schema'
 import { eq } from 'drizzle-orm'
-import { authRoutes, clawsRoutes, plansRoutes, sshKeysRoutes, usersRoutes } from './routes'
+import { authRoutes, clawsRoutes, plansRoutes, sshKeysRoutes, usersRoutes, webhooksRoutes } from './routes'
 
 const app = new Hono<{ Variables: { userId: string } }>()
 
@@ -20,11 +20,12 @@ app.get('/', (c) => c.json({ status: 'ok' }))
 // Public routes
 app.route('/auth', authRoutes)
 app.route('/plans', plansRoutes)
+app.route('/webhooks', webhooksRoutes)
 
 // Auth middleware for protected routes
 app.use('/*', async (c, next) => {
   // Skip auth for public routes
-  if (c.req.path === '/' || c.req.path.startsWith('/auth') || c.req.path.startsWith('/plans')) {
+  if (c.req.path === '/' || c.req.path.startsWith('/auth') || c.req.path.startsWith('/plans') || c.req.path.startsWith('/webhooks')) {
     return next()
   }
 
@@ -41,15 +42,18 @@ app.use('/*', async (c, next) => {
       return c.json({ error: 'Invalid token' }, 401)
     }
 
-    // Ensure user exists in our database
-    const existingUser = await db.select().from(users).where(eq(users.id, decoded.uid)).limit(1)
-
-    if (!existingUser[0]) {
-      await db.insert(users).values({
+    // Ensure user exists in our database (upsert by email)
+    // If user signs in with same email but different Firebase UID, update the ID
+    await db
+      .insert(users)
+      .values({
         id: decoded.uid,
         email: decoded.email || '',
       })
-    }
+      .onConflictDoUpdate({
+        target: users.email,
+        set: { id: decoded.uid },
+      })
 
     c.set('userId', decoded.uid)
     return next()

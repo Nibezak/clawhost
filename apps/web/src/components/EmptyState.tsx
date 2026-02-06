@@ -1,6 +1,6 @@
 import type { FC, ReactNode } from 'react'
 import type { EmptyStateProps } from '@/ts/Interfaces'
-import { Button } from '@/components/ui/button'
+import { ActionButton } from '@/components/ActionButton'
 import { PlusCircle } from '@phosphor-icons/react'
 
 const EmptyState: FC<EmptyStateProps> = ({ icon, title, description, actionLabel, onAction }): ReactNode => {
@@ -12,10 +12,12 @@ const EmptyState: FC<EmptyStateProps> = ({ icon, title, description, actionLabel
       <h3 className="mb-2 text-xl font-semibold">{title}</h3>
       <p className="text-muted-foreground mx-auto mb-6 max-w-sm">{description}</p>
       {actionLabel && onAction && (
-        <Button size="lg" onClick={onAction}>
-          <PlusCircle className="h-5 w-5" weight="bold" />
-          {actionLabel}
-        </Button>
+        <ActionButton
+          onClick={onAction}
+          icon={<PlusCircle className="h-5 w-5" weight="bold" />}
+          label={actionLabel}
+          size="lg"
+        />
       )}
     </div>
   )

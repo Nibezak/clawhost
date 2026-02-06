@@ -3,6 +3,7 @@ import {
   getClaws,
   getClaw,
   createClaw,
+  initiateClawPurchase,
   syncClaw,
   startClaw,
   stopClaw,
@@ -14,7 +15,8 @@ const app = new Hono<{ Variables: { userId: string } }>()
 
 app.get('/', getClaws)
 app.get('/:id', getClaw)
-app.post('/', createClaw)
+app.post('/', createClaw) // Direct creation (for free tier or testing)
+app.post('/purchase', initiateClawPurchase) // Paid creation with Polar checkout
 app.post('/:id/sync', syncClaw)
 app.post('/:id/start', startClaw)
 app.post('/:id/stop', stopClaw)

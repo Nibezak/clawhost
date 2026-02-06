@@ -17,7 +17,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Logo } from '@/components/Logo'
 import { ROUTES } from '@/lib/routes'
-import { HardDrive, Key, User, SignOut, Lightning } from '@phosphor-icons/react'
+import { Key, User, SignOut, Lightning } from '@phosphor-icons/react'
+import { ClawMascot } from '@/components/ClawMascot'
 
 const Header: FC<HeaderProps> = ({ showNavLinks = false, navLinks = [], activeSection = '' }): ReactNode => {
   const { user, loading: authLoading, signOut } = useAuth()
@@ -85,17 +86,21 @@ const Header: FC<HeaderProps> = ({ showNavLinks = false, navLinks = [], activeSe
 
         <div className="flex items-center gap-3">
           {authLoading || (user && !isProfileReady) ? (
-            <div className="flex h-7 min-w-[100px] items-center gap-2 px-1.5">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="pointer-events-none flex min-w-[100px] items-center justify-start gap-2 px-1.5 py-5"
+            >
               <Skeleton className="h-7 w-7 shrink-0 rounded-full bg-white/10" />
               <Skeleton className="hidden h-4 w-16 rounded bg-white/10 sm:block" />
-            </div>
+            </Button>
           ) : user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="flex min-w-[100px] items-center justify-start gap-2 px-1.5 py-1.5 hover:bg-white/10"
+                  className="flex min-w-[100px] items-center justify-start gap-2 px-1.5 py-5 hover:bg-white/10"
                 >
                   <Avatar className="h-7 w-7">
                     <AvatarFallback className="bg-gradient-to-br from-[#ef5350] to-[#c62828] text-xs text-white">
@@ -112,21 +117,21 @@ const Header: FC<HeaderProps> = ({ showNavLinks = false, navLinks = [], activeSe
                   onClick={() => navigate(ROUTES.CLAWS)}
                   className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.CLAWS ? 'bg-white/10' : ''}`}
                 >
-                  <HardDrive className="mr-2 h-4 w-4" />
+                  <ClawMascot className="h-4 w-4" />
                   {t('nav.claws')}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => navigate(ROUTES.SSH_KEYS)}
                   className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.SSH_KEYS ? 'bg-white/10' : ''}`}
                 >
-                  <Key className="mr-2 h-4 w-4" />
+                  <Key className="h-4 w-4" />
                   {t('nav.sshKeys')}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => navigate(ROUTES.ACCOUNT)}
                   className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.ACCOUNT ? 'bg-white/10' : ''}`}
                 >
-                  <User className="mr-2 h-4 w-4" />
+                  <User className="h-4 w-4" />
                   {t('nav.account')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="bg-white/10" />
@@ -134,7 +139,7 @@ const Header: FC<HeaderProps> = ({ showNavLinks = false, navLinks = [], activeSe
                   onClick={signOut}
                   className="text-red-400 focus:bg-white/10 focus:text-red-400"
                 >
-                  <SignOut className="mr-2 h-4 w-4" />
+                  <SignOut className="h-4 w-4" />
                   {t('nav.signOut')}
                 </DropdownMenuItem>
               </DropdownMenuContent>

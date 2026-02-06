@@ -7,15 +7,15 @@ import type {
   StatusConfig,
 } from '@/ts/Interfaces'
 import { useState, useEffect } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
+import { useAuth } from '@/lib/auth'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
 import { ROUTES } from '@/lib/routes'
 import {
   useClaws,
-  useCreateClaw,
+  usePurchaseClaw,
   useStartClaw,
   useStopClaw,
   useRestartClaw,
@@ -24,7 +24,7 @@ import {
   usePlans,
   useLocations,
   useVolumePricing,
-  CLAWS_QUERY_KEY,
+  useUserStats,
 } from '@/hooks'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -54,7 +54,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 import {
   Lightning,
-  HardDrive,
   Play,
   Square,
   ArrowClockwise,
@@ -69,10 +68,12 @@ import {
   List,
   SquaresFour,
   Copy,
-  Desktop,
   CaretDown,
+  PlusCircle,
 } from '@phosphor-icons/react'
 import { PageHeader } from '@/components/PageHeader'
+import { ActionButton } from '@/components/ActionButton'
+import { ClawMascot } from '@/components/ClawMascot'
 
 // Generate a secure random password
 function generatePassword(length = 16): string {
@@ -255,7 +256,7 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
   }
 
   const plan = plans.find((p) => p.id === claw.planId)
-  const monthlyPrice = plan ? plan.priceMonthly + 20 : null // +20 for OpenClaw fee
+  const monthlyPrice = plan ? plan.priceMonthly : null
   const locationName = claw.location ? locationNames[claw.location] || claw.location : 'Unknown'
   const flag = claw.location ? locationFlags[claw.location] : null
 
@@ -267,7 +268,7 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
           <div className="mb-3 flex items-start justify-between">
             <div className="relative">
               <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-lg text-xl">
-                {flag || <Desktop className="text-muted-foreground h-5 w-5" />}
+                {flag || <ClawMascot className="h-5 w-5" />}
               </div>
               <div
                 className={`border-background absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 ${status.color} ${status.pulse ? 'animate-pulse' : ''}`}
@@ -495,7 +496,7 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
             {/* Server icon + Status indicator */}
             <div className="relative">
               <div className="bg-muted flex h-12 w-12 items-center justify-center rounded-xl">
-                <Desktop className="text-muted-foreground h-6 w-6" />
+                <ClawMascot className="h-6 w-6" />
               </div>
               <div
                 className={`border-background absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 ${status.color} ${status.pulse ? 'animate-pulse' : ''}`}
@@ -758,14 +759,25 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
   const [showPassword, setShowPassword] = useState(false)
   const [selectedSshKeyId, setSelectedSshKeyId] = useState<string>('')
   const [volumeSize, setVolumeSize] = useState<number>(0) // 0 means no volume
-  const [createdClaw, setCreatedClaw] = useState<Claw | null>(null)
   const [showAdvanced, setShowAdvanced] = useState(false)
   const { showToast } = useUIStore()
 
-  const createMutation = useCreateClaw()
+  const purchaseMutation = usePurchaseClaw()
 
   const handleCreate = () => {
-    createMutation.mutate(
+    const selectedPlanData = plans.find((p) => p.id === planId)
+    if (!selectedPlanData) {
+      showToast(t('errors.invalidPlan'), 'error')
+      return
+    }
+
+    // Calculate total price (plan + optional volume)
+    let totalPrice = selectedPlanData.priceMonthly
+    if (volumeSize > 0 && volumePricing) {
+      totalPrice += volumeSize * volumePricing.pricePerGbMonthly
+    }
+
+    purchaseMutation.mutate(
       {
         name,
         planId,
@@ -773,14 +785,16 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
         password: password || undefined,
         sshKeyId: selectedSshKeyId || undefined,
         volumeSize: volumeSize > 0 ? volumeSize : undefined,
+        priceMonthly: totalPrice,
       },
       {
-        onSuccess: (data: Claw) => {
+        onSuccess: (data) => {
           if ((data as unknown as { error?: string }).error) {
             showToast((data as unknown as { error: string }).error, 'error')
             return
           }
-          setCreatedClaw(data)
+          // Redirect to Polar checkout
+          window.location.href = data.checkoutUrl
         },
         onError: (err: Error) => {
           showToast(err.message || t('errors.failedToCreateClaw'), 'error')
@@ -790,135 +804,10 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
   }
 
   const selectedPlan = plans.find((p) => p.id === planId)
-  const selectedSshKey = sshKeys.find((k) => k.id === selectedSshKeyId)
-
-  const [copiedField, setCopiedField] = useState<string | null>(null)
-
-  const handleCopyField = (label: string, value: string) => {
-    navigator.clipboard.writeText(value)
-    setCopiedField(label)
-    showToast(t('common.copiedWithLabel', { label }), 'success')
-    setTimeout(() => setCopiedField(null), 2000)
-  }
-
-  if (createdClaw) {
-    const sshCommand = selectedSshKey
-      ? `ssh root@${createdClaw.ip || '...'}`
-      : `sshpass -p '${createdClaw.rootPassword}' ssh -o StrictHostKeyChecking=no root@${createdClaw.ip || '...'}`
-
-    return (
-      <Dialog open onOpenChange={onClose}>
-        <DialogContent>
-          <DialogHeader>
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/20">
-              <Check className="h-8 w-8 text-green-500" />
-            </div>
-            <DialogTitle className="text-center">{t('createClaw.clawCreated')}</DialogTitle>
-          </DialogHeader>
-
-          <div className="bg-muted space-y-3 rounded-xl p-4">
-            {/* IP Address */}
-            <div>
-              <span className="text-muted-foreground text-sm">{t('dashboard.ipAddress')}</span>
-              <div
-                onClick={() => handleCopyField(t('dashboard.ipAddress'), createdClaw.ip || '')}
-                className="bg-background hover:bg-background/80 group relative mt-1 flex cursor-pointer items-center justify-between gap-2 rounded-lg p-3 transition-colors"
-              >
-                <p className="break-all pr-8 font-mono text-sm">
-                  {createdClaw.ip || t('createClaw.assigning')}
-                </p>
-                <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                  {copiedField === t('dashboard.ipAddress') ? (
-                    <Check className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <Copy className="text-muted-foreground h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {selectedSshKey && (
-              <div>
-                <span className="text-muted-foreground text-sm">{t('dashboard.sshKey')}</span>
-                <div className="bg-background mt-1 flex items-center gap-2 rounded-lg p-3">
-                  <Key className="text-muted-foreground h-4 w-4" />
-                  <span>{selectedSshKey.name}</span>
-                </div>
-              </div>
-            )}
-
-            {createdClaw.rootPassword && (
-              <div>
-                <span className="text-muted-foreground text-sm">{t('createClaw.rootPasswordSaveThis')}</span>
-                <div
-                  onClick={() => handleCopyField(t('createClaw.rootPassword'), createdClaw.rootPassword!)}
-                  className="bg-background hover:bg-background/80 group relative mt-1 flex cursor-pointer items-center justify-between gap-2 rounded-lg p-3 transition-colors"
-                >
-                  <p className="break-all pr-8 font-mono text-sm">{createdClaw.rootPassword}</p>
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    {copiedField === t('createClaw.rootPassword') ? (
-                      <Check className="h-4 w-4 text-green-500" />
-                    ) : (
-                      <Copy className="text-muted-foreground h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Gateway Token */}
-            {createdClaw.gatewayToken && (
-              <div>
-                <span className="text-muted-foreground text-sm">{t('dashboard.gatewayToken')}</span>
-                <div
-                  onClick={() => handleCopyField(t('dashboard.gatewayToken'), createdClaw.gatewayToken!)}
-                  className="bg-background hover:bg-background/80 group relative mt-1 flex cursor-pointer items-center justify-between gap-2 rounded-lg p-3 transition-colors"
-                >
-                  <p className="break-all pr-8 font-mono text-xs">{createdClaw.gatewayToken}</p>
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    {copiedField === t('dashboard.gatewayToken') ? (
-                      <Check className="h-4 w-4 text-green-500" />
-                    ) : (
-                      <Copy className="text-muted-foreground h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
-                    )}
-                  </div>
-                </div>
-                <p className="text-muted-foreground mt-1 text-xs">{t('dashboard.gatewayTokenDescription')}</p>
-              </div>
-            )}
-
-            {/* SSH Command */}
-            <div>
-              <span className="text-muted-foreground text-sm">
-                {selectedSshKey ? t('createClaw.sshCommandUsingKey') : t('createClaw.sshCommandWithPassword')}
-              </span>
-              <div
-                onClick={() => handleCopyField('SSH Command', sshCommand)}
-                className="bg-background hover:bg-background/80 group relative mt-1 flex cursor-pointer items-center justify-between gap-2 rounded-lg p-3 transition-colors"
-              >
-                <p className="break-all pr-8 font-mono text-xs">{sshCommand}</p>
-                <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                  {copiedField === 'SSH Command' ? (
-                    <Check className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <Copy className="text-muted-foreground h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <Button onClick={onClose} className="w-full">
-            {t('common.done')}
-          </Button>
-        </DialogContent>
-      </Dialog>
-    )
-  }
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className="flex max-h-[70vh] max-w-lg flex-col gap-0 overflow-hidden p-0">
+      <DialogContent className="flex max-h-[85vh] max-w-lg flex-col gap-0 p-0">
         <DialogHeader className="shrink-0 px-6 pb-4 pt-6">
           <DialogTitle>{t('createClaw.title')}</DialogTitle>
           <DialogDescription>{t('createClaw.description')}</DialogDescription>
@@ -939,7 +828,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={t('createClaw.clawNamePlaceholder')}
-              required
               className="h-11"
             />
           </div>
@@ -983,7 +871,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
           {/* Plan */}
           <div className="space-y-2">
             <Label>{t('createClaw.plan')}</Label>
-            <div className="max-h-48 space-y-2 overflow-y-auto">
+            <div className="space-y-2">
               {plans.map((plan) => {
                 const isSelected = planId === plan.id
                 return (
@@ -1163,7 +1051,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                   <div className={`bg-muted space-y-4 rounded-lg p-4`}>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <HardDrive className="text-muted-foreground h-4 w-4" />
+                        <ClawMascot className="h-4 w-4" />
                         <span className="text-sm font-medium">{t('createClaw.volumeStorage')}</span>
                       </div>
                       <span className="text-sm font-semibold">
@@ -1210,32 +1098,39 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
 
           {/* Pricing Summary */}
           {selectedPlan && (
-            <div className="bg-muted rounded-lg p-4">
+            <div className="bg-muted rounded-lg p-4 space-y-2">
+              {name && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">{t('createClaw.clawName')}</span>
+                  <span>{name}</span>
+                </div>
+              )}
+              {location && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">{t('createClaw.location')}</span>
+                  <span>{locations.find((l) => l.id === location)?.city || location}</span>
+                </div>
+              )}
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">{t('createClaw.vpsServer')}</span>
+                <span className="text-muted-foreground">{t('createClaw.plan')}</span>
                 <span>${selectedPlan.priceMonthly.toFixed(2)}/mo</span>
               </div>
-              <div className="mt-1 flex justify-between text-sm">
-                <span className="text-muted-foreground">{t('createClaw.openClawPreinstalled')}</span>
-                <span>+$20.00/mo</span>
-              </div>
               {volumeSize > 0 && volumePricing && (
-                <div className="mt-1 flex justify-between text-sm">
+                <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">{t('createClaw.storageWithSize')} ({volumeSize} GB)</span>
                   <span>+${(volumeSize * volumePricing.pricePerGbMonthly).toFixed(2)}/mo</span>
                 </div>
               )}
-              <div className="border-border mt-2 flex justify-between border-t pt-2 text-sm">
+              <div className="border-border flex justify-between border-t pt-2 text-sm">
                 <span className="text-muted-foreground">{t('createClaw.totalMonthly')}</span>
                 <span className="font-semibold">
                   $
                   {(
                     selectedPlan.priceMonthly +
-                    20 +
                     (volumeSize > 0 && volumePricing
                       ? volumeSize * volumePricing.pricePerGbMonthly
                       : 0)
-                  ).toFixed(2)}
+                  ).toFixed(2)}/mo
                 </span>
               </div>
             </div>
@@ -1246,14 +1141,21 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
             <Button type="button" variant="ghost" onClick={onClose}>
               {t('common.cancel')}
             </Button>
-            <Button type="submit" disabled={createMutation.isPending}>
-              {createMutation.isPending ? (
+            <Button type="submit" disabled={purchaseMutation.isPending}>
+              {purchaseMutation.isPending ? (
                 <>
                   <CircleNotch className="h-4 w-4 animate-spin" />
-                  {t('createClaw.creating')}
+                  {t('createClaw.redirecting')}
                 </>
               ) : (
-                t('common.create')
+                t('createClaw.proceedToPayment', {
+                  amount: (
+                    (selectedPlan?.priceMonthly ?? 0) +
+                    (volumeSize > 0 && volumePricing
+                      ? volumeSize * volumePricing.pricePerGbMonthly
+                      : 0)
+                  ).toFixed(2)
+                })
               )}
             </Button>
           </div>
@@ -1264,6 +1166,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
 }
 
 const Dashboard: FC = (): ReactNode => {
+  const { loading: authLoading } = useAuth()
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const [showCreate, setShowCreate] = useState(false)
@@ -1281,13 +1184,10 @@ const Dashboard: FC = (): ReactNode => {
     }
   }, [searchParams, setSearchParams])
 
-  const queryClient = useQueryClient()
-
-  // Check if any claws are in transitional states (need syncing)
-  const cachedClaws = queryClient.getQueryData<Claw[]>(CLAWS_QUERY_KEY)
-
   const { data: claws, isLoading, isError, refetch } = useClaws()
-  const skeletonCount = cachedClaws !== undefined ? cachedClaws.length : 3
+  const { data: userStats, isLoading: isStatsLoading } = useUserStats()
+  const skeletonCount = userStats?.clawCount ?? 0
+  const knowsCount = !isStatsLoading && userStats !== undefined
 
   const { data: plans } = usePlans()
   const { data: locations } = useLocations()
@@ -1306,114 +1206,121 @@ const Dashboard: FC = (): ReactNode => {
         transition={{ duration: 0.4 }}
         className="relative mx-auto w-full max-w-6xl flex-1 px-6 py-8"
       >
-        {/* Title + Create button */}
-        <PageHeader
-          title={t('dashboard.title')}
-          description={`${claws?.length ?? 0} ${claws?.length === 1 ? t('dashboard.claw') : t('dashboard.clawsPlural')}`}
-          action={
-            <div className="flex items-center gap-2">
-              {/* View mode toggle */}
-              <div className="flex items-center rounded-lg border border-white/10 p-0.5">
-                <button
-                  onClick={() => setInstancesViewMode('list')}
-                  className={`rounded-md p-1.5 transition-colors ${
-                    instancesViewMode === 'list'
-                      ? 'bg-white/10 text-white'
-                      : 'text-gray-400 hover:text-white'
-                  }`}
-                >
-                  <List className="h-4 w-4" weight="bold" />
-                </button>
-                <button
-                  onClick={() => setInstancesViewMode('grid')}
-                  className={`rounded-md p-1.5 transition-colors ${
-                    instancesViewMode === 'grid'
-                      ? 'bg-white/10 text-white'
-                      : 'text-gray-400 hover:text-white'
-                  }`}
-                >
-                  <SquaresFour className="h-4 w-4" weight="bold" />
-                </button>
-              </div>
-              <Button
-                size="lg"
-                className="gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90"
-                onClick={() => setShowCreate(true)}
-              >
-                <Lightning className="h-4 w-4" weight="fill" />
-                {t('createClaw.title')}
-              </Button>
-            </div>
-          }
-        />
-
-        {/* Claws container */}
-        <div className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
-          {isError ? (
-            <ErrorState
-              title={t('errors.failedToLoadClaws')}
-              description={t('errors.failedToLoadClawsDescription')}
-              onRetry={() => refetch()}
-            />
-          ) : isLoading && skeletonCount === 0 ? (
-            <EmptyState
-              icon={<HardDrive className="text-primary h-10 w-10" />}
-              title={t('dashboard.noClawsYet')}
-              description={t('dashboard.noClawsDescription')}
-              actionLabel={t('nav.deployOpenClaw')}
-              onAction={() => setShowCreate(true)}
-            />
-          ) : isLoading ? (
-            <div className="space-y-3">
-              {Array.from({ length: skeletonCount }).map((_, i) => (
-                <ClawSkeleton key={i} />
-              ))}
-            </div>
-          ) : claws?.length === 0 ? (
-            <EmptyState
-              icon={<HardDrive className="text-primary h-10 w-10" />}
-              title={t('dashboard.noClawsYet')}
-              description={t('dashboard.noClawsDescription')}
-              actionLabel={t('nav.deployOpenClaw')}
-              onAction={() => setShowCreate(true)}
-            />
-          ) : (
-            <div
-              className={
-                instancesViewMode === 'grid' ? 'grid grid-cols-1 gap-4 md:grid-cols-2' : 'space-y-3'
+        {authLoading || !claws ? (
+          <div className="flex min-h-[60vh] items-center justify-center">
+            <CircleNotch className="text-primary h-8 w-8 animate-spin" />
+          </div>
+        ) : (
+          <>
+            {/* Title + Create button */}
+            <PageHeader
+              title={t('dashboard.title')}
+              description={`${claws?.length ?? 0} ${claws?.length === 1 ? t('dashboard.claw') : t('dashboard.clawsPlural')}`}
+              action={
+                !isLoading && claws?.length === 0 ? undefined : (
+                  <div className="flex items-center gap-2">
+                    {/* View mode toggle */}
+                    <div className="flex items-center rounded-lg border border-white/10 p-0.5">
+                      <button
+                        onClick={() => setInstancesViewMode('list')}
+                        className={`rounded-md p-1.5 transition-colors ${
+                          instancesViewMode === 'list'
+                            ? 'bg-white/10 text-white'
+                            : 'text-gray-400 hover:text-white'
+                        }`}
+                      >
+                        <List className="h-4 w-4" weight="bold" />
+                      </button>
+                      <button
+                        onClick={() => setInstancesViewMode('grid')}
+                        className={`rounded-md p-1.5 transition-colors ${
+                          instancesViewMode === 'grid'
+                            ? 'bg-white/10 text-white'
+                            : 'text-gray-400 hover:text-white'
+                        }`}
+                      >
+                        <SquaresFour className="h-4 w-4" weight="bold" />
+                      </button>
+                    </div>
+                    <ActionButton
+                      onClick={() => setShowCreate(true)}
+                      icon={<PlusCircle className="h-5 w-5" weight="bold" />}
+                      label={t('createClaw.title')}
+                    />
+                  </div>
+                )
               }
-            >
-              {claws?.map((claw) => (
-                <ClawCard
-                  key={claw.id}
-                  claw={claw}
-                  sshKeys={sshKeys || []}
-                  plans={plans || []}
-                  viewMode={instancesViewMode}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+            />
 
-        {/* Create modal */}
-        {showCreate && plans && locations && (
-          <CreateClawModal
-            plans={plans}
-            locations={locations}
-            sshKeys={sshKeys || []}
-            volumePricing={volumePricing}
-            preselectedPlanId={preselectedPlanId}
-            onClose={() => {
-              setShowCreate(false)
-              setPreselectedPlanId(null)
-            }}
-            onNavigateToSSHKeys={() => {
-              setShowCreate(false)
-              setPreselectedPlanId(null)
-              navigate(ROUTES.SSH_KEYS)
-            }}
-          />
+            {/* Claws container */}
+            <div className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+              {isError ? (
+                <ErrorState
+                  title={t('errors.failedToLoadClaws')}
+                  description={t('errors.failedToLoadClawsDescription')}
+                  onRetry={() => refetch()}
+                />
+              ) : isLoading && knowsCount && skeletonCount === 0 ? (
+                <EmptyState
+                  icon={<ClawMascot className="h-10 w-10" />}
+                  title={t('dashboard.noClawsYet')}
+                  description={t('dashboard.noClawsDescription')}
+                  actionLabel={t('nav.deployOpenClaw')}
+                  onAction={() => setShowCreate(true)}
+                />
+              ) : isLoading && skeletonCount > 0 ? (
+                <div className="space-y-1.5">
+                  {Array.from({ length: skeletonCount }).map((_, i) => (
+                    <ClawSkeleton key={i} />
+                  ))}
+                </div>
+              ) : claws?.length === 0 ? (
+                <EmptyState
+                  icon={<ClawMascot className="h-10 w-10" />}
+                  title={t('dashboard.noClawsYet')}
+                  description={t('dashboard.noClawsDescription')}
+                  actionLabel={t('nav.deployOpenClaw')}
+                  onAction={() => setShowCreate(true)}
+                />
+              ) : (
+                <div
+                  className={
+                    instancesViewMode === 'grid' ? 'grid grid-cols-1 gap-1.5 md:grid-cols-2' : 'space-y-1.5'
+                  }
+                >
+                  {claws?.map((claw) => (
+                    <ClawCard
+                      key={claw.id}
+                      claw={claw}
+                      sshKeys={sshKeys || []}
+                      plans={plans || []}
+                      viewMode={instancesViewMode}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Create modal */}
+            {showCreate && plans && locations && (
+              <CreateClawModal
+                plans={plans}
+                locations={locations}
+                sshKeys={sshKeys || []}
+                volumePricing={volumePricing}
+                preselectedPlanId={preselectedPlanId}
+                onClose={() => {
+                  setShowCreate(false)
+                  setPreselectedPlanId(null)
+                }}
+                onNavigateToSSHKeys={() => {
+                  setShowCreate(false)
+                  setPreselectedPlanId(null)
+                  navigate(ROUTES.SSH_KEYS)
+                }}
+              />
+            )}
+          </>
         )}
       </motion.main>
 

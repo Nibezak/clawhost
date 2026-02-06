@@ -1,7 +1,10 @@
 import type {
+  BillingHistoryResponse,
   Claw,
   Location,
   Plan,
+  PurchaseClawData,
+  PurchaseClawResponse,
   SSHKey,
   UserProfile,
   UserStats,
@@ -77,6 +80,8 @@ export const api = {
     sshKeyId?: string
     volumeSize?: number
   }) => client.post<Claw>('/claws', data),
+  purchaseClaw: (data: PurchaseClawData) =>
+    client.post<PurchaseClawResponse>('/claws/purchase', data),
   startClaw: (id: string) => client.post<void>(`/claws/${id}/start`),
   stopClaw: (id: string) => client.post<void>(`/claws/${id}/stop`),
   restartClaw: (id: string) => client.post<void>(`/claws/${id}/restart`),
@@ -92,4 +97,6 @@ export const api = {
   getProfile: () => client.get<UserProfile>('/users/me'),
   updateProfile: (data: { name?: string }) => client.put<UserProfile>('/users/me', data),
   getUserStats: () => client.get<UserStats>('/users/me/stats'),
+  getBillingHistory: (page: number = 1, limit: number = 10) =>
+    client.get<BillingHistoryResponse>(`/users/me/billing?page=${page}&limit=${limit}`),
 }

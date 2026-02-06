@@ -1,47 +1,72 @@
+import type { MagicLinkEmailProps } from '../ts/Interfaces'
+
 import {
   Body,
   Button,
   Container,
   Head,
   Heading,
-  Hr,
   Html,
-  Link,
+  Img,
   Preview,
   Section,
   Text,
 } from '@react-email/components'
 
-interface MagicLinkEmailProps {
-  magicLink: string
-}
+import {
+  darkModeStyles,
+  main,
+  container,
+  heading,
+  buttonContainer,
+  body,
+  paragraph,
+  paragraphMuted,
+  button,
+  logoSection,
+  logo,
+} from './styles'
 
 export const MagicLinkEmail = ({ magicLink }: MagicLinkEmailProps) => {
   return (
     <Html>
-      <Head />
-      <Preview>Sign in to OpenClaw</Preview>
-      <Body style={main}>
-        <Container style={container}>
-          <Heading style={heading}>Sign in to OpenClaw</Heading>
+      <Head>
+        <meta name="color-scheme" content="light dark" />
+        <meta name="supported-color-schemes" content="light dark" />
+        <style>{darkModeStyles}</style>
+      </Head>
+      <Preview>Sign in to ClawHost</Preview>
+      <Body style={main} className="email-body">
+        <Container style={container} className="email-container">
+          <Section style={logoSection}>
+            <Img
+              src="https://cdn.clawhost.cloud/assets/clawhost-logo-dark.png"
+              width="140"
+              alt="ClawHost"
+              style={logo}
+              className="logo-light"
+            />
+            <Img
+              src="https://cdn.clawhost.cloud/assets/clawhost-logo-light.png"
+              width="140"
+              alt="ClawHost"
+              style={{ ...logo, display: 'none' }}
+              className="logo-dark"
+            />
+          </Section>
           <Section style={body}>
-            <Text style={paragraph}>
-              Click the button below to sign in to your OpenClaw account. This link will expire in 1 hour.
+            <Text style={paragraph} className="email-text">
+              Click the button below to sign in to your ClawHost account. This link will expire in 1 hour.
             </Text>
+            <Section style={buttonContainer}>
             <Button style={button} href={magicLink}>
-              Sign in to OpenClaw
+              Sign in to ClawHost
             </Button>
-            <Text style={paragraph}>
+            </Section>
+            <Text style={paragraphMuted} className="email-text-muted">
               If you didn't request this email, you can safely ignore it.
             </Text>
           </Section>
-          <Hr style={hr} />
-          <Text style={footer}>
-            If the button doesn't work, copy and paste this link into your browser:
-          </Text>
-          <Link href={magicLink} style={link}>
-            {magicLink}
-          </Link>
         </Container>
       </Body>
     </Html>
@@ -49,68 +74,3 @@ export const MagicLinkEmail = ({ magicLink }: MagicLinkEmailProps) => {
 }
 
 export default MagicLinkEmail
-
-const main = {
-  backgroundColor: '#f6f9fc',
-  fontFamily:
-    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Ubuntu, sans-serif',
-}
-
-const container = {
-  backgroundColor: '#ffffff',
-  margin: '0 auto',
-  padding: '40px 20px',
-  marginBottom: '64px',
-  borderRadius: '8px',
-}
-
-const heading = {
-  fontSize: '24px',
-  letterSpacing: '-0.5px',
-  lineHeight: '1.3',
-  fontWeight: '600',
-  color: '#1a1a1a',
-  padding: '0 0 20px',
-  textAlign: 'center' as const,
-}
-
-const body = {
-  padding: '0 20px',
-}
-
-const paragraph = {
-  fontSize: '15px',
-  lineHeight: '1.6',
-  color: '#3c3c3c',
-  margin: '0 0 20px',
-}
-
-const button = {
-  backgroundColor: '#000000',
-  borderRadius: '6px',
-  color: '#ffffff',
-  fontSize: '15px',
-  fontWeight: '600',
-  textDecoration: 'none',
-  textAlign: 'center' as const,
-  display: 'block',
-  padding: '14px 24px',
-  margin: '20px auto',
-}
-
-const hr = {
-  borderColor: '#e6ebf1',
-  margin: '30px 0',
-}
-
-const footer = {
-  color: '#8898aa',
-  fontSize: '12px',
-  lineHeight: '1.5',
-}
-
-const link = {
-  color: '#8898aa',
-  fontSize: '12px',
-  wordBreak: 'break-all' as const,
-}

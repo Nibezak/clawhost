@@ -75,6 +75,16 @@
     @apply bg-background text-foreground antialiased;
     font-family: 'Satoshi', system-ui, sans-serif;
   }
+  a,
+  img {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
 }
 
 /* Font classes */

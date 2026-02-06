@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useUIStore } from '@/lib/store'
+import { ClawMascot } from '@/components/ClawMascot'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -13,7 +14,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
-  Desktop,
   CaretDown,
   DotsThreeOutline,
   Play,
@@ -104,7 +104,7 @@ const MockClawCard: FC<MockClawCardProps> = ({ claw, onStart, onStop, onRestart,
             {/* Server icon + Status indicator */}
             <div className="relative">
               <div className="bg-muted flex h-12 w-12 items-center justify-center rounded-xl">
-                <Desktop className="text-muted-foreground h-6 w-6" />
+                <ClawMascot className="h-6 w-6" />
               </div>
               <div
                 className={`border-background absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 ${status.color} ${status.pulse ? 'animate-pulse' : ''}`}
