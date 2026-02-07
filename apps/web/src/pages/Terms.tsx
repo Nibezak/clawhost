@@ -16,7 +16,7 @@ const Terms: FC = (): ReactNode => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="relative mx-auto w-full max-w-3xl flex-1 px-6 py-12"
+        className="relative mx-auto w-full max-w-6xl flex-1 px-6 py-12"
       >
         <h1 className="font-clash mb-2 text-4xl font-bold">Terms of Service</h1>
         <p className="text-muted-foreground mb-12">Last updated: February 1, 2026</p>
