@@ -1,7 +1,9 @@
 import type { FC, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { t } from '@openclaw/i18n'
 import { Logo } from '@/components/Logo'
 import { ROUTES } from '@/lib/routes'
+import { GITHUB_REPO_URL } from '@/hooks'
 import { GithubLogo, XLogo } from '@phosphor-icons/react'
 
 const LandingFooter: FC = (): ReactNode => {
@@ -9,16 +11,14 @@ const LandingFooter: FC = (): ReactNode => {
     <footer className="border-t border-white/5 px-6 py-16">
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-12 md:grid-cols-4">
-          {/* Brand */}
           <div className="md:col-span-2">
             <Logo />
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-gray-400">
-              Deploy OpenClaw on your own VPS with one click. Full privacy, dedicated resources, no
-              shared infrastructure.
+            <p className="mt-4 max-w-sm text-[15.5px] text-gray-400">
+              {t('footer.productDescription')}
             </p>
             <div className="mt-6 flex items-center gap-3">
               <a
-                href="https://github.com/clawhost"
+                href={GITHUB_REPO_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-lg bg-white/5 p-2 text-gray-400 transition hover:bg-white/10 hover:text-white"
@@ -35,97 +35,70 @@ const LandingFooter: FC = (): ReactNode => {
               </a>
             </div>
             <p className="mt-4 text-sm text-gray-500">
-              &copy; {new Date().getFullYear()} ClawHost. All rights reserved.
-            </p>
-            <p className="mt-2 text-xs text-gray-500">
-              Built by{' '}
-              <a
-                href="https://bfzli.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 transition hover:text-white"
-              >
-                @bfzli
-              </a>
-              {' · '}
-              Supported by{' '}
-              <a
-                href="https://openclaw.ai"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 transition hover:text-white"
-              >
-                OpenClaw
-              </a>
-              {' & '}
-              <a
-                href="https://hetzner.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 transition hover:text-white"
-              >
-                Hetzner
-              </a>
+              &copy; {new Date().getFullYear()} {t('footer.copyright')}
             </p>
           </div>
 
-          {/* Product */}
           <div>
-            <h4 className="font-clash mb-4 font-semibold text-white">Product</h4>
+            <h4 className="font-clash mb-4 font-semibold text-white">{t('footer.product')}</h4>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link to="/#how-it-works" className="text-gray-400 transition hover:text-white">
-                  How it Works
+                  {t('landing.howItWorks')}
                 </Link>
               </li>
               <li>
                 <Link to="/#features" className="text-gray-400 transition hover:text-white">
-                  Features
+                  {t('landing.features')}
                 </Link>
               </li>
               <li>
                 <Link to="/#pricing" className="text-gray-400 transition hover:text-white">
-                  Pricing
+                  {t('landing.pricing')}
                 </Link>
               </li>
               <li>
                 <Link to="/#faq" className="text-gray-400 transition hover:text-white">
-                  FAQ
+                  {t('landing.faqTitle')}
+                </Link>
+              </li>
+              <li>
+                <Link to="/#testimonials" className="text-gray-400 transition hover:text-white">
+                  {t('landing.testimonials')}
+                </Link>
+              </li>
+              <li>
+                <Link to="/#comparison" className="text-gray-400 transition hover:text-white">
+                  {t('landing.comparison')}
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Legal & More */}
           <div>
-            <h4 className="font-clash mb-4 font-semibold text-white">Legal & More</h4>
+            <h4 className="font-clash mb-4 font-semibold text-white">{t('footer.legalAndMore')}</h4>
             <ul className="space-y-3 text-sm">
               <li>
+                <Link to={ROUTES.POSTS} className="text-gray-400 transition hover:text-white">
+                  {t('footer.blog')}
+                </Link>
+              </li>
+              <li>
                 <Link to={ROUTES.PRIVACY} className="text-gray-400 transition hover:text-white">
-                  Privacy Policy
+                  {t('footer.privacyPolicy')}
                 </Link>
               </li>
               <li>
                 <Link to={ROUTES.TERMS} className="text-gray-400 transition hover:text-white">
-                  Terms of Service
+                  {t('footer.termsOfService')}
                 </Link>
-              </li>
-              <li>
-                <a
-                  href="https://github.com/clawhost"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 transition hover:text-white"
-                >
-                  Documentation
-                </a>
               </li>
               <li>
                 <a
                   href="mailto:support@clawhost.cloud"
                   className="text-gray-400 transition hover:text-white"
                 >
-                  Get in Touch
+                  {t('footer.getInTouch')}
                 </a>
               </li>
             </ul>

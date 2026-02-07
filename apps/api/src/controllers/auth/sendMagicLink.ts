@@ -1,4 +1,5 @@
 import type { Context } from 'hono'
+
 import { auth } from '../../services/firebase'
 import { resend, FROM_EMAIL } from '../../services/resend'
 import MagicLinkEmail from '../../emails/MagicLinkEmail'
@@ -30,7 +31,7 @@ const sendMagicLink = async (c: Context) => {
     const { error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: email,
-      subject: 'Sign in to OpenClaw',
+      subject: 'Sign in to ClawHost',
       react: MagicLinkEmail({ magicLink }),
     })
 

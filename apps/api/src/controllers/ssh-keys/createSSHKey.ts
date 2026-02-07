@@ -1,7 +1,10 @@
 import type { Context } from 'hono'
+import { eq, count } from 'drizzle-orm'
 import { db } from '../../db'
 import { sshKeys } from '../../db/schema'
 import { hetzner } from '../../services/hetzner'
+
+const MAX_SSH_KEYS_PER_ACCOUNT = 50
 
 const createSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
   try {
@@ -13,6 +16,18 @@ const createSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
 
     if (!name || !publicKey) {
       return c.json({ error: 'Name and public key are required' }, 400)
+    }
+
+    // Check SSH key limit
+    const [{ value: keyCount }] = await db
+      .select({ value: count() })
+      .from(sshKeys)
+      .where(eq(sshKeys.userId, userId))
+
+    if (keyCount >= MAX_SSH_KEYS_PER_ACCOUNT) {
+      return c.json({
+        error: `You've reached the limit of ${MAX_SSH_KEYS_PER_ACCOUNT} SSH keys. Please contact support to increase this limit.`
+      }, 400)
     }
 
     // Validate SSH key format

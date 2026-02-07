@@ -8,7 +8,7 @@ import { PageTitle } from '@/components/PageTitle'
 const Terms: FC = (): ReactNode => {
   return (
     <div className="relative flex min-h-screen flex-col bg-[#0a0a0f] text-white">
-      <PageTitle title="Terms of Service" />
+      <PageTitle title="Terms of Service" description="Read the terms and conditions for using ClawHost services." />
       <PageBackground />
       <Header />
 
@@ -16,7 +16,7 @@ const Terms: FC = (): ReactNode => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="relative mx-auto max-w-3xl flex-1 px-6 py-12"
+        className="relative mx-auto w-full max-w-3xl flex-1 px-6 py-12"
       >
         <h1 className="font-clash mb-2 text-4xl font-bold">Terms of Service</h1>
         <p className="text-muted-foreground mb-12">Last updated: February 1, 2026</p>

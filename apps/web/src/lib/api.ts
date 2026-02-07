@@ -1,50 +1,27 @@
 import type {
+  BillingHistoryResponse,
+  BillingInvoiceResponse,
   Claw,
+  DeleteClawResponse,
   Location,
   Plan,
+  PurchaseClawData,
+  PurchaseClawResponse,
   SSHKey,
   UserProfile,
   UserStats,
   VolumePricing,
 } from '@/ts/Interfaces'
 import { RequestClient } from '@openclaw/shared'
-import { auth } from '@/lib/firebase'
+import { getCachedToken } from '@/lib/firebase'
 
 // Re-export types for backward compatibility
 export type { Claw, Location, Plan, SSHKey, UserProfile, UserStats, Volume, VolumePricing } from '@/ts/Interfaces'
 
-// Helper to wait for auth to be ready
-const getAuthToken = async (): Promise<string | null> => {
-  // If user is already available, get token immediately
-  if (auth.currentUser) {
-    return auth.currentUser.getIdToken()
-  }
-
-  // Wait for auth state to be ready (max 5 seconds)
-  return new Promise((resolve) => {
-    const timeout = setTimeout(() => {
-      resolve(null)
-    }, 5000)
-
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      clearTimeout(timeout)
-      unsubscribe()
-      if (user) {
-        user
-          .getIdToken()
-          .then(resolve)
-          .catch(() => resolve(null))
-      } else {
-        resolve(null)
-      }
-    })
-  })
-}
-
 const client = new RequestClient({
   baseUrl: '/api',
   getHeaders: async (): Promise<Record<string, string>> => {
-    const token = await getAuthToken()
+    const token = await getCachedToken()
     return token ? { Authorization: `Bearer ${token}` } : {}
   },
 })
@@ -65,7 +42,7 @@ export const api = {
   getVolumePricing: () => client.get<VolumePricing>('/plans/volume-pricing'),
 
   // Claws
-  getClaws: (sync?: boolean) => client.get<Claw[]>(`/claws${sync ? '?sync=true' : ''}`),
+  getClaws: () => client.get<Claw[]>('/claws'),
   getClaw: (id: string, sync?: boolean) =>
     client.get<Claw>(`/claws/${id}${sync ? '?sync=true' : ''}`),
   syncClaw: (id: string) => client.post<Claw>(`/claws/${id}/sync`),
@@ -77,10 +54,13 @@ export const api = {
     sshKeyId?: string
     volumeSize?: number
   }) => client.post<Claw>('/claws', data),
+  purchaseClaw: (data: PurchaseClawData) =>
+    client.post<PurchaseClawResponse>('/claws/purchase', data),
   startClaw: (id: string) => client.post<void>(`/claws/${id}/start`),
   stopClaw: (id: string) => client.post<void>(`/claws/${id}/stop`),
   restartClaw: (id: string) => client.post<void>(`/claws/${id}/restart`),
-  deleteClaw: (id: string) => client.delete<void>(`/claws/${id}`),
+  deleteClaw: (id: string) => client.delete<DeleteClawResponse>(`/claws/${id}`),
+  cancelDeletion: (id: string) => client.post<void>(`/claws/${id}/cancel-deletion`),
 
   // SSH Keys
   getSSHKeys: () => client.get<SSHKey[]>('/ssh-keys'),
@@ -92,4 +72,10 @@ export const api = {
   getProfile: () => client.get<UserProfile>('/users/me'),
   updateProfile: (data: { name?: string }) => client.put<UserProfile>('/users/me', data),
   getUserStats: () => client.get<UserStats>('/users/me/stats'),
+  getBillingHistory: (page: number = 1, limit: number = 10) =>
+    client.get<BillingHistoryResponse>(`/users/me/billing?page=${page}&limit=${limit}`),
+  getOrderInvoice: (orderId: string) =>
+    client.get<BillingInvoiceResponse>(`/users/me/billing/${orderId}/invoice`),
+  getCustomerPortal: () =>
+    client.post<{ url: string }>('/users/me/billing/portal'),
 }

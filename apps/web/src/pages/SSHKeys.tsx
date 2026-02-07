@@ -8,14 +8,15 @@ import type { CopiedFieldType, SSHKeyModalMode } from '@/ts/Types'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
+import { useAuth } from '@/lib/auth'
 import { useUIStore } from '@/lib/store'
-import { useSSHKeys, useCreateSSHKey, useDeleteSSHKey } from '@/hooks'
+import { useSSHKeys, useCreateSSHKey, useDeleteSSHKey, useUserStats } from '@/hooks'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/components/ui/alert' // Keep for warnings only
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { EmptyState } from '@/components/EmptyState'
 import { ErrorState } from '@/components/ErrorState'
 import { Header } from '@/components/Header'
@@ -38,8 +39,10 @@ import {
   Check,
   Download,
   Warning,
+  CaretDown,
 } from '@phosphor-icons/react'
 import { PageHeader } from '@/components/PageHeader'
+import { ActionButton } from '@/components/ActionButton'
 
 const SSHKeySkeleton: FC = (): ReactNode => {
   return (
@@ -61,41 +64,70 @@ const SSHKeySkeleton: FC = (): ReactNode => {
 }
 
 const SSHKeyCard: FC<SSHKeyCardProps> = ({ sshKey }): ReactNode => {
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
   const deleteMutation = useDeleteSSHKey()
 
   return (
-    <Card>
-      <CardContent className="py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-full">
-              <Key className="text-muted-foreground h-5 w-5" />
+    <>
+      <Card>
+        <CardContent className="py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-full">
+                <Key className="text-muted-foreground h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="font-semibold">{sshKey.name}</h3>
+                <p className="text-muted-foreground font-mono text-sm">{sshKey.fingerprint}</p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-semibold">{sshKey.name}</h3>
-              <p className="text-muted-foreground font-mono text-sm">{sshKey.fingerprint}</p>
-            </div>
-          </div>
 
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => {
-              if (confirm(t('sshKeys.deleteConfirmation'))) {
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowDeleteModal(true)}
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? (
+                <CircleNotch className="h-5 w-5 animate-spin" />
+              ) : (
+                <Trash className="text-destructive h-5 w-5" />
+              )}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('sshKeys.deleteKey')}</DialogTitle>
+            <DialogDescription>
+              {t('sshKeys.deleteKeyConfirmation')} <strong>{sshKey.name}</strong>?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4 flex justify-end gap-3">
+            <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
+              {t('common.cancel')}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
                 deleteMutation.mutate(sshKey.id)
-              }
-            }}
-            disabled={deleteMutation.isPending}
-          >
-            {deleteMutation.isPending ? (
-              <CircleNotch className="h-5 w-5 animate-spin" />
-            ) : (
-              <Trash className="text-destructive h-5 w-5" />
-            )}
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+                setShowDeleteModal(false)
+              }}
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? (
+                <CircleNotch className="h-4 w-4 animate-spin" />
+              ) : (
+                t('common.delete')
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 
@@ -130,7 +162,6 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({ onClose }): ReactNode =
 
   const generateKeyPair = async () => {
     try {
-      // Generate RSA key pair using Web Crypto API
       const keyPair = await crypto.subtle.generateKey(
         {
           name: 'RSASSA-PKCS1-v1_5',
@@ -142,18 +173,47 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({ onClose }): ReactNode =
         ['sign', 'verify']
       )
 
-      // Export keys
-      const publicKeyBuffer = await crypto.subtle.exportKey('spki', keyPair.publicKey)
+      const publicKeyJwk = await crypto.subtle.exportKey('jwk', keyPair.publicKey)
       const privateKeyBuffer = await crypto.subtle.exportKey('pkcs8', keyPair.privateKey)
 
-      // Convert to base64
-      const publicKeyBase64 = btoa(String.fromCharCode(...new Uint8Array(publicKeyBuffer)))
+      const base64UrlToBytes = (base64url: string): Uint8Array => {
+        const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/')
+        const padding = '='.repeat((4 - (base64.length % 4)) % 4)
+        const binary = atob(base64 + padding)
+        return Uint8Array.from(binary, (c) => c.charCodeAt(0))
+      }
+
+      const n = base64UrlToBytes(publicKeyJwk.n!)
+      const e = base64UrlToBytes(publicKeyJwk.e!)
+
+      const encodeLength = (len: number): Uint8Array => {
+        return new Uint8Array([
+          (len >> 24) & 0xff,
+          (len >> 16) & 0xff,
+          (len >> 8) & 0xff,
+          len & 0xff,
+        ])
+      }
+
+      const keyType = new TextEncoder().encode('ssh-rsa')
+
+      // Ensure modulus has leading zero if high bit is set (SSH mpint format)
+      const nWithPadding = n[0] & 0x80 ? new Uint8Array([0, ...n]) : n
+      const eWithPadding = e[0] & 0x80 ? new Uint8Array([0, ...e]) : e
+
+      const keyBlob = new Uint8Array([
+        ...encodeLength(keyType.length),
+        ...keyType,
+        ...encodeLength(eWithPadding.length),
+        ...eWithPadding,
+        ...encodeLength(nWithPadding.length),
+        ...nWithPadding,
+      ])
+
+      const keyBlobBase64 = btoa(String.fromCharCode(...keyBlob))
+      const sshPublicKey = `ssh-rsa ${keyBlobBase64} ${name || 'generated-key'}@clawhost`
+
       const privateKeyBase64 = btoa(String.fromCharCode(...new Uint8Array(privateKeyBuffer)))
-
-      // Format as OpenSSH public key (simplified - real conversion is more complex)
-      const sshPublicKey = `ssh-rsa ${publicKeyBase64} ${name || 'generated-key'}@clawhost`
-
-      // Format as PEM private key
       const pemPrivateKey = `-----BEGIN PRIVATE KEY-----\n${privateKeyBase64.match(/.{1,64}/g)?.join('\n')}\n-----END PRIVATE KEY-----`
 
       setGeneratedKeys({
@@ -192,7 +252,6 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({ onClose }): ReactNode =
           <DialogDescription>{t('sshKeys.addSshKeyModalDescription')}</DialogDescription>
         </DialogHeader>
 
-        {/* Mode selector */}
         <div className="bg-muted flex gap-2 rounded-lg p-1">
           <button
             type="button"
@@ -440,14 +499,19 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({ onClose }): ReactNode =
 }
 
 const SSHKeys: FC = (): ReactNode => {
+  const { loading: authLoading } = useAuth()
   const [showCreate, setShowCreate] = useState(false)
 
-  const { data: sshKeys, isLoading, isError, refetch, cachedCount } = useSSHKeys()
-  const skeletonCount = cachedCount > 0 ? cachedCount : 2
+  const { data: sshKeys, isLoading, isError, refetch } = useSSHKeys()
+  const { data: userStats, isLoading: isStatsLoading } = useUserStats()
+  const skeletonCount = userStats?.sshKeyCount ?? 0
+  const knowsCount = !isStatsLoading && userStats !== undefined
+
+  const [howItWorksOpen, setHowItWorksOpen] = useState(false)
 
   return (
     <div className="relative flex min-h-screen flex-col bg-[#0a0a0f] text-white">
-      <PageTitle title={t('sshKeys.title')} />
+      <PageTitle title={t('sshKeys.title')} description={t('sshKeys.description')} />
       <PageBackground />
       <Header />
 
@@ -457,75 +521,94 @@ const SSHKeys: FC = (): ReactNode => {
         transition={{ duration: 0.4 }}
         className="relative mx-auto w-full max-w-6xl flex-1 px-6 py-8"
       >
-        <PageHeader
-          title={t('sshKeys.title')}
-          description={t('sshKeys.description')}
-          action={
-            <Button onClick={() => setShowCreate(true)}>
-              <PlusCircle className="h-5 w-5" weight="bold" />
-              {t('sshKeys.addSshKey')}
-            </Button>
-          }
-        />
-
-        {/* SSH Keys container */}
-        <div className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
-          {/* How it works */}
-          <div className="mb-6 rounded-lg border border-white/5 bg-white/5 p-4">
-            <h3 className="mb-2 font-semibold">{t('sshKeys.howSshKeysWork')}</h3>
-            <ol className="text-muted-foreground list-inside list-decimal space-y-1 text-sm">
-              <li>{t('sshKeys.step1')}</li>
-              <li>
-                {t('sshKeys.step2').split('public key')[0]}<strong className="text-white">public key</strong>{t('sshKeys.step2').split('public key')[1] || ' here'}
-              </li>
-              <li>{t('sshKeys.step3')}</li>
-              <li>
-                {t('sshKeys.step4')}{' '}
-                <code className="rounded bg-white/10 px-1">{t('sshKeys.step4Command')}</code> {t('sshKeys.step4Suffix')}
-              </li>
-            </ol>
+        {authLoading || !sshKeys ? (
+          <div className="flex min-h-[60vh] items-center justify-center">
+            <CircleNotch className="text-primary h-8 w-8 animate-spin" />
           </div>
+        ) : (
+          <>
+            <PageHeader
+              title={t('sshKeys.title')}
+              description={`${sshKeys?.length ?? 0} ${sshKeys?.length === 1 ? t('sshKeys.key') : t('sshKeys.keys')}`}
+              action={
+                !isLoading && sshKeys?.length === 0 ? undefined : (
+                  <ActionButton
+                    onClick={() => setShowCreate(true)}
+                    icon={<PlusCircle className="h-5 w-5" weight="bold" />}
+                    label={t('sshKeys.addSshKey')}
+                  />
+                )
+              }
+            />
 
-          {/* SSH Keys list */}
-          {isError ? (
-            <ErrorState
-              title={t('errors.failedToLoadSSHKeys')}
-              description={t('errors.failedToLoadSSHKeysDescription')}
-              onRetry={() => refetch()}
-            />
-          ) : isLoading && skeletonCount === 0 ? (
-            <EmptyState
-              icon={<Key className="text-primary h-10 w-10" />}
-              title={t('sshKeys.noSshKeysYet')}
-              description={t('sshKeys.noSshKeysDescription')}
-              actionLabel={t('sshKeys.addSshKey')}
-              onAction={() => setShowCreate(true)}
-            />
-          ) : isLoading ? (
-            <div className="space-y-4">
-              {Array.from({ length: skeletonCount }).map((_, i) => (
-                <SSHKeySkeleton key={i} />
-              ))}
-            </div>
-          ) : sshKeys?.length === 0 ? (
-            <EmptyState
-              icon={<Key className="text-primary h-10 w-10" />}
-              title={t('sshKeys.noSshKeysYet')}
-              description={t('sshKeys.noSshKeysDescription')}
-              actionLabel={t('sshKeys.addSshKey')}
-              onAction={() => setShowCreate(true)}
-            />
-          ) : (
-            <div className="space-y-4">
-              {sshKeys?.map((key) => (
-                <SSHKeyCard key={key.id} sshKey={key} />
-              ))}
-            </div>
-          )}
-        </div>
+            <div className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+              <div className="mb-6 rounded-lg border border-white/5 bg-white/5">
+                <button
+                  type="button"
+                  onClick={() => setHowItWorksOpen(!howItWorksOpen)}
+                  className="flex w-full items-center justify-between p-4 text-left"
+                >
+                  <h3 className="font-semibold">{t('sshKeys.howSshKeysWork')}</h3>
+                  <CaretDown
+                    className={`h-4 w-4 text-gray-400 transition-transform ${howItWorksOpen ? 'rotate-180' : ''}`}
+                    weight="bold"
+                  />
+                </button>
+                {howItWorksOpen && (
+                  <ol className="text-muted-foreground list-inside list-decimal space-y-1 px-4 pb-4 text-sm">
+                    <li>{t('sshKeys.step1')}</li>
+                    <li>
+                      {t('sshKeys.step2').split('public key')[0]}<strong className="text-white">public key</strong>{t('sshKeys.step2').split('public key')[1] || ' here.'}
+                    </li>
+                    <li>{t('sshKeys.step3')}</li>
+                    <li>
+                      {t('sshKeys.step4')}{' '}
+                      <code className="rounded bg-white/10 px-1">{t('sshKeys.step4Command')}</code> {t('sshKeys.step4Suffix')}
+                    </li>
+                  </ol>
+                )}
+              </div>
 
-        {/* Create modal */}
-        {showCreate && <CreateSSHKeyModal onClose={() => setShowCreate(false)} />}
+              {isError ? (
+                <ErrorState
+                  title={t('errors.failedToLoadSSHKeys')}
+                  description={t('errors.failedToLoadSSHKeysDescription')}
+                  onRetry={() => refetch()}
+                />
+              ) : isLoading && knowsCount && skeletonCount === 0 ? (
+                <EmptyState
+                  icon={<Key className="text-primary h-10 w-10" />}
+                  title={t('sshKeys.noSshKeysYet')}
+                  description={t('sshKeys.noSshKeysDescription')}
+                  actionLabel={t('sshKeys.addSshKey')}
+                  onAction={() => setShowCreate(true)}
+                />
+              ) : isLoading && skeletonCount > 0 ? (
+                <div className="space-y-1.5">
+                  {Array.from({ length: skeletonCount }).map((_, i) => (
+                    <SSHKeySkeleton key={i} />
+                  ))}
+                </div>
+              ) : sshKeys?.length === 0 ? (
+                <EmptyState
+                  icon={<Key className="text-primary h-10 w-10" />}
+                  title={t('sshKeys.noSshKeysYet')}
+                  description={t('sshKeys.noSshKeysDescription')}
+                  actionLabel={t('sshKeys.addSshKey')}
+                  onAction={() => setShowCreate(true)}
+                />
+              ) : (
+                <div className="space-y-1.5">
+                  {sshKeys?.map((key) => (
+                    <SSHKeyCard key={key.id} sshKey={key} />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {showCreate && <CreateSSHKeyModal onClose={() => setShowCreate(false)} />}
+          </>
+        )}
       </motion.main>
 
       <LandingFooter />

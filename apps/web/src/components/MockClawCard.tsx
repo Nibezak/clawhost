@@ -1,8 +1,10 @@
 import type { FC, ReactNode } from 'react'
+import type { MockClawCardProps } from '@/ts/Interfaces'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useUIStore } from '@/lib/store'
+import { ClawMascot } from '@/components/ClawMascot'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -13,7 +15,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
-  Desktop,
   CaretDown,
   DotsThreeOutline,
   Play,
@@ -26,26 +27,6 @@ import {
   CircleNotch,
 } from '@phosphor-icons/react'
 
-interface MockClawData {
-  id: string
-  name: string
-  status: 'running' | 'stopped' | 'restarting'
-  subdomain: string
-  ip: string
-  location: string
-  locationFlag: string
-  plan: string
-  planDetails: string
-}
-
-interface MockClawCardProps {
-  claw: MockClawData
-  onStart?: (id: string) => void
-  onStop?: (id: string) => void
-  onRestart?: (id: string) => void
-  onDelete?: (id: string) => void
-}
-
 const MockClawCard: FC<MockClawCardProps> = ({ claw, onStart, onStop, onRestart, onDelete }): ReactNode => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [copiedField, setCopiedField] = useState<string | null>(null)
@@ -54,7 +35,7 @@ const MockClawCard: FC<MockClawCardProps> = ({ claw, onStart, onStop, onRestart,
   const statusConfig = {
     running: { color: 'bg-green-500', bgColor: 'bg-green-500/10', label: t('dashboard.status.running'), pulse: false },
     stopped: { color: 'bg-gray-400', bgColor: 'bg-gray-400/10', label: t('dashboard.status.stopped'), pulse: false },
-    restarting: { color: 'bg-yellow-500', bgColor: 'bg-yellow-500/10', label: 'Restarting', pulse: true },
+    restarting: { color: 'bg-yellow-500', bgColor: 'bg-yellow-500/10', label: t('dashboard.status.restarting'), pulse: true },
   }
 
   const status = statusConfig[claw.status]
@@ -68,12 +49,12 @@ const MockClawCard: FC<MockClawCardProps> = ({ claw, onStart, onStop, onRestart,
 
   const handleConnect = () => {
     navigator.clipboard.writeText(`ssh root@${claw.ip}`)
-    showToast('SSH command copied!', 'success')
+    showToast(t('dashboard.sshCommandCopied'), 'success')
   }
 
   const handleCopyPassword = () => {
     navigator.clipboard.writeText('Cl@wH0st2024!')
-    showToast('Password copied!', 'success')
+    showToast(t('dashboard.passwordCopiedToClipboard'), 'success')
   }
 
   const CopyableField: FC<{ label: string; value: string }> = ({ label, value }): ReactNode => (
@@ -98,20 +79,17 @@ const MockClawCard: FC<MockClawCardProps> = ({ claw, onStart, onStop, onRestart,
   return (
     <Card>
       <CardContent className="py-4">
-        {/* Main row */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            {/* Server icon + Status indicator */}
             <div className="relative">
               <div className="bg-muted flex h-12 w-12 items-center justify-center rounded-xl">
-                <Desktop className="text-muted-foreground h-6 w-6" />
+                <ClawMascot className="h-6 w-6" />
               </div>
               <div
                 className={`border-background absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 ${status.color} ${status.pulse ? 'animate-pulse' : ''}`}
               />
             </div>
 
-            {/* Claw name + status */}
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <h3 className="text-base font-semibold">{claw.name}</h3>
@@ -130,7 +108,6 @@ const MockClawCard: FC<MockClawCardProps> = ({ claw, onStart, onStop, onRestart,
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Expand/collapse toggle */}
             <Button
               variant="ghost"
               size="icon"
@@ -142,7 +119,6 @@ const MockClawCard: FC<MockClawCardProps> = ({ claw, onStart, onStop, onRestart,
               />
             </Button>
 
-            {/* Actions menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" disabled={claw.status === 'restarting'}>
@@ -194,7 +170,6 @@ const MockClawCard: FC<MockClawCardProps> = ({ claw, onStart, onStop, onRestart,
           </div>
         </div>
 
-        {/* Expanded details section */}
         <AnimatePresence>
           {isExpanded && (
             <motion.div
@@ -219,4 +194,3 @@ const MockClawCard: FC<MockClawCardProps> = ({ claw, onStart, onStop, onRestart,
 }
 
 export { MockClawCard }
-export type { MockClawData }

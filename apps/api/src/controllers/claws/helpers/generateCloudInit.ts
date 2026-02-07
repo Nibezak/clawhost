@@ -49,19 +49,32 @@ runcmd:
   # Create openclaw user for running the service
   - useradd -r -m -d /home/openclaw -s /bin/bash openclaw
 
-  # Create OpenClaw directories and config
+  # Create OpenClaw directories, config, and agent auth directory
   - mkdir -p /home/openclaw/.openclaw
+  - mkdir -p /home/openclaw/.openclaw/agents/main/agent
 
-  # Configure gateway with auth token (passed from API)
+  # Configure gateway with token auth, channels, and skip device pairing for web access
   - |
     cat > /home/openclaw/.openclaw/openclaw.json << 'OCCONFIG'
     {
       "gateway": {
         "mode": "local",
         "auth": {
+          "mode": "token",
           "token": "${gatewayToken}"
         },
+        "controlUi": {
+          "allowInsecureAuth": true
+        },
         "trustedProxies": ["127.0.0.1", "::1"]
+      },
+      "channels": {
+        "whatsapp": { "dmPolicy": "open", "allowFrom": ["*"] },
+        "telegram": { "dmPolicy": "open", "allowFrom": ["*"] },
+        "discord": {},
+        "slack": {},
+        "signal": { "dmPolicy": "open", "allowFrom": ["*"] },
+        "imessage": { "dmPolicy": "open", "allowFrom": ["*"] }
       }
     }
     OCCONFIG
@@ -90,6 +103,12 @@ runcmd:
     WantedBy=multi-user.target
     SYSTEMD
 
+  # Enable all bundled plugins
+  - |
+    for p in bluebubbles copilot-proxy discord googlechat imessage line llm-task lobster matrix mattermost memory-lancedb msteams nextcloud-talk nostr open-prose signal slack tlon twitch voice-call whatsapp zalo zalouser feishu; do
+      su - openclaw -c "openclaw plugins enable $p" || true
+    done
+
   # Enable and start OpenClaw service
   - systemctl daemon-reload
   - systemctl enable openclaw-gateway
@@ -102,8 +121,16 @@ runcmd:
   - ufw --force enable
 
   # Create Nginx config - only responds to subdomain, blocks IP access
+  # Note: heredoc uses single-quoted delimiter so $ is literal (no bash expansion needed)
+  # JS template literals only interpolate \${...} with braces, so bare $word is safe
   - |
     cat > /etc/nginx/sites-available/openclaw << 'NGINXEOF'
+    # Map upgrade header for WebSocket support (must be outside server blocks)
+    map $http_upgrade $connection_upgrade {
+        default upgrade;
+        '' close;
+    }
+
     # Block direct IP access - return 444 (connection closed)
     server {
         listen 80 default_server;
@@ -121,13 +148,13 @@ runcmd:
         location / {
             proxy_pass http://127.0.0.1:18789;
             proxy_http_version 1.1;
-            proxy_set_header Upgrade \\$http_upgrade;
-            proxy_set_header Connection 'upgrade';
-            proxy_set_header Host \\$host;
-            proxy_set_header X-Real-IP \\$remote_addr;
-            proxy_set_header X-Forwarded-For \\$proxy_add_x_forwarded_for;
-            proxy_set_header X-Forwarded-Proto \\$scheme;
-            proxy_cache_bypass \\$http_upgrade;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection $connection_upgrade;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_cache_bypass $http_upgrade;
             proxy_read_timeout 86400;
             proxy_send_timeout 86400;
         }

@@ -1,11 +1,12 @@
 import type { FC, ReactNode } from 'react'
-import type { MockClawData } from '@/components/MockClawCard'
+import type { MockClawData } from '@/ts/Interfaces'
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { PageTitle } from '@/components/PageTitle'
 import { Header } from '@/components/Header'
 import { LandingFooter } from '@/components/LandingFooter'
 import { MockClawCard } from '@/components/MockClawCard'
@@ -13,7 +14,7 @@ import { initialMockClaws } from '@/data'
 import { useUIStore } from '@/lib/store'
 import { useAuth } from '@/lib/auth'
 import { ROUTES } from '@/lib/routes'
-import { usePlans } from '@/hooks'
+import { usePlans, useGitHubStars, GITHUB_REPO_URL } from '@/hooks'
 import {
   ShieldCheck,
   Globe,
@@ -32,6 +33,7 @@ import {
   CreditCard,
   Link as LinkIcon,
   ArrowsClockwise,
+  X,
 } from '@phosphor-icons/react'
 
 function getTestimonials() {
@@ -99,52 +101,50 @@ function getFaqs() {
 const Landing: FC = (): ReactNode => {
   const { user } = useAuth()
   const { data: plans, isLoading: plansLoading } = usePlans()
+  const { data: gitHubStars } = useGitHubStars()
   const { showToast } = useUIStore()
 
   const [openFaq, setOpenFaq] = useState<number | null>(null)
   const [activeSection, setActiveSection] = useState('')
   const [mockClaws, setMockClaws] = useState<MockClawData[]>(initialMockClaws)
 
-  // Interactive demo handlers
   const handleStart = (id: string) => {
     setMockClaws((prev) =>
       prev.map((claw) => (claw.id === id ? { ...claw, status: 'running' } : claw))
     )
-    showToast('Claw started!', 'success')
+    showToast(t('landing.demoClawStarted'), 'success')
   }
 
   const handleStop = (id: string) => {
     setMockClaws((prev) =>
       prev.map((claw) => (claw.id === id ? { ...claw, status: 'stopped' } : claw))
     )
-    showToast('Claw stopped!', 'success')
+    showToast(t('landing.demoClawStopped'), 'success')
   }
 
   const handleRestart = (id: string) => {
     setMockClaws((prev) =>
       prev.map((claw) => (claw.id === id ? { ...claw, status: 'restarting' } : claw))
     )
-    showToast('Restarting claw...', 'success')
-    // After 2 seconds, set back to running
+    showToast(t('landing.demoClawRestarting'), 'success')
     setTimeout(() => {
       setMockClaws((prev) =>
         prev.map((claw) => (claw.id === id ? { ...claw, status: 'running' } : claw))
       )
-      showToast('Claw restarted!', 'success')
+      showToast(t('landing.demoClawRestarted'), 'success')
     }, 2000)
   }
 
   const handleDelete = (id: string) => {
     setMockClaws((prev) => prev.filter((claw) => claw.id !== id))
-    showToast('Claw deleted!', 'success')
+    showToast(t('landing.demoClawDeleted'), 'success')
   }
 
   const runningCount = mockClaws.filter((c) => c.status === 'running').length
 
   useEffect(() => {
     const handleScroll = () => {
-      // Determine active section
-      const sections = ['how-it-works', 'features', 'testimonials', 'pricing', 'faq']
+      const sections = ['how-it-works', 'features', 'testimonials', 'pricing', 'comparison', 'faq']
       for (const section of sections.reverse()) {
         const el = document.getElementById(section)
         if (el && window.scrollY >= el.offsetTop - 100) {
@@ -158,28 +158,25 @@ const Landing: FC = (): ReactNode => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Add $20 for VPN pre-installed
-  const VPN_FEE = 20
 
   const navLinks = [
     { label: t('landing.howItWorks'), href: '#how-it-works', id: 'how-it-works' },
     { label: t('landing.features'), href: '#features', id: 'features' },
     { label: t('landing.testimonials'), href: '#testimonials', id: 'testimonials' },
     { label: t('landing.pricing'), href: '#pricing', id: 'pricing' },
+    { label: t('landing.comparison'), href: '#comparison', id: 'comparison' },
     { label: t('landing.faqTitle'), href: '#faq', id: 'faq' },
   ]
 
   return (
     <div className="font-satoshi min-h-screen bg-[#0a0a0f] text-white">
-      {/* Background gradient (fixed) */}
+      <PageTitle title={t('landing.title')} description={t('landing.description')} />
+
       <div className="landing-gradient pointer-events-none fixed inset-0" />
 
-      {/* Header */}
       <Header showNavLinks={true} navLinks={navLinks} activeSection={activeSection} />
 
-      {/* Hero */}
       <section className="relative overflow-hidden px-6 pb-24 pt-32">
-        {/* Grid (scrolls with content, fades out) */}
         <div className="landing-grid pointer-events-none" />
 
         <motion.div
@@ -189,7 +186,6 @@ const Landing: FC = (): ReactNode => {
           className="relative mx-auto max-w-6xl"
         >
           <div className="flex flex-col items-center text-center">
-            {/* Animated badge */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -200,7 +196,6 @@ const Landing: FC = (): ReactNode => {
               <span className="text-sm text-gray-300">{t('landing.badge')}</span>
             </motion.div>
 
-            {/* Main heading with gradient - Clash Display font */}
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -238,7 +233,7 @@ const Landing: FC = (): ReactNode => {
               >
                 <Link to={user ? ROUTES.CLAWS : ROUTES.LOGIN}>
                   <Lightning className="h-5 w-5" weight="fill" />
-                  {user ? t('landing.goToClaws') : t('nav.deployOpenClaw')}
+                  {t('nav.deployOpenClaw')}
                 </Link>
               </Button>
               <Button
@@ -248,18 +243,22 @@ const Landing: FC = (): ReactNode => {
                 asChild
               >
                 <a
-                  href="https://github.com/clawhost/openclaw"
+                  href={GITHUB_REPO_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <GithubLogo className="h-5 w-5" weight="fill" />
                   {t('landing.selfHost')}
-                  <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs">2.4k</span>
+                  {gitHubStars && (
+                    <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-2 py-0.5 text-xs">
+                      {gitHubStars.formatted}
+                      <span className="text-[12px]">★</span>
+                    </span>
+                  )}
                 </a>
               </Button>
             </motion.div>
 
-            {/* Stats */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -267,13 +266,18 @@ const Landing: FC = (): ReactNode => {
               className="flex items-center gap-8 text-center md:gap-16"
             >
               <div>
-                <div className="font-clash text-3xl font-bold text-white md:text-4xl">$5/mo</div>
+                <div className="font-clash text-3xl font-bold text-white md:text-4xl">$10/mo</div>
                 <div className="text-sm text-gray-500">{t('landing.startingPrice')}</div>
               </div>
               <div className="h-12 w-px bg-white/10" />
               <div>
-                <div className="font-clash text-3xl font-bold text-white md:text-4xl">10+</div>
+                <div className="font-clash text-3xl font-bold text-white md:text-4xl">6</div>
                 <div className="text-sm text-gray-500">{t('landing.locations')}</div>
+              </div>
+              <div className="h-12 w-px bg-white/10" />
+              <div>
+                <div className="font-clash text-3xl font-bold text-white md:text-4xl">15+</div>
+                <div className="text-sm text-gray-500">{t('landing.servers')}</div>
               </div>
               <div className="h-12 w-px bg-white/10" />
               <div>
@@ -283,7 +287,6 @@ const Landing: FC = (): ReactNode => {
             </motion.div>
           </div>
 
-          {/* Dashboard Preview - macOS style */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -291,7 +294,6 @@ const Landing: FC = (): ReactNode => {
             className="mx-auto mt-20 max-w-4xl"
           >
             <div className="glow-border overflow-hidden rounded-xl border border-white/10 bg-[#1a1a1f]/90 shadow-2xl backdrop-blur-sm">
-              {/* macOS Title Bar */}
               <div className="flex items-center gap-2 border-b border-white/10 bg-[#2a2a30] px-4 py-3">
                 <div className="h-3 w-3 rounded-full bg-[#ff5f57]" />
                 <div className="h-3 w-3 rounded-full bg-[#febc2e]" />
@@ -302,15 +304,13 @@ const Landing: FC = (): ReactNode => {
                 </div>
                 <div className="flex-1" />
               </div>
-              {/* Dashboard Content */}
               <div className="p-6">
-                {/* Header */}
                 <div className="mb-6 flex items-center justify-between">
                   <div>
                     <h3 className="text-lg font-semibold text-white">{t('landing.dashboardPreviewTitle')}</h3>
                     <p className="text-sm text-gray-500">
                       {mockClaws.length > 0
-                        ? `${runningCount} running, ${mockClaws.length} total`
+                        ? t('landing.demoStatus', { running: String(runningCount), total: String(mockClaws.length) })
                         : t('dashboard.noClawsYet')}
                     </p>
                   </div>
@@ -322,7 +322,6 @@ const Landing: FC = (): ReactNode => {
                     {t('landing.deployNew')}
                   </Link>
                 </div>
-                {/* Instance Cards */}
                 <div className="space-y-3">
                   <AnimatePresence mode="popLayout">
                     {mockClaws.length > 0 ? (
@@ -365,7 +364,6 @@ const Landing: FC = (): ReactNode => {
         </motion.div>
       </section>
 
-      {/* How it works */}
       <section id="how-it-works" className="relative scroll-mt-20 px-6 py-24">
         <div className="mx-auto max-w-6xl">
           <div className="mb-16 text-center">
@@ -421,7 +419,6 @@ const Landing: FC = (): ReactNode => {
         </div>
       </section>
 
-      {/* Features */}
       <section id="features" className="relative scroll-mt-20 border-t border-white/5 px-6 py-24">
         <div className="mx-auto max-w-6xl">
           <div className="mb-16 text-center">
@@ -496,7 +493,6 @@ const Landing: FC = (): ReactNode => {
         </div>
       </section>
 
-      {/* Testimonials */}
       <section
         id="testimonials"
         className="relative scroll-mt-20 border-t border-white/5 px-6 py-24"
@@ -534,7 +530,6 @@ const Landing: FC = (): ReactNode => {
         </div>
       </section>
 
-      {/* Pricing */}
       <section id="pricing" className="relative scroll-mt-20 border-t border-white/5 px-6 py-24">
         <div className="mx-auto max-w-6xl">
           <div className="mb-16 text-center">
@@ -545,7 +540,7 @@ const Landing: FC = (): ReactNode => {
               {t('landing.simpleTransparentPricing')}
             </h2>
             <p className="mx-auto max-w-xl text-lg text-[#8892b0]">
-              {t('landing.pricingDescription')} (+${VPN_FEE}/mo).
+              {t('landing.pricingDescription')}
             </p>
           </div>
 
@@ -572,18 +567,15 @@ const Landing: FC = (): ReactNode => {
                         {t('landing.storageColumn')}
                       </th>
                       <th className="font-clash px-4 py-4 text-center font-semibold text-white">
-                        {t('landing.hourlyColumn')}
-                      </th>
-                      <th className="font-clash px-4 py-4 text-center font-semibold text-white">
                         {t('landing.monthlyColumn')}
                       </th>
                       <th className="px-4 py-4 text-right"></th>
                     </tr>
                   </thead>
                   <tbody>
-                    {plans.map((plan, index) => {
-                      const totalMonthly = Math.round(plan.priceMonthly + VPN_FEE)
-                      const isRecommended = index === 1
+                    {plans.map((plan) => {
+                      const totalMonthly = Math.round(plan.priceMonthly)
+                      const isRecommended = plan.id === 'cax41'
 
                       return (
                         <tr
@@ -605,9 +597,6 @@ const Landing: FC = (): ReactNode => {
                           <td className="px-4 py-4 text-center text-gray-300">{plan.cpu}</td>
                           <td className="px-4 py-4 text-center text-gray-300">{plan.memory} GB</td>
                           <td className="px-4 py-4 text-center text-gray-300">{plan.disk} GB</td>
-                          <td className="px-4 py-4 text-center text-sm text-gray-400">
-                            ${plan.priceHourly.toFixed(3)}/hr
-                          </td>
                           <td className="px-4 py-4 text-center">
                             <span className="font-clash font-bold text-white">${totalMonthly}</span>
                             <span className="text-sm text-gray-500">/mo</span>
@@ -656,10 +645,6 @@ const Landing: FC = (): ReactNode => {
                   </div>
                   <div className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-green-400" />
-                    <span>{t('landing.hourlyBilling')}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-green-400" />
                     <span>{t('landing.cancelAnytime')}</span>
                   </div>
                 </div>
@@ -673,7 +658,139 @@ const Landing: FC = (): ReactNode => {
         </div>
       </section>
 
-      {/* FAQ */}
+      <section id="comparison" className="relative scroll-mt-20 border-t border-white/5 px-6 py-24">
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-16 text-center">
+            <Badge variant="outline" className="mb-4 border-white/10 bg-white/5 text-gray-300">
+              {t('landing.comparison')}
+            </Badge>
+            <h2 className="font-clash mb-4 bg-gradient-to-b from-white to-gray-400 bg-clip-text text-4xl font-bold text-transparent md:text-5xl">
+              {t('landing.comparisonTitle')}
+            </h2>
+            <p className="mx-auto max-w-xl text-lg text-[#8892b0]">
+              {t('landing.comparisonDescription')}
+            </p>
+          </div>
+
+          <div className="overflow-hidden rounded-xl border border-white/10">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-white/10 bg-white/[0.02]">
+                  <th className="px-6 py-4">
+                    <div className="flex items-center justify-center">
+                      <img src="https://cdn.clawhost.cloud/assets/clawhost-logo-light.png" alt="ClawHost" className="h-6" />
+                    </div>
+                  </th>
+                  <th className="px-6 py-4 text-center">
+                    <span className="font-medium text-gray-400">{t('landing.others')}</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5">
+                <tr>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <Check className="h-5 w-5 flex-shrink-0 text-green-400" />
+                      <span className="text-white">{t('landing.comparisonOpenClawUs')}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <X className="h-5 w-5 flex-shrink-0 text-red-400" />
+                      <span className="text-gray-400">{t('landing.comparisonOpenClawOthers')}</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr className="bg-white/[0.01]">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <Check className="h-5 w-5 flex-shrink-0 text-green-400" />
+                      <span className="text-white">{t('landing.comparisonPricingUs')}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <X className="h-5 w-5 flex-shrink-0 text-red-400" />
+                      <span className="text-gray-400">{t('landing.comparisonPricingOthers')}</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <Check className="h-5 w-5 flex-shrink-0 text-green-400" />
+                      <span className="text-white">{t('landing.comparisonOwnershipUs')}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <X className="h-5 w-5 flex-shrink-0 text-red-400" />
+                      <span className="text-gray-400">{t('landing.comparisonOwnershipOthers')}</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr className="bg-white/[0.01]">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <Check className="h-5 w-5 flex-shrink-0 text-green-400" />
+                      <span className="text-white">{t('landing.comparisonControlUs')}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <X className="h-5 w-5 flex-shrink-0 text-red-400" />
+                      <span className="text-gray-400">{t('landing.comparisonControlOthers')}</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <Check className="h-5 w-5 flex-shrink-0 text-green-400" />
+                      <span className="text-white">{t('landing.comparisonUsageUs')}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <X className="h-5 w-5 flex-shrink-0 text-red-400" />
+                      <span className="text-gray-400">{t('landing.comparisonUsageOthers')}</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr className="bg-white/[0.01]">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <Check className="h-5 w-5 flex-shrink-0 text-green-400" />
+                      <span className="text-white">{t('landing.comparisonVariantsUs')}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <X className="h-5 w-5 flex-shrink-0 text-red-400" />
+                      <span className="text-gray-400">{t('landing.comparisonVariantsOthers')}</span>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <Check className="h-5 w-5 flex-shrink-0 text-green-400" />
+                      <span className="text-white">{t('landing.comparisonMultipleUs')}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <X className="h-5 w-5 flex-shrink-0 text-red-400" />
+                      <span className="text-gray-400">{t('landing.comparisonMultipleOthers')}</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       <section id="faq" className="relative scroll-mt-20 border-t border-white/5 px-6 py-24">
         <div className="mx-auto max-w-3xl">
           <div className="mb-16 text-center">
@@ -726,7 +843,6 @@ const Landing: FC = (): ReactNode => {
         </div>
       </section>
 
-      {/* CTA */}
       <section className="relative border-t border-white/5 px-6 py-32">
         <div className="mx-auto max-w-4xl text-center">
           <motion.div
@@ -752,7 +868,7 @@ const Landing: FC = (): ReactNode => {
               >
                 <Link to={user ? ROUTES.CLAWS : ROUTES.LOGIN}>
                   <Lightning className="h-5 w-5" weight="fill" />
-                  {user ? t('landing.goToClaws') : t('landing.deployOpenClawNow')}
+                  {t('landing.deployOpenClawNow')}
                 </Link>
               </Button>
               <Button
@@ -762,7 +878,7 @@ const Landing: FC = (): ReactNode => {
                 asChild
               >
                 <a
-                  href="https://github.com/clawhost/openclaw"
+                  href={GITHUB_REPO_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

@@ -40,7 +40,6 @@ const Login: FC = (): ReactNode => {
   useEffect(() => {
     if (isSignInWithEmailLink(auth, window.location.href)) {
       const storedEmail = window.localStorage.getItem('emailForSignIn')
-      // Also get stored plan from localStorage (we store it when sending OTP)
       const storedPlan = window.localStorage.getItem('planForSignIn')
       const redirectUrl = storedPlan ? `${ROUTES.CLAWS}?plan=${storedPlan}` : ROUTES.CLAWS
 
@@ -59,7 +58,7 @@ const Login: FC = (): ReactNode => {
             setVerifyingEmail(null)
           })
       } else {
-        const inputEmail = window.prompt('Please enter your email for confirmation')
+        const inputEmail = window.prompt(t('auth.enterEmailForConfirmation'))
         if (inputEmail) {
           setLoading(true)
           setVerifyingEmail(inputEmail)
@@ -84,7 +83,6 @@ const Login: FC = (): ReactNode => {
     setLoading(true)
 
     try {
-      // Store plan in localStorage so we can retrieve it after email link click
       if (planParam) {
         window.localStorage.setItem('planForSignIn', planParam)
       }
@@ -97,7 +95,6 @@ const Login: FC = (): ReactNode => {
     }
   }
 
-  // Show verifying state when coming back from email link
   if (loading && verifyingEmail) {
     return (
       <div className="relative flex min-h-screen items-center justify-center bg-[#0a0a0f] px-4 text-white">
@@ -153,7 +150,7 @@ const Login: FC = (): ReactNode => {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center bg-[#0a0a0f] px-4 text-white">
-      <PageTitle title={t('auth.signIn')} />
+      <PageTitle title={t('auth.signIn')} description={t('auth.signInDescription')} />
       <PageBackground />
       <motion.div
         initial={{ opacity: 0, y: 20 }}

@@ -3,10 +3,12 @@ export {
   useClaws,
   useClaw,
   useCreateClaw,
+  usePurchaseClaw,
   useStartClaw,
   useStopClaw,
   useRestartClaw,
   useDeleteClaw,
+  useCancelDeletion,
   useSyncClaw,
   CLAWS_QUERY_KEY,
 } from './useClaws'
@@ -24,8 +26,10 @@ export {
   useProfile,
   useUpdateProfile,
   useUserStats,
+  useBillingHistory,
   PROFILE_QUERY_KEY,
   USER_STATS_QUERY_KEY,
+  BILLING_HISTORY_QUERY_KEY,
 } from './useUser'
 
 // Plans hooks
@@ -37,3 +41,10 @@ export {
   LOCATIONS_QUERY_KEY,
   VOLUME_PRICING_QUERY_KEY,
 } from './usePlans'
+
+// GitHub hooks
+export {
+  useGitHubStars,
+  GITHUB_REPO_URL,
+  GITHUB_STARS_QUERY_KEY,
+} from './useGitHubStars'

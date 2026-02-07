@@ -2,29 +2,29 @@ import 'dotenv/config'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
+import { serveStatic } from '@hono/node-server/serve-static'
 import { verifyToken } from './services/firebase'
 import { db } from './db'
 import { users } from './db/schema'
 import { eq } from 'drizzle-orm'
-import { authRoutes, clawsRoutes, plansRoutes, sshKeysRoutes, usersRoutes } from './routes'
+import { authRoutes, clawsRoutes, plansRoutes, sshKeysRoutes, usersRoutes, webhooksRoutes } from './routes'
 
 const app = new Hono<{ Variables: { userId: string } }>()
 
-// Middleware
 app.use('*', logger())
 app.use('*', cors())
 
-// Health check
+app.use('/favicon.ico', serveStatic({ path: './public/favicon.ico' }))
+app.use('/favicon.svg', serveStatic({ path: './public/favicon.svg' }))
+
 app.get('/', (c) => c.json({ status: 'ok' }))
 
-// Public routes
 app.route('/auth', authRoutes)
 app.route('/plans', plansRoutes)
+app.route('/webhooks', webhooksRoutes)
 
-// Auth middleware for protected routes
 app.use('/*', async (c, next) => {
-  // Skip auth for public routes
-  if (c.req.path === '/' || c.req.path.startsWith('/auth') || c.req.path.startsWith('/plans')) {
+  if (c.req.path === '/' || c.req.path.startsWith('/favicon') || c.req.path.startsWith('/auth') || c.req.path.startsWith('/plans') || c.req.path.startsWith('/webhooks')) {
     return next()
   }
 
@@ -41,15 +41,16 @@ app.use('/*', async (c, next) => {
       return c.json({ error: 'Invalid token' }, 401)
     }
 
-    // Ensure user exists in our database
-    const existingUser = await db.select().from(users).where(eq(users.id, decoded.uid)).limit(1)
-
-    if (!existingUser[0]) {
-      await db.insert(users).values({
+    await db
+      .insert(users)
+      .values({
         id: decoded.uid,
         email: decoded.email || '',
       })
-    }
+      .onConflictDoUpdate({
+        target: users.email,
+        set: { id: decoded.uid },
+      })
 
     c.set('userId', decoded.uid)
     return next()
@@ -59,9 +60,10 @@ app.use('/*', async (c, next) => {
   }
 })
 
-// Protected routes
 app.route('/claws', clawsRoutes)
 app.route('/ssh-keys', sshKeysRoutes)
 app.route('/users', usersRoutes)
+
+app.notFound((c) => c.json({ error: 'Not found' }, 404))
 
 export default app

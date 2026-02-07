@@ -52,6 +52,16 @@ interface Location {
   city: string
 }
 
+interface Datacenter {
+  id: number
+  name: string
+  location: { name: string }
+  server_types: {
+    available: number[]
+    supported: number[]
+  }
+}
+
 interface HetznerVolume {
   id: number
   name: string
@@ -97,14 +107,10 @@ export const hetzner = {
       body.user_data = userData
     }
 
-    console.log('Creating Hetzner server:', { name, serverType, location })
-
     const data = await getClient().post<{
       server: HetznerServer
       root_password: string
     }>('/servers', body)
-
-    console.log('Hetzner server created:', data.server.id)
 
     return {
       serverId: data.server.id,
@@ -119,6 +125,27 @@ export const hetzner = {
       status: data.server.status,
       ip: data.server.public_net.ipv4.ip,
     }
+  },
+
+  async getServers(): Promise<Map<string, { status: string; ip: string }>> {
+    const result = new Map<string, { status: string; ip: string }>()
+    let page = 1
+    let hasMore = true
+    while (hasMore) {
+      const data = await getClient().get<{
+        servers: HetznerServer[]
+        meta: { pagination: { total_entries: number; last_page: number } }
+      }>(`/servers?per_page=50&page=${page}`)
+      for (const server of data.servers) {
+        result.set(String(server.id), {
+          status: server.status,
+          ip: server.public_net.ipv4.ip,
+        })
+      }
+      hasMore = page < data.meta.pagination.last_page
+      page++
+    }
+    return result
   },
 
   async startServer(serverId: string): Promise<void> {
@@ -171,16 +198,37 @@ export const hetzner = {
 
   // Locations
   async getLocations(): Promise<
-    Array<{ id: string; name: string; city: string; country: string }>
+    Array<{ id: string; name: string; city: string; country: string; disabled: boolean }>
   > {
-    const data = await getClient().get<{ locations: Location[] }>('/locations')
+    const [locData, dcData] = await Promise.all([
+      getClient().get<{ locations: Location[] }>('/locations'),
+      getClient().get<{ datacenters: Datacenter[] }>('/datacenters'),
+    ])
 
-    return data.locations.map((l) => ({
-      id: l.name,
-      name: l.description,
-      city: l.city,
-      country: l.country,
-    }))
+    // Build a set of base location names that have available server types
+    const enabledLocations = new Set<string>()
+    for (const dc of dcData.datacenters) {
+      if (dc.server_types.available.length > 0) {
+        enabledLocations.add(dc.location.name)
+      }
+    }
+
+    // Hetzner may return datacenter-specific names like "fsn1-dc14"
+    // but server creation only accepts the base location (e.g. "fsn1")
+    const seen = new Set<string>()
+    return locData.locations
+      .map((l) => ({
+        id: l.name.replace(/-dc\d+$/, ''),
+        name: l.description,
+        city: l.city,
+        country: l.country,
+        disabled: !enabledLocations.has(l.name.replace(/-dc\d+$/, '')),
+      }))
+      .filter((l) => {
+        if (seen.has(l.id)) return false
+        seen.add(l.id)
+        return true
+      })
   },
 
   // SSH Keys
