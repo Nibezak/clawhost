@@ -259,15 +259,17 @@ const Account: FC = (): ReactNode => {
               <h3 className="mb-1 font-semibold">{t('account.billingHistory')}</h3>
               <p className="text-muted-foreground text-sm">{t('account.billingDescription')}</p>
             </div>
-            <ActionButton
-              onClick={handleManageBilling}
-              label={t('account.manageBilling')}
-              icon={isPortalLoading
-                ? <CircleNotch className="h-5 w-5 animate-spin" />
-                : <ArrowSquareOut className="h-5 w-5" weight="bold" />
-              }
-              size="sm"
-            />
+            {billingTotal > 0 && (
+              <ActionButton
+                onClick={handleManageBilling}
+                label={t('account.manageBilling')}
+                icon={isPortalLoading
+                  ? <CircleNotch className="h-5 w-5 animate-spin" />
+                  : <ArrowSquareOut className="h-5 w-5" weight="bold" />
+                }
+                size="sm"
+              />
+            )}
           </div>
 
           {isBillingLoading && knowsBillingCount && billingTotal === 0 ? (

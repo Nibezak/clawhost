@@ -2,6 +2,7 @@ import type { Context } from 'hono'
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { users } from '@/db/schema'
+import { t } from '@openclaw/i18n'
 
 const updateUserProfile = async (c: Context<{ Variables: { userId: string } }>) => {
   try {
@@ -9,7 +10,7 @@ const updateUserProfile = async (c: Context<{ Variables: { userId: string } }>) 
     const { name } = await c.req.json<{ name?: string }>()
 
     if (name !== undefined && name.length > 100) {
-      return c.json({ error: 'Name must be 100 characters or less' }, 400)
+      return c.json({ error: t('api.nameTooLong') }, 400)
     }
 
     await db
@@ -31,7 +32,7 @@ const updateUserProfile = async (c: Context<{ Variables: { userId: string } }>) 
     return c.json(updated[0])
   } catch (err) {
     console.error('Update user error:', err)
-    return c.json({ error: err instanceof Error ? err.message : 'Failed to update profile' }, 500)
+    return c.json({ error: err instanceof Error ? err.message : t('api.failedToUpdateProfile') }, 500)
   }
 }
 

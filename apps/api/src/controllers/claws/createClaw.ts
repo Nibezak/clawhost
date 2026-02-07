@@ -5,6 +5,7 @@ import { claws, sshKeys, volumes } from '@/db/schema'
 import { hetzner } from '@/services/hetzner'
 import { cloudflare } from '@/services/cloudflare'
 import { generateSlug, generatePassword, generateCloudInit, generateToken, DOMAIN } from './helpers/index'
+import { t } from '@openclaw/i18n'
 
 const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
   try {
@@ -19,7 +20,7 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
     }>()
 
     if (!name || !planId || !location) {
-      return c.json({ error: 'Missing required fields' }, 400)
+      return c.json({ error: t('api.missingRequiredFields') }, 400)
     }
 
     // Check claw limit
@@ -31,13 +32,13 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
 
     if (clawCount >= MAX_CLAWS_PER_ACCOUNT) {
       return c.json({
-        error: `You've reached the limit of ${MAX_CLAWS_PER_ACCOUNT} claws. Please contact support to increase this limit.`
+        error: t('api.clawLimitReached')
       }, 400)
     }
 
     // Validate volume size if provided
     if (volumeSize !== undefined && (volumeSize < 10 || volumeSize > 10240)) {
-      return c.json({ error: 'Volume size must be between 10 and 10240 GB' }, 400)
+      return c.json({ error: t('api.volumeSizeInvalid') }, 400)
     }
 
     // Generate claw ID and subdomain
@@ -152,7 +153,7 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
     })
   } catch (err) {
     console.error('Create claw error:', err)
-    return c.json({ error: err instanceof Error ? err.message : 'Failed to create claw' }, 500)
+    return c.json({ error: err instanceof Error ? err.message : t('api.failedToCreateClaw') }, 500)
   }
 }
 

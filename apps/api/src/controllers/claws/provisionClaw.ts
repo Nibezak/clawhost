@@ -4,6 +4,7 @@ import { claws, pendingClaws, sshKeys, volumes } from '@/db/schema'
 import { hetzner } from '@/services/hetzner'
 import { cloudflare } from '@/services/cloudflare'
 import { generateSlug, generateToken, generateCloudInit, DOMAIN } from './helpers/index'
+import { t } from '@openclaw/i18n'
 
 export interface ProvisionClawParams {
   pendingClawId: string
@@ -25,7 +26,7 @@ export async function provisionClaw(params: ProvisionClawParams): Promise<{
       .limit(1)
 
     if (!pendingClaw[0]) {
-      return { success: false, error: 'Pending claw not found' }
+      return { success: false, error: t('api.pendingClawNotFound') }
     }
 
     const pending = pendingClaw[0]
@@ -129,6 +130,6 @@ export async function provisionClaw(params: ProvisionClawParams): Promise<{
     return { success: true, clawId: id }
   } catch (err) {
     console.error('Provision claw error:', err)
-    return { success: false, error: err instanceof Error ? err.message : 'Failed to provision claw' }
+    return { success: false, error: err instanceof Error ? err.message : t('api.failedToProvisionClaw') }
   }
 }

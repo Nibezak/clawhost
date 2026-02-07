@@ -3,6 +3,7 @@ import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { hetzner } from '@/services/hetzner'
+import { t } from '@openclaw/i18n'
 
 const restartClaw = async (c: Context<{ Variables: { userId: string } }>) => {
   try {
@@ -16,7 +17,7 @@ const restartClaw = async (c: Context<{ Variables: { userId: string } }>) => {
       .limit(1)
 
     if (!claw[0] || !claw[0].hetznerServerId) {
-      return c.json({ error: 'Claw not found' }, 404)
+      return c.json({ error: t('api.clawNotFound') }, 404)
     }
 
     await hetzner.restartServer(claw[0].hetznerServerId)
@@ -24,7 +25,7 @@ const restartClaw = async (c: Context<{ Variables: { userId: string } }>) => {
     return c.json({ success: true })
   } catch (err) {
     console.error('Restart claw error:', err)
-    return c.json({ error: err instanceof Error ? err.message : 'Failed to restart claw' }, 500)
+    return c.json({ error: err instanceof Error ? err.message : t('api.failedToRestartClaw') }, 500)
   }
 }
 

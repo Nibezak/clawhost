@@ -3,6 +3,7 @@ import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { users } from '@/db/schema'
 import { orders } from '@/lib/polar'
+import { t } from '@openclaw/i18n'
 
 const getBillingHistory = async (c: Context<{ Variables: { userId: string } }>) => {
   try {
@@ -36,7 +37,7 @@ const getBillingHistory = async (c: Context<{ Variables: { userId: string } }>) 
     })
   } catch (err) {
     console.error('Get billing history error:', err)
-    return c.json({ error: 'Failed to get billing history' }, 500)
+    return c.json({ error: t('api.failedToGetBillingHistory') }, 500)
   }
 }
 

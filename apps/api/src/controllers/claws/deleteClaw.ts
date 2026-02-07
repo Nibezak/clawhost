@@ -4,6 +4,7 @@ import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { subscriptions } from '@/lib/polar'
 import { cleanupClaw } from './helpers/index'
+import { t } from '@openclaw/i18n'
 
 const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {
   try {
@@ -17,7 +18,7 @@ const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {
       .limit(1)
 
     if (!claw[0]) {
-      return c.json({ error: 'Claw not found' }, 404)
+      return c.json({ error: t('api.clawNotFound') }, 404)
     }
 
     // If there is a Polar subscription, schedule deletion at period end
@@ -68,7 +69,7 @@ const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {
     return c.json({ success: true, scheduled: false })
   } catch (err) {
     console.error('Delete claw error:', err)
-    return c.json({ error: err instanceof Error ? err.message : 'Failed to delete claw' }, 500)
+    return c.json({ error: err instanceof Error ? err.message : t('api.failedToDeleteClaw') }, 500)
   }
 }
 

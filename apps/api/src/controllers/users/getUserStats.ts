@@ -3,6 +3,7 @@ import { eq, count } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws, sshKeys, users } from '@/db/schema'
 import { orders } from '@/lib/polar'
+import { t } from '@openclaw/i18n'
 
 const getUserStats = async (c: Context<{ Variables: { userId: string } }>) => {
   try {
@@ -32,7 +33,7 @@ const getUserStats = async (c: Context<{ Variables: { userId: string } }>) => {
     })
   } catch (err) {
     console.error('Get user stats error:', err)
-    return c.json({ error: 'Failed to get stats' }, 500)
+    return c.json({ error: t('api.failedToGetStats') }, 500)
   }
 }
 

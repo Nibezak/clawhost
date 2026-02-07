@@ -3,6 +3,7 @@ import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { users } from '@/db/schema'
 import { orders } from '@/lib/polar'
+import { t } from '@openclaw/i18n'
 
 const getOrderInvoice = async (c: Context<{ Variables: { userId: string } }>) => {
   try {
@@ -10,7 +11,7 @@ const getOrderInvoice = async (c: Context<{ Variables: { userId: string } }>) =>
     const orderId = c.req.param('orderId')
 
     if (!orderId) {
-      return c.json({ error: 'Order ID is required' }, 400)
+      return c.json({ error: t('api.orderIdRequired') }, 400)
     }
 
     const user = await db
@@ -21,7 +22,7 @@ const getOrderInvoice = async (c: Context<{ Variables: { userId: string } }>) =>
 
     const polarCustomerId = user[0]?.polarCustomerId
     if (!polarCustomerId) {
-      return c.json({ error: 'No billing account found' }, 404)
+      return c.json({ error: t('api.noBillingAccount') }, 404)
     }
 
     const invoiceUrl = await orders.getInvoiceUrl(orderId)
@@ -29,7 +30,7 @@ const getOrderInvoice = async (c: Context<{ Variables: { userId: string } }>) =>
     return c.json({ url: invoiceUrl })
   } catch (err) {
     console.error('Get order invoice error:', err)
-    return c.json({ error: 'Failed to get invoice' }, 500)
+    return c.json({ error: t('api.failedToGetInvoice') }, 500)
   }
 }
 

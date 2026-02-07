@@ -93,7 +93,7 @@ const Header: FC<HeaderProps> = ({ showNavLinks = false, navLinks = [], activeSe
               <Skeleton className="hidden h-4 w-16 rounded bg-white/10 sm:block" />
             </Button>
           ) : user || cachedProfile ? (
-            <DropdownMenu>
+            <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"

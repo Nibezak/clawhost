@@ -3,6 +3,7 @@ import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { subscriptions } from '@/lib/polar'
+import { t } from '@openclaw/i18n'
 
 const cancelDeletion = async (c: Context<{ Variables: { userId: string } }>) => {
   try {
@@ -16,11 +17,11 @@ const cancelDeletion = async (c: Context<{ Variables: { userId: string } }>) => 
       .limit(1)
 
     if (!claw[0]) {
-      return c.json({ error: 'Claw not found' }, 404)
+      return c.json({ error: t('api.clawNotFound') }, 404)
     }
 
     if (!claw[0].deletionScheduledAt) {
-      return c.json({ error: 'Claw is not scheduled for deletion' }, 400)
+      return c.json({ error: t('api.clawNotScheduledForDeletion') }, 400)
     }
 
     // Uncancel the Polar subscription
@@ -29,7 +30,7 @@ const cancelDeletion = async (c: Context<{ Variables: { userId: string } }>) => 
         await subscriptions.uncancel(claw[0].polarSubscriptionId)
       } catch (subErr) {
         console.error('Failed to uncancel subscription:', subErr)
-        return c.json({ error: 'Failed to cancel the scheduled deletion' }, 500)
+        return c.json({ error: t('api.failedToCancelScheduledDeletion') }, 500)
       }
     }
 
@@ -45,7 +46,7 @@ const cancelDeletion = async (c: Context<{ Variables: { userId: string } }>) => 
     return c.json({ success: true })
   } catch (err) {
     console.error('Cancel deletion error:', err)
-    return c.json({ error: err instanceof Error ? err.message : 'Failed to cancel deletion' }, 500)
+    return c.json({ error: err instanceof Error ? err.message : t('api.failedToCancelDeletion') }, 500)
   }
 }
 
