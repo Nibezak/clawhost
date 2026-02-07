@@ -5,7 +5,7 @@ import type {
   CreateClawModalProps,
   StatusConfig,
 } from '@/ts/Interfaces'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
@@ -19,6 +19,7 @@ import {
   useStopClaw,
   useRestartClaw,
   useDeleteClaw,
+  useCancelDeletion,
   useSSHKeys,
   usePlans,
   useLocations,
@@ -51,6 +52,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import {
   Play,
   Square,
@@ -68,6 +70,7 @@ import {
   Copy,
   CaretDown,
   Lightning,
+  ClockCountdown,
 } from '@phosphor-icons/react'
 import { PageHeader } from '@/components/PageHeader'
 import { ActionButton } from '@/components/ActionButton'
@@ -103,11 +106,6 @@ const locationFlags: Record<string, string> = {
   nbg1: '🇩🇪', // Nuremberg, Germany
   hel1: '🇫🇮', // Helsinki, Finland
   sin: '🇸🇬', // Singapore
-  'fsn1-dc14': '🇩🇪',
-  'nbg1-dc3': '🇩🇪',
-  'hel1-dc2': '🇫🇮',
-  'ash-dc1': '🇺🇸',
-  'hil-dc1': '🇺🇸',
 }
 
 const locationNames: Record<string, string> = {
@@ -117,18 +115,13 @@ const locationNames: Record<string, string> = {
   nbg1: 'Nuremberg, Germany',
   hel1: 'Helsinki, Finland',
   sin: 'Singapore',
-  'fsn1-dc14': 'Falkenstein, Germany',
-  'nbg1-dc3': 'Nuremberg, Germany',
-  'hel1-dc2': 'Helsinki, Finland',
-  'ash-dc1': 'Ashburn, USA',
-  'hil-dc1': 'Hillsboro, USA',
 }
 
 function getStatusConfig(): Record<string, StatusConfig> {
   return {
     running: { color: 'bg-green-500', bgColor: 'bg-green-500/10', label: t('dashboard.status.running') },
     stopped: { color: 'bg-gray-400', bgColor: 'bg-gray-400/10', label: t('dashboard.status.stopped') },
-    off: { color: 'bg-gray-400', bgColor: 'bg-gray-400/10', label: t('dashboard.status.off') },
+    off: { color: 'bg-gray-400', bgColor: 'bg-gray-400/10', label: t('dashboard.status.stopped') },
     starting: {
       color: 'bg-yellow-500',
       bgColor: 'bg-yellow-500/10',
@@ -192,6 +185,8 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
   const [copied, setCopied] = useState(false)
   const [passwordCopied, setPasswordCopied] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [showStopModal, setShowStopModal] = useState(false)
+  const [showRestartModal, setShowRestartModal] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
   const [copiedField, setCopiedField] = useState<string | null>(null)
 
@@ -199,14 +194,18 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
   const stopMutation = useStopClaw()
   const restartMutation = useRestartClaw()
   const deleteMutation = useDeleteClaw()
+  const cancelDeletionMutation = useCancelDeletion()
 
   const isLoading =
     startMutation.isPending ||
     stopMutation.isPending ||
     restartMutation.isPending ||
-    deleteMutation.isPending
+    deleteMutation.isPending ||
+    cancelDeletionMutation.isPending
 
   const attachedSshKey = claw.sshKeyId ? sshKeys.find((k) => k.id === claw.sshKeyId) : null
+  const isScheduledForDeletion = !!claw.deletionScheduledAt
+  const hasActionItems = claw.status === 'running' || claw.status === 'stopped' || claw.status === 'off'
 
   const statusConfig = getStatusConfig()
   const status = statusConfig[claw.status] || statusConfig.stopped
@@ -265,7 +264,7 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
                 className={`border-background absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 ${status.color} ${status.pulse ? 'animate-pulse' : ''}`}
               />
             </div>
-            {deleteMutation.isPending ? (
+            {isLoading ? (
               <Button variant="ghost" size="icon" className="h-8 w-8" disabled>
                 <CircleNotch className="h-4 w-4 animate-spin" />
               </Button>
@@ -285,12 +284,12 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
                   )}
                   {claw.status === 'running' && (
                     <>
-                      <DropdownMenuItem onClick={() => stopMutation.mutate(claw.id)} disabled={isLoading}>
+                      <DropdownMenuItem onClick={() => setShowStopModal(true)} disabled={isLoading}>
                         <Square className="mr-2 h-4 w-4" />
                         {t('dashboard.stop')}
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick={() => restartMutation.mutate(claw.id)}
+                        onClick={() => setShowRestartModal(true)}
                         disabled={isLoading}
                       >
                         <ArrowClockwise className="mr-2 h-4 w-4" />
@@ -298,33 +297,63 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
                       </DropdownMenuItem>
                     </>
                   )}
-                  {claw.rootPassword && (
+                  {(claw.status === 'running' && claw.ip || claw.rootPassword) && (
                     <>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={copyPassword}>
-                        {passwordCopied ? (
-                          <>
-                            <Check className="mr-2 h-4 w-4" />
-                            {t('common.copied')}
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="mr-2 h-4 w-4" />
-                            {t('dashboard.copyPassword')}
-                          </>
-                        )}
-                      </DropdownMenuItem>
+                      {hasActionItems && <DropdownMenuSeparator />}
+                      {claw.status === 'running' && claw.ip && (
+                        <DropdownMenuItem
+                          onClick={claw.rootPassword ? copySSHWithPassword : copySSHWithKey}
+                        >
+                          {copied ? (
+                            <>
+                              <Check className="mr-2 h-4 w-4" />
+                              {t('common.copied')}
+                            </>
+                          ) : (
+                            <>
+                              <Terminal className="mr-2 h-4 w-4" />
+                              {t('dashboard.connect')}
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                      )}
+                      {claw.rootPassword && (
+                        <DropdownMenuItem onClick={copyPassword}>
+                          {passwordCopied ? (
+                            <>
+                              <Check className="mr-2 h-4 w-4" />
+                              {t('common.copied')}
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="mr-2 h-4 w-4" />
+                              {t('dashboard.copyPassword')}
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                      )}
                     </>
                   )}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={() => setShowDeleteModal(true)}
-                    disabled={isLoading}
-                    className="text-destructive focus:text-destructive"
-                  >
-                    <Trash className="mr-2 h-4 w-4" />
-                    {t('common.delete')}
-                  </DropdownMenuItem>
+                  {(hasActionItems || claw.rootPassword) && <DropdownMenuSeparator />}
+                  {isScheduledForDeletion ? (
+                    <DropdownMenuItem
+                      onClick={() => cancelDeletionMutation.mutate(claw.id)}
+                      disabled={cancelDeletionMutation.isPending}
+                      className="text-orange-400 focus:text-orange-400"
+                    >
+                      <ClockCountdown className="mr-2 h-4 w-4" />
+                      {t('dashboard.cancelDeletion')}
+                    </DropdownMenuItem>
+                  ) : (
+                    <DropdownMenuItem
+                      onClick={() => setShowDeleteModal(true)}
+                      disabled={isLoading}
+                      className="text-destructive focus:text-destructive"
+                    >
+                      <Trash className="mr-2 h-4 w-4" />
+                      {t('common.delete')}
+                    </DropdownMenuItem>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
@@ -365,6 +394,31 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
               </div>
             )}
           </div>
+
+          {isScheduledForDeletion && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="mb-3 inline-flex cursor-default items-center gap-1 rounded-full bg-white/5 px-2 py-0.5 text-xs font-medium text-gray-400">
+                  <ClockCountdown className="h-3 w-3" />
+                  {t('dashboard.scheduledDeletionShort', {
+                    date: new Date(claw.deletionScheduledAt!).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                    }),
+                  })}
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{t('dashboard.deletionTooltip', {
+                  date: new Date(claw.deletionScheduledAt!).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  }),
+                })}</p>
+              </TooltipContent>
+            </Tooltip>
+          )}
 
           {claw.status === 'running' &&
             claw.ip &&
@@ -423,7 +477,7 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
             <DialogHeader>
               <DialogTitle>{t('dashboard.deleteClaw')}</DialogTitle>
               <DialogDescription>
-                {t('dashboard.deleteClawConfirmation')} <strong>{claw.name}</strong>? {t('dashboard.actionCannotBeUndone')}
+                {t('dashboard.deleteClawConfirmation')} <strong>{claw.name}</strong>? {t('dashboard.deleteClawWarning')}
               </DialogDescription>
             </DialogHeader>
             <div className="mt-4 flex justify-end gap-3">
@@ -444,7 +498,73 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
                     {t('dashboard.deleting')}
                   </>
                 ) : (
-                  t('common.delete')
+                  t('dashboard.scheduleDeletion')
+                )}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={showStopModal} onOpenChange={setShowStopModal}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{t('dashboard.stopClaw')}</DialogTitle>
+              <DialogDescription>
+                {t('dashboard.stopClawConfirmation')}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="mt-4 flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setShowStopModal(false)}>
+                {t('common.cancel')}
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  stopMutation.mutate(claw.id)
+                  setShowStopModal(false)
+                }}
+                disabled={stopMutation.isPending}
+              >
+                {stopMutation.isPending ? (
+                  <>
+                    <CircleNotch className="mr-2 h-4 w-4 animate-spin" />
+                    {t('dashboard.stopping')}
+                  </>
+                ) : (
+                  t('dashboard.stop')
+                )}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={showRestartModal} onOpenChange={setShowRestartModal}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{t('dashboard.restartClaw')}</DialogTitle>
+              <DialogDescription>
+                {t('dashboard.restartClawConfirmation')}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="mt-4 flex justify-end gap-3">
+              <Button variant="outline" onClick={() => setShowRestartModal(false)}>
+                {t('common.cancel')}
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  restartMutation.mutate(claw.id)
+                  setShowRestartModal(false)
+                }}
+                disabled={restartMutation.isPending}
+              >
+                {restartMutation.isPending ? (
+                  <>
+                    <CircleNotch className="mr-2 h-4 w-4 animate-spin" />
+                    {t('dashboard.restarting')}
+                  </>
+                ) : (
+                  t('dashboard.restart')
                 )}
               </Button>
             </div>
@@ -498,6 +618,30 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
                   />
                   {status.label}
                 </span>
+                {isScheduledForDeletion && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="inline-flex cursor-default items-center gap-1 rounded-full bg-white/5 px-2 py-0.5 text-xs font-medium text-gray-400">
+                        <ClockCountdown className="h-3 w-3" />
+                        {t('dashboard.scheduledDeletionShort', {
+                          date: new Date(claw.deletionScheduledAt!).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                          }),
+                        })}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{t('dashboard.deletionTooltip', {
+                        date: new Date(claw.deletionScheduledAt!).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                        }),
+                      })}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
               </div>
               <a
                 href={`https://${claw.subdomain || generateSlug(claw.id)}.clawhost.cloud${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
@@ -522,7 +666,7 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
               />
             </Button>
 
-            {deleteMutation.isPending ? (
+            {isLoading ? (
               <Button variant="ghost" size="icon" disabled>
                 <CircleNotch className="h-5 w-5 animate-spin" />
               </Button>
@@ -542,12 +686,12 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
                   )}
                   {claw.status === 'running' && (
                     <>
-                      <DropdownMenuItem onClick={() => stopMutation.mutate(claw.id)} disabled={isLoading}>
+                      <DropdownMenuItem onClick={() => setShowStopModal(true)} disabled={isLoading}>
                         <Square className="mr-2 h-4 w-4" />
                         {t('dashboard.stop')}
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick={() => restartMutation.mutate(claw.id)}
+                        onClick={() => setShowRestartModal(true)}
                         disabled={isLoading}
                       >
                         <ArrowClockwise className="mr-2 h-4 w-4" />
@@ -555,53 +699,63 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
                       </DropdownMenuItem>
                     </>
                   )}
-                  {claw.status === 'running' && claw.ip && (
+                  {(claw.status === 'running' && claw.ip || claw.rootPassword) && (
                     <>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={claw.rootPassword ? copySSHWithPassword : copySSHWithKey}
-                      >
-                        {copied ? (
-                          <>
-                            <Check className="mr-2 h-4 w-4" />
-                            {t('common.copied')}
-                          </>
-                        ) : (
-                          <>
-                            <Terminal className="mr-2 h-4 w-4" />
-                            {t('dashboard.connect')}
-                          </>
-                        )}
-                      </DropdownMenuItem>
+                      {hasActionItems && <DropdownMenuSeparator />}
+                      {claw.status === 'running' && claw.ip && (
+                        <DropdownMenuItem
+                          onClick={claw.rootPassword ? copySSHWithPassword : copySSHWithKey}
+                        >
+                          {copied ? (
+                            <>
+                              <Check className="mr-2 h-4 w-4" />
+                              {t('common.copied')}
+                            </>
+                          ) : (
+                            <>
+                              <Terminal className="mr-2 h-4 w-4" />
+                              {t('dashboard.connect')}
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                      )}
+                      {claw.rootPassword && (
+                        <DropdownMenuItem onClick={copyPassword}>
+                          {passwordCopied ? (
+                            <>
+                              <Check className="mr-2 h-4 w-4" />
+                              {t('common.copied')}
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="mr-2 h-4 w-4" />
+                              {t('dashboard.copyPassword')}
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                      )}
                     </>
                   )}
-                  {claw.rootPassword && (
-                    <>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={copyPassword}>
-                        {passwordCopied ? (
-                          <>
-                            <Check className="mr-2 h-4 w-4" />
-                            {t('common.copied')}
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="mr-2 h-4 w-4" />
-                            {t('dashboard.copyPassword')}
-                          </>
-                        )}
-                      </DropdownMenuItem>
-                    </>
+                  {(hasActionItems || claw.rootPassword) && <DropdownMenuSeparator />}
+                  {isScheduledForDeletion ? (
+                    <DropdownMenuItem
+                      onClick={() => cancelDeletionMutation.mutate(claw.id)}
+                      disabled={cancelDeletionMutation.isPending}
+                      className="text-orange-400 focus:text-orange-400"
+                    >
+                      <ClockCountdown className="mr-2 h-4 w-4" />
+                      {t('dashboard.cancelDeletion')}
+                    </DropdownMenuItem>
+                  ) : (
+                    <DropdownMenuItem
+                      onClick={() => setShowDeleteModal(true)}
+                      disabled={isLoading}
+                      className="text-destructive focus:text-destructive"
+                    >
+                      <Trash className="mr-2 h-4 w-4" />
+                      {t('common.delete')}
+                    </DropdownMenuItem>
                   )}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={() => setShowDeleteModal(true)}
-                    disabled={isLoading}
-                    className="text-destructive focus:text-destructive"
-                  >
-                    <Trash className="mr-2 h-4 w-4" />
-                    {t('common.delete')}
-                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
@@ -667,6 +821,43 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
                 <CopyableField label={t('dashboard.gatewayToken')} value={claw.gatewayToken} />
               )}
             </div>
+
+            {isScheduledForDeletion && (
+              <div className="mt-3 flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <ClockCountdown className="h-5 w-5 text-gray-400" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-300">
+                      {t('dashboard.scheduledForDeletion')}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {t('dashboard.deletionDate', {
+                        date: new Date(claw.deletionScheduledAt!).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                        }),
+                      })}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => cancelDeletionMutation.mutate(claw.id)}
+                  disabled={cancelDeletionMutation.isPending}
+                >
+                  {cancelDeletionMutation.isPending ? (
+                    <>
+                      <CircleNotch className="mr-2 h-4 w-4 animate-spin" />
+                      {t('common.loading')}
+                    </>
+                  ) : (
+                    t('dashboard.cancelDeletion')
+                  )}
+                </Button>
+              </div>
+            )}
           </motion.div>
         )}
       </CardContent>
@@ -676,7 +867,7 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
           <DialogHeader>
             <DialogTitle>{t('dashboard.deleteClaw')}</DialogTitle>
             <DialogDescription>
-              {t('dashboard.deleteClawConfirmation')} <strong>{claw.name}</strong>? {t('dashboard.actionCannotBeUndone')}
+              {t('dashboard.deleteClawConfirmation')} <strong>{claw.name}</strong>? {t('dashboard.deleteClawWarning')}
             </DialogDescription>
           </DialogHeader>
           <div className="mt-4 flex justify-end gap-3">
@@ -697,7 +888,73 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
                   {t('dashboard.deleting')}
                 </>
               ) : (
-                t('common.delete')
+                t('dashboard.scheduleDeletion')
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showStopModal} onOpenChange={setShowStopModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('dashboard.stopClaw')}</DialogTitle>
+            <DialogDescription>
+              {t('dashboard.stopClawConfirmation')}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4 flex justify-end gap-3">
+            <Button variant="outline" onClick={() => setShowStopModal(false)}>
+              {t('common.cancel')}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                stopMutation.mutate(claw.id)
+                setShowStopModal(false)
+              }}
+              disabled={stopMutation.isPending}
+            >
+              {stopMutation.isPending ? (
+                <>
+                  <CircleNotch className="mr-2 h-4 w-4 animate-spin" />
+                  {t('dashboard.stopping')}
+                </>
+              ) : (
+                t('dashboard.stop')
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showRestartModal} onOpenChange={setShowRestartModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('dashboard.restartClaw')}</DialogTitle>
+            <DialogDescription>
+              {t('dashboard.restartClawConfirmation')}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4 flex justify-end gap-3">
+            <Button variant="outline" onClick={() => setShowRestartModal(false)}>
+              {t('common.cancel')}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                restartMutation.mutate(claw.id)
+                setShowRestartModal(false)
+              }}
+              disabled={restartMutation.isPending}
+            >
+              {restartMutation.isPending ? (
+                <>
+                  <CircleNotch className="mr-2 h-4 w-4 animate-spin" />
+                  {t('dashboard.restarting')}
+                </>
+              ) : (
+                t('dashboard.restart')
               )}
             </Button>
           </div>
@@ -722,7 +979,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
       ? preselectedPlanId
       : plans[0]?.id || ''
   const [planId, setPlanId] = useState(initialPlanId)
-  const [location, setLocation] = useState(locations[0]?.id || '')
+  const [location, setLocation] = useState(locations.find((l) => !l.disabled)?.id || locations[0]?.id || '')
   const [password, setPassword] = useState(generatePassword())
   const [showPassword, setShowPassword] = useState(false)
   const [selectedSshKeyId, setSelectedSshKeyId] = useState<string>('')
@@ -806,10 +1063,12 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                 return (
                   <label
                     key={loc.id}
-                    className={`flex cursor-pointer items-center gap-2 rounded-lg p-3 transition ${
-                      isSelected
-                        ? 'border border-[#ef5350]/50 bg-[#ef5350]/20'
-                        : 'bg-muted hover:bg-muted/80 border border-transparent'
+                    className={`flex items-center gap-2 rounded-lg p-3 transition ${
+                      loc.disabled
+                        ? 'bg-muted/50 cursor-not-allowed border border-transparent opacity-80'
+                        : isSelected
+                          ? 'cursor-pointer border border-[#ef5350]/50 bg-[#ef5350]/20'
+                          : 'bg-muted hover:bg-muted/80 cursor-pointer border border-transparent'
                     }`}
                   >
                     <input
@@ -817,6 +1076,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                       name="location"
                       value={loc.id}
                       checked={isSelected}
+                      disabled={loc.disabled}
                       onChange={(e) => setLocation(e.target.value)}
                       className="sr-only"
                     />
@@ -825,6 +1085,9 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                       <p className="text-sm font-medium">
                         {loc.city}, {loc.country}
                       </p>
+                      {loc.disabled && (
+                        <p className="text-muted-foreground text-xs">{t('createClaw.locationUnavailable')}</p>
+                      )}
                     </div>
                   </label>
                 )
@@ -1127,6 +1390,7 @@ const Dashboard: FC = (): ReactNode => {
   const [searchParams, setSearchParams] = useSearchParams()
   const [showCreate, setShowCreate] = useState(false)
   const [preselectedPlanId, setPreselectedPlanId] = useState<string | null>(null)
+  const [awaitingClaw, setAwaitingClaw] = useState(() => searchParams.get('payment') === 'success')
   const { instancesViewMode, setInstancesViewMode } = usePreferencesStore()
 
   useEffect(() => {
@@ -1134,11 +1398,40 @@ const Dashboard: FC = (): ReactNode => {
     if (planParam) {
       setPreselectedPlanId(planParam)
       setShowCreate(true)
+    }
+    if (planParam || searchParams.get('payment')) {
       setSearchParams({}, { replace: true })
     }
   }, [searchParams, setSearchParams])
 
-  const { data: claws, isLoading, isError, refetch } = useClaws()
+  const initialClawCount = useRef<number | null>(null)
+
+  const { data: claws, isLoading, isError, refetch } = useClaws(
+    awaitingClaw ? { refetchInterval: 3000 } : undefined
+  )
+
+  // Stop polling once a new claw appears
+  useEffect(() => {
+    if (!awaitingClaw) return
+    if (claws && initialClawCount.current === null) {
+      initialClawCount.current = claws.length
+    }
+    if (claws && initialClawCount.current !== null && claws.length > initialClawCount.current) {
+      setAwaitingClaw(false)
+      initialClawCount.current = null
+    }
+  }, [awaitingClaw, claws])
+
+  // Safety timeout — stop polling after 60s
+  useEffect(() => {
+    if (!awaitingClaw) return
+    const timeout = setTimeout(() => {
+      setAwaitingClaw(false)
+      initialClawCount.current = null
+    }, 60000)
+    return () => clearTimeout(timeout)
+  }, [awaitingClaw])
+
   const { data: userStats, isLoading: isStatsLoading } = useUserStats()
   const skeletonCount = userStats?.clawCount ?? 0
   const knowsCount = !isStatsLoading && userStats !== undefined

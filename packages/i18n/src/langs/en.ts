@@ -64,7 +64,9 @@ export const en = {
         failedToGenerateKeyPair:
             'Failed to generate key pair. Please generate keys locally instead.',
         unableToLoadPricing: 'Unable to load pricing. Please try again later.',
-        noPasswordAvailable: 'No password available for this claw.'
+        noPasswordAvailable: 'No password available for this claw.',
+        clawLimitReached: "You've reached the limit of 50 claws. Please contact support to increase this limit.",
+        sshKeyLimitReached: "You've reached the limit of 50 SSH keys. Please contact support to increase this limit."
     },
     auth: {
         signIn: 'Sign In',
@@ -119,7 +121,10 @@ export const en = {
         noBillingHistoryDescription: 'You have no payments history, once you deploy your first claw you should see your billings here.',
         failedToLoadBilling: 'Failed to load billing history',
         viewInvoice: 'View Invoice',
-        failedToLoadInvoice: 'Failed to load invoice'
+        failedToLoadInvoice: 'Failed to load invoice',
+        couponApplied: 'Coupon: {{name}}',
+        manageBilling: 'Manage Billing',
+        failedToLoadPortal: 'Failed to open billing portal'
     },
     dashboard: {
         title: 'Claws',
@@ -132,11 +137,18 @@ export const en = {
             'No deployed claw was found. But you can deploy your first claw anytime starting from $10/m. Just AI it.',
         deleteClaw: 'Delete Claw',
         deleteClawConfirmation: 'Are you sure you want to delete',
+        deleteClawWarning: 'Your subscription will be cancelled and the server will be deleted at the end of your current billing period. You can keep using it until then.',
         actionCannotBeUndone: 'This action cannot be undone.',
         deleting: 'Deleting...',
         start: 'Start',
         stop: 'Stop',
         restart: 'Restart',
+        stopClaw: 'Stop Claw',
+        stopClawConfirmation: 'Are you sure you want to stop the server? This will kill everything that is running including OpenClaw, but you can start anytime. Stopping does not stop billing — delete the server to stop being charged.',
+        stopping: 'Stopping...',
+        restartClaw: 'Restart Claw',
+        restartClawConfirmation: 'Are you sure you want to restart the server? This will kill everything that is running including OpenClaw.',
+        restarting: 'Restarting...',
         copyPassword: 'Copy Password',
         copySshWithKey: 'Copy SSH (with key)',
         copySshWithPassword: 'Copy SSH (with password)',
@@ -157,6 +169,13 @@ export const en = {
         gatewayToken: 'Gateway Token',
         gatewayTokenDescription:
             'Use this token to authenticate with your gateway',
+        scheduledForDeletion: 'Scheduled for Deletion',
+        scheduledDeletionShort: 'Deletes {{date}}',
+        deletionDate: 'This claw will be deleted on {{date}}',
+        deletionTooltip: 'Scheduled for deletion on {{date}}. To cancel, use the menu.',
+        cancelDeletion: 'Cancel Deletion',
+        deletionCancelled: 'Deletion cancelled!',
+        scheduleDeletion: 'Schedule Deletion',
         status: {
             running: 'Running',
             stopped: 'Stopped',
@@ -169,6 +188,7 @@ export const en = {
             rebuilding: 'Rebuilding...',
             restarting: 'Restarting',
             deleting: 'Deleting...',
+            scheduledDeletion: 'Deletion Scheduled',
             unknown: 'Unknown'
         }
     },
@@ -178,6 +198,7 @@ export const en = {
         clawName: 'Claw Name',
         clawNamePlaceholder: 'e.g. cozy-panda',
         location: 'Location',
+        locationUnavailable: 'Unavailable',
         plan: 'Plan',
         advancedOptions: 'Advanced Options',
         rootPassword: 'Root Password',

@@ -149,6 +149,7 @@ export type WebhookHandlers = {
   onSubscriptionUpdated?: (data: SubscriptionWebhookData) => Promise<void>
   onSubscriptionCanceled?: (data: SubscriptionWebhookData) => Promise<void>
   onSubscriptionRevoked?: (data: SubscriptionWebhookData) => Promise<void>
+  onSubscriptionUncanceled?: (data: SubscriptionWebhookData) => Promise<void>
 }
 
 /**
@@ -179,6 +180,9 @@ export async function handleWebhook(
       break
     case 'subscription.revoked':
       await handlers.onSubscriptionRevoked?.(event.data as SubscriptionWebhookData)
+      break
+    case 'subscription.uncanceled':
+      await handlers.onSubscriptionUncanceled?.(event.data as SubscriptionWebhookData)
       break
   }
 }

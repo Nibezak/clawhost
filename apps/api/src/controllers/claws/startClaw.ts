@@ -19,8 +19,8 @@ const startClaw = async (c: Context<{ Variables: { userId: string } }>) => {
       return c.json({ error: 'Claw not found' }, 404)
     }
 
-    await hetzner.startServer(claw[0].hetznerServerId)
     await db.update(claws).set({ status: 'starting' }).where(eq(claws.id, id))
+    await hetzner.startServer(claw[0].hetznerServerId)
 
     return c.json({ success: true })
   } catch (err) {

@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 import { AuthProvider } from '@/lib/auth'
 import { ScrollToTop } from '@/components/ScrollToTop'
 import { Toast } from '@/components/Toast'
+import { TooltipProvider } from '@/components/ui/tooltip'
 import { ROUTES } from '@/lib/routes'
 import Landing from '@/pages/Landing'
 import Login from '@/pages/Login'
@@ -16,6 +17,7 @@ import ProtectedRoute from '@/components/ProtectedRoute'
 
 const App: FC = (): ReactNode => {
   return (
+    <TooltipProvider delayDuration={300}>
     <AuthProvider>
       <ScrollToTop />
       <Toast />
@@ -51,6 +53,7 @@ const App: FC = (): ReactNode => {
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AuthProvider>
+    </TooltipProvider>
   )
 }
 

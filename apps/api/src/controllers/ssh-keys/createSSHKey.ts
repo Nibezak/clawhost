@@ -4,7 +4,7 @@ import { db } from '../../db'
 import { sshKeys } from '../../db/schema'
 import { hetzner } from '../../services/hetzner'
 
-const MAX_SSH_KEYS_PER_ACCOUNT = 100
+const MAX_SSH_KEYS_PER_ACCOUNT = 50
 
 const createSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
   try {
@@ -26,7 +26,7 @@ const createSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
 
     if (keyCount >= MAX_SSH_KEYS_PER_ACCOUNT) {
       return c.json({
-        error: `You cannot add more than ${MAX_SSH_KEYS_PER_ACCOUNT} SSH keys. Contact our team to increase this limit.`
+        error: `You've reached the limit of ${MAX_SSH_KEYS_PER_ACCOUNT} SSH keys. Please contact support to increase this limit.`
       }, 400)
     }
 

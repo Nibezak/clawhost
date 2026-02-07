@@ -9,6 +9,7 @@ import {
   stopClaw,
   restartClaw,
   deleteClaw,
+  cancelDeletion,
 } from '../controllers/claws'
 
 const app = new Hono<{ Variables: { userId: string } }>()
@@ -21,6 +22,7 @@ app.post('/:id/sync', syncClaw)
 app.post('/:id/start', startClaw)
 app.post('/:id/stop', stopClaw)
 app.post('/:id/restart', restartClaw)
+app.post('/:id/cancel-deletion', cancelDeletion)
 app.delete('/:id', deleteClaw)
 
 export default app

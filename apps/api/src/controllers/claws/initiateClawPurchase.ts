@@ -1,7 +1,7 @@
 import type { Context } from 'hono'
-import { eq, and } from 'drizzle-orm'
+import { eq, and, count } from 'drizzle-orm'
 import { db } from '../../db'
-import { users, sshKeys, pendingClaws } from '../../db/schema'
+import { users, sshKeys, claws, pendingClaws } from '../../db/schema'
 import { checkouts, customers } from '../../lib/polar'
 import { generatePassword } from './helpers/index'
 
@@ -75,6 +75,19 @@ const initiateClawPurchase = async (c: Context<{ Variables: { userId: string } }
 
     if (!planId || !location || !priceMonthly) {
       return c.json({ error: 'Missing required fields' }, 400)
+    }
+
+    // Check claw limit
+    const MAX_CLAWS_PER_ACCOUNT = 50
+    const [{ value: clawCount }] = await db
+      .select({ value: count() })
+      .from(claws)
+      .where(eq(claws.userId, userId))
+
+    if (clawCount >= MAX_CLAWS_PER_ACCOUNT) {
+      return c.json({
+        error: `You've reached the limit of ${MAX_CLAWS_PER_ACCOUNT} claws. Please contact support to increase this limit.`
+      }, 400)
     }
 
     // Generate a cozy random name if not provided

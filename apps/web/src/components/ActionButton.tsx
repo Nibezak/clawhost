@@ -7,7 +7,7 @@ const ActionButton: FC<ActionButtonProps> = ({ onClick, label, icon, size = 'def
     <Button
       onClick={onClick}
       size={size}
-      className="gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90"
+      className="gap-2 border border-white/20 bg-white text-black hover:bg-white/90"
     >
       {icon}
       {label}

@@ -28,6 +28,7 @@ export const claws = pgTable('claws', {
   polarProductId: text('polar_product_id'), // Polar product ID used for this claw
   polarCustomerId: text('polar_customer_id'), // Polar customer ID
   subscriptionStatus: text('subscription_status').default('pending'), // pending, active, canceled, past_due, revoked
+  deletionScheduledAt: timestamp('deletion_scheduled_at'), // When the claw is scheduled to be deleted (null = not scheduled)
   createdAt: timestamp('created_at').defaultNow().notNull(),
 })
 

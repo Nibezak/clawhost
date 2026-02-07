@@ -1,11 +1,9 @@
 import type { Context } from 'hono'
 import { eq, and } from 'drizzle-orm'
 import { db } from '../../db'
-import { claws, volumes } from '../../db/schema'
-import { hetzner } from '../../services/hetzner'
-import { cloudflare } from '../../services/cloudflare'
+import { claws } from '../../db/schema'
 import { subscriptions } from '../../lib/polar'
-import { DOMAIN } from './helpers/index'
+import { cleanupClaw } from './helpers/index'
 
 const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {
   try {
@@ -22,56 +20,52 @@ const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {
       return c.json({ error: 'Claw not found' }, 404)
     }
 
-    // Cancel subscription in Polar (if exists)
+    // If there is a Polar subscription, schedule deletion at period end
     if (claw[0].polarSubscriptionId) {
       try {
-        // Immediately revoke the subscription (stops billing immediately)
+        // Get subscription to find the period end date
+        const sub = await subscriptions.get(claw[0].polarSubscriptionId)
+
+        if (sub && sub.currentPeriodEnd) {
+          // Cancel at period end (user keeps access until then)
+          await subscriptions.cancel(claw[0].polarSubscriptionId)
+
+          // Mark the claw as scheduled for deletion
+          await db
+            .update(claws)
+            .set({
+              deletionScheduledAt: sub.currentPeriodEnd,
+              subscriptionStatus: 'canceled',
+            })
+            .where(eq(claws.id, id))
+
+          return c.json({
+            success: true,
+            scheduled: true,
+            deletionScheduledAt: sub.currentPeriodEnd.toISOString(),
+          })
+        }
+      } catch (subErr) {
+        console.error('Failed to schedule deletion via subscription:', subErr)
+        // Fall through to immediate deletion
+      }
+    }
+
+    // Fallback: No subscription or subscription handling failed — immediate deletion
+    if (claw[0].polarSubscriptionId) {
+      try {
         await subscriptions.revoke(claw[0].polarSubscriptionId)
       } catch (subErr) {
-        console.error('Failed to cancel subscription:', subErr)
-        // Continue with deletion even if subscription cancellation fails
+        console.error('Failed to revoke subscription:', subErr)
       }
     }
 
-    // Get associated volumes
-    const clawVolumes = await db.select().from(volumes).where(eq(volumes.clawId, id))
+    await cleanupClaw(id, {
+      hetznerServerId: claw[0].hetznerServerId,
+      subdomain: claw[0].subdomain,
+    })
 
-    // Delete volumes from Hetzner first (must detach before deleting server)
-    for (const vol of clawVolumes) {
-      if (vol.hetznerVolumeId) {
-        try {
-          await hetzner.detachVolume(vol.hetznerVolumeId)
-          await hetzner.deleteVolume(vol.hetznerVolumeId)
-        } catch (volErr) {
-          console.error('Failed to delete volume:', volErr)
-        }
-      }
-    }
-
-    // Delete volumes from database
-    await db.delete(volumes).where(eq(volumes.clawId, id))
-
-    // Delete DNS record from Cloudflare
-    if (claw[0].subdomain) {
-      try {
-        const dnsRecord = await cloudflare.findDNSRecord(claw[0].subdomain)
-        if (dnsRecord) {
-          await cloudflare.deleteDNSRecord(dnsRecord.id)
-        }
-      } catch (dnsErr) {
-        console.error('Failed to delete DNS record:', dnsErr)
-      }
-    }
-
-    // Delete server from Hetzner
-    if (claw[0].hetznerServerId) {
-      await hetzner.deleteServer(claw[0].hetznerServerId)
-    }
-
-    // Delete claw from database
-    await db.delete(claws).where(eq(claws.id, id))
-
-    return c.json({ success: true })
+    return c.json({ success: true, scheduled: false })
   } catch (err) {
     console.error('Delete claw error:', err)
     return c.json({ error: err instanceof Error ? err.message : 'Failed to delete claw' }, 500)

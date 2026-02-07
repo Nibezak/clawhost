@@ -15,7 +15,8 @@ import { Header } from '@/components/Header'
 import { LandingFooter } from '@/components/LandingFooter'
 import { PageBackground } from '@/components/PageBackground'
 import { PageTitle } from '@/components/PageTitle'
-import { CircleNotch, Calendar, Key, Receipt, DownloadSimple } from '@phosphor-icons/react'
+import { CircleNotch, Calendar, Key, Receipt, DownloadSimple, ArrowSquareOut } from '@phosphor-icons/react'
+import { ActionButton } from '@/components/ActionButton'
 import { api } from '@/lib/api'
 import { ClawMascot } from '@/components/ClawMascot'
 import { EmptyState } from '@/components/EmptyState'
@@ -30,6 +31,7 @@ const Account: FC = (): ReactNode => {
   const [name, setName] = useState('')
   const [hasChanges, setHasChanges] = useState(false)
   const [loadingInvoiceIds, setLoadingInvoiceIds] = useState<Set<string>>(new Set())
+  const [isPortalLoading, setIsPortalLoading] = useState(false)
 
   const { data: profile } = useProfile({ enabled: !!user })
   const { data: userStats, isLoading: isStatsLoading } = useUserStats()
@@ -125,15 +127,15 @@ const Account: FC = (): ReactNode => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'paid':
-        return <Badge className="border-green-500/30 bg-green-500/20 text-green-400">{t('account.statusPaid')}</Badge>
+        return <Badge className="pointer-events-none border-green-500/30 bg-green-500/20 text-green-400">{t('account.statusPaid')}</Badge>
       case 'pending':
-        return <Badge className="border-yellow-500/30 bg-yellow-500/20 text-yellow-400">{t('account.statusPending')}</Badge>
+        return <Badge className="pointer-events-none border-yellow-500/30 bg-yellow-500/20 text-yellow-400">{t('account.statusPending')}</Badge>
       case 'refunded':
-        return <Badge className="border-red-500/30 bg-red-500/20 text-red-400">{t('account.statusRefunded')}</Badge>
+        return <Badge className="pointer-events-none border-red-500/30 bg-red-500/20 text-red-400">{t('account.statusRefunded')}</Badge>
       case 'partially_refunded':
-        return <Badge className="border-orange-500/30 bg-orange-500/20 text-orange-400">{t('account.statusPartiallyRefunded')}</Badge>
+        return <Badge className="pointer-events-none border-orange-500/30 bg-orange-500/20 text-orange-400">{t('account.statusPartiallyRefunded')}</Badge>
       default:
-        return <Badge variant="outline">{status}</Badge>
+        return <Badge variant="outline" className="pointer-events-none">{status}</Badge>
     }
   }
 
@@ -160,6 +162,18 @@ const Account: FC = (): ReactNode => {
         next.delete(orderId)
         return next
       })
+    }
+  }
+
+  const handleManageBilling = async () => {
+    setIsPortalLoading(true)
+    try {
+      const { url } = await api.getCustomerPortal()
+      window.open(url, '_blank')
+    } catch {
+      showToast(t('account.failedToLoadPortal'), 'error')
+    } finally {
+      setIsPortalLoading(false)
     }
   }
 
@@ -240,8 +254,21 @@ const Account: FC = (): ReactNode => {
         </div>
 
         <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
-          <h3 className="mb-1 font-semibold">{t('account.billingHistory')}</h3>
-          <p className="text-muted-foreground mb-6 text-sm">{t('account.billingDescription')}</p>
+          <div className="mb-6 flex items-start justify-between">
+            <div>
+              <h3 className="mb-1 font-semibold">{t('account.billingHistory')}</h3>
+              <p className="text-muted-foreground text-sm">{t('account.billingDescription')}</p>
+            </div>
+            <ActionButton
+              onClick={handleManageBilling}
+              label={t('account.manageBilling')}
+              icon={isPortalLoading
+                ? <CircleNotch className="h-5 w-5 animate-spin" />
+                : <ArrowSquareOut className="h-5 w-5" weight="bold" />
+              }
+              size="sm"
+            />
+          </div>
 
           {isBillingLoading && knowsBillingCount && billingTotal === 0 ? (
             <EmptyState
@@ -305,9 +332,21 @@ const Account: FC = (): ReactNode => {
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="text-sm font-medium">
-                      {formatCurrency(order.totalAmount, order.currency)}
-                    </span>
+                    <div className="text-right text-sm">
+                      <div className="flex items-center gap-2 font-medium">
+                        {order.discountAmount > 0 && (
+                          <span className="text-muted-foreground line-through">
+                            {formatCurrency(order.subtotalAmount, order.currency)}
+                          </span>
+                        )}
+                        <span>{formatCurrency(order.totalAmount, order.currency)}</span>
+                      </div>
+                      {order.discountName && (
+                        <p className="text-muted-foreground text-xs">
+                          {t('account.couponApplied', { name: order.discountName })}
+                        </p>
+                      )}
+                    </div>
                     {getStatusBadge(order.status)}
                     <Button
                       variant="ghost"

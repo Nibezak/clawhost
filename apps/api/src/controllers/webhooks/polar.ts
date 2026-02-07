@@ -10,9 +10,7 @@ import {
 } from '../../lib/polar'
 import { provisionClaw } from '../claws/provisionClaw'
 import { hetzner } from '../../services/hetzner'
-import { cloudflare } from '../../services/cloudflare'
-import { volumes } from '../../db/schema'
-import { DOMAIN } from '../claws/helpers/index'
+import { cleanupClaw } from '../claws/helpers/index'
 
 /**
  * Handle Polar webhook events
@@ -114,14 +112,31 @@ const handlePolarWebhook = async (c: Context) => {
           return
         }
 
-        // Update status first
+        // If deletion was scheduled, perform full infrastructure cleanup
+        if (claw[0].deletionScheduledAt) {
+          try {
+            await cleanupClaw(claw[0].id, {
+              hetznerServerId: claw[0].hetznerServerId,
+              subdomain: claw[0].subdomain,
+            })
+            console.log(`Claw ${claw[0].id} fully deleted after scheduled deletion`)
+          } catch (err) {
+            console.error(`Failed to cleanup claw ${claw[0].id}:`, err)
+            // Update status to indicate failure so it can be retried or handled manually
+            await db
+              .update(claws)
+              .set({ subscriptionStatus: 'revoked', status: 'stopped' })
+              .where(eq(claws.id, claw[0].id))
+          }
+          return
+        }
+
+        // No scheduled deletion — just stop the server (grace period)
         await db
           .update(claws)
           .set({ subscriptionStatus: 'revoked' })
           .where(eq(claws.id, claw[0].id))
 
-        // Optionally: Stop the server instead of deleting
-        // This gives the user a grace period to reactivate
         if (claw[0].hetznerServerId) {
           try {
             await hetzner.stopServer(claw[0].hetznerServerId)
@@ -133,6 +148,18 @@ const handlePolarWebhook = async (c: Context) => {
             console.error(`Failed to stop server: ${err}`)
           }
         }
+      },
+
+      // When subscription is uncanceled (deletion cancelled by user)
+      onSubscriptionUncanceled: async (data: SubscriptionWebhookData) => {
+        // Clear deletion schedule when subscription is uncanceled
+        await db
+          .update(claws)
+          .set({
+            deletionScheduledAt: null,
+            subscriptionStatus: 'active',
+          })
+          .where(eq(claws.polarSubscriptionId, data.id))
       },
 
       // When subscription payment fails

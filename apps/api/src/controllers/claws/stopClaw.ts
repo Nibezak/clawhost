@@ -19,8 +19,8 @@ const stopClaw = async (c: Context<{ Variables: { userId: string } }>) => {
       return c.json({ error: 'Claw not found' }, 404)
     }
 
-    await hetzner.stopServer(claw[0].hetznerServerId)
     await db.update(claws).set({ status: 'stopping' }).where(eq(claws.id, id))
+    await hetzner.stopServer(claw[0].hetznerServerId)
 
     return c.json({ success: true })
   } catch (err) {

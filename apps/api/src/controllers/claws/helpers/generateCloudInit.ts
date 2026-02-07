@@ -103,6 +103,12 @@ runcmd:
     WantedBy=multi-user.target
     SYSTEMD
 
+  # Enable all bundled plugins
+  - |
+    for p in bluebubbles copilot-proxy discord googlechat imessage line llm-task lobster matrix mattermost memory-lancedb msteams nextcloud-talk nostr open-prose signal slack tlon twitch voice-call whatsapp zalo zalouser feishu; do
+      su - openclaw -c "openclaw plugins enable $p" || true
+    done
+
   # Enable and start OpenClaw service
   - systemctl daemon-reload
   - systemctl enable openclaw-gateway

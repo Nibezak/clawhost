@@ -64,6 +64,13 @@
       "when": 1770350400000,
       "tag": "0008_add_polar_payments",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1770436800000,
+      "tag": "0009_add_deletion_scheduled_at",
+      "breakpoints": true
     }
   ]
 }

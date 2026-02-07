@@ -2,6 +2,7 @@ import type {
   BillingHistoryResponse,
   BillingInvoiceResponse,
   Claw,
+  DeleteClawResponse,
   Location,
   Plan,
   PurchaseClawData,
@@ -41,7 +42,7 @@ export const api = {
   getVolumePricing: () => client.get<VolumePricing>('/plans/volume-pricing'),
 
   // Claws
-  getClaws: (sync?: boolean) => client.get<Claw[]>(`/claws${sync ? '?sync=true' : ''}`),
+  getClaws: () => client.get<Claw[]>('/claws'),
   getClaw: (id: string, sync?: boolean) =>
     client.get<Claw>(`/claws/${id}${sync ? '?sync=true' : ''}`),
   syncClaw: (id: string) => client.post<Claw>(`/claws/${id}/sync`),
@@ -58,7 +59,8 @@ export const api = {
   startClaw: (id: string) => client.post<void>(`/claws/${id}/start`),
   stopClaw: (id: string) => client.post<void>(`/claws/${id}/stop`),
   restartClaw: (id: string) => client.post<void>(`/claws/${id}/restart`),
-  deleteClaw: (id: string) => client.delete<void>(`/claws/${id}`),
+  deleteClaw: (id: string) => client.delete<DeleteClawResponse>(`/claws/${id}`),
+  cancelDeletion: (id: string) => client.post<void>(`/claws/${id}/cancel-deletion`),
 
   // SSH Keys
   getSSHKeys: () => client.get<SSHKey[]>('/ssh-keys'),
@@ -74,4 +76,6 @@ export const api = {
     client.get<BillingHistoryResponse>(`/users/me/billing?page=${page}&limit=${limit}`),
   getOrderInvoice: (orderId: string) =>
     client.get<BillingInvoiceResponse>(`/users/me/billing/${orderId}/invoice`),
+  getCustomerPortal: () =>
+    client.post<{ url: string }>('/users/me/billing/portal'),
 }

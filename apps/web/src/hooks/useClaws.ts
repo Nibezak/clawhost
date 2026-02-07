@@ -5,10 +5,10 @@ import { USER_STATS_QUERY_KEY } from './useUser'
 
 export const CLAWS_QUERY_KEY = ['claws'] as const
 
-export function useClaws(options?: { sync?: boolean; refetchInterval?: number | false }) {
+export function useClaws(options?: { refetchInterval?: number | false }) {
   const queryClient = useQueryClient()
 
-  // Check if any claws are in transitional states (need syncing)
+  // Poll faster when claws are in transitional states
   const cachedClaws = queryClient.getQueryData<Claw[]>(CLAWS_QUERY_KEY)
   const hasTransitionalClaws = cachedClaws?.some((c) =>
     ['initializing', 'starting', 'stopping', 'creating', 'migrating', 'rebuilding'].includes(
@@ -16,12 +16,11 @@ export function useClaws(options?: { sync?: boolean; refetchInterval?: number | 
     )
   )
 
-  const shouldSync = options?.sync ?? hasTransitionalClaws
   const refetchInterval = options?.refetchInterval ?? (hasTransitionalClaws ? 5000 : false)
 
   return useQuery({
     queryKey: CLAWS_QUERY_KEY,
-    queryFn: () => api.getClaws(shouldSync),
+    queryFn: () => api.getClaws(),
     placeholderData: (previousData) => previousData,
     staleTime: Infinity,
     refetchInterval,
@@ -96,6 +95,17 @@ export function useDeleteClaw() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: CLAWS_QUERY_KEY })
       queryClient.invalidateQueries({ queryKey: USER_STATS_QUERY_KEY })
+    },
+  })
+}
+
+export function useCancelDeletion() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (id: string) => api.cancelDeletion(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: CLAWS_QUERY_KEY })
     },
   })
 }

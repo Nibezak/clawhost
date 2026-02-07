@@ -26,6 +26,7 @@ export interface Claw {
     subdomain: string | null
     gatewayToken: string | null
     volumes?: Volume[]
+    deletionScheduledAt: string | null
     createdAt: string
 }
 
@@ -50,6 +51,7 @@ export interface Location {
     name: string
     city: string
     country: string
+    disabled: boolean
 }
 
 export interface SSHKey {
@@ -76,6 +78,8 @@ export interface UserStats {
 export interface BillingOrder {
     id: string
     status: string
+    subtotalAmount: number
+    discountAmount: number
     totalAmount: number
     taxAmount: number
     currency: string
@@ -83,6 +87,7 @@ export interface BillingOrder {
     productName: string | null
     productId: string | null
     subscriptionId: string | null
+    discountName: string | null
     createdAt: string
 }
 
@@ -244,6 +249,77 @@ export interface CreateClawModalProps {
     onNavigateToSSHKeys: () => void
 }
 
+export interface ClawCardActions {
+    onStart: () => void
+    onShowStopModal: () => void
+    onShowRestartModal: () => void
+    onShowDeleteModal: () => void
+    onCancelDeletion: () => void
+    onCopySSH: () => void
+    onCopySSHWithKey: () => void
+    onCopySSHWithPassword: () => void
+    onCopyPassword: () => void
+}
+
+export interface ClawCardDropdownMenuProps {
+    claw: Claw
+    actions: ClawCardActions
+    isLoading: boolean
+    copied: boolean
+    passwordCopied: boolean
+    hasActionItems: boolean
+    isScheduledForDeletion: boolean
+    compact?: boolean
+}
+
+export interface ClawCardDialogsProps {
+    clawName: string
+    showDeleteModal: boolean
+    setShowDeleteModal: (open: boolean) => void
+    showStopModal: boolean
+    setShowStopModal: (open: boolean) => void
+    showRestartModal: boolean
+    setShowRestartModal: (open: boolean) => void
+    onDelete: () => void
+    onStop: () => void
+    onRestart: () => void
+    isDeletePending: boolean
+    isStopPending: boolean
+    isRestartPending: boolean
+}
+
+export interface ClawCardGridViewProps {
+    claw: Claw
+    status: StatusConfig
+    flag: string | null
+    actions: ClawCardActions
+    isLoading: boolean
+    copied: boolean
+    passwordCopied: boolean
+    hasActionItems: boolean
+    hasBothOptions: boolean
+    isScheduledForDeletion: boolean
+}
+
+export interface ClawCardListViewProps {
+    claw: Claw
+    status: StatusConfig
+    flag: string | null
+    locationName: string
+    plan: Plan | undefined
+    monthlyPrice: number | null
+    attachedSshKey: SSHKey | null
+    actions: ClawCardActions
+    isLoading: boolean
+    copied: boolean
+    passwordCopied: boolean
+    hasActionItems: boolean
+    hasBothOptions: boolean
+    isScheduledForDeletion: boolean
+    isExpanded: boolean
+    onToggleExpand: () => void
+}
+
 // ============================================
 // SSH Keys Component Interfaces
 // ============================================
@@ -286,6 +362,12 @@ export interface PurchaseClawData {
     sshKeyId?: string
     volumeSize?: number
     priceMonthly: number
+}
+
+export interface DeleteClawResponse {
+    success: boolean
+    scheduled: boolean
+    deletionScheduledAt?: string
 }
 
 export interface PurchaseClawResponse {

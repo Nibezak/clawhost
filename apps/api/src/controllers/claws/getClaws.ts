@@ -1,41 +1,46 @@
 import type { Context } from 'hono'
-import { eq } from 'drizzle-orm'
+import { eq, desc } from 'drizzle-orm'
 import { db } from '../../db'
 import { claws, volumes } from '../../db/schema'
 import { hetzner } from '../../services/hetzner'
 
+// Transitional statuses we set in our DB that Hetzner doesn't know about
+const transitionCompletedBy: Record<string, string[]> = {
+  stopping: ['off', 'stopped'],
+  starting: ['running'],
+  creating: ['running'],
+  initializing: ['running'],
+  migrating: ['running'],
+  rebuilding: ['running'],
+}
+
 const getClaws = async (c: Context<{ Variables: { userId: string } }>) => {
   const userId = c.get('userId')
-  const sync = c.req.query('sync') === 'true'
 
-  const userClaws = await db.select().from(claws).where(eq(claws.userId, userId))
+  const [userClaws, userVolumes, hetznerServers] = await Promise.all([
+    db.select().from(claws).where(eq(claws.userId, userId)).orderBy(desc(claws.createdAt)),
+    db.select().from(volumes).where(eq(volumes.userId, userId)),
+    hetzner.getServers().catch((err) => {
+      console.error('Failed to fetch Hetzner servers:', err)
+      return new Map<string, { status: string; ip: string }>()
+    }),
+  ])
 
-  // Get volumes for each claw
-  const userVolumes = await db.select().from(volumes).where(eq(volumes.userId, userId))
+  // Merge Hetzner live status into each claw
+  const syncedClaws = userClaws.map((claw) => {
+    if (!claw.hetznerServerId) return claw
 
-  // Optionally sync status with Hetzner for all claws
-  let syncedClaws = userClaws
-  if (sync) {
-    syncedClaws = await Promise.all(
-      userClaws.map(async (claw) => {
-        if (!claw.hetznerServerId) return claw
-        try {
-          const hetznerStatus = await hetzner.getServer(claw.hetznerServerId)
-          if (hetznerStatus.status !== claw.status || hetznerStatus.ip !== claw.ip) {
-            await db
-              .update(claws)
-              .set({ status: hetznerStatus.status, ip: hetznerStatus.ip })
-              .where(eq(claws.id, claw.id))
-            return { ...claw, status: hetznerStatus.status, ip: hetznerStatus.ip }
-          }
-          return claw
-        } catch (err) {
-          console.error(`Failed to sync claw ${claw.id}:`, err)
-          return claw
-        }
-      })
-    )
-  }
+    const live = hetznerServers.get(claw.hetznerServerId)
+    if (!live) return claw
+
+    const completionStates = transitionCompletedBy[claw.status]
+    // If DB is in a transitional state, only accept Hetzner status that confirms the transition is done
+    if (completionStates && !completionStates.includes(live.status)) {
+      return { ...claw, ip: live.ip }
+    }
+
+    return { ...claw, status: live.status, ip: live.ip }
+  })
 
   // Attach volumes to claws
   const clawsWithVolumes = syncedClaws.map((claw) => ({

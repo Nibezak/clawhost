@@ -1,5 +1,5 @@
 import type { Context } from 'hono'
-import { eq, and } from 'drizzle-orm'
+import { eq, and, count } from 'drizzle-orm'
 import { db } from '../../db'
 import { claws, sshKeys, volumes } from '../../db/schema'
 import { hetzner } from '../../services/hetzner'
@@ -20,6 +20,19 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
 
     if (!name || !planId || !location) {
       return c.json({ error: 'Missing required fields' }, 400)
+    }
+
+    // Check claw limit
+    const MAX_CLAWS_PER_ACCOUNT = 50
+    const [{ value: clawCount }] = await db
+      .select({ value: count() })
+      .from(claws)
+      .where(eq(claws.userId, userId))
+
+    if (clawCount >= MAX_CLAWS_PER_ACCOUNT) {
+      return c.json({
+        error: `You've reached the limit of ${MAX_CLAWS_PER_ACCOUNT} claws. Please contact support to increase this limit.`
+      }, 400)
     }
 
     // Validate volume size if provided

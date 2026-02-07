@@ -1,5 +1,5 @@
 import type { Context } from 'hono'
-import { eq } from 'drizzle-orm'
+import { eq, desc } from 'drizzle-orm'
 import { db } from '../../db'
 import { sshKeys } from '../../db/schema'
 
@@ -16,6 +16,7 @@ const getSSHKeys = async (c: Context<{ Variables: { userId: string } }>) => {
     })
     .from(sshKeys)
     .where(eq(sshKeys.userId, userId))
+    .orderBy(desc(sshKeys.createdAt))
 
   return c.json(keys)
 }

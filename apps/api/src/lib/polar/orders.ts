@@ -3,6 +3,8 @@ import { getPolarClient } from './client'
 export interface PolarOrder {
   id: string
   status: string
+  subtotalAmount: number
+  discountAmount: number
   totalAmount: number
   taxAmount: number
   currency: string
@@ -10,6 +12,7 @@ export interface PolarOrder {
   productName: string | null
   productId: string | null
   subscriptionId: string | null
+  discountName: string | null
   createdAt: string
 }
 
@@ -42,12 +45,15 @@ export const orders = {
         id: string
         status: string
         amount: number
+        subtotalAmount: number
+        discountAmount: number
         taxAmount: number
         currency?: string
         billingReason: string
         product?: { name: string; id: string } | null
         productId?: string | null
         subscriptionId?: string | null
+        discount?: { name: string } | null
         createdAt: Date | string
       }>
 
@@ -55,6 +61,8 @@ export const orders = {
         items: items.map((order) => ({
           id: order.id,
           status: order.status,
+          subtotalAmount: order.subtotalAmount ?? order.amount ?? 0,
+          discountAmount: order.discountAmount ?? 0,
           totalAmount: order.amount ?? 0,
           taxAmount: order.taxAmount ?? 0,
           currency: order.currency ?? 'usd',
@@ -62,6 +70,7 @@ export const orders = {
           productName: order.product?.name ?? null,
           productId: order.product?.id ?? order.productId ?? null,
           subscriptionId: order.subscriptionId ?? null,
+          discountName: order.discount?.name ?? null,
           createdAt: order.createdAt instanceof Date ? order.createdAt.toISOString() : String(order.createdAt),
         })),
         totalCount: data.pagination?.totalCount ?? 0,

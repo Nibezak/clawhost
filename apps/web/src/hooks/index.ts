@@ -8,6 +8,7 @@ export {
   useStopClaw,
   useRestartClaw,
   useDeleteClaw,
+  useCancelDeletion,
   useSyncClaw,
   CLAWS_QUERY_KEY,
 } from './useClaws'
