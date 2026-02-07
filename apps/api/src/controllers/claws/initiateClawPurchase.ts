@@ -4,6 +4,7 @@ import { db } from '@/db'
 import { users, sshKeys, claws, pendingClaws } from '@/db/schema'
 import { checkouts, customers } from '@/lib/polar'
 import { generatePassword } from './helpers/index'
+import { t } from '@openclaw/i18n'
 
 const adjectives = [
   'cozy', 'swift', 'brave', 'calm', 'tiny', 'wild', 'warm', 'cool',
@@ -71,7 +72,7 @@ const initiateClawPurchase = async (c: Context<{ Variables: { userId: string } }
     }>()
 
     if (!planId || !location || !priceMonthly) {
-      return c.json({ error: 'Missing required fields' }, 400)
+      return c.json({ error: t('api.missingRequiredFields') }, 400)
     }
 
     // Check claw limit
@@ -83,7 +84,7 @@ const initiateClawPurchase = async (c: Context<{ Variables: { userId: string } }
 
     if (clawCount >= MAX_CLAWS_PER_ACCOUNT) {
       return c.json({
-        error: `You've reached the limit of ${MAX_CLAWS_PER_ACCOUNT} claws. Please contact support to increase this limit.`
+        error: t('api.clawLimitReached')
       }, 400)
     }
 
@@ -92,7 +93,7 @@ const initiateClawPurchase = async (c: Context<{ Variables: { userId: string } }
 
     // Validate volume size if provided
     if (volumeSize !== undefined && (volumeSize < 10 || volumeSize > 10240)) {
-      return c.json({ error: 'Volume size must be between 10 and 10240 GB' }, 400)
+      return c.json({ error: t('api.volumeSizeInvalid') }, 400)
     }
 
     // Get user info for Polar customer
@@ -103,7 +104,7 @@ const initiateClawPurchase = async (c: Context<{ Variables: { userId: string } }
       .limit(1)
 
     if (!user[0]) {
-      return c.json({ error: 'User not found' }, 404)
+      return c.json({ error: t('api.userNotFound') }, 404)
     }
 
     // Validate SSH key if provided
@@ -115,7 +116,7 @@ const initiateClawPurchase = async (c: Context<{ Variables: { userId: string } }
         .limit(1)
 
       if (!sshKey[0]) {
-        return c.json({ error: 'SSH key not found' }, 404)
+        return c.json({ error: t('api.sshKeyNotFound') }, 404)
       }
     }
 
@@ -140,7 +141,7 @@ const initiateClawPurchase = async (c: Context<{ Variables: { userId: string } }
     // Get product ID for this plan
     const productId = getPolarProductId(planId)
     if (!productId) {
-      return c.json({ error: 'Payment not configured for this plan' }, 400)
+      return c.json({ error: t('api.paymentNotConfigured') }, 400)
     }
 
     // Generate pending claw ID
@@ -187,7 +188,7 @@ const initiateClawPurchase = async (c: Context<{ Variables: { userId: string } }
     })
   } catch (err) {
     console.error('Initiate claw purchase error:', err)
-    return c.json({ error: err instanceof Error ? err.message : 'Failed to initiate purchase' }, 500)
+    return c.json({ error: err instanceof Error ? err.message : t('api.failedToInitiatePurchase') }, 500)
   }
 }
 

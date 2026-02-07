@@ -3,6 +3,7 @@ import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { hetzner } from '@/services/hetzner'
+import { t } from '@openclaw/i18n'
 
 const getClaw = async (c: Context<{ Variables: { userId: string } }>) => {
   const userId = c.get('userId')
@@ -16,7 +17,7 @@ const getClaw = async (c: Context<{ Variables: { userId: string } }>) => {
     .limit(1)
 
   if (!claw[0]) {
-    return c.json({ error: 'Claw not found' }, 404)
+    return c.json({ error: t('api.clawNotFound') }, 404)
   }
 
   // Optionally sync status with Hetzner

@@ -3,6 +3,7 @@ import { eq, count } from 'drizzle-orm'
 import { db } from '@/db'
 import { sshKeys } from '@/db/schema'
 import { hetzner } from '@/services/hetzner'
+import { t } from '@openclaw/i18n'
 
 const MAX_SSH_KEYS_PER_ACCOUNT = 50
 
@@ -15,7 +16,7 @@ const createSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
     }>()
 
     if (!name || !publicKey) {
-      return c.json({ error: 'Name and public key are required' }, 400)
+      return c.json({ error: t('api.nameAndKeyRequired') }, 400)
     }
 
     // Check SSH key limit
@@ -26,13 +27,13 @@ const createSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
 
     if (keyCount >= MAX_SSH_KEYS_PER_ACCOUNT) {
       return c.json({
-        error: `You've reached the limit of ${MAX_SSH_KEYS_PER_ACCOUNT} SSH keys. Please contact support to increase this limit.`
+        error: t('api.sshKeyLimitReached')
       }, 400)
     }
 
     // Validate SSH key format
     if (!publicKey.startsWith('ssh-') && !publicKey.startsWith('ecdsa-')) {
-      return c.json({ error: 'Invalid SSH public key format' }, 400)
+      return c.json({ error: t('api.invalidSshKeyFormat') }, 400)
     }
 
     // Create in Hetzner first
@@ -58,7 +59,7 @@ const createSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
     })
   } catch (err) {
     console.error('Create SSH key error:', err)
-    return c.json({ error: err instanceof Error ? err.message : 'Failed to create SSH key' }, 500)
+    return c.json({ error: err instanceof Error ? err.message : t('api.failedToCreateSshKey') }, 500)
   }
 }
 

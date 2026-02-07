@@ -11,13 +11,14 @@ import {
 import { provisionClaw } from '@/controllers/claws/provisionClaw'
 import { hetzner } from '@/services/hetzner'
 import { cleanupClaw } from '@/controllers/claws/helpers/index'
+import { t } from '@openclaw/i18n'
 
 const handlePolarWebhook = async (c: Context) => {
   try {
     const event = await parseWebhook(c)
 
     if (!event) {
-      return c.json({ error: 'Invalid webhook' }, 400)
+      return c.json({ error: t('api.invalidWebhook') }, 400)
     }
 
     await handleWebhook(event, {
@@ -177,7 +178,7 @@ const handlePolarWebhook = async (c: Context) => {
     return c.json({ received: true })
   } catch (err) {
     console.error('Webhook error:', err)
-    return c.json({ error: 'Webhook processing failed' }, 500)
+    return c.json({ error: t('api.webhookProcessingFailed') }, 500)
   }
 }
 

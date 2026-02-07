@@ -1,5 +1,6 @@
 import type { Context } from 'hono'
 import { hetzner } from '@/services/hetzner'
+import { t } from '@openclaw/i18n'
 
 const planOrder = [
   'cx23', 'cx33', 'cx43', 'cx53',
@@ -35,7 +36,7 @@ const getPlans = async (c: Context) => {
     return c.json(plans)
   } catch (err) {
     console.error('Failed to fetch plans:', err)
-    return c.json({ error: 'Failed to fetch plans' }, 500)
+    return c.json({ error: t('api.failedToFetchPlans') }, 500)
   }
 }
 

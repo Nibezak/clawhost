@@ -1,5 +1,6 @@
 import type { Context } from 'hono'
 import { hetzner } from '@/services/hetzner'
+import { t } from '@openclaw/i18n'
 
 const getVolumePricing = async (c: Context) => {
   try {
@@ -11,7 +12,7 @@ const getVolumePricing = async (c: Context) => {
     })
   } catch (err) {
     console.error('Failed to fetch volume pricing:', err)
-    return c.json({ error: 'Failed to fetch volume pricing' }, 500)
+    return c.json({ error: t('api.failedToFetchVolumePricing') }, 500)
   }
 }
 

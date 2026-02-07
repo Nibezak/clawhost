@@ -3,6 +3,7 @@ import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { hetzner } from '@/services/hetzner'
+import { t } from '@openclaw/i18n'
 
 const stopClaw = async (c: Context<{ Variables: { userId: string } }>) => {
   try {
@@ -16,7 +17,7 @@ const stopClaw = async (c: Context<{ Variables: { userId: string } }>) => {
       .limit(1)
 
     if (!claw[0] || !claw[0].hetznerServerId) {
-      return c.json({ error: 'Claw not found' }, 404)
+      return c.json({ error: t('api.clawNotFound') }, 404)
     }
 
     await db.update(claws).set({ status: 'stopping' }).where(eq(claws.id, id))
@@ -25,7 +26,7 @@ const stopClaw = async (c: Context<{ Variables: { userId: string } }>) => {
     return c.json({ success: true })
   } catch (err) {
     console.error('Stop claw error:', err)
-    return c.json({ error: err instanceof Error ? err.message : 'Failed to stop claw' }, 500)
+    return c.json({ error: err instanceof Error ? err.message : t('api.failedToStopClaw') }, 500)
   }
 }
 

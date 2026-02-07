@@ -3,6 +3,7 @@ import type { Context } from 'hono'
 import { auth } from '@/services/firebase'
 import { getResend, FROM_EMAIL } from '@/services/resend'
 import MagicLinkEmail from '@/emails/MagicLinkEmail'
+import { t } from '@openclaw/i18n'
 
 const sendMagicLink = async (c: Context) => {
   try {
@@ -12,11 +13,11 @@ const sendMagicLink = async (c: Context) => {
     }>()
 
     if (!email) {
-      return c.json({ error: 'Email is required' }, 400)
+      return c.json({ error: t('api.emailRequired') }, 400)
     }
 
     if (!redirectUrl) {
-      return c.json({ error: 'Redirect URL is required' }, 400)
+      return c.json({ error: t('api.redirectUrlRequired') }, 400)
     }
 
     const actionCodeSettings = {
@@ -35,13 +36,13 @@ const sendMagicLink = async (c: Context) => {
 
     if (error) {
       console.error('Resend error:', error)
-      return c.json({ error: 'Failed to send email' }, 500)
+      return c.json({ error: t('api.failedToSendEmail') }, 500)
     }
 
     return c.json({ success: true })
   } catch (err) {
     console.error('Send magic link error:', err)
-    return c.json({ error: err instanceof Error ? err.message : 'Failed to send magic link' }, 500)
+    return c.json({ error: err instanceof Error ? err.message : t('api.failedToSendMagicLink') }, 500)
   }
 }
 
