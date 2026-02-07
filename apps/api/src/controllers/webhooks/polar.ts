@@ -90,12 +90,18 @@ const handlePolarWebhook = async (c: Context) => {
         }
       },
 
-      // When subscription is canceled (at period end)
+      // When subscription is canceled (at period end) — schedule claw for deletion
       onSubscriptionCanceled: async (data: SubscriptionWebhookData) => {
-        // Update claw status
+        const deletionScheduledAt = data.currentPeriodEnd
+          ? new Date(data.currentPeriodEnd)
+          : null
+
         await db
           .update(claws)
-          .set({ subscriptionStatus: 'canceled' })
+          .set({
+            subscriptionStatus: 'canceled',
+            ...(deletionScheduledAt ? { deletionScheduledAt } : {}),
+          })
           .where(eq(claws.polarSubscriptionId, data.id))
       },
 

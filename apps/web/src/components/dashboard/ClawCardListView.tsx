@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
-import { CaretDown, ClockCountdown, CircleNotch } from '@phosphor-icons/react'
+import { CaretDown, ClockCountdown } from '@phosphor-icons/react'
 import { ClawMascot } from '@/components/ClawMascot'
 import { ClawCardDropdownMenu } from '@/components/dashboard/ClawCardDropdownMenu'
 import { CopyableField } from '@/components/dashboard/CopyableField'
@@ -24,7 +24,6 @@ const ClawCardListView: FC<ClawCardListViewProps> = ({
   copied,
   passwordCopied,
   hasActionItems,
-  hasBothOptions,
   isScheduledForDeletion,
   isExpanded,
   onToggleExpand,

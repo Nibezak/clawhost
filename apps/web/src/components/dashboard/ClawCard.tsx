@@ -96,6 +96,10 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
           claw={claw}
           status={status}
           flag={flag}
+          locationName={locationName}
+          plan={plan}
+          monthlyPrice={monthlyPrice}
+          attachedSshKey={attachedSshKey || null}
           actions={actions}
           isLoading={isLoading}
           copied={copied}
@@ -118,7 +122,6 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
           copied={copied}
           passwordCopied={passwordCopied}
           hasActionItems={hasActionItems}
-          hasBothOptions={hasBothOptions}
           isScheduledForDeletion={isScheduledForDeletion}
           isExpanded={isExpanded}
           onToggleExpand={() => setIsExpanded(!isExpanded)}

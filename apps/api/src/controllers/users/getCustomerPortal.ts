@@ -19,9 +19,14 @@ const getCustomerPortal = async (c: Context<{ Variables: { userId: string } }>) 
       return c.json({ error: 'No billing account found' }, 404)
     }
 
+    const clientUrl = process.env.CLIENT
+    const http = clientUrl?.includes('localhost') ? 'http' : 'https'
+    const returnUrl = `${http}://${clientUrl}/account`
+
     const polar = getPolarClient()
     const session = await polar.customerSessions.create({
       customerId: polarCustomerId,
+      returnUrl,
     })
 
     return c.json({ url: session.customerPortalUrl })

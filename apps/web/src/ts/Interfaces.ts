@@ -292,6 +292,10 @@ export interface ClawCardGridViewProps {
     claw: Claw
     status: StatusConfig
     flag: string | null
+    locationName: string
+    plan: Plan | undefined
+    monthlyPrice: number | null
+    attachedSshKey: SSHKey | null
     actions: ClawCardActions
     isLoading: boolean
     copied: boolean
@@ -314,7 +318,6 @@ export interface ClawCardListViewProps {
     copied: boolean
     passwordCopied: boolean
     hasActionItems: boolean
-    hasBothOptions: boolean
     isScheduledForDeletion: boolean
     isExpanded: boolean
     onToggleExpand: () => void
