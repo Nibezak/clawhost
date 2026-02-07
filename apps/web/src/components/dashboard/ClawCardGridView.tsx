@@ -30,13 +30,8 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
       <CardContent className="py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="relative shrink-0">
-              <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-xl">
-                <ClawMascot className="h-5 w-5" />
-              </div>
-              <div
-                className={`border-background absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 ${status.color} ${status.pulse ? 'animate-pulse' : ''}`}
-              />
+            <div className="bg-muted flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
+              <ClawMascot className="h-5 w-5" />
             </div>
 
             <div className="min-w-0">
@@ -46,7 +41,7 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
                   className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${status.bgColor}`}
                 >
                   <span
-                    className={`h-1.5 w-1.5 rounded-full ${status.color} mr-1.5 ${status.pulse ? 'animate-pulse' : ''}`}
+                    className={`h-1.5 w-1.5 rounded-full ${status.color} mr-1.5 ${status.pulse ? 'animate-pulse' : ''} ${claw.status === 'running' ? 'animate-pulse shadow-[0_0_4px_2px_rgba(34,197,94,0.5)]' : ''}`}
                   />
                   {status.label}
                 </span>

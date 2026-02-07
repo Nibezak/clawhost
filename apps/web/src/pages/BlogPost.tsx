@@ -33,7 +33,7 @@ const BlogPost: FC = (): ReactNode => {
   const postUrl = `${SITE_URL}/posts/${meta.slug}`
   const imageUrl = meta.coverImage
     ? `${SITE_URL}${meta.coverImage}`
-    : `${SITE_URL}/og-image.png`
+    : `${SITE_URL}/og-image.webp`
 
   return (
     <div className="relative flex min-h-screen flex-col bg-[#0a0a0f] text-white">

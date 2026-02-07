@@ -253,12 +253,12 @@ const Landing: FC = (): ReactNode => {
                 >
                   <GithubLogo className="h-5 w-5" weight="fill" />
                   {t('landing.selfHost')}
-                  {gitHubStars && (
+                  {/* {gitHubStars && (
                     <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-2 py-0.5 text-xs">
                       {gitHubStars.formatted}
                       <span className="text-[12px]">★</span>
                     </span>
-                  )}
+                  )} */}
                 </a>
               </Button>
             </motion.div>

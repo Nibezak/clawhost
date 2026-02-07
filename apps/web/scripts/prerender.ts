@@ -99,7 +99,7 @@ const listingHtml = injectMeta(template, {
   description: 'Guides, tutorials, and news about OpenClaw and self-hosted infrastructure.',
   url: `${SITE_URL}/posts`,
   type: 'website',
-  image: `${SITE_URL}/og-image.png`,
+  image: `${SITE_URL}/og-image.webp`,
   jsonLd: {
     '@context': 'https://schema.org',
     '@type': 'Blog',
@@ -119,7 +119,7 @@ fs.writeFileSync(path.join(DIST, 'posts', 'index.html'), listingHtml)
 
 // Generate /posts/<slug>/index.html for each post
 for (const post of posts) {
-  const imageUrl = post.coverImage ? `${SITE_URL}${post.coverImage}` : `${SITE_URL}/og-image.png`
+  const imageUrl = post.coverImage ? `${SITE_URL}${post.coverImage}` : `${SITE_URL}/og-image.webp`
 
   const postHtml = injectMeta(template, {
     title: post.title,

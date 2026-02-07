@@ -17,8 +17,10 @@ import { getCachedToken } from '@/lib/firebase'
 
 export type { Claw, Location, Plan, SSHKey, UserProfile, UserStats, Volume, VolumePricing } from '@/ts/Interfaces'
 
+const BASE_URL = import.meta.env.VITE_API_URL || '/api'
+
 const client = new RequestClient({
-  baseUrl: '/api',
+  baseUrl: BASE_URL,
   getHeaders: async (): Promise<Record<string, string>> => {
     const token = await getCachedToken()
     return token ? { Authorization: `Bearer ${token}` } : {}
@@ -26,7 +28,7 @@ const client = new RequestClient({
 })
 
 const publicClient = new RequestClient({
-  baseUrl: '/api',
+  baseUrl: BASE_URL,
 })
 
 export const api = {
