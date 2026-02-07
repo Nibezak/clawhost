@@ -24,7 +24,7 @@ const sendMagicLink = async (c: Context) => {
       handleCodeInApp: true,
     }
 
-    const magicLink = await auth.generateSignInWithEmailLink(email, actionCodeSettings)
+    const magicLink = await auth().generateSignInWithEmailLink(email, actionCodeSettings)
 
     const { error } = await resend.emails.send({
       from: FROM_EMAIL,
