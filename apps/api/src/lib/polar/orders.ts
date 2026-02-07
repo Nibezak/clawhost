@@ -71,4 +71,13 @@ export const orders = {
       return { items: [], totalCount: 0, maxPage: 1 }
     }
   },
+
+  /**
+   * Get invoice URL for a specific order
+   */
+  async getInvoiceUrl(orderId: string): Promise<string> {
+    const polar = getPolarClient()
+    const invoice = await polar.orders.invoice({ id: orderId })
+    return invoice.url
+  },
 }

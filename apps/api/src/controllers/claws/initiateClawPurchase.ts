@@ -5,6 +5,44 @@ import { users, sshKeys, pendingClaws } from '../../db/schema'
 import { checkouts, customers } from '../../lib/polar'
 import { generatePassword } from './helpers/index'
 
+const adjectives = [
+  'cozy', 'swift', 'brave', 'calm', 'tiny', 'wild', 'warm', 'cool',
+  'happy', 'lucky', 'fuzzy', 'snowy', 'dusty', 'misty', 'sunny',
+  'sleepy', 'clever', 'gentle', 'mighty', 'silent', 'golden', 'cosmic',
+  'polar', 'rusty', 'nimble', 'jolly', 'witty', 'noble', 'vivid', 'crisp',
+]
+
+const nouns = [
+  'claw', 'panda', 'otter', 'fox', 'wolf', 'bear', 'falcon', 'lynx',
+  'raven', 'crane', 'pike', 'owl', 'hare', 'frog', 'moth', 'finch',
+  'cedar', 'maple', 'birch', 'reef', 'dune', 'peak', 'brook', 'grove',
+  'ember', 'spark', 'drift', 'frost', 'cloud', 'storm',
+]
+
+// Shuffled pool of all combinations — cycles through every name before repeating
+let namePool: string[] = []
+
+function shufflePool() {
+  namePool = []
+  for (const adj of adjectives) {
+    for (const noun of nouns) {
+      namePool.push(`${adj}-${noun}`)
+    }
+  }
+  // Fisher-Yates shuffle
+  for (let i = namePool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[namePool[i], namePool[j]] = [namePool[j], namePool[i]]
+  }
+}
+
+function generateClawName(): string {
+  if (namePool.length === 0) {
+    shufflePool()
+  }
+  return namePool.pop()!
+}
+
 /**
  * Get the Polar product ID for a given plan
  * Products are created per-plan using scripts/create-polar-products.ts
@@ -25,8 +63,8 @@ function getPolarProductId(planId: string): string | null {
 const initiateClawPurchase = async (c: Context<{ Variables: { userId: string } }>) => {
   try {
     const userId = c.get('userId')
-    const { name, planId, location, password, sshKeyId, volumeSize, priceMonthly } = await c.req.json<{
-      name: string
+    const { name: rawName, planId, location, password, sshKeyId, volumeSize, priceMonthly } = await c.req.json<{
+      name?: string
       planId: string
       location: string
       password?: string
@@ -35,9 +73,12 @@ const initiateClawPurchase = async (c: Context<{ Variables: { userId: string } }
       priceMonthly: number // Price in dollars (already 2x markup from frontend)
     }>()
 
-    if (!name || !planId || !location || !priceMonthly) {
+    if (!planId || !location || !priceMonthly) {
       return c.json({ error: 'Missing required fields' }, 400)
     }
+
+    // Generate a cozy random name if not provided
+    const name = rawName || generateClawName()
 
     // Validate volume size if provided
     if (volumeSize !== undefined && (volumeSize < 10 || volumeSize > 10240)) {

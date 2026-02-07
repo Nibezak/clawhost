@@ -8,7 +8,7 @@ import { PageTitle } from '@/components/PageTitle'
 const Privacy: FC = (): ReactNode => {
   return (
     <div className="relative flex min-h-screen flex-col bg-[#0a0a0f] text-white">
-      <PageTitle title="Privacy Policy" />
+      <PageTitle title="Privacy Policy" description="Learn how ClawHost collects, uses, and protects your personal data." />
       <PageBackground />
       <Header />
 

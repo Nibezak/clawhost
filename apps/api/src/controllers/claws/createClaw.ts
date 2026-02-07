@@ -68,7 +68,6 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
     // Create DNS record in Cloudflare pointing subdomain to claw IP
     try {
       await cloudflare.createDNSRecord(subdomain, ip)
-      console.log(`Created DNS record: ${subdomain}.${DOMAIN} -> ${ip}`)
     } catch (dnsErr) {
       console.error('Failed to create DNS record:', dnsErr)
       // Continue anyway - DNS can be added manually if needed

@@ -27,7 +27,6 @@ const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {
       try {
         // Immediately revoke the subscription (stops billing immediately)
         await subscriptions.revoke(claw[0].polarSubscriptionId)
-        console.log(`Revoked subscription ${claw[0].polarSubscriptionId}`)
       } catch (subErr) {
         console.error('Failed to cancel subscription:', subErr)
         // Continue with deletion even if subscription cancellation fails
@@ -58,7 +57,6 @@ const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {
         const dnsRecord = await cloudflare.findDNSRecord(claw[0].subdomain)
         if (dnsRecord) {
           await cloudflare.deleteDNSRecord(dnsRecord.id)
-          console.log(`Deleted DNS record: ${claw[0].subdomain}.${DOMAIN}`)
         }
       } catch (dnsErr) {
         console.error('Failed to delete DNS record:', dnsErr)

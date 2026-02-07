@@ -16,7 +16,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/components/ui/alert' // Keep for warnings only
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { EmptyState } from '@/components/EmptyState'
 import { ErrorState } from '@/components/ErrorState'
 import { Header } from '@/components/Header'
@@ -98,7 +98,6 @@ const SSHKeyCard: FC<SSHKeyCardProps> = ({ sshKey }): ReactNode => {
         </CardContent>
       </Card>
 
-      {/* Delete Confirmation Modal */}
       <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
         <DialogContent>
           <DialogHeader>
@@ -163,7 +162,6 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({ onClose }): ReactNode =
 
   const generateKeyPair = async () => {
     try {
-      // Generate RSA key pair using Web Crypto API
       const keyPair = await crypto.subtle.generateKey(
         {
           name: 'RSASSA-PKCS1-v1_5',
@@ -175,11 +173,9 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({ onClose }): ReactNode =
         ['sign', 'verify']
       )
 
-      // Export public key in JWK format (easier to extract n and e)
       const publicKeyJwk = await crypto.subtle.exportKey('jwk', keyPair.publicKey)
       const privateKeyBuffer = await crypto.subtle.exportKey('pkcs8', keyPair.privateKey)
 
-      // Convert base64url to standard base64
       const base64UrlToBytes = (base64url: string): Uint8Array => {
         const base64 = base64url.replace(/-/g, '+').replace(/_/g, '/')
         const padding = '='.repeat((4 - (base64.length % 4)) % 4)
@@ -187,12 +183,9 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({ onClose }): ReactNode =
         return Uint8Array.from(binary, (c) => c.charCodeAt(0))
       }
 
-      // Get modulus (n) and exponent (e) from JWK
       const n = base64UrlToBytes(publicKeyJwk.n!)
       const e = base64UrlToBytes(publicKeyJwk.e!)
 
-      // Build OpenSSH public key format
-      // Format: string "ssh-rsa" + mpint e + mpint n
       const encodeLength = (len: number): Uint8Array => {
         return new Uint8Array([
           (len >> 24) & 0xff,
@@ -208,7 +201,6 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({ onClose }): ReactNode =
       const nWithPadding = n[0] & 0x80 ? new Uint8Array([0, ...n]) : n
       const eWithPadding = e[0] & 0x80 ? new Uint8Array([0, ...e]) : e
 
-      // Build the key blob
       const keyBlob = new Uint8Array([
         ...encodeLength(keyType.length),
         ...keyType,
@@ -218,11 +210,9 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({ onClose }): ReactNode =
         ...nWithPadding,
       ])
 
-      // Convert to base64
       const keyBlobBase64 = btoa(String.fromCharCode(...keyBlob))
       const sshPublicKey = `ssh-rsa ${keyBlobBase64} ${name || 'generated-key'}@clawhost`
 
-      // Format private key as PEM
       const privateKeyBase64 = btoa(String.fromCharCode(...new Uint8Array(privateKeyBuffer)))
       const pemPrivateKey = `-----BEGIN PRIVATE KEY-----\n${privateKeyBase64.match(/.{1,64}/g)?.join('\n')}\n-----END PRIVATE KEY-----`
 
@@ -262,7 +252,6 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({ onClose }): ReactNode =
           <DialogDescription>{t('sshKeys.addSshKeyModalDescription')}</DialogDescription>
         </DialogHeader>
 
-        {/* Mode selector */}
         <div className="bg-muted flex gap-2 rounded-lg p-1">
           <button
             type="button"
@@ -522,7 +511,7 @@ const SSHKeys: FC = (): ReactNode => {
 
   return (
     <div className="relative flex min-h-screen flex-col bg-[#0a0a0f] text-white">
-      <PageTitle title={t('sshKeys.title')} />
+      <PageTitle title={t('sshKeys.title')} description={t('sshKeys.description')} />
       <PageBackground />
       <Header />
 
@@ -552,9 +541,7 @@ const SSHKeys: FC = (): ReactNode => {
               }
             />
 
-            {/* SSH Keys container */}
             <div className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
-              {/* How it works */}
               <div className="mb-6 rounded-lg border border-white/5 bg-white/5">
                 <button
                   type="button"
@@ -582,7 +569,6 @@ const SSHKeys: FC = (): ReactNode => {
                 )}
               </div>
 
-              {/* SSH Keys list */}
               {isError ? (
                 <ErrorState
                   title={t('errors.failedToLoadSSHKeys')}
@@ -620,7 +606,6 @@ const SSHKeys: FC = (): ReactNode => {
               )}
             </div>
 
-            {/* Create modal */}
             {showCreate && <CreateSSHKeyModal onClose={() => setShowCreate(false)} />}
           </>
         )}

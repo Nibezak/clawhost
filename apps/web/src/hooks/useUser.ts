@@ -1,5 +1,5 @@
 import type { UpdateProfileData } from '@/ts/Interfaces'
-import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
+import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 
 export const PROFILE_QUERY_KEY = ['profile'] as const
@@ -34,11 +34,13 @@ export function useUserStats() {
   })
 }
 
-export function useBillingHistory(page: number = 1, limit: number = 10) {
-  return useQuery({
-    queryKey: [...BILLING_HISTORY_QUERY_KEY, page, limit],
-    queryFn: () => api.getBillingHistory(page, limit),
+export function useBillingHistory(limit: number = 10) {
+  return useInfiniteQuery({
+    queryKey: [...BILLING_HISTORY_QUERY_KEY, limit],
+    queryFn: ({ pageParam }) => api.getBillingHistory(pageParam, limit),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) =>
+      lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
     staleTime: 5 * 60 * 1000,
-    placeholderData: keepPreviousData,
   })
 }

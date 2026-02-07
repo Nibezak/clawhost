@@ -97,14 +97,10 @@ export const hetzner = {
       body.user_data = userData
     }
 
-    console.log('Creating Hetzner server:', { name, serverType, location })
-
     const data = await getClient().post<{
       server: HetznerServer
       root_password: string
     }>('/servers', body)
-
-    console.log('Hetzner server created:', data.server.id)
 
     return {
       serverId: data.server.id,

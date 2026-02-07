@@ -1,5 +1,6 @@
 import type {
   BillingHistoryResponse,
+  BillingInvoiceResponse,
   Claw,
   Location,
   Plan,
@@ -11,43 +12,15 @@ import type {
   VolumePricing,
 } from '@/ts/Interfaces'
 import { RequestClient } from '@openclaw/shared'
-import { auth } from '@/lib/firebase'
+import { getCachedToken } from '@/lib/firebase'
 
 // Re-export types for backward compatibility
 export type { Claw, Location, Plan, SSHKey, UserProfile, UserStats, Volume, VolumePricing } from '@/ts/Interfaces'
 
-// Helper to wait for auth to be ready
-const getAuthToken = async (): Promise<string | null> => {
-  // If user is already available, get token immediately
-  if (auth.currentUser) {
-    return auth.currentUser.getIdToken()
-  }
-
-  // Wait for auth state to be ready (max 5 seconds)
-  return new Promise((resolve) => {
-    const timeout = setTimeout(() => {
-      resolve(null)
-    }, 5000)
-
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      clearTimeout(timeout)
-      unsubscribe()
-      if (user) {
-        user
-          .getIdToken()
-          .then(resolve)
-          .catch(() => resolve(null))
-      } else {
-        resolve(null)
-      }
-    })
-  })
-}
-
 const client = new RequestClient({
   baseUrl: '/api',
   getHeaders: async (): Promise<Record<string, string>> => {
-    const token = await getAuthToken()
+    const token = await getCachedToken()
     return token ? { Authorization: `Bearer ${token}` } : {}
   },
 })
@@ -99,4 +72,6 @@ export const api = {
   getUserStats: () => client.get<UserStats>('/users/me/stats'),
   getBillingHistory: (page: number = 1, limit: number = 10) =>
     client.get<BillingHistoryResponse>(`/users/me/billing?page=${page}&limit=${limit}`),
+  getOrderInvoice: (orderId: string) =>
+    client.get<BillingInvoiceResponse>(`/users/me/billing/${orderId}/invoice`),
 }

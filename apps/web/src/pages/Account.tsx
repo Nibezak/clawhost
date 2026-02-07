@@ -1,12 +1,11 @@
 import type { FC, ReactNode } from 'react'
 import type { BillingOrder } from '@/ts/Interfaces'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
 import { useUIStore } from '@/lib/store'
 import { useProfile, useUpdateProfile, useUserStats, useBillingHistory } from '@/hooks'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
@@ -16,28 +15,55 @@ import { Header } from '@/components/Header'
 import { LandingFooter } from '@/components/LandingFooter'
 import { PageBackground } from '@/components/PageBackground'
 import { PageTitle } from '@/components/PageTitle'
-import { CircleNotch, Calendar, Key, Receipt, CaretLeft, CaretRight } from '@phosphor-icons/react'
+import { CircleNotch, Calendar, Key, Receipt, DownloadSimple } from '@phosphor-icons/react'
+import { api } from '@/lib/api'
 import { ClawMascot } from '@/components/ClawMascot'
 import { EmptyState } from '@/components/EmptyState'
 import { ErrorState } from '@/components/ErrorState'
 import { PageHeader } from '@/components/PageHeader'
+import { Button } from '@/components/ui/button'
 
 const Account: FC = (): ReactNode => {
-  const { user, loading: authLoading } = useAuth()
+  const { user, loading: authLoading, updateCachedProfile } = useAuth()
   const { showToast } = useUIStore()
 
   const [name, setName] = useState('')
   const [hasChanges, setHasChanges] = useState(false)
-  const [billingPage, setBillingPage] = useState(1)
+  const [loadingInvoiceIds, setLoadingInvoiceIds] = useState<Set<string>>(new Set())
 
-  // Fetch profile to get name
   const { data: profile } = useProfile({ enabled: !!user })
   const { data: userStats, isLoading: isStatsLoading } = useUserStats()
-  const billingSkeletonCount = userStats?.orderCount ?? 0
+  const billingTotal = userStats?.orderCount ?? 0
   const knowsBillingCount = !isStatsLoading && userStats !== undefined
-  const { data: billingData, isLoading: isBillingLoading, isError: isBillingError } = useBillingHistory(billingPage)
+  const BILLING_PAGE_SIZE = 10
+  const {
+    data: billingData,
+    isLoading: isBillingLoading,
+    isError: isBillingError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useBillingHistory(BILLING_PAGE_SIZE)
 
-  // Initialize name from profile when loaded
+  const observerRef = useRef<IntersectionObserver | null>(null)
+  const loadMoreRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (isFetchingNextPage) return
+      if (observerRef.current) observerRef.current.disconnect()
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasNextPage) {
+          fetchNextPage()
+        }
+      })
+      if (node) observerRef.current.observe(node)
+    },
+    [isFetchingNextPage, hasNextPage, fetchNextPage]
+  )
+
+  const allBillingItems = billingData?.pages.flatMap((page) => page.items) ?? []
+  const remainingBillingCount = Math.max(0, billingTotal - allBillingItems.length)
+  const nextPageSkeletonCount = Math.min(BILLING_PAGE_SIZE, remainingBillingCount)
+
   useEffect(() => {
     if (profile?.name) {
       setName(profile.name)
@@ -53,6 +79,7 @@ const Account: FC = (): ReactNode => {
         onSuccess: (data) => {
           setName(data.name || '')
           setHasChanges(false)
+          updateCachedProfile({ name: data.name })
           showToast(t('account.profileUpdatedSuccessfully'), 'success')
         },
         onError: (err: Error) => {
@@ -120,11 +147,27 @@ const Account: FC = (): ReactNode => {
     }
   }
 
+  const handleViewInvoice = async (orderId: string) => {
+    setLoadingInvoiceIds((prev) => new Set(prev).add(orderId))
+    try {
+      const { url } = await api.getOrderInvoice(orderId)
+      window.open(url, '_blank')
+    } catch {
+      showToast(t('account.failedToLoadInvoice'), 'error')
+    } finally {
+      setLoadingInvoiceIds((prev) => {
+        const next = new Set(prev)
+        next.delete(orderId)
+        return next
+      })
+    }
+  }
+
   const joinedDate = user?.metadata?.creationTime
 
   return (
     <div className="relative flex min-h-screen flex-col bg-[#0a0a0f] text-white">
-      <PageTitle title={t('account.title')} />
+      <PageTitle title={t('account.title')} description={t('account.description')} />
       <PageBackground />
       <Header />
 
@@ -196,20 +239,19 @@ const Account: FC = (): ReactNode => {
           </div>
         </div>
 
-        {/* Billing History Section */}
         <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
           <h3 className="mb-1 font-semibold">{t('account.billingHistory')}</h3>
           <p className="text-muted-foreground mb-6 text-sm">{t('account.billingDescription')}</p>
 
-          {isBillingLoading && knowsBillingCount && billingSkeletonCount === 0 ? (
+          {isBillingLoading && knowsBillingCount && billingTotal === 0 ? (
             <EmptyState
               icon={<Receipt className="text-primary h-10 w-10" />}
               title={t('account.noBillingHistory')}
               description={t('account.noBillingHistoryDescription')}
             />
-          ) : isBillingLoading && billingSkeletonCount > 0 ? (
-            <div className="space-y-3">
-              {Array.from({ length: Math.min(billingSkeletonCount, 10) }).map((_, i) => (
+          ) : isBillingLoading && billingTotal > 0 ? (
+            <div className="space-y-2">
+              {Array.from({ length: Math.min(billingTotal, BILLING_PAGE_SIZE) }).map((_, i) => (
                 <div key={i} className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] p-4">
                   <div className="space-y-2">
                     <Skeleton className="h-4 w-32" />
@@ -223,7 +265,7 @@ const Account: FC = (): ReactNode => {
               ))}
             </div>
           ) : isBillingLoading ? (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {Array.from({ length: 3 }).map((_, i) => (
                 <div key={i} className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] p-4">
                   <div className="space-y-2">
@@ -241,64 +283,66 @@ const Account: FC = (): ReactNode => {
             <ErrorState
               title={t('account.failedToLoadBilling')}
             />
-          ) : !billingData?.items.length ? (
+          ) : !allBillingItems.length ? (
             <EmptyState
               icon={<Receipt className="text-primary h-10 w-10" />}
               title={t('account.noBillingHistory')}
               description={t('account.noBillingHistoryDescription')}
             />
           ) : (
-            <>
-              <div className="space-y-2">
-                {billingData.items.map((order: BillingOrder) => (
-                  <div
-                    key={order.id}
-                    className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] p-4 transition-colors hover:bg-white/[0.04]"
-                  >
-                    <div>
-                      <p className="text-sm font-medium">
-                        {order.productName || getBillingReasonLabel(order.billingReason)}
-                      </p>
-                      <p className="text-muted-foreground text-xs">
-                        {formatDate(order.createdAt)}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <span className="text-sm font-medium">
-                        {formatCurrency(order.totalAmount, order.currency)}
-                      </span>
-                      {getStatusBadge(order.status)}
-                    </div>
+            <div className="space-y-2">
+              {allBillingItems.map((order: BillingOrder) => (
+                <div
+                  key={order.id}
+                  className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] p-4 transition-colors hover:bg-white/[0.04]"
+                >
+                  <div>
+                    <p className="text-sm font-medium">
+                      {order.productName || getBillingReasonLabel(order.billingReason)}
+                    </p>
+                    <p className="text-muted-foreground text-xs">
+                      {formatDate(order.createdAt)}
+                    </p>
                   </div>
-                ))}
-              </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm font-medium">
+                      {formatCurrency(order.totalAmount, order.currency)}
+                    </span>
+                    {getStatusBadge(order.status)}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleViewInvoice(order.id)}
+                      disabled={loadingInvoiceIds.has(order.id)}
+                      title={t('account.viewInvoice')}
+                    >
+                      {loadingInvoiceIds.has(order.id) ? (
+                        <CircleNotch className="h-5 w-5 animate-spin" />
+                      ) : (
+                        <DownloadSimple className="h-5 w-5" />
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              ))}
 
-              {billingData.totalPages > 1 && (
-                <div className="mt-4 flex items-center justify-between">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setBillingPage((p) => Math.max(1, p - 1))}
-                    disabled={billingPage <= 1}
-                  >
-                    <CaretLeft className="mr-1 h-4 w-4" />
-                    {t('account.previousPage')}
-                  </Button>
-                  <span className="text-muted-foreground text-sm">
-                    {t('account.pageOf', { page: String(billingPage), totalPages: String(billingData.totalPages) })}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setBillingPage((p) => Math.min(billingData.totalPages, p + 1))}
-                    disabled={billingPage >= billingData.totalPages}
-                  >
-                    {t('account.nextPage')}
-                    <CaretRight className="ml-1 h-4 w-4" />
-                  </Button>
+              {hasNextPage && (
+                <div ref={loadMoreRef} className="space-y-2">
+                  {Array.from({ length: nextPageSkeletonCount }).map((_, i) => (
+                    <div key={`skeleton-${i}`} className="flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] p-4">
+                      <div className="space-y-2">
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-3 w-24" />
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <Skeleton className="h-4 w-16" />
+                        <Skeleton className="h-5 w-14 rounded-full" />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
-            </>
+            </div>
           )}
         </div>
           </>

@@ -21,7 +21,7 @@ import { Key, User, SignOut, Lightning } from '@phosphor-icons/react'
 import { ClawMascot } from '@/components/ClawMascot'
 
 const Header: FC<HeaderProps> = ({ showNavLinks = false, navLinks = [], activeSection = '' }): ReactNode => {
-  const { user, loading: authLoading, signOut } = useAuth()
+  const { user, loading: authLoading, cachedProfile, signOut } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
   const [scrolled, setScrolled] = useState(false)
@@ -31,18 +31,16 @@ const Header: FC<HeaderProps> = ({ showNavLinks = false, navLinks = [], activeSe
       setScrolled(window.scrollY > 50)
     }
     window.addEventListener('scroll', handleScroll)
-    // Check initial scroll position
     handleScroll()
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const { data: profile, isLoading: profileLoading } = useProfile({
+  const { data: profile } = useProfile({
     enabled: !!user,
-    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    staleTime: 1000 * 60 * 5,
   })
 
-  const displayName = profile?.name || user?.email || ''
-  const isProfileReady = !profileLoading || !!profile
+  const displayName = profile?.name || cachedProfile?.name || user?.email || cachedProfile?.email || ''
 
   const getInitials = (text: string) => {
     if (!text) return '?'
@@ -85,7 +83,7 @@ const Header: FC<HeaderProps> = ({ showNavLinks = false, navLinks = [], activeSe
         )}
 
         <div className="flex items-center gap-3">
-          {authLoading || (user && !isProfileReady) ? (
+          {authLoading && !cachedProfile ? (
             <Button
               variant="ghost"
               size="sm"
@@ -94,7 +92,7 @@ const Header: FC<HeaderProps> = ({ showNavLinks = false, navLinks = [], activeSe
               <Skeleton className="h-7 w-7 shrink-0 rounded-full bg-white/10" />
               <Skeleton className="hidden h-4 w-16 rounded bg-white/10 sm:block" />
             </Button>
-          ) : user ? (
+          ) : user || cachedProfile ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button

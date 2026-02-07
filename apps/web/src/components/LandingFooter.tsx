@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import { t } from '@openclaw/i18n'
 import { Logo } from '@/components/Logo'
 import { ROUTES } from '@/lib/routes'
 import { GITHUB_REPO_URL } from '@/hooks'
@@ -10,11 +11,10 @@ const LandingFooter: FC = (): ReactNode => {
     <footer className="border-t border-white/5 px-6 py-16">
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-12 md:grid-cols-4">
-          {/* Brand */}
           <div className="md:col-span-2">
             <Logo />
             <p className="mt-4 max-w-sm text-[15.5px] text-gray-400">
-              Production-ready infrastructure with one-click OpenClaw deployment, handled end to end — build, ship, and move faster with AI.
+              {t('footer.productDescription')}
             </p>
             <div className="mt-6 flex items-center gap-3">
               <a
@@ -35,59 +35,57 @@ const LandingFooter: FC = (): ReactNode => {
               </a>
             </div>
             <p className="mt-4 text-sm text-gray-500">
-              &copy; {new Date().getFullYear()} ClawHost. All rights reserved.
+              &copy; {new Date().getFullYear()} {t('footer.copyright')}
             </p>
           </div>
 
-          {/* Product */}
           <div>
-            <h4 className="font-clash mb-4 font-semibold text-white">Product</h4>
+            <h4 className="font-clash mb-4 font-semibold text-white">{t('footer.product')}</h4>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link to="/#how-it-works" className="text-gray-400 transition hover:text-white">
-                  How it Works
+                  {t('landing.howItWorks')}
                 </Link>
               </li>
               <li>
                 <Link to="/#features" className="text-gray-400 transition hover:text-white">
-                  Features
+                  {t('landing.features')}
                 </Link>
               </li>
               <li>
                 <Link to="/#pricing" className="text-gray-400 transition hover:text-white">
-                  Pricing
+                  {t('landing.pricing')}
                 </Link>
               </li>
               <li>
                 <Link to="/#faq" className="text-gray-400 transition hover:text-white">
-                  Questions
+                  {t('landing.faqTitle')}
                 </Link>
               </li>
               <li>
                 <Link to="/#testimonials" className="text-gray-400 transition hover:text-white">
-                  Testimonials
+                  {t('landing.testimonials')}
                 </Link>
               </li>
               <li>
                 <Link to="/#comparison" className="text-gray-400 transition hover:text-white">
-                  Comparison
+                  {t('landing.comparison')}
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Legal & More */}
           <div>
-            <h4 className="font-clash mb-4 font-semibold text-white">Legal & More</h4>
+            <h4 className="font-clash mb-4 font-semibold text-white">{t('footer.legalAndMore')}</h4>
             <ul className="space-y-3 text-sm">
               <li>
                 <Link to={ROUTES.PRIVACY} className="text-gray-400 transition hover:text-white">
-                  Privacy Policy
+                  {t('footer.privacyPolicy')}
                 </Link>
               </li>
               <li>
                 <Link to={ROUTES.TERMS} className="text-gray-400 transition hover:text-white">
-                  Terms of Service
+                  {t('footer.termsOfService')}
                 </Link>
               </li>
               <li>
@@ -95,7 +93,7 @@ const LandingFooter: FC = (): ReactNode => {
                   href="mailto:support@clawhost.cloud"
                   className="text-gray-400 transition hover:text-white"
                 >
-                  Get in Touch
+                  {t('footer.getInTouch')}
                 </a>
               </li>
             </ul>

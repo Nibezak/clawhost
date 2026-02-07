@@ -8,7 +8,7 @@ import { PageTitle } from '@/components/PageTitle'
 const Terms: FC = (): ReactNode => {
   return (
     <div className="relative flex min-h-screen flex-col bg-[#0a0a0f] text-white">
-      <PageTitle title="Terms of Service" />
+      <PageTitle title="Terms of Service" description="Read the terms and conditions for using ClawHost services." />
       <PageBackground />
       <Header />
 

@@ -1,6 +1,5 @@
 import type { FC, ReactNode } from 'react'
 import type {
-  Claw,
   ClawCardProps,
   CopyableFieldProps,
   CreateClawModalProps,
@@ -53,7 +52,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
-  Lightning,
   Play,
   Square,
   ArrowClockwise,
@@ -69,13 +67,12 @@ import {
   SquaresFour,
   Copy,
   CaretDown,
-  PlusCircle,
+  Lightning,
 } from '@phosphor-icons/react'
 import { PageHeader } from '@/components/PageHeader'
 import { ActionButton } from '@/components/ActionButton'
 import { ClawMascot } from '@/components/ClawMascot'
 
-// Generate a secure random password
 function generatePassword(length = 16): string {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'
   const array = new Uint8Array(length)
@@ -83,7 +80,6 @@ function generatePassword(length = 16): string {
   return Array.from(array, (byte) => chars[byte % chars.length]).join('')
 }
 
-// Generate a readable slug from claw ID (deterministic, 7 chars)
 function generateSlug(id: string): string {
   const chars = 'abcdefghjkmnpqrstuvwxyz23456789' // Removed confusing chars: i, l, o, 0, 1
   let hash = 0
@@ -100,7 +96,6 @@ function generateSlug(id: string): string {
   return slug
 }
 
-// Location to country flag emoji mapping
 const locationFlags: Record<string, string> = {
   ash: '🇺🇸', // Ashburn, USA
   hil: '🇺🇸', // Hillsboro, USA
@@ -108,7 +103,6 @@ const locationFlags: Record<string, string> = {
   nbg1: '🇩🇪', // Nuremberg, Germany
   hel1: '🇫🇮', // Helsinki, Finland
   sin: '🇸🇬', // Singapore
-  // Additional Hetzner locations
   'fsn1-dc14': '🇩🇪',
   'nbg1-dc3': '🇩🇪',
   'hel1-dc2': '🇫🇮',
@@ -116,7 +110,6 @@ const locationFlags: Record<string, string> = {
   'hil-dc1': '🇺🇸',
 }
 
-// Location to full name mapping
 const locationNames: Record<string, string> = {
   ash: 'Ashburn, USA',
   hil: 'Hillsboro, USA',
@@ -131,7 +124,6 @@ const locationNames: Record<string, string> = {
   'hil-dc1': 'Hillsboro, USA',
 }
 
-// Status colors and labels (matches Hetzner statuses)
 function getStatusConfig(): Record<string, StatusConfig> {
   return {
     running: { color: 'bg-green-500', bgColor: 'bg-green-500/10', label: t('dashboard.status.running') },
@@ -264,7 +256,6 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
     return (
       <Card>
         <CardContent className="py-4">
-          {/* Header with flag and actions */}
           <div className="mb-3 flex items-start justify-between">
             <div className="relative">
               <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-lg text-xl">
@@ -339,7 +330,6 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
             )}
           </div>
 
-          {/* Claw name and status */}
           <div className="mb-2">
             <div className="flex items-center gap-2">
               <h3 className="truncate text-base font-semibold">{claw.name}</h3>
@@ -359,7 +349,6 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
             </span>
           </div>
 
-          {/* Details */}
           <div className="text-muted-foreground mb-3 space-y-1 text-sm">
             <div className="flex items-center justify-between">
               <span>{t('dashboard.plan')}</span>
@@ -377,7 +366,6 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
             )}
           </div>
 
-          {/* {t('dashboard.connect')} button */}
           {claw.status === 'running' &&
             claw.ip &&
             (hasBothOptions ? (
@@ -430,7 +418,6 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
             ))}
         </CardContent>
 
-        {/* Delete Confirmation Modal */}
         <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
           <DialogContent>
             <DialogHeader>
@@ -467,7 +454,6 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
     )
   }
 
-  // Copyable field component for expanded section
   const CopyableField: FC<CopyableFieldProps> = ({ label, value }): ReactNode => (
     <div
       onClick={() => copyField(label, value)}
@@ -490,10 +476,8 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
   return (
     <Card>
       <CardContent className="py-4">
-        {/* Main row - always visible */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            {/* Server icon + Status indicator */}
             <div className="relative">
               <div className="bg-muted flex h-12 w-12 items-center justify-center rounded-xl">
                 <ClawMascot className="h-6 w-6" />
@@ -503,7 +487,6 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
               />
             </div>
 
-            {/* Claw name + status */}
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <h3 className="text-base font-semibold">{claw.name}</h3>
@@ -517,7 +500,7 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
                 </span>
               </div>
               <a
-                href={`https://${claw.subdomain || generateSlug(claw.id)}.clawhost.cloud`}
+                href={`https://${claw.subdomain || generateSlug(claw.id)}.clawhost.cloud${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-foreground text-sm transition-colors"
@@ -528,7 +511,6 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Expand/collapse toggle */}
             <Button
               variant="ghost"
               size="icon"
@@ -540,7 +522,6 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
               />
             </Button>
 
-            {/* Actions menu */}
             {deleteMutation.isPending ? (
               <Button variant="ghost" size="icon" disabled>
                 <CircleNotch className="h-5 w-5 animate-spin" />
@@ -627,7 +608,6 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
           </div>
         </div>
 
-        {/* Expanded details section */}
         {isExpanded && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
@@ -637,19 +617,15 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
             className="border-border mt-4 border-t pt-4"
           >
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-              {/* Domain */}
               <CopyableField
                 label={t('dashboard.domain')}
                 value={`${claw.subdomain || generateSlug(claw.id)}.clawhost.cloud`}
               />
 
-              {/* IP Address */}
               {claw.ip && <CopyableField label={t('dashboard.ipAddress')} value={claw.ip} />}
 
-              {/* Location */}
               <CopyableField label={t('dashboard.location')} value={`${flag || ''} ${locationName}`.trim()} />
 
-              {/* Plan */}
               <CopyableField
                 label={t('dashboard.plan')}
                 value={
@@ -659,17 +635,14 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
                 }
               />
 
-              {/* Monthly Cost */}
               {monthlyPrice && (
                 <CopyableField label={t('dashboard.monthlyCost')} value={`$${monthlyPrice.toFixed(0)}/mo`} />
               )}
 
-              {/* Server ID */}
               {claw.hetznerServerId && (
                 <CopyableField label={t('dashboard.serverId')} value={`#${claw.hetznerServerId}`} />
               )}
 
-              {/* Created At */}
               {claw.createdAt && (
                 <CopyableField
                   label={t('dashboard.created')}
@@ -681,10 +654,8 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
                 />
               )}
 
-              {/* SSH Key */}
               {attachedSshKey && <CopyableField label={t('dashboard.sshKey')} value={attachedSshKey.name} />}
 
-              {/* Storage */}
               {claw.volumes && claw.volumes.length > 0 && (
                 <CopyableField
                   label={t('dashboard.storage')}
@@ -692,7 +663,6 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
                 />
               )}
 
-              {/* Gateway Token */}
               {claw.gatewayToken && (
                 <CopyableField label={t('dashboard.gatewayToken')} value={claw.gatewayToken} />
               )}
@@ -701,7 +671,6 @@ const ClawCard: FC<ClawCardProps> = ({ claw, sshKeys, plans, viewMode = 'list' }
         )}
       </CardContent>
 
-      {/* Delete Confirmation Modal */}
       <Dialog open={showDeleteModal} onOpenChange={setShowDeleteModal}>
         <DialogContent>
           <DialogHeader>
@@ -748,7 +717,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
   onNavigateToSSHKeys,
 }): ReactNode => {
   const [name, setName] = useState('')
-  // Use preselected plan if provided and valid, otherwise fall back to first plan
   const initialPlanId =
     preselectedPlanId && plans.find((p) => p.id === preselectedPlanId)
       ? preselectedPlanId
@@ -758,7 +726,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
   const [password, setPassword] = useState(generatePassword())
   const [showPassword, setShowPassword] = useState(false)
   const [selectedSshKeyId, setSelectedSshKeyId] = useState<string>('')
-  const [volumeSize, setVolumeSize] = useState<number>(0) // 0 means no volume
+  const [volumeSize, setVolumeSize] = useState<number>(0)
   const [showAdvanced, setShowAdvanced] = useState(false)
   const { showToast } = useUIStore()
 
@@ -771,7 +739,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
       return
     }
 
-    // Calculate total price (plan + optional volume)
     let totalPrice = selectedPlanData.priceMonthly
     if (volumeSize > 0 && volumePricing) {
       totalPrice += volumeSize * volumePricing.pricePerGbMonthly
@@ -793,7 +760,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
             showToast((data as unknown as { error: string }).error, 'error')
             return
           }
-          // Redirect to Polar checkout
           window.location.href = data.checkoutUrl
         },
         onError: (err: Error) => {
@@ -820,7 +786,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
           }}
           className="flex-1 space-y-5 overflow-y-auto px-6 pb-6"
         >
-          {/* Claw Name */}
           <div className="space-y-2">
             <Label>{t('createClaw.clawName')}</Label>
             <Input
@@ -832,7 +797,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
             />
           </div>
 
-          {/* Location */}
           <div className="space-y-2">
             <Label>{t('createClaw.location')}</Label>
             <div className="grid grid-cols-2 gap-2">
@@ -868,7 +832,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
             </div>
           </div>
 
-          {/* Plan */}
           <div className="space-y-2">
             <Label>{t('createClaw.plan')}</Label>
             <div className="space-y-2">
@@ -908,7 +871,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
             </div>
           </div>
 
-          {/* Advanced Options Toggle */}
           <button
             type="button"
             onClick={() => setShowAdvanced(!showAdvanced)}
@@ -920,10 +882,8 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
             {t('createClaw.advancedOptions')}
           </button>
 
-          {/* Advanced Options */}
           {showAdvanced && (
             <div className="space-y-5 pt-2">
-              {/* Root Password */}
               <div className="space-y-2">
                 <Label>{t('createClaw.rootPassword')}</Label>
                 <div className="flex items-center gap-2">
@@ -972,7 +932,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                 </p>
               </div>
 
-              {/* SSH Key */}
               <div className="space-y-2">
                 <Label>{t('createClaw.sshKeyOptional')}</Label>
                 {sshKeys.length > 0 ? (
@@ -1044,7 +1003,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                 )}
               </div>
 
-              {/* Additional Storage */}
               {volumePricing && (
                 <div className="space-y-2">
                   <Label>{t('createClaw.additionalStorageOptional')}</Label>
@@ -1096,7 +1054,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
             </div>
           )}
 
-          {/* Pricing Summary */}
           {selectedPlan && (
             <div className="bg-muted rounded-lg p-4 space-y-2">
               {name && (
@@ -1112,7 +1069,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                 </div>
               )}
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">{t('createClaw.plan')}</span>
+                <span className="text-muted-foreground">{selectedPlan.name}</span>
                 <span>${selectedPlan.priceMonthly.toFixed(2)}/mo</span>
               </div>
               {volumeSize > 0 && volumePricing && (
@@ -1136,7 +1093,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
             </div>
           )}
 
-          {/* Buttons */}
           <div className="flex justify-end gap-3">
             <Button type="button" variant="ghost" onClick={onClose}>
               {t('common.cancel')}
@@ -1173,13 +1129,11 @@ const Dashboard: FC = (): ReactNode => {
   const [preselectedPlanId, setPreselectedPlanId] = useState<string | null>(null)
   const { instancesViewMode, setInstancesViewMode } = usePreferencesStore()
 
-  // Check for plan param in URL and open modal if present
   useEffect(() => {
     const planParam = searchParams.get('plan')
     if (planParam) {
       setPreselectedPlanId(planParam)
       setShowCreate(true)
-      // Clear the param from URL
       setSearchParams({}, { replace: true })
     }
   }, [searchParams, setSearchParams])
@@ -1196,7 +1150,7 @@ const Dashboard: FC = (): ReactNode => {
 
   return (
     <div className="relative flex min-h-screen flex-col bg-[#0a0a0f] text-white">
-      <PageTitle title={t('dashboard.title')} />
+      <PageTitle title={t('dashboard.title')} description={t('dashboard.description')} />
       <PageBackground />
       <Header />
 
@@ -1212,14 +1166,12 @@ const Dashboard: FC = (): ReactNode => {
           </div>
         ) : (
           <>
-            {/* Title + Create button */}
             <PageHeader
               title={t('dashboard.title')}
               description={`${claws?.length ?? 0} ${claws?.length === 1 ? t('dashboard.claw') : t('dashboard.clawsPlural')}`}
               action={
                 !isLoading && claws?.length === 0 ? undefined : (
                   <div className="flex items-center gap-2">
-                    {/* View mode toggle */}
                     <div className="flex items-center rounded-lg border border-white/10 p-0.5">
                       <button
                         onClick={() => setInstancesViewMode('list')}
@@ -1244,7 +1196,7 @@ const Dashboard: FC = (): ReactNode => {
                     </div>
                     <ActionButton
                       onClick={() => setShowCreate(true)}
-                      icon={<PlusCircle className="h-5 w-5" weight="bold" />}
+                      icon={<Lightning className="h-5 w-5" weight="fill" />}
                       label={t('createClaw.title')}
                     />
                   </div>
@@ -1252,7 +1204,6 @@ const Dashboard: FC = (): ReactNode => {
               }
             />
 
-            {/* Claws container */}
             <div className="rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
               {isError ? (
                 <ErrorState
@@ -1301,7 +1252,6 @@ const Dashboard: FC = (): ReactNode => {
               )}
             </div>
 
-            {/* Create modal */}
             {showCreate && plans && locations && (
               <CreateClawModal
                 plans={plans}

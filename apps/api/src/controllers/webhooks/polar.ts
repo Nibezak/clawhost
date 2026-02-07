@@ -26,8 +26,6 @@ const handlePolarWebhook = async (c: Context) => {
       return c.json({ error: 'Invalid webhook' }, 400)
     }
 
-    console.log(`Received Polar webhook: ${event.type}`)
-
     await handleWebhook(event, {
       // When checkout is completed (subscription created)
       onCheckoutUpdated: async (data: CheckoutWebhookData) => {
@@ -35,25 +33,29 @@ const handlePolarWebhook = async (c: Context) => {
           return
         }
 
-        console.log(`Checkout succeeded: ${data.id}`)
-
         // The subscription.active event will handle provisioning
         // This is just for logging/tracking
       },
 
       // When subscription becomes active (payment confirmed)
       onSubscriptionActive: async (data: SubscriptionWebhookData) => {
-        console.log(`Subscription active: ${data.id}`)
+        // Check if already provisioned (subscription.created may have handled it)
+        const existingClaw = await db
+          .select()
+          .from(claws)
+          .where(eq(claws.polarSubscriptionId, data.id))
+          .limit(1)
 
-        // Extract pending claw ID from metadata
-        const pendingClawId = data.metadata?.pendingClawId
-
-        if (!pendingClawId) {
-          console.log('No pendingClawId in subscription metadata, skipping provisioning')
+        if (existingClaw[0]) {
+          console.log(`Claw already provisioned for subscription ${data.id}, skipping`)
           return
         }
 
-        // Provision the claw
+        const pendingClawId = data.metadata?.pendingClawId
+        if (!pendingClawId) {
+          return
+        }
+
         const result = await provisionClaw({
           pendingClawId,
           subscriptionId: data.id,
@@ -68,31 +70,30 @@ const handlePolarWebhook = async (c: Context) => {
 
       // When subscription is created (may not be active yet)
       onSubscriptionCreated: async (data: SubscriptionWebhookData) => {
-        console.log(`Subscription created: ${data.id}, status: ${data.status}`)
+        if (data.status !== 'active') {
+          console.log(`Subscription created but not active yet (${data.status}), waiting for activation`)
+          return
+        }
 
-        // If immediately active, provision the claw
-        if (data.status === 'active') {
-          const pendingClawId = data.metadata?.pendingClawId
+        const pendingClawId = data.metadata?.pendingClawId
+        if (!pendingClawId) {
+          return
+        }
 
-          if (pendingClawId) {
-            const result = await provisionClaw({
-              pendingClawId,
-              subscriptionId: data.id,
-              customerId: data.customerId,
-              productId: data.productId,
-            })
+        const result = await provisionClaw({
+          pendingClawId,
+          subscriptionId: data.id,
+          customerId: data.customerId,
+          productId: data.productId,
+        })
 
-            if (!result.success) {
-              console.error(`Failed to provision claw: ${result.error}`)
-            }
-          }
+        if (!result.success) {
+          console.error(`Failed to provision claw: ${result.error}`)
         }
       },
 
       // When subscription is canceled (at period end)
       onSubscriptionCanceled: async (data: SubscriptionWebhookData) => {
-        console.log(`Subscription canceled: ${data.id}`)
-
         // Update claw status
         await db
           .update(claws)
@@ -102,8 +103,6 @@ const handlePolarWebhook = async (c: Context) => {
 
       // When subscription is revoked (immediate cancellation or end of period)
       onSubscriptionRevoked: async (data: SubscriptionWebhookData) => {
-        console.log(`Subscription revoked: ${data.id}`)
-
         // Find the claw
         const claw = await db
           .select()
@@ -112,7 +111,6 @@ const handlePolarWebhook = async (c: Context) => {
           .limit(1)
 
         if (!claw[0]) {
-          console.log(`No claw found for subscription ${data.id}`)
           return
         }
 
@@ -131,7 +129,6 @@ const handlePolarWebhook = async (c: Context) => {
               .update(claws)
               .set({ status: 'stopped' })
               .where(eq(claws.id, claw[0].id))
-            console.log(`Stopped server for revoked subscription ${data.id}`)
           } catch (err) {
             console.error(`Failed to stop server: ${err}`)
           }
@@ -140,8 +137,6 @@ const handlePolarWebhook = async (c: Context) => {
 
       // When subscription payment fails
       onSubscriptionUpdated: async (data: SubscriptionWebhookData) => {
-        console.log(`Subscription updated: ${data.id}, status: ${data.status}`)
-
         // Update subscription status
         await db
           .update(claws)
@@ -163,7 +158,6 @@ const handlePolarWebhook = async (c: Context) => {
                 .update(claws)
                 .set({ status: 'stopped' })
                 .where(eq(claws.id, claw[0].id))
-              console.log(`Stopped server due to past_due subscription ${data.id}`)
             } catch (err) {
               console.error(`Failed to stop server: ${err}`)
             }

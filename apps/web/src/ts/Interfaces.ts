@@ -93,6 +93,10 @@ export interface BillingHistoryResponse {
     totalPages: number
 }
 
+export interface BillingInvoiceResponse {
+    url: string
+}
+
 // ============================================
 // Store Interfaces
 // ============================================
@@ -120,9 +124,16 @@ export interface PreferencesState {
 // Auth Interfaces
 // ============================================
 
+export interface CachedProfile {
+    email: string
+    name: string | null
+}
+
 export interface AuthContextType {
     user: User | null
     loading: boolean
+    cachedProfile: CachedProfile | null
+    updateCachedProfile: (data: Partial<CachedProfile>) => void
     sendOtp: (email: string) => Promise<void>
     verifyOtp: (email: string) => Promise<void>
     signOut: () => Promise<void>
@@ -164,6 +175,7 @@ export interface ErrorStateProps {
 
 export interface PageTitleProps {
     title: string
+    description?: string
 }
 
 export interface PageHeaderProps {
@@ -177,6 +189,26 @@ export interface ActionButtonProps {
     label: string
     icon: ReactNode
     size?: 'default' | 'sm' | 'lg'
+}
+
+export interface MockClawData {
+    id: string
+    name: string
+    status: 'running' | 'stopped' | 'restarting'
+    subdomain: string
+    ip: string
+    location: string
+    locationFlag: string
+    plan: string
+    planDetails: string
+}
+
+export interface MockClawCardProps {
+    claw: MockClawData
+    onStart?: (id: string) => void
+    onStop?: (id: string) => void
+    onRestart?: (id: string) => void
+    onDelete?: (id: string) => void
 }
 
 // ============================================

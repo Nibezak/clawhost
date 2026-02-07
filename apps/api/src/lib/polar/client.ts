@@ -20,10 +20,16 @@ export function getPolarClient(): Polar {
 }
 
 export function getPolarConfig() {
-  return {
-    organizationId: process.env.POLAR_ORGANIZATION_ID,
-    successUrl: process.env.POLAR_SUCCESS_URL,
-    cancelUrl: process.env.POLAR_CANCEL_URL,
-    webhookSecret: process.env.POLAR_WEBHOOK_SECRET,
-  }
+    const url = process.env.CLIENT
+    const http = url?.includes('localhost') ? 'http' : 'https'
+    
+    const successUrl = `${http}://${url}/claws?payment=success`
+    const cancelUrl = `${http}://${url}/claws?payment=success`
+
+    return {
+        organizationId: process.env.POLAR_ORGANIZATION_ID,
+        successUrl,
+        cancelUrl,
+        webhookSecret: process.env.POLAR_WEBHOOK_SECRET,
+    }
 }

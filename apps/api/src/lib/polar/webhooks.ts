@@ -51,22 +51,57 @@ export interface CheckoutWebhookData {
 }
 
 /**
- * Verify webhook signature from Polar
+ * Verify webhook signature from Polar (Standard Webhooks format)
+ * Polar signs: `${webhookId}.${timestamp}.${body}` using HMAC-SHA256
+ * The secret is base64-encoded and prefixed with "whsec_"
  */
 export function verifyWebhookSignature(
   payload: string,
-  signature: string,
+  webhookId: string,
+  timestamp: string,
+  signatureHeader: string,
   secret: string
 ): boolean {
-  const expectedSignature = crypto
-    .createHmac('sha256', secret)
-    .update(payload)
-    .digest('hex')
+  // Build the signed content: id.timestamp.body
+  const signedContent = `${webhookId}.${timestamp}.${payload}`
 
-  return crypto.timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(expectedSignature)
-  )
+  // Try multiple secret formats since Polar's format may vary
+  const secretVariants = [
+    // Raw secret as UTF-8 (no prefix stripping, no base64 decode)
+    Buffer.from(secret),
+    // Strip polar_whs_ prefix, base64 decode
+    secret.startsWith('polar_whs_') ? Buffer.from(secret.slice(10), 'base64') : null,
+    // Strip whsec_ prefix, base64 decode
+    secret.startsWith('whsec_') ? Buffer.from(secret.slice(6), 'base64') : null,
+    // Full secret as base64
+    Buffer.from(secret, 'base64'),
+    // Strip polar_whs_ prefix, use as UTF-8
+    secret.startsWith('polar_whs_') ? Buffer.from(secret.slice(10)) : null,
+  ].filter(Boolean) as Buffer[]
+
+  // Extract v1 signatures from header
+  const receivedSigs = signatureHeader.split(' ')
+    .filter((s) => s.startsWith('v1,'))
+    .map((s) => s.slice(3))
+
+  for (const secretBytes of secretVariants) {
+    const expectedSignature = crypto
+      .createHmac('sha256', secretBytes)
+      .update(signedContent)
+      .digest('base64')
+
+    for (const received of receivedSigs) {
+      try {
+        if (crypto.timingSafeEqual(Buffer.from(received), Buffer.from(expectedSignature))) {
+          return true
+        }
+      } catch {
+        // Length mismatch, continue
+      }
+    }
+  }
+
+  return false
 }
 
 /**
@@ -80,16 +115,19 @@ export async function parseWebhook(c: Context): Promise<WebhookEvent | null> {
     return null
   }
 
-  const signature = c.req.header('webhook-signature') || c.req.header('x-polar-signature')
-  if (!signature) {
-    console.error('Missing webhook signature header')
+  const webhookId = c.req.header('webhook-id')
+  const timestamp = c.req.header('webhook-timestamp')
+  const signature = c.req.header('webhook-signature')
+
+  if (!webhookId || !timestamp || !signature) {
+    console.error('Missing webhook headers')
     return null
   }
 
   const payload = await c.req.text()
 
   // Verify signature
-  if (!verifyWebhookSignature(payload, signature, config.webhookSecret)) {
+  if (!verifyWebhookSignature(payload, webhookId, timestamp, signature, config.webhookSecret)) {
     console.error('Invalid webhook signature')
     return null
   }

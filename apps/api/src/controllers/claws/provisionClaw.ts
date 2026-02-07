@@ -43,7 +43,6 @@ export async function provisionClaw(params: ProvisionClawParams): Promise<{
       .limit(1)
 
     if (existingClaw[0]) {
-      console.log(`Claw already exists for subscription ${params.subscriptionId}`)
       return { success: true, clawId: existingClaw[0].id }
     }
 
@@ -88,7 +87,6 @@ export async function provisionClaw(params: ProvisionClawParams): Promise<{
     // Create DNS record
     try {
       await cloudflare.createDNSRecord(subdomain, ip)
-      console.log(`Created DNS record: ${subdomain}.${DOMAIN} -> ${ip}`)
     } catch (dnsErr) {
       console.error('Failed to create DNS record:', dnsErr)
     }
@@ -141,8 +139,6 @@ export async function provisionClaw(params: ProvisionClawParams): Promise<{
 
     // Delete pending claw record
     await db.delete(pendingClaws).where(eq(pendingClaws.id, params.pendingClawId))
-
-    console.log(`Successfully provisioned claw ${id} for subscription ${params.subscriptionId}`)
 
     return { success: true, clawId: id }
   } catch (err) {

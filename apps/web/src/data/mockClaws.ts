@@ -1,4 +1,4 @@
-import type { MockClawData } from '@/components/MockClawCard'
+import type { MockClawData } from '@/ts/Interfaces'
 
 export const initialMockClaws: MockClawData[] = [
   {

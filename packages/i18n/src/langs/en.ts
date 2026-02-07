@@ -14,7 +14,8 @@ export const en = {
         addKey: 'Add Key',
         close: 'Close',
         none: 'None',
-        unknown: 'Unknown'
+        unknown: 'Unknown',
+        pageNotFound: 'Page Not Found'
     },
     nav: {
         claws: 'Claws',
@@ -39,7 +40,9 @@ export const en = {
         pricing: 'Pricing',
         faq: 'Questions',
         legalAndMore: 'Legal & More',
-        documentation: 'Documentation'
+        documentation: 'Documentation',
+        productDescription:
+            'Production-ready infrastructure with one-click OpenClaw deployment, handled end to end — build, ship, and move faster with AI.'
     },
     errors: {
         somethingWentWrong: 'Something went wrong',
@@ -65,6 +68,7 @@ export const en = {
     },
     auth: {
         signIn: 'Sign In',
+        signInDescription: 'Sign in to your ClawHost account to manage your OpenClaw instances.',
         signingIn: 'Signing In',
         signingYouIn: 'Signing you in',
         loggingInAs: 'Logging in as',
@@ -80,10 +84,12 @@ export const en = {
         sending: 'Sending...',
         magicLinkDescription:
             "We'll send you a magic link to sign in. No password needed.",
-        welcomeBack: 'Welcome back.'
+        welcomeBack: 'Welcome back.',
+        enterEmailForConfirmation: 'Please enter your email for confirmation'
     },
     account: {
         title: 'Account',
+        description: 'Manage your ClawHost account settings, profile information, and billing history.',
         accountSettings: 'Account',
         manageYourAccount: 'Manage your account and view all your billings.',
         profileInformation: 'Profile Information',
@@ -111,13 +117,13 @@ export const en = {
         billingReasonSubscriptionUpdate: 'Subscription Update',
         noBillingHistory: 'No Billings',
         noBillingHistoryDescription: 'You have no payments history, once you deploy your first claw you should see your billings here.',
-        previousPage: 'Previous',
-        nextPage: 'Next',
-        pageOf: 'Page {{page}} of {{totalPages}}',
-        failedToLoadBilling: 'Failed to load billing history'
+        failedToLoadBilling: 'Failed to load billing history',
+        viewInvoice: 'View Invoice',
+        failedToLoadInvoice: 'Failed to load invoice'
     },
     dashboard: {
         title: 'Claws',
+        description: 'View and manage your deployed OpenClaw instances. Start, stop, restart, and monitor your VPS servers.',
         claw: 'claw',
         clawsPlural: 'claws',
         newClaw: 'New Claw',
@@ -161,6 +167,7 @@ export const en = {
             initializing: 'Setting up...',
             migrating: 'Migrating...',
             rebuilding: 'Rebuilding...',
+            restarting: 'Restarting',
             deleting: 'Deleting...',
             unknown: 'Unknown'
         }
@@ -169,7 +176,7 @@ export const en = {
         title: 'Deploy OpenClaw',
         description: 'Configure your server and start building with AI.',
         clawName: 'Claw Name',
-        clawNamePlaceholder: 'e.g. Work OpenClaw',
+        clawNamePlaceholder: 'e.g. cozy-panda',
         location: 'Location',
         plan: 'Plan',
         advancedOptions: 'Advanced Options',
@@ -199,9 +206,9 @@ export const en = {
     },
     sshKeys: {
         title: 'SSH Keys',
+        description: 'Manage your SSH keys for secure, passwordless access to your OpenClaw instances.',
         key: 'ssh key',
         keys: 'ssh keys',
-        description: 'Manage SSH keys for passwordless login to your instances',
         addSshKey: 'Add SSH Key',
         howSshKeysWork: 'How to connect a SSH key?',
         step1: 'Generate an SSH key pair on your computer (or use an existing one).',
@@ -250,6 +257,8 @@ export const en = {
         saving: 'Saving...'
     },
     landing: {
+        title: 'Deploy OpenClaw. One click. Done.',
+        description: 'Deploy OpenClaw on your own VPS with one click. Self-hostable cloud hosting with full root access, global locations, and transparent pricing.',
         badge: '100+ OpenClaw instances Deployed',
         heroTitle1: 'Deploy OpenClaw.',
         heroTitle2: 'One click. Done.',
@@ -374,25 +383,33 @@ export const en = {
         comparisonTitle: 'Why ClawHost?',
         comparisonDescription: 'See how we compare to other hosted AI solutions',
         others: 'Others',
-        comparisonPricingUs: 'Know exactly what server you get and pay for it',
-        comparisonPricingOthers: 'Fixed prices, unknown server specs',
-        comparisonOwnershipUs: 'You own the VPS completely',
-        comparisonOwnershipOthers: "You don't own anything",
-        comparisonControlUs: 'Own and manage OpenClaw yourself',
-        comparisonControlOthers: 'Just use ClawHost, no control',
-        comparisonUsageUs: 'Use the VPS for anything beyond AI',
-        comparisonUsageOthers: 'Just chats, nothing else',
-        comparisonVariantsUs: 'Different server variants to choose from',
-        comparisonVariantsOthers: 'No differentiation, just single instance',
-        comparisonMultipleUs: 'Multiple instances, manage all in one place',
-        comparisonMultipleOthers: 'Single instance or switch between accounts',
-        readyToOwnYourPrivacy: 'Ready to own your privacy?',
+        comparisonOpenClawUs: 'Full access to OpenClaw',
+        comparisonOpenClawOthers: 'Only chat, no management',
+        comparisonPricingUs: 'Transparent pricing, clear specs',
+        comparisonPricingOthers: 'Hidden specs, unclear pricing',
+        comparisonOwnershipUs: 'You fully own your VPS',
+        comparisonOwnershipOthers: 'You own nothing',
+        comparisonControlUs: 'Full root and SSH access',
+        comparisonControlOthers: 'No server access',
+        comparisonUsageUs: 'Run anything on your server',
+        comparisonUsageOthers: 'Limited to one service',
+        comparisonVariantsUs: 'Multiple server configs available',
+        comparisonVariantsOthers: 'One-size-fits-all',
+        comparisonMultipleUs: 'Manage multiple instances',
+        comparisonMultipleOthers: 'Single instance only',
+        readyToOwnYourPrivacy: 'Ready to deploy your own VPS?',
         ctaDescription:
-            "Join thousands who've deployed their own VPN with ClawHost. No technical skills required — just one click.",
-        deployOpenClawNow: 'Deploy OpenClaw Now',
+            "Get a dedicated server with OpenClaw pre-installed. Full root access, global locations, and ready in under 60 seconds.",
+        deployOpenClawNow: 'Deploy OpenClaw',
         selfHostInstead: 'Self Host Instead',
         noCreditCardRequired: 'No credit card required',
-        deployIn60Seconds: 'Deploy in 60 seconds'
+        deployIn60Seconds: 'Deploy in 60 seconds',
+        demoClawStarted: 'Claw started!',
+        demoClawStopped: 'Claw stopped!',
+        demoClawRestarting: 'Restarting claw...',
+        demoClawRestarted: 'Claw restarted!',
+        demoClawDeleted: 'Claw deleted!',
+        demoStatus: '{{running}} running, {{total}} total'
     }
 } as const
 
