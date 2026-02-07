@@ -581,6 +581,7 @@ const SSHKeys: FC = (): ReactNode => {
                   title={t('sshKeys.noSshKeysYet')}
                   description={t('sshKeys.noSshKeysDescription')}
                   actionLabel={t('sshKeys.addSshKey')}
+                  actionIcon={<PlusCircle className="h-5 w-5" weight="bold" />}
                   onAction={() => setShowCreate(true)}
                 />
               ) : isLoading && skeletonCount > 0 ? (
@@ -595,6 +596,7 @@ const SSHKeys: FC = (): ReactNode => {
                   title={t('sshKeys.noSshKeysYet')}
                   description={t('sshKeys.noSshKeysDescription')}
                   actionLabel={t('sshKeys.addSshKey')}
+                  actionIcon={<PlusCircle className="h-5 w-5" weight="bold" />}
                   onAction={() => setShowCreate(true)}
                 />
               ) : (

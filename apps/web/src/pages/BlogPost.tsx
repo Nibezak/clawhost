@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { ArrowLeft, CalendarBlank, Clock, User } from '@phosphor-icons/react'
+import { ArrowLeft, CalendarBlank, Clock } from '@phosphor-icons/react'
 import { Header } from '@/components/Header'
 import { LandingFooter } from '@/components/LandingFooter'
 import { PageBackground } from '@/components/PageBackground'
@@ -77,7 +77,7 @@ const BlogPost: FC = (): ReactNode => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="relative mx-auto w-full max-w-3xl flex-1 px-6 py-12"
+        className="relative mx-auto w-full max-w-6xl flex-1 px-6 py-12"
       >
         <Link
           to={ROUTES.POSTS}
@@ -101,10 +101,6 @@ const BlogPost: FC = (): ReactNode => {
         <h1 className="font-clash mb-4 text-4xl font-bold">{meta.title}</h1>
 
         <div className="mb-8 flex items-center gap-4 text-sm text-gray-400">
-          <span className="flex items-center gap-1.5">
-            <User className="h-4 w-4" />
-            {meta.author}
-          </span>
           <span className="flex items-center gap-1.5">
             <CalendarBlank className="h-4 w-4" />
             {formattedDate}

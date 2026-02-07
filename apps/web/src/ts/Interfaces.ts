@@ -157,6 +157,7 @@ export interface EmptyStateProps {
     title: string
     description: string
     actionLabel?: string
+    actionIcon?: ReactNode
     onAction?: () => void
 }
 
@@ -197,6 +198,10 @@ export interface MockClawData {
     locationFlag: string
     plan: string
     planDetails: string
+    monthlyCost: string
+    serverId: string
+    createdAt: string
+    sshKey: string
 }
 
 export interface MockClawCardProps {

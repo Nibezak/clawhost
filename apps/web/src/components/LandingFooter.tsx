@@ -43,34 +43,34 @@ const LandingFooter: FC = (): ReactNode => {
             <h4 className="font-clash mb-4 font-semibold text-white">{t('footer.product')}</h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link to="/#how-it-works" className="text-gray-400 transition hover:text-white">
+                <a href="#how-it-works" className="text-gray-400 transition hover:text-white">
                   {t('landing.howItWorks')}
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/#features" className="text-gray-400 transition hover:text-white">
+                <a href="#features" className="text-gray-400 transition hover:text-white">
                   {t('landing.features')}
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/#pricing" className="text-gray-400 transition hover:text-white">
+                <a href="#pricing" className="text-gray-400 transition hover:text-white">
                   {t('landing.pricing')}
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/#faq" className="text-gray-400 transition hover:text-white">
+                <a href="#faq" className="text-gray-400 transition hover:text-white">
                   {t('landing.faqTitle')}
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/#testimonials" className="text-gray-400 transition hover:text-white">
+                <a href="#testimonials" className="text-gray-400 transition hover:text-white">
                   {t('landing.testimonials')}
-                </Link>
+                </a>
               </li>
               <li>
-                <Link to="/#comparison" className="text-gray-400 transition hover:text-white">
+                <a href="#comparison" className="text-gray-400 transition hover:text-white">
                   {t('landing.comparison')}
-                </Link>
+                </a>
               </li>
             </ul>
           </div>

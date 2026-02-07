@@ -19,7 +19,7 @@ const Terms: FC = (): ReactNode => {
         className="relative mx-auto w-full max-w-6xl flex-1 px-6 py-12"
       >
         <h1 className="font-clash mb-2 text-4xl font-bold">Terms of Service</h1>
-        <p className="text-muted-foreground mb-12">Last updated: February 1, 2026</p>
+        <p className="text-muted-foreground mb-12">Last updated: February 7, 2026</p>
 
         <div className="prose prose-invert prose-sm max-w-none space-y-8">
           <section>
@@ -34,9 +34,9 @@ const Terms: FC = (): ReactNode => {
           <section>
             <h2 className="mb-3 text-xl font-semibold">2. Description of Service</h2>
             <p className="text-muted-foreground leading-relaxed">
-              ClawHost provides one-click OpenClaw VPN deployment on dedicated VPS servers. We
-              enable users to deploy, manage, and connect to pre-configured OpenClaw servers for
-              secure, private browsing.
+              ClawHost provides one-click OpenClaw deployment on dedicated servers. We
+              enable users to deploy, manage, and access pre-configured OpenClaw instances
+              with full root access and dedicated resources.
             </p>
           </section>
 
@@ -61,16 +61,19 @@ const Terms: FC = (): ReactNode => {
               <li>Send spam or unsolicited communications</li>
               <li>Host or distribute illegal content</li>
               <li>Violate any third-party rights including intellectual property</li>
-              <li>Mine cryptocurrency without explicit authorization</li>
+              <li>Mine cryptocurrency</li>
+              <li>Any other unlawful or harmful activities that we may determine to be inappropriate at our discretion</li>
             </ul>
           </section>
 
           <section>
             <h2 className="mb-3 text-xl font-semibold">5. Payment and Billing</h2>
             <p className="text-muted-foreground leading-relaxed">
-              Services are billed on a pay-as-you-go basis. You agree to pay all fees associated
-              with your use of the Service. Prices are subject to change with reasonable notice.
-              Failure to pay may result in suspension or termination of your account.
+              Services are billed on a fixed monthly basis. All payments are non-refundable. When
+              you pay for a server, you have access to it for the full billing period. If you cancel,
+              the cancellation takes effect at the end of the current billing period. Prices are
+              subject to change with reasonable notice. Failure to pay may result in suspension or
+              termination of your account.
             </p>
           </section>
 

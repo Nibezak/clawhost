@@ -19,7 +19,7 @@ const Privacy: FC = (): ReactNode => {
         className="relative mx-auto w-full max-w-6xl flex-1 px-6 py-12"
       >
         <h1 className="font-clash mb-2 text-4xl font-bold">Privacy Policy</h1>
-        <p className="text-muted-foreground mb-12">Last updated: February 1, 2026</p>
+        <p className="text-muted-foreground mb-12">Last updated: February 7, 2026</p>
 
         <div className="prose prose-invert prose-sm max-w-none space-y-8">
           <section>
@@ -44,11 +44,11 @@ const Privacy: FC = (): ReactNode => {
               <li>Payment information (processed securely by third-party providers)</li>
             </ul>
 
-            <h3 className="mb-2 mt-4 text-lg font-medium">Usage Information</h3>
+            <h3 className="mb-2 mt-4 text-lg font-medium">Server Information</h3>
             <ul className="text-muted-foreground list-inside list-disc space-y-2">
-              <li>Server usage and resource consumption</li>
-              <li>Login times and IP addresses</li>
-              <li>Browser type and device information</li>
+              <li>Server configuration and status (hosted on Hetzner Cloud)</li>
+              <li>Server IP address and location</li>
+              <li>Resource allocation (CPU, RAM, storage)</li>
             </ul>
           </section>
 
@@ -119,9 +119,8 @@ const Privacy: FC = (): ReactNode => {
           <section>
             <h2 className="mb-3 text-xl font-semibold">8. Cookies and Tracking</h2>
             <p className="text-muted-foreground leading-relaxed">
-              We use essential cookies to maintain your session and provide the Service. We do not
-              use third-party tracking cookies for advertising purposes. You can configure your
-              browser to refuse cookies, but this may affect Service functionality.
+              We do not use cookies. Authentication is handled through Firebase and does not rely on
+              cookies stored in your browser.
             </p>
           </section>
 
@@ -135,11 +134,9 @@ const Privacy: FC = (): ReactNode => {
           </section>
 
           <section>
-            <h2 className="mb-3 text-xl font-semibold">10. Children's Privacy</h2>
+            <h2 className="mb-3 text-xl font-semibold">10. Eligibility</h2>
             <p className="text-muted-foreground leading-relaxed">
-              Our Service is not intended for individuals under 18 years of age. We do not knowingly
-              collect personal information from children. If we become aware of such collection, we
-              will delete the information immediately.
+              Our Service is available to anyone. There are no age restrictions for using ClawHost.
             </p>
           </section>
 
@@ -156,8 +153,8 @@ const Privacy: FC = (): ReactNode => {
             <p className="text-muted-foreground leading-relaxed">
               If you have questions about this Privacy Policy or wish to exercise your rights,
               please contact us at{' '}
-              <a href="mailto:privacy@clawhost.cloud" className="text-primary hover:underline">
-                privacy@clawhost.cloud
+              <a href="mailto:legal@clawhost.cloud" className="text-primary hover:underline">
+                legal@clawhost.cloud
               </a>
             </p>
           </section>
