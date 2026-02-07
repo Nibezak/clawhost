@@ -1,21 +1,15 @@
-import 'dotenv/config'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
-import { serveStatic } from '@hono/node-server/serve-static'
 import { verifyToken } from '@/services/firebase'
 import { db } from '@/db'
 import { users } from '@/db/schema'
-import { eq } from 'drizzle-orm'
 import { authRoutes, clawsRoutes, plansRoutes, sshKeysRoutes, usersRoutes, webhooksRoutes } from '@/routes'
 
 const app = new Hono<{ Variables: { userId: string } }>()
 
 app.use('*', logger())
 app.use('*', cors())
-
-app.use('/favicon.ico', serveStatic({ path: './public/favicon.ico' }))
-app.use('/favicon.svg', serveStatic({ path: './public/favicon.svg' }))
 
 app.get('/', (c) => c.json({ status: 'ok' }))
 
