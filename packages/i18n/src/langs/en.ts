@@ -124,9 +124,9 @@ export const en = {
         sentLoginLink: 'We sent a login link to',
         clickLinkToSignIn:
             'Click the link in the email to sign in. You can close this tab.',
-        signInToDeployOpenClaw: 'Sign in to deploy OpenClaw',
-        emailAddress: 'Email address',
-        emailPlaceholder: 'you@example.com',
+        signInToDeployOpenClaw: 'Sign-in to manage and deploy OpenClaw instances.',
+        emailAddress: 'Email Address',
+        emailPlaceholder: 'example@clawhost.cloud',
         continueWithEmail: 'Continue with Email',
         sending: 'Sending...',
         magicLinkDescription:
