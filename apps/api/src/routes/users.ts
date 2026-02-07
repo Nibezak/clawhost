@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { getCurrentUser, getBillingHistory, getOrderInvoice, getCustomerPortal, getUserStats, updateUserProfile } from '../controllers/users'
+import { getCurrentUser, getBillingHistory, getOrderInvoice, getCustomerPortal, getUserStats, updateUserProfile } from '@/controllers/users'
 
 const app = new Hono<{ Variables: { userId: string } }>()
 

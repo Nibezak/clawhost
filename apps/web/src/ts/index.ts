@@ -1,4 +1,3 @@
-// Types
 export type {
   ClawStatus,
   CopiedFieldType,
@@ -7,9 +6,7 @@ export type {
   ViewMode,
 } from './Types'
 
-// Interfaces
 export type {
-  // API / Data Models
   Claw,
   Location,
   Plan,
@@ -20,13 +17,10 @@ export type {
   UserStats,
   Volume,
   VolumePricing,
-  // Store
   PreferencesState,
   ToastData,
   UIState,
-  // Auth
   AuthContextType,
-  // Component Props
   ClawCardProps,
   CopyableFieldProps,
   CreateClawModalProps,
@@ -40,7 +34,6 @@ export type {
   PageTitleProps,
   SSHKeyCardProps,
   StatusConfig,
-  // Hook Data Types
   CreateClawData,
   CreateSSHKeyData,
   UpdateProfileData,

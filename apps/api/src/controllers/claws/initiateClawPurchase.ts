@@ -1,8 +1,8 @@
 import type { Context } from 'hono'
 import { eq, and, count } from 'drizzle-orm'
-import { db } from '../../db'
-import { users, sshKeys, claws, pendingClaws } from '../../db/schema'
-import { checkouts, customers } from '../../lib/polar'
+import { db } from '@/db'
+import { users, sshKeys, claws, pendingClaws } from '@/db/schema'
+import { checkouts, customers } from '@/lib/polar'
 import { generatePassword } from './helpers/index'
 
 const adjectives = [
@@ -52,12 +52,9 @@ function getPolarProductId(planId: string): string | null {
   // Check environment variable (format: POLAR_PRODUCT_CX11=product_id)
   const envKey = `POLAR_PRODUCT_${planId.toUpperCase().replace(/-/g, '_')}`
   const envValue = process.env[envKey]
-  if (envValue) {
-    return envValue
-  }
-
-  // Fallback to a default product ID (if set)
-  return process.env.POLAR_DEFAULT_PRODUCT_ID || null
+  
+  if (envValue) return envValue
+  else return null
 }
 
 const initiateClawPurchase = async (c: Context<{ Variables: { userId: string } }>) => {

@@ -52,7 +52,6 @@ const Dashboard: FC = (): ReactNode => {
     awaitingClaw ? { refetchInterval: 3000 } : undefined
   )
 
-  // Stop polling once a new claw appears
   useEffect(() => {
     if (!awaitingClaw) return
     if (claws && initialClawCount.current === null) {
@@ -64,7 +63,6 @@ const Dashboard: FC = (): ReactNode => {
     }
   }, [awaitingClaw, claws])
 
-  // Safety timeout — stop polling after 60s
   useEffect(() => {
     if (!awaitingClaw) return
     const timeout = setTimeout(() => {

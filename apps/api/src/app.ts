@@ -3,11 +3,11 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
 import { serveStatic } from '@hono/node-server/serve-static'
-import { verifyToken } from './services/firebase'
-import { db } from './db'
-import { users } from './db/schema'
+import { verifyToken } from '@/services/firebase'
+import { db } from '@/db'
+import { users } from '@/db/schema'
 import { eq } from 'drizzle-orm'
-import { authRoutes, clawsRoutes, plansRoutes, sshKeysRoutes, usersRoutes, webhooksRoutes } from './routes'
+import { authRoutes, clawsRoutes, plansRoutes, sshKeysRoutes, usersRoutes, webhooksRoutes } from '@/routes'
 
 const app = new Hono<{ Variables: { userId: string } }>()
 

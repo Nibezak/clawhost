@@ -1,4 +1,3 @@
-// Claws hooks
 export {
   useClaws,
   useClaw,
@@ -13,7 +12,6 @@ export {
   CLAWS_QUERY_KEY,
 } from './useClaws'
 
-// SSH Keys hooks
 export {
   useSSHKeys,
   useCreateSSHKey,
@@ -21,7 +19,6 @@ export {
   SSH_KEYS_QUERY_KEY,
 } from './useSSHKeys'
 
-// User hooks
 export {
   useProfile,
   useUpdateProfile,
@@ -32,7 +29,6 @@ export {
   BILLING_HISTORY_QUERY_KEY,
 } from './useUser'
 
-// Plans hooks
 export {
   usePlans,
   useLocations,
@@ -42,7 +38,6 @@ export {
   VOLUME_PRICING_QUERY_KEY,
 } from './usePlans'
 
-// GitHub hooks
 export {
   useGitHubStars,
   GITHUB_REPO_URL,

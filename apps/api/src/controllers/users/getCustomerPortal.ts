@@ -1,8 +1,8 @@
 import type { Context } from 'hono'
 import { eq } from 'drizzle-orm'
-import { db } from '../../db'
-import { users } from '../../db/schema'
-import { getPolarClient } from '../../lib/polar'
+import { db } from '@/db'
+import { users } from '@/db/schema'
+import { getPolarClient } from '@/lib/polar'
 
 const getCustomerPortal = async (c: Context<{ Variables: { userId: string } }>) => {
   try {

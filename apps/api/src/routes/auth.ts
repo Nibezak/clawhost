@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { sendMagicLink } from '../controllers/auth'
+import { sendMagicLink } from '@/controllers/auth'
 
 const app = new Hono()
 

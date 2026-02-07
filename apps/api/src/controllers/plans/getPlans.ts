@@ -1,15 +1,10 @@
 import type { Context } from 'hono'
-import { hetzner } from '../../services/hetzner'
+import { hetzner } from '@/services/hetzner'
 
-// Custom pricing per plan (in dollars) - order defines display order
 const planOrder = [
-  // CX series - Best value shared vCPU
   'cx23', 'cx33', 'cx43', 'cx53',
-  // CPX series - AMD shared vCPU
   'cpx11', 'cpx21', 'cpx31', 'cpx41', 'cpx51',
-  // CAX series - ARM efficient
   'cax11', 'cax21', 'cax31', 'cax41',
-  // CCX series - Dedicated CPU premium
   'ccx13', 'ccx23', 'ccx33', 'ccx43', 'ccx53', 'ccx63',
 ]
 
@@ -24,7 +19,6 @@ const getPlans = async (c: Context) => {
   try {
     const serverTypes = await hetzner.getServerTypes()
 
-    // Only include plans with custom pricing, sorted by planOrder
     const plans = serverTypes
       .filter((t) => customPrices[t.name] !== undefined)
       .map((t) => ({

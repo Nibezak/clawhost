@@ -46,19 +46,21 @@ openclaw.anywhere/
 
 ### Import Rules
 
-**CRITICAL: Always use `@/` path aliases in the web app. Never use relative imports like `../` or `./`.**
+**CRITICAL: Always use `@/` path aliases in both the web app and the API app. Never use relative imports like `../` or `./` to cross directory boundaries.**
 
 ```typescript
 // CORRECT - Use @ path aliases
 import { Button } from '@/components/ui/button'
 import { api } from '@/lib/api'
-import { useAuth } from '@/lib/auth'
-import { ROUTES } from '@/lib/routes'
+import { db } from '@/db'
+import { hetzner } from '@/services/hetzner'
 
 // INCORRECT - Never use relative imports
 import { Button } from '../components/ui/button' // DO NOT USE
-import { api } from './lib/api' // DO NOT USE
+import { db } from '../../db' // DO NOT USE
 ```
+
+**Exception:** Same-directory `./` imports are allowed in barrel export files (index.ts) and for sibling files within the same folder.
 
 **For workspace packages, use the package name:**
 
@@ -66,8 +68,6 @@ import { api } from './lib/api' // DO NOT USE
 import { RequestClient } from '@openclaw/shared'
 import { t } from '@openclaw/i18n'
 ```
-
-**Note:** The API app uses relative imports since it doesn't have path aliases configured.
 
 ### Types and Interfaces Rules
 
@@ -339,7 +339,7 @@ import { t } from '@openclaw/i18n'
 ## Guidelines for AI
 
 1. **Always read files before modifying** - Understand existing patterns first
-2. **Use `@/` imports in web app** - Always use path aliases, never relative imports
+2. **Use `@/` imports everywhere** - Always use path aliases in both web and API apps, never relative imports (except `./` in barrel exports and same-directory siblings)
 3. **Centralize types in `@/ts/`** - Never define types/interfaces inline; add to Types.ts or Interfaces.ts
 4. **Use `import type` for types** - Always use `import type` syntax and place at top of file
 5. **Use FC pattern for components** - Always use `const ComponentName: FC = (): ReactNode => { ... }` with `export default ComponentName` at the end
@@ -350,3 +350,6 @@ import { t } from '@openclaw/i18n'
 10. **Zustand for state** - Don't introduce additional state management
 11. **shadcn/ui components** - Prefer existing UI components over custom ones
 12. **Use translations for all text** - Never hardcode user-facing text; always use `t()` from `@openclaw/i18n`
+13. **Never write comments** - Do not add code comments, JSX comments, section markers, or doc comments. The code should be self-explanatory. The only exception is when logic is truly non-obvious (e.g., bitwise operations, crypto algorithms, or workarounds for framework bugs)
+14. **Never add console.log** - Do not add `console.log` statements. Use `console.error` only for actual error handling in catch blocks. No debug logging, no request logging, no data logging
+15. **No section markers** - Never write comments like `// Section Name`, `{/* Section */}`, `// ========`, or category headers in files

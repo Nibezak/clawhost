@@ -1,8 +1,8 @@
 import type { Context } from 'hono'
 import { eq, and } from 'drizzle-orm'
-import { db } from '../../db'
-import { claws } from '../../db/schema'
-import { hetzner } from '../../services/hetzner'
+import { db } from '@/db'
+import { claws } from '@/db/schema'
+import { hetzner } from '@/services/hetzner'
 
 const startClaw = async (c: Context<{ Variables: { userId: string } }>) => {
   try {

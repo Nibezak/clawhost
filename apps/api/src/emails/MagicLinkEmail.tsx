@@ -1,4 +1,4 @@
-import type { MagicLinkEmailProps } from '../ts/Interfaces'
+import type { MagicLinkEmailProps } from '@/ts/Interfaces'
 
 import {
   Body,

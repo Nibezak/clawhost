@@ -102,10 +102,6 @@ export interface BillingInvoiceResponse {
     url: string
 }
 
-// ============================================
-// Store Interfaces
-// ============================================
-
 export interface ToastData {
     message: string
     type: ToastType
@@ -125,10 +121,6 @@ export interface PreferencesState {
     setInstancesViewMode: (mode: ViewMode) => void
 }
 
-// ============================================
-// Auth Interfaces
-// ============================================
-
 export interface CachedProfile {
     email: string
     name: string | null
@@ -143,10 +135,6 @@ export interface AuthContextType {
     verifyOtp: (email: string) => Promise<void>
     signOut: () => Promise<void>
 }
-
-// ============================================
-// Component Props Interfaces
-// ============================================
 
 export interface NavLink {
     label: string
@@ -218,10 +206,6 @@ export interface MockClawCardProps {
     onRestart?: (id: string) => void
     onDelete?: (id: string) => void
 }
-
-// ============================================
-// Dashboard Component Interfaces
-// ============================================
 
 export interface StatusConfig {
     color: string
@@ -326,10 +310,6 @@ export interface ClawCardListViewProps {
     onToggleExpand: () => void
 }
 
-// ============================================
-// SSH Keys Component Interfaces
-// ============================================
-
 export interface SSHKeyCardProps {
     sshKey: SSHKey
 }
@@ -346,10 +326,6 @@ export interface GeneratedKeyPair {
 export interface ProtectedRouteProps {
     children: ReactNode
 }
-
-// ============================================
-// Hook Interfaces
-// ============================================
 
 export interface CreateClawData {
     name: string
@@ -391,10 +367,6 @@ export interface CreateSSHKeyData {
 export interface UpdateProfileData {
     name?: string
 }
-
-// ============================================
-// Blog Interfaces
-// ============================================
 
 export interface BlogPostFrontmatter {
     title: string
