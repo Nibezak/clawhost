@@ -79,6 +79,11 @@ const LandingFooter: FC = (): ReactNode => {
             <h4 className="font-clash mb-4 font-semibold text-white">{t('footer.legalAndMore')}</h4>
             <ul className="space-y-3 text-sm">
               <li>
+                <Link to={ROUTES.POSTS} className="text-gray-400 transition hover:text-white">
+                  {t('footer.blog')}
+                </Link>
+              </li>
+              <li>
                 <Link to={ROUTES.PRIVACY} className="text-gray-400 transition hover:text-white">
                   {t('footer.privacyPolicy')}
                 </Link>

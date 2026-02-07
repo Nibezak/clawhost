@@ -12,7 +12,17 @@ const setMetaTag = (attr: string, key: string, content: string) => {
   meta.content = content
 }
 
-const PageTitle: FC<PageTitleProps> = ({ title, description }): ReactNode => {
+const setLinkTag = (rel: string, href: string) => {
+  let link = document.querySelector(`link[rel="${rel}"]`) as HTMLLinkElement | null
+  if (!link) {
+    link = document.createElement('link')
+    link.rel = rel
+    document.head.appendChild(link)
+  }
+  link.href = href
+}
+
+const PageTitle: FC<PageTitleProps> = ({ title, description, image, url, type }): ReactNode => {
   useEffect(() => {
     const fullTitle = `${title} - ClawHost`
     document.title = fullTitle
@@ -27,6 +37,26 @@ const PageTitle: FC<PageTitleProps> = ({ title, description }): ReactNode => {
       setMetaTag('name', 'twitter:description', description)
     }
   }, [description])
+
+  useEffect(() => {
+    if (image) {
+      setMetaTag('property', 'og:image', image)
+      setMetaTag('name', 'twitter:image', image)
+    }
+  }, [image])
+
+  useEffect(() => {
+    if (url) {
+      setMetaTag('property', 'og:url', url)
+      setLinkTag('canonical', url)
+    }
+  }, [url])
+
+  useEffect(() => {
+    if (type) {
+      setMetaTag('property', 'og:type', type)
+    }
+  }, [type])
 
   return null
 }

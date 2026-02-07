@@ -181,6 +181,9 @@ export interface ErrorStateProps {
 export interface PageTitleProps {
     title: string
     description?: string
+    image?: string
+    url?: string
+    type?: string
 }
 
 export interface PageHeaderProps {
@@ -387,4 +390,36 @@ export interface CreateSSHKeyData {
 
 export interface UpdateProfileData {
     name?: string
+}
+
+// ============================================
+// Blog Interfaces
+// ============================================
+
+export interface BlogPostFrontmatter {
+    title: string
+    slug: string
+    description: string
+    author: string
+    publishedAt: string
+    updatedAt?: string
+    tags: string[]
+    coverImage?: string
+}
+
+export interface BlogPostMeta extends BlogPostFrontmatter {
+    readingTime: number
+}
+
+export interface BlogPostModule {
+    default: React.ComponentType
+    frontmatter: BlogPostFrontmatter
+}
+
+export interface BlogCardProps {
+    post: BlogPostMeta
+}
+
+export interface JsonLdProps {
+    data: Record<string, unknown>
 }

@@ -6,6 +6,8 @@ export const ROUTES = {
   ACCOUNT: '/account',
   TERMS: '/terms',
   PRIVACY: '/privacy',
+  POSTS: '/posts',
+  POST: '/posts/:slug',
 } as const
 
 export type Route = (typeof ROUTES)[keyof typeof ROUTES]

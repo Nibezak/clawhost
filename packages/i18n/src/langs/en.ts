@@ -39,6 +39,7 @@ export const en = {
         features: 'Features',
         pricing: 'Pricing',
         faq: 'Questions',
+        blog: 'Blog',
         legalAndMore: 'Legal & More',
         documentation: 'Documentation',
         productDescription:
@@ -431,6 +432,16 @@ export const en = {
         demoClawRestarted: 'Claw restarted!',
         demoClawDeleted: 'Claw deleted!',
         demoStatus: '{{running}} running, {{total}} total'
+    },
+    blog: {
+        title: 'Blog',
+        description: 'Guides, tutorials, and news about OpenClaw and self-hosted infrastructure.',
+        readingTime: '{{minutes}} min read',
+        publishedOn: 'Published on {{date}}',
+        writtenBy: 'By {{author}}',
+        backToBlog: 'Back to Blog',
+        noPosts: 'No Posts Yet',
+        noPostsDescription: 'Blog posts are coming soon. Check back later.'
     }
 } as const
 
