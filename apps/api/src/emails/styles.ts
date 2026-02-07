@@ -76,7 +76,7 @@ export const paragraph = {
   lineHeight: '1.6',
   color: '#3c3c3c',
   margin: '0 0 20px',
-  textAlign: 'center',
+  textAlign: 'center' as const,
   marginTop: '4px'
 }
 
@@ -85,11 +85,11 @@ export const paragraphMuted = {
   lineHeight: '1.5',
   color: '#8898aa',
   margin: '0',
-  textAlign: 'center'
+  textAlign: 'center' as const
 }
 
 export const buttonContainer = {
-    textAlign: 'center'
+    textAlign: 'center' as const
 }
 
 export const button = {

@@ -1,8 +1,8 @@
 import type { Context } from 'hono'
 import { eq } from 'drizzle-orm'
-import { db } from '../../db'
-import { users } from '../../db/schema'
-import { orders } from '../../lib/polar'
+import { db } from '@/db'
+import { users } from '@/db/schema'
+import { orders } from '@/lib/polar'
 
 const getBillingHistory = async (c: Context<{ Variables: { userId: string } }>) => {
   try {

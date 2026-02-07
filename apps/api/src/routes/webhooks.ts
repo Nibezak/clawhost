@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { handlePolarWebhook } from '../controllers/webhooks'
+import { handlePolarWebhook } from '@/controllers/webhooks'
 
 const app = new Hono()
 

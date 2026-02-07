@@ -1,7 +1,7 @@
 import type { Context } from 'hono'
 import { eq, desc } from 'drizzle-orm'
-import { db } from '../../db'
-import { sshKeys } from '../../db/schema'
+import { db } from '@/db'
+import { sshKeys } from '@/db/schema'
 
 const getSSHKeys = async (c: Context<{ Variables: { userId: string } }>) => {
   const userId = c.get('userId')

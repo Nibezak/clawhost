@@ -1,8 +1,8 @@
 import type { Context } from 'hono'
 import { eq, count } from 'drizzle-orm'
-import { db } from '../../db'
-import { sshKeys } from '../../db/schema'
-import { hetzner } from '../../services/hetzner'
+import { db } from '@/db'
+import { sshKeys } from '@/db/schema'
+import { hetzner } from '@/services/hetzner'
 
 const MAX_SSH_KEYS_PER_ACCOUNT = 50
 

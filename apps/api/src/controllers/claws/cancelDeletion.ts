@@ -1,8 +1,8 @@
 import type { Context } from 'hono'
 import { eq, and } from 'drizzle-orm'
-import { db } from '../../db'
-import { claws } from '../../db/schema'
-import { subscriptions } from '../../lib/polar'
+import { db } from '@/db'
+import { claws } from '@/db/schema'
+import { subscriptions } from '@/lib/polar'
 
 const cancelDeletion = async (c: Context<{ Variables: { userId: string } }>) => {
   try {

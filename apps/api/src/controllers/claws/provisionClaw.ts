@@ -1,8 +1,8 @@
 import { eq } from 'drizzle-orm'
-import { db } from '../../db'
-import { claws, pendingClaws, sshKeys, volumes } from '../../db/schema'
-import { hetzner } from '../../services/hetzner'
-import { cloudflare } from '../../services/cloudflare'
+import { db } from '@/db'
+import { claws, pendingClaws, sshKeys, volumes } from '@/db/schema'
+import { hetzner } from '@/services/hetzner'
+import { cloudflare } from '@/services/cloudflare'
 import { generateSlug, generateToken, generateCloudInit, DOMAIN } from './helpers/index'
 
 export interface ProvisionClawParams {
@@ -12,17 +12,12 @@ export interface ProvisionClawParams {
   productId: string
 }
 
-/**
- * Provision a claw after successful payment
- * Called from webhook handler
- */
 export async function provisionClaw(params: ProvisionClawParams): Promise<{
   success: boolean
   clawId?: string
   error?: string
 }> {
   try {
-    // Get pending claw
     const pendingClaw = await db
       .select()
       .from(pendingClaws)
@@ -35,7 +30,6 @@ export async function provisionClaw(params: ProvisionClawParams): Promise<{
 
     const pending = pendingClaw[0]
 
-    // Check if claw already exists (idempotency)
     const existingClaw = await db
       .select()
       .from(claws)
@@ -46,12 +40,10 @@ export async function provisionClaw(params: ProvisionClawParams): Promise<{
       return { success: true, clawId: existingClaw[0].id }
     }
 
-    // Generate claw ID and subdomain
     const id = crypto.randomUUID()
     const subdomain = generateSlug(id)
     const gatewayToken = generateToken()
 
-    // Look up SSH key if provided
     let hetznerSshKeyIds: number[] | undefined
     if (pending.sshKeyId) {
       const sshKey = await db
@@ -65,7 +57,6 @@ export async function provisionClaw(params: ProvisionClawParams): Promise<{
       }
     }
 
-    // Generate cloud-init script
     const cloudInitScript = generateCloudInit(
       pending.rootPassword || '',
       subdomain,
@@ -73,7 +64,6 @@ export async function provisionClaw(params: ProvisionClawParams): Promise<{
       gatewayToken
     )
 
-    // Create server in Hetzner
     const { serverId, ip } = await hetzner.createServer(
       `${pending.name}-${id.slice(0, 8)}`,
       pending.planId,
@@ -84,14 +74,12 @@ export async function provisionClaw(params: ProvisionClawParams): Promise<{
       cloudInitScript
     )
 
-    // Create DNS record
     try {
       await cloudflare.createDNSRecord(subdomain, ip)
     } catch (dnsErr) {
       console.error('Failed to create DNS record:', dnsErr)
     }
 
-    // Save claw to database
     await db.insert(claws).values({
       id,
       userId: pending.userId,
@@ -111,7 +99,6 @@ export async function provisionClaw(params: ProvisionClawParams): Promise<{
       subscriptionStatus: 'active',
     })
 
-    // Create volume if requested
     if (pending.volumeSize && pending.volumeSize >= 10) {
       try {
         const volumeId = crypto.randomUUID()
@@ -137,7 +124,6 @@ export async function provisionClaw(params: ProvisionClawParams): Promise<{
       }
     }
 
-    // Delete pending claw record
     await db.delete(pendingClaws).where(eq(pendingClaws.id, params.pendingClawId))
 
     return { success: true, clawId: id }

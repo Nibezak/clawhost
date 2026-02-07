@@ -15,7 +15,6 @@ import type {
 import { RequestClient } from '@openclaw/shared'
 import { getCachedToken } from '@/lib/firebase'
 
-// Re-export types for backward compatibility
 export type { Claw, Location, Plan, SSHKey, UserProfile, UserStats, Volume, VolumePricing } from '@/ts/Interfaces'
 
 const client = new RequestClient({
@@ -26,22 +25,18 @@ const client = new RequestClient({
   },
 })
 
-// Public API client (no auth required)
 const publicClient = new RequestClient({
   baseUrl: '/api',
 })
 
 export const api = {
-  // Auth (public)
   sendMagicLink: (email: string, redirectUrl: string) =>
     publicClient.post<{ success: boolean }>('/auth/send-magic-link', { email, redirectUrl }),
 
-  // Plans & Locations
   getPlans: () => client.get<Plan[]>('/plans'),
   getLocations: () => client.get<Location[]>('/plans/locations'),
   getVolumePricing: () => client.get<VolumePricing>('/plans/volume-pricing'),
 
-  // Claws
   getClaws: () => client.get<Claw[]>('/claws'),
   getClaw: (id: string, sync?: boolean) =>
     client.get<Claw>(`/claws/${id}${sync ? '?sync=true' : ''}`),
@@ -62,13 +57,11 @@ export const api = {
   deleteClaw: (id: string) => client.delete<DeleteClawResponse>(`/claws/${id}`),
   cancelDeletion: (id: string) => client.post<void>(`/claws/${id}/cancel-deletion`),
 
-  // SSH Keys
   getSSHKeys: () => client.get<SSHKey[]>('/ssh-keys'),
   createSSHKey: (data: { name: string; publicKey: string }) =>
     client.post<SSHKey>('/ssh-keys', data),
   deleteSSHKey: (id: string) => client.delete<void>(`/ssh-keys/${id}`),
 
-  // User Profile
   getProfile: () => client.get<UserProfile>('/users/me'),
   updateProfile: (data: { name?: string }) => client.put<UserProfile>('/users/me', data),
   getUserStats: () => client.get<UserStats>('/users/me/stats'),

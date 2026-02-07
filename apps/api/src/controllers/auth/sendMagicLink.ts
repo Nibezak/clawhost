@@ -1,8 +1,8 @@
 import type { Context } from 'hono'
 
-import { auth } from '../../services/firebase'
-import { resend, FROM_EMAIL } from '../../services/resend'
-import MagicLinkEmail from '../../emails/MagicLinkEmail'
+import { auth } from '@/services/firebase'
+import { resend, FROM_EMAIL } from '@/services/resend'
+import MagicLinkEmail from '@/emails/MagicLinkEmail'
 
 const sendMagicLink = async (c: Context) => {
   try {
@@ -19,7 +19,6 @@ const sendMagicLink = async (c: Context) => {
       return c.json({ error: 'Redirect URL is required' }, 400)
     }
 
-    // Generate the magic link using Firebase Admin SDK
     const actionCodeSettings = {
       url: redirectUrl,
       handleCodeInApp: true,
@@ -27,7 +26,6 @@ const sendMagicLink = async (c: Context) => {
 
     const magicLink = await auth.generateSignInWithEmailLink(email, actionCodeSettings)
 
-    // Send the email via Resend
     const { error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: email,

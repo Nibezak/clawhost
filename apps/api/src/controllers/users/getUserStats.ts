@@ -1,8 +1,8 @@
 import type { Context } from 'hono'
 import { eq, count } from 'drizzle-orm'
-import { db } from '../../db'
-import { claws, sshKeys, users } from '../../db/schema'
-import { orders } from '../../lib/polar'
+import { db } from '@/db'
+import { claws, sshKeys, users } from '@/db/schema'
+import { orders } from '@/lib/polar'
 
 const getUserStats = async (c: Context<{ Variables: { userId: string } }>) => {
   try {

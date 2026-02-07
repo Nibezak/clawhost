@@ -1,8 +1,8 @@
 import type { Context } from 'hono'
 import { eq, desc } from 'drizzle-orm'
-import { db } from '../../db'
-import { claws, volumes } from '../../db/schema'
-import { hetzner } from '../../services/hetzner'
+import { db } from '@/db'
+import { claws, volumes } from '@/db/schema'
+import { hetzner } from '@/services/hetzner'
 
 // Transitional statuses we set in our DB that Hetzner doesn't know about
 const transitionCompletedBy: Record<string, string[]> = {

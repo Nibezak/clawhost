@@ -1,5 +1,5 @@
 import type { Context } from 'hono'
-import { hetzner } from '../../services/hetzner'
+import { hetzner } from '@/services/hetzner'
 
 const getVolumePricing = async (c: Context) => {
   try {

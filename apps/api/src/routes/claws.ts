@@ -10,7 +10,7 @@ import {
   restartClaw,
   deleteClaw,
   cancelDeletion,
-} from '../controllers/claws'
+} from '@/controllers/claws'
 
 const app = new Hono<{ Variables: { userId: string } }>()
 

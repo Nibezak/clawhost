@@ -1,7 +1,7 @@
 import type { Context } from 'hono'
 import { eq } from 'drizzle-orm'
-import { db } from '../../db'
-import { users } from '../../db/schema'
+import { db } from '@/db'
+import { users } from '@/db/schema'
 
 const updateUserProfile = async (c: Context<{ Variables: { userId: string } }>) => {
   try {

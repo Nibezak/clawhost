@@ -1,9 +1,9 @@
 import type { Context } from 'hono'
 import { eq, and, count } from 'drizzle-orm'
-import { db } from '../../db'
-import { claws, sshKeys, volumes } from '../../db/schema'
-import { hetzner } from '../../services/hetzner'
-import { cloudflare } from '../../services/cloudflare'
+import { db } from '@/db'
+import { claws, sshKeys, volumes } from '@/db/schema'
+import { hetzner } from '@/services/hetzner'
+import { cloudflare } from '@/services/cloudflare'
 import { generateSlug, generatePassword, generateCloudInit, generateToken, DOMAIN } from './helpers/index'
 
 const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {

@@ -7,6 +7,10 @@
     "strict": true,
     "skipLibCheck": true,
     "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "jsx": "react-jsx"
   },
   "include": ["src", "api"]
