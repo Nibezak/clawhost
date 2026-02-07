@@ -184,6 +184,10 @@ const MockClawCard: FC<MockClawCardProps> = ({ claw, onStart, onStop, onRestart,
                 <CopyableField label={t('dashboard.ipAddress')} value={claw.ip} />
                 <CopyableField label={t('dashboard.location')} value={`${claw.locationFlag} ${claw.location}`} />
                 <CopyableField label={t('dashboard.plan')} value={`${claw.plan} (${claw.planDetails})`} />
+                <CopyableField label={t('dashboard.monthlyCost')} value={claw.monthlyCost} />
+                <CopyableField label={t('dashboard.serverId')} value={claw.serverId} />
+                <CopyableField label={t('dashboard.created')} value={claw.createdAt} />
+                <CopyableField label={t('dashboard.sshKey')} value={claw.sshKey} />
               </div>
             </motion.div>
           )}

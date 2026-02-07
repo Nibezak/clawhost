@@ -95,6 +95,10 @@ function getFaqs() {
       question: t('landing.faq7Question'),
       answer: t('landing.faq7Answer'),
     },
+    {
+      question: t('landing.faq8Question'),
+      answer: t('landing.faq8Answer'),
+    },
   ]
 }
 
@@ -316,10 +320,10 @@ const Landing: FC = (): ReactNode => {
                   </div>
                   <Link
                     to={user ? ROUTES.CLAWS : ROUTES.LOGIN}
-                    className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#ef5350] to-[#c62828] px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                    className="flex items-center gap-2 rounded-lg border border-white/20 bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-white/90"
                   >
                     <Lightning className="h-4 w-4" weight="fill" />
-                    {t('landing.deployNew')}
+                    {t('createClaw.title')}
                   </Link>
                 </div>
                 <div className="space-y-3">
@@ -645,7 +649,11 @@ const Landing: FC = (): ReactNode => {
                   </div>
                   <div className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-green-400" />
-                    <span>{t('landing.cancelAnytime')}</span>
+                    <span>{t('landing.onlineAllDay')}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-400" />
+                    <span>{t('landing.highQualityInternet')}</span>
                   </div>
                 </div>
               </div>
@@ -733,13 +741,13 @@ const Landing: FC = (): ReactNode => {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <Check className="h-5 w-5 flex-shrink-0 text-green-400" />
-                      <span className="text-white">{t('landing.comparisonControlUs')}</span>
+                      <span className="text-white">{t('landing.comparisonSubdomainUs')}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <X className="h-5 w-5 flex-shrink-0 text-red-400" />
-                      <span className="text-gray-400">{t('landing.comparisonControlOthers')}</span>
+                      <span className="text-gray-400">{t('landing.comparisonSubdomainOthers')}</span>
                     </div>
                   </td>
                 </tr>
@@ -747,13 +755,13 @@ const Landing: FC = (): ReactNode => {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <Check className="h-5 w-5 flex-shrink-0 text-green-400" />
-                      <span className="text-white">{t('landing.comparisonUsageUs')}</span>
+                      <span className="text-white">{t('landing.comparisonInfraUs')}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <X className="h-5 w-5 flex-shrink-0 text-red-400" />
-                      <span className="text-gray-400">{t('landing.comparisonUsageOthers')}</span>
+                      <span className="text-gray-400">{t('landing.comparisonInfraOthers')}</span>
                     </div>
                   </td>
                 </tr>
@@ -761,13 +769,13 @@ const Landing: FC = (): ReactNode => {
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <Check className="h-5 w-5 flex-shrink-0 text-green-400" />
-                      <span className="text-white">{t('landing.comparisonVariantsUs')}</span>
+                      <span className="text-white">{t('landing.comparisonDataUs')}</span>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <X className="h-5 w-5 flex-shrink-0 text-red-400" />
-                      <span className="text-gray-400">{t('landing.comparisonVariantsOthers')}</span>
+                      <span className="text-gray-400">{t('landing.comparisonDataOthers')}</span>
                     </div>
                   </td>
                 </tr>
@@ -860,7 +868,7 @@ const Landing: FC = (): ReactNode => {
               {t('landing.ctaDescription')}
             </p>
 
-            <div className="mb-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Button
                 size="lg"
                 className="gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] px-8 py-6 text-lg font-semibold text-white hover:opacity-90"
@@ -888,20 +896,6 @@ const Landing: FC = (): ReactNode => {
               </Button>
             </div>
 
-            <div className="flex items-center justify-center gap-8 text-sm text-gray-400">
-              <div className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-green-400" />
-                <span>{t('landing.noCreditCardRequired')}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-green-400" />
-                <span>{t('landing.deployIn60Seconds')}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-green-400" />
-                <span>{t('landing.cancelAnytime')}</span>
-              </div>
-            </div>
           </motion.div>
         </div>
       </section>

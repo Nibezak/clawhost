@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react'
 import type { BlogCardProps } from '@/ts/Interfaces'
 import { Link } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
-import { CalendarBlank, Clock, ArrowRight } from '@phosphor-icons/react'
+import { CalendarBlank, Clock } from '@phosphor-icons/react'
 
 const BlogCard: FC<BlogCardProps> = ({ post }): ReactNode => {
   const formattedDate = new Date(post.publishedAt).toLocaleDateString('en-US', {
@@ -14,7 +14,7 @@ const BlogCard: FC<BlogCardProps> = ({ post }): ReactNode => {
   return (
     <Link
       to={`/posts/${post.slug}`}
-      className="group overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] transition hover:border-white/20 hover:bg-white/[0.04]"
+      className="group flex flex-col overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] transition hover:border-white/20 hover:bg-white/[0.04]"
     >
       <div className="aspect-[16/9] w-full overflow-hidden bg-white/5">
         {post.coverImage ? (
@@ -30,7 +30,7 @@ const BlogCard: FC<BlogCardProps> = ({ post }): ReactNode => {
         )}
       </div>
 
-      <div className="p-5">
+      <div className="flex flex-1 flex-col p-5">
         <div className="mb-3 flex flex-wrap gap-2">
           {post.tags.map((tag) => (
             <span
@@ -46,7 +46,7 @@ const BlogCard: FC<BlogCardProps> = ({ post }): ReactNode => {
           {post.title}
         </h2>
 
-        <p className="mb-4 line-clamp-2 text-sm leading-relaxed text-gray-400">
+        <p className="mb-4 flex-1 line-clamp-2 text-sm leading-relaxed text-gray-400">
           {post.description}
         </p>
 
@@ -61,7 +61,6 @@ const BlogCard: FC<BlogCardProps> = ({ post }): ReactNode => {
               {t('blog.readingTime', { minutes: String(post.readingTime) })}
             </span>
           </div>
-          <ArrowRight className="h-4 w-4 text-gray-500 transition group-hover:translate-x-1 group-hover:text-primary" />
         </div>
       </div>
     </Link>

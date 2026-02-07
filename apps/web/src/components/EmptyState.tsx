@@ -1,9 +1,9 @@
 import type { FC, ReactNode } from 'react'
 import type { EmptyStateProps } from '@/ts/Interfaces'
 import { ActionButton } from '@/components/ActionButton'
-import { PlusCircle } from '@phosphor-icons/react'
+import { Lightning } from '@phosphor-icons/react'
 
-const EmptyState: FC<EmptyStateProps> = ({ icon, title, description, actionLabel, onAction }): ReactNode => {
+const EmptyState: FC<EmptyStateProps> = ({ icon, title, description, actionLabel, actionIcon, onAction }): ReactNode => {
   return (
     <div className="py-16 text-center">
       <div className="from-primary/20 to-primary/5 mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br">
@@ -14,7 +14,7 @@ const EmptyState: FC<EmptyStateProps> = ({ icon, title, description, actionLabel
       {actionLabel && onAction && (
         <ActionButton
           onClick={onAction}
-          icon={<PlusCircle className="h-5 w-5" weight="bold" />}
+          icon={actionIcon || <Lightning className="h-5 w-5" weight="fill" />}
           label={actionLabel}
           size="lg"
         />
