@@ -1,7 +1,7 @@
 import type { Context } from 'hono'
 
 import { auth } from '@/services/firebase'
-import { resend, FROM_EMAIL } from '@/services/resend'
+import { getResend, FROM_EMAIL } from '@/services/resend'
 import MagicLinkEmail from '@/emails/MagicLinkEmail'
 
 const sendMagicLink = async (c: Context) => {
@@ -26,7 +26,7 @@ const sendMagicLink = async (c: Context) => {
 
     const magicLink = await auth().generateSignInWithEmailLink(email, actionCodeSettings)
 
-    const { error } = await resend.emails.send({
+    const { error } = await getResend().emails.send({
       from: FROM_EMAIL,
       to: email,
       subject: 'Sign in to ClawHost',
