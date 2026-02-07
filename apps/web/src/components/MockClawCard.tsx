@@ -81,13 +81,8 @@ const MockClawCard: FC<MockClawCardProps> = ({ claw, onStart, onStop, onRestart,
       <CardContent className="py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="relative">
-              <div className="bg-muted flex h-12 w-12 items-center justify-center rounded-xl">
-                <ClawMascot className="h-6 w-6" />
-              </div>
-              <div
-                className={`border-background absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 ${status.color} ${status.pulse ? 'animate-pulse' : ''}`}
-              />
+            <div className="bg-muted flex h-12 w-12 items-center justify-center rounded-xl">
+              <ClawMascot className="h-6 w-6" />
             </div>
 
             <div>
@@ -97,7 +92,7 @@ const MockClawCard: FC<MockClawCardProps> = ({ claw, onStart, onStop, onRestart,
                   className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${status.bgColor}`}
                 >
                   {status.pulse && <CircleNotch className="mr-1.5 h-3 w-3 animate-spin" />}
-                  {!status.pulse && <span className={`h-1.5 w-1.5 rounded-full ${status.color} mr-1.5`} />}
+                  {!status.pulse && <span className={`h-1.5 w-1.5 rounded-full ${status.color} mr-1.5 ${claw.status === 'running' ? 'animate-pulse shadow-[0_0_4px_2px_rgba(34,197,94,0.5)]' : ''}`} />}
                   {status.label}
                 </span>
               </div>
