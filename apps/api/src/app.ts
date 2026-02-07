@@ -9,7 +9,15 @@ import { authRoutes, clawsRoutes, plansRoutes, sshKeysRoutes, usersRoutes, webho
 const app = new Hono<{ Variables: { userId: string } }>()
 
 app.use('*', logger())
-app.use('*', cors())
+app.use(
+  '*',
+  cors({
+    origin: ['https://clawhost.cloud', 'https://www.clawhost.cloud', 'http://localhost:1111'],
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization'],
+    maxAge: 86400,
+  })
+)
 
 app.get('/', (c) => c.json({ status: 'ok' }))
 
