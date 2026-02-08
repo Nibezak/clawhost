@@ -4,7 +4,7 @@ export type {
     SSHKeyModalMode,
     ToastType,
     ViewMode
-} from './Types'
+} from '@/ts/Types'
 
 export type {
     Claw,
@@ -37,4 +37,4 @@ export type {
     CreateClawData,
     CreateSSHKeyData,
     UpdateProfileData
-} from './Interfaces'
+} from '@/ts/Interfaces'

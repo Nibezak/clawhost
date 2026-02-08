@@ -1,1 +1,1 @@
-export { default as sendMagicLink } from './sendMagicLink'
+export { default as sendMagicLink } from '@/controllers/auth/sendMagicLink'

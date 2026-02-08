@@ -1,1 +1,1 @@
-export { initialMockClaws } from './mockClaws'
+export { initialMockClaws } from '@/data/mockClaws'

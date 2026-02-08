@@ -1,5 +1,5 @@
 import type { CheckoutSession, CreateCheckoutParams } from '@/ts/Interfaces'
-import { getPolarClient, getPolarConfig } from './client'
+import { getPolarClient, getPolarConfig } from '@/lib/polar/client'
 
 export const checkouts = {
     async create(params: CreateCheckoutParams): Promise<CheckoutSession> {

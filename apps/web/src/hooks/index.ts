@@ -10,14 +10,14 @@ export {
     useCancelDeletion,
     useSyncClaw,
     CLAWS_QUERY_KEY
-} from './useClaws'
+} from '@/hooks/useClaws'
 
 export {
     useSSHKeys,
     useCreateSSHKey,
     useDeleteSSHKey,
     SSH_KEYS_QUERY_KEY
-} from './useSSHKeys'
+} from '@/hooks/useSSHKeys'
 
 export {
     useProfile,
@@ -27,7 +27,7 @@ export {
     PROFILE_QUERY_KEY,
     USER_STATS_QUERY_KEY,
     BILLING_HISTORY_QUERY_KEY
-} from './useUser'
+} from '@/hooks/useUser'
 
 export {
     usePlans,
@@ -36,10 +36,10 @@ export {
     PLANS_QUERY_KEY,
     LOCATIONS_QUERY_KEY,
     VOLUME_PRICING_QUERY_KEY
-} from './usePlans'
+} from '@/hooks/usePlans'
 
 export {
     useGitHubStars,
     GITHUB_REPO_URL,
     GITHUB_STARS_QUERY_KEY
-} from './useGitHubStars'
+} from '@/hooks/useGitHubStars'

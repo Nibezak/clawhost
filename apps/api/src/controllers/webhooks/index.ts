@@ -1,1 +1,1 @@
-export { default as handlePolarWebhook } from './polar'
+export { default as handlePolarWebhook } from '@/controllers/webhooks/polar'

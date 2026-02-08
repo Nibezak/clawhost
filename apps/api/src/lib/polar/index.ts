@@ -1,10 +1,14 @@
-export { getPolarClient, getPolarConfig } from './client'
-export { customers } from './customers'
-export { checkouts } from './checkouts'
-export { subscriptions } from './subscriptions'
-export { products } from './products'
-export { orders } from './orders'
-export { parseWebhook, handleWebhook, verifyWebhookSignature } from './webhooks'
+export { getPolarClient, getPolarConfig } from '@/lib/polar/client'
+export { customers } from '@/lib/polar/customers'
+export { checkouts } from '@/lib/polar/checkouts'
+export { subscriptions } from '@/lib/polar/subscriptions'
+export { products } from '@/lib/polar/products'
+export { orders } from '@/lib/polar/orders'
+export {
+    parseWebhook,
+    handleWebhook,
+    verifyWebhookSignature
+} from '@/lib/polar/webhooks'
 export type {
     PolarCustomer,
     CheckoutSession,

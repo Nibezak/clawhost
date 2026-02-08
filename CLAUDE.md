@@ -46,7 +46,7 @@ openclaw.anywhere/
 
 ### Import Rules
 
-**CRITICAL: Always use `@/` path aliases in both the web app and the API app. Never use relative imports like `../` or `./` to cross directory boundaries.**
+**CRITICAL: Always use `@/` path aliases in both the web app and the API app. Never use `../` relative imports under any circumstance. This applies to ALL `.ts` and `.tsx` files — including files in `scripts/`, entry points, and any other directory outside `src/`.**
 
 ```typescript
 // CORRECT - Use @ path aliases
@@ -55,12 +55,17 @@ import { api } from '@/lib/api'
 import { db } from '@/db'
 import { hetzner } from '@/services/hetzner'
 
-// INCORRECT - Never use relative imports
+// CORRECT - Script files also use @/ aliases
+// apps/api/scripts/example.ts
+import { hetzner } from '@/services/hetzner'
+
+// INCORRECT - Never use ../ relative imports
 import { Button } from '../components/ui/button' // DO NOT USE
 import { db } from '../../db' // DO NOT USE
+import { hetzner } from '../src/services/hetzner' // DO NOT USE (even in scripts/)
 ```
 
-**Exception:** Same-directory `./` imports are allowed in barrel export files (index.ts) and for sibling files within the same folder.
+**`./` imports are NEVER allowed.** All imports must use `@/` path aliases — including barrel exports, same-directory siblings, and subdirectory imports.
 
 **For workspace packages, use the package name:**
 
@@ -463,7 +468,7 @@ pnpm check           # Run tsc + eslint for both api and web
 ## Guidelines for AI
 
 1. **Always read files before modifying** - Understand existing patterns first
-2. **Use `@/` imports everywhere** - Always use path aliases in both web and API apps, never relative imports (except `./` in barrel exports and same-directory siblings)
+2. **Use `@/` imports everywhere** - Always use path aliases in both web and API apps, never use `../` or `./` relative imports anywhere
 3. **Centralize types in `@/ts/`** - Never define types/interfaces inline; add to Types.ts or Interfaces.ts
 4. **Use `import type` for types** - Always use `import type` syntax and place at top of file
 5. **Use FC pattern for components** - Always use `const ComponentName: FC = (): ReactNode => { ... }` with `export default ComponentName` at the end

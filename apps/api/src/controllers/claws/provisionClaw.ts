@@ -8,7 +8,7 @@ import {
     generateToken,
     generateCloudInit,
     DOMAIN
-} from './helpers/index'
+} from '@/controllers/claws/helpers'
 import type {
     ProvisionClawParams,
     ProvisionClawResponse

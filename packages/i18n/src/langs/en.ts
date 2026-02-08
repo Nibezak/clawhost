@@ -116,6 +116,7 @@ export const en = {
         failedToFetchVolumePricing: 'Failed to fetch volume pricing!',
         failedToSendEmail: 'Failed to send email!',
         failedToSendMagicLink: 'Failed to send magic link!',
+        rateLimitExceeded: 'Please wait before requesting another login link.',
         webhookProcessingFailed: 'Webhook processing failed!'
     },
     auth: {
