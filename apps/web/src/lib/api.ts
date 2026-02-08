@@ -21,17 +21,6 @@ import type {
 import { RequestClient } from '@openclaw/shared'
 import { getCachedToken } from '@/lib/firebase'
 
-export type {
-    Claw,
-    Location,
-    Plan,
-    SSHKey,
-    UserProfile,
-    UserStats,
-    Volume,
-    VolumePricing
-} from '@/ts/Interfaces'
-
 const BASE_URL = import.meta.env.VITE_API_URL || '/api'
 
 const client = new RequestClient({

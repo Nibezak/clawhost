@@ -1,5 +1,8 @@
 import type { Context } from 'hono'
-import type { SubscriptionWebhookData, CheckoutWebhookData } from '@/ts/Interfaces'
+import type {
+    SubscriptionWebhookData,
+    CheckoutWebhookData
+} from '@/ts/Interfaces'
 
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'

@@ -1,2 +1,12 @@
-export { t, setLanguage, getLanguage, type TranslationKey } from './t'
+import t from './t'
+import setLanguage from './setLanguage'
+import getLanguage from './getLanguage'
+
+export type { TranslationKey } from './types'
 export { en, type Translations } from './langs/en'
+
+export {
+    t,
+    setLanguage,
+    getLanguage
+}

@@ -1,6 +1,6 @@
 import type { PolarOrdersPage, PolarOrderRaw } from '@/ts/Interfaces'
 
-import { getPolarClient } from '@/lib/polar/client'
+import getPolarClient from '@/lib/polar/getPolarClient'
 
 export const orders = {
     async listByCustomer(

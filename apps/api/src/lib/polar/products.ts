@@ -4,7 +4,8 @@ import type {
     CreatePolarProductParams
 } from '@/ts/Interfaces'
 
-import { getPolarClient, getPolarConfig } from '@/lib/polar/client'
+import getPolarClient from '@/lib/polar/getPolarClient'
+import getPolarConfig from '@/lib/polar/getPolarConfig'
 
 export const products = {
     async list(): Promise<PolarProduct[]> {

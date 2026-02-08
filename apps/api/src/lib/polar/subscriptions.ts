@@ -1,7 +1,7 @@
 import type { PolarSubscription, PolarSubscriptionRaw } from '@/ts/Interfaces'
 import type { SubscriptionStatus } from '@/ts/Types'
 
-import { getPolarClient } from '@/lib/polar/client'
+import getPolarClient from '@/lib/polar/getPolarClient'
 
 export const subscriptions = {
     async get(subscriptionId: string): Promise<PolarSubscription | null> {

@@ -74,6 +74,46 @@ import { RequestClient } from '@openclaw/shared'
 import { t } from '@openclaw/i18n'
 ```
 
+### One Export Per File Rule
+
+**CRITICAL: Every `.ts` and `.tsx` file must export exactly ONE function, component, constant, or class via `export default`. No file should have multiple exports.**
+
+**When a module needs multiple exports, convert it to a folder:**
+
+```
+lib/example.ts (BEFORE - multiple exports)
+↓
+lib/example/           (AFTER - one per file)
+  doThing.ts           → export default doThing
+  doOtherThing.ts      → export default doOtherThing
+  index.ts             → barrel re-exports
+```
+
+**Barrel `index.ts` syntax:**
+
+```typescript
+import doThing from '@/lib/example/doThing'
+import doOtherThing from '@/lib/example/doOtherThing'
+
+export {
+    doThing,
+    doOtherThing
+}
+```
+
+**NEVER use `export { default as X } from` syntax in barrel files.** Always import the default first, then re-export by name.
+
+**Private/internal modules** (shared state, config) within a folder don't need to be in the barrel.
+
+**Exempt from this rule:**
+
+- `ts/Types.ts` and `ts/Interfaces.ts` — type centralization files
+- `ts/index.ts` — type barrel
+- Barrel `index.ts` files — they are the aggregation mechanism
+- shadcn/ui components in `components/ui/` — third-party generated
+
+**Reference pattern:** See `apps/api/src/controllers/claws/` for the canonical example.
+
 ### Types and Interfaces Rules
 
 **CRITICAL: All types and interfaces must be centralized in `@/ts/`. This applies to BOTH `apps/web` AND `apps/api`. Never define types, interfaces, or inline object types anywhere else — not in components, hooks, services, controllers, lib files, or scripts.**

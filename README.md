@@ -12,8 +12,7 @@
 <p align="center">
   <a href="https://clawhost.cloud">Website</a> &middot;
   <a href="https://clawhost.cloud/posts">Blog</a> &middot;
-  <a href="#self-hosting">Self-Host Guide</a> &middot;
-  <a href="https://github.com/bfzli/clawhost/issues">Issues</a>
+  <a href="#self-hosting">Self-Host Guide</a>
 </p>
 
 <p align="center">
@@ -62,33 +61,33 @@ clawhost/
 
 ### Tech Stack
 
-| Layer | Technology |
-| --- | --- |
-| **API Framework** | [Hono](https://hono.dev) on Node.js |
-| **Database** | PostgreSQL with [Drizzle ORM](https://orm.drizzle.team) |
-| **Authentication** | [Firebase](https://firebase.google.com) (passwordless email links) |
-| **Server Provisioning** | [Hetzner Cloud API](https://docs.hetzner.cloud) |
-| **DNS** | [Cloudflare API](https://developers.cloudflare.com/api) |
-| **Billing** | [Polar.sh](https://polar.sh) |
-| **Email** | [Resend](https://resend.com) with React Email |
-| **Frontend** | [React 18](https://react.dev) + [Vite](https://vitejs.dev) |
-| **UI Components** | [shadcn/ui](https://ui.shadcn.com) + [Radix UI](https://radix-ui.com) + [Tailwind CSS](https://tailwindcss.com) |
-| **State Management** | [Zustand](https://zustand-demo.pmnd.rs) |
-| **Data Fetching** | [TanStack React Query](https://tanstack.com/query) |
-| **Icons** | [Phosphor Icons](https://phosphoricons.com) |
-| **Animations** | [Framer Motion](https://www.framer.com/motion) |
-| **Blog** | MDX with frontmatter |
-| **Monorepo** | [Turborepo](https://turbo.build) + [pnpm](https://pnpm.io) |
+| Layer                   | Technology                                                                                                      |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **API Framework**       | [Hono](https://hono.dev) on Node.js                                                                             |
+| **Database**            | PostgreSQL with [Drizzle ORM](https://orm.drizzle.team)                                                         |
+| **Authentication**      | [Firebase](https://firebase.google.com) (passwordless email links)                                              |
+| **Server Provisioning** | [Hetzner Cloud API](https://docs.hetzner.cloud)                                                                 |
+| **DNS**                 | [Cloudflare API](https://developers.cloudflare.com/api)                                                         |
+| **Billing**             | [Polar.sh](https://polar.sh)                                                                                    |
+| **Email**               | [Resend](https://resend.com) with React Email                                                                   |
+| **Frontend**            | [React 18](https://react.dev) + [Vite](https://vitejs.dev)                                                      |
+| **UI Components**       | [shadcn/ui](https://ui.shadcn.com) + [Radix UI](https://radix-ui.com) + [Tailwind CSS](https://tailwindcss.com) |
+| **State Management**    | [Zustand](https://zustand-demo.pmnd.rs)                                                                         |
+| **Data Fetching**       | [TanStack React Query](https://tanstack.com/query)                                                              |
+| **Icons**               | [Phosphor Icons](https://phosphoricons.com)                                                                     |
+| **Animations**          | [Framer Motion](https://www.framer.com/motion)                                                                  |
+| **Blog**                | MDX with frontmatter                                                                                            |
+| **Monorepo**            | [Turborepo](https://turbo.build) + [pnpm](https://pnpm.io)                                                      |
 
 ### Database Schema
 
-| Table | Purpose |
-| --- | --- |
-| `users` | Firebase-authenticated users with Polar customer IDs |
-| `claws` | Hetzner Cloud server instances (status, IP, subdomain, gateway token) |
-| `pendingClaws` | Temporary storage for in-progress checkout sessions |
-| `sshKeys` | SSH public keys with Hetzner sync |
-| `volumes` | Persistent storage volumes attached to claws |
+| Table          | Purpose                                                               |
+| -------------- | --------------------------------------------------------------------- |
+| `users`        | Firebase-authenticated users with Polar customer IDs                  |
+| `claws`        | Hetzner Cloud server instances (status, IP, subdomain, gateway token) |
+| `pendingClaws` | Temporary storage for in-progress checkout sessions                   |
+| `sshKeys`      | SSH public keys with Hetzner sync                                     |
+| `volumes`      | Persistent storage volumes attached to claws                          |
 
 ## Self-Hosting
 
@@ -100,13 +99,13 @@ clawhost/
 
 ### External Services
 
-| Service | Purpose | What You Need |
-| --- | --- | --- |
-| [Hetzner Cloud](https://console.hetzner.cloud) | Server provisioning | API Token (Read & Write) |
-| [Firebase](https://console.firebase.google.com) | Authentication | Project credentials + Service account |
-| [Cloudflare](https://dash.cloudflare.com) | DNS management | API Token + Zone ID |
-| [Polar.sh](https://polar.sh) | Billing & subscriptions | API credentials |
-| [Resend](https://resend.com) | Transactional email | API Key |
+| Service                                         | Purpose                 | What You Need                         |
+| ----------------------------------------------- | ----------------------- | ------------------------------------- |
+| [Hetzner Cloud](https://console.hetzner.cloud)  | Server provisioning     | API Token (Read & Write)              |
+| [Firebase](https://console.firebase.google.com) | Authentication          | Project credentials + Service account |
+| [Cloudflare](https://dash.cloudflare.com)       | DNS management          | API Token + Zone ID                   |
+| [Polar.sh](https://polar.sh)                    | Billing & subscriptions | API credentials                       |
+| [Resend](https://resend.com)                    | Transactional email     | API Key                               |
 
 ### 1. Clone & Install
 
@@ -212,8 +211,8 @@ pnpm dev
 
 This starts both apps:
 
-| App | URL |
-| --- | --- |
+| App | URL                   |
+| --- | --------------------- |
 | Web | http://localhost:1111 |
 | API | http://localhost:2222 |
 
@@ -223,25 +222,25 @@ The web dev server proxies `/api` requests to the API server automatically.
 
 ### Root Commands
 
-| Command | Description |
-| --- | --- |
-| `pnpm dev` | Start all apps in development mode |
-| `pnpm dev:web` | Start web app only |
-| `pnpm dev:api` | Start API only |
-| `pnpm build` | Build all apps for production |
-| `pnpm lint` | Run ESLint across the monorepo |
-| `pnpm lint:fix` | Auto-fix ESLint issues |
-| `pnpm format` | Format all files with Prettier |
-| `pnpm format:check` | Check formatting without writing |
-| `pnpm check` | Run TypeScript type-check + ESLint for both apps |
+| Command             | Description                                      |
+| ------------------- | ------------------------------------------------ |
+| `pnpm dev`          | Start all apps in development mode               |
+| `pnpm dev:web`      | Start web app only                               |
+| `pnpm dev:api`      | Start API only                                   |
+| `pnpm build`        | Build all apps for production                    |
+| `pnpm lint`         | Run ESLint across the monorepo                   |
+| `pnpm lint:fix`     | Auto-fix ESLint issues                           |
+| `pnpm format`       | Format all files with Prettier                   |
+| `pnpm format:check` | Check formatting without writing                 |
+| `pnpm check`        | Run TypeScript type-check + ESLint for both apps |
 
 ### Database Commands
 
-| Command | Description |
-| --- | --- |
+| Command                         | Description                                   |
+| ------------------------------- | --------------------------------------------- |
 | `pnpm --filter api db:generate` | Generate a new migration after schema changes |
-| `pnpm --filter api db:migrate` | Apply pending migrations |
-| `pnpm --filter api db:studio` | Open Drizzle Studio (database GUI) |
+| `pnpm --filter api db:migrate`  | Apply pending migrations                      |
+| `pnpm --filter api db:studio`   | Open Drizzle Studio (database GUI)            |
 
 ### Email Development
 
@@ -253,53 +252,53 @@ pnpm --filter api email:dev    # Preview email templates at localhost:3333
 
 ### Public Endpoints
 
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| `GET` | `/api/plans` | List available server plans |
-| `GET` | `/api/plans/locations` | List available regions |
-| `GET` | `/api/plans/volume-pricing` | Get volume pricing |
+| Method | Endpoint                    | Description                   |
+| ------ | --------------------------- | ----------------------------- |
+| `GET`  | `/api/plans`                | List available server plans   |
+| `GET`  | `/api/plans/locations`      | List available regions        |
+| `GET`  | `/api/plans/volume-pricing` | Get volume pricing            |
 | `POST` | `/api/auth/send-magic-link` | Send passwordless login email |
 
 ### Protected Endpoints (Bearer token required)
 
 **Claws (Server Instances)**
 
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| `GET` | `/api/claws` | List all claws |
-| `GET` | `/api/claws/:id` | Get a specific claw |
-| `POST` | `/api/claws` | Create a claw (direct) |
-| `POST` | `/api/claws/purchase` | Initiate paid claw purchase |
-| `POST` | `/api/claws/:id/sync` | Sync claw with Hetzner |
-| `POST` | `/api/claws/:id/start` | Start a claw |
-| `POST` | `/api/claws/:id/stop` | Stop a claw |
-| `POST` | `/api/claws/:id/restart` | Restart a claw |
-| `POST` | `/api/claws/:id/cancel-deletion` | Cancel scheduled deletion |
-| `DELETE` | `/api/claws/:id` | Delete a claw |
+| Method   | Endpoint                         | Description                 |
+| -------- | -------------------------------- | --------------------------- |
+| `GET`    | `/api/claws`                     | List all claws              |
+| `GET`    | `/api/claws/:id`                 | Get a specific claw         |
+| `POST`   | `/api/claws`                     | Create a claw (direct)      |
+| `POST`   | `/api/claws/purchase`            | Initiate paid claw purchase |
+| `POST`   | `/api/claws/:id/sync`            | Sync claw with Hetzner      |
+| `POST`   | `/api/claws/:id/start`           | Start a claw                |
+| `POST`   | `/api/claws/:id/stop`            | Stop a claw                 |
+| `POST`   | `/api/claws/:id/restart`         | Restart a claw              |
+| `POST`   | `/api/claws/:id/cancel-deletion` | Cancel scheduled deletion   |
+| `DELETE` | `/api/claws/:id`                 | Delete a claw               |
 
 **SSH Keys**
 
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| `GET` | `/api/ssh-keys` | List SSH keys |
-| `POST` | `/api/ssh-keys` | Add an SSH key |
+| Method   | Endpoint            | Description       |
+| -------- | ------------------- | ----------------- |
+| `GET`    | `/api/ssh-keys`     | List SSH keys     |
+| `POST`   | `/api/ssh-keys`     | Add an SSH key    |
 | `DELETE` | `/api/ssh-keys/:id` | Delete an SSH key |
 
 **Users**
 
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| `GET` | `/api/users/me` | Get current user profile |
-| `PUT` | `/api/users/me` | Update profile |
-| `GET` | `/api/users/me/stats` | Get user stats |
-| `GET` | `/api/users/me/billing` | Get billing history |
-| `GET` | `/api/users/me/billing/:orderId/invoice` | Get invoice for an order |
-| `POST` | `/api/users/me/billing/portal` | Open Polar billing portal |
+| Method | Endpoint                                 | Description               |
+| ------ | ---------------------------------------- | ------------------------- |
+| `GET`  | `/api/users/me`                          | Get current user profile  |
+| `PUT`  | `/api/users/me`                          | Update profile            |
+| `GET`  | `/api/users/me/stats`                    | Get user stats            |
+| `GET`  | `/api/users/me/billing`                  | Get billing history       |
+| `GET`  | `/api/users/me/billing/:orderId/invoice` | Get invoice for an order  |
+| `POST` | `/api/users/me/billing/portal`           | Open Polar billing portal |
 
 ### Webhooks
 
-| Method | Endpoint | Description |
-| --- | --- | --- |
+| Method | Endpoint              | Description           |
+| ------ | --------------------- | --------------------- |
 | `POST` | `/api/webhooks/polar` | Polar payment webhook |
 
 ## Deployment
@@ -413,9 +412,3 @@ Contributions are welcome! Please open an issue first to discuss what you'd like
 ## License
 
 MIT License — see [LICENSE](LICENSE) for details.
-
----
-
-<p align="center">
-  Built by <a href="https://github.com/bfzli">Benjamin</a>
-</p>

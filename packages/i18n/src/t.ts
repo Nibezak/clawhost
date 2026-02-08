@@ -1,30 +1,6 @@
-import { en, type Translations } from './langs/en'
+import type { TranslationKey } from './types'
 
-type NestedKeyOf<T> = T extends object
-    ? {
-          [K in keyof T & string]: T[K] extends object
-              ? `${K}` | `${K}.${NestedKeyOf<T[K]>}`
-              : `${K}`
-      }[keyof T & string]
-    : never
-
-export type TranslationKey = NestedKeyOf<Translations>
-
-type Languages = 'en'
-
-const languages: Record<Languages, Translations> = {
-    en
-}
-
-let currentLanguage: Languages = 'en'
-
-export function setLanguage(lang: Languages): void {
-    currentLanguage = lang
-}
-
-export function getLanguage(): Languages {
-    return currentLanguage
-}
+import state from './state'
 
 function getNestedValue(obj: unknown, path: string): string {
     const keys = path.split('.')
@@ -44,11 +20,8 @@ function getNestedValue(obj: unknown, path: string): string {
     return typeof current === 'string' ? current : path
 }
 
-export function t(
-    key: TranslationKey,
-    params?: Record<string, string>
-): string {
-    const translations = languages[currentLanguage]
+function t(key: TranslationKey, params?: Record<string, string>): string {
+    const translations = state.languages[state.currentLanguage]
     let value = getNestedValue(translations, key)
 
     if (params) {
@@ -62,3 +35,5 @@ export function t(
 
     return value
 }
+
+export default t
