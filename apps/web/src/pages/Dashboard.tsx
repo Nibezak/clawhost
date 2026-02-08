@@ -5,7 +5,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
-import { usePreferencesStore } from '@/lib/store'
+import { usePreferencesStore, useUIStore } from '@/lib/store'
 import { ROUTES } from '@/lib/routes'
 import {
     useClaws,
@@ -45,6 +45,13 @@ const Dashboard: FC = (): ReactNode => {
         () => searchParams.get('payment') === 'success'
     )
     const { instancesViewMode, setInstancesViewMode } = usePreferencesStore()
+    const { showToast } = useUIStore()
+
+    useEffect(() => {
+        if (awaitingClaw) {
+            showToast(t('dashboard.paymentSuccess'), 'success')
+        }
+    }, [])
 
     useEffect(() => {
         const planParam = searchParams.get('plan')

@@ -244,6 +244,7 @@ export const en = {
         hardDeleteConfirmation:
             'Are you sure you want to delete this claw immediately? You will lose the remaining time on your current billing period. This action cannot be undone.',
         hardDeleting: 'Deleting...',
+        paymentSuccess: 'Your claw is being created and configured.',
         status: {
             running: 'Running',
             stopped: 'Stopped',
