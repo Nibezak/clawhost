@@ -1,9 +1,10 @@
 import type { Context } from 'hono'
+import type { ProviderType } from '@/ts/Types'
 
 import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
-import { hetzner } from '@/services/hetzner'
+import { getProvider } from '@/services/provider'
 import { t } from '@openclaw/i18n'
 
 const restartClaw = async (c: Context<{ Variables: { userId: string } }>) => {
@@ -17,11 +18,13 @@ const restartClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             .where(and(eq(claws.id, id), eq(claws.userId, userId)))
             .limit(1)
 
-        if (!claw[0] || !claw[0].hetznerServerId) {
+        if (!claw[0] || !claw[0].providerServerId) {
             return c.json({ error: t('api.clawNotFound') }, 404)
         }
 
-        await hetzner.restartServer(claw[0].hetznerServerId)
+        await getProvider(claw[0].provider as ProviderType).restartServer(
+            claw[0].providerServerId
+        )
 
         return c.json({ success: true })
     } catch (err) {

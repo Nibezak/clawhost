@@ -1,9 +1,10 @@
 import type { Context } from 'hono'
+import type { ProviderType } from '@/ts/Types'
 
-import { hetzner } from '@/services/hetzner'
+import { getProvider } from '@/services/provider'
 import { t } from '@openclaw/i18n'
 
-const planOrder = [
+const hetznerPlanOrder = [
     'cx23',
     'cx33',
     'cx43',
@@ -25,7 +26,17 @@ const planOrder = [
     'ccx63'
 ]
 
-const customPrices: Record<string, number> = {
+const digitaloceanPlanOrder = [
+    's-1vcpu-512mb-10gb',
+    's-1vcpu-1gb',
+    's-1vcpu-2gb',
+    's-2vcpu-2gb',
+    's-2vcpu-4gb',
+    's-4vcpu-8gb',
+    's-8vcpu-16gb'
+]
+
+const hetznerCustomPrices: Record<string, number> = {
     cx23: 10,
     cx33: 15,
     cx43: 20,
@@ -47,22 +58,55 @@ const customPrices: Record<string, number> = {
     ccx63: 350
 }
 
+const digitaloceanCustomPrices: Record<string, number> = {
+    's-1vcpu-512mb-10gb': 10,
+    's-1vcpu-1gb': 15,
+    's-1vcpu-2gb': 20,
+    's-2vcpu-2gb': 30,
+    's-2vcpu-4gb': 50,
+    's-4vcpu-8gb': 75,
+    's-8vcpu-16gb': 150
+}
+
+const planConfigs: Record<
+    ProviderType,
+    { order: string[]; prices: Record<string, number> }
+> = {
+    hetzner: { order: hetznerPlanOrder, prices: hetznerCustomPrices },
+    digitalocean: {
+        order: digitaloceanPlanOrder,
+        prices: digitaloceanCustomPrices
+    }
+}
+
 const getPlans = async (c: Context) => {
     try {
-        const serverTypes = await hetzner.getServerTypes()
+        const providerName = (c.req.query('provider') ||
+            'hetzner') as ProviderType
+        const config = planConfigs[providerName]
+
+        if (!config) {
+            return c.json({ error: t('api.invalidProvider') }, 400)
+        }
+
+        const provider = getProvider(providerName)
+        const serverTypes = await provider.getServerTypes()
 
         const plans = serverTypes
-            .filter((t) => customPrices[t.name] !== undefined)
-            .map((t) => ({
-                id: t.name,
-                name: t.description,
-                cpu: t.cores,
-                memory: t.memory,
-                disk: t.disk,
-                priceMonthly: customPrices[t.name],
-                architecture: t.architecture
+            .filter((st) => config.prices[st.name] !== undefined)
+            .map((st) => ({
+                id: st.name,
+                name: st.description,
+                cpu: st.cores,
+                memory: st.memory,
+                disk: st.disk,
+                priceMonthly: config.prices[st.name],
+                architecture: st.architecture
             }))
-            .sort((a, b) => planOrder.indexOf(a.id) - planOrder.indexOf(b.id))
+            .sort(
+                (a, b) =>
+                    config.order.indexOf(a.id) - config.order.indexOf(b.id)
+            )
 
         return c.json(plans)
     } catch (err) {

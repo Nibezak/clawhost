@@ -4,7 +4,7 @@ import type { CreateSSHKeyBody } from '@/ts/Interfaces'
 import { eq, count } from 'drizzle-orm'
 import { db } from '@/db'
 import { sshKeys } from '@/db/schema'
-import { hetzner } from '@/services/hetzner'
+import { getProvider } from '@/services/provider'
 import { t } from '@openclaw/i18n'
 
 const MAX_SSH_KEYS_PER_ACCOUNT = 50
@@ -18,7 +18,6 @@ const createSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
             return c.json({ error: t('api.nameAndKeyRequired') }, 400)
         }
 
-        // Check SSH key limit
         const [{ value: keyCount }] = await db
             .select({ value: count() })
             .from(sshKeys)
@@ -33,18 +32,27 @@ const createSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
             )
         }
 
-        // Validate SSH key format
         if (!publicKey.startsWith('ssh-') && !publicKey.startsWith('ecdsa-')) {
             return c.json({ error: t('api.invalidSshKeyFormat') }, 400)
         }
 
-        // Create in Hetzner first
-        const hetznerKey = await hetzner.createSSHKey(
-            `${name}-${userId.slice(0, 8)}`,
+        const keyLabel = `${name}-${userId.slice(0, 8)}`
+
+        const hetznerProvider = getProvider('hetzner')
+        const hetznerKey = await hetznerProvider.createSSHKey(
+            keyLabel,
             publicKey
         )
 
-        // Save to database
+        let digitaloceanKeyId: number | null = null
+        try {
+            const doProvider = getProvider('digitalocean')
+            const doKey = await doProvider.createSSHKey(keyLabel, publicKey)
+            digitaloceanKeyId = doKey.id
+        } catch (err) {
+            console.error('Failed to register SSH key with DigitalOcean:', err)
+        }
+
         const id = crypto.randomUUID()
         await db.insert(sshKeys).values({
             id,
@@ -52,7 +60,8 @@ const createSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
             name,
             publicKey,
             fingerprint: hetznerKey.fingerprint,
-            hetznerKeyId: hetznerKey.id
+            providerKeyId: hetznerKey.id,
+            digitaloceanKeyId
         })
 
         return c.json({

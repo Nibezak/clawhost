@@ -1,11 +1,13 @@
 import type { Context } from 'hono'
 import type { InitiateClawPurchaseBody } from '@/ts/Interfaces'
+import type { ProviderType } from '@/ts/Types'
 
 import { eq, and, count } from 'drizzle-orm'
 import { db } from '@/db'
 import { users, sshKeys, claws, pendingClaws } from '@/db/schema'
 import { checkouts, customers } from '@/lib/polar'
 import { generatePassword } from '@/controllers/claws/helpers'
+import { getProvider } from '@/services/provider'
 import { t } from '@openclaw/i18n'
 
 const adjectives = [
@@ -74,7 +76,6 @@ const nouns = [
     'storm'
 ]
 
-// Shuffled pool of all combinations — cycles through every name before repeating
 let namePool: string[] = []
 
 function shufflePool() {
@@ -84,7 +85,6 @@ function shufflePool() {
             namePool.push(`${adj}-${noun}`)
         }
     }
-    // Fisher-Yates shuffle
     for (let i = namePool.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1))
         ;[namePool[i], namePool[j]] = [namePool[j], namePool[i]]
@@ -98,14 +98,9 @@ function generateClawName(): string {
     return namePool.pop()!
 }
 
-/**
- * Get the Polar product ID for a given plan
- * Products are created per-plan using scripts/create-polar-products.ts
- * Environment variable format: POLAR_PRODUCT_CX11, POLAR_PRODUCT_CX22, etc.
- */
-function getPolarProductId(planId: string): string | null {
-    // Check environment variable (format: POLAR_PRODUCT_CX11=product_id)
-    const envKey = `POLAR_PRODUCT_${planId.toUpperCase().replace(/-/g, '_')}`
+function getPolarProductId(providerName: string, planId: string): string | null {
+    const prefix = providerName === 'hetzner' ? '' : `${providerName.toUpperCase()}_`
+    const envKey = `POLAR_PRODUCT_${prefix}${planId.toUpperCase().replace(/-/g, '_')}`
     const envValue = process.env[envKey]
 
     if (envValue) return envValue
@@ -119,6 +114,7 @@ const initiateClawPurchase = async (
         const userId = c.get('userId')
         const {
             name: rawName,
+            provider: providerName,
             planId,
             location,
             password,
@@ -133,7 +129,26 @@ const initiateClawPurchase = async (
             return c.json({ error: t('api.missingRequiredFields') }, 400)
         }
 
-        // Check claw limit
+        const validProviders: ProviderType[] = ['hetzner', 'digitalocean']
+        if (providerName && !validProviders.includes(providerName as ProviderType)) {
+            return c.json({ error: t('api.invalidProvider') }, 400)
+        }
+
+        const provider = getProvider((providerName || 'hetzner') as ProviderType)
+        const [serverTypes, locations] = await Promise.all([
+            provider.getServerTypes(),
+            provider.getLocations()
+        ])
+
+        if (!serverTypes.find((st) => st.name === planId)) {
+            return c.json({ error: t('api.invalidPlan') }, 400)
+        }
+
+        const selectedLocation = locations.find((l) => l.id === location)
+        if (!selectedLocation || selectedLocation.disabled) {
+            return c.json({ error: t('api.invalidLocation') }, 400)
+        }
+
         const MAX_CLAWS_PER_ACCOUNT = 50
         const [{ value: clawCount }] = await db
             .select({ value: count() })
@@ -149,10 +164,8 @@ const initiateClawPurchase = async (
             )
         }
 
-        // Generate a cozy random name if not provided
         const name = rawName || generateClawName()
 
-        // Validate volume size if provided
         if (
             volumeSize !== undefined &&
             (volumeSize < 10 || volumeSize > 10240)
@@ -160,7 +173,6 @@ const initiateClawPurchase = async (
             return c.json({ error: t('api.volumeSizeInvalid') }, 400)
         }
 
-        // Get user info for Polar customer
         const user = await db
             .select()
             .from(users)
@@ -171,7 +183,6 @@ const initiateClawPurchase = async (
             return c.json({ error: t('api.userNotFound') }, 404)
         }
 
-        // Validate SSH key if provided
         if (sshKeyId) {
             const sshKey = await db
                 .select()
@@ -186,7 +197,6 @@ const initiateClawPurchase = async (
             }
         }
 
-        // Get or create Polar customer
         let polarCustomerId = user[0].polarCustomerId
 
         if (!polarCustomerId) {
@@ -197,24 +207,20 @@ const initiateClawPurchase = async (
             })
             polarCustomerId = customer.id
 
-            // Save customer ID to user
             await db
                 .update(users)
                 .set({ polarCustomerId })
                 .where(eq(users.id, userId))
         }
 
-        // Get product ID for this plan
-        const productId = getPolarProductId(planId)
+        const productId = getPolarProductId(providerName || 'hetzner', planId)
         if (!productId) {
             return c.json({ error: t('api.paymentNotConfigured') }, 400)
         }
 
-        // Generate pending claw ID
         const pendingId = crypto.randomUUID()
         const finalPassword = password || generatePassword()
 
-        // Create checkout session (product already has correct price)
         const checkout = await checkouts.create({
             productId,
             customerEmail: user[0].email,
@@ -228,15 +234,14 @@ const initiateClawPurchase = async (
             }
         })
 
-        // Calculate expiration (24 hours from now)
         const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
 
-        // Store pending claw
         await db.insert(pendingClaws).values({
             id: pendingId,
             userId,
             checkoutId: checkout.id,
             name,
+            provider: providerName || 'hetzner',
             planId,
             location,
             rootPassword: finalPassword,
@@ -244,7 +249,7 @@ const initiateClawPurchase = async (
             volumeSize: volumeSize || null,
             model: model || null,
             apiToken: apiToken || null,
-            priceMonthly: Math.round(priceMonthly * 100), // Store in cents
+            priceMonthly: Math.round(priceMonthly * 100),
             expiresAt
         })
 

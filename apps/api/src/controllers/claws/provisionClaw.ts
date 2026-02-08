@@ -2,11 +2,12 @@ import type {
     ProvisionClawParams,
     ProvisionClawResponse
 } from '@/ts/Interfaces'
+import type { ProviderType } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws, pendingClaws, sshKeys, volumes } from '@/db/schema'
-import { hetzner } from '@/services/hetzner'
+import { getProvider } from '@/services/provider'
 import { cloudflare } from '@/services/cloudflare'
 import {
     generateSlug,
@@ -42,11 +43,14 @@ export async function provisionClaw(
             return { success: true, clawId: existingClaw[0].id }
         }
 
+        const providerName = (pending.provider || 'hetzner') as ProviderType
+        const provider = getProvider(providerName)
+
         const id = crypto.randomUUID()
         const subdomain = generateSlug(id)
         const gatewayToken = generateToken()
 
-        let hetznerSshKeyIds: number[] | undefined
+        let providerSshKeyIds: number[] | undefined
         if (pending.sshKeyId) {
             const sshKey = await db
                 .select()
@@ -54,8 +58,14 @@ export async function provisionClaw(
                 .where(eq(sshKeys.id, pending.sshKeyId))
                 .limit(1)
 
-            if (sshKey[0]?.hetznerKeyId) {
-                hetznerSshKeyIds = [sshKey[0].hetznerKeyId]
+            if (sshKey[0]) {
+                const keyId =
+                    providerName === 'digitalocean'
+                        ? sshKey[0].digitaloceanKeyId
+                        : sshKey[0].providerKeyId
+                if (keyId) {
+                    providerSshKeyIds = [keyId]
+                }
             }
         }
 
@@ -68,12 +78,12 @@ export async function provisionClaw(
             pending.apiToken || undefined
         )
 
-        const { serverId, ip } = await hetzner.createServer(
+        const { serverId, ip } = await provider.createServer(
             `${pending.name}-${id.slice(0, 8)}`,
             pending.planId,
             pending.location,
             pending.rootPassword || undefined,
-            hetznerSshKeyIds,
+            providerSshKeyIds,
             '',
             cloudInitScript
         )
@@ -88,7 +98,8 @@ export async function provisionClaw(
             id,
             userId: pending.userId,
             name: pending.name,
-            hetznerServerId: serverId.toString(),
+            provider: providerName,
+            providerServerId: serverId.toString(),
             status: 'configuring',
             ip,
             planId: pending.planId,
@@ -107,7 +118,7 @@ export async function provisionClaw(
         if (pending.volumeSize && pending.volumeSize >= 10) {
             try {
                 const volumeId = crypto.randomUUID()
-                const hetznerVolume = await hetzner.createVolume(
+                const providerVolume = await provider.createVolume(
                     `${pending.name}-vol-${volumeId.slice(0, 8)}`,
                     pending.volumeSize,
                     pending.location,
@@ -120,7 +131,7 @@ export async function provisionClaw(
                     clawId: id,
                     name: `${pending.name}-storage`,
                     size: pending.volumeSize,
-                    hetznerVolumeId: hetznerVolume.id,
+                    providerVolumeId: providerVolume.id,
                     location: pending.location,
                     status: 'available'
                 })

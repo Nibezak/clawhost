@@ -37,6 +37,7 @@ interface SelectItemProps {
 interface SelectGroupProps {
     label: string
     children: React.ReactNode
+    isLast?: boolean
 }
 
 const SelectContext = React.createContext<{
@@ -155,14 +156,14 @@ const SelectItem = ({ value, children, className }: SelectItemProps) => {
     )
 }
 
-const SelectGroup = ({ label, children }: SelectGroupProps) => {
+const SelectGroup = ({ label, children, isLast }: SelectGroupProps) => {
     return (
         <>
             <DropdownMenuLabel className='text-muted-foreground text-xs font-medium'>
                 {label}
             </DropdownMenuLabel>
             {children}
-            <DropdownMenuSeparator />
+            {!isLast && <DropdownMenuSeparator />}
         </>
     )
 }

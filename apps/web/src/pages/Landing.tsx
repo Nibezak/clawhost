@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from 'react'
 import type { MockClawData } from '@/ts/Interfaces'
+import type { ProviderType } from '@/ts/Types'
 
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
@@ -16,6 +17,7 @@ import { useUIStore } from '@/lib/store'
 import { useAuth } from '@/lib/auth'
 import { ROUTES } from '@/lib/routes'
 import { usePlans, useGitHubStars, GITHUB_REPO_URL } from '@/hooks'
+import ProviderIcon from '@/components/ProviderIcon'
 import {
     ShieldCheck,
     Globe,
@@ -105,7 +107,8 @@ function getFaqs() {
 
 const Landing: FC = (): ReactNode => {
     const { user } = useAuth()
-    const { data: plans, isLoading: plansLoading } = usePlans()
+    const [pricingProvider, setPricingProvider] = useState<ProviderType>('hetzner')
+    const { data: plans, isLoading: plansLoading } = usePlans(pricingProvider)
     const { data: gitHubStars } = useGitHubStars()
     const { showToast } = useUIStore()
 
@@ -328,7 +331,7 @@ const Landing: FC = (): ReactNode => {
                             <div className='h-12 w-px bg-white/10' />
                             <div>
                                 <div className='font-clash text-3xl font-bold text-white md:text-4xl'>
-                                    6
+                                    15+
                                 </div>
                                 <div className='text-sm text-gray-500'>
                                     {t('landing.locations')}
@@ -337,7 +340,7 @@ const Landing: FC = (): ReactNode => {
                             <div className='h-12 w-px bg-white/10' />
                             <div>
                                 <div className='font-clash text-3xl font-bold text-white md:text-4xl'>
-                                    15+
+                                    25+
                                 </div>
                                 <div className='text-sm text-gray-500'>
                                     {t('landing.servers')}
@@ -689,6 +692,33 @@ const Landing: FC = (): ReactNode => {
                         <p className='mx-auto max-w-xl text-lg text-[#8892b0]'>
                             {t('landing.pricingDescription')}
                         </p>
+
+                        <div className='mt-8 flex justify-center'>
+                            <div className='flex rounded-lg border border-white/10 bg-white/5 p-1'>
+                                <button
+                                    onClick={() => setPricingProvider('hetzner')}
+                                    className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition ${
+                                        pricingProvider === 'hetzner'
+                                            ? 'bg-white/10 text-white shadow-sm'
+                                            : 'text-gray-400 hover:text-white'
+                                    }`}
+                                >
+                                    <ProviderIcon provider='hetzner' className='h-4 w-4' />
+                                    {t('createClaw.providerHetzner')}
+                                </button>
+                                <button
+                                    onClick={() => setPricingProvider('digitalocean')}
+                                    className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition ${
+                                        pricingProvider === 'digitalocean'
+                                            ? 'bg-white/10 text-white shadow-sm'
+                                            : 'text-gray-400 hover:text-white'
+                                    }`}
+                                >
+                                    <ProviderIcon provider='digitalocean' className='h-4 w-4' />
+                                    {t('createClaw.providerDigitalOcean')}
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     {plansLoading ? (
@@ -725,7 +755,9 @@ const Landing: FC = (): ReactNode => {
                                                 plan.priceMonthly
                                             )
                                             const isRecommended =
-                                                plan.id === 'cax41'
+                                                pricingProvider === 'hetzner'
+                                                    ? plan.id === 'cax41'
+                                                    : plan.id === 's-2vcpu-4gb'
 
                                             return (
                                                 <tr
@@ -739,7 +771,7 @@ const Landing: FC = (): ReactNode => {
                                                     <td className='px-4 py-4'>
                                                         <div className='flex items-center gap-2'>
                                                             <span className='font-medium text-white'>
-                                                                {plan.name}
+                                                                {plan.name.replace(/([A-Za-z])(\d)/, '$1 $2')}
                                                             </span>
                                                             {isRecommended && (
                                                                 <Badge className='border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-xs text-white'>

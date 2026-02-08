@@ -3,13 +3,14 @@ import type {
     SubscriptionWebhookData,
     CheckoutWebhookData
 } from '@/ts/Interfaces'
+import type { ProviderType } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { parseWebhook, handleWebhook } from '@/lib/polar'
 import { provisionClaw } from '@/controllers/claws/provisionClaw'
-import { hetzner } from '@/services/hetzner'
+import { getProvider } from '@/services/provider'
 import { cleanupClaw } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 
@@ -106,7 +107,9 @@ const handlePolarWebhook = async (c: Context) => {
                 if (claw[0].deletionScheduledAt) {
                     try {
                         await cleanupClaw(claw[0].id, {
-                            hetznerServerId: claw[0].hetznerServerId,
+                            provider: (claw[0].provider ||
+                                'hetzner') as ProviderType,
+                            providerServerId: claw[0].providerServerId,
                             subdomain: claw[0].subdomain
                         })
                     } catch (err) {
@@ -130,9 +133,12 @@ const handlePolarWebhook = async (c: Context) => {
                     .set({ subscriptionStatus: 'revoked' })
                     .where(eq(claws.id, claw[0].id))
 
-                if (claw[0].hetznerServerId) {
+                if (claw[0].providerServerId) {
                     try {
-                        await hetzner.stopServer(claw[0].hetznerServerId)
+                        const provider = getProvider(
+                            (claw[0].provider || 'hetzner') as ProviderType
+                        )
+                        await provider.stopServer(claw[0].providerServerId)
                         await db
                             .update(claws)
                             .set({ status: 'stopped' })
@@ -166,9 +172,12 @@ const handlePolarWebhook = async (c: Context) => {
                         .where(eq(claws.polarSubscriptionId, data.id))
                         .limit(1)
 
-                    if (claw[0]?.hetznerServerId) {
+                    if (claw[0]?.providerServerId) {
                         try {
-                            await hetzner.stopServer(claw[0].hetznerServerId)
+                            const provider = getProvider(
+                                (claw[0].provider || 'hetzner') as ProviderType
+                            )
+                            await provider.stopServer(claw[0].providerServerId)
                             await db
                                 .update(claws)
                                 .set({ status: 'stopped' })

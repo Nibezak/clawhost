@@ -101,7 +101,7 @@ const Header: FC<HeaderProps> = ({
                         <Button
                             variant='ghost'
                             size='sm'
-                            className='pointer-events-none flex min-w-[100px] items-center justify-start gap-2 px-1.5 py-5'
+                            className='pointer-events-none ml-auto flex w-auto items-center gap-2 px-1.5 py-5'
                         >
                             <Skeleton className='h-7 w-7 shrink-0 rounded-full bg-white/10' />
                             <Skeleton className='hidden h-4 w-16 rounded bg-white/10 sm:block' />
@@ -112,7 +112,7 @@ const Header: FC<HeaderProps> = ({
                                 <Button
                                     variant='ghost'
                                     size='sm'
-                                    className='flex min-w-[100px] items-center justify-start gap-2 px-1.5 py-5 hover:bg-white/10'
+                                    className='ml-auto flex w-auto items-center gap-2 px-1.5 py-[18px] hover:bg-white/10'
                                 >
                                     <Avatar className='h-7 w-7'>
                                         <AvatarFallback className='bg-gradient-to-br from-[#ef5350] to-[#c62828] text-xs text-white'>

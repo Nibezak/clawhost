@@ -6,7 +6,7 @@ import { t } from '@openclaw/i18n'
 import { useUIStore } from '@/lib/store'
 import { Check, Copy } from '@phosphor-icons/react'
 
-const CopyableField: FC<CopyableFieldProps> = ({ label, value }): ReactNode => {
+const CopyableField: FC<CopyableFieldProps> = ({ label, value, icon }): ReactNode => {
     const [isCopied, setIsCopied] = useState(false)
     const { showToast } = useUIStore()
 
@@ -26,7 +26,8 @@ const CopyableField: FC<CopyableFieldProps> = ({ label, value }): ReactNode => {
                 <span className='text-muted-foreground block text-xs'>
                     {label}
                 </span>
-                <span className='block truncate font-mono text-sm'>
+                <span className='flex items-center gap-1.5 truncate font-mono text-sm'>
+                    {icon}
                     {value}
                 </span>
             </div>

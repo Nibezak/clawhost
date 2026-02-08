@@ -32,6 +32,7 @@ export type {
     NavLink,
     PageHeaderProps,
     PageTitleProps,
+    ProviderIconProps,
     SSHKeyCardProps,
     StatusConfig,
     CreateClawData,

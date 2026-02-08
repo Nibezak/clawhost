@@ -1,3 +1,5 @@
+export type ProviderType = 'hetzner' | 'digitalocean'
+
 export type SubscriptionStatus =
     | 'active'
     | 'canceled'

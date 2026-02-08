@@ -1,4 +1,5 @@
 import type { Context } from 'hono'
+import type { ProviderType } from '@/ts/Types'
 
 import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
@@ -22,17 +23,13 @@ const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             return c.json({ error: t('api.clawNotFound') }, 404)
         }
 
-        // If there is a Polar subscription, schedule deletion at period end
         if (claw[0].polarSubscriptionId) {
             try {
-                // Get subscription to find the period end date
                 const sub = await subscriptions.get(claw[0].polarSubscriptionId)
 
                 if (sub && sub.currentPeriodEnd) {
-                    // Cancel at period end (user keeps access until then)
                     await subscriptions.cancel(claw[0].polarSubscriptionId)
 
-                    // Mark the claw as scheduled for deletion
                     await db
                         .update(claws)
                         .set({
@@ -52,11 +49,9 @@ const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {
                     'Failed to schedule deletion via subscription:',
                     subErr
                 )
-                // Fall through to immediate deletion
             }
         }
 
-        // Fallback: No subscription or subscription handling failed — immediate deletion
         if (claw[0].polarSubscriptionId) {
             try {
                 await subscriptions.revoke(claw[0].polarSubscriptionId)
@@ -66,7 +61,8 @@ const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {
         }
 
         await cleanupClaw(id, {
-            hetznerServerId: claw[0].hetznerServerId,
+            provider: (claw[0].provider || 'hetzner') as ProviderType,
+            providerServerId: claw[0].providerServerId,
             subdomain: claw[0].subdomain
         })
 

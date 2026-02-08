@@ -3,7 +3,7 @@ import type { Context } from 'hono'
 import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
 import { sshKeys } from '@/db/schema'
-import { hetzner } from '@/services/hetzner'
+import { getProvider } from '@/services/provider'
 import { t } from '@openclaw/i18n'
 
 const deleteSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
@@ -21,12 +21,27 @@ const deleteSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
             return c.json({ error: t('api.sshKeyNotFound') }, 404)
         }
 
-        // Delete from Hetzner if we have the ID
-        if (key[0].hetznerKeyId) {
-            await hetzner.deleteSSHKey(key[0].hetznerKeyId)
+        if (key[0].providerKeyId) {
+            try {
+                await getProvider('hetzner').deleteSSHKey(key[0].providerKeyId)
+            } catch (err) {
+                console.error('Failed to delete SSH key from Hetzner:', err)
+            }
         }
 
-        // Delete from database
+        if (key[0].digitaloceanKeyId) {
+            try {
+                await getProvider('digitalocean').deleteSSHKey(
+                    key[0].digitaloceanKeyId
+                )
+            } catch (err) {
+                console.error(
+                    'Failed to delete SSH key from DigitalOcean:',
+                    err
+                )
+            }
+        }
+
         await db.delete(sshKeys).where(eq(sshKeys.id, id))
 
         return c.json({ success: true })
