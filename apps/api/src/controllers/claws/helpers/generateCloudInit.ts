@@ -200,7 +200,7 @@ runcmd:
 
   # Install Homebrew in the background (non-blocking)
   - |
-    nohup su - openclaw -c 'NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && echo "eval \"$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"" >> /home/openclaw/.bashrc' > /var/log/brew-install.log 2>&1 &
+    nohup su - openclaw -c 'NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && echo "eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"" >> /home/openclaw/.bashrc' > /var/log/brew-install.log 2>&1 &
 
 final_message: "OpenClaw instance ready! Access dashboard at https://${fullDomain}/"
 `
