@@ -3,17 +3,18 @@ import { hetzner } from '@/services/hetzner'
 import { t } from '@openclaw/i18n'
 
 const getVolumePricing = async (c: Context) => {
-  try {
-    const pricing = await hetzner.getVolumePricing()
-    return c.json({
-      pricePerGbMonthly: Math.ceil(pricing.pricePerGbMonthly * 3 * 1000) / 1000, // 3x markup
-      minSize: 10, // Hetzner minimum
-      maxSize: 10240, // 10TB max
-    })
-  } catch (err) {
-    console.error('Failed to fetch volume pricing:', err)
-    return c.json({ error: t('api.failedToFetchVolumePricing') }, 500)
-  }
+    try {
+        const pricing = await hetzner.getVolumePricing()
+        return c.json({
+            pricePerGbMonthly:
+                Math.ceil(pricing.pricePerGbMonthly * 3 * 1000) / 1000, // 3x markup
+            minSize: 10, // Hetzner minimum
+            maxSize: 10240 // 10TB max
+        })
+    } catch (err) {
+        console.error('Failed to fetch volume pricing:', err)
+        return c.json({ error: t('api.failedToFetchVolumePricing') }, 500)
+    }
 }
 
 export default getVolumePricing

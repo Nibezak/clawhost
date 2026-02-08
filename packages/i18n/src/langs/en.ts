@@ -66,8 +66,10 @@ export const en = {
             'Failed to generate key pair. Please generate keys locally instead!',
         unableToLoadPricing: 'Unable to load pricing. Please try again later!',
         noPasswordAvailable: 'No password available for this claw!',
-        clawLimitReached: "You've reached the limit of 50 claws. Please contact support to increase this limit!",
-        sshKeyLimitReached: "You've reached the limit of 50 SSH keys. Please contact support to increase this limit!"
+        clawLimitReached:
+            "You've reached the limit of 50 claws. Please contact support to increase this limit!",
+        sshKeyLimitReached:
+            "You've reached the limit of 50 SSH keys. Please contact support to increase this limit!"
     },
     api: {
         missingRequiredFields: 'Missing required fields!',
@@ -76,8 +78,10 @@ export const en = {
         sshKeyNotFound: 'SSH key not found!',
         pendingClawNotFound: 'Pending claw not found!',
         clawNotScheduledForDeletion: 'Claw is not scheduled for deletion!',
-        clawLimitReached: "You've reached the limit of 50 claws. Please contact support to increase this limit!",
-        sshKeyLimitReached: "You've reached the limit of 50 SSH keys. Please contact support to increase this limit!",
+        clawLimitReached:
+            "You've reached the limit of 50 claws. Please contact support to increase this limit!",
+        sshKeyLimitReached:
+            "You've reached the limit of 50 SSH keys. Please contact support to increase this limit!",
         volumeSizeInvalid: 'Volume size must be between 10 and 10240 GB!',
         paymentNotConfigured: 'Payment not configured for this plan!',
         invalidSshKeyFormat: 'Invalid SSH public key format!',
@@ -97,7 +101,8 @@ export const en = {
         failedToProvisionClaw: 'Failed to provision claw!',
         failedToInitiatePurchase: 'Failed to initiate purchase!',
         failedToCancelDeletion: 'Failed to cancel deletion!',
-        failedToCancelScheduledDeletion: 'Failed to cancel the scheduled deletion!',
+        failedToCancelScheduledDeletion:
+            'Failed to cancel the scheduled deletion!',
         failedToCreateSshKey: 'Failed to create SSH key!',
         failedToDeleteSshKey: 'Failed to delete SSH key!',
         failedToUpdateProfile: 'Failed to update profile!',
@@ -115,7 +120,8 @@ export const en = {
     },
     auth: {
         signIn: 'Sign In',
-        signInDescription: 'Sign in to your ClawHost account to manage your OpenClaw instances.',
+        signInDescription:
+            'Sign in to your ClawHost account to manage your OpenClaw instances.',
         signingIn: 'Signing In',
         signingYouIn: 'Signing you in',
         loggingInAs: 'Logging in as',
@@ -124,7 +130,8 @@ export const en = {
         sentLoginLink: 'We sent a login link to',
         clickLinkToSignIn:
             'Click the link in the email to sign in. You can close this tab.',
-        signInToDeployOpenClaw: 'Sign-in to manage and deploy OpenClaw instances.',
+        signInToDeployOpenClaw:
+            'Sign-in to manage and deploy OpenClaw instances.',
         emailAddress: 'Email Address',
         emailPlaceholder: 'example@clawhost.cloud',
         continueWithEmail: 'Continue with Email',
@@ -132,11 +139,13 @@ export const en = {
         magicLinkDescription:
             "We'll send you a magic link to sign in. No password needed.",
         welcomeBack: 'Welcome back.',
-        enterEmailForConfirmation: 'Please enter your email for confirmation'
+        enterEmailForConfirmation: 'Please enter your email for confirmation',
+        resendIn: 'Resend in {{seconds}}s'
     },
     account: {
         title: 'Account',
-        description: 'Manage your ClawHost account settings, profile information, and billing history.',
+        description:
+            'Manage your ClawHost account settings, profile information, and billing history.',
         accountSettings: 'Account',
         manageYourAccount: 'Manage your account and view all your billings.',
         profileInformation: 'Profile Information',
@@ -163,7 +172,8 @@ export const en = {
         billingReasonSubscriptionCycle: 'Renewal',
         billingReasonSubscriptionUpdate: 'Subscription Update',
         noBillingHistory: 'No Billings',
-        noBillingHistoryDescription: 'You have no payments history, once you deploy your first claw you should see your billings here.',
+        noBillingHistoryDescription:
+            'You have no payments history, once you deploy your first claw you should see your billings here.',
         failedToLoadBilling: 'Failed to load billing history!',
         viewInvoice: 'View Invoice',
         failedToLoadInvoice: 'Failed to load invoice!',
@@ -173,7 +183,8 @@ export const en = {
     },
     dashboard: {
         title: 'Claws',
-        description: 'View and manage your deployed OpenClaw instances. Start, stop, restart, and monitor your VPS servers.',
+        description:
+            'View and manage your deployed OpenClaw instances. Start, stop, restart, and monitor your VPS servers.',
         claw: 'claw',
         clawsPlural: 'claws',
         newClaw: 'New Claw',
@@ -182,17 +193,20 @@ export const en = {
             'No deployed claw was found. But you can deploy your first claw anytime starting from $10/m. Just AI it.',
         deleteClaw: 'Delete Claw',
         deleteClawConfirmation: 'Are you sure you want to delete',
-        deleteClawWarning: 'Your subscription will be cancelled and the server will be deleted at the end of your current billing period. You can keep using it until then.',
+        deleteClawWarning:
+            'Your subscription will be cancelled and the server will be deleted at the end of your current billing period. You can keep using it until then.',
         actionCannotBeUndone: 'This action cannot be undone.',
         deleting: 'Deleting...',
         start: 'Start',
         stop: 'Stop',
         restart: 'Restart',
         stopClaw: 'Stop Claw',
-        stopClawConfirmation: 'Are you sure you want to stop the server? This will kill everything that is running including OpenClaw, but you can start anytime. Stopping does not stop billing — delete the server to stop being charged.',
+        stopClawConfirmation:
+            'Are you sure you want to stop the server? This will kill everything that is running including OpenClaw, but you can start anytime. Stopping does not stop billing — delete the server to stop being charged.',
         stopping: 'Stopping...',
         restartClaw: 'Restart Claw',
-        restartClawConfirmation: 'Are you sure you want to restart the server? This will kill everything that is running including OpenClaw.',
+        restartClawConfirmation:
+            'Are you sure you want to restart the server? This will kill everything that is running including OpenClaw.',
         restarting: 'Restarting...',
         copyPassword: 'Copy Password',
         copySshWithKey: 'Copy SSH (with key)',
@@ -217,7 +231,8 @@ export const en = {
         scheduledForDeletion: 'Scheduled for Deletion',
         scheduledDeletionShort: 'Deletes {{date}}',
         deletionDate: 'This claw will be deleted on {{date}}',
-        deletionTooltip: 'Scheduled for deletion on {{date}}. To cancel, use the menu.',
+        deletionTooltip:
+            'Scheduled for deletion on {{date}}. To cancel, use the menu.',
         cancelDeletion: 'Cancel Deletion',
         deletionCancelled: 'Deletion cancelled.',
         scheduleDeletion: 'Schedule Deletion',
@@ -272,7 +287,8 @@ export const en = {
     },
     sshKeys: {
         title: 'SSH Keys',
-        description: 'Manage your SSH keys for secure, passwordless access to your OpenClaw instances.',
+        description:
+            'Manage your SSH keys for secure, passwordless access to your OpenClaw instances.',
         key: 'ssh key',
         keys: 'ssh keys',
         addSshKey: 'Add SSH Key',
@@ -324,7 +340,8 @@ export const en = {
     },
     landing: {
         title: 'Deploy OpenClaw. One click. Done.',
-        description: 'Deploy OpenClaw on your own VPS with one click. Self-hostable cloud hosting with full root access, global locations, and transparent pricing.',
+        description:
+            'Deploy OpenClaw on your own VPS with one click. Self-hostable cloud hosting with full root access, global locations, and transparent pricing.',
         badge: 'OpenClaw Simplified',
         heroTitle1: 'Deploy OpenClaw.',
         heroTitle2: 'One click. Done.',
@@ -351,13 +368,12 @@ export const en = {
         step2Title: 'Auto-Installation',
         step2Description:
             'OpenClaw is pre-installed with a direct link and VPS details. No setup required.',
-        step3Title: 'It\'s Yours',
+        step3Title: "It's Yours",
         step3Description:
             'Full access to OpenClaw and the VPS, with no limits on what you can achieve.',
         features: 'Features',
         whyClawHost: 'All-in-One Features',
-        featuresDescription:
-            'Why we’re worth a try, features don’t lie here.',
+        featuresDescription: 'Why we’re worth a try, features don’t lie here.',
         zeroConfigDescription:
             'Skip hours of server and OpenClaw setup. It’s pre-installed and ready within minutes.',
         ownedData: '100% Owned Data',
@@ -387,13 +403,13 @@ export const en = {
         testimonials: 'Testimonials',
         whatPeopleSay: 'What People Are Saying',
         testimonialsDescription:
-            "Don’t just take our word for it. See how others deploy OpenClaw.",
+            'Don’t just take our word for it. See how others deploy OpenClaw.',
         testimonial1Quote:
             "Finally, my own AI server. Setup took 30 seconds and I've been running it for months without issues.",
         testimonial1Author: 'Alex Chen',
         testimonial1Role: 'Software Developer',
         testimonial2Quote:
-            "No more sharing resources with others. My OpenClaw instance handles everything I throw at it.",
+            'No more sharing resources with others. My OpenClaw instance handles everything I throw at it.',
         testimonial2Author: 'Maria Santos',
         testimonial2Role: 'Digital Nomad',
         testimonial3Quote:
@@ -430,19 +446,20 @@ export const en = {
             'ClawHost is a platform built to make OpenClaw accessible to everyone. It lets both non-technical users and developers run OpenClaw without managing infrastructure. We handle servers, uptime, security, and maintenance — you just use OpenClaw.',
         faq2Question: 'What is OpenClaw?',
         faq2Answer:
-            "OpenClaw is a self-hosted secure access layer for your AI tools and services. It’s pre-configured for security and performance, so you can deploy it and connect instantly.",
-        faq3Question: 'How is this different from other AI tools or hosted platforms?',
+            'OpenClaw is a self-hosted secure access layer for your AI tools and services. It’s pre-configured for security and performance, so you can deploy it and connect instantly.',
+        faq3Question:
+            'How is this different from other AI tools or hosted platforms?',
         faq3Answer:
             'Unlike hosted AI tools, ClawHost gives you a real server with OpenClaw installed. You own the infrastructure, control everything, and aren’t limited by a shared platform or model.',
         faq4Question: 'Do I need technical knowledge?',
         faq4Answer:
-            "No. We handle all infrastructure, setup, and maintenance. You can configure and manage OpenClaw through its UI, connect to channels, and customize usage — without touching servers or infrastructure.",
+            'No. We handle all infrastructure, setup, and maintenance. You can configure and manage OpenClaw through its UI, connect to channels, and customize usage — without touching servers or infrastructure.',
         faq5Question: 'What locations are available?',
         faq5Answer:
             'We offer 6 server locations worldwide including US, Europe, Asia, and more. You can deploy OpenClaw on multiple servers in different regions if needed.',
         faq6Question: 'How much does it cost?',
         faq6Answer:
-            "Pricing is based on the server you select. With 15+ server options ranging from entry-level to high-performance, you choose what fits your needs and budget.",
+            'Pricing is based on the server you select. With 15+ server options ranging from entry-level to high-performance, you choose what fits your needs and budget.',
         faq7Question: 'Can I access my server directly?',
         faq7Answer:
             'Yes. Along with OpenClaw access via subdomain URL, you have full access to the server and its underlying infrastructure, giving you complete freedom to customize and run anything you need.',
@@ -451,7 +468,8 @@ export const en = {
             'All servers are hosted on Hetzner Cloud, a trusted European cloud provider known for high-performance hardware and excellent uptime, used by large-scale infrastructures.',
         comparison: 'Comparison',
         comparisonTitle: 'How We’re Different',
-        comparisonDescription: 'There’s only one comparable platform, and our approach focuses on real servers and full ownership instead of limitations.',
+        comparisonDescription:
+            'There’s only one comparable platform, and our approach focuses on real servers and full ownership instead of limitations.',
         others: 'Others',
         comparisonOpenClawUs: 'Full access to OpenClaw',
         comparisonOpenClawOthers: 'Only chat, no management',
@@ -469,7 +487,7 @@ export const en = {
         comparisonMultipleOthers: 'Single instance only',
         readyToOwnYourPrivacy: 'Ready to deploy OpenClaw?',
         ctaDescription:
-            "Get a dedicated server with OpenClaw pre-installed. Full root access, global locations, and ready in minutes. You own it at all times.",
+            'Get a dedicated server with OpenClaw pre-installed. Full root access, global locations, and ready in minutes. You own it at all times.',
         deployOpenClawNow: 'Deploy OpenClaw',
         selfHostInstead: 'Self Host Instead',
         noCreditCardRequired: 'Instant Setup',
@@ -483,7 +501,8 @@ export const en = {
     },
     blog: {
         title: 'Blog',
-        description: 'Guides, tutorials, and news about OpenClaw and self-hosted infrastructure.',
+        description:
+            'Guides, tutorials, and news about OpenClaw and self-hosted infrastructure.',
         readingTime: '{{minutes}} min read',
         publishedOn: 'Published on {{date}}',
         writtenBy: 'By {{author}}',

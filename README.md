@@ -107,12 +107,12 @@ VITE_FIREBASE_APP_ID=1:123456789:web:abc123
 3. Enable **Authentication** → **Sign-in method** → **Email link (passwordless)**
 4. Add your domain to **Authorized domains**
 5. For the web app:
-   - Go to **Project Settings** → **General** → **Your apps**
-   - Add a web app and copy the config values
+    - Go to **Project Settings** → **General** → **Your apps**
+    - Add a web app and copy the config values
 6. For the API:
-   - Go to **Project Settings** → **Service accounts**
-   - Generate a new private key (downloads JSON)
-   - Extract `project_id`, `client_email`, and `private_key` from the JSON
+    - Go to **Project Settings** → **Service accounts**
+    - Generate a new private key (downloads JSON)
+    - Extract `project_id`, `client_email`, and `private_key` from the JSON
 
 #### Cloudflare
 
@@ -120,8 +120,8 @@ VITE_FIREBASE_APP_ID=1:123456789:web:abc123
 2. Add your domain (e.g., `clawhost.cloud`) or use an existing one
 3. Get your **Zone ID** from the domain overview page
 4. Create an API token:
-   - Go to **My Profile** → **API Tokens**
-   - Create a token with **Zone:DNS:Edit** permission for your zone
+    - Go to **My Profile** → **API Tokens**
+    - Create a token with **Zone:DNS:Edit** permission for your zone
 5. Copy Zone ID and API Token to your `.env`
 
 ### 4. Initialize Database

@@ -5,13 +5,13 @@ import { useAuth } from '@/lib/auth'
 import { ROUTES } from '@/lib/routes'
 
 const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }): ReactNode => {
-  const { user, loading } = useAuth()
+    const { user, loading } = useAuth()
 
-  if (!loading && !user) {
-    return <Navigate to={ROUTES.LOGIN} replace />
-  }
+    if (!loading && !user) {
+        return <Navigate to={ROUTES.LOGIN} replace />
+    }
 
-  return <>{children}</>
+    return <>{children}</>
 }
 
 export default ProtectedRoute

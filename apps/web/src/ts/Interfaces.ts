@@ -332,6 +332,10 @@ export interface ProtectedRouteProps {
     children: ReactNode
 }
 
+export interface AuthProviderProps {
+    children: ReactNode
+}
+
 export interface CreateClawData {
     name: string
     planId: string
@@ -373,6 +377,19 @@ export interface UpdateProfileData {
     name?: string
 }
 
+export interface MagicLinkResponse {
+    success: boolean
+}
+
+export interface CustomerPortalResponse {
+    url: string
+}
+
+export interface GitHubStarsData {
+    count: number
+    formatted: string
+}
+
 export interface BlogPostFrontmatter {
     title: string
     slug: string
@@ -399,4 +416,21 @@ export interface BlogCardProps {
 
 export interface JsonLdProps {
     data: Record<string, unknown>
+}
+
+export interface PrerenderMeta {
+    title: string
+    description: string
+    url: string
+    type: string
+    image: string
+    jsonLd: Record<string, unknown>
+    articleMeta?: ArticleMeta
+}
+
+export interface ArticleMeta {
+    publishedTime: string
+    modifiedTime?: string
+    author: string
+    tags: string[]
 }

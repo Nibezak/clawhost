@@ -7,23 +7,25 @@ import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import remarkGfm from 'remark-gfm'
 
 export default defineConfig({
-  plugins: [
-    mdx({ remarkPlugins: [remarkGfm, remarkFrontmatter, remarkMdxFrontmatter] }),
-    react(),
-  ],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
+    plugins: [
+        mdx({
+            remarkPlugins: [remarkGfm, remarkFrontmatter, remarkMdxFrontmatter]
+        }),
+        react()
+    ],
+    resolve: {
+        alias: {
+            '@': path.resolve(__dirname, './src')
+        }
     },
-  },
-  server: {
-    port: 1111,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:2222',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
-      },
-    },
-  },
+    server: {
+        port: 1111,
+        proxy: {
+            '/api': {
+                target: 'http://localhost:2222',
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/api/, '')
+            }
+        }
+    }
 })

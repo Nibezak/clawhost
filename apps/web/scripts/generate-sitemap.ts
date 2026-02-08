@@ -11,37 +11,51 @@ const staticRoutes = ['/', '/login', '/terms', '/privacy', '/posts']
 const mdxFiles = fs.readdirSync(CONTENT).filter((f) => f.endsWith('.mdx'))
 
 const postSlugs = mdxFiles.map((file) => {
-  const raw = fs.readFileSync(path.join(CONTENT, file), 'utf-8')
-  const { data } = matter(raw)
-  return (data as { slug: string }).slug
+    const raw = fs.readFileSync(path.join(CONTENT, file), 'utf-8')
+    const { data } = matter(raw)
+    return (data as { slug: string }).slug
 })
 
 const today = new Date().toISOString().split('T')[0]
 
 const urls = [
-  ...staticRoutes.map((route) => ({ loc: `${SITE_URL}${route}`, lastmod: today })),
-  ...postSlugs.map((slug) => {
-    const raw = fs.readFileSync(
-      path.join(CONTENT, mdxFiles.find((f) => {
-        const { data } = matter(fs.readFileSync(path.join(CONTENT, f), 'utf-8'))
-        return (data as { slug: string }).slug === slug
-      })!),
-      'utf-8'
-    )
-    const { data } = matter(raw)
-    return {
-      loc: `${SITE_URL}/posts/${slug}`,
-      lastmod: (data as { updatedAt?: string; publishedAt: string }).updatedAt ?? (data as { publishedAt: string }).publishedAt,
-    }
-  }),
+    ...staticRoutes.map((route) => ({
+        loc: `${SITE_URL}${route}`,
+        lastmod: today
+    })),
+    ...postSlugs.map((slug) => {
+        const raw = fs.readFileSync(
+            path.join(
+                CONTENT,
+                mdxFiles.find((f) => {
+                    const { data } = matter(
+                        fs.readFileSync(path.join(CONTENT, f), 'utf-8')
+                    )
+                    return (data as { slug: string }).slug === slug
+                })!
+            ),
+            'utf-8'
+        )
+        const { data } = matter(raw)
+        return {
+            loc: `${SITE_URL}/posts/${slug}`,
+            lastmod:
+                (data as { updatedAt?: string; publishedAt: string })
+                    .updatedAt ?? (data as { publishedAt: string }).publishedAt
+        }
+    })
 ]
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map((url) => `  <url>
+${urls
+    .map(
+        (url) => `  <url>
     <loc>${url.loc}</loc>
     <lastmod>${url.lastmod}</lastmod>
-  </url>`).join('\n')}
+  </url>`
+    )
+    .join('\n')}
 </urlset>`
 
 fs.writeFileSync(path.join(DIST, 'sitemap.xml'), sitemap)
