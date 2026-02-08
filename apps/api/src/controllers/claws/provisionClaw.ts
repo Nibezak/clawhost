@@ -1,3 +1,8 @@
+import type {
+    ProvisionClawParams,
+    ProvisionClawResponse
+} from '@/ts/Interfaces'
+
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws, pendingClaws, sshKeys, volumes } from '@/db/schema'
@@ -9,10 +14,6 @@ import {
     generateCloudInit,
     DOMAIN
 } from '@/controllers/claws/helpers'
-import type {
-    ProvisionClawParams,
-    ProvisionClawResponse
-} from '@/ts/Interfaces'
 import { t } from '@openclaw/i18n'
 
 export async function provisionClaw(
@@ -62,7 +63,9 @@ export async function provisionClaw(
             pending.rootPassword || '',
             subdomain,
             DOMAIN,
-            gatewayToken
+            gatewayToken,
+            pending.model || undefined,
+            pending.apiToken || undefined
         )
 
         const { serverId, ip } = await hetzner.createServer(
@@ -86,7 +89,7 @@ export async function provisionClaw(
             userId: pending.userId,
             name: pending.name,
             hetznerServerId: serverId.toString(),
-            status: 'running',
+            status: 'configuring',
             ip,
             planId: pending.planId,
             location: pending.location,
@@ -94,6 +97,7 @@ export async function provisionClaw(
             sshKeyId: pending.sshKeyId,
             subdomain,
             gatewayToken,
+            model: pending.model,
             polarSubscriptionId: params.subscriptionId,
             polarProductId: params.productId,
             polarCustomerId: params.customerId,

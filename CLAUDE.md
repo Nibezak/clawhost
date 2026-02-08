@@ -74,6 +74,43 @@ import { RequestClient } from '@openclaw/shared'
 import { t } from '@openclaw/i18n'
 ```
 
+### One Export Per File Rule
+
+**CRITICAL: Every `.ts` and `.tsx` file must export exactly ONE function, component, constant, or class via `export default`. No file should have multiple exports.**
+
+**When a module needs multiple exports, convert it to a folder:**
+
+```
+lib/example.ts (BEFORE - multiple exports)
+↓
+lib/example/           (AFTER - one per file)
+  doThing.ts           → export default doThing
+  doOtherThing.ts      → export default doOtherThing
+  index.ts             → barrel re-exports
+```
+
+**Barrel `index.ts` syntax:**
+
+```typescript
+import doThing from '@/lib/example/doThing'
+import doOtherThing from '@/lib/example/doOtherThing'
+
+export { doThing, doOtherThing }
+```
+
+**NEVER use `export { default as X } from` syntax in barrel files.** Always import the default first, then re-export by name.
+
+**Private/internal modules** (shared state, config) within a folder don't need to be in the barrel.
+
+**Exempt from this rule:**
+
+- `ts/Types.ts` and `ts/Interfaces.ts` — type centralization files
+- `ts/index.ts` — type barrel
+- Barrel `index.ts` files — they are the aggregation mechanism
+- shadcn/ui components in `components/ui/` — third-party generated
+
+**Reference pattern:** See `apps/api/src/controllers/claws/` for the canonical example.
+
 ### Types and Interfaces Rules
 
 **CRITICAL: All types and interfaces must be centralized in `@/ts/`. This applies to BOTH `apps/web` AND `apps/api`. Never define types, interfaces, or inline object types anywhere else — not in components, hooks, services, controllers, lib files, or scripts.**
@@ -94,14 +131,23 @@ import { t } from '@openclaw/i18n'
 | Web | `apps/web/src/ts/Interfaces.ts` | `apps/web/src/ts/Types.ts` | `apps/web/src/ts/index.ts` |
 | API | `apps/api/src/ts/Interfaces.ts` | `apps/api/src/ts/Types.ts` | `apps/api/src/ts/index.ts` |
 
-**Type Imports Must Be at the Top of Files:**
+**Type Imports Must Be at the Top of Files, Separated by an Empty Line:**
 
 ```typescript
-// CORRECT - Type imports at the very top using `import type`
+// CORRECT - Type imports first, then empty line, then regular imports
 import type { Claw, Plan, SSHKey, StatusConfig } from '@/ts/Interfaces'
 import type { ViewMode, ToastType } from '@/ts/Types'
+
 import { useState } from 'react'
 import { api } from '@/lib/api'
+
+// INCORRECT - Missing empty line between type and regular imports
+import type { Claw } from '@/ts/Interfaces' // DO NOT USE
+import { useState } from 'react' // (no blank line above)
+
+// INCORRECT - Type imports after regular imports
+import { useState } from 'react' // DO NOT USE
+import type { Claw } from '@/ts/Interfaces' // (type import must be above)
 
 // INCORRECT - Regular imports for types
 import { Claw, Plan } from '@/ts/Interfaces' // DO NOT USE

@@ -1,4 +1,5 @@
 import type { FC, ReactNode } from 'react'
+
 import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'

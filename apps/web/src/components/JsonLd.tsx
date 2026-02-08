@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from 'react'
 import type { JsonLdProps } from '@/ts/Interfaces'
+
 import { useEffect } from 'react'
 
 const JsonLd: FC<JsonLdProps> = ({ data }): ReactNode => {

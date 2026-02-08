@@ -1,6 +1,15 @@
-export { default as authRoutes } from '@/routes/auth'
-export { default as clawsRoutes } from '@/routes/claws'
-export { default as plansRoutes } from '@/routes/plans'
-export { default as sshKeysRoutes } from '@/routes/ssh-keys'
-export { default as usersRoutes } from '@/routes/users'
-export { default as webhooksRoutes } from '@/routes/webhooks'
+import authRoutes from '@/routes/auth'
+import clawsRoutes from '@/routes/claws'
+import plansRoutes from '@/routes/plans'
+import sshKeysRoutes from '@/routes/ssh-keys'
+import usersRoutes from '@/routes/users'
+import webhooksRoutes from '@/routes/webhooks'
+
+export {
+    authRoutes,
+    clawsRoutes,
+    plansRoutes,
+    sshKeysRoutes,
+    usersRoutes,
+    webhooksRoutes
+}

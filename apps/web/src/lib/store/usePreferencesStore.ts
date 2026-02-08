@@ -1,0 +1,18 @@
+import type { PreferencesState } from '@/ts/Interfaces'
+
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+
+const usePreferencesStore = create<PreferencesState>()(
+    persist(
+        (set) => ({
+            instancesViewMode: 'list',
+            setInstancesViewMode: (mode) => set({ instancesViewMode: mode })
+        }),
+        {
+            name: 'clawhost-preferences'
+        }
+    )
+)
+
+export default usePreferencesStore

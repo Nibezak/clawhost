@@ -1,10 +1,25 @@
-export { default as getClaws } from '@/controllers/claws/getClaws'
-export { default as getClaw } from '@/controllers/claws/getClaw'
-export { default as createClaw } from '@/controllers/claws/createClaw'
-export { default as initiateClawPurchase } from '@/controllers/claws/initiateClawPurchase'
-export { default as syncClaw } from '@/controllers/claws/syncClaw'
-export { default as startClaw } from '@/controllers/claws/startClaw'
-export { default as stopClaw } from '@/controllers/claws/stopClaw'
-export { default as restartClaw } from '@/controllers/claws/restartClaw'
-export { default as deleteClaw } from '@/controllers/claws/deleteClaw'
-export { default as cancelDeletion } from '@/controllers/claws/cancelDeletion'
+import getClaws from '@/controllers/claws/getClaws'
+import getClaw from '@/controllers/claws/getClaw'
+import createClaw from '@/controllers/claws/createClaw'
+import initiateClawPurchase from '@/controllers/claws/initiateClawPurchase'
+import syncClaw from '@/controllers/claws/syncClaw'
+import startClaw from '@/controllers/claws/startClaw'
+import stopClaw from '@/controllers/claws/stopClaw'
+import restartClaw from '@/controllers/claws/restartClaw'
+import deleteClaw from '@/controllers/claws/deleteClaw'
+import cancelDeletion from '@/controllers/claws/cancelDeletion'
+import hardDeleteClaw from '@/controllers/claws/hardDeleteClaw'
+
+export {
+    getClaws,
+    getClaw,
+    createClaw,
+    initiateClawPurchase,
+    syncClaw,
+    startClaw,
+    stopClaw,
+    restartClaw,
+    deleteClaw,
+    cancelDeletion,
+    hardDeleteClaw
+}

@@ -1,6 +1,10 @@
+import generateCloudInit from '@/controllers/claws/helpers/generateCloudInit'
+import checkSubdomainReady from '@/controllers/claws/helpers/checkSubdomainReady'
+
 export { generateSlug } from '@/controllers/claws/helpers/generateSlug'
 export { generatePassword } from '@/controllers/claws/helpers/generatePassword'
 export { generateToken } from '@/controllers/claws/helpers/generateToken'
-export { generateCloudInit } from '@/controllers/claws/helpers/generateCloudInit'
+export { generateCloudInit }
+export { checkSubdomainReady }
 export { DOMAIN } from '@/controllers/claws/helpers/constants'
 export { cleanupClaw } from '@/controllers/claws/helpers/cleanupClaw'

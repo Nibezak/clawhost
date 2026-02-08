@@ -1,32 +1,62 @@
 import type { Context } from 'hono'
 import type { SendMagicLinkBody } from '@/ts/Interfaces'
 
+import { eq } from 'drizzle-orm'
 import { auth } from '@/services/firebase'
 import { getResend, FROM_EMAIL } from '@/services/resend'
+import { db } from '@/db'
+import { rateLimits } from '@/db/schema'
 import MagicLinkEmail from '@/emails/MagicLinkEmail'
 import { t } from '@openclaw/i18n'
 
 const RATE_LIMIT_WINDOW = 60_000
-const rateLimitMap = new Map<string, number>()
+
+const getClientIp = (c: Context): string | null => {
+    return c.req.header('x-forwarded-for')?.split(',')[0]?.trim()
+        || c.req.header('x-real-ip')
+        || null
+}
+
+const checkRateLimit = async (key: string): Promise<number> => {
+    const record = await db
+        .select()
+        .from(rateLimits)
+        .where(eq(rateLimits.key, key))
+        .then((rows) => rows[0])
+
+    if (!record) return 0
+    const elapsed = Date.now() - record.lastSentAt.getTime()
+    if (elapsed >= RATE_LIMIT_WINDOW) return 0
+    return Math.ceil((RATE_LIMIT_WINDOW - elapsed) / 1000)
+}
+
+const setRateLimit = async (...keys: string[]): Promise<void> => {
+    const now = new Date()
+    await Promise.all(
+        keys.map((key) =>
+            db
+                .insert(rateLimits)
+                .values({ key, lastSentAt: now })
+                .onConflictDoUpdate({
+                    target: rateLimits.key,
+                    set: { lastSentAt: now }
+                })
+        )
+    )
+}
 
 const sendMagicLink = async (c: Context) => {
     try {
-        const ip =
-            c.req.header('x-forwarded-for')?.split(',')[0]?.trim() ||
-            c.req.header('x-real-ip') ||
-            'unknown'
+        const ip = getClientIp(c)
 
-        const lastSent = rateLimitMap.get(ip)
-        const now = Date.now()
-
-        if (lastSent && now - lastSent < RATE_LIMIT_WINDOW) {
-            const retryAfter = Math.ceil(
-                (RATE_LIMIT_WINDOW - (now - lastSent)) / 1000
-            )
-            return c.json(
-                { error: t('api.rateLimitExceeded'), retryAfter },
-                429
-            )
+        if (ip) {
+            const ipRetry = await checkRateLimit(`ip:${ip}`)
+            if (ipRetry > 0) {
+                return c.json(
+                    { error: t('api.rateLimitExceeded'), retryAfter: ipRetry },
+                    429
+                )
+            }
         }
 
         const { email, redirectUrl } = await c.req.json<SendMagicLinkBody>()
@@ -37,6 +67,14 @@ const sendMagicLink = async (c: Context) => {
 
         if (!redirectUrl) {
             return c.json({ error: t('api.redirectUrlRequired') }, 400)
+        }
+
+        const emailRetry = await checkRateLimit(`email:${email.toLowerCase()}`)
+        if (emailRetry > 0) {
+            return c.json(
+                { error: t('api.rateLimitExceeded'), retryAfter: emailRetry },
+                429
+            )
         }
 
         const actionCodeSettings = {
@@ -61,7 +99,9 @@ const sendMagicLink = async (c: Context) => {
             return c.json({ error: t('api.failedToSendEmail') }, 500)
         }
 
-        rateLimitMap.set(ip, Date.now())
+        const keys = [`email:${email.toLowerCase()}`]
+        if (ip) keys.push(`ip:${ip}`)
+        await setRateLimit(...keys)
         return c.json({ success: true })
     } catch (err) {
         console.error('Send magic link error:', err)

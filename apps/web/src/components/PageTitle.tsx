@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from 'react'
 import type { PageTitleProps } from '@/ts/Interfaces'
+
 import { useEffect } from 'react'
 
 const setMetaTag = (attr: string, key: string, content: string) => {

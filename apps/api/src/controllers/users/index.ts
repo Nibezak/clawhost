@@ -1,6 +1,15 @@
-export { default as getCurrentUser } from '@/controllers/users/getCurrentUser'
-export { default as getBillingHistory } from '@/controllers/users/getBillingHistory'
-export { default as getOrderInvoice } from '@/controllers/users/getOrderInvoice'
-export { default as getCustomerPortal } from '@/controllers/users/getCustomerPortal'
-export { default as getUserStats } from '@/controllers/users/getUserStats'
-export { default as updateUserProfile } from '@/controllers/users/updateUserProfile'
+import getCurrentUser from '@/controllers/users/getCurrentUser'
+import getBillingHistory from '@/controllers/users/getBillingHistory'
+import getOrderInvoice from '@/controllers/users/getOrderInvoice'
+import getCustomerPortal from '@/controllers/users/getCustomerPortal'
+import getUserStats from '@/controllers/users/getUserStats'
+import updateUserProfile from '@/controllers/users/updateUserProfile'
+
+export {
+    getCurrentUser,
+    getBillingHistory,
+    getOrderInvoice,
+    getCustomerPortal,
+    getUserStats,
+    updateUserProfile
+}

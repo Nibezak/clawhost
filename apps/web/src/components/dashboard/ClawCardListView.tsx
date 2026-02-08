@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from 'react'
 import type { ClawCardListViewProps } from '@/ts/Interfaces'
+
 import { t } from '@openclaw/i18n'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
@@ -97,15 +98,17 @@ const ClawCardListView: FC<ClawCardListViewProps> = ({
                                     </Tooltip>
                                 )}
                             </div>
-                            <a
-                                href={`https://${claw.subdomain || generateSlug(claw.id)}.clawhost.cloud${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                className='text-muted-foreground hover:text-foreground text-sm transition-colors'
-                            >
-                                {claw.subdomain || generateSlug(claw.id)}
-                                .clawhost.cloud
-                            </a>
+                            {claw.status !== 'configuring' && (
+                                <a
+                                    href={`https://${claw.subdomain || generateSlug(claw.id)}.clawhost.cloud${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    className='text-muted-foreground hover:text-foreground text-sm transition-colors'
+                                >
+                                    {claw.subdomain || generateSlug(claw.id)}
+                                    .clawhost.cloud
+                                </a>
+                            )}
                         </div>
                     </div>
 
@@ -142,10 +145,12 @@ const ClawCardListView: FC<ClawCardListViewProps> = ({
                         className='border-border mt-4 border-t pt-4'
                     >
                         <div className='grid grid-cols-2 gap-3 md:grid-cols-4'>
-                            <CopyableField
-                                label={t('dashboard.domain')}
-                                value={`${claw.subdomain || generateSlug(claw.id)}.clawhost.cloud`}
-                            />
+                            {claw.status !== 'configuring' && (
+                                <CopyableField
+                                    label={t('dashboard.domain')}
+                                    value={`${claw.subdomain || generateSlug(claw.id)}.clawhost.cloud`}
+                                />
+                            )}
 
                             {claw.ip && (
                                 <CopyableField

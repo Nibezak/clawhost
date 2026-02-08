@@ -1,13 +1,61 @@
-// Generate cloud-init script with subdomain and SSL
-export function generateCloudInit(
+function getProviderEnvVar(model: string): string | null {
+    if (model.startsWith('anthropic/')) return 'ANTHROPIC_API_KEY'
+    if (model.startsWith('openai/')) return 'OPENAI_API_KEY'
+    if (model.startsWith('google/')) return 'GEMINI_API_KEY'
+    return null
+}
+
+export default function generateCloudInit(
     rootPassword: string,
     subdomain: string,
     domain: string,
-    gatewayToken: string
+    gatewayToken: string,
+    model?: string,
+    apiToken?: string
 ): string {
     const fullDomain = `${subdomain}.${domain}`
 
-    // Note: Using template literal, variables like $http_upgrade need escaping
+    const config: Record<string, unknown> = {
+        gateway: {
+            mode: 'local',
+            auth: {
+                mode: 'token',
+                token: gatewayToken
+            },
+            controlUi: {
+                allowInsecureAuth: true
+            },
+            trustedProxies: ['127.0.0.1', '::1']
+        },
+        channels: {
+            whatsapp: { dmPolicy: 'open', allowFrom: ['*'] },
+            telegram: { dmPolicy: 'open', allowFrom: ['*'] },
+            discord: {},
+            slack: {},
+            signal: { dmPolicy: 'open', allowFrom: ['*'] },
+            imessage: { dmPolicy: 'open', allowFrom: ['*'] }
+        }
+    }
+
+    const agentDefaults: Record<string, unknown> = {
+        sandbox: { mode: 'off' }
+    }
+
+    if (model) {
+        agentDefaults.model = { primary: model }
+
+        const envVarName = getProviderEnvVar(model)
+        if (envVarName && apiToken) {
+            config.env = {
+                [envVarName]: apiToken
+            }
+        }
+    }
+
+    config.agents = { defaults: agentDefaults }
+
+    const configJson = JSON.stringify(config, null, 2).replace(/\n/g, '\n    ')
+
     return `#cloud-config
 
 # OpenClaw Instance Auto-Configuration
@@ -48,6 +96,7 @@ runcmd:
 
   # Create openclaw user for running the service
   - useradd -r -m -d /home/openclaw -s /bin/bash openclaw
+  - echo 'openclaw ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/openclaw
 
   # Create OpenClaw directories, config, and agent auth directory
   - mkdir -p /home/openclaw/.openclaw
@@ -56,27 +105,7 @@ runcmd:
   # Configure gateway with token auth, channels, and skip device pairing for web access
   - |
     cat > /home/openclaw/.openclaw/openclaw.json << 'OCCONFIG'
-    {
-      "gateway": {
-        "mode": "local",
-        "auth": {
-          "mode": "token",
-          "token": "${gatewayToken}"
-        },
-        "controlUi": {
-          "allowInsecureAuth": true
-        },
-        "trustedProxies": ["127.0.0.1", "::1"]
-      },
-      "channels": {
-        "whatsapp": { "dmPolicy": "open", "allowFrom": ["*"] },
-        "telegram": { "dmPolicy": "open", "allowFrom": ["*"] },
-        "discord": {},
-        "slack": {},
-        "signal": { "dmPolicy": "open", "allowFrom": ["*"] },
-        "imessage": { "dmPolicy": "open", "allowFrom": ["*"] }
-      }
-    }
+    ${configJson}
     OCCONFIG
 
   - chown -R openclaw:openclaw /home/openclaw
@@ -102,12 +131,6 @@ runcmd:
     [Install]
     WantedBy=multi-user.target
     SYSTEMD
-
-  # Enable all bundled plugins
-  - |
-    for p in bluebubbles copilot-proxy discord googlechat imessage line llm-task lobster matrix mattermost memory-lancedb msteams nextcloud-talk nostr open-prose signal slack tlon twitch voice-call whatsapp zalo zalouser feishu; do
-      su - openclaw -c "openclaw plugins enable $p" || true
-    done
 
   # Enable and start OpenClaw service
   - systemctl daemon-reload
@@ -174,6 +197,10 @@ runcmd:
   # Set up automatic renewal cron (twice daily, renews if <30 days left)
   - echo "0 0,12 * * * root certbot renew --quiet --deploy-hook 'systemctl reload nginx'" > /etc/cron.d/certbot-renew
   - chmod 644 /etc/cron.d/certbot-renew
+
+  # Install Homebrew in the background (non-blocking)
+  - |
+    nohup su - openclaw -c 'NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && echo "eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"" >> /home/openclaw/.bashrc' > /var/log/brew-install.log 2>&1 &
 
 final_message: "OpenClaw instance ready! Access dashboard at https://${fullDomain}/"
 `

@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from 'react'
 import type { ErrorStateProps } from '@/ts/Interfaces'
+
 import { t } from '@openclaw/i18n'
 import { Button } from '@/components/ui/button'
 import { WarningCircle, ArrowClockwise } from '@phosphor-icons/react'

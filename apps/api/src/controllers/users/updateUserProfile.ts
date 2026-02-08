@@ -1,5 +1,6 @@
 import type { Context } from 'hono'
 import type { UpdateProfileBody } from '@/ts/Interfaces'
+
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { users } from '@/db/schema'

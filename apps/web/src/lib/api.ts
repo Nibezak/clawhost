@@ -9,6 +9,7 @@ import type {
     Location,
     MagicLinkResponse,
     Plan,
+    PlanAvailability,
     PurchaseClawData,
     PurchaseClawResponse,
     SSHKey,
@@ -17,19 +18,9 @@ import type {
     UserStats,
     VolumePricing
 } from '@/ts/Interfaces'
+
 import { RequestClient } from '@openclaw/shared'
 import { getCachedToken } from '@/lib/firebase'
-
-export type {
-    Claw,
-    Location,
-    Plan,
-    SSHKey,
-    UserProfile,
-    UserStats,
-    Volume,
-    VolumePricing
-} from '@/ts/Interfaces'
 
 const BASE_URL = import.meta.env.VITE_API_URL || '/api'
 
@@ -55,6 +46,7 @@ export const api = {
     getPlans: () => client.get<Plan[]>('/plans'),
     getLocations: () => client.get<Location[]>('/plans/locations'),
     getVolumePricing: () => client.get<VolumePricing>('/plans/volume-pricing'),
+    getPlanAvailability: () => client.get<PlanAvailability>('/plans/availability'),
 
     getClaws: () => client.get<Claw[]>('/claws'),
     getClaw: (id: string, sync?: boolean) =>
@@ -70,6 +62,8 @@ export const api = {
         client.delete<DeleteClawResponse>(`/claws/${id}`),
     cancelDeletion: (id: string) =>
         client.post<void>(`/claws/${id}/cancel-deletion`),
+    hardDeleteClaw: (id: string) =>
+        client.post<void>(`/claws/${id}/hard-delete`),
 
     getSSHKeys: () => client.get<SSHKey[]>('/ssh-keys'),
     createSSHKey: (data: CreateSSHKeyData) =>

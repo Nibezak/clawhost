@@ -8,6 +8,7 @@ export {
     useRestartClaw,
     useDeleteClaw,
     useCancelDeletion,
+    useHardDeleteClaw,
     useSyncClaw,
     CLAWS_QUERY_KEY
 } from '@/hooks/useClaws'
@@ -33,9 +34,11 @@ export {
     usePlans,
     useLocations,
     useVolumePricing,
+    usePlanAvailability,
     PLANS_QUERY_KEY,
     LOCATIONS_QUERY_KEY,
-    VOLUME_PRICING_QUERY_KEY
+    VOLUME_PRICING_QUERY_KEY,
+    PLAN_AVAILABILITY_QUERY_KEY
 } from '@/hooks/usePlans'
 
 export {

@@ -1,16 +1,16 @@
 import type { Context } from 'hono'
+import type {
+    SubscriptionWebhookData,
+    CheckoutWebhookData
+} from '@/ts/Interfaces'
+
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
-import {
-    parseWebhook,
-    handleWebhook,
-    type SubscriptionWebhookData,
-    type CheckoutWebhookData
-} from '@/lib/polar'
+import { parseWebhook, handleWebhook } from '@/lib/polar'
 import { provisionClaw } from '@/controllers/claws/provisionClaw'
 import { hetzner } from '@/services/hetzner'
-import { cleanupClaw } from '@/controllers/claws/helpers/index'
+import { cleanupClaw } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 
 const handlePolarWebhook = async (c: Context) => {
