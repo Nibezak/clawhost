@@ -94,14 +94,23 @@ import { t } from '@openclaw/i18n'
 | Web | `apps/web/src/ts/Interfaces.ts` | `apps/web/src/ts/Types.ts` | `apps/web/src/ts/index.ts` |
 | API | `apps/api/src/ts/Interfaces.ts` | `apps/api/src/ts/Types.ts` | `apps/api/src/ts/index.ts` |
 
-**Type Imports Must Be at the Top of Files:**
+**Type Imports Must Be at the Top of Files, Separated by an Empty Line:**
 
 ```typescript
-// CORRECT - Type imports at the very top using `import type`
+// CORRECT - Type imports first, then empty line, then regular imports
 import type { Claw, Plan, SSHKey, StatusConfig } from '@/ts/Interfaces'
 import type { ViewMode, ToastType } from '@/ts/Types'
+
 import { useState } from 'react'
 import { api } from '@/lib/api'
+
+// INCORRECT - Missing empty line between type and regular imports
+import type { Claw } from '@/ts/Interfaces' // DO NOT USE
+import { useState } from 'react' // (no blank line above)
+
+// INCORRECT - Type imports after regular imports
+import { useState } from 'react' // DO NOT USE
+import type { Claw } from '@/ts/Interfaces' // (type import must be above)
 
 // INCORRECT - Regular imports for types
 import { Claw, Plan } from '@/ts/Interfaces' // DO NOT USE

@@ -3,6 +3,7 @@ import type {
     PolarProductRaw,
     CreatePolarProductParams
 } from '@/ts/Interfaces'
+
 import { getPolarClient, getPolarConfig } from '@/lib/polar/client'
 
 export const products = {

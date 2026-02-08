@@ -1,4 +1,5 @@
 import type { PolarCustomer, CreatePolarCustomerParams } from '@/ts/Interfaces'
+
 import { getPolarClient } from '@/lib/polar/client'
 
 export const customers = {

@@ -1,63 +1,127 @@
-# OpenClaw.Anywhere
+<p align="center">
+  <img src="apps/web/public/favicon.ico" alt="ClawHost" width="80" />
+</p>
 
-A self-hostable cloud hosting management platform that provides a streamlined dashboard for managing Hetzner Cloud servers with automatic SSL, DNS configuration, and SSH key management.
+<h1 align="center">ClawHost</h1>
 
-## Features
+<p align="center">
+  Deploy OpenClaw on your own VPS with one click.<br/>
+  Full privacy, dedicated resources, no shared infrastructure.
+</p>
 
-- **Instance Management** - Create, start, stop, restart, and delete Hetzner Cloud servers
-- **Automatic SSL** - Auto-configured HTTPS via Let's Encrypt for every instance
-- **DNS Management** - Automatic subdomain creation via Cloudflare
-- **SSH Key Management** - Store and assign SSH keys to instances
-- **Storage Volumes** - Create and attach persistent storage
-- **Passwordless Auth** - Firebase email link authentication
+<p align="center">
+  <a href="https://clawhost.cloud">Website</a> &middot;
+  <a href="https://clawhost.cloud/posts">Blog</a> &middot;
+  <a href="#self-hosting">Self-Host Guide</a> &middot;
+  <a href="https://github.com/bfzli/clawhost/issues">Issues</a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT License" />
+  <img src="https://img.shields.io/badge/node-%3E%3D20-green" alt="Node 20+" />
+  <img src="https://img.shields.io/badge/pnpm-9.14%2B-orange" alt="pnpm 9.14+" />
+  <img src="https://img.shields.io/badge/TypeScript-strict-blue" alt="TypeScript" />
+</p>
+
+---
+
+## What is ClawHost?
+
+ClawHost is an open-source, self-hostable cloud hosting platform that lets anyone deploy [OpenClaw](https://openclaw.dev) on a dedicated VPS in under a minute. It handles server provisioning, DNS, SSL, firewall configuration, and OpenClaw installation automatically — so you can focus on using AI, not managing infrastructure.
+
+### Key Highlights
+
+- **One-Click Deploy** — Select a server, pay, and OpenClaw is live within minutes
+- **Dedicated VPS** — Real servers with full root access, not shared containers
+- **Automatic SSL** — HTTPS via Let's Encrypt, configured automatically
+- **DNS Management** — Automatic subdomain creation via Cloudflare
+- **Global Locations** — 6 server regions worldwide (US, Europe, Asia)
+- **SSH Key Management** — Store and assign keys for passwordless access
+- **Persistent Storage** — Attach additional volumes to any instance
+- **Passwordless Auth** — Magic link sign-in, no passwords to remember
+- **Billing Built-In** — Polar.sh integration for subscriptions and invoicing
+- **Fully Open Source** — MIT licensed, self-host the entire platform yourself
 
 ## Architecture
 
+ClawHost is a TypeScript monorepo built with [Turborepo](https://turbo.build) and managed with [pnpm](https://pnpm.io).
+
 ```
-openclaw.anywhere/
+clawhost/
 ├── apps/
-│   ├── api/          # Hono.js backend (Node.js)
-│   └── web/          # React frontend (Vite)
+│   ├── api/                 # Hono.js backend API
+│   └── web/                 # React + Vite frontend
 ├── packages/
-│   └── shared/       # Shared TypeScript utilities
-└── scripts/
-    └── cloud-init.yaml   # Instance initialization template
+│   ├── shared/              # @openclaw/shared — HTTP client utility
+│   └── i18n/                # @openclaw/i18n — Internationalization
+├── scripts/
+│   └── cloud-init.yaml      # Server initialization template
+├── turbo.json               # Turborepo build orchestration
+└── pnpm-workspace.yaml      # Workspace definition
 ```
 
-## Prerequisites
+### Tech Stack
 
-- **Node.js** 22+
+| Layer | Technology |
+| --- | --- |
+| **API Framework** | [Hono](https://hono.dev) on Node.js |
+| **Database** | PostgreSQL with [Drizzle ORM](https://orm.drizzle.team) |
+| **Authentication** | [Firebase](https://firebase.google.com) (passwordless email links) |
+| **Server Provisioning** | [Hetzner Cloud API](https://docs.hetzner.cloud) |
+| **DNS** | [Cloudflare API](https://developers.cloudflare.com/api) |
+| **Billing** | [Polar.sh](https://polar.sh) |
+| **Email** | [Resend](https://resend.com) with React Email |
+| **Frontend** | [React 18](https://react.dev) + [Vite](https://vitejs.dev) |
+| **UI Components** | [shadcn/ui](https://ui.shadcn.com) + [Radix UI](https://radix-ui.com) + [Tailwind CSS](https://tailwindcss.com) |
+| **State Management** | [Zustand](https://zustand-demo.pmnd.rs) |
+| **Data Fetching** | [TanStack React Query](https://tanstack.com/query) |
+| **Icons** | [Phosphor Icons](https://phosphoricons.com) |
+| **Animations** | [Framer Motion](https://www.framer.com/motion) |
+| **Blog** | MDX with frontmatter |
+| **Monorepo** | [Turborepo](https://turbo.build) + [pnpm](https://pnpm.io) |
+
+### Database Schema
+
+| Table | Purpose |
+| --- | --- |
+| `users` | Firebase-authenticated users with Polar customer IDs |
+| `claws` | Hetzner Cloud server instances (status, IP, subdomain, gateway token) |
+| `pendingClaws` | Temporary storage for in-progress checkout sessions |
+| `sshKeys` | SSH public keys with Hetzner sync |
+| `volumes` | Persistent storage volumes attached to claws |
+
+## Self-Hosting
+
+### Prerequisites
+
+- **Node.js** 20+
 - **pnpm** 9.14+
 - **PostgreSQL** database (Neon, Supabase, or self-hosted)
 
 ### External Services
 
-You'll need accounts and API credentials for:
+| Service | Purpose | What You Need |
+| --- | --- | --- |
+| [Hetzner Cloud](https://console.hetzner.cloud) | Server provisioning | API Token (Read & Write) |
+| [Firebase](https://console.firebase.google.com) | Authentication | Project credentials + Service account |
+| [Cloudflare](https://dash.cloudflare.com) | DNS management | API Token + Zone ID |
+| [Polar.sh](https://polar.sh) | Billing & subscriptions | API credentials |
+| [Resend](https://resend.com) | Transactional email | API Key |
 
-| Service                                          | Purpose             | What You Need       |
-| ------------------------------------------------ | ------------------- | ------------------- |
-| [Hetzner Cloud](https://console.hetzner.cloud/)  | Server provisioning | API Token           |
-| [Firebase](https://console.firebase.google.com/) | Authentication      | Project credentials |
-| [Cloudflare](https://dash.cloudflare.com/)       | DNS management      | API Token + Zone ID |
-
-## Setup
-
-### 1. Clone and Install
+### 1. Clone & Install
 
 ```bash
-git clone https://github.com/your-username/openclaw.anywhere.git
-cd openclaw.anywhere
+git clone https://github.com/bfzli/clawhost.git
+cd clawhost
 pnpm install
 ```
 
 ### 2. Configure Environment Variables
 
-#### API Configuration
-
-Create `apps/api/.env`:
+**API** — create `apps/api/.env`:
 
 ```bash
-# Database (PostgreSQL connection string)
+# Database
 DATABASE_URL=postgresql://user:password@host:5432/database?sslmode=require
 
 # Firebase Admin SDK
@@ -76,9 +140,7 @@ CLOUDFLARE_ZONE_ID=your-zone-id
 PORT=2222
 ```
 
-#### Web Configuration
-
-Create `apps/web/.env`:
+**Web** — create `apps/web/.env`:
 
 ```bash
 # Firebase Client SDK
@@ -90,192 +152,270 @@ VITE_FIREBASE_MESSAGING_SENDER_ID=123456789
 VITE_FIREBASE_APP_ID=1:123456789:web:abc123
 ```
 
-### 3. Setup External Services
+### 3. Set Up External Services
 
-#### Hetzner Cloud
+<details>
+<summary><strong>Hetzner Cloud</strong></summary>
 
-1. Go to [Hetzner Cloud Console](https://console.hetzner.cloud/)
-2. Create a new project or select existing
-3. Navigate to **Security** → **API Tokens**
-4. Generate a new token with **Read & Write** permissions
-5. Copy the token to `HETZNER_API_TOKEN`
+1. Go to [Hetzner Cloud Console](https://console.hetzner.cloud)
+2. Create a new project or select an existing one
+3. Navigate to **Security** > **API Tokens**
+4. Generate a token with **Read & Write** permissions
+5. Copy to `HETZNER_API_TOKEN`
 
-#### Firebase
+</details>
 
-1. Go to [Firebase Console](https://console.firebase.google.com/)
+<details>
+<summary><strong>Firebase</strong></summary>
+
+1. Go to [Firebase Console](https://console.firebase.google.com)
 2. Create a new project
-3. Enable **Authentication** → **Sign-in method** → **Email link (passwordless)**
+3. Enable **Authentication** > **Sign-in method** > **Email link (passwordless)**
 4. Add your domain to **Authorized domains**
-5. For the web app:
-    - Go to **Project Settings** → **General** → **Your apps**
-    - Add a web app and copy the config values
-6. For the API:
-    - Go to **Project Settings** → **Service accounts**
-    - Generate a new private key (downloads JSON)
-    - Extract `project_id`, `client_email`, and `private_key` from the JSON
+5. For the web app: **Project Settings** > **General** > **Your apps** > Add a web app and copy config
+6. For the API: **Project Settings** > **Service accounts** > Generate a new private key
 
-#### Cloudflare
+</details>
 
-1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com/)
-2. Add your domain (e.g., `clawhost.cloud`) or use an existing one
-3. Get your **Zone ID** from the domain overview page
-4. Create an API token:
-    - Go to **My Profile** → **API Tokens**
-    - Create a token with **Zone:DNS:Edit** permission for your zone
+<details>
+<summary><strong>Cloudflare</strong></summary>
+
+1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com)
+2. Add your domain or select an existing one
+3. Copy the **Zone ID** from the domain overview page
+4. Create an API token with **Zone:DNS:Edit** permission
 5. Copy Zone ID and API Token to your `.env`
+
+</details>
+
+<details>
+<summary><strong>Polar.sh</strong></summary>
+
+1. Go to [Polar.sh](https://polar.sh)
+2. Create an organization and set up your products/subscriptions
+3. Configure webhook to point to your API's `/api/webhooks/polar` endpoint
+4. Copy API credentials to your `.env`
+
+</details>
 
 ### 4. Initialize Database
 
 ```bash
-cd apps/api
-pnpm db:migrate
+pnpm --filter api db:migrate
 ```
 
-### 5. Start Development Servers
+### 5. Start Development
 
 ```bash
-# From root directory
 pnpm dev
 ```
 
-This starts:
+This starts both apps:
 
-- API server at `http://localhost:2222`
-- Web app at `http://localhost:1111`
+| App | URL |
+| --- | --- |
+| Web | http://localhost:1111 |
+| API | http://localhost:2222 |
 
-## Production Deployment
+The web dev server proxies `/api` requests to the API server automatically.
 
-### Build
+## Scripts
+
+### Root Commands
+
+| Command | Description |
+| --- | --- |
+| `pnpm dev` | Start all apps in development mode |
+| `pnpm dev:web` | Start web app only |
+| `pnpm dev:api` | Start API only |
+| `pnpm build` | Build all apps for production |
+| `pnpm lint` | Run ESLint across the monorepo |
+| `pnpm lint:fix` | Auto-fix ESLint issues |
+| `pnpm format` | Format all files with Prettier |
+| `pnpm format:check` | Check formatting without writing |
+| `pnpm check` | Run TypeScript type-check + ESLint for both apps |
+
+### Database Commands
+
+| Command | Description |
+| --- | --- |
+| `pnpm --filter api db:generate` | Generate a new migration after schema changes |
+| `pnpm --filter api db:migrate` | Apply pending migrations |
+| `pnpm --filter api db:studio` | Open Drizzle Studio (database GUI) |
+
+### Email Development
+
+```bash
+pnpm --filter api email:dev    # Preview email templates at localhost:3333
+```
+
+## API Reference
+
+### Public Endpoints
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/api/plans` | List available server plans |
+| `GET` | `/api/plans/locations` | List available regions |
+| `GET` | `/api/plans/volume-pricing` | Get volume pricing |
+| `POST` | `/api/auth/send-magic-link` | Send passwordless login email |
+
+### Protected Endpoints (Bearer token required)
+
+**Claws (Server Instances)**
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/api/claws` | List all claws |
+| `GET` | `/api/claws/:id` | Get a specific claw |
+| `POST` | `/api/claws` | Create a claw (direct) |
+| `POST` | `/api/claws/purchase` | Initiate paid claw purchase |
+| `POST` | `/api/claws/:id/sync` | Sync claw with Hetzner |
+| `POST` | `/api/claws/:id/start` | Start a claw |
+| `POST` | `/api/claws/:id/stop` | Stop a claw |
+| `POST` | `/api/claws/:id/restart` | Restart a claw |
+| `POST` | `/api/claws/:id/cancel-deletion` | Cancel scheduled deletion |
+| `DELETE` | `/api/claws/:id` | Delete a claw |
+
+**SSH Keys**
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/api/ssh-keys` | List SSH keys |
+| `POST` | `/api/ssh-keys` | Add an SSH key |
+| `DELETE` | `/api/ssh-keys/:id` | Delete an SSH key |
+
+**Users**
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/api/users/me` | Get current user profile |
+| `PUT` | `/api/users/me` | Update profile |
+| `GET` | `/api/users/me/stats` | Get user stats |
+| `GET` | `/api/users/me/billing` | Get billing history |
+| `GET` | `/api/users/me/billing/:orderId/invoice` | Get invoice for an order |
+| `POST` | `/api/users/me/billing/portal` | Open Polar billing portal |
+
+### Webhooks
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `POST` | `/api/webhooks/polar` | Polar payment webhook |
+
+## Deployment
+
+### Web App
+
+The web app builds to `apps/web/dist/` as a static SPA with pre-rendered pages and a generated sitemap. Deploy to any static hosting provider:
+
+- **Vercel** (includes `vercel.json` with SPA rewrites)
+- Cloudflare Pages
+- Netlify
+- Nginx / Apache
 
 ```bash
 pnpm build
 ```
 
-### Run API
+### API
+
+The API runs as a Next.js application (Hono mounted on Next.js for deployment flexibility):
 
 ```bash
 cd apps/api
-pnpm start
+pnpm build
+pnpm start    # Starts on port 2222
 ```
 
-### Deploy Web
+## How It Works
 
-The web app builds to `apps/web/dist/`. Deploy this directory to any static hosting:
+When a user deploys a new claw, the platform:
 
-- Vercel
-- Netlify
-- Cloudflare Pages
-- Nginx/Apache
+1. **Creates a checkout** — Initiates a Polar.sh subscription for the selected plan
+2. **Provisions a server** — Spins up a Hetzner Cloud VPS in the chosen region
+3. **Runs cloud-init** — Automatically installs Node.js, OpenClaw, Nginx, SSL, and firewall
+4. **Configures DNS** — Creates a Cloudflare subdomain pointing to the server IP
+5. **Delivers access** — User gets a subdomain URL, root password, and SSH access
 
-### Environment-Specific Configuration
+The `scripts/cloud-init.yaml` template configures every new instance with:
 
-For production, update the web app's API base URL. Edit `apps/web/src/lib/api.ts` or set up environment-based configuration to point to your production API URL.
-
-## Database Migrations
-
-```bash
-cd apps/api
-
-# Generate new migration after schema changes
-pnpm db:generate
-
-# Apply pending migrations
-pnpm db:migrate
-
-# Open Drizzle Studio (database GUI)
-pnpm db:studio
-```
+- Node.js 22 runtime
+- OpenClaw (installed globally via npm)
+- Nginx reverse proxy with WebSocket support
+- Let's Encrypt SSL certificates
+- UFW firewall (ports 22, 80, 443)
+- systemd service for automatic OpenClaw startup
 
 ## Customization
 
 ### Subdomain Pattern
 
-Instances are assigned subdomains like `abc1234.yourdomain.com`. To change the base domain:
-
-1. Update your Cloudflare zone
-2. Modify the subdomain generation in `apps/api/src/routes/instances.ts`
-3. Update the cloud-init template in `scripts/cloud-init.yaml`
+Instances get subdomains like `abc1234.yourdomain.com`. To use your own domain, update the Cloudflare zone configuration and the cloud-init template.
 
 ### Pricing Markup
 
-The default 20% markup on Hetzner prices can be adjusted in `apps/api/src/routes/plans.ts`.
+The default pricing markup on Hetzner base prices is configurable in the plans controller.
 
-### Cloud-Init Script
+### Cloud-Init
 
-The instance initialization script at `scripts/cloud-init.yaml` installs:
+Modify `scripts/cloud-init.yaml` to customize what gets installed on new instances — add packages, change Node.js version, or configure additional services.
 
-- Node.js 22
-- Nginx with reverse proxy
-- Let's Encrypt SSL certificates
-- OpenClaw gateway service
-- UFW firewall
+### Internationalization
 
-Modify this file to customize what gets installed on new instances.
-
-## API Endpoints
-
-### Public
-
-| Method | Endpoint                    | Description            |
-| ------ | --------------------------- | ---------------------- |
-| GET    | `/api/plans`                | Available server types |
-| GET    | `/api/plans/locations`      | Available regions      |
-| GET    | `/api/plans/volume-pricing` | Volume pricing         |
-
-### Protected (requires auth)
-
-| Method | Endpoint                     | Description      |
-| ------ | ---------------------------- | ---------------- |
-| GET    | `/api/instances`             | List instances   |
-| POST   | `/api/instances`             | Create instance  |
-| DELETE | `/api/instances/:id`         | Delete instance  |
-| POST   | `/api/instances/:id/start`   | Start instance   |
-| POST   | `/api/instances/:id/stop`    | Stop instance    |
-| POST   | `/api/instances/:id/restart` | Restart instance |
-| GET    | `/api/ssh-keys`              | List SSH keys    |
-| POST   | `/api/ssh-keys`              | Create SSH key   |
-| DELETE | `/api/ssh-keys/:id`          | Delete SSH key   |
-| GET    | `/api/users/me`              | Current user     |
-| PUT    | `/api/users/me`              | Update profile   |
-
-## Tech Stack
-
-**Backend**
-
-- [Hono](https://hono.dev/) - Web framework
-- [Drizzle ORM](https://orm.drizzle.team/) - Database ORM
-- [Firebase Admin](https://firebase.google.com/docs/admin/setup) - Auth verification
-
-**Frontend**
-
-- [React](https://react.dev/) - UI framework
-- [Vite](https://vitejs.dev/) - Build tool
-- [Tailwind CSS](https://tailwindcss.com/) - Styling
-- [React Query](https://tanstack.com/query) - Data fetching
-- [Zustand](https://zustand-demo.pmnd.rs/) - State management
+All UI text is managed through `@openclaw/i18n`. Translation strings live in `packages/i18n/src/langs/en.ts`, organized by category (`common`, `nav`, `auth`, `dashboard`, `landing`, etc.).
 
 ## Troubleshooting
 
-### SSL Certificate Issues
+<details>
+<summary><strong>SSL certificates not working</strong></summary>
 
-Instances may take 1-2 minutes for SSL certificates to be provisioned. The cloud-init script includes a 60-second retry loop for certificate generation.
+Instances may take 1-2 minutes for SSL certificates to provision after the server boots. The cloud-init script includes retry logic for certificate generation. Ensure ports 80 and 443 are open.
 
-### DNS Propagation
+</details>
 
-New subdomains may take a few minutes to propagate. Cloudflare typically updates within 1-5 minutes.
+<details>
+<summary><strong>DNS not resolving</strong></summary>
 
-### Firebase Auth Not Working
+New subdomains may take 1-5 minutes to propagate through Cloudflare. Check that your Cloudflare API token has Zone:DNS:Edit permission and the Zone ID is correct.
 
-1. Ensure your domain is added to Firebase authorized domains
-2. Check that email link sign-in is enabled
-3. Verify the Firebase config values match your project
+</details>
 
-### Database Connection Errors
+<details>
+<summary><strong>Firebase auth not working</strong></summary>
 
-1. Verify your `DATABASE_URL` is correct
-2. Ensure SSL mode is enabled for hosted databases
-3. Check that migrations have been applied
+1. Verify your domain is listed in Firebase **Authorized domains**
+2. Confirm email link sign-in is enabled under **Authentication** > **Sign-in method**
+3. Double-check that all `VITE_FIREBASE_*` values match your Firebase project
+
+</details>
+
+<details>
+<summary><strong>Database connection errors</strong></summary>
+
+1. Verify `DATABASE_URL` is correct and includes `?sslmode=require` for hosted databases
+2. Run `pnpm --filter api db:migrate` to apply any pending migrations
+3. Use `pnpm --filter api db:studio` to inspect the database directly
+
+</details>
+
+## Contributing
+
+Contributions are welcome! Please open an issue first to discuss what you'd like to change.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/my-feature`)
+3. Make your changes following the project's code conventions
+4. Run `pnpm check` to verify TypeScript and linting pass
+5. Run `pnpm format` to ensure formatting is correct
+6. Commit and push your changes
+7. Open a pull request
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+MIT License — see [LICENSE](LICENSE) for details.
+
+---
+
+<p align="center">
+  Built by <a href="https://github.com/bfzli">Benjamin</a>
+</p>

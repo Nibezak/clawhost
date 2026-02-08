@@ -1,4 +1,5 @@
 import type { CloudflareDNSRecord, CloudflareDNSLookup } from '@/ts/Interfaces'
+
 import Cloudflare from 'cloudflare'
 
 function getClient() {

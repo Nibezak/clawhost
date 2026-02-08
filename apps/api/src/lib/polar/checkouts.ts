@@ -1,4 +1,5 @@
 import type { CheckoutSession, CreateCheckoutParams } from '@/ts/Interfaces'
+
 import { getPolarClient, getPolarConfig } from '@/lib/polar/client'
 
 export const checkouts = {

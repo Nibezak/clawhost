@@ -1,5 +1,6 @@
 import type { PolarSubscription, PolarSubscriptionRaw } from '@/ts/Interfaces'
 import type { SubscriptionStatus } from '@/ts/Types'
+
 import { getPolarClient } from '@/lib/polar/client'
 
 export const subscriptions = {

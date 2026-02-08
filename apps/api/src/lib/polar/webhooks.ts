@@ -5,6 +5,7 @@ import type {
     CheckoutWebhookData,
     SubscriptionWebhookData
 } from '@/ts/Interfaces'
+
 import crypto from 'crypto'
 import { getPolarConfig } from '@/lib/polar/client'
 

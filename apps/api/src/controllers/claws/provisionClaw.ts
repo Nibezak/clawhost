@@ -1,3 +1,8 @@
+import type {
+    ProvisionClawParams,
+    ProvisionClawResponse
+} from '@/ts/Interfaces'
+
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws, pendingClaws, sshKeys, volumes } from '@/db/schema'
@@ -9,10 +14,6 @@ import {
     generateCloudInit,
     DOMAIN
 } from '@/controllers/claws/helpers'
-import type {
-    ProvisionClawParams,
-    ProvisionClawResponse
-} from '@/ts/Interfaces'
 import { t } from '@openclaw/i18n'
 
 export async function provisionClaw(

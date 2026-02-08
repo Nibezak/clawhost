@@ -1,7 +1,8 @@
+import type { ClawCleanupData } from '@/ts/Interfaces'
+
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws, volumes } from '@/db/schema'
-import type { ClawCleanupData } from '@/ts/Interfaces'
 import { hetzner } from '@/services/hetzner'
 import { cloudflare } from '@/services/cloudflare'
 
