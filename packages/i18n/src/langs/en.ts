@@ -244,6 +244,7 @@ export const en = {
             starting: 'Starting...',
             stopping: 'Stopping...',
             creating: 'Creating...',
+            configuring: 'Configuring...',
             initializing: 'Setting up...',
             migrating: 'Migrating...',
             rebuilding: 'Rebuilding...',
@@ -284,7 +285,11 @@ export const en = {
         rootPasswordSaveThis: 'Root Password (save this!)',
         sshCommandUsingKey: 'SSH Command (using your key)',
         sshCommandWithPassword: 'SSH Command (with password)',
-        passwordCopied: 'Password copied.'
+        passwordCopied: 'Password copied.',
+        model: 'AI Model (Optional)',
+        modelPlaceholder: 'e.g. anthropic/claude-sonnet-4-5-20250929',
+        modelDescription:
+            'Pre-configure the default AI model. You can change this later in the dashboard.'
     },
     sshKeys: {
         title: 'SSH Keys',

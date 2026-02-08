@@ -23,6 +23,7 @@ export const claws = pgTable('claws', {
     sshKeyId: text('ssh_key_id').references(() => sshKeys.id),
     subdomain: text('subdomain'),
     gatewayToken: text('gateway_token'),
+    model: text('model'),
     polarSubscriptionId: text('polar_subscription_id'),
     polarProductId: text('polar_product_id'),
     polarCustomerId: text('polar_customer_id'),
@@ -43,6 +44,7 @@ export const pendingClaws = pgTable('pending_claws', {
     rootPassword: text('root_password'),
     sshKeyId: text('ssh_key_id').references(() => sshKeys.id),
     volumeSize: integer('volume_size'),
+    model: text('model'),
     priceMonthly: integer('price_monthly').notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     expiresAt: timestamp('expires_at').notNull()

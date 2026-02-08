@@ -37,6 +37,12 @@ const getStatusConfig = (): Record<string, StatusConfig> => {
             label: t('dashboard.status.creating'),
             pulse: true
         },
+        configuring: {
+            color: 'bg-blue-500',
+            bgColor: 'bg-blue-500/10',
+            label: t('dashboard.status.configuring'),
+            pulse: true
+        },
         initializing: {
             color: 'bg-blue-500',
             bgColor: 'bg-blue-500/10',

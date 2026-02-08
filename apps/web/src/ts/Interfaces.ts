@@ -343,6 +343,7 @@ export interface CreateClawData {
     password?: string
     sshKeyId?: string
     volumeSize?: number
+    model?: string
 }
 
 export interface PurchaseClawData {
@@ -352,6 +353,7 @@ export interface PurchaseClawData {
     password?: string
     sshKeyId?: string
     volumeSize?: number
+    model?: string
     priceMonthly: number
 }
 

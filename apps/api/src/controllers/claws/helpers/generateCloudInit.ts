@@ -1,13 +1,42 @@
-// Generate cloud-init script with subdomain and SSL
-export function generateCloudInit(
+export default function generateCloudInit(
     rootPassword: string,
     subdomain: string,
     domain: string,
-    gatewayToken: string
+    gatewayToken: string,
+    model?: string
 ): string {
     const fullDomain = `${subdomain}.${domain}`
 
-    // Note: Using template literal, variables like $http_upgrade need escaping
+    const config: Record<string, unknown> = {
+        gateway: {
+            mode: 'local',
+            auth: {
+                mode: 'token',
+                token: gatewayToken
+            },
+            controlUi: {
+                allowInsecureAuth: true
+            },
+            trustedProxies: ['127.0.0.1', '::1']
+        },
+        channels: {
+            whatsapp: { dmPolicy: 'open', allowFrom: ['*'] },
+            telegram: { dmPolicy: 'open', allowFrom: ['*'] },
+            discord: {},
+            slack: {},
+            signal: { dmPolicy: 'open', allowFrom: ['*'] },
+            imessage: { dmPolicy: 'open', allowFrom: ['*'] }
+        }
+    }
+
+    if (model) {
+        config.agents = {
+            main: { model }
+        }
+    }
+
+    const configJson = JSON.stringify(config, null, 2)
+
     return `#cloud-config
 
 # OpenClaw Instance Auto-Configuration
@@ -56,27 +85,7 @@ runcmd:
   # Configure gateway with token auth, channels, and skip device pairing for web access
   - |
     cat > /home/openclaw/.openclaw/openclaw.json << 'OCCONFIG'
-    {
-      "gateway": {
-        "mode": "local",
-        "auth": {
-          "mode": "token",
-          "token": "${gatewayToken}"
-        },
-        "controlUi": {
-          "allowInsecureAuth": true
-        },
-        "trustedProxies": ["127.0.0.1", "::1"]
-      },
-      "channels": {
-        "whatsapp": { "dmPolicy": "open", "allowFrom": ["*"] },
-        "telegram": { "dmPolicy": "open", "allowFrom": ["*"] },
-        "discord": {},
-        "slack": {},
-        "signal": { "dmPolicy": "open", "allowFrom": ["*"] },
-        "imessage": { "dmPolicy": "open", "allowFrom": ["*"] }
-      }
-    }
+    ${configJson}
     OCCONFIG
 
   - chown -R openclaw:openclaw /home/openclaw

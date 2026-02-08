@@ -4,7 +4,8 @@ import { db } from '@/db'
 import { claws, volumes } from '@/db/schema'
 import { hetzner } from '@/services/hetzner'
 
-// Transitional statuses we set in our DB that Hetzner doesn't know about
+const CONFIGURATION_DURATION_MS = 3 * 60 * 1000
+
 const transitionCompletedBy: Record<string, string[]> = {
     stopping: ['off', 'stopped'],
     starting: ['running'],
@@ -30,15 +31,21 @@ const getClaws = async (c: Context<{ Variables: { userId: string } }>) => {
         })
     ])
 
-    // Merge Hetzner live status into each claw
     const syncedClaws = userClaws.map((claw) => {
         if (!claw.hetznerServerId) return claw
 
         const live = hetznerServers.get(claw.hetznerServerId)
         if (!live) return claw
 
+        if (claw.status === 'configuring') {
+            const elapsed = Date.now() - new Date(claw.createdAt).getTime()
+            if (elapsed < CONFIGURATION_DURATION_MS) {
+                return { ...claw, ip: live.ip }
+            }
+            return { ...claw, status: live.status, ip: live.ip }
+        }
+
         const completionStates = transitionCompletedBy[claw.status]
-        // If DB is in a transitional state, only accept Hetzner status that confirms the transition is done
         if (completionStates && !completionStates.includes(live.status)) {
             return { ...claw, ip: live.ip }
         }

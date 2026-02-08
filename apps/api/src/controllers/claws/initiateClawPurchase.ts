@@ -123,6 +123,7 @@ const initiateClawPurchase = async (
             password,
             sshKeyId,
             volumeSize,
+            model,
             priceMonthly
         } = await c.req.json<InitiateClawPurchaseBody>()
 
@@ -239,6 +240,7 @@ const initiateClawPurchase = async (
             rootPassword: finalPassword,
             sshKeyId: sshKeyId || null,
             volumeSize: volumeSize || null,
+            model: model || null,
             priceMonthly: Math.round(priceMonthly * 100), // Store in cents
             expiresAt
         })

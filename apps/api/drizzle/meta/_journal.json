@@ -71,6 +71,13 @@
       "when": 1770436800000,
       "tag": "0009_add_deletion_scheduled_at",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1770523200000,
+      "tag": "0010_add_model_column",
+      "breakpoints": true
     }
   ]
 }

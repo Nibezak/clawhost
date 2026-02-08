@@ -17,8 +17,15 @@ import { t } from '@openclaw/i18n'
 const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
     try {
         const userId = c.get('userId')
-        const { name, planId, location, password, sshKeyId, volumeSize } =
-            await c.req.json<CreateClawBody>()
+        const {
+            name,
+            planId,
+            location,
+            password,
+            sshKeyId,
+            volumeSize,
+            model
+        } = await c.req.json<CreateClawBody>()
 
         if (!name || !planId || !location) {
             return c.json({ error: t('api.missingRequiredFields') }, 400)
@@ -79,7 +86,8 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             finalPassword,
             subdomain,
             DOMAIN,
-            gatewayToken
+            gatewayToken,
+            model || undefined
         )
 
         // Create in Hetzner with our password and optional SSH key
@@ -107,14 +115,15 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             userId,
             name,
             hetznerServerId: serverId.toString(),
-            status: 'running',
+            status: 'configuring',
             ip,
             planId,
             location,
             rootPassword: finalPassword,
             sshKeyId: sshKeyId || null,
             subdomain,
-            gatewayToken
+            gatewayToken,
+            model: model || null
         })
 
         // Create volume if requested
@@ -154,7 +163,7 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
         return c.json({
             id,
             name,
-            status: 'running',
+            status: 'configuring',
             ip,
             planId,
             location,

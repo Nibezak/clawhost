@@ -5,6 +5,8 @@ import { claws } from '@/db/schema'
 import { hetzner } from '@/services/hetzner'
 import { t } from '@openclaw/i18n'
 
+const CONFIGURATION_DURATION_MS = 3 * 60 * 1000
+
 const syncClaw = async (c: Context<{ Variables: { userId: string } }>) => {
     const userId = c.get('userId')
     const id = c.req.param('id')
@@ -21,6 +23,22 @@ const syncClaw = async (c: Context<{ Variables: { userId: string } }>) => {
 
     try {
         const hetznerStatus = await hetzner.getServer(claw[0].hetznerServerId)
+
+        const isConfiguring = claw[0].status === 'configuring'
+        const elapsed = Date.now() - new Date(claw[0].createdAt).getTime()
+        const stillConfiguring = isConfiguring && elapsed < CONFIGURATION_DURATION_MS
+
+        if (stillConfiguring) {
+            await db
+                .update(claws)
+                .set({ ip: hetznerStatus.ip })
+                .where(eq(claws.id, id))
+
+            return c.json({
+                ...claw[0],
+                ip: hetznerStatus.ip
+            })
+        }
 
         await db
             .update(claws)

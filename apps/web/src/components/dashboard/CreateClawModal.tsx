@@ -49,6 +49,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     const [showPassword, setShowPassword] = useState(false)
     const [selectedSshKeyId, setSelectedSshKeyId] = useState<string>('')
     const [volumeSize, setVolumeSize] = useState<number>(0)
+    const [model, setModel] = useState('')
     const [showAdvanced, setShowAdvanced] = useState(false)
     const { showToast } = useUIStore()
 
@@ -74,6 +75,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                 password: password || undefined,
                 sshKeyId: selectedSshKeyId || undefined,
                 volumeSize: volumeSize > 0 ? volumeSize : undefined,
+                model: model || undefined,
                 priceMonthly: totalPrice
             },
             {
@@ -471,6 +473,22 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                     </div>
                                 </div>
                             )}
+
+                            <div className='space-y-2'>
+                                <Label>{t('createClaw.model')}</Label>
+                                <Input
+                                    type='text'
+                                    value={model}
+                                    onChange={(e) => setModel(e.target.value)}
+                                    placeholder={t(
+                                        'createClaw.modelPlaceholder'
+                                    )}
+                                    className='h-11 font-mono text-sm'
+                                />
+                                <p className='text-muted-foreground text-xs'>
+                                    {t('createClaw.modelDescription')}
+                                </p>
+                            </div>
                         </div>
                     )}
 
