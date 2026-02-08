@@ -1,7 +1,7 @@
 function getProviderEnvVar(model: string): string | null {
     if (model.startsWith('anthropic/')) return 'ANTHROPIC_API_KEY'
     if (model.startsWith('openai/')) return 'OPENAI_API_KEY'
-    if (model.startsWith('google/')) return 'GOOGLE_API_KEY'
+    if (model.startsWith('google/')) return 'GEMINI_API_KEY'
     return null
 }
 
@@ -37,17 +37,22 @@ export default function generateCloudInit(
         }
     }
 
+    const agentDefaults: Record<string, unknown> = {
+        sandbox: { mode: 'off' }
+    }
+
     if (model) {
-        config.agents = {
-            main: { model }
+        agentDefaults.model = { primary: model }
+
+        const envVarName = getProviderEnvVar(model)
+        if (envVarName && apiToken) {
+            config.env = {
+                [envVarName]: apiToken
+            }
         }
     }
 
-    const envVarName = model ? getProviderEnvVar(model) : null
-    const envLine =
-        envVarName && apiToken
-            ? `\n    Environment=${envVarName}=${apiToken}`
-            : ''
+    config.agents = { defaults: agentDefaults }
 
     const configJson = JSON.stringify(config, null, 2).replace(/\n/g, '\n    ')
 
@@ -91,10 +96,7 @@ runcmd:
 
   # Create openclaw user for running the service
   - useradd -r -m -d /home/openclaw -s /bin/bash openclaw
-
-  # Install Homebrew for the openclaw user
-  - su - openclaw -c 'NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
-  - su - openclaw -c 'echo "eval \\"\\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\\"" >> /home/openclaw/.bashrc'
+  - echo 'openclaw ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/openclaw
 
   # Create OpenClaw directories, config, and agent auth directory
   - mkdir -p /home/openclaw/.openclaw
@@ -121,7 +123,7 @@ runcmd:
     Group=openclaw
     WorkingDirectory=/home/openclaw
     Environment=HOME=/home/openclaw
-    Environment=NODE_ENV=production${envLine}
+    Environment=NODE_ENV=production
     ExecStart=/usr/bin/openclaw gateway --port 18789 --bind loopback
     Restart=always
     RestartSec=10
@@ -195,6 +197,10 @@ runcmd:
   # Set up automatic renewal cron (twice daily, renews if <30 days left)
   - echo "0 0,12 * * * root certbot renew --quiet --deploy-hook 'systemctl reload nginx'" > /etc/cron.d/certbot-renew
   - chmod 644 /etc/cron.d/certbot-renew
+
+  # Install Homebrew in the background (non-blocking)
+  - |
+    nohup su - openclaw -c 'NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && echo "eval \"$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\"" >> /home/openclaw/.bashrc' > /var/log/brew-install.log 2>&1 &
 
 final_message: "OpenClaw instance ready! Access dashboard at https://${fullDomain}/"
 `

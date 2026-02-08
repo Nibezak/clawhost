@@ -224,7 +224,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                         key={loc.id}
                                         className={`flex items-center gap-2 rounded-lg p-3 transition ${
                                             isDisabled
-                                                ? 'bg-muted/50 cursor-not-allowed border border-transparent opacity-80'
+                                                ? 'bg-muted/50 cursor-not-allowed border border-transparent opacity-90'
                                                 : isSelected
                                                   ? 'cursor-pointer border border-[#ef5350]/50 bg-[#ef5350]/20'
                                                   : 'bg-muted hover:bg-muted/80 cursor-pointer border border-transparent'
