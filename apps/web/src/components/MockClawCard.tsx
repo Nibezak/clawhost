@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useUIStore } from '@/lib/store'
 import { ClawMascot } from '@/components/ClawMascot'
+import ProviderIcon from '@/components/ProviderIcon'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -209,7 +210,7 @@ const MockClawCard: FC<MockClawCardProps> = ({
                                     onClick={() => onDelete?.(claw.id)}
                                 >
                                     <Trash className='mr-2 h-4 w-4' />
-                                    {t('common.delete')}
+                                    {t('dashboard.scheduleDeletion')}
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
@@ -227,13 +228,30 @@ const MockClawCard: FC<MockClawCardProps> = ({
                         >
                             <div className='border-border mt-4 grid grid-cols-2 gap-3 border-t pt-4 md:grid-cols-4'>
                                 <CopyableField
-                                    label={t('dashboard.domain')}
-                                    value={`${claw.subdomain}.clawhost.cloud`}
-                                />
-                                <CopyableField
                                     label={t('dashboard.ipAddress')}
                                     value={claw.ip}
                                 />
+                                <div
+                                    onClick={() => copyField(t('dashboard.provider'), claw.provider === 'hetzner' ? t('createClaw.providerHetzner') : t('createClaw.providerDigitalOcean'))}
+                                    className='bg-background hover:bg-background/80 group flex cursor-pointer items-center justify-between gap-2 rounded-lg px-3 py-2 transition-colors'
+                                >
+                                    <div className='min-w-0'>
+                                        <span className='text-muted-foreground block text-xs'>
+                                            {t('dashboard.provider')}
+                                        </span>
+                                        <span className='flex items-center gap-1.5 font-mono text-sm'>
+                                            <ProviderIcon provider={claw.provider} className='h-3.5 w-3.5 shrink-0' />
+                                            {claw.provider === 'hetzner' ? t('createClaw.providerHetzner') : t('createClaw.providerDigitalOcean')}
+                                        </span>
+                                    </div>
+                                    <div className='shrink-0'>
+                                        {copiedField === t('dashboard.provider') ? (
+                                            <Check className='h-4 w-4 text-green-500' />
+                                        ) : (
+                                            <Copy className='text-muted-foreground h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100' />
+                                        )}
+                                    </div>
+                                </div>
                                 <CopyableField
                                     label={t('dashboard.location')}
                                     value={`${claw.locationFlag} ${claw.location}`}

@@ -379,11 +379,16 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                             <div className='space-y-2'>
                                 {plans.map((plan) => {
                                     const isSelected = planId === plan.id
+                                    const isDisabled = plan.disabled
                                     return (
                                         <label
                                             key={plan.id}
-                                            className={`flex cursor-pointer items-center justify-between rounded-lg p-3 transition ${
-                                                isSelected
+                                            className={`flex items-center justify-between rounded-lg p-3 transition ${
+                                                isDisabled
+                                                    ? 'cursor-not-allowed opacity-50'
+                                                    : 'cursor-pointer'
+                                            } ${
+                                                isSelected && !isDisabled
                                                     ? 'border border-[#ef5350]/50 bg-[#ef5350]/20'
                                                     : 'bg-muted hover:bg-muted/80 border border-transparent'
                                             }`}
@@ -394,6 +399,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                     name='plan'
                                                     value={plan.id}
                                                     checked={isSelected}
+                                                    disabled={isDisabled}
                                                     onChange={(e) => {
                                                         const newPlanId =
                                                             e.target.value
@@ -424,9 +430,16 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                     </p>
                                                 </div>
                                             </div>
-                                            <span className='text-sm font-semibold'>
-                                                ${plan.priceMonthly.toFixed(2)}/mo
-                                            </span>
+                                            <div className='flex items-center gap-2'>
+                                                {isDisabled && (
+                                                    <span className='rounded bg-red-500/10 px-1.5 py-0.5 text-xs text-red-400'>
+                                                        {t('createClaw.planUnavailable')}
+                                                    </span>
+                                                )}
+                                                <span className='text-sm font-semibold'>
+                                                    ${plan.priceMonthly.toFixed(2)}/mo
+                                                </span>
+                                            </div>
                                         </label>
                                     )
                                 })}

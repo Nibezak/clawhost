@@ -131,9 +131,12 @@ runcmd:
     WorkingDirectory=/home/openclaw
     Environment=HOME=/home/openclaw
     Environment=NODE_ENV=production
+    Environment=NODE_OPTIONS=--max-old-space-size=512
     ExecStart=/usr/bin/openclaw gateway --port 18789 --bind loopback
     Restart=always
     RestartSec=10
+    StandardOutput=append:/var/log/openclaw-gateway.log
+    StandardError=append:/var/log/openclaw-gateway.log
 
     [Install]
     WantedBy=multi-user.target
@@ -207,7 +210,13 @@ runcmd:
 
   # Install Homebrew in the background (non-blocking)
   - |
-    nohup su - openclaw -c 'NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && echo "eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"" >> /home/openclaw/.bashrc' > /var/log/brew-install.log 2>&1 &
+    cat > /tmp/install-brew.sh << 'BREWSCRIPT'
+    #!/bin/bash
+    su - openclaw -c 'NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+    echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> /home/openclaw/.bashrc
+    BREWSCRIPT
+    chmod +x /tmp/install-brew.sh
+    nohup /tmp/install-brew.sh > /var/log/brew-install.log 2>&1 &
 
 final_message: "OpenClaw instance ready! Access dashboard at https://${fullDomain}/"
 `

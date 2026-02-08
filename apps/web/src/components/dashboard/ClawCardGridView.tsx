@@ -45,14 +45,32 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
                                 <h3 className='truncate text-base font-semibold'>
                                     {claw.name}
                                 </h3>
-                                <span
-                                    className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${status.bgColor}`}
-                                >
+                                {claw.status === 'configuring' ? (
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <span
+                                                className={`inline-flex cursor-default items-center rounded-full px-2 py-0.5 text-xs font-medium ${status.bgColor}`}
+                                            >
+                                                <span
+                                                    className={`h-1.5 w-1.5 rounded-full ${status.color} mr-1.5 ${status.pulse ? 'animate-pulse' : ''}`}
+                                                />
+                                                {status.label}
+                                            </span>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>{t('dashboard.configuringTooltip')}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                ) : (
                                     <span
-                                        className={`h-1.5 w-1.5 rounded-full ${status.color} mr-1.5 ${status.pulse ? 'animate-pulse' : ''} ${claw.status === 'running' ? 'animate-pulse shadow-[0_0_4px_2px_rgba(34,197,94,0.5)]' : ''}`}
-                                    />
-                                    {status.label}
-                                </span>
+                                        className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${status.bgColor}`}
+                                    >
+                                        <span
+                                            className={`h-1.5 w-1.5 rounded-full ${status.color} mr-1.5 ${status.pulse ? 'animate-pulse' : ''} ${claw.status === 'running' ? 'animate-pulse shadow-[0_0_4px_2px_rgba(34,197,94,0.5)]' : ''}`}
+                                        />
+                                        {status.label}
+                                    </span>
+                                )}
                                 {isScheduledForDeletion && (
                                     <Tooltip>
                                         <TooltipTrigger asChild>
@@ -124,13 +142,6 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
 
                 <div className='border-border mt-4 border-t pt-4'>
                     <div className='grid grid-cols-2 gap-2'>
-                        {claw.status !== 'configuring' && (
-                            <CopyableField
-                                label={t('dashboard.domain')}
-                                value={`${claw.subdomain || generateSlug(claw.id)}.clawhost.cloud`}
-                            />
-                        )}
-
                         {claw.ip && (
                             <CopyableField
                                 label={t('dashboard.ipAddress')}

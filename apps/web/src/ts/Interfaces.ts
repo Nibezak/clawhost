@@ -49,6 +49,7 @@ export interface Plan {
     disk: number
     priceMonthly: number
     architecture: string
+    disabled?: boolean
 }
 
 export interface Location {
@@ -204,6 +205,7 @@ export interface MockClawData {
     status: 'running' | 'stopped' | 'restarting'
     subdomain: string
     ip: string
+    provider: ProviderType
     location: string
     locationFlag: string
     plan: string

@@ -133,7 +133,7 @@ const SSHKeyCard: FC<SSHKeyCardProps> = ({ sshKey }): ReactNode => {
                             {deleteMutation.isPending ? (
                                 <CircleNotch className='h-4 w-4 animate-spin' />
                             ) : (
-                                t('common.delete')
+                                t('common.confirm')
                             )}
                         </Button>
                     </div>
@@ -279,39 +279,38 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
     return (
         <Dialog open onOpenChange={onClose}>
             <DialogContent className='max-h-[90vh] max-w-lg overflow-y-auto'>
-                <DialogHeader>
+                <DialogHeader className='pb-1.5'>
                     <DialogTitle>
                         {t('sshKeys.addSshKeyModalTitle')}
                     </DialogTitle>
                     <DialogDescription>
                         {t('sshKeys.addSshKeyModalDescription')}
                     </DialogDescription>
+                    <div className='bg-muted flex gap-2 rounded-lg p-1 !mt-3'>
+                        <button
+                            type='button'
+                            onClick={() => setMode('upload')}
+                            className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition ${
+                                mode === 'upload'
+                                    ? 'bg-background shadow'
+                                    : 'text-muted-foreground hover:text-foreground'
+                            }`}
+                        >
+                            {t('sshKeys.iHaveAnSshKey')}
+                        </button>
+                        <button
+                            type='button'
+                            onClick={() => setMode('generate')}
+                            className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition ${
+                                mode === 'generate'
+                                    ? 'bg-background shadow'
+                                    : 'text-muted-foreground hover:text-foreground'
+                            }`}
+                        >
+                            {t('sshKeys.generateNewKey')}
+                        </button>
+                    </div>
                 </DialogHeader>
-
-                <div className='bg-muted flex gap-2 rounded-lg p-1'>
-                    <button
-                        type='button'
-                        onClick={() => setMode('upload')}
-                        className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition ${
-                            mode === 'upload'
-                                ? 'bg-background shadow'
-                                : 'text-muted-foreground hover:text-foreground'
-                        }`}
-                    >
-                        {t('sshKeys.iHaveAnSshKey')}
-                    </button>
-                    <button
-                        type='button'
-                        onClick={() => setMode('generate')}
-                        className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition ${
-                            mode === 'generate'
-                                ? 'bg-background shadow'
-                                : 'text-muted-foreground hover:text-foreground'
-                        }`}
-                    >
-                        {t('sshKeys.generateNewKey')}
-                    </button>
-                </div>
 
                 {keyGenError && (
                     <Alert variant='destructive'>
@@ -359,13 +358,13 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                             </p>
                         </div>
 
-                        <Card className='bg-muted/50'>
+                        <Card className='bg-muted/50 rounded-xl'>
                             <CardContent className='py-3'>
                                 <p className='text-muted-foreground mb-2 text-sm'>
                                     {t('sshKeys.dontHaveSshKey')}
                                 </p>
                                 <div className='flex items-center gap-2'>
-                                    <code className='bg-background flex-1 overflow-x-auto rounded p-2 font-mono text-xs'>
+                                    <code className='bg-background flex-1 overflow-x-auto rounded-lg p-2 font-mono text-xs'>
                                         {sshKeygenCommand}
                                     </code>
                                     <Button
@@ -389,7 +388,7 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                             </CardContent>
                         </Card>
 
-                        <div className='flex gap-3'>
+                        <div className='flex gap-3 pt-2'>
                             <Button
                                 type='button'
                                 variant='outline'
@@ -459,13 +458,13 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                                     </div>
                                 </div>
 
-                                <Card className='bg-muted/50'>
+                                <Card className='bg-muted/50 rounded-xl'>
                                     <CardContent className='py-3'>
                                         <p className='text-muted-foreground mb-2 text-sm'>
                                             {t('sshKeys.runThisInYourTerminal')}
                                         </p>
                                         <div className='flex items-center gap-2'>
-                                            <code className='bg-background flex-1 overflow-x-auto rounded p-2 font-mono text-xs'>
+                                            <code className='bg-background flex-1 overflow-x-auto rounded-lg p-2 font-mono text-xs'>
                                                 {sshKeygenCommand}
                                             </code>
                                             <Button
@@ -552,7 +551,7 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                                     />
                                 </div>
 
-                                <div className='flex gap-3'>
+                                <div className='flex gap-3 pt-2'>
                                     <Button
                                         type='button'
                                         variant='outline'
