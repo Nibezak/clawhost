@@ -221,6 +221,16 @@ const Dashboard: FC = (): ReactNode => {
                                     actionLabel={t('nav.deployOpenClaw')}
                                     onAction={() => setShowCreate(true)}
                                 />
+                            ) : claws?.length === 0 ? (
+                                <EmptyState
+                                    icon={<ClawMascot className='h-10 w-10' />}
+                                    title={t('dashboard.noClawsYet')}
+                                    description={t(
+                                        'dashboard.noClawsDescription'
+                                    )}
+                                    actionLabel={t('nav.deployOpenClaw')}
+                                    onAction={() => setShowCreate(true)}
+                                />
                             ) : (
                                 <div
                                     className={

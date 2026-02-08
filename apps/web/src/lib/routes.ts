@@ -6,6 +6,7 @@ export const ROUTES = {
     ACCOUNT: '/account',
     TERMS: '/terms',
     PRIVACY: '/privacy',
+    CHANGELOG: '/changelog',
     POSTS: '/posts',
     POST: '/posts/:slug'
 } as const

@@ -1,7 +1,57 @@
-import type { SubscriptionStatus, WebhookEventType } from '@/ts/Types'
+import type {
+    ProviderType,
+    SubscriptionStatus,
+    WebhookEventType
+} from '@/ts/Types'
 
 export interface MagicLinkEmailProps {
     magicLink: string
+}
+
+export interface CloudProvider {
+    createServer(
+        name: string,
+        serverType: string,
+        location: string,
+        rootPassword?: string,
+        sshKeyIds?: number[],
+        snapshotId?: string,
+        userData?: string
+    ): Promise<CreateServerResult>
+    getServer(serverId: string): Promise<ServerStatus>
+    getServers(): Promise<Map<string, ServerStatus>>
+    startServer(serverId: string): Promise<void>
+    stopServer(serverId: string): Promise<void>
+    restartServer(serverId: string): Promise<void>
+    deleteServer(serverId: string): Promise<void>
+    getServerTypes(): Promise<ServerTypeInfo[]>
+    getLocations(): Promise<LocationInfo[]>
+    getRawServerTypes(): Promise<RawServerType[]>
+    getDatacenters(): Promise<DatacenterAvailability[]>
+    createSSHKey(name: string, publicKey: string): Promise<CreateSSHKeyResult>
+    deleteSSHKey(keyId: number): Promise<void>
+    getVolumePricing(): Promise<VolumePricingResult>
+    createVolume(
+        name: string,
+        size: number,
+        location: string,
+        serverId?: number
+    ): Promise<VolumeInfo>
+    attachVolume(volumeId: number, serverId: number): Promise<void>
+    detachVolume(volumeId: number): Promise<void>
+    deleteVolume(volumeId: number): Promise<void>
+    getVolume(volumeId: number): Promise<VolumeDetails>
+}
+
+export interface RawServerType {
+    id: number
+    name: string
+}
+
+export interface DatacenterAvailability {
+    name: string
+    locationName: string
+    availableServerTypeIds: number[]
 }
 
 export interface HetznerServer {
@@ -110,6 +160,83 @@ export interface HetznerPricingResponse {
 
 export interface HetznerVolumeResponse {
     volume: HetznerVolume
+}
+
+export interface DigitalOceanDroplet {
+    id: number
+    name: string
+    status: string
+    networks: {
+        v4: Array<{
+            ip_address: string
+            type: string
+        }>
+    }
+}
+
+export interface DigitalOceanSize {
+    slug: string
+    description: string
+    vcpus: number
+    memory: number
+    disk: number
+    price_monthly: number
+    price_hourly: number
+    regions: string[]
+    available: boolean
+}
+
+export interface DigitalOceanRegion {
+    slug: string
+    name: string
+    available: boolean
+    sizes: string[]
+}
+
+export interface DigitalOceanSSHKey {
+    id: number
+    name: string
+    fingerprint: string
+    public_key: string
+}
+
+export interface DigitalOceanVolume {
+    id: string
+    name: string
+    size_gigabytes: number
+    region: { slug: string }
+    droplet_ids: number[]
+    created_at: string
+}
+
+export interface DigitalOceanDropletResponse {
+    droplet: DigitalOceanDroplet
+}
+
+export interface DigitalOceanDropletsResponse {
+    droplets: DigitalOceanDroplet[]
+    meta: { total: number }
+    links: { pages?: { last?: string; next?: string } }
+}
+
+export interface DigitalOceanSizesResponse {
+    sizes: DigitalOceanSize[]
+}
+
+export interface DigitalOceanRegionsResponse {
+    regions: DigitalOceanRegion[]
+}
+
+export interface DigitalOceanSSHKeyResponse {
+    ssh_key: DigitalOceanSSHKey
+}
+
+export interface DigitalOceanSSHKeysResponse {
+    ssh_keys: DigitalOceanSSHKey[]
+}
+
+export interface DigitalOceanVolumeResponse {
+    volume: DigitalOceanVolume
 }
 
 export interface ServerStatus {
@@ -357,7 +484,8 @@ export interface ProvisionClawResponse {
 }
 
 export interface ClawCleanupData {
-    hetznerServerId: string | null
+    provider: ProviderType
+    providerServerId: string | null
     subdomain: string | null
 }
 
@@ -377,6 +505,7 @@ export interface UpdateProfileBody {
 
 export interface CreateClawBody {
     name: string
+    provider: ProviderType
     planId: string
     location: string
     password?: string
@@ -388,6 +517,7 @@ export interface CreateClawBody {
 
 export interface InitiateClawPurchaseBody {
     name?: string
+    provider: ProviderType
     planId: string
     location: string
     password?: string

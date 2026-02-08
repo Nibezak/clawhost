@@ -1,23 +1,53 @@
-/**
- * Script to create Polar products for each Hetzner plan
- *
- * Usage:
- *   pnpm --filter api exec tsx scripts/create-polar-products.ts
- *
- * Make sure your .env has:
- *   - POLAR_ACCESS_TOKEN
- *   - POLAR_ORGANIZATION_ID
- *   - HETZNER_API_TOKEN
- */
-
 import 'dotenv/config'
 import { Polar } from '@polar-sh/sdk'
-import { hetzner } from '@/services/hetzner'
+import { getProvider } from '@/services/provider'
+
+const customPrices: Record<string, Record<string, number>> = {
+    hetzner: {
+        cx23: 10,
+        cx33: 15,
+        cx43: 20,
+        cx53: 30,
+        cpx11: 15,
+        cpx21: 20,
+        cpx31: 30,
+        cpx41: 50,
+        cpx51: 75,
+        cax11: 10,
+        cax21: 15,
+        cax31: 25,
+        cax41: 50,
+        ccx13: 25,
+        ccx23: 50,
+        ccx33: 100,
+        ccx43: 150,
+        ccx53: 250,
+        ccx63: 350
+    },
+    digitalocean: {
+        's-1vcpu-512mb-10gb': 10,
+        's-1vcpu-1gb': 15,
+        's-1vcpu-2gb': 20,
+        's-2vcpu-2gb': 30,
+        's-2vcpu-4gb': 50,
+        's-4vcpu-8gb': 75,
+        's-8vcpu-16gb': 150
+    }
+}
 
 async function main() {
-    console.log('🚀 Creating Polar products for each Hetzner plan...\n')
+    const providerName = (process.argv[2] || 'hetzner') as
+        | 'hetzner'
+        | 'digitalocean'
 
-    // Validate env vars
+    const prices = customPrices[providerName]
+    if (!prices) {
+        console.error(`❌ Unknown provider: ${providerName}`)
+        process.exit(1)
+    }
+
+    console.log(`🚀 Creating Polar products for ${providerName} plans...\n`)
+
     const accessToken = process.env.POLAR_ACCESS_TOKEN
 
     if (!accessToken || accessToken.includes('REPLACE')) {
@@ -25,15 +55,20 @@ async function main() {
         process.exit(1)
     }
 
-    // Initialize Polar client
     const polar = new Polar({ accessToken })
 
-    // Fetch Hetzner plans
-    console.log('📦 Fetching Hetzner server types...')
-    const serverTypes = await hetzner.getServerTypes()
+    console.log(`📦 Fetching ${providerName} server types...`)
+    const provider = getProvider(providerName)
+    const serverTypes = await provider.getServerTypes()
     console.log(`   Found ${serverTypes.length} server types\n`)
 
-    // Track created products
+    const whitelistedPlans = serverTypes.filter(
+        (st) => prices[st.name] !== undefined
+    )
+    console.log(
+        `   ${whitelistedPlans.length} plans in whitelist\n`
+    )
+
     const createdProducts: {
         planId: string
         productId: string
@@ -41,12 +76,11 @@ async function main() {
     }[] = []
     const envLines: string[] = []
 
-    for (const plan of serverTypes) {
-        // Calculate price with 2x markup (convert to cents)
-        const priceMonthly = Math.ceil(plan.priceMonthly * 2 * 100) / 100
+    for (const plan of whitelistedPlans) {
+        const priceMonthly = prices[plan.name]
         const priceCents = Math.round(priceMonthly * 100)
 
-        const productName = `Claw - ${plan.name.toUpperCase()}`
+        const productName = `Claw - ${plan.description}`
         const productDescription = `${plan.description} (${plan.cores} vCPU, ${plan.memory}GB RAM, ${plan.disk}GB SSD)`
 
         console.log(`Creating: ${productName}`)
@@ -73,8 +107,7 @@ async function main() {
                 price: priceMonthly
             })
 
-            // Create env variable name (e.g., cx11 -> POLAR_PRODUCT_CX11)
-            const envKey = `POLAR_PRODUCT_${plan.name.toUpperCase().replace(/-/g, '_')}`
+            const envKey = `POLAR_PRODUCT_${providerName.toUpperCase()}_${plan.name.toUpperCase().replace(/-/g, '_')}`
             envLines.push(`${envKey}=${product.id}`)
 
             console.log(`   ✅ Created: ${product.id}\n`)
@@ -85,7 +118,6 @@ async function main() {
         }
     }
 
-    // Summary
     console.log('\n' + '='.repeat(60))
     console.log('📋 SUMMARY')
     console.log('='.repeat(60))
@@ -93,19 +125,20 @@ async function main() {
 
     if (createdProducts.length > 0) {
         console.log('Add these to your .env file:\n')
-        console.log('# Polar Product IDs (auto-generated)')
+        console.log(
+            `# Polar Product IDs for ${providerName} (auto-generated)`
+        )
         envLines.forEach((line) => console.log(line))
         console.log('')
     }
 
-    // Also show a table
     console.log('\nProduct mapping:')
     console.log('-'.repeat(60))
-    console.log('Plan ID'.padEnd(15) + 'Price'.padEnd(12) + 'Product ID')
+    console.log('Plan ID'.padEnd(20) + 'Price'.padEnd(12) + 'Product ID')
     console.log('-'.repeat(60))
     createdProducts.forEach((p) => {
         console.log(
-            p.planId.padEnd(15) + `$${p.price}/mo`.padEnd(12) + p.productId
+            p.planId.padEnd(20) + `$${p.price}/mo`.padEnd(12) + p.productId
         )
     })
     console.log('-'.repeat(60))

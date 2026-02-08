@@ -1,4 +1,5 @@
 import type { Context } from 'hono'
+import type { ProviderType } from '@/ts/Types'
 
 import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
@@ -37,7 +38,8 @@ const hardDeleteClaw = async (
         }
 
         await cleanupClaw(id, {
-            hetznerServerId: claw[0].hetznerServerId,
+            provider: (claw[0].provider || 'hetzner') as ProviderType,
+            providerServerId: claw[0].providerServerId,
             subdomain: claw[0].subdomain
         })
 

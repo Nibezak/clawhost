@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import type { User } from 'firebase/auth'
-import type { ClawStatus, ToastType, ViewMode } from '@/ts/Types'
+import type { ClawStatus, ProviderType, ToastType, ViewMode } from '@/ts/Types'
 
 export interface MagicLinkEmailProps {
     magicLink: string
@@ -16,15 +16,20 @@ export interface Volume {
 export interface Claw {
     id: string
     name: string
+    provider: ProviderType
     status: ClawStatus
     ip: string | null
     planId: string
     location: string | null
     rootPassword: string | null
     sshKeyId: string | null
-    hetznerServerId: string | null
+    providerServerId: string | null
     subdomain: string | null
     gatewayToken: string | null
+    model: string | null
+    subscriptionStatus: string | null
+    currentPeriodStart: string | null
+    currentPeriodEnd: string | null
     volumes?: Volume[]
     deletionScheduledAt: string | null
     createdAt: string
@@ -146,6 +151,11 @@ export interface ClawMascotProps {
     className?: string
 }
 
+export interface ProviderIconProps {
+    provider: ProviderType
+    className?: string
+}
+
 export interface HeaderProps {
     showNavLinks?: boolean
     navLinks?: NavLink[]
@@ -229,6 +239,7 @@ export interface ClawCardProps {
 export interface CopyableFieldProps {
     label: string
     value: string
+    icon?: ReactNode
 }
 
 export interface PlanAvailability {
@@ -354,6 +365,7 @@ export interface AIModelOption {
 
 export interface CreateClawData {
     name: string
+    provider: ProviderType
     planId: string
     location: string
     password?: string
@@ -365,6 +377,7 @@ export interface CreateClawData {
 
 export interface PurchaseClawData {
     name: string
+    provider: ProviderType
     planId: string
     location: string
     password?: string

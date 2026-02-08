@@ -43,10 +43,20 @@ export const api = {
             redirectUrl
         }),
 
-    getPlans: () => client.get<Plan[]>('/plans'),
-    getLocations: () => client.get<Location[]>('/plans/locations'),
-    getVolumePricing: () => client.get<VolumePricing>('/plans/volume-pricing'),
-    getPlanAvailability: () => client.get<PlanAvailability>('/plans/availability'),
+    getPlans: (provider?: string) =>
+        client.get<Plan[]>(`/plans${provider ? `?provider=${provider}` : ''}`),
+    getLocations: (provider?: string) =>
+        client.get<Location[]>(
+            `/plans/locations${provider ? `?provider=${provider}` : ''}`
+        ),
+    getVolumePricing: (provider?: string) =>
+        client.get<VolumePricing>(
+            `/plans/volume-pricing${provider ? `?provider=${provider}` : ''}`
+        ),
+    getPlanAvailability: (provider?: string) =>
+        client.get<PlanAvailability>(
+            `/plans/availability${provider ? `?provider=${provider}` : ''}`
+        ),
 
     getClaws: () => client.get<Claw[]>('/claws'),
     getClaw: (id: string, sync?: boolean) =>

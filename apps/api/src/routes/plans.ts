@@ -1,5 +1,10 @@
 import { Hono } from 'hono'
-import { getPlans, getLocations, getVolumePricing, getPlanAvailability } from '@/controllers/plans'
+import {
+    getPlans,
+    getLocations,
+    getVolumePricing,
+    getPlanAvailability
+} from '@/controllers/plans'
 
 const app = new Hono()
 

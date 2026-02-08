@@ -4,7 +4,7 @@ import type { CreateClawBody } from '@/ts/Interfaces'
 import { eq, and, count } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws, sshKeys, volumes } from '@/db/schema'
-import { hetzner } from '@/services/hetzner'
+import { getProvider } from '@/services/provider'
 import { cloudflare } from '@/services/cloudflare'
 import {
     generateSlug,
@@ -20,6 +20,7 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
         const userId = c.get('userId')
         const {
             name,
+            provider: providerName,
             planId,
             location,
             password,
@@ -33,7 +34,6 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             return c.json({ error: t('api.missingRequiredFields') }, 400)
         }
 
-        // Check claw limit
         const MAX_CLAWS_PER_ACCOUNT = 50
         const [{ value: clawCount }] = await db
             .select({ value: count() })
@@ -49,7 +49,6 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             )
         }
 
-        // Validate volume size if provided
         if (
             volumeSize !== undefined &&
             (volumeSize < 10 || volumeSize > 10240)
@@ -57,15 +56,12 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             return c.json({ error: t('api.volumeSizeInvalid') }, 400)
         }
 
-        // Generate claw ID and subdomain
+        const provider = getProvider(providerName || 'hetzner')
         const id = crypto.randomUUID()
         const subdomain = generateSlug(id)
-
-        // Use provided password or generate a secure one
         const finalPassword = password || generatePassword()
 
-        // Look up SSH key if provided
-        let hetznerSshKeyIds: number[] | undefined
+        let providerSshKeyIds: number[] | undefined
         if (sshKeyId) {
             const sshKey = await db
                 .select()
@@ -75,15 +71,18 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
                 )
                 .limit(1)
 
-            if (sshKey[0]?.hetznerKeyId) {
-                hetznerSshKeyIds = [sshKey[0].hetznerKeyId]
+            if (sshKey[0]) {
+                const keyId =
+                    providerName === 'digitalocean'
+                        ? sshKey[0].digitaloceanKeyId
+                        : sshKey[0].providerKeyId
+                if (keyId) {
+                    providerSshKeyIds = [keyId]
+                }
             }
         }
 
-        // Generate gateway token for owner authentication
         const gatewayToken = generateToken()
-
-        // Generate cloud-init with subdomain for SSL and gateway token
         const cloudInitScript = generateCloudInit(
             finalPassword,
             subdomain,
@@ -93,31 +92,28 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             apiToken || undefined
         )
 
-        // Create in Hetzner with our password and optional SSH key
-        const { serverId, ip } = await hetzner.createServer(
+        const { serverId, ip } = await provider.createServer(
             `${name}-${id.slice(0, 8)}`,
             planId,
             location,
             finalPassword,
-            hetznerSshKeyIds,
+            providerSshKeyIds,
             '',
             cloudInitScript
         )
 
-        // Create DNS record in Cloudflare pointing subdomain to claw IP
         try {
             await cloudflare.createDNSRecord(subdomain, ip)
         } catch (dnsErr) {
             console.error('Failed to create DNS record:', dnsErr)
-            // Continue anyway - DNS can be added manually if needed
         }
 
-        // Save claw to database
         await db.insert(claws).values({
             id,
             userId,
             name,
-            hetznerServerId: serverId.toString(),
+            provider: providerName || 'hetzner',
+            providerServerId: serverId.toString(),
             status: 'configuring',
             ip,
             planId,
@@ -129,12 +125,11 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             model: model || null
         })
 
-        // Create volume if requested
         let createdVolume = null
         if (volumeSize && volumeSize >= 10) {
             try {
                 const volumeId = crypto.randomUUID()
-                const hetznerVolume = await hetzner.createVolume(
+                const providerVolume = await provider.createVolume(
                     `${name}-vol-${volumeId.slice(0, 8)}`,
                     volumeSize,
                     location,
@@ -147,7 +142,7 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
                     clawId: id,
                     name: `${name}-storage`,
                     size: volumeSize,
-                    hetznerVolumeId: hetznerVolume.id,
+                    providerVolumeId: providerVolume.id,
                     location,
                     status: 'available'
                 })
@@ -159,13 +154,13 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
                 }
             } catch (volumeErr) {
                 console.error('Failed to create volume:', volumeErr)
-                // Continue without volume - claw is already created
             }
         }
 
         return c.json({
             id,
             name,
+            provider: providerName || 'hetzner',
             status: 'configuring',
             ip,
             planId,

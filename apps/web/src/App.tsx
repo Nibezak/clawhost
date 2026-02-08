@@ -13,6 +13,7 @@ import SSHKeys from '@/pages/SSHKeys'
 import Account from '@/pages/Account'
 import Terms from '@/pages/Terms'
 import Privacy from '@/pages/Privacy'
+import Changelog from '@/pages/Changelog'
 import Blog from '@/pages/Blog'
 import BlogPost from '@/pages/BlogPost'
 import NotFound from '@/pages/NotFound'
@@ -29,6 +30,7 @@ const App: FC = (): ReactNode => {
                     <Route path={ROUTES.LOGIN} element={<Login />} />
                     <Route path={ROUTES.TERMS} element={<Terms />} />
                     <Route path={ROUTES.PRIVACY} element={<Privacy />} />
+                    <Route path={ROUTES.CHANGELOG} element={<Changelog />} />
                     <Route path={ROUTES.POSTS} element={<Blog />} />
                     <Route path={ROUTES.POST} element={<BlogPost />} />
                     <Route

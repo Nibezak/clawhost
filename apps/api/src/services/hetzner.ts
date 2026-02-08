@@ -1,10 +1,10 @@
 import type {
+    CloudProvider,
     HetznerCreateServerResponse,
     HetznerDatacentersResponse,
     HetznerLocationsResponse,
     HetznerPricingResponse,
     HetznerSSHKeyResponse,
-    HetznerSSHKeysResponse,
     HetznerServerResponse,
     HetznerServerTypesResponse,
     HetznerServersResponse,
@@ -13,11 +13,12 @@ import type {
     CreateServerResult,
     ServerTypeInfo,
     LocationInfo,
-    HetznerSSHKeyInfo,
     CreateSSHKeyResult,
     VolumeInfo,
     VolumeDetails,
-    VolumePricingResult
+    VolumePricingResult,
+    RawServerType,
+    DatacenterAvailability
 } from '@/ts/Interfaces'
 
 import { RequestClient } from '@openclaw/shared'
@@ -34,7 +35,7 @@ function getClient() {
     })
 }
 
-export const hetzner = {
+export const hetzner: CloudProvider = {
     async createServer(
         name: string,
         serverType: string,
@@ -172,27 +173,22 @@ export const hetzner = {
             })
     },
 
-    async getRawServerTypes(): Promise<HetznerServerTypesResponse['server_types']> {
+    async getRawServerTypes(): Promise<RawServerType[]> {
         const data =
             await getClient().get<HetznerServerTypesResponse>('/server_types')
-        return data.server_types
+        return data.server_types.map((st) => ({
+            id: st.id,
+            name: st.name
+        }))
     },
 
-    async getDatacenters(): Promise<HetznerDatacentersResponse['datacenters']> {
+    async getDatacenters(): Promise<DatacenterAvailability[]> {
         const data =
             await getClient().get<HetznerDatacentersResponse>('/datacenters')
-        return data.datacenters
-    },
-
-    async getSSHKeys(): Promise<HetznerSSHKeyInfo[]> {
-        const data = await getClient().get<HetznerSSHKeysResponse>('/ssh_keys')
-
-        return data.ssh_keys.map((k) => ({
-            id: k.id,
-            name: k.name,
-            fingerprint: k.fingerprint,
-            publicKey: k.public_key,
-            createdAt: k.created
+        return data.datacenters.map((dc) => ({
+            name: dc.name,
+            locationName: dc.location.name,
+            availableServerTypeIds: dc.server_types.available
         }))
     },
 

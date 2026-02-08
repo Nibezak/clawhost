@@ -127,6 +127,14 @@ const LandingFooter: FC = (): ReactNode => {
                                 </Link>
                             </li>
                             <li>
+                                <Link
+                                    to={ROUTES.CHANGELOG}
+                                    className='text-gray-400 transition hover:text-white'
+                                >
+                                    {t('footer.changelog')}
+                                </Link>
+                            </li>
+                            <li>
                                 <a
                                     href='mailto:support@clawhost.cloud'
                                     className='text-gray-400 transition hover:text-white'

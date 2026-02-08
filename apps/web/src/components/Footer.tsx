@@ -25,6 +25,12 @@ const Footer: FC = (): ReactNode => {
                         >
                             {t('footer.privacyPolicy')}
                         </Link>
+                        <Link
+                            to='/changelog'
+                            className='text-muted-foreground hover:text-foreground text-sm transition-colors'
+                        >
+                            {t('footer.changelog')}
+                        </Link>
                         <a
                             href='mailto:support@clawhost.cloud'
                             className='text-muted-foreground hover:text-foreground text-sm transition-colors'

@@ -1,9 +1,10 @@
 import type { Context } from 'hono'
+import type { ProviderType } from '@/ts/Types'
 
 import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
-import { hetzner } from '@/services/hetzner'
+import { getProvider } from '@/services/provider'
 import { t } from '@openclaw/i18n'
 
 const getClaw = async (c: Context<{ Variables: { userId: string } }>) => {
@@ -21,28 +22,28 @@ const getClaw = async (c: Context<{ Variables: { userId: string } }>) => {
         return c.json({ error: t('api.clawNotFound') }, 404)
     }
 
-    // Optionally sync status with Hetzner
-    if (sync && claw[0].hetznerServerId) {
+    if (sync && claw[0].providerServerId) {
         try {
-            const hetznerStatus = await hetzner.getServer(
-                claw[0].hetznerServerId
+            const provider = getProvider(claw[0].provider as ProviderType)
+            const serverStatus = await provider.getServer(
+                claw[0].providerServerId
             )
             if (
-                hetznerStatus.status !== claw[0].status ||
-                hetznerStatus.ip !== claw[0].ip
+                serverStatus.status !== claw[0].status ||
+                serverStatus.ip !== claw[0].ip
             ) {
                 await db
                     .update(claws)
-                    .set({ status: hetznerStatus.status, ip: hetznerStatus.ip })
+                    .set({ status: serverStatus.status, ip: serverStatus.ip })
                     .where(eq(claws.id, id))
                 return c.json({
                     ...claw[0],
-                    status: hetznerStatus.status,
-                    ip: hetznerStatus.ip
+                    status: serverStatus.status,
+                    ip: serverStatus.ip
                 })
             }
         } catch (err) {
-            console.error('Failed to sync with Hetzner:', err)
+            console.error('Failed to sync server status:', err)
         }
     }
 

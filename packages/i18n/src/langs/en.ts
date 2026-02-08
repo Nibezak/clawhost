@@ -14,6 +14,7 @@ export const en = {
         addKey: 'Add Key',
         close: 'Close',
         none: 'None',
+        all: 'All',
         unknown: 'Unknown',
         pageNotFound: 'Page Not Found'
     },
@@ -40,6 +41,7 @@ export const en = {
         pricing: 'Pricing',
         faq: 'Questions',
         blog: 'Blog',
+        changelog: 'Changelog',
         legalAndMore: 'Legal & More',
         documentation: 'Documentation',
         productDescription:
@@ -62,6 +64,7 @@ export const en = {
         failedToAddSSHKey: 'Failed to add SSH key!',
         failedToCreateClaw: 'Failed to create claw!',
         invalidPlan: 'Invalid plan selected!',
+        invalidLocation: 'Please select a location!',
         failedToGenerateKeyPair:
             'Failed to generate key pair. Please generate keys locally instead!',
         unableToLoadPricing: 'Unable to load pricing. Please try again later!',
@@ -97,7 +100,10 @@ export const en = {
         failedToRestartClaw: 'Failed to restart claw!',
         failedToDeleteClaw: 'Failed to delete claw!',
         failedToCreateClaw: 'Failed to create claw!',
-        failedToSyncClaw: 'Failed to sync with Hetzner!',
+        invalidProvider: 'Invalid provider!',
+        invalidPlan: 'Invalid plan selected!',
+        invalidLocation: 'Invalid location selected!',
+        failedToSyncClaw: 'Failed to sync server status!',
         failedToProvisionClaw: 'Failed to provision claw!',
         failedToInitiatePurchase: 'Failed to initiate purchase!',
         failedToCancelDeletion: 'Failed to cancel deletion!',
@@ -228,6 +234,10 @@ export const en = {
         created: 'Created',
         sshKey: 'SSH Key',
         storage: 'Storage',
+        provider: 'Provider',
+        aiModel: 'AI Model',
+        nextBilling: 'Next Billing',
+        lastBilling: 'Last Billing',
         gatewayToken: 'Gateway Token',
         gatewayTokenDescription:
             'Use this token to authenticate with your gateway',
@@ -274,7 +284,7 @@ export const en = {
         comingSoon: 'Soon',
         location: 'Location',
         locationUnavailable: 'Unavailable',
-        locationUnavailableForPlan: 'Unavailable for this server',
+        locationUnavailableForPlan: 'Unavailable',
         plan: 'Server',
         advancedOptions: 'Advanced Options',
         rootPassword: 'Root Password',
@@ -388,7 +398,7 @@ export const en = {
             'From zero to a fully deployed OpenClaw to use 24/7 with full access.',
         step1Title: 'Select Server',
         step1Description:
-            'Pick from 6 global locations. We spin up a dedicated VPS just for you in seconds.',
+            'Pick from 15+ global locations across two providers. We spin up a dedicated VPS just for you in seconds.',
         step2Title: 'Auto-Installation',
         step2Description:
             'OpenClaw is pre-installed with a direct link and VPS details. No setup required.',
@@ -408,7 +418,7 @@ export const en = {
             'Dedicated VPS resources mean no throttling, full bandwidth, and lightning-fast internet.',
         globalLocations: 'Global Locations',
         globalLocationsDescription:
-            'Deploy OpenClaw across 6 global regions and choose the location closest to you.',
+            'Deploy OpenClaw across 15+ global regions on Hetzner or DigitalOcean and choose the location closest to you.',
         fullSshAccess: 'Full SSH Access',
         fullSshAccessDescription:
             'Full root access to your server. You own it, so install anything and customize everything.',
@@ -447,7 +457,7 @@ export const en = {
         pricing: 'Pricing',
         simpleTransparentPricing: 'Simple, Transparent Pricing',
         pricingDescription:
-            'Choose any server to host OpenClaw and pay only for what you need.',
+            'Choose from 25+ servers across two providers and pay only for what you need.',
         planColumn: 'Server',
         vCpuColumn: 'vCPU',
         ramColumn: 'RAM',
@@ -480,16 +490,16 @@ export const en = {
             'No. We handle all infrastructure, setup, and maintenance. You can configure and manage OpenClaw through its UI, connect to channels, and customize usage — without touching servers or infrastructure.',
         faq5Question: 'What locations are available?',
         faq5Answer:
-            'We offer 6 server locations worldwide including US, Europe, Asia, and more. You can deploy OpenClaw on multiple servers in different regions if needed.',
+            'We offer 15+ server locations worldwide across Hetzner and DigitalOcean, including US, Europe, Asia, and more. You can deploy OpenClaw on multiple servers in different regions if needed.',
         faq6Question: 'How much does it cost?',
         faq6Answer:
-            'Pricing is based on the server you select. With 15+ server options ranging from entry-level to high-performance, you choose what fits your needs and budget.',
+            'Pricing is based on the server you select. With 25+ server options ranging from entry-level to high-performance across two providers, you choose what fits your needs and budget.',
         faq7Question: 'Can I access my server directly?',
         faq7Answer:
             'Yes. Along with OpenClaw access via subdomain URL, you have full access to the server and its underlying infrastructure, giving you complete freedom to customize and run anything you need.',
         faq8Question: 'Where are the servers hosted?',
         faq8Answer:
-            'All servers are hosted on Hetzner Cloud, a trusted European cloud provider known for high-performance hardware and excellent uptime, used by large-scale infrastructures.',
+            'All servers are hosted on Hetzner Cloud and DigitalOcean, trusted cloud providers known for high-performance hardware and excellent uptime, used by large-scale infrastructures.',
         comparison: 'Comparison',
         comparisonTitle: 'How We’re Different',
         comparisonDescription:
@@ -533,6 +543,47 @@ export const en = {
         backToBlog: 'Back to Blog',
         noPosts: 'No Posts Yet',
         noPostsDescription: 'Blog posts are coming soon. Check back later.'
+    },
+    changelog: {
+        title: 'Changelog',
+        description:
+            'Track updates, new features, and improvements to ClawHost.',
+        subtitle: 'All updates, new features, and improvements to ClawHost.',
+        upcomingRelease: 'Upcoming',
+        release1Title: 'Initial Release',
+        release1Description:
+            'The first official release of ClawHost — deploy OpenClaw on your own VPS with one click.',
+        release1Feature1: 'One-click OpenClaw deployment on Hetzner Cloud',
+        release1Feature2:
+            'Dashboard to manage claws — start, stop, restart, and delete instances',
+        release1Feature3:
+            '18 Hetzner server plans with dedicated vCPU, RAM, and storage options',
+        release1Feature4:
+            '6 Hetzner server locations across US, Europe, and Asia',
+        release1Feature5: 'SSH key management for passwordless server access',
+        release1Feature6: 'Additional volume storage support up to 10 TB',
+        release1Feature7: 'Magic link authentication — no passwords needed',
+        release1Feature8: 'Online access to OpenClaw via secure subdomains',
+        release1Feature9:
+            'Payment integration with transparent per-server pricing',
+        release1Feature10: 'Billing history and invoice management',
+        release1Feature11:
+            'Auto-provisioning with OpenClaw pre-installed and configured',
+        release2Title: 'DigitalOcean & More',
+        release2Description:
+            'Multi-provider infrastructure and a new way to stay updated on everything ClawHost.',
+        release2Feature1: 'DigitalOcean as a second cloud provider',
+        release2Feature2:
+            '7 DigitalOcean server plans with dedicated vCPU, RAM, and storage options',
+        release2Feature3:
+            '10+ DigitalOcean server locations across US, Europe, Asia, and more',
+        release2Feature4:
+            'Changelog page to track all platform updates and releases',
+        release3Title: "What's Next",
+        release3Description: 'Upcoming features currently in development.',
+        release3Feature1: 'Server snapshots for backup and restore',
+        release3Feature2: 'Server configurations directly from the platform',
+        release3Feature3: 'Real-time server logs in the dashboard'
     }
 } as const
 

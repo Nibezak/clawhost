@@ -1,9 +1,10 @@
 import type { Context } from 'hono'
+import type { ProviderType } from '@/ts/Types'
 
-import { hetzner } from '@/services/hetzner'
+import { getProvider } from '@/services/provider'
 import { t } from '@openclaw/i18n'
 
-const customPrices: Record<string, number> = {
+const hetznerCustomPrices: Record<string, number> = {
     cx23: 10,
     cx33: 15,
     cx43: 20,
@@ -25,11 +26,35 @@ const customPrices: Record<string, number> = {
     ccx63: 350
 }
 
+const digitaloceanCustomPrices: Record<string, number> = {
+    's-1vcpu-512mb-10gb': 10,
+    's-1vcpu-1gb': 15,
+    's-1vcpu-2gb': 20,
+    's-2vcpu-2gb': 30,
+    's-2vcpu-4gb': 50,
+    's-4vcpu-8gb': 75,
+    's-8vcpu-16gb': 150
+}
+
+const pricesByProvider: Record<ProviderType, Record<string, number>> = {
+    hetzner: hetznerCustomPrices,
+    digitalocean: digitaloceanCustomPrices
+}
+
 const getPlanAvailability = async (c: Context) => {
     try {
+        const providerName = (c.req.query('provider') ||
+            'hetzner') as ProviderType
+        const provider = getProvider(providerName)
+        const customPrices = pricesByProvider[providerName]
+
+        if (!customPrices) {
+            return c.json({ error: t('api.invalidProvider') }, 400)
+        }
+
         const [serverTypes, datacenters] = await Promise.all([
-            hetzner.getRawServerTypes(),
-            hetzner.getDatacenters()
+            provider.getRawServerTypes(),
+            provider.getDatacenters()
         ])
 
         const nameToId = new Map<string, number>()
@@ -45,8 +70,8 @@ const getPlanAvailability = async (c: Context) => {
 
             const locations = new Set<string>()
             for (const dc of datacenters) {
-                if (dc.server_types.available.includes(serverTypeId)) {
-                    locations.add(dc.location.name)
+                if (dc.availableServerTypeIds.includes(serverTypeId)) {
+                    locations.add(dc.locationName)
                 }
             }
 

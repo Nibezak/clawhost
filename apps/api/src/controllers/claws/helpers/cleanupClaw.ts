@@ -3,23 +3,25 @@ import type { ClawCleanupData } from '@/ts/Interfaces'
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws, volumes } from '@/db/schema'
-import { hetzner } from '@/services/hetzner'
+import { getProvider } from '@/services/provider'
 import { cloudflare } from '@/services/cloudflare'
 
 export async function cleanupClaw(
     clawId: string,
     claw: ClawCleanupData
 ): Promise<void> {
+    const provider = getProvider(claw.provider)
+
     const clawVolumes = await db
         .select()
         .from(volumes)
         .where(eq(volumes.clawId, clawId))
 
     for (const vol of clawVolumes) {
-        if (vol.hetznerVolumeId) {
+        if (vol.providerVolumeId) {
             try {
-                await hetzner.detachVolume(vol.hetznerVolumeId)
-                await hetzner.deleteVolume(vol.hetznerVolumeId)
+                await provider.detachVolume(vol.providerVolumeId)
+                await provider.deleteVolume(vol.providerVolumeId)
             } catch (volErr) {
                 console.error('Failed to delete volume:', volErr)
             }
@@ -39,8 +41,12 @@ export async function cleanupClaw(
         }
     }
 
-    if (claw.hetznerServerId) {
-        await hetzner.deleteServer(claw.hetznerServerId)
+    if (claw.providerServerId) {
+        try {
+            await provider.deleteServer(claw.providerServerId)
+        } catch (serverErr) {
+            console.error('Failed to delete server:', serverErr)
+        }
     }
 
     await db.delete(claws).where(eq(claws.id, clawId))

@@ -1,3 +1,5 @@
+export type ProviderType = 'hetzner' | 'digitalocean'
+
 export type ToastType = 'success' | 'error' | 'warning' | 'info'
 
 export type ViewMode = 'list' | 'grid'

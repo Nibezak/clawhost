@@ -12,9 +12,11 @@ import { t } from '@openclaw/i18n'
 const RATE_LIMIT_WINDOW = 60_000
 
 const getClientIp = (c: Context): string | null => {
-    return c.req.header('x-forwarded-for')?.split(',')[0]?.trim()
-        || c.req.header('x-real-ip')
-        || null
+    return (
+        c.req.header('x-forwarded-for')?.split(',')[0]?.trim() ||
+        c.req.header('x-real-ip') ||
+        null
+    )
 }
 
 const checkRateLimit = async (key: string): Promise<number> => {

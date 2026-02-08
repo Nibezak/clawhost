@@ -11,9 +11,10 @@ import {
 } from '@/components/ui/tooltip'
 import { ClockCountdown } from '@phosphor-icons/react'
 import { ClawMascot } from '@/components/ClawMascot'
+import ProviderIcon from '@/components/ProviderIcon'
 import { ClawCardDropdownMenu } from '@/components/dashboard/ClawCardDropdownMenu'
 import { CopyableField } from '@/components/dashboard/CopyableField'
-import { generateSlug } from '@/lib/claw-utils'
+import { generateSlug, aiModels } from '@/lib/claw-utils'
 
 const ClawCardGridView: FC<ClawCardGridViewProps> = ({
     claw,
@@ -138,6 +139,12 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
                         )}
 
                         <CopyableField
+                            label={t('dashboard.provider')}
+                            value={claw.provider === 'hetzner' ? t('createClaw.providerHetzner') : t('createClaw.providerDigitalOcean')}
+                            icon={<ProviderIcon provider={claw.provider} className='h-3.5 w-3.5 shrink-0' />}
+                        />
+
+                        <CopyableField
                             label={t('dashboard.location')}
                             value={`${flag || ''} ${locationName}`.trim()}
                         />
@@ -146,7 +153,7 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
                             label={t('dashboard.plan')}
                             value={
                                 plan
-                                    ? `${plan.name} (${plan.cpu} vCPU, ${plan.memory}GB RAM, ${plan.disk}GB SSD)`
+                                    ? `${plan.name.replace(/([A-Za-z])(\d)/, '$1 $2')} (${plan.cpu} vCPU, ${plan.memory}GB RAM, ${plan.disk}GB SSD)`
                                     : claw.planId
                             }
                         />
@@ -158,10 +165,10 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
                             />
                         )}
 
-                        {claw.hetznerServerId && (
+                        {claw.providerServerId && (
                             <CopyableField
                                 label={t('dashboard.serverId')}
-                                value={`#${claw.hetznerServerId}`}
+                                value={`#${claw.providerServerId}`}
                             />
                         )}
 
@@ -182,6 +189,27 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
                             <CopyableField
                                 label={t('dashboard.sshKey')}
                                 value={attachedSshKey.name}
+                            />
+                        )}
+
+                        {claw.model && (
+                            <CopyableField
+                                label={t('dashboard.aiModel')}
+                                value={aiModels.find((m) => m.id === claw.model)?.name || claw.model}
+                            />
+                        )}
+
+                        {claw.currentPeriodStart && (
+                            <CopyableField
+                                label={t('dashboard.lastBilling')}
+                                value={new Date(claw.currentPeriodStart).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                            />
+                        )}
+
+                        {claw.currentPeriodEnd && (
+                            <CopyableField
+                                label={t('dashboard.nextBilling')}
+                                value={new Date(claw.currentPeriodEnd).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                             />
                         )}
 

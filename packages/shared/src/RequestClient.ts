@@ -26,10 +26,14 @@ class RequestClient {
         })
 
         const contentType = res.headers.get('content-type')
+        const contentLength = res.headers.get('content-length')
         let data: unknown
 
-        if (contentType?.includes('application/json')) {
-            data = await res.json()
+        if (res.status === 204 || contentLength === '0') {
+            data = null
+        } else if (contentType?.includes('application/json')) {
+            const text = await res.text()
+            data = text ? JSON.parse(text) : null
         } else {
             const text = await res.text()
             if (!res.ok) {
