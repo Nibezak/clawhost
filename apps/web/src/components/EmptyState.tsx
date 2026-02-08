@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from 'react'
 import type { EmptyStateProps } from '@/ts/Interfaces'
+
 import { ActionButton } from '@/components/ActionButton'
 import { Lightning } from '@phosphor-icons/react'
 

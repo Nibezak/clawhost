@@ -5,8 +5,4 @@ import getLanguage from './getLanguage'
 export type { TranslationKey } from './types'
 export { en, type Translations } from './langs/en'
 
-export {
-    t,
-    setLanguage,
-    getLanguage
-}
+export { t, setLanguage, getLanguage }

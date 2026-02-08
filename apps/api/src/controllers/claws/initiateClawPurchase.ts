@@ -1,5 +1,6 @@
 import type { Context } from 'hono'
 import type { InitiateClawPurchaseBody } from '@/ts/Interfaces'
+
 import { eq, and, count } from 'drizzle-orm'
 import { db } from '@/db'
 import { users, sshKeys, claws, pendingClaws } from '@/db/schema'
@@ -124,6 +125,7 @@ const initiateClawPurchase = async (
             sshKeyId,
             volumeSize,
             model,
+            apiToken,
             priceMonthly
         } = await c.req.json<InitiateClawPurchaseBody>()
 
@@ -241,6 +243,7 @@ const initiateClawPurchase = async (
             sshKeyId: sshKeyId || null,
             volumeSize: volumeSize || null,
             model: model || null,
+            apiToken: apiToken || null,
             priceMonthly: Math.round(priceMonthly * 100), // Store in cents
             expiresAt
         })

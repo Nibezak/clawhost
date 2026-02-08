@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from 'react'
 import type { ClawCardListViewProps } from '@/ts/Interfaces'
+
 import { t } from '@openclaw/i18n'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'

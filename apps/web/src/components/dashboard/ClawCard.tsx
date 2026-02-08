@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from 'react'
 import type { ClawCardProps, ClawCardActions } from '@/ts/Interfaces'
+
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
 import { useUIStore } from '@/lib/store'
@@ -8,7 +9,8 @@ import {
     useStopClaw,
     useRestartClaw,
     useDeleteClaw,
-    useCancelDeletion
+    useCancelDeletion,
+    useHardDeleteClaw
 } from '@/hooks'
 import { getStatusConfig, locationFlags, locationNames } from '@/lib/claw-utils'
 import { ClawCardGridView } from '@/components/dashboard/ClawCardGridView'
@@ -27,6 +29,7 @@ const ClawCard: FC<ClawCardProps> = ({
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showStopModal, setShowStopModal] = useState(false)
     const [showRestartModal, setShowRestartModal] = useState(false)
+    const [showHardDeleteModal, setShowHardDeleteModal] = useState(false)
     const [isExpanded, setIsExpanded] = useState(false)
 
     const startMutation = useStartClaw()
@@ -34,13 +37,15 @@ const ClawCard: FC<ClawCardProps> = ({
     const restartMutation = useRestartClaw()
     const deleteMutation = useDeleteClaw()
     const cancelDeletionMutation = useCancelDeletion()
+    const hardDeleteMutation = useHardDeleteClaw()
 
     const isLoading =
         startMutation.isPending ||
         stopMutation.isPending ||
         restartMutation.isPending ||
         deleteMutation.isPending ||
-        cancelDeletionMutation.isPending
+        cancelDeletionMutation.isPending ||
+        hardDeleteMutation.isPending
 
     const attachedSshKey = claw.sshKeyId
         ? sshKeys.find((k) => k.id === claw.sshKeyId)
@@ -95,6 +100,7 @@ const ClawCard: FC<ClawCardProps> = ({
         onShowRestartModal: () => setShowRestartModal(true),
         onShowDeleteModal: () => setShowDeleteModal(true),
         onCancelDeletion: () => cancelDeletionMutation.mutate(claw.id),
+        onShowHardDeleteModal: () => setShowHardDeleteModal(true),
         onCopySSH: claw.rootPassword ? copySSHWithPassword : copySSHWithKey,
         onCopySSHWithKey: copySSHWithKey,
         onCopySSHWithPassword: copySSHWithPassword,
@@ -147,12 +153,16 @@ const ClawCard: FC<ClawCardProps> = ({
                 setShowStopModal={setShowStopModal}
                 showRestartModal={showRestartModal}
                 setShowRestartModal={setShowRestartModal}
+                showHardDeleteModal={showHardDeleteModal}
+                setShowHardDeleteModal={setShowHardDeleteModal}
                 onDelete={() => deleteMutation.mutate(claw.id)}
                 onStop={() => stopMutation.mutate(claw.id)}
                 onRestart={() => restartMutation.mutate(claw.id)}
+                onHardDelete={() => hardDeleteMutation.mutate(claw.id)}
                 isDeletePending={deleteMutation.isPending}
                 isStopPending={stopMutation.isPending}
                 isRestartPending={restartMutation.isPending}
+                isHardDeletePending={hardDeleteMutation.isPending}
             />
         </>
     )

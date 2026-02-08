@@ -1,4 +1,5 @@
 import type { FC, ReactNode } from 'react'
+
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, Warning, X, Info } from '@phosphor-icons/react'

@@ -8,6 +8,7 @@ import useStopClaw from '@/hooks/useClaws/useStopClaw'
 import useRestartClaw from '@/hooks/useClaws/useRestartClaw'
 import useDeleteClaw from '@/hooks/useClaws/useDeleteClaw'
 import useCancelDeletion from '@/hooks/useClaws/useCancelDeletion'
+import useHardDeleteClaw from '@/hooks/useClaws/useHardDeleteClaw'
 import useSyncClaw from '@/hooks/useClaws/useSyncClaw'
 
 export {
@@ -21,5 +22,6 @@ export {
     useRestartClaw,
     useDeleteClaw,
     useCancelDeletion,
+    useHardDeleteClaw,
     useSyncClaw
 }

@@ -1,4 +1,5 @@
 import type { FC, ReactNode } from 'react'
+
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
@@ -12,6 +13,7 @@ import {
     usePlans,
     useLocations,
     useVolumePricing,
+    usePlanAvailability,
     useUserStats
 } from '@/hooks'
 import { EmptyState } from '@/components/EmptyState'
@@ -96,6 +98,7 @@ const Dashboard: FC = (): ReactNode => {
     const { data: locations } = useLocations()
     const { data: sshKeys } = useSSHKeys()
     const { data: volumePricing } = useVolumePricing()
+    const { data: planAvailability } = usePlanAvailability()
 
     return (
         <div className='relative flex min-h-screen flex-col bg-[#0a0a0f] text-white'>
@@ -238,6 +241,7 @@ const Dashboard: FC = (): ReactNode => {
                                 locations={locations}
                                 sshKeys={sshKeys || []}
                                 volumePricing={volumePricing}
+                                planAvailability={planAvailability}
                                 preselectedPlanId={preselectedPlanId}
                                 onClose={() => {
                                     setShowCreate(false)

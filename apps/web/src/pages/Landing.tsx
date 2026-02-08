@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from 'react'
 import type { MockClawData } from '@/ts/Interfaces'
+
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'

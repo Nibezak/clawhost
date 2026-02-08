@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from 'react'
 import type { ClawCardDialogsProps } from '@/ts/Interfaces'
+
 import { t } from '@openclaw/i18n'
 import { Button } from '@/components/ui/button'
 import {
@@ -19,12 +20,16 @@ const ClawCardDialogs: FC<ClawCardDialogsProps> = ({
     setShowStopModal,
     showRestartModal,
     setShowRestartModal,
+    showHardDeleteModal,
+    setShowHardDeleteModal,
     onDelete,
     onStop,
     onRestart,
+    onHardDelete,
     isDeletePending,
     isStopPending,
-    isRestartPending
+    isRestartPending,
+    isHardDeletePending
 }): ReactNode => {
     return (
         <>
@@ -132,6 +137,47 @@ const ClawCardDialogs: FC<ClawCardDialogsProps> = ({
                                 </>
                             ) : (
                                 t('dashboard.restart')
+                            )}
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog
+                open={showHardDeleteModal}
+                onOpenChange={setShowHardDeleteModal}
+            >
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>
+                            {t('dashboard.hardDeleteClaw')}
+                        </DialogTitle>
+                        <DialogDescription>
+                            {t('dashboard.hardDeleteConfirmation')}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className='mt-4 flex justify-end gap-3'>
+                        <Button
+                            variant='outline'
+                            onClick={() => setShowHardDeleteModal(false)}
+                        >
+                            {t('common.cancel')}
+                        </Button>
+                        <Button
+                            variant='destructive'
+                            onClick={() => {
+                                onHardDelete()
+                                setShowHardDeleteModal(false)
+                            }}
+                            disabled={isHardDeletePending}
+                        >
+                            {isHardDeletePending ? (
+                                <>
+                                    <CircleNotch className='mr-2 h-4 w-4 animate-spin' />
+                                    {t('dashboard.hardDeleting')}
+                                </>
+                            ) : (
+                                t('dashboard.hardDelete')
                             )}
                         </Button>
                     </div>

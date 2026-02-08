@@ -3,11 +3,13 @@ import generateSlug from '@/lib/claw-utils/generateSlug'
 import locationFlags from '@/lib/claw-utils/locationFlags'
 import locationNames from '@/lib/claw-utils/locationNames'
 import getStatusConfig from '@/lib/claw-utils/getStatusConfig'
+import aiModels from '@/lib/claw-utils/aiModels'
 
 export {
     generatePassword,
     generateSlug,
     locationFlags,
     locationNames,
-    getStatusConfig
+    getStatusConfig,
+    aiModels
 }

@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from 'react'
 import type { MockClawCardProps } from '@/ts/Interfaces'
+
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { t } from '@openclaw/i18n'

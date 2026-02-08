@@ -64,7 +64,8 @@ export async function provisionClaw(
             subdomain,
             DOMAIN,
             gatewayToken,
-            pending.model || undefined
+            pending.model || undefined,
+            pending.apiToken || undefined
         )
 
         const { serverId, ip } = await hetzner.createServer(

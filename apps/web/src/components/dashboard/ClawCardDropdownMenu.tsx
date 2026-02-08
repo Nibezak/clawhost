@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from 'react'
 import type { ClawCardDropdownMenuProps } from '@/ts/Interfaces'
+
 import { t } from '@openclaw/i18n'
 import { Button } from '@/components/ui/button'
 import {
@@ -83,11 +84,10 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                         </DropdownMenuItem>
                     </>
                 )}
-                {((claw.status === 'running' && claw.ip) ||
-                    claw.rootPassword) && (
+                {(claw.ip || claw.rootPassword) && (
                     <>
                         {hasActionItems && <DropdownMenuSeparator />}
-                        {claw.status === 'running' && claw.ip && (
+                        {claw.ip && (
                             <DropdownMenuItem onClick={actions.onCopySSH}>
                                 {copied ? (
                                     <>
@@ -123,18 +123,28 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                     <DropdownMenuSeparator />
                 )}
                 {isScheduledForDeletion ? (
-                    <DropdownMenuItem
-                        onClick={actions.onCancelDeletion}
-                        className='text-orange-400 focus:text-orange-400'
-                    >
-                        <ClockCountdown className='mr-2 h-4 w-4' />
-                        {t('dashboard.cancelDeletion')}
-                    </DropdownMenuItem>
+                    <>
+                        <DropdownMenuItem
+                            onClick={actions.onCancelDeletion}
+                            className='text-orange-400 focus:text-orange-400'
+                        >
+                            <ClockCountdown className='mr-2 h-4 w-4' />
+                            {t('dashboard.cancelDeletion')}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={actions.onShowHardDeleteModal}
+                            disabled={isLoading}
+                            className='text-red-400 focus:text-red-400'
+                        >
+                            <Trash className='mr-2 h-4 w-4' />
+                            {t('dashboard.hardDelete')}
+                        </DropdownMenuItem>
+                    </>
                 ) : (
                     <DropdownMenuItem
                         onClick={actions.onShowDeleteModal}
                         disabled={isLoading}
-                        className='text-destructive focus:text-destructive'
+                        className='text-red-400 focus:text-red-400'
                     >
                         <Trash className='mr-2 h-4 w-4' />
                         {t('common.delete')}

@@ -45,6 +45,7 @@ export const pendingClaws = pgTable('pending_claws', {
     sshKeyId: text('ssh_key_id').references(() => sshKeys.id),
     volumeSize: integer('volume_size'),
     model: text('model'),
+    apiToken: text('api_token'),
     priceMonthly: integer('price_monthly').notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     expiresAt: timestamp('expires_at').notNull()
@@ -60,6 +61,11 @@ export const sshKeys = pgTable('ssh_keys', {
     fingerprint: text('fingerprint').notNull(),
     hetznerKeyId: integer('hetzner_key_id'),
     createdAt: timestamp('created_at').defaultNow().notNull()
+})
+
+export const rateLimits = pgTable('rate_limits', {
+    key: text('key').primaryKey(),
+    lastSentAt: timestamp('last_sent_at').notNull()
 })
 
 export const volumes = pgTable('volumes', {

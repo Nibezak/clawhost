@@ -9,6 +9,7 @@ import type {
     Location,
     MagicLinkResponse,
     Plan,
+    PlanAvailability,
     PurchaseClawData,
     PurchaseClawResponse,
     SSHKey,
@@ -45,6 +46,7 @@ export const api = {
     getPlans: () => client.get<Plan[]>('/plans'),
     getLocations: () => client.get<Location[]>('/plans/locations'),
     getVolumePricing: () => client.get<VolumePricing>('/plans/volume-pricing'),
+    getPlanAvailability: () => client.get<PlanAvailability>('/plans/availability'),
 
     getClaws: () => client.get<Claw[]>('/claws'),
     getClaw: (id: string, sync?: boolean) =>
@@ -60,6 +62,8 @@ export const api = {
         client.delete<DeleteClawResponse>(`/claws/${id}`),
     cancelDeletion: (id: string) =>
         client.post<void>(`/claws/${id}/cancel-deletion`),
+    hardDeleteClaw: (id: string) =>
+        client.post<void>(`/claws/${id}/hard-delete`),
 
     getSSHKeys: () => client.get<SSHKey[]>('/ssh-keys'),
     createSSHKey: (data: CreateSSHKeyData) =>

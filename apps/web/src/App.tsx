@@ -1,4 +1,5 @@
 import type { FC, ReactNode } from 'react'
+
 import { Routes, Route } from 'react-router-dom'
 import { AuthProvider } from '@/lib/auth'
 import { ScrollToTop } from '@/components/ScrollToTop'

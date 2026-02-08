@@ -1,11 +1,11 @@
 import type { Context } from 'hono'
+
 import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { hetzner } from '@/services/hetzner'
 import { t } from '@openclaw/i18n'
-
-const CONFIGURATION_DURATION_MS = 3 * 60 * 1000
+import { checkSubdomainReady } from '@/controllers/claws/helpers'
 
 const syncClaw = async (c: Context<{ Variables: { userId: string } }>) => {
     const userId = c.get('userId')
@@ -24,11 +24,23 @@ const syncClaw = async (c: Context<{ Variables: { userId: string } }>) => {
     try {
         const hetznerStatus = await hetzner.getServer(claw[0].hetznerServerId)
 
-        const isConfiguring = claw[0].status === 'configuring'
-        const elapsed = Date.now() - new Date(claw[0].createdAt).getTime()
-        const stillConfiguring = isConfiguring && elapsed < CONFIGURATION_DURATION_MS
+        if (claw[0].status === 'configuring') {
+            if (hetznerStatus.status === 'running' && claw[0].subdomain) {
+                const ready = await checkSubdomainReady(claw[0].subdomain)
+                if (ready) {
+                    await db
+                        .update(claws)
+                        .set({ status: 'running', ip: hetznerStatus.ip })
+                        .where(eq(claws.id, id))
 
-        if (stillConfiguring) {
+                    return c.json({
+                        ...claw[0],
+                        status: 'running',
+                        ip: hetznerStatus.ip
+                    })
+                }
+            }
+
             await db
                 .update(claws)
                 .set({ ip: hetznerStatus.ip })

@@ -1,9 +1,17 @@
+function getProviderEnvVar(model: string): string | null {
+    if (model.startsWith('anthropic/')) return 'ANTHROPIC_API_KEY'
+    if (model.startsWith('openai/')) return 'OPENAI_API_KEY'
+    if (model.startsWith('google/')) return 'GOOGLE_API_KEY'
+    return null
+}
+
 export default function generateCloudInit(
     rootPassword: string,
     subdomain: string,
     domain: string,
     gatewayToken: string,
-    model?: string
+    model?: string,
+    apiToken?: string
 ): string {
     const fullDomain = `${subdomain}.${domain}`
 
@@ -35,7 +43,13 @@ export default function generateCloudInit(
         }
     }
 
-    const configJson = JSON.stringify(config, null, 2)
+    const envVarName = model ? getProviderEnvVar(model) : null
+    const envLine =
+        envVarName && apiToken
+            ? `\n    Environment=${envVarName}=${apiToken}`
+            : ''
+
+    const configJson = JSON.stringify(config, null, 2).replace(/\n/g, '\n    ')
 
     return `#cloud-config
 
@@ -78,6 +92,10 @@ runcmd:
   # Create openclaw user for running the service
   - useradd -r -m -d /home/openclaw -s /bin/bash openclaw
 
+  # Install Homebrew for the openclaw user
+  - su - openclaw -c 'NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+  - su - openclaw -c 'echo "eval \\"\\$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)\\"" >> /home/openclaw/.bashrc'
+
   # Create OpenClaw directories, config, and agent auth directory
   - mkdir -p /home/openclaw/.openclaw
   - mkdir -p /home/openclaw/.openclaw/agents/main/agent
@@ -103,7 +121,7 @@ runcmd:
     Group=openclaw
     WorkingDirectory=/home/openclaw
     Environment=HOME=/home/openclaw
-    Environment=NODE_ENV=production
+    Environment=NODE_ENV=production${envLine}
     ExecStart=/usr/bin/openclaw gateway --port 18789 --bind loopback
     Restart=always
     RestartSec=10
@@ -111,12 +129,6 @@ runcmd:
     [Install]
     WantedBy=multi-user.target
     SYSTEMD
-
-  # Enable all bundled plugins
-  - |
-    for p in bluebubbles copilot-proxy discord googlechat imessage line llm-task lobster matrix mattermost memory-lancedb msteams nextcloud-talk nostr open-prose signal slack tlon twitch voice-call whatsapp zalo zalouser feishu; do
-      su - openclaw -c "openclaw plugins enable $p" || true
-    done
 
   # Enable and start OpenClaw service
   - systemctl daemon-reload

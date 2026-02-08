@@ -101,6 +101,7 @@ export const en = {
         failedToProvisionClaw: 'Failed to provision claw!',
         failedToInitiatePurchase: 'Failed to initiate purchase!',
         failedToCancelDeletion: 'Failed to cancel deletion!',
+        failedToHardDeleteClaw: 'Failed to hard delete claw!',
         failedToCancelScheduledDeletion:
             'Failed to cancel the scheduled deletion!',
         failedToCreateSshKey: 'Failed to create SSH key!',
@@ -114,6 +115,7 @@ export const en = {
         failedToFetchLocations: 'Failed to fetch locations!',
         failedToFetchPlans: 'Failed to fetch plans!',
         failedToFetchVolumePricing: 'Failed to fetch volume pricing!',
+        failedToFetchPlanAvailability: 'Failed to fetch plan availability!',
         failedToSendEmail: 'Failed to send email!',
         failedToSendMagicLink: 'Failed to send magic link!',
         rateLimitExceeded: 'Please wait before requesting another login link.',
@@ -237,6 +239,11 @@ export const en = {
         cancelDeletion: 'Cancel Deletion',
         deletionCancelled: 'Deletion cancelled.',
         scheduleDeletion: 'Schedule Deletion',
+        hardDelete: 'Force Delete',
+        hardDeleteClaw: 'Force Delete',
+        hardDeleteConfirmation:
+            'Are you sure you want to delete this claw immediately? You will lose the remaining time on your current billing period. This action cannot be undone.',
+        hardDeleting: 'Deleting...',
         status: {
             running: 'Running',
             stopped: 'Stopped',
@@ -259,8 +266,14 @@ export const en = {
         description: 'Configure your server and start building with AI.',
         clawName: 'Claw Name',
         clawNamePlaceholder: 'e.g. cozy-panda',
+        provider: 'Provider',
+        providerHetzner: 'Hetzner',
+        providerDigitalOcean: 'DigitalOcean',
+        providerAws: 'AWS',
+        comingSoon: 'Soon',
         location: 'Location',
         locationUnavailable: 'Unavailable',
+        locationUnavailableForPlan: 'Unavailable for this server',
         plan: 'Server',
         advancedOptions: 'Advanced Options',
         rootPassword: 'Root Password',
@@ -286,10 +299,14 @@ export const en = {
         sshCommandUsingKey: 'SSH Command (using your key)',
         sshCommandWithPassword: 'SSH Command (with password)',
         passwordCopied: 'Password copied.',
-        model: 'AI Model (Optional)',
-        modelPlaceholder: 'e.g. anthropic/claude-sonnet-4-5-20250929',
+        model: 'AI Model',
+        modelNone: 'No model pre-configured',
         modelDescription:
-            'Pre-configure the default AI model. You can change this later in the dashboard.'
+            'Pre-configure the default AI model. You can change this later in the dashboard.',
+        apiToken: 'API Token',
+        apiTokenPlaceholder: 'Enter your provider API key',
+        apiTokenDescription:
+            'Required for the selected model to work. Get it from your provider dashboard.'
     },
     sshKeys: {
         title: 'SSH Keys',

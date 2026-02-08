@@ -1,5 +1,6 @@
 import type { Context } from 'hono'
 import type { CreateClawBody } from '@/ts/Interfaces'
+
 import { eq, and, count } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws, sshKeys, volumes } from '@/db/schema'
@@ -24,7 +25,8 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             password,
             sshKeyId,
             volumeSize,
-            model
+            model,
+            apiToken
         } = await c.req.json<CreateClawBody>()
 
         if (!name || !planId || !location) {
@@ -87,7 +89,8 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             subdomain,
             DOMAIN,
             gatewayToken,
-            model || undefined
+            model || undefined,
+            apiToken || undefined
         )
 
         // Create in Hetzner with our password and optional SSH key

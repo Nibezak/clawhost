@@ -172,6 +172,18 @@ export const hetzner = {
             })
     },
 
+    async getRawServerTypes(): Promise<HetznerServerTypesResponse['server_types']> {
+        const data =
+            await getClient().get<HetznerServerTypesResponse>('/server_types')
+        return data.server_types
+    },
+
+    async getDatacenters(): Promise<HetznerDatacentersResponse['datacenters']> {
+        const data =
+            await getClient().get<HetznerDatacentersResponse>('/datacenters')
+        return data.datacenters
+    },
+
     async getSSHKeys(): Promise<HetznerSSHKeyInfo[]> {
         const data = await getClient().get<HetznerSSHKeysResponse>('/ssh_keys')
 

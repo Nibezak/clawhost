@@ -95,10 +95,7 @@ lib/example/           (AFTER - one per file)
 import doThing from '@/lib/example/doThing'
 import doOtherThing from '@/lib/example/doOtherThing'
 
-export {
-    doThing,
-    doOtherThing
-}
+export { doThing, doOtherThing }
 ```
 
 **NEVER use `export { default as X } from` syntax in barrel files.** Always import the default first, then re-export by name.

@@ -8,6 +8,7 @@ import stopClaw from '@/controllers/claws/stopClaw'
 import restartClaw from '@/controllers/claws/restartClaw'
 import deleteClaw from '@/controllers/claws/deleteClaw'
 import cancelDeletion from '@/controllers/claws/cancelDeletion'
+import hardDeleteClaw from '@/controllers/claws/hardDeleteClaw'
 
 export {
     getClaws,
@@ -19,5 +20,6 @@ export {
     stopClaw,
     restartClaw,
     deleteClaw,
-    cancelDeletion
+    cancelDeletion,
+    hardDeleteClaw
 }

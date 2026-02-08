@@ -1,4 +1,5 @@
 import type { FC, ReactNode } from 'react'
+
 import { Link } from 'react-router-dom'
 
 const Logo: FC = (): ReactNode => {

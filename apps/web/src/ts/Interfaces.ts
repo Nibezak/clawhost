@@ -231,11 +231,16 @@ export interface CopyableFieldProps {
     value: string
 }
 
+export interface PlanAvailability {
+    [planId: string]: string[]
+}
+
 export interface CreateClawModalProps {
     plans: Plan[]
     locations: Location[]
     sshKeys: SSHKey[]
     volumePricing?: VolumePricing
+    planAvailability?: PlanAvailability
     preselectedPlanId?: string | null
     onClose: () => void
     onNavigateToSSHKeys: () => void
@@ -247,6 +252,7 @@ export interface ClawCardActions {
     onShowRestartModal: () => void
     onShowDeleteModal: () => void
     onCancelDeletion: () => void
+    onShowHardDeleteModal: () => void
     onCopySSH: () => void
     onCopySSHWithKey: () => void
     onCopySSHWithPassword: () => void
@@ -272,12 +278,16 @@ export interface ClawCardDialogsProps {
     setShowStopModal: (open: boolean) => void
     showRestartModal: boolean
     setShowRestartModal: (open: boolean) => void
+    showHardDeleteModal: boolean
+    setShowHardDeleteModal: (open: boolean) => void
     onDelete: () => void
     onStop: () => void
     onRestart: () => void
+    onHardDelete: () => void
     isDeletePending: boolean
     isStopPending: boolean
     isRestartPending: boolean
+    isHardDeletePending: boolean
 }
 
 export interface ClawCardGridViewProps {
@@ -336,6 +346,12 @@ export interface AuthProviderProps {
     children: ReactNode
 }
 
+export interface AIModelOption {
+    id: string
+    name: string
+    provider: string
+}
+
 export interface CreateClawData {
     name: string
     planId: string
@@ -344,6 +360,7 @@ export interface CreateClawData {
     sshKeyId?: string
     volumeSize?: number
     model?: string
+    apiToken?: string
 }
 
 export interface PurchaseClawData {
@@ -354,6 +371,7 @@ export interface PurchaseClawData {
     sshKeyId?: string
     volumeSize?: number
     model?: string
+    apiToken?: string
     priceMonthly: number
 }
 

@@ -383,6 +383,7 @@ export interface CreateClawBody {
     sshKeyId?: string
     volumeSize?: number
     model?: string
+    apiToken?: string
 }
 
 export interface InitiateClawPurchaseBody {
@@ -393,6 +394,7 @@ export interface InitiateClawPurchaseBody {
     sshKeyId?: string
     volumeSize?: number
     model?: string
+    apiToken?: string
     priceMonthly: number
 }
 

@@ -4,9 +4,10 @@ import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { subscriptions } from '@/lib/polar'
+import { cleanupClaw } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 
-const cancelDeletion = async (
+const hardDeleteClaw = async (
     c: Context<{ Variables: { userId: string } }>
 ) => {
     try {
@@ -27,41 +28,32 @@ const cancelDeletion = async (
             return c.json({ error: t('api.clawNotScheduledForDeletion') }, 400)
         }
 
-        // Uncancel the Polar subscription
         if (claw[0].polarSubscriptionId) {
             try {
-                await subscriptions.uncancel(claw[0].polarSubscriptionId)
+                await subscriptions.revoke(claw[0].polarSubscriptionId)
             } catch (subErr) {
-                console.error('Failed to uncancel subscription:', subErr)
-                return c.json(
-                    { error: t('api.failedToCancelScheduledDeletion') },
-                    500
-                )
+                console.error('Failed to revoke subscription:', subErr)
             }
         }
 
-        // Clear the deletion schedule and restore subscription status
-        await db
-            .update(claws)
-            .set({
-                deletionScheduledAt: null,
-                subscriptionStatus: 'active'
-            })
-            .where(eq(claws.id, id))
+        await cleanupClaw(id, {
+            hetznerServerId: claw[0].hetznerServerId,
+            subdomain: claw[0].subdomain
+        })
 
         return c.json({ success: true })
     } catch (err) {
-        console.error('Cancel deletion error:', err)
+        console.error('Hard delete claw error:', err)
         return c.json(
             {
                 error:
                     err instanceof Error
                         ? err.message
-                        : t('api.failedToCancelDeletion')
+                        : t('api.failedToHardDeleteClaw')
             },
             500
         )
     }
 }
 
-export default cancelDeletion
+export default hardDeleteClaw
