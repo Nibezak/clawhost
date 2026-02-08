@@ -64,7 +64,7 @@ const ClawCardDialogs: FC<ClawCardDialogsProps> = ({
                                     {t('dashboard.deleting')}
                                 </>
                             ) : (
-                                t('dashboard.scheduleDeletion')
+                                t('common.confirm')
                             )}
                         </Button>
                     </div>
@@ -100,7 +100,7 @@ const ClawCardDialogs: FC<ClawCardDialogsProps> = ({
                                     {t('dashboard.stopping')}
                                 </>
                             ) : (
-                                t('dashboard.stop')
+                                t('common.confirm')
                             )}
                         </Button>
                     </div>
@@ -136,7 +136,7 @@ const ClawCardDialogs: FC<ClawCardDialogsProps> = ({
                                     {t('dashboard.restarting')}
                                 </>
                             ) : (
-                                t('dashboard.restart')
+                                t('common.confirm')
                             )}
                         </Button>
                     </div>
@@ -177,7 +177,7 @@ const ClawCardDialogs: FC<ClawCardDialogsProps> = ({
                                     {t('dashboard.hardDeleting')}
                                 </>
                             ) : (
-                                t('dashboard.hardDelete')
+                                t('common.confirm')
                             )}
                         </Button>
                     </div>

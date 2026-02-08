@@ -758,14 +758,17 @@ const Landing: FC = (): ReactNode => {
                                                 pricingProvider === 'hetzner'
                                                     ? plan.id === 'cax41'
                                                     : plan.id === 's-2vcpu-4gb'
+                                            const isDisabled = plan.disabled
 
                                             return (
                                                 <tr
                                                     key={plan.id}
                                                     className={`border-b border-white/5 ${
-                                                        isRecommended
-                                                            ? 'bg-[#ef5350]/5'
-                                                            : ''
+                                                        isDisabled
+                                                            ? 'opacity-40'
+                                                            : isRecommended
+                                                              ? 'bg-[#ef5350]/5'
+                                                              : ''
                                                     }`}
                                                 >
                                                     <td className='px-4 py-4'>
@@ -773,7 +776,12 @@ const Landing: FC = (): ReactNode => {
                                                             <span className='font-medium text-white'>
                                                                 {plan.name.replace(/([A-Za-z])(\d)/, '$1 $2')}
                                                             </span>
-                                                            {isRecommended && (
+                                                            {isDisabled && (
+                                                                <Badge className='border-0 bg-red-500/10 text-xs text-red-400'>
+                                                                    {t('createClaw.planUnavailable')}
+                                                                </Badge>
+                                                            )}
+                                                            {isRecommended && !isDisabled && (
                                                                 <Badge className='border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-xs text-white'>
                                                                     {t(
                                                                         'landing.recommended'
@@ -800,31 +808,41 @@ const Landing: FC = (): ReactNode => {
                                                         </span>
                                                     </td>
                                                     <td className='px-4 py-4 text-right'>
-                                                        <Button
-                                                            size='sm'
-                                                            className={`gap-2 px-4 ${
-                                                                isRecommended
-                                                                    ? 'border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90'
-                                                                    : 'border-0 bg-white/10 text-white hover:bg-white/20'
-                                                            }`}
-                                                            asChild
-                                                        >
-                                                            <Link
-                                                                to={
-                                                                    user
-                                                                        ? `${ROUTES.CLAWS}?plan=${plan.id}`
-                                                                        : `${ROUTES.LOGIN}?plan=${plan.id}`
-                                                                }
+                                                        {isDisabled ? (
+                                                            <Button
+                                                                size='sm'
+                                                                disabled
+                                                                className='gap-2 border-0 bg-white/5 px-4 text-gray-500'
                                                             >
-                                                                {user
-                                                                    ? t(
-                                                                          'landing.deploy'
-                                                                      )
-                                                                    : t(
-                                                                          'landing.select'
-                                                                      )}
-                                                            </Link>
-                                                        </Button>
+                                                                {t('createClaw.planUnavailable')}
+                                                            </Button>
+                                                        ) : (
+                                                            <Button
+                                                                size='sm'
+                                                                className={`gap-2 px-4 ${
+                                                                    isRecommended
+                                                                        ? 'border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90'
+                                                                        : 'border-0 bg-white/10 text-white hover:bg-white/20'
+                                                                }`}
+                                                                asChild
+                                                            >
+                                                                <Link
+                                                                    to={
+                                                                        user
+                                                                            ? `${ROUTES.CLAWS}?plan=${plan.id}`
+                                                                            : `${ROUTES.LOGIN}?plan=${plan.id}`
+                                                                    }
+                                                                >
+                                                                    {user
+                                                                        ? t(
+                                                                              'landing.deploy'
+                                                                          )
+                                                                        : t(
+                                                                              'landing.select'
+                                                                          )}
+                                                                </Link>
+                                                            </Button>
+                                                        )}
                                                     </td>
                                                 </tr>
                                             )

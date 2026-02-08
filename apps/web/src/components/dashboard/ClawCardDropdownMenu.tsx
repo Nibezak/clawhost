@@ -147,7 +147,7 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                         className='text-red-400 focus:text-red-400'
                     >
                         <Trash className='mr-2 h-4 w-4' />
-                        {t('common.delete')}
+                        {t('dashboard.scheduleDeletion')}
                     </DropdownMenuItem>
                 )}
             </DropdownMenuContent>

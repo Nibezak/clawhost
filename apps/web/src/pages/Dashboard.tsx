@@ -101,7 +101,9 @@ const Dashboard: FC = (): ReactNode => {
     const skeletonCount = userStats?.clawCount ?? 0
     const knowsCount = !isStatsLoading && userStats !== undefined
 
-    const { data: plans } = usePlans()
+    const { data: hetznerPlans } = usePlans('hetzner')
+    const { data: digitaloceanPlans } = usePlans('digitalocean')
+    const plans = [...(hetznerPlans || []), ...(digitaloceanPlans || [])]
     const { data: locations } = useLocations()
     const { data: sshKeys } = useSSHKeys()
     const { data: volumePricing } = useVolumePricing()
@@ -252,7 +254,7 @@ const Dashboard: FC = (): ReactNode => {
                             )}
                         </div>
 
-                        {showCreate && plans && locations && (
+                        {showCreate && plans.length > 0 && locations && (
                             <CreateClawModal
                                 plans={plans}
                                 locations={locations}

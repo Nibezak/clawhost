@@ -68,6 +68,10 @@ const digitaloceanCustomPrices: Record<string, number> = {
     's-8vcpu-16gb': 150
 }
 
+const disabledPlans = new Set([
+    's-1vcpu-512mb-10gb'
+])
+
 const planConfigs: Record<
     ProviderType,
     { order: string[]; prices: Record<string, number> }
@@ -101,7 +105,8 @@ const getPlans = async (c: Context) => {
                 memory: st.memory,
                 disk: st.disk,
                 priceMonthly: config.prices[st.name],
-                architecture: st.architecture
+                architecture: st.architecture,
+                disabled: disabledPlans.has(st.name)
             }))
             .sort(
                 (a, b) =>
