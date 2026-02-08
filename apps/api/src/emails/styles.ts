@@ -37,55 +37,55 @@ export const darkModeStyles = `
 `
 
 export const main = {
-  backgroundColor: '#fdfdfd',
-  backgroundImage:
-    'linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px)',
-  backgroundSize: '24px 24px',
-  fontFamily: 'Verdana, Geneva, sans-serif',
-  padding: '40px 0',
+    backgroundColor: '#fdfdfd',
+    backgroundImage:
+        'linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px)',
+    backgroundSize: '24px 24px',
+    fontFamily: 'Verdana, Geneva, sans-serif',
+    padding: '40px 0'
 }
 
 export const container = {
-  backgroundColor: '#ffffff',
-  margin: '0 auto',
-  padding: '48px 32px',
-  paddingBottom: '48px',
-  marginBottom: '64px',
-  marginTop: '64px',
-  borderRadius: '32px',
-  maxWidth: '450px',
-  border: '1px solid #e8e8e8'
+    backgroundColor: '#ffffff',
+    margin: '0 auto',
+    padding: '48px 32px',
+    paddingBottom: '48px',
+    marginBottom: '64px',
+    marginTop: '64px',
+    borderRadius: '32px',
+    maxWidth: '450px',
+    border: '1px solid #e8e8e8'
 }
 
 export const heading = {
-  fontSize: '24px',
-  letterSpacing: '-0.5px',
-  lineHeight: '1.3',
-  fontWeight: '700',
-  color: '#1a1a1a',
-  padding: '0 0 20px',
-  textAlign: 'center' as const,
+    fontSize: '24px',
+    letterSpacing: '-0.5px',
+    lineHeight: '1.3',
+    fontWeight: '700',
+    color: '#1a1a1a',
+    padding: '0 0 20px',
+    textAlign: 'center' as const
 }
 
 export const body = {
-  padding: '0 20px',
+    padding: '0 20px'
 }
 
 export const paragraph = {
-  fontSize: '14px',
-  lineHeight: '1.6',
-  color: '#3c3c3c',
-  margin: '0 0 20px',
-  textAlign: 'center' as const,
-  marginTop: '4px'
+    fontSize: '14px',
+    lineHeight: '1.6',
+    color: '#3c3c3c',
+    margin: '0 0 20px',
+    textAlign: 'center' as const,
+    marginTop: '4px'
 }
 
 export const paragraphMuted = {
-  fontSize: '11px',
-  lineHeight: '1.5',
-  color: '#8898aa',
-  margin: '0',
-  textAlign: 'center' as const
+    fontSize: '11px',
+    lineHeight: '1.5',
+    color: '#8898aa',
+    margin: '0',
+    textAlign: 'center' as const
 }
 
 export const buttonContainer = {
@@ -93,24 +93,24 @@ export const buttonContainer = {
 }
 
 export const button = {
-  background: 'linear-gradient(to right, #ef5350, #c62828)',
-  backgroundColor: '#ef5350',
-  borderRadius: '9999px',
-  color: '#ffffff',
-  fontSize: '15px',
-  fontWeight: '600',
-  textDecoration: 'none',
-  textAlign: 'center' as const,
-  padding: '14px 32px',
-  width: 'auto',
-  marginBottom: '20px',
+    background: 'linear-gradient(to right, #ef5350, #c62828)',
+    backgroundColor: '#ef5350',
+    borderRadius: '9999px',
+    color: '#ffffff',
+    fontSize: '15px',
+    fontWeight: '600',
+    textDecoration: 'none',
+    textAlign: 'center' as const,
+    padding: '14px 32px',
+    width: 'auto',
+    marginBottom: '20px'
 }
 
 export const logoSection = {
-  textAlign: 'center' as const,
-  marginBottom: '20px',
+    textAlign: 'center' as const,
+    marginBottom: '20px'
 }
 
 export const logo = {
-  margin: '0 auto',
+    margin: '0 auto'
 }

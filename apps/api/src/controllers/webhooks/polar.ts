@@ -3,10 +3,10 @@ import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import {
-  parseWebhook,
-  handleWebhook,
-  type SubscriptionWebhookData,
-  type CheckoutWebhookData,
+    parseWebhook,
+    handleWebhook,
+    type SubscriptionWebhookData,
+    type CheckoutWebhookData
 } from '@/lib/polar'
 import { provisionClaw } from '@/controllers/claws/provisionClaw'
 import { hetzner } from '@/services/hetzner'
@@ -14,172 +14,178 @@ import { cleanupClaw } from '@/controllers/claws/helpers/index'
 import { t } from '@openclaw/i18n'
 
 const handlePolarWebhook = async (c: Context) => {
-  try {
-    const event = await parseWebhook(c)
+    try {
+        const event = await parseWebhook(c)
 
-    if (!event) {
-      return c.json({ error: t('api.invalidWebhook') }, 400)
-    }
-
-    await handleWebhook(event, {
-      onCheckoutUpdated: async (data: CheckoutWebhookData) => {
-        if (data.status !== 'succeeded') {
-          return
-        }
-      },
-
-      onSubscriptionActive: async (data: SubscriptionWebhookData) => {
-        const existingClaw = await db
-          .select()
-          .from(claws)
-          .where(eq(claws.polarSubscriptionId, data.id))
-          .limit(1)
-
-        if (existingClaw[0]) {
-          return
+        if (!event) {
+            return c.json({ error: t('api.invalidWebhook') }, 400)
         }
 
-        const pendingClawId = data.metadata?.pendingClawId
-        if (!pendingClawId) {
-          return
-        }
+        await handleWebhook(event, {
+            onCheckoutUpdated: async (data: CheckoutWebhookData) => {
+                if (data.status !== 'succeeded') {
+                    return
+                }
+            },
 
-        const result = await provisionClaw({
-          pendingClawId,
-          subscriptionId: data.id,
-          customerId: data.customerId,
-          productId: data.productId,
-        })
+            onSubscriptionActive: async (data: SubscriptionWebhookData) => {
+                const existingClaw = await db
+                    .select()
+                    .from(claws)
+                    .where(eq(claws.polarSubscriptionId, data.id))
+                    .limit(1)
 
-        if (!result.success) {
-          console.error(`Failed to provision claw: ${result.error}`)
-        }
-      },
+                if (existingClaw[0]) {
+                    return
+                }
 
-      onSubscriptionCreated: async (data: SubscriptionWebhookData) => {
-        if (data.status !== 'active') {
-          return
-        }
+                const pendingClawId = data.metadata?.pendingClawId
+                if (!pendingClawId) {
+                    return
+                }
 
-        const pendingClawId = data.metadata?.pendingClawId
-        if (!pendingClawId) {
-          return
-        }
+                const result = await provisionClaw({
+                    pendingClawId,
+                    subscriptionId: data.id,
+                    customerId: data.customerId,
+                    productId: data.productId
+                })
 
-        const result = await provisionClaw({
-          pendingClawId,
-          subscriptionId: data.id,
-          customerId: data.customerId,
-          productId: data.productId,
-        })
+                if (!result.success) {
+                    console.error(`Failed to provision claw: ${result.error}`)
+                }
+            },
 
-        if (!result.success) {
-          console.error(`Failed to provision claw: ${result.error}`)
-        }
-      },
+            onSubscriptionCreated: async (data: SubscriptionWebhookData) => {
+                if (data.status !== 'active') {
+                    return
+                }
 
-      onSubscriptionCanceled: async (data: SubscriptionWebhookData) => {
-        const deletionScheduledAt = data.currentPeriodEnd
-          ? new Date(data.currentPeriodEnd)
-          : null
+                const pendingClawId = data.metadata?.pendingClawId
+                if (!pendingClawId) {
+                    return
+                }
 
-        await db
-          .update(claws)
-          .set({
-            subscriptionStatus: 'canceled',
-            ...(deletionScheduledAt ? { deletionScheduledAt } : {}),
-          })
-          .where(eq(claws.polarSubscriptionId, data.id))
-      },
+                const result = await provisionClaw({
+                    pendingClawId,
+                    subscriptionId: data.id,
+                    customerId: data.customerId,
+                    productId: data.productId
+                })
 
-      onSubscriptionRevoked: async (data: SubscriptionWebhookData) => {
-        const claw = await db
-          .select()
-          .from(claws)
-          .where(eq(claws.polarSubscriptionId, data.id))
-          .limit(1)
+                if (!result.success) {
+                    console.error(`Failed to provision claw: ${result.error}`)
+                }
+            },
 
-        if (!claw[0]) {
-          return
-        }
+            onSubscriptionCanceled: async (data: SubscriptionWebhookData) => {
+                const deletionScheduledAt = data.currentPeriodEnd
+                    ? new Date(data.currentPeriodEnd)
+                    : null
 
-        if (claw[0].deletionScheduledAt) {
-          try {
-            await cleanupClaw(claw[0].id, {
-              hetznerServerId: claw[0].hetznerServerId,
-              subdomain: claw[0].subdomain,
-            })
-          } catch (err) {
-            console.error(`Failed to cleanup claw ${claw[0].id}:`, err)
-            await db
-              .update(claws)
-              .set({ subscriptionStatus: 'revoked', status: 'stopped' })
-              .where(eq(claws.id, claw[0].id))
-          }
-          return
-        }
+                await db
+                    .update(claws)
+                    .set({
+                        subscriptionStatus: 'canceled',
+                        ...(deletionScheduledAt ? { deletionScheduledAt } : {})
+                    })
+                    .where(eq(claws.polarSubscriptionId, data.id))
+            },
 
-        await db
-          .update(claws)
-          .set({ subscriptionStatus: 'revoked' })
-          .where(eq(claws.id, claw[0].id))
+            onSubscriptionRevoked: async (data: SubscriptionWebhookData) => {
+                const claw = await db
+                    .select()
+                    .from(claws)
+                    .where(eq(claws.polarSubscriptionId, data.id))
+                    .limit(1)
 
-        if (claw[0].hetznerServerId) {
-          try {
-            await hetzner.stopServer(claw[0].hetznerServerId)
-            await db
-              .update(claws)
-              .set({ status: 'stopped' })
-              .where(eq(claws.id, claw[0].id))
-          } catch (err) {
-            console.error(`Failed to stop server: ${err}`)
-          }
-        }
-      },
+                if (!claw[0]) {
+                    return
+                }
 
-      onSubscriptionUncanceled: async (data: SubscriptionWebhookData) => {
-        await db
-          .update(claws)
-          .set({
-            deletionScheduledAt: null,
-            subscriptionStatus: 'active',
-          })
-          .where(eq(claws.polarSubscriptionId, data.id))
-      },
+                if (claw[0].deletionScheduledAt) {
+                    try {
+                        await cleanupClaw(claw[0].id, {
+                            hetznerServerId: claw[0].hetznerServerId,
+                            subdomain: claw[0].subdomain
+                        })
+                    } catch (err) {
+                        console.error(
+                            `Failed to cleanup claw ${claw[0].id}:`,
+                            err
+                        )
+                        await db
+                            .update(claws)
+                            .set({
+                                subscriptionStatus: 'revoked',
+                                status: 'stopped'
+                            })
+                            .where(eq(claws.id, claw[0].id))
+                    }
+                    return
+                }
 
-      onSubscriptionUpdated: async (data: SubscriptionWebhookData) => {
-        await db
-          .update(claws)
-          .set({ subscriptionStatus: data.status })
-          .where(eq(claws.polarSubscriptionId, data.id))
+                await db
+                    .update(claws)
+                    .set({ subscriptionStatus: 'revoked' })
+                    .where(eq(claws.id, claw[0].id))
 
-        if (data.status === 'past_due') {
-          const claw = await db
-            .select()
-            .from(claws)
-            .where(eq(claws.polarSubscriptionId, data.id))
-            .limit(1)
+                if (claw[0].hetznerServerId) {
+                    try {
+                        await hetzner.stopServer(claw[0].hetznerServerId)
+                        await db
+                            .update(claws)
+                            .set({ status: 'stopped' })
+                            .where(eq(claws.id, claw[0].id))
+                    } catch (err) {
+                        console.error(`Failed to stop server: ${err}`)
+                    }
+                }
+            },
 
-          if (claw[0]?.hetznerServerId) {
-            try {
-              await hetzner.stopServer(claw[0].hetznerServerId)
-              await db
-                .update(claws)
-                .set({ status: 'stopped' })
-                .where(eq(claws.id, claw[0].id))
-            } catch (err) {
-              console.error(`Failed to stop server: ${err}`)
+            onSubscriptionUncanceled: async (data: SubscriptionWebhookData) => {
+                await db
+                    .update(claws)
+                    .set({
+                        deletionScheduledAt: null,
+                        subscriptionStatus: 'active'
+                    })
+                    .where(eq(claws.polarSubscriptionId, data.id))
+            },
+
+            onSubscriptionUpdated: async (data: SubscriptionWebhookData) => {
+                await db
+                    .update(claws)
+                    .set({ subscriptionStatus: data.status })
+                    .where(eq(claws.polarSubscriptionId, data.id))
+
+                if (data.status === 'past_due') {
+                    const claw = await db
+                        .select()
+                        .from(claws)
+                        .where(eq(claws.polarSubscriptionId, data.id))
+                        .limit(1)
+
+                    if (claw[0]?.hetznerServerId) {
+                        try {
+                            await hetzner.stopServer(claw[0].hetznerServerId)
+                            await db
+                                .update(claws)
+                                .set({ status: 'stopped' })
+                                .where(eq(claws.id, claw[0].id))
+                        } catch (err) {
+                            console.error(`Failed to stop server: ${err}`)
+                        }
+                    }
+                }
             }
-          }
-        }
-      },
-    })
+        })
 
-    return c.json({ received: true })
-  } catch (err) {
-    console.error('Webhook error:', err)
-    return c.json({ error: t('api.webhookProcessingFailed') }, 500)
-  }
+        return c.json({ received: true })
+    } catch (err) {
+        console.error('Webhook error:', err)
+        return c.json({ error: t('api.webhookProcessingFailed') }, 500)
+    }
 }
 
 export default handlePolarWebhook

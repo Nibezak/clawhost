@@ -1,14 +1,14 @@
 // Generate cloud-init script with subdomain and SSL
 export function generateCloudInit(
-  rootPassword: string,
-  subdomain: string,
-  domain: string,
-  gatewayToken: string
+    rootPassword: string,
+    subdomain: string,
+    domain: string,
+    gatewayToken: string
 ): string {
-  const fullDomain = `${subdomain}.${domain}`
+    const fullDomain = `${subdomain}.${domain}`
 
-  // Note: Using template literal, variables like $http_upgrade need escaping
-  return `#cloud-config
+    // Note: Using template literal, variables like $http_upgrade need escaping
+    return `#cloud-config
 
 # OpenClaw Instance Auto-Configuration
 # Fully automatic setup with SSL - users access via subdomain only

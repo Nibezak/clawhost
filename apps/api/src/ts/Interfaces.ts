@@ -1,3 +1,3 @@
 export interface MagicLinkEmailProps {
-  magicLink: string
+    magicLink: string
 }

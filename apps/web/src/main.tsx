@@ -11,36 +11,39 @@ import '@/index.css'
 const PERSISTABLE_QUERIES = new Set(['profile', 'userStats'])
 
 const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      gcTime: 1000 * 60 * 60 * 24,
-    },
-  },
+    defaultOptions: {
+        queries: {
+            gcTime: 1000 * 60 * 60 * 24
+        }
+    }
 })
 
 const persister = createSyncStoragePersister({
-  storage: window.localStorage,
-  key: 'clawhost_query_cache',
+    storage: window.localStorage,
+    key: 'clawhost_query_cache'
 })
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <PersistQueryClientProvider
-      client={queryClient}
-      persistOptions={{
-        persister,
-        maxAge: 1000 * 60 * 60 * 24,
-        dehydrateOptions: {
-          shouldDehydrateQuery: (query) => {
-            const key = query.queryKey[0] as string
-            return query.state.status === 'success' && PERSISTABLE_QUERIES.has(key)
-          },
-        },
-      }}
-    >
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </PersistQueryClientProvider>
-  </React.StrictMode>
+    <React.StrictMode>
+        <PersistQueryClientProvider
+            client={queryClient}
+            persistOptions={{
+                persister,
+                maxAge: 1000 * 60 * 60 * 24,
+                dehydrateOptions: {
+                    shouldDehydrateQuery: (query) => {
+                        const key = query.queryKey[0] as string
+                        return (
+                            query.state.status === 'success' &&
+                            PERSISTABLE_QUERIES.has(key)
+                        )
+                    }
+                }
+            }}
+        >
+            <BrowserRouter>
+                <App />
+            </BrowserRouter>
+        </PersistQueryClientProvider>
+    </React.StrictMode>
 )

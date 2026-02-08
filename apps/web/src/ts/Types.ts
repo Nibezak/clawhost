@@ -3,17 +3,17 @@ export type ToastType = 'success' | 'error' | 'warning' | 'info'
 export type ViewMode = 'list' | 'grid'
 
 export type ClawStatus =
-  | 'initializing'
-  | 'starting'
-  | 'running'
-  | 'stopping'
-  | 'off'
-  | 'stopped'
-  | 'deleting'
-  | 'migrating'
-  | 'rebuilding'
-  | 'unknown'
-  | 'creating'
+    | 'initializing'
+    | 'starting'
+    | 'running'
+    | 'stopping'
+    | 'off'
+    | 'stopped'
+    | 'deleting'
+    | 'migrating'
+    | 'rebuilding'
+    | 'unknown'
+    | 'creating'
 
 export type CopiedFieldType = 'command' | 'private' | null
 

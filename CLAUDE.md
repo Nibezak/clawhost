@@ -86,8 +86,9 @@ import { api } from '@/lib/api'
 import { Claw, Plan } from '@/ts/Interfaces' // DO NOT USE
 
 // INCORRECT - Inline type definitions
-interface MyComponentProps { // DO NOT USE - put in @/ts/Interfaces.ts
-  title: string
+interface MyComponentProps {
+    // DO NOT USE - put in @/ts/Interfaces.ts
+    title: string
 }
 ```
 
@@ -336,6 +337,97 @@ import { t } from '@openclaw/i18n'
 2. Use descriptive, hierarchical key names
 3. Then reference them in components using `t('category.keyName')`
 
+## Formatting & Linting Rules
+
+**CRITICAL: All code written or modified must strictly follow these formatting and linting rules. These are enforced by ESLint and Prettier and checked by Husky pre-commit hooks. Never deviate from them.**
+
+### Prettier Rules (enforced by `.prettierrc`)
+
+- **Single quotes** — Always use single quotes (`'`), never double quotes (`"`)
+- **No semicolons** — Never end statements with semicolons
+- **4-space indentation** — Use 4 spaces for all indentation, never tabs, never 2 spaces
+- **No trailing commas** — Never add trailing commas in arrays, objects, function params, or imports
+- **Single JSX quotes** — Use single quotes in JSX attributes (`<div className='foo'>`)
+- **Tailwind class sorting** — Classes are auto-sorted by `prettier-plugin-tailwindcss`
+
+### ESLint Rules (enforced by `eslint.config.js`)
+
+These apply to **both api and web** — every `.js`, `.mjs`, `.cjs`, `.ts`, and `.tsx` file:
+
+- **4-space indentation** — `indent: ['error', 4]`
+- **Single quotes** — `quotes: ['error', 'single']`
+- **No semicolons** — `semi: ['error', 'never']`
+- **No trailing commas** — `comma-dangle: ['error', 'never']`
+- **Single JSX quotes** — `jsx-quotes: ['error', 'prefer-single']`
+- **No multiple empty lines** — Max 1 empty line between code, 0 at start of file, 0 at end of file
+- **No newline at end of file** — `eol-last: ['error', 'never']`
+- **No `@ts-ignore` restrictions** — `@typescript-eslint/ban-ts-comment` is off
+- **Linebreak style** — Disabled (cross-platform)
+
+TypeScript-specific rules (`.ts` and `.tsx` files):
+
+- **Warn on unused variables** — Except those prefixed with `_`
+- **Warn on `any` type** — Prefer explicit types over `any`
+- **Enforce `import type`** — Always use `import type` for type-only imports with separate-type-imports style
+
+React-specific rules (web app only):
+
+- **React Hooks rules** — Enforced (deps arrays, rules of hooks)
+- **React Refresh** — Warns on non-component exports in component files
+
+### Pre-commit Hook (Husky)
+
+On every commit, Husky runs:
+
+1. `pnpm check` — Runs `tsc --noEmit` and `eslint .` for both api and web
+2. `pnpm version:patch` — Auto-bumps patch version in both `apps/api/package.json` and `apps/web/package.json`
+3. Stages the bumped `package.json` files
+
+### How to Follow These Rules
+
+When writing any code:
+
+```typescript
+// CORRECT
+const myFunction = (param: string): string => {
+    const result = doSomething(param)
+    return result
+}
+
+const myObject = {
+    key: 'value',
+    nested: {
+        foo: 'bar'
+    }
+}
+
+import type { MyType } from '@/ts/Interfaces'
+import { useState } from 'react'
+
+// INCORRECT — violates multiple rules
+const myFunction = (param: string): string => {
+    const result = doSomething(param) // 2-space indent + semicolons
+    return result
+}
+
+const myObject = {
+    key: 'value', // double quotes + 2-space indent
+    nested: {
+        foo: 'bar' // trailing comma + double quotes
+    }
+}
+```
+
+### Verification Commands
+
+```bash
+pnpm format:check    # Check if all files match Prettier rules
+pnpm format          # Auto-fix Prettier formatting
+pnpm lint            # Check ESLint rules
+pnpm lint:fix        # Auto-fix ESLint issues
+pnpm check           # Run tsc + eslint for both api and web
+```
+
 ## Guidelines for AI
 
 1. **Always read files before modifying** - Understand existing patterns first
@@ -353,3 +445,5 @@ import { t } from '@openclaw/i18n'
 13. **Never write comments** - Do not add code comments, JSX comments, section markers, or doc comments. The code should be self-explanatory. The only exception is when logic is truly non-obvious (e.g., bitwise operations, crypto algorithms, or workarounds for framework bugs)
 14. **Never add console.log** - Do not add `console.log` statements. Use `console.error` only for actual error handling in catch blocks. No debug logging, no request logging, no data logging
 15. **No section markers** - Never write comments like `// Section Name`, `{/* Section */}`, `// ========`, or category headers in files
+16. **Strict formatting compliance** - Every line of code must follow the Prettier and ESLint rules defined above. 4-space indentation, single quotes, no semicolons, no trailing commas, no end-of-file newlines. No exceptions
+17. **Run checks after changes** - After writing or modifying code, verify with `pnpm lint` and `pnpm format:check` to ensure compliance

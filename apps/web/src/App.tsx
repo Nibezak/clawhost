@@ -18,47 +18,47 @@ import NotFound from '@/pages/NotFound'
 import ProtectedRoute from '@/components/ProtectedRoute'
 
 const App: FC = (): ReactNode => {
-  return (
-    <TooltipProvider delayDuration={300}>
-    <AuthProvider>
-      <ScrollToTop />
-      <Toast />
-      <Routes>
-        <Route path={ROUTES.HOME} element={<Landing />} />
-        <Route path={ROUTES.LOGIN} element={<Login />} />
-        <Route path={ROUTES.TERMS} element={<Terms />} />
-        <Route path={ROUTES.PRIVACY} element={<Privacy />} />
-        <Route path={ROUTES.POSTS} element={<Blog />} />
-        <Route path={ROUTES.POST} element={<BlogPost />} />
-        <Route
-          path={ROUTES.CLAWS}
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={ROUTES.SSH_KEYS}
-          element={
-            <ProtectedRoute>
-              <SSHKeys />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={ROUTES.ACCOUNT}
-          element={
-            <ProtectedRoute>
-              <Account />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </AuthProvider>
-    </TooltipProvider>
-  )
+    return (
+        <TooltipProvider delayDuration={300}>
+            <AuthProvider>
+                <ScrollToTop />
+                <Toast />
+                <Routes>
+                    <Route path={ROUTES.HOME} element={<Landing />} />
+                    <Route path={ROUTES.LOGIN} element={<Login />} />
+                    <Route path={ROUTES.TERMS} element={<Terms />} />
+                    <Route path={ROUTES.PRIVACY} element={<Privacy />} />
+                    <Route path={ROUTES.POSTS} element={<Blog />} />
+                    <Route path={ROUTES.POST} element={<BlogPost />} />
+                    <Route
+                        path={ROUTES.CLAWS}
+                        element={
+                            <ProtectedRoute>
+                                <Dashboard />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path={ROUTES.SSH_KEYS}
+                        element={
+                            <ProtectedRoute>
+                                <SSHKeys />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path={ROUTES.ACCOUNT}
+                        element={
+                            <ProtectedRoute>
+                                <Account />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route path='*' element={<NotFound />} />
+                </Routes>
+            </AuthProvider>
+        </TooltipProvider>
+    )
 }
 
 export default App

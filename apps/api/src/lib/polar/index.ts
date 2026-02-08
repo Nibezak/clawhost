@@ -12,15 +12,11 @@ export { products } from './products'
 export type { PolarProduct } from './products'
 export { orders } from './orders'
 export type { PolarOrder, PolarOrdersPage } from './orders'
-export {
-  parseWebhook,
-  handleWebhook,
-  verifyWebhookSignature,
-} from './webhooks'
+export { parseWebhook, handleWebhook, verifyWebhookSignature } from './webhooks'
 export type {
-  WebhookEvent,
-  WebhookEventType,
-  WebhookHandlers,
-  SubscriptionWebhookData,
-  CheckoutWebhookData,
+    WebhookEvent,
+    WebhookEventType,
+    WebhookHandlers,
+    SubscriptionWebhookData,
+    CheckoutWebhookData
 } from './webhooks'
