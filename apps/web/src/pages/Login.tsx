@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { isSignInWithEmailLink } from 'firebase/auth'
@@ -16,11 +16,22 @@ import { PageBackground } from '@/components/PageBackground'
 import { PageTitle } from '@/components/PageTitle'
 import { Envelope, CircleNotch } from '@phosphor-icons/react'
 
+const COOLDOWN_KEY = 'otpSentAt'
+const COOLDOWN_DURATION = 60
+
+const getRemainingCooldown = (): number => {
+    const sentAt = localStorage.getItem(COOLDOWN_KEY)
+    if (!sentAt) return 0
+    const elapsed = Math.floor((Date.now() - Number(sentAt)) / 1000)
+    return Math.max(0, COOLDOWN_DURATION - elapsed)
+}
+
 const Login: FC = (): ReactNode => {
     const [email, setEmail] = useState('')
     const [sent, setSent] = useState(false)
     const [loading, setLoading] = useState(false)
     const [verifyingEmail, setVerifyingEmail] = useState<string | null>(null)
+    const [cooldown, setCooldown] = useState(getRemainingCooldown)
     const { user, loading: authLoading, sendOtp, verifyOtp } = useAuth()
     const { showToast } = useUIStore()
     const navigate = useNavigate()
@@ -82,6 +93,19 @@ const Login: FC = (): ReactNode => {
         }
     }, [verifyOtp, navigate, showToast])
 
+    useEffect(() => {
+        if (cooldown <= 0) return
+        const interval = setInterval(() => {
+            setCooldown(getRemainingCooldown())
+        }, 1000)
+        return () => clearInterval(interval)
+    }, [cooldown])
+
+    const startCooldown = useCallback(() => {
+        localStorage.setItem(COOLDOWN_KEY, String(Date.now()))
+        setCooldown(COOLDOWN_DURATION)
+    }, [])
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setLoading(true)
@@ -91,6 +115,7 @@ const Login: FC = (): ReactNode => {
                 window.localStorage.setItem('planForSignIn', planParam)
             }
             await sendOtp(email)
+            startCooldown()
             setSent(true)
         } catch (err: any) {
             showToast(err.message, 'error')
@@ -214,13 +239,17 @@ const Login: FC = (): ReactNode => {
                             type='submit'
                             size='lg'
                             className='w-full gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90'
-                            disabled={loading}
+                            disabled={loading || cooldown > 0}
                         >
                             {loading ? (
                                 <>
                                     <CircleNotch className='h-4 w-4 animate-spin' />
                                     {t('auth.sending')}
                                 </>
+                            ) : cooldown > 0 ? (
+                                t('auth.resendIn', {
+                                    seconds: String(cooldown)
+                                })
                             ) : (
                                 t('auth.continueWithEmail')
                             )}

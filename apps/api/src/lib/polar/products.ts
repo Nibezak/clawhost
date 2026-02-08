@@ -1,17 +1,11 @@
+import type {
+    PolarProduct,
+    PolarProductRaw,
+    CreatePolarProductParams
+} from '@/ts/Interfaces'
 import { getPolarClient, getPolarConfig } from './client'
 
-export interface PolarProduct {
-    id: string
-    name: string
-    description?: string
-    isRecurring: boolean
-    isArchived: boolean
-}
-
 export const products = {
-    /**
-     * Get all products for the organization
-     */
     async list(): Promise<PolarProduct[]> {
         const polar = getPolarClient()
         const config = getPolarConfig()
@@ -25,15 +19,7 @@ export const products = {
                 ? result.result
                 : (result as unknown as { items: unknown[] }).items || []
 
-        return (
-            items as Array<{
-                id: string
-                name: string
-                description?: string | null
-                isRecurring: boolean
-                isArchived: boolean
-            }>
-        ).map((product) => ({
+        return (items as PolarProductRaw[]).map((product) => ({
             id: product.id,
             name: product.name,
             description: product.description ?? undefined,
@@ -42,9 +28,6 @@ export const products = {
         }))
     },
 
-    /**
-     * Get a product by ID
-     */
     async get(productId: string): Promise<PolarProduct | null> {
         const polar = getPolarClient()
 
@@ -62,15 +45,7 @@ export const products = {
         }
     },
 
-    /**
-     * Create a new recurring product for a plan
-     */
-    async create(data: {
-        name: string
-        description?: string
-        priceAmountCents: number
-        recurringInterval?: 'month' | 'year'
-    }): Promise<PolarProduct> {
+    async create(data: CreatePolarProductParams): Promise<PolarProduct> {
         const polar = getPolarClient()
         const config = getPolarConfig()
 
@@ -78,7 +53,6 @@ export const products = {
             name: data.name,
             description: data.description,
             organizationId: config.organizationId,
-            // Use type assertion for the prices array as the SDK types may vary
             prices: [
                 {
                     amountType: 'fixed' as const,
@@ -97,9 +71,6 @@ export const products = {
         }
     },
 
-    /**
-     * Archive a product (soft delete)
-     */
     async archive(productId: string): Promise<void> {
         const polar = getPolarClient()
         await polar.products.update({

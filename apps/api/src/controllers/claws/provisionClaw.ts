@@ -9,20 +9,15 @@ import {
     generateCloudInit,
     DOMAIN
 } from './helpers/index'
+import type {
+    ProvisionClawParams,
+    ProvisionClawResponse
+} from '@/ts/Interfaces'
 import { t } from '@openclaw/i18n'
 
-export interface ProvisionClawParams {
-    pendingClawId: string
-    subscriptionId: string
-    customerId: string
-    productId: string
-}
-
-export async function provisionClaw(params: ProvisionClawParams): Promise<{
-    success: boolean
-    clawId?: string
-    error?: string
-}> {
+export async function provisionClaw(
+    params: ProvisionClawParams
+): Promise<ProvisionClawResponse> {
     try {
         const pendingClaw = await db
             .select()

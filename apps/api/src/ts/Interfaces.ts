@@ -1,3 +1,422 @@
+import type { SubscriptionStatus, WebhookEventType } from '@/ts/Types'
+
 export interface MagicLinkEmailProps {
     magicLink: string
+}
+
+export interface HetznerServer {
+    id: number
+    name: string
+    status: string
+    public_net: {
+        ipv4: { ip: string }
+    }
+}
+
+export interface HetznerSSHKey {
+    id: number
+    name: string
+    fingerprint: string
+    public_key: string
+    created: string
+}
+
+export interface HetznerServerType {
+    id: number
+    name: string
+    description: string
+    cores: number
+    memory: number
+    disk: number
+    architecture: string
+    prices: Array<{
+        location: string
+        price_hourly: { gross: string }
+        price_monthly: { gross: string }
+    }>
+}
+
+export interface HetznerLocation {
+    id: number
+    name: string
+    description: string
+    country: string
+    city: string
+}
+
+export interface HetznerDatacenter {
+    id: number
+    name: string
+    location: { name: string }
+    server_types: {
+        available: number[]
+        supported: number[]
+    }
+}
+
+export interface HetznerVolume {
+    id: number
+    name: string
+    size: number
+    location: { name: string }
+    server: number | null
+    status: string
+    created: string
+}
+
+export interface HetznerVolumePricing {
+    price_per_gb_month: { gross: string }
+}
+
+export interface HetznerCreateServerResponse {
+    server: HetznerServer
+    root_password: string
+}
+
+export interface HetznerServersResponse {
+    servers: HetznerServer[]
+    meta: {
+        pagination: { total_entries: number; last_page: number }
+    }
+}
+
+export interface HetznerServerResponse {
+    server: HetznerServer
+}
+
+export interface HetznerServerTypesResponse {
+    server_types: HetznerServerType[]
+}
+
+export interface HetznerLocationsResponse {
+    locations: HetznerLocation[]
+}
+
+export interface HetznerDatacentersResponse {
+    datacenters: HetznerDatacenter[]
+}
+
+export interface HetznerSSHKeysResponse {
+    ssh_keys: HetznerSSHKey[]
+}
+
+export interface HetznerSSHKeyResponse {
+    ssh_key: HetznerSSHKey
+}
+
+export interface HetznerPricingResponse {
+    pricing: { volume: HetznerVolumePricing }
+}
+
+export interface HetznerVolumeResponse {
+    volume: HetznerVolume
+}
+
+export interface ServerStatus {
+    status: string
+    ip: string
+}
+
+export interface CreateServerResult {
+    serverId: number
+    ip: string
+    rootPassword: string
+}
+
+export interface ServerTypeInfo {
+    name: string
+    description: string
+    cores: number
+    memory: number
+    disk: number
+    architecture: string
+    priceHourly: number
+    priceMonthly: number
+}
+
+export interface LocationInfo {
+    id: string
+    name: string
+    city: string
+    country: string
+    disabled: boolean
+}
+
+export interface HetznerSSHKeyInfo {
+    id: number
+    name: string
+    fingerprint: string
+    publicKey: string
+    createdAt: string
+}
+
+export interface CreateSSHKeyResult {
+    id: number
+    name: string
+    fingerprint: string
+}
+
+export interface VolumeInfo {
+    id: number
+    size: number
+    location: string
+}
+
+export interface VolumeDetails {
+    id: number
+    size: number
+    status: string
+    serverId: number | null
+}
+
+export interface VolumePricingResult {
+    pricePerGbMonthly: number
+}
+
+export interface CheckoutSession {
+    id: string
+    url: string
+    status: string
+    customerId?: string
+    customerEmail?: string
+    productId: string
+    amount: number
+    currency: string
+    metadata?: Record<string, string>
+}
+
+export interface CreateCheckoutParams {
+    productId: string
+    customerEmail: string
+    customerId?: string
+    successUrl?: string
+    cancelUrl?: string
+    metadata?: Record<string, string>
+}
+
+export interface PolarSubscription {
+    id: string
+    status: SubscriptionStatus
+    customerId: string
+    productId: string
+    amount: number
+    currency: string
+    currentPeriodStart?: Date
+    currentPeriodEnd?: Date
+    cancelAtPeriodEnd: boolean
+    canceledAt?: Date
+    endedAt?: Date
+    metadata?: Record<string, string>
+}
+
+export interface PolarSubscriptionRaw {
+    id: string
+    status: string
+    customerId: string
+    productId: string
+    amount?: number
+    currency?: string
+    currentPeriodStart?: string
+    currentPeriodEnd?: string
+    cancelAtPeriodEnd?: boolean
+    canceledAt?: string
+    endedAt?: string
+    metadata?: Record<string, string>
+}
+
+export interface PolarOrder {
+    id: string
+    status: string
+    subtotalAmount: number
+    discountAmount: number
+    totalAmount: number
+    taxAmount: number
+    currency: string
+    billingReason: string
+    productName: string | null
+    productId: string | null
+    subscriptionId: string | null
+    discountName: string | null
+    createdAt: string
+}
+
+export interface PolarOrdersPage {
+    items: PolarOrder[]
+    totalCount: number
+    maxPage: number
+}
+
+export interface PolarOrderRaw {
+    id: string
+    status: string
+    amount: number
+    subtotalAmount: number
+    discountAmount: number
+    taxAmount: number
+    currency?: string
+    billingReason: string
+    product?: { name: string; id: string } | null
+    productId?: string | null
+    subscriptionId?: string | null
+    discount?: { name: string } | null
+    createdAt: Date | string
+}
+
+export interface PolarProduct {
+    id: string
+    name: string
+    description?: string
+    isRecurring: boolean
+    isArchived: boolean
+}
+
+export interface PolarProductRaw {
+    id: string
+    name: string
+    description?: string | null
+    isRecurring: boolean
+    isArchived: boolean
+}
+
+export interface CreatePolarProductParams {
+    name: string
+    description?: string
+    priceAmountCents: number
+    recurringInterval?: 'month' | 'year'
+}
+
+export interface PolarCustomer {
+    id: string
+    email: string
+    name?: string
+    externalId?: string
+}
+
+export interface CreatePolarCustomerParams {
+    email: string
+    name?: string
+    externalId: string
+}
+
+export interface WebhookEvent<T = unknown> {
+    type: WebhookEventType
+    data: T
+}
+
+export interface SubscriptionWebhookData {
+    id: string
+    status: string
+    customerId: string
+    customerEmail?: string
+    productId: string
+    priceId?: string
+    amount: number
+    currency: string
+    currentPeriodStart?: string
+    currentPeriodEnd?: string
+    cancelAtPeriodEnd: boolean
+    canceledAt?: string
+    endedAt?: string
+    metadata?: Record<string, string>
+}
+
+export interface CheckoutWebhookData {
+    id: string
+    status: string
+    customerId?: string
+    customerEmail?: string
+    productId: string
+    subscriptionId?: string
+    amount: number
+    currency: string
+    metadata?: Record<string, string>
+}
+
+export interface WebhookHandlers {
+    onCheckoutCreated?: (data: CheckoutWebhookData) => Promise<void>
+    onCheckoutUpdated?: (data: CheckoutWebhookData) => Promise<void>
+    onSubscriptionCreated?: (data: SubscriptionWebhookData) => Promise<void>
+    onSubscriptionActive?: (data: SubscriptionWebhookData) => Promise<void>
+    onSubscriptionUpdated?: (data: SubscriptionWebhookData) => Promise<void>
+    onSubscriptionCanceled?: (data: SubscriptionWebhookData) => Promise<void>
+    onSubscriptionRevoked?: (data: SubscriptionWebhookData) => Promise<void>
+    onSubscriptionUncanceled?: (data: SubscriptionWebhookData) => Promise<void>
+}
+
+export interface ProvisionClawParams {
+    pendingClawId: string
+    subscriptionId: string
+    customerId: string
+    productId: string
+}
+
+export interface ProvisionClawResponse {
+    success: boolean
+    clawId?: string
+    error?: string
+}
+
+export interface ClawCleanupData {
+    hetznerServerId: string | null
+    subdomain: string | null
+}
+
+export interface SendMagicLinkBody {
+    email: string
+    redirectUrl: string
+}
+
+export interface CreateSSHKeyBody {
+    name: string
+    publicKey: string
+}
+
+export interface UpdateProfileBody {
+    name?: string
+}
+
+export interface CreateClawBody {
+    name: string
+    planId: string
+    location: string
+    password?: string
+    sshKeyId?: string
+    volumeSize?: number
+}
+
+export interface InitiateClawPurchaseBody {
+    name?: string
+    planId: string
+    location: string
+    password?: string
+    sshKeyId?: string
+    volumeSize?: number
+    priceMonthly: number
+}
+
+export interface CloudflareDNSRecord {
+    id: string
+    name: string
+}
+
+export interface CloudflareDNSLookup {
+    id: string
+    ip: string
+}
+
+export interface PrerenderMeta {
+    title: string
+    description: string
+    url: string
+    type: string
+    image: string
+    jsonLd: Record<string, unknown>
+    articleMeta?: ArticleMeta
+}
+
+export interface ArticleMeta {
+    publishedTime: string
+    modifiedTime?: string
+    author: string
+    tags: string[]
 }

@@ -1,4 +1,5 @@
 import type { Context } from 'hono'
+import type { SendMagicLinkBody } from '@/ts/Interfaces'
 
 import { auth } from '@/services/firebase'
 import { getResend, FROM_EMAIL } from '@/services/resend'
@@ -7,10 +8,7 @@ import { t } from '@openclaw/i18n'
 
 const sendMagicLink = async (c: Context) => {
     try {
-        const { email, redirectUrl } = await c.req.json<{
-            email: string
-            redirectUrl: string
-        }>()
+        const { email, redirectUrl } = await c.req.json<SendMagicLinkBody>()
 
         if (!email) {
             return c.json({ error: t('api.emailRequired') }, 400)

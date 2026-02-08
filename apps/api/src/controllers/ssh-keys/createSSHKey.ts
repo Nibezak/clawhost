@@ -1,4 +1,5 @@
 import type { Context } from 'hono'
+import type { CreateSSHKeyBody } from '@/ts/Interfaces'
 import { eq, count } from 'drizzle-orm'
 import { db } from '@/db'
 import { sshKeys } from '@/db/schema'
@@ -10,10 +11,7 @@ const MAX_SSH_KEYS_PER_ACCOUNT = 50
 const createSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
     try {
         const userId = c.get('userId')
-        const { name, publicKey } = await c.req.json<{
-            name: string
-            publicKey: string
-        }>()
+        const { name, publicKey } = await c.req.json<CreateSSHKeyBody>()
 
         if (!name || !publicKey) {
             return c.json({ error: t('api.nameAndKeyRequired') }, 400)

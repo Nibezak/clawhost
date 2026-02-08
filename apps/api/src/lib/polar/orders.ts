@@ -1,31 +1,7 @@
+import type { PolarOrdersPage, PolarOrderRaw } from '@/ts/Interfaces'
 import { getPolarClient } from './client'
 
-export interface PolarOrder {
-    id: string
-    status: string
-    subtotalAmount: number
-    discountAmount: number
-    totalAmount: number
-    taxAmount: number
-    currency: string
-    billingReason: string
-    productName: string | null
-    productId: string | null
-    subscriptionId: string | null
-    discountName: string | null
-    createdAt: string
-}
-
-export interface PolarOrdersPage {
-    items: PolarOrder[]
-    totalCount: number
-    maxPage: number
-}
-
 export const orders = {
-    /**
-     * List orders for a customer with pagination
-     */
     async listByCustomer(
         customerId: string,
         page: number = 1,
@@ -49,21 +25,7 @@ export const orders = {
                           pagination: { totalCount: number; maxPage: number }
                       })
 
-            const items = (data.items || []) as Array<{
-                id: string
-                status: string
-                amount: number
-                subtotalAmount: number
-                discountAmount: number
-                taxAmount: number
-                currency?: string
-                billingReason: string
-                product?: { name: string; id: string } | null
-                productId?: string | null
-                subscriptionId?: string | null
-                discount?: { name: string } | null
-                createdAt: Date | string
-            }>
+            const items = (data.items || []) as PolarOrderRaw[]
 
             return {
                 items: items.map((order) => ({
@@ -92,9 +54,6 @@ export const orders = {
         }
     },
 
-    /**
-     * Get invoice URL for a specific order
-     */
     async getInvoiceUrl(orderId: string): Promise<string> {
         const polar = getPolarClient()
         const invoice = await polar.orders.invoice({ id: orderId })

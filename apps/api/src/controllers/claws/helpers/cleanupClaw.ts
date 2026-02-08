@@ -1,12 +1,13 @@
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws, volumes } from '@/db/schema'
+import type { ClawCleanupData } from '@/ts/Interfaces'
 import { hetzner } from '@/services/hetzner'
 import { cloudflare } from '@/services/cloudflare'
 
 export async function cleanupClaw(
     clawId: string,
-    claw: { hetznerServerId: string | null; subdomain: string | null }
+    claw: ClawCleanupData
 ): Promise<void> {
     const clawVolumes = await db
         .select()

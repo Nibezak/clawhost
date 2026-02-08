@@ -1,4 +1,5 @@
 import type { Context } from 'hono'
+import type { InitiateClawPurchaseBody } from '@/ts/Interfaces'
 import { eq, and, count } from 'drizzle-orm'
 import { db } from '@/db'
 import { users, sshKeys, claws, pendingClaws } from '@/db/schema'
@@ -123,15 +124,7 @@ const initiateClawPurchase = async (
             sshKeyId,
             volumeSize,
             priceMonthly
-        } = await c.req.json<{
-            name?: string
-            planId: string
-            location: string
-            password?: string
-            sshKeyId?: string
-            volumeSize?: number
-            priceMonthly: number // Price in dollars (already 2x markup from frontend)
-        }>()
+        } = await c.req.json<InitiateClawPurchaseBody>()
 
         if (!planId || !location || !priceMonthly) {
             return c.json({ error: t('api.missingRequiredFields') }, 400)

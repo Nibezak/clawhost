@@ -71,7 +71,23 @@ import { t } from '@openclaw/i18n'
 
 ### Types and Interfaces Rules
 
-**CRITICAL: All types and interfaces must be centralized in `@/ts/`. Never define types or interfaces inline within component or utility files.**
+**CRITICAL: All types and interfaces must be centralized in `@/ts/`. This applies to BOTH `apps/web` AND `apps/api`. Never define types, interfaces, or inline object types anywhere else — not in components, hooks, services, controllers, lib files, or scripts.**
+
+**This includes:**
+
+- `interface` definitions
+- `type` alias definitions
+- Inline object types in function parameters (e.g., `(data: { name: string })`)
+- Inline object types in return types (e.g., `Promise<{ id: string }>`)
+- Inline union types used as standalone types
+- Props types for React components
+
+**Centralized Type Files:**
+
+| App | Interfaces                      | Types                      | Barrel                     |
+| --- | ------------------------------- | -------------------------- | -------------------------- |
+| Web | `apps/web/src/ts/Interfaces.ts` | `apps/web/src/ts/Types.ts` | `apps/web/src/ts/index.ts` |
+| API | `apps/api/src/ts/Interfaces.ts` | `apps/api/src/ts/Types.ts` | `apps/api/src/ts/index.ts` |
 
 **Type Imports Must Be at the Top of Files:**
 
@@ -90,6 +106,14 @@ interface MyComponentProps {
     // DO NOT USE - put in @/ts/Interfaces.ts
     title: string
 }
+
+// INCORRECT - Inline object types in functions
+async function getUser(): Promise<{ id: string; name: string }> {} // DO NOT USE
+function create(data: { email: string; name?: string }): void {} // DO NOT USE
+
+// CORRECT - Use named interfaces from @/ts/Interfaces
+async function getUser(): Promise<UserProfile> {} // USE THIS
+function create(data: CreateUserParams): void {} // USE THIS
 ```
 
 **File Organization:**
@@ -98,13 +122,21 @@ interface MyComponentProps {
 - `@/ts/Interfaces.ts` - All interfaces (e.g., `interface Claw { ... }`)
 - `@/ts/index.ts` - Barrel export for convenient imports
 
-**Categories in Interfaces.ts:**
+**Categories in web Interfaces.ts:**
 
 - API / Data Models: `Claw`, `Plan`, `Location`, `SSHKey`, `Volume`, etc.
 - Store Interfaces: `UIState`, `PreferencesState`, `ToastData`
 - Auth Interfaces: `AuthContextType`
 - Component Props: `HeaderProps`, `EmptyStateProps`, `ClawCardProps`, etc.
 - Hook Data Types: `CreateClawData`, `CreateSSHKeyData`, etc.
+
+**Categories in api Interfaces.ts:**
+
+- Hetzner Types: `HetznerServer`, `HetznerVolume`, `ServerStatus`, `LocationInfo`, etc.
+- Polar Types: `CheckoutSession`, `PolarSubscription`, `PolarOrder`, `PolarCustomer`, etc.
+- Webhook Types: `WebhookEvent`, `WebhookHandlers`, `CheckoutWebhookData`, etc.
+- Controller Types: `ProvisionClawParams`, `ClawCleanupData`, etc.
+- Email Props: `MagicLinkEmailProps`
 
 ### React Component Function Pattern
 

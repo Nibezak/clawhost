@@ -1,3 +1,24 @@
+import type {
+    HetznerCreateServerResponse,
+    HetznerDatacentersResponse,
+    HetznerLocationsResponse,
+    HetznerPricingResponse,
+    HetznerSSHKeyResponse,
+    HetznerSSHKeysResponse,
+    HetznerServerResponse,
+    HetznerServerTypesResponse,
+    HetznerServersResponse,
+    HetznerVolumeResponse,
+    ServerStatus,
+    CreateServerResult,
+    ServerTypeInfo,
+    LocationInfo,
+    HetznerSSHKeyInfo,
+    CreateSSHKeyResult,
+    VolumeInfo,
+    VolumeDetails,
+    VolumePricingResult
+} from '@/ts/Interfaces'
 import { RequestClient } from '@openclaw/shared'
 
 function getClient() {
@@ -12,72 +33,7 @@ function getClient() {
     })
 }
 
-interface HetznerServer {
-    id: number
-    name: string
-    status: string
-    public_net: {
-        ipv4: { ip: string }
-    }
-}
-
-interface HetznerSSHKey {
-    id: number
-    name: string
-    fingerprint: string
-    public_key: string
-    created: string
-}
-
-interface ServerType {
-    id: number
-    name: string
-    description: string
-    cores: number
-    memory: number
-    disk: number
-    architecture: string
-    prices: Array<{
-        location: string
-        price_hourly: { gross: string }
-        price_monthly: { gross: string }
-    }>
-}
-
-interface Location {
-    id: number
-    name: string
-    description: string
-    country: string
-    city: string
-}
-
-interface Datacenter {
-    id: number
-    name: string
-    location: { name: string }
-    server_types: {
-        available: number[]
-        supported: number[]
-    }
-}
-
-interface HetznerVolume {
-    id: number
-    name: string
-    size: number
-    location: { name: string }
-    server: number | null
-    status: string
-    created: string
-}
-
-interface VolumePricing {
-    price_per_gb_month: { gross: string }
-}
-
 export const hetzner = {
-    // Server operations
     async createServer(
         name: string,
         serverType: string,
@@ -86,7 +42,7 @@ export const hetzner = {
         sshKeyIds?: number[],
         snapshotId?: string,
         userData?: string
-    ): Promise<{ serverId: number; ip: string; rootPassword: string }> {
+    ): Promise<CreateServerResult> {
         const body: Record<string, unknown> = {
             name,
             server_type: serverType,
@@ -107,10 +63,10 @@ export const hetzner = {
             body.user_data = userData
         }
 
-        const data = await getClient().post<{
-            server: HetznerServer
-            root_password: string
-        }>('/servers', body)
+        const data = await getClient().post<HetznerCreateServerResponse>(
+            '/servers',
+            body
+        )
 
         return {
             serverId: data.server.id,
@@ -119,8 +75,8 @@ export const hetzner = {
         }
     },
 
-    async getServer(serverId: string): Promise<{ status: string; ip: string }> {
-        const data = await getClient().get<{ server: HetznerServer }>(
+    async getServer(serverId: string): Promise<ServerStatus> {
+        const data = await getClient().get<HetznerServerResponse>(
             `/servers/${serverId}`
         )
         return {
@@ -129,17 +85,14 @@ export const hetzner = {
         }
     },
 
-    async getServers(): Promise<Map<string, { status: string; ip: string }>> {
-        const result = new Map<string, { status: string; ip: string }>()
+    async getServers(): Promise<Map<string, ServerStatus>> {
+        const result = new Map<string, ServerStatus>()
         let page = 1
         let hasMore = true
         while (hasMore) {
-            const data = await getClient().get<{
-                servers: HetznerServer[]
-                meta: {
-                    pagination: { total_entries: number; last_page: number }
-                }
-            }>(`/servers?per_page=50&page=${page}`)
+            const data = await getClient().get<HetznerServersResponse>(
+                `/servers?per_page=50&page=${page}`
+            )
             for (const server of data.servers) {
                 result.set(String(server.id), {
                     status: server.status,
@@ -168,22 +121,9 @@ export const hetzner = {
         await getClient().delete(`/servers/${serverId}`)
     },
 
-    // Server types
-    async getServerTypes(): Promise<
-        Array<{
-            name: string
-            description: string
-            cores: number
-            memory: number
-            disk: number
-            architecture: string
-            priceHourly: number
-            priceMonthly: number
-        }>
-    > {
-        const data = await getClient().get<{ server_types: ServerType[] }>(
-            '/server_types'
-        )
+    async getServerTypes(): Promise<ServerTypeInfo[]> {
+        const data =
+            await getClient().get<HetznerServerTypesResponse>('/server_types')
 
         return data.server_types.map((t) => {
             const ashPrice = t.prices.find((p) => p.location === 'ash')
@@ -202,22 +142,12 @@ export const hetzner = {
         })
     },
 
-    // Locations
-    async getLocations(): Promise<
-        Array<{
-            id: string
-            name: string
-            city: string
-            country: string
-            disabled: boolean
-        }>
-    > {
+    async getLocations(): Promise<LocationInfo[]> {
         const [locData, dcData] = await Promise.all([
-            getClient().get<{ locations: Location[] }>('/locations'),
-            getClient().get<{ datacenters: Datacenter[] }>('/datacenters')
+            getClient().get<HetznerLocationsResponse>('/locations'),
+            getClient().get<HetznerDatacentersResponse>('/datacenters')
         ])
 
-        // Build a set of base location names that have available server types
         const enabledLocations = new Set<string>()
         for (const dc of dcData.datacenters) {
             if (dc.server_types.available.length > 0) {
@@ -225,8 +155,6 @@ export const hetzner = {
             }
         }
 
-        // Hetzner may return datacenter-specific names like "fsn1-dc14"
-        // but server creation only accepts the base location (e.g. "fsn1")
         const seen = new Set<string>()
         return locData.locations
             .map((l) => ({
@@ -243,19 +171,8 @@ export const hetzner = {
             })
     },
 
-    // SSH Keys
-    async getSSHKeys(): Promise<
-        Array<{
-            id: number
-            name: string
-            fingerprint: string
-            publicKey: string
-            createdAt: string
-        }>
-    > {
-        const data = await getClient().get<{ ssh_keys: HetznerSSHKey[] }>(
-            '/ssh_keys'
-        )
+    async getSSHKeys(): Promise<HetznerSSHKeyInfo[]> {
+        const data = await getClient().get<HetznerSSHKeysResponse>('/ssh_keys')
 
         return data.ssh_keys.map((k) => ({
             id: k.id,
@@ -269,8 +186,8 @@ export const hetzner = {
     async createSSHKey(
         name: string,
         publicKey: string
-    ): Promise<{ id: number; name: string; fingerprint: string }> {
-        const data = await getClient().post<{ ssh_key: HetznerSSHKey }>(
+    ): Promise<CreateSSHKeyResult> {
+        const data = await getClient().post<HetznerSSHKeyResponse>(
             '/ssh_keys',
             {
                 name,
@@ -289,11 +206,8 @@ export const hetzner = {
         await getClient().delete(`/ssh_keys/${keyId}`)
     },
 
-    // Volumes
-    async getVolumePricing(): Promise<{ pricePerGbMonthly: number }> {
-        const data = await getClient().get<{
-            pricing: { volume: VolumePricing }
-        }>('/pricing')
+    async getVolumePricing(): Promise<VolumePricingResult> {
+        const data = await getClient().get<HetznerPricingResponse>('/pricing')
         return {
             pricePerGbMonthly: parseFloat(
                 data.pricing.volume.price_per_gb_month.gross
@@ -306,7 +220,7 @@ export const hetzner = {
         size: number,
         location: string,
         serverId?: number
-    ): Promise<{ id: number; size: number; location: string }> {
+    ): Promise<VolumeInfo> {
         const body: Record<string, unknown> = {
             name,
             size,
@@ -319,7 +233,7 @@ export const hetzner = {
             body.server = serverId
         }
 
-        const data = await getClient().post<{ volume: HetznerVolume }>(
+        const data = await getClient().post<HetznerVolumeResponse>(
             '/volumes',
             body
         )
@@ -346,13 +260,8 @@ export const hetzner = {
         await getClient().delete(`/volumes/${volumeId}`)
     },
 
-    async getVolume(volumeId: number): Promise<{
-        id: number
-        size: number
-        status: string
-        serverId: number | null
-    }> {
-        const data = await getClient().get<{ volume: HetznerVolume }>(
+    async getVolume(volumeId: number): Promise<VolumeDetails> {
+        const data = await getClient().get<HetznerVolumeResponse>(
             `/volumes/${volumeId}`
         )
         return {

@@ -2,12 +2,17 @@ import type {
     BillingHistoryResponse,
     BillingInvoiceResponse,
     Claw,
+    CreateClawData,
+    CreateSSHKeyData,
+    CustomerPortalResponse,
     DeleteClawResponse,
     Location,
+    MagicLinkResponse,
     Plan,
     PurchaseClawData,
     PurchaseClawResponse,
     SSHKey,
+    UpdateProfileData,
     UserProfile,
     UserStats,
     VolumePricing
@@ -42,7 +47,7 @@ const publicClient = new RequestClient({
 
 export const api = {
     sendMagicLink: (email: string, redirectUrl: string) =>
-        publicClient.post<{ success: boolean }>('/auth/send-magic-link', {
+        publicClient.post<MagicLinkResponse>('/auth/send-magic-link', {
             email,
             redirectUrl
         }),
@@ -55,14 +60,7 @@ export const api = {
     getClaw: (id: string, sync?: boolean) =>
         client.get<Claw>(`/claws/${id}${sync ? '?sync=true' : ''}`),
     syncClaw: (id: string) => client.post<Claw>(`/claws/${id}/sync`),
-    createClaw: (data: {
-        name: string
-        planId: string
-        location: string
-        password?: string
-        sshKeyId?: string
-        volumeSize?: number
-    }) => client.post<Claw>('/claws', data),
+    createClaw: (data: CreateClawData) => client.post<Claw>('/claws', data),
     purchaseClaw: (data: PurchaseClawData) =>
         client.post<PurchaseClawResponse>('/claws/purchase', data),
     startClaw: (id: string) => client.post<void>(`/claws/${id}/start`),
@@ -74,12 +72,12 @@ export const api = {
         client.post<void>(`/claws/${id}/cancel-deletion`),
 
     getSSHKeys: () => client.get<SSHKey[]>('/ssh-keys'),
-    createSSHKey: (data: { name: string; publicKey: string }) =>
+    createSSHKey: (data: CreateSSHKeyData) =>
         client.post<SSHKey>('/ssh-keys', data),
     deleteSSHKey: (id: string) => client.delete<void>(`/ssh-keys/${id}`),
 
     getProfile: () => client.get<UserProfile>('/users/me'),
-    updateProfile: (data: { name?: string }) =>
+    updateProfile: (data: UpdateProfileData) =>
         client.put<UserProfile>('/users/me', data),
     getUserStats: () => client.get<UserStats>('/users/me/stats'),
     getBillingHistory: (page: number = 1, limit: number = 10) =>
@@ -91,5 +89,5 @@ export const api = {
             `/users/me/billing/${orderId}/invoice`
         ),
     getCustomerPortal: () =>
-        client.post<{ url: string }>('/users/me/billing/portal')
+        client.post<CustomerPortalResponse>('/users/me/billing/portal')
 }

@@ -139,7 +139,8 @@ export const en = {
         magicLinkDescription:
             "We'll send you a magic link to sign in. No password needed.",
         welcomeBack: 'Welcome back.',
-        enterEmailForConfirmation: 'Please enter your email for confirmation'
+        enterEmailForConfirmation: 'Please enter your email for confirmation',
+        resendIn: 'Resend in {{seconds}}s'
     },
     account: {
         title: 'Account',

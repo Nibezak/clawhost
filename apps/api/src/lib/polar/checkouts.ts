@@ -1,31 +1,7 @@
+import type { CheckoutSession, CreateCheckoutParams } from '@/ts/Interfaces'
 import { getPolarClient, getPolarConfig } from './client'
 
-export interface CheckoutSession {
-    id: string
-    url: string
-    status: string
-    customerId?: string
-    customerEmail?: string
-    productId: string
-    amount: number
-    currency: string
-    metadata?: Record<string, string>
-}
-
-export interface CreateCheckoutParams {
-    productId: string
-    customerEmail: string
-    customerId?: string
-    successUrl?: string
-    cancelUrl?: string
-    metadata?: Record<string, string>
-}
-
 export const checkouts = {
-    /**
-     * Create a checkout session for a subscription
-     * Product already has the correct price (created via scripts/create-polar-products.ts)
-     */
     async create(params: CreateCheckoutParams): Promise<CheckoutSession> {
         const polar = getPolarClient()
         const config = getPolarConfig()
@@ -51,9 +27,6 @@ export const checkouts = {
         }
     },
 
-    /**
-     * Get a checkout session by ID
-     */
     async get(checkoutId: string): Promise<CheckoutSession | null> {
         const polar = getPolarClient()
 

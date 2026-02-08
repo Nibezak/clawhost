@@ -1,3 +1,4 @@
+import type { BlogPostFrontmatter, PrerenderMeta } from '../src/ts/Interfaces'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
@@ -10,21 +11,10 @@ const template = fs.readFileSync(path.join(DIST, 'index.html'), 'utf-8')
 
 const mdxFiles = fs.readdirSync(CONTENT).filter((f) => f.endsWith('.mdx'))
 
-interface PostFrontmatter {
-    title: string
-    slug: string
-    description: string
-    author: string
-    publishedAt: string
-    updatedAt?: string
-    tags: string[]
-    coverImage?: string
-}
-
-const posts: PostFrontmatter[] = mdxFiles.map((file) => {
+const posts: BlogPostFrontmatter[] = mdxFiles.map((file) => {
     const raw = fs.readFileSync(path.join(CONTENT, file), 'utf-8')
     const { data } = matter(raw)
-    return data as PostFrontmatter
+    return data as BlogPostFrontmatter
 })
 
 function escapeHtml(str: string): string {
@@ -35,23 +25,7 @@ function escapeHtml(str: string): string {
         .replace(/>/g, '&gt;')
 }
 
-function injectMeta(
-    html: string,
-    meta: {
-        title: string
-        description: string
-        url: string
-        type: string
-        image: string
-        jsonLd: Record<string, unknown>
-        articleMeta?: {
-            publishedTime: string
-            modifiedTime?: string
-            author: string
-            tags: string[]
-        }
-    }
-): string {
+function injectMeta(html: string, meta: PrerenderMeta): string {
     const fullTitle = `${meta.title} - ClawHost`
 
     // Replace existing title

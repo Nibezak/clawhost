@@ -1,4 +1,5 @@
 import type { Context } from 'hono'
+import type { UpdateProfileBody } from '@/ts/Interfaces'
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { users } from '@/db/schema'
@@ -9,7 +10,7 @@ const updateUserProfile = async (
 ) => {
     try {
         const userId = c.get('userId')
-        const { name } = await c.req.json<{ name?: string }>()
+        const { name } = await c.req.json<UpdateProfileBody>()
 
         if (name !== undefined && name.length > 100) {
             return c.json({ error: t('api.nameTooLong') }, 400)

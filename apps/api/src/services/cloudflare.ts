@@ -1,3 +1,4 @@
+import type { CloudflareDNSRecord, CloudflareDNSLookup } from '@/ts/Interfaces'
 import Cloudflare from 'cloudflare'
 
 function getClient() {
@@ -22,7 +23,7 @@ export const cloudflare = {
     async createDNSRecord(
         subdomain: string,
         ip: string
-    ): Promise<{ id: string; name: string }> {
+    ): Promise<CloudflareDNSRecord> {
         const client = getClient()
         const zoneId = getZoneId()
 
@@ -72,7 +73,7 @@ export const cloudflare = {
     // Find DNS record by subdomain
     async findDNSRecord(
         subdomain: string
-    ): Promise<{ id: string; ip: string } | null> {
+    ): Promise<CloudflareDNSLookup | null> {
         const client = getClient()
         const zoneId = getZoneId()
         const fullName = `${subdomain}.clawhost.cloud`

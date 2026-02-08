@@ -1,6 +1,9 @@
-import type { ReactNode } from 'react'
 import type { User } from 'firebase/auth'
-import type { AuthContextType, CachedProfile } from '@/ts/Interfaces'
+import type {
+    AuthContextType,
+    AuthProviderProps,
+    CachedProfile
+} from '@/ts/Interfaces'
 import {
     createContext,
     useCallback,
@@ -29,7 +32,7 @@ function readCachedProfile(): CachedProfile | null {
     }
 }
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function AuthProvider({ children }: AuthProviderProps) {
     const queryClient = useQueryClient()
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)

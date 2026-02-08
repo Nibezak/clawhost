@@ -1,3 +1,4 @@
+import type { GitHubStarsData } from '@/ts/Interfaces'
 import { useQuery } from '@tanstack/react-query'
 
 export const GITHUB_STARS_QUERY_KEY = ['github-stars'] as const
@@ -12,10 +13,7 @@ function formatStars(count: number): string {
     return count.toString()
 }
 
-async function fetchGitHubStars(): Promise<{
-    count: number
-    formatted: string
-}> {
+async function fetchGitHubStars(): Promise<GitHubStarsData> {
     const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}`)
     if (!response.ok) {
         throw new Error('Failed to fetch GitHub stars')

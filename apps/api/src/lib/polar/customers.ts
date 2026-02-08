@@ -1,21 +1,8 @@
+import type { PolarCustomer, CreatePolarCustomerParams } from '@/ts/Interfaces'
 import { getPolarClient } from './client'
 
-export interface PolarCustomer {
-    id: string
-    email: string
-    name?: string
-    externalId?: string
-}
-
 export const customers = {
-    /**
-     * Create a new customer in Polar
-     */
-    async create(data: {
-        email: string
-        name?: string
-        externalId: string // Our user ID
-    }): Promise<PolarCustomer> {
+    async create(data: CreatePolarCustomerParams): Promise<PolarCustomer> {
         const polar = getPolarClient()
 
         const customer = await polar.customers.create({
@@ -32,9 +19,6 @@ export const customers = {
         }
     },
 
-    /**
-     * Get customer by external ID (our user ID)
-     */
     async getByExternalId(externalId: string): Promise<PolarCustomer | null> {
         const polar = getPolarClient()
 
@@ -51,14 +35,7 @@ export const customers = {
         }
     },
 
-    /**
-     * Get or create customer
-     */
-    async getOrCreate(data: {
-        email: string
-        name?: string
-        externalId: string
-    }): Promise<PolarCustomer> {
+    async getOrCreate(data: CreatePolarCustomerParams): Promise<PolarCustomer> {
         const existing = await this.getByExternalId(data.externalId)
         if (existing) {
             return existing
@@ -66,9 +43,6 @@ export const customers = {
         return this.create(data)
     },
 
-    /**
-     * Get customer by ID
-     */
     async get(customerId: string): Promise<PolarCustomer | null> {
         const polar = getPolarClient()
 

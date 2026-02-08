@@ -1,4 +1,5 @@
 import type { Context } from 'hono'
+import type { CreateClawBody } from '@/ts/Interfaces'
 import { eq, and, count } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws, sshKeys, volumes } from '@/db/schema'
@@ -17,14 +18,7 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
     try {
         const userId = c.get('userId')
         const { name, planId, location, password, sshKeyId, volumeSize } =
-            await c.req.json<{
-                name: string
-                planId: string
-                location: string
-                password?: string
-                sshKeyId?: string
-                volumeSize?: number // Optional volume size in GB
-            }>()
+            await c.req.json<CreateClawBody>()
 
         if (!name || !planId || !location) {
             return c.json({ error: t('api.missingRequiredFields') }, 400)
