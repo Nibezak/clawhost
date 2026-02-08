@@ -6,7 +6,7 @@ import type {
     SubscriptionWebhookData
 } from '@/ts/Interfaces'
 import crypto from 'crypto'
-import { getPolarConfig } from './client'
+import { getPolarConfig } from '@/lib/polar/client'
 
 export function verifyWebhookSignature(
     payload: string,

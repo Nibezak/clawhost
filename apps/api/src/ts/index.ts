@@ -1,2 +1,2 @@
-export * from './Interfaces'
-export * from './Types'
+export * from '@/ts/Interfaces'
+export * from '@/ts/Types'

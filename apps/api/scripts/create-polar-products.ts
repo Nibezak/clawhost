@@ -12,7 +12,7 @@
 
 import 'dotenv/config'
 import { Polar } from '@polar-sh/sdk'
-import { hetzner } from '../src/services/hetzner'
+import { hetzner } from '@/services/hetzner'
 
 async function main() {
     console.log('🚀 Creating Polar products for each Hetzner plan...\n')
@@ -57,13 +57,13 @@ async function main() {
             const product = await polar.products.create({
                 name: productName,
                 description: productDescription,
+                recurringInterval: 'month',
                 prices: [
                     {
                         amountType: 'fixed',
                         priceAmount: priceCents,
-                        priceCurrency: 'usd',
-                        recurringInterval: 'month'
-                    } as Record<string, unknown>
+                        priceCurrency: 'usd'
+                    }
                 ]
             })
 

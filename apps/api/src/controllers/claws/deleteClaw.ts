@@ -3,7 +3,7 @@ import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { subscriptions } from '@/lib/polar'
-import { cleanupClaw } from './helpers/index'
+import { cleanupClaw } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 
 const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {

@@ -6,8 +6,29 @@ import { getResend, FROM_EMAIL } from '@/services/resend'
 import MagicLinkEmail from '@/emails/MagicLinkEmail'
 import { t } from '@openclaw/i18n'
 
+const RATE_LIMIT_WINDOW = 60_000
+const rateLimitMap = new Map<string, number>()
+
 const sendMagicLink = async (c: Context) => {
     try {
+        const ip =
+            c.req.header('x-forwarded-for')?.split(',')[0]?.trim() ||
+            c.req.header('x-real-ip') ||
+            'unknown'
+
+        const lastSent = rateLimitMap.get(ip)
+        const now = Date.now()
+
+        if (lastSent && now - lastSent < RATE_LIMIT_WINDOW) {
+            const retryAfter = Math.ceil(
+                (RATE_LIMIT_WINDOW - (now - lastSent)) / 1000
+            )
+            return c.json(
+                { error: t('api.rateLimitExceeded'), retryAfter },
+                429
+            )
+        }
+
         const { email, redirectUrl } = await c.req.json<SendMagicLinkBody>()
 
         if (!email) {
@@ -40,6 +61,7 @@ const sendMagicLink = async (c: Context) => {
             return c.json({ error: t('api.failedToSendEmail') }, 500)
         }
 
+        rateLimitMap.set(ip, Date.now())
         return c.json({ success: true })
     } catch (err) {
         console.error('Send magic link error:', err)

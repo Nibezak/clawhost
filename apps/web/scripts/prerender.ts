@@ -1,4 +1,4 @@
-import type { BlogPostFrontmatter, PrerenderMeta } from '../src/ts/Interfaces'
+import type { BlogPostFrontmatter, PrerenderMeta } from '@/ts/Interfaces'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'

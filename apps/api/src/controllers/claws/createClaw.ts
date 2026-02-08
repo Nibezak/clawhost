@@ -11,7 +11,7 @@ import {
     generateCloudInit,
     generateToken,
     DOMAIN
-} from './helpers/index'
+} from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 
 const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {

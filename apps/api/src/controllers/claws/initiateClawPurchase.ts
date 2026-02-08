@@ -4,7 +4,7 @@ import { eq, and, count } from 'drizzle-orm'
 import { db } from '@/db'
 import { users, sshKeys, claws, pendingClaws } from '@/db/schema'
 import { checkouts, customers } from '@/lib/polar'
-import { generatePassword } from './helpers/index'
+import { generatePassword } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 
 const adjectives = [

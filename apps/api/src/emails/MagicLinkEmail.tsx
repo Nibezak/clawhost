@@ -23,7 +23,7 @@ import {
     button,
     logoSection,
     logo
-} from './styles'
+} from '@/emails/styles'
 
 export const MagicLinkEmail = ({ magicLink }: MagicLinkEmailProps) => {
     return (

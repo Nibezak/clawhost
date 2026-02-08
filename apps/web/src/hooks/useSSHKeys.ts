@@ -1,7 +1,7 @@
 import type { CreateSSHKeyData } from '@/ts/Interfaces'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api'
-import { USER_STATS_QUERY_KEY } from './useUser'
+import { USER_STATS_QUERY_KEY } from '@/hooks/useUser'
 
 export const SSH_KEYS_QUERY_KEY = ['sshKeys'] as const
 
