@@ -376,21 +376,20 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                 ))}
                             </div>
                         ) : (
+                        <TooltipProvider delayDuration={200}>
                             <div className='space-y-2'>
                                 {plans.map((plan) => {
                                     const isSelected = planId === plan.id
                                     const isDisabled = plan.disabled
-                                    return (
+
+                                    const card = (
                                         <label
-                                            key={plan.id}
                                             className={`flex items-center justify-between rounded-lg p-3 transition ${
                                                 isDisabled
-                                                    ? 'cursor-not-allowed opacity-50'
-                                                    : 'cursor-pointer'
-                                            } ${
-                                                isSelected && !isDisabled
-                                                    ? 'border border-[#ef5350]/50 bg-[#ef5350]/20'
-                                                    : 'bg-muted hover:bg-muted/80 border border-transparent'
+                                                    ? 'bg-muted/50 cursor-not-allowed border border-transparent opacity-50'
+                                                    : isSelected
+                                                      ? 'cursor-pointer border border-[#ef5350]/50 bg-[#ef5350]/20'
+                                                      : 'bg-muted hover:bg-muted/80 cursor-pointer border border-transparent'
                                             }`}
                                         >
                                             <div className='flex items-center gap-3'>
@@ -430,20 +429,31 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div className='flex items-center gap-2'>
-                                                {isDisabled && (
-                                                    <span className='rounded bg-red-500/10 px-1.5 py-0.5 text-xs text-red-400'>
-                                                        {t('createClaw.planUnavailable')}
-                                                    </span>
-                                                )}
-                                                <span className='text-sm font-semibold'>
-                                                    ${plan.priceMonthly.toFixed(2)}/mo
-                                                </span>
-                                            </div>
+                                            <span className='text-sm font-semibold'>
+                                                ${plan.priceMonthly.toFixed(2)}/mo
+                                            </span>
                                         </label>
+                                    )
+
+                                    if (isDisabled) {
+                                        return (
+                                            <Tooltip key={plan.id}>
+                                                <TooltipTrigger asChild>
+                                                    <div>{card}</div>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    {t('createClaw.planUnavailable')}
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        )
+                                    }
+
+                                    return (
+                                        <div key={plan.id}>{card}</div>
                                     )
                                 })}
                             </div>
+                        </TooltipProvider>
                         )}
                     </div>
 
