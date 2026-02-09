@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from 'react'
 import type { ClawConfigDialogProps } from '@/ts/Interfaces'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { t } from '@openclaw/i18n'
 import { Button } from '@/components/ui/button'
 import {
@@ -16,6 +16,37 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useQueryClient } from '@tanstack/react-query'
 import { useClawConfig, useUpdateClawConfig } from '@/hooks'
 import useUIStore from '@/lib/store/useUIStore'
+import CodeMirror, { EditorView } from '@uiw/react-codemirror'
+import { createTheme } from '@uiw/codemirror-themes'
+import { tags } from '@lezer/highlight'
+import { json } from '@codemirror/lang-json'
+
+const editorTheme = createTheme({
+    theme: 'dark',
+    settings: {
+        background: '#000000',
+        foreground: '#d4d4d8',
+        caret: '#d4d4d8',
+        selection: '#264f78',
+        selectionMatch: '#264f7844',
+        lineHighlight: '#ffffff08',
+        gutterBackground: '#000000',
+        gutterForeground: '#525252'
+    },
+    styles: [
+        { tag: tags.propertyName, color: '#93c5fd' },
+        { tag: tags.string, color: '#86efac' },
+        { tag: tags.number, color: '#fde68a' },
+        { tag: tags.bool, color: '#f9a8d4' },
+        { tag: tags.null, color: '#a78bfa' },
+        { tag: tags.punctuation, color: '#a1a1aa' }
+    ]
+})
+
+const editorStyles = EditorView.theme({
+    '&': { fontSize: '12px' },
+    '.cm-gutters': { borderRight: 'none' }
+})
 
 const ClawConfigDialog: FC<ClawConfigDialogProps> = ({
     clawId,
@@ -53,7 +84,7 @@ const ClawConfigDialog: FC<ClawConfigDialogProps> = ({
         onOpenChange(isOpen)
     }
 
-    const handleChange = (value: string) => {
+    const handleChange = useCallback((value: string) => {
         setEditedConfig(value)
         try {
             JSON.parse(value)
@@ -61,7 +92,7 @@ const ClawConfigDialog: FC<ClawConfigDialogProps> = ({
         } catch {
             setJsonError(true)
         }
-    }
+    }, [])
 
     const handleSave = () => {
         if (jsonError) return
@@ -118,16 +149,27 @@ const ClawConfigDialog: FC<ClawConfigDialogProps> = ({
                     )}
                     {config.data && (
                         <>
-                            <textarea
-                                value={editedConfig}
-                                onChange={(e) => handleChange(e.target.value)}
-                                spellCheck={false}
-                                className={`h-[400px] w-full resize-none rounded-md border bg-black p-3 font-mono text-xs leading-snug text-zinc-300 focus:outline-none ${
-                                    jsonError
-                                        ? 'border-red-500/50 focus:border-red-500'
-                                        : 'border-zinc-800 focus:border-zinc-600'
-                                }`}
-                            />
+                            <div className={`overflow-hidden rounded-md border ${
+                                jsonError
+                                    ? 'border-red-500/50'
+                                    : 'border-zinc-800'
+                            }`}>
+                                <CodeMirror
+                                    value={editedConfig}
+                                    onChange={handleChange}
+                                    extensions={[json(), editorStyles]}
+                                    theme={editorTheme}
+                                    height='400px'
+                                    basicSetup={{
+                                        lineNumbers: true,
+                                        foldGutter: true,
+                                        bracketMatching: true,
+                                        closeBrackets: true,
+                                        highlightActiveLine: true,
+                                        indentOnInput: true
+                                    }}
+                                />
+                            </div>
                             {jsonError && (
                                 <p className='text-xs text-red-400'>
                                     {t('dashboard.configInvalidJson')}
