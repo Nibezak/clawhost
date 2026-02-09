@@ -9,22 +9,10 @@ const useHardDeleteClaw = () => {
 
     return useMutation({
         mutationFn: (id: string) => api.hardDeleteClaw(id),
-        onMutate: async (id) => {
-            await queryClient.cancelQueries({ queryKey: CLAWS_QUERY_KEY })
-            const previousClaws =
-                queryClient.getQueryData<Claw[]>(CLAWS_QUERY_KEY)
+        onSuccess: (_response, id) => {
             queryClient.setQueryData<Claw[]>(CLAWS_QUERY_KEY, (old) =>
                 old?.filter((c) => c.id !== id)
             )
-            return { previousClaws }
-        },
-        onError: (_err, _id, context) => {
-            if (context?.previousClaws) {
-                queryClient.setQueryData(CLAWS_QUERY_KEY, context.previousClaws)
-            }
-        },
-        onSettled: () => {
-            queryClient.invalidateQueries({ queryKey: CLAWS_QUERY_KEY })
         }
     })
 }

@@ -71,7 +71,7 @@ const Dashboard: FC = (): ReactNode => {
         isLoading,
         isError,
         refetch
-    } = useClaws(awaitingClaw ? { refetchInterval: 3000 } : undefined)
+    } = useClaws()
 
     useEffect(() => {
         if (!awaitingClaw) return
