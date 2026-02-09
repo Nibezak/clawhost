@@ -10,6 +10,9 @@ import useDeleteClaw from '@/hooks/useClaws/useDeleteClaw'
 import useCancelDeletion from '@/hooks/useClaws/useCancelDeletion'
 import useHardDeleteClaw from '@/hooks/useClaws/useHardDeleteClaw'
 import useSyncClaw from '@/hooks/useClaws/useSyncClaw'
+import useClawDiagnostics from '@/hooks/useClaws/useClawDiagnostics'
+import useClawLogs from '@/hooks/useClaws/useClawLogs'
+import useRepairClaw from '@/hooks/useClaws/useRepairClaw'
 
 export {
     CLAWS_QUERY_KEY,
@@ -23,5 +26,8 @@ export {
     useDeleteClaw,
     useCancelDeletion,
     useHardDeleteClaw,
-    useSyncClaw
+    useSyncClaw,
+    useClawDiagnostics,
+    useClawLogs,
+    useRepairClaw
 }

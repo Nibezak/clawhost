@@ -554,3 +554,18 @@ export interface ArticleMeta {
     author: string
     tags: string[]
 }
+
+export interface DiagnosticsStatusResponse {
+    service: string
+    port: string
+    memory: string
+}
+
+export interface DiagnosticsLogsResponse {
+    logs: string
+}
+
+export interface DiagnosticsRepairResponse {
+    success: boolean
+    message: string
+}

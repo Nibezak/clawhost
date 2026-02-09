@@ -7,10 +7,10 @@ class RequestClient {
         this.config = config
     }
 
-    async request<T>(
+    private async executeRequest(
         endpoint: string,
         options: RequestOptions = {}
-    ): Promise<T> {
+    ): Promise<Response> {
         const { body, ...init } = options
 
         const headers: Record<string, string> = {
@@ -19,12 +19,14 @@ class RequestClient {
             ...((init.headers as Record<string, string>) || {})
         }
 
-        const res = await fetch(`${this.config.baseUrl}${endpoint}`, {
+        return fetch(`${this.config.baseUrl}${endpoint}`, {
             ...init,
             headers,
             body: body ? JSON.stringify(body) : undefined
         })
+    }
 
+    private async parseResponse<T>(res: Response): Promise<T> {
         const contentType = res.headers.get('content-type')
         const contentLength = res.headers.get('content-length')
         let data: unknown
@@ -64,6 +66,20 @@ class RequestClient {
         }
 
         return data as T
+    }
+
+    async request<T>(
+        endpoint: string,
+        options: RequestOptions = {}
+    ): Promise<T> {
+        let res = await this.executeRequest(endpoint, options)
+
+        if (res.status === 401 && this.config.onUnauthorized) {
+            await this.config.onUnauthorized()
+            res = await this.executeRequest(endpoint, options)
+        }
+
+        return this.parseResponse<T>(res)
     }
 
     get<T>(endpoint: string, options?: RequestOptions): Promise<T> {

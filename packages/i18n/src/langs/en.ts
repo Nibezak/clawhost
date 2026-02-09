@@ -124,6 +124,11 @@ export const en = {
         failedToFetchVolumePricing: 'Failed to fetch volume pricing!',
         failedToFetchPlanAvailability: 'Failed to fetch plan availability!',
         failedToSendEmail: 'Failed to send email!',
+        failedToGetDiagnostics: 'Failed to connect to the instance!',
+        failedToRepairClaw: 'Failed to repair the instance!',
+        repairSuccess: 'Instance repaired successfully.',
+        repairGatewayNotResponding:
+            'Repair applied but gateway is not responding yet. It may need more time to start.',
         failedToSendMagicLink: 'Failed to send magic link!',
         rateLimitExceeded: 'Please wait before requesting another login link.',
         webhookProcessingFailed: 'Webhook processing failed!'
@@ -255,7 +260,27 @@ export const en = {
         hardDeleteConfirmation:
             'Are you sure you want to delete this claw immediately? You will lose the remaining time on your current billing period. This action cannot be undone.',
         hardDeleting: 'Deleting...',
-        configuringTooltip: 'This might take some time. It depends on OpenClaw, the server location, and Cloudflare DNS.',
+        diagnostics: 'Diagnostics',
+        diagnosticsDescription: 'Check the health of your OpenClaw instance',
+        diagnosticsStatus: 'Status',
+        diagnosticsLogs: 'Logs',
+        diagnosticsRepair: 'Repair',
+        diagnosticsRepairDescription:
+            'Remove memory limits, add a watchdog service, and restart the gateway. This fixes most common issues.',
+        diagnosticsRepairSuccess: 'Instance repaired successfully!',
+        diagnosticsRepairFailed:
+            'Repair applied but gateway is not responding yet.',
+        diagnosticsLoading: 'Connecting to instance...',
+        diagnosticsNoLogs: 'No logs available',
+        diagnosticsIssueDetected: 'An issue was detected with your instance.',
+        diagnosticsHealthy: 'Your instance is running normally.',
+        diagnosticsPort: 'Port 18789',
+        diagnosticsMemory: 'Memory',
+        logsDescription:
+            'Latest 100 lines of your gateway log, auto-refreshing',
+        scrollToBottom: 'Scroll to new Logs',
+        configuringTooltip:
+            'This might take some time. It depends on OpenClaw, the server location, and Cloudflare DNS.',
         paymentSuccess: 'Your claw is being created and configured.',
         status: {
             running: 'Running',

@@ -6,6 +6,9 @@ import type {
     CreateSSHKeyData,
     CustomerPortalResponse,
     DeleteClawResponse,
+    DiagnosticsLogsResponse,
+    DiagnosticsRepairResponse,
+    DiagnosticsStatusResponse,
     Location,
     MagicLinkResponse,
     Plan,
@@ -20,7 +23,7 @@ import type {
 } from '@/ts/Interfaces'
 
 import { RequestClient } from '@openclaw/shared'
-import { getCachedToken } from '@/lib/firebase'
+import { clearTokenCache, getCachedToken } from '@/lib/firebase'
 
 const BASE_URL = import.meta.env.VITE_API_URL || '/api'
 
@@ -29,6 +32,10 @@ const client = new RequestClient({
     getHeaders: async (): Promise<Record<string, string>> => {
         const token = await getCachedToken()
         return token ? { Authorization: `Bearer ${token}` } : {}
+    },
+    onUnauthorized: async (): Promise<void> => {
+        clearTokenCache()
+        await getCachedToken(true)
     }
 })
 
@@ -74,6 +81,16 @@ export const api = {
         client.post<Claw>(`/claws/${id}/cancel-deletion`),
     hardDeleteClaw: (id: string) =>
         client.post<void>(`/claws/${id}/hard-delete`),
+    getClawDiagnostics: (id: string) =>
+        client.post<DiagnosticsStatusResponse>(
+            `/claws/${id}/diagnostics/status`
+        ),
+    getClawLogs: (id: string) =>
+        client.post<DiagnosticsLogsResponse>(`/claws/${id}/diagnostics/logs`),
+    repairClaw: (id: string) =>
+        client.post<DiagnosticsRepairResponse>(
+            `/claws/${id}/diagnostics/repair`
+        ),
 
     getSSHKeys: () => client.get<SSHKey[]>('/ssh-keys'),
     createSSHKey: (data: CreateSSHKeyData) =>

@@ -2,8 +2,14 @@ import auth from '@/lib/firebase/auth'
 import authReady from '@/lib/firebase/authReady'
 import tokenState from '@/lib/firebase/tokenState'
 
-const getCachedToken = async (): Promise<string | null> => {
-    if (tokenState.cachedToken && Date.now() < tokenState.tokenExpiry) {
+const getCachedToken = async (
+    forceRefresh?: boolean
+): Promise<string | null> => {
+    if (
+        !forceRefresh &&
+        tokenState.cachedToken &&
+        Date.now() < tokenState.tokenExpiry
+    ) {
         return tokenState.cachedToken
     }
 
@@ -15,7 +21,7 @@ const getCachedToken = async (): Promise<string | null> => {
     const currentUser = auth.currentUser
     if (!currentUser) return null
 
-    tokenState.cachedToken = await currentUser.getIdToken()
+    tokenState.cachedToken = await currentUser.getIdToken(forceRefresh)
     tokenState.tokenExpiry = Date.now() + 3500 * 1000
     return tokenState.cachedToken
 }

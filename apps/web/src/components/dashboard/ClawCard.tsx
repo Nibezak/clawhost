@@ -16,6 +16,8 @@ import { getStatusConfig, locationFlags, locationNames } from '@/lib/claw-utils'
 import { ClawCardGridView } from '@/components/dashboard/ClawCardGridView'
 import { ClawCardListView } from '@/components/dashboard/ClawCardListView'
 import { ClawCardDialogs } from '@/components/dashboard/ClawCardDialogs'
+import ClawDiagnosticsDialog from '@/components/dashboard/ClawDiagnosticsDialog'
+import ClawLogsDialog from '@/components/dashboard/ClawLogsDialog'
 
 const ClawCard: FC<ClawCardProps> = ({
     claw,
@@ -30,6 +32,8 @@ const ClawCard: FC<ClawCardProps> = ({
     const [showStopModal, setShowStopModal] = useState(false)
     const [showRestartModal, setShowRestartModal] = useState(false)
     const [showHardDeleteModal, setShowHardDeleteModal] = useState(false)
+    const [showDiagnostics, setShowDiagnostics] = useState(false)
+    const [showLogs, setShowLogs] = useState(false)
     const [isExpanded, setIsExpanded] = useState(false)
 
     const startMutation = useStartClaw()
@@ -101,6 +105,8 @@ const ClawCard: FC<ClawCardProps> = ({
         onShowDeleteModal: () => setShowDeleteModal(true),
         onCancelDeletion: () => cancelDeletionMutation.mutate(claw.id),
         onShowHardDeleteModal: () => setShowHardDeleteModal(true),
+        onShowDiagnostics: () => setShowDiagnostics(true),
+        onShowLogs: () => setShowLogs(true),
         onCopySSH: claw.rootPassword ? copySSHWithPassword : copySSHWithKey,
         onCopySSHWithKey: copySSHWithKey,
         onCopySSHWithPassword: copySSHWithPassword,
@@ -163,6 +169,16 @@ const ClawCard: FC<ClawCardProps> = ({
                 isStopPending={stopMutation.isPending}
                 isRestartPending={restartMutation.isPending}
                 isHardDeletePending={hardDeleteMutation.isPending}
+            />
+            <ClawDiagnosticsDialog
+                clawId={claw.id}
+                open={showDiagnostics}
+                onOpenChange={setShowDiagnostics}
+            />
+            <ClawLogsDialog
+                clawId={claw.id}
+                open={showLogs}
+                onOpenChange={setShowLogs}
             />
         </>
     )
