@@ -30,7 +30,13 @@ const stopClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             claw[0].providerServerId
         )
 
-        return c.json({ success: true })
+        const updated = await db
+            .select()
+            .from(claws)
+            .where(eq(claws.id, id))
+            .limit(1)
+
+        return c.json(updated[0])
     } catch (err) {
         console.error('Stop claw error:', err)
         return c.json(

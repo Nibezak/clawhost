@@ -394,6 +394,7 @@ export interface DeleteClawResponse {
     success: boolean
     scheduled: boolean
     deletionScheduledAt?: string
+    claw?: Claw
 }
 
 export interface PurchaseClawResponse {

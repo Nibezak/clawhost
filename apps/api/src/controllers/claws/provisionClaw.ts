@@ -21,18 +21,6 @@ export async function provisionClaw(
     params: ProvisionClawParams
 ): Promise<ProvisionClawResponse> {
     try {
-        const pendingClaw = await db
-            .select()
-            .from(pendingClaws)
-            .where(eq(pendingClaws.id, params.pendingClawId))
-            .limit(1)
-
-        if (!pendingClaw[0]) {
-            return { success: false, error: t('api.pendingClawNotFound') }
-        }
-
-        const pending = pendingClaw[0]
-
         const existingClaw = await db
             .select()
             .from(claws)
@@ -42,6 +30,17 @@ export async function provisionClaw(
         if (existingClaw[0]) {
             return { success: true, clawId: existingClaw[0].id }
         }
+
+        const claimed = await db
+            .delete(pendingClaws)
+            .where(eq(pendingClaws.id, params.pendingClawId))
+            .returning()
+
+        if (!claimed[0]) {
+            return { success: false, error: t('api.pendingClawNotFound') }
+        }
+
+        const pending = claimed[0]
 
         const providerName = (pending.provider || 'hetzner') as ProviderType
         const provider = getProvider(providerName)
@@ -139,10 +138,6 @@ export async function provisionClaw(
                 console.error('Failed to create volume:', volumeErr)
             }
         }
-
-        await db
-            .delete(pendingClaws)
-            .where(eq(pendingClaws.id, params.pendingClawId))
 
         return { success: true, clawId: id }
     } catch (err) {

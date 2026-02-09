@@ -38,10 +38,17 @@ const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {
                         })
                         .where(eq(claws.id, id))
 
+                    const updated = await db
+                        .select()
+                        .from(claws)
+                        .where(eq(claws.id, id))
+                        .limit(1)
+
                     return c.json({
                         success: true,
                         scheduled: true,
-                        deletionScheduledAt: sub.currentPeriodEnd.toISOString()
+                        deletionScheduledAt: sub.currentPeriodEnd.toISOString(),
+                        claw: updated[0]
                     })
                 }
             } catch (subErr) {

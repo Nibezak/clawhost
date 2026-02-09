@@ -61,6 +61,12 @@ const getStatusConfig = (): Record<string, StatusConfig> => {
             label: t('dashboard.status.rebuilding'),
             pulse: true
         },
+        restarting: {
+            color: 'bg-yellow-500',
+            bgColor: 'bg-yellow-500/10',
+            label: t('dashboard.status.restarting'),
+            pulse: true
+        },
         deleting: {
             color: 'bg-red-500',
             bgColor: 'bg-red-500/10',

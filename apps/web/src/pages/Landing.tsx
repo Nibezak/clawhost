@@ -765,7 +765,7 @@ const Landing: FC = (): ReactNode => {
                                                     key={plan.id}
                                                     className={`border-b border-white/5 ${
                                                         isDisabled
-                                                            ? 'opacity-40'
+                                                            ? 'opacity-50'
                                                             : isRecommended
                                                               ? 'bg-[#ef5350]/5'
                                                               : ''
@@ -776,11 +776,6 @@ const Landing: FC = (): ReactNode => {
                                                             <span className='font-medium text-white'>
                                                                 {plan.name.replace(/([A-Za-z])(\d)/, '$1 $2')}
                                                             </span>
-                                                            {isDisabled && (
-                                                                <Badge className='border-0 bg-red-500/10 text-xs text-red-400'>
-                                                                    {t('createClaw.planUnavailable')}
-                                                                </Badge>
-                                                            )}
                                                             {isRecommended && !isDisabled && (
                                                                 <Badge className='border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-xs text-white'>
                                                                     {t(
@@ -808,24 +803,21 @@ const Landing: FC = (): ReactNode => {
                                                         </span>
                                                     </td>
                                                     <td className='px-4 py-4 text-right'>
-                                                        {isDisabled ? (
-                                                            <Button
-                                                                size='sm'
-                                                                disabled
-                                                                className='gap-2 border-0 bg-white/5 px-4 text-gray-500'
-                                                            >
-                                                                {t('createClaw.planUnavailable')}
-                                                            </Button>
-                                                        ) : (
-                                                            <Button
-                                                                size='sm'
-                                                                className={`gap-2 px-4 ${
-                                                                    isRecommended
-                                                                        ? 'border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90'
-                                                                        : 'border-0 bg-white/10 text-white hover:bg-white/20'
-                                                                }`}
-                                                                asChild
-                                                            >
+                                                        <Button
+                                                            size='sm'
+                                                            disabled={isDisabled}
+                                                            className={`gap-2 px-4 ${
+                                                                isDisabled
+                                                                    ? 'border-0 bg-white/5 text-gray-500'
+                                                                    : isRecommended
+                                                                      ? 'border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90'
+                                                                      : 'border-0 bg-white/10 text-white hover:bg-white/20'
+                                                            }`}
+                                                            asChild={!isDisabled}
+                                                        >
+                                                            {isDisabled ? (
+                                                                t('createClaw.planUnavailable')
+                                                            ) : (
                                                                 <Link
                                                                     to={
                                                                         user
@@ -841,8 +833,8 @@ const Landing: FC = (): ReactNode => {
                                                                               'landing.select'
                                                                           )}
                                                                 </Link>
-                                                            </Button>
-                                                        )}
+                                                            )}
+                                                        </Button>
                                                     </td>
                                                 </tr>
                                             )

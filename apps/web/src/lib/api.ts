@@ -65,13 +65,13 @@ export const api = {
     createClaw: (data: CreateClawData) => client.post<Claw>('/claws', data),
     purchaseClaw: (data: PurchaseClawData) =>
         client.post<PurchaseClawResponse>('/claws/purchase', data),
-    startClaw: (id: string) => client.post<void>(`/claws/${id}/start`),
-    stopClaw: (id: string) => client.post<void>(`/claws/${id}/stop`),
-    restartClaw: (id: string) => client.post<void>(`/claws/${id}/restart`),
+    startClaw: (id: string) => client.post<Claw>(`/claws/${id}/start`),
+    stopClaw: (id: string) => client.post<Claw>(`/claws/${id}/stop`),
+    restartClaw: (id: string) => client.post<Claw>(`/claws/${id}/restart`),
     deleteClaw: (id: string) =>
         client.delete<DeleteClawResponse>(`/claws/${id}`),
     cancelDeletion: (id: string) =>
-        client.post<void>(`/claws/${id}/cancel-deletion`),
+        client.post<Claw>(`/claws/${id}/cancel-deletion`),
     hardDeleteClaw: (id: string) =>
         client.post<void>(`/claws/${id}/hard-delete`),
 
