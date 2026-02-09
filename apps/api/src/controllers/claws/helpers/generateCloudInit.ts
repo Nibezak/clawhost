@@ -117,7 +117,6 @@ runcmd:
     WorkingDirectory=/home/openclaw
     Environment=HOME=/home/openclaw
     Environment=NODE_ENV=production
-    Environment=NODE_OPTIONS=--max-old-space-size=512
     ExecStart=/usr/bin/openclaw gateway --port 18789 --bind loopback
     Restart=always
     RestartSec=10
