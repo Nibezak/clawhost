@@ -17,6 +17,7 @@ export type ClawStatus =
     | 'unknown'
     | 'creating'
     | 'configuring'
+    | 'restarting'
 
 export type CopiedFieldType = 'command' | 'private' | null
 

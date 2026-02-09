@@ -16,7 +16,8 @@ const useClaws = (options?: { refetchInterval?: number | false }) => {
             'creating',
             'configuring',
             'migrating',
-            'rebuilding'
+            'rebuilding',
+            'restarting'
         ].includes(c.status)
     )
 

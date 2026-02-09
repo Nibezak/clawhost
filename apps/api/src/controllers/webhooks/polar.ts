@@ -45,38 +45,14 @@ const handlePolarWebhook = async (c: Context) => {
                     return
                 }
 
-                const result = await provisionClaw({
+                provisionClaw({
                     pendingClawId,
                     subscriptionId: data.id,
                     customerId: data.customerId,
                     productId: data.productId
+                }).catch((err) => {
+                    console.error(`Failed to provision claw: ${err}`)
                 })
-
-                if (!result.success) {
-                    console.error(`Failed to provision claw: ${result.error}`)
-                }
-            },
-
-            onSubscriptionCreated: async (data: SubscriptionWebhookData) => {
-                if (data.status !== 'active') {
-                    return
-                }
-
-                const pendingClawId = data.metadata?.pendingClawId
-                if (!pendingClawId) {
-                    return
-                }
-
-                const result = await provisionClaw({
-                    pendingClawId,
-                    subscriptionId: data.id,
-                    customerId: data.customerId,
-                    productId: data.productId
-                })
-
-                if (!result.success) {
-                    console.error(`Failed to provision claw: ${result.error}`)
-                }
             },
 
             onSubscriptionCanceled: async (data: SubscriptionWebhookData) => {

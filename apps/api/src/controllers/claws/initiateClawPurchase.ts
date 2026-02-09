@@ -2,7 +2,7 @@ import type { Context } from 'hono'
 import type { InitiateClawPurchaseBody } from '@/ts/Interfaces'
 import type { ProviderType } from '@/ts/Types'
 
-import { eq, and, count } from 'drizzle-orm'
+import { eq, and, count, lt } from 'drizzle-orm'
 import { db } from '@/db'
 import { users, sshKeys, claws, pendingClaws } from '@/db/schema'
 import { checkouts, customers } from '@/lib/polar'
@@ -76,6 +76,9 @@ const nouns = [
     'storm'
 ]
 
+let lastPendingCleanup = 0
+const CLEANUP_INTERVAL = 60 * 60 * 1000
+
 let namePool: string[] = []
 
 function shufflePool() {
@@ -111,6 +114,11 @@ const initiateClawPurchase = async (
     c: Context<{ Variables: { userId: string } }>
 ) => {
     try {
+        if (Date.now() - lastPendingCleanup > CLEANUP_INTERVAL) {
+            await db.delete(pendingClaws).where(lt(pendingClaws.expiresAt, new Date()))
+            lastPendingCleanup = Date.now()
+        }
+
         const userId = c.get('userId')
         const {
             name: rawName,

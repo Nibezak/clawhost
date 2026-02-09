@@ -22,11 +22,21 @@ const restartClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             return c.json({ error: t('api.clawNotFound') }, 404)
         }
 
+        await db
+            .update(claws)
+            .set({ status: 'restarting' })
+            .where(eq(claws.id, id))
         await getProvider(claw[0].provider as ProviderType).restartServer(
             claw[0].providerServerId
         )
 
-        return c.json({ success: true })
+        const updated = await db
+            .select()
+            .from(claws)
+            .where(eq(claws.id, id))
+            .limit(1)
+
+        return c.json(updated[0])
     } catch (err) {
         console.error('Restart claw error:', err)
         return c.json(
