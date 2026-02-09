@@ -121,6 +121,7 @@ runcmd:
     ExecStart=/usr/bin/openclaw gateway --port 18789 --bind loopback
     Restart=always
     RestartSec=10
+    StartLimitIntervalSec=0
     StandardOutput=append:/var/log/openclaw-gateway.log
     StandardError=append:/var/log/openclaw-gateway.log
 
@@ -131,6 +132,27 @@ runcmd:
   - systemctl daemon-reload
   - systemctl enable openclaw-gateway
   - systemctl start openclaw-gateway
+
+  - |
+    for i in $(seq 1 30); do
+      if curl -sf -o /dev/null http://127.0.0.1:18789; then
+        break
+      fi
+      systemctl restart openclaw-gateway 2>/dev/null || true
+      sleep 10
+    done
+
+  - |
+    cat > /usr/local/bin/openclaw-watchdog.sh << 'WATCHDOG'
+    #!/bin/bash
+    if ! curl -sf -o /dev/null --max-time 5 http://127.0.0.1:18789; then
+      systemctl restart openclaw-gateway
+    fi
+    WATCHDOG
+    chmod +x /usr/local/bin/openclaw-watchdog.sh
+
+  - echo "* * * * * root /usr/local/bin/openclaw-watchdog.sh" > /etc/cron.d/openclaw-watchdog
+  - chmod 644 /etc/cron.d/openclaw-watchdog
 
   - ufw allow 22/tcp
   - ufw allow 80/tcp

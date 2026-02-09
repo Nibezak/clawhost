@@ -69,7 +69,8 @@ const digitaloceanCustomPrices: Record<string, number> = {
 }
 
 const disabledPlans = new Set([
-    's-1vcpu-512mb-10gb'
+    's-1vcpu-512mb-10gb',
+    's-1vcpu-1gb'
 ])
 
 const planConfigs: Record<
