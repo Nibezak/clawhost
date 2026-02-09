@@ -58,58 +58,45 @@ export default function generateCloudInit(
 
     return `#cloud-config
 
-# OpenClaw Instance Auto-Configuration
-# Fully automatic setup with SSL - users access via subdomain only
-
-# Set root password (overrides Hetzner's default)
 chpasswd:
   list: |
     root:${rootPassword}
   expire: false
 
 package_update: true
-package_upgrade: true
 
 packages:
-  - git
   - curl
-  - wget
-  - vim
-  - htop
   - nginx
   - certbot
   - python3-certbot-nginx
   - ufw
   - ca-certificates
   - gnupg
+  - git
+  - dnsutils
 
 runcmd:
-  # Create swap space for low-memory servers
   - fallocate -l 2G /swapfile
   - chmod 600 /swapfile
   - mkswap /swapfile
   - swapon /swapfile
   - echo '/swapfile none swap sw 0 0' >> /etc/fstab
 
-  # Install Node.js 22 (required for OpenClaw)
   - mkdir -p /etc/apt/keyrings
   - curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
   - echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" > /etc/apt/sources.list.d/nodesource.list
-  - apt-get update
+  - apt-get update -o Dir::Etc::sourcelist="sources.list.d/nodesource.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
   - apt-get install -y nodejs
 
-  # Install OpenClaw globally
   - npm install -g openclaw@latest
 
-  # Create openclaw user for running the service
   - useradd -r -m -d /home/openclaw -s /bin/bash openclaw
   - echo 'openclaw ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/openclaw
 
-  # Create OpenClaw directories, config, and agent auth directory
   - mkdir -p /home/openclaw/.openclaw
   - mkdir -p /home/openclaw/.openclaw/agents/main/agent
 
-  # Configure gateway with token auth, channels, and skip device pairing for web access
   - |
     cat > /home/openclaw/.openclaw/openclaw.json << 'OCCONFIG'
     ${configJson}
@@ -117,7 +104,6 @@ runcmd:
 
   - chown -R openclaw:openclaw /home/openclaw
 
-  # Create systemd service for OpenClaw (system-level for always-on)
   - |
     cat > /etc/systemd/system/openclaw-gateway.service <<'SYSTEMD'
     [Unit]
@@ -142,29 +128,22 @@ runcmd:
     WantedBy=multi-user.target
     SYSTEMD
 
-  # Enable and start OpenClaw service
   - systemctl daemon-reload
   - systemctl enable openclaw-gateway
   - systemctl start openclaw-gateway
 
-  # Configure firewall
   - ufw allow 22/tcp
   - ufw allow 80/tcp
   - ufw allow 443/tcp
   - ufw --force enable
 
-  # Create Nginx config - only responds to subdomain, blocks IP access
-  # Note: heredoc uses single-quoted delimiter so $ is literal (no bash expansion needed)
-  # JS template literals only interpolate \${...} with braces, so bare $word is safe
   - |
     cat > /etc/nginx/sites-available/openclaw << 'NGINXEOF'
-    # Map upgrade header for WebSocket support (must be outside server blocks)
     map $http_upgrade $connection_upgrade {
         default upgrade;
         '' close;
     }
 
-    # Block direct IP access - return 444 (connection closed)
     server {
         listen 80 default_server;
         listen [::]:80 default_server;
@@ -172,7 +151,6 @@ runcmd:
         return 444;
     }
 
-    # Subdomain server - will be upgraded to HTTPS by certbot
     server {
         listen 80;
         listen [::]:80;
@@ -194,21 +172,24 @@ runcmd:
     }
     NGINXEOF
 
-  # Enable the site and start Nginx
   - ln -sf /etc/nginx/sites-available/openclaw /etc/nginx/sites-enabled/
   - rm -f /etc/nginx/sites-enabled/default
   - nginx -t && systemctl reload nginx
   - systemctl enable nginx
 
-  # Wait for DNS propagation then get SSL certificate
-  - sleep 60
+  - |
+    for i in $(seq 1 24); do
+      if host ${fullDomain} 1.1.1.1 > /dev/null 2>&1; then
+        sleep 15
+        break
+      fi
+      sleep 5
+    done
   - certbot --nginx -d ${fullDomain} --non-interactive --agree-tos --email ssl@${domain} --redirect
 
-  # Set up automatic renewal cron (twice daily, renews if <30 days left)
   - echo "0 0,12 * * * root certbot renew --quiet --deploy-hook 'systemctl reload nginx'" > /etc/cron.d/certbot-renew
   - chmod 644 /etc/cron.d/certbot-renew
 
-  # Install Homebrew in the background (non-blocking)
   - |
     cat > /tmp/install-brew.sh << 'BREWSCRIPT'
     #!/bin/bash
