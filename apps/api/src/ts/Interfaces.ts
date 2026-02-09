@@ -569,3 +569,16 @@ export interface DiagnosticsRepairResponse {
     success: boolean
     message: string
 }
+
+export interface ClawConfigResponse {
+    config: string
+}
+
+export interface UpdateClawConfigBody {
+    config: string
+}
+
+export interface UpdateClawConfigResponse {
+    success: boolean
+    message: string
+}

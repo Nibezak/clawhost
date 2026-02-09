@@ -22,7 +22,8 @@ import {
     Copy,
     ClockCountdown,
     Pulse,
-    Scroll
+    Scroll,
+    GearSix
 } from '@phosphor-icons/react'
 
 const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
@@ -131,6 +132,10 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                         <DropdownMenuItem onClick={actions.onShowLogs}>
                             <Scroll className='mr-2 h-4 w-4' />
                             {t('dashboard.diagnosticsLogs')}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={actions.onShowConfig}>
+                            <GearSix className='mr-2 h-4 w-4' />
+                            {t('dashboard.configuration')}
                         </DropdownMenuItem>
                     </>
                 )}

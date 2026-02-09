@@ -268,6 +268,7 @@ export interface ClawCardActions {
     onShowHardDeleteModal: () => void
     onShowDiagnostics: () => void
     onShowLogs: () => void
+    onShowConfig: () => void
     onCopySSH: () => void
     onCopySSHWithKey: () => void
     onCopySSHWithPassword: () => void
@@ -488,6 +489,24 @@ export interface DiagnosticsRepairResponse {
     message: string
 }
 
+export interface ClawConfigResponse {
+    config: string
+}
+
+export interface UpdateClawConfigData {
+    config: string
+}
+
+export interface UpdateClawConfigResponse {
+    success: boolean
+    message: string
+}
+
+export interface UpdateClawConfigParams {
+    id: string
+    data: UpdateClawConfigData
+}
+
 export interface ClawDiagnosticsDialogProps {
     clawId: string
     open: boolean
@@ -495,6 +514,12 @@ export interface ClawDiagnosticsDialogProps {
 }
 
 export interface ClawLogsDialogProps {
+    clawId: string
+    open: boolean
+    onOpenChange: (open: boolean) => void
+}
+
+export interface ClawConfigDialogProps {
     clawId: string
     open: boolean
     onOpenChange: (open: boolean) => void

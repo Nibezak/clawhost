@@ -13,7 +13,9 @@ import {
     hardDeleteClaw,
     getClawDiagnostics,
     getClawLogs,
-    repairClaw
+    repairClaw,
+    getClawConfig,
+    updateClawConfig
 } from '@/controllers/claws'
 
 const app = new Hono<{ Variables: { userId: string } }>()
@@ -31,6 +33,8 @@ app.post('/:id/hard-delete', hardDeleteClaw)
 app.post('/:id/diagnostics/status', getClawDiagnostics)
 app.post('/:id/diagnostics/logs', getClawLogs)
 app.post('/:id/diagnostics/repair', repairClaw)
+app.post('/:id/config', getClawConfig)
+app.put('/:id/config', updateClawConfig)
 app.delete('/:id', deleteClaw)
 
 export default app

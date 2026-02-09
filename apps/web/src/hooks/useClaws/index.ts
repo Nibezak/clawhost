@@ -13,6 +13,8 @@ import useSyncClaw from '@/hooks/useClaws/useSyncClaw'
 import useClawDiagnostics from '@/hooks/useClaws/useClawDiagnostics'
 import useClawLogs from '@/hooks/useClaws/useClawLogs'
 import useRepairClaw from '@/hooks/useClaws/useRepairClaw'
+import useClawConfig from '@/hooks/useClaws/useClawConfig'
+import useUpdateClawConfig from '@/hooks/useClaws/useUpdateClawConfig'
 
 export {
     CLAWS_QUERY_KEY,
@@ -29,5 +31,7 @@ export {
     useSyncClaw,
     useClawDiagnostics,
     useClawLogs,
-    useRepairClaw
+    useRepairClaw,
+    useClawConfig,
+    useUpdateClawConfig
 }

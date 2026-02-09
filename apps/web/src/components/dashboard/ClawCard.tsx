@@ -18,6 +18,7 @@ import { ClawCardListView } from '@/components/dashboard/ClawCardListView'
 import { ClawCardDialogs } from '@/components/dashboard/ClawCardDialogs'
 import ClawDiagnosticsDialog from '@/components/dashboard/ClawDiagnosticsDialog'
 import ClawLogsDialog from '@/components/dashboard/ClawLogsDialog'
+import ClawConfigDialog from '@/components/dashboard/ClawConfigDialog'
 
 const ClawCard: FC<ClawCardProps> = ({
     claw,
@@ -34,6 +35,7 @@ const ClawCard: FC<ClawCardProps> = ({
     const [showHardDeleteModal, setShowHardDeleteModal] = useState(false)
     const [showDiagnostics, setShowDiagnostics] = useState(false)
     const [showLogs, setShowLogs] = useState(false)
+    const [showConfig, setShowConfig] = useState(false)
     const [isExpanded, setIsExpanded] = useState(false)
 
     const startMutation = useStartClaw()
@@ -107,6 +109,7 @@ const ClawCard: FC<ClawCardProps> = ({
         onShowHardDeleteModal: () => setShowHardDeleteModal(true),
         onShowDiagnostics: () => setShowDiagnostics(true),
         onShowLogs: () => setShowLogs(true),
+        onShowConfig: () => setShowConfig(true),
         onCopySSH: claw.rootPassword ? copySSHWithPassword : copySSHWithKey,
         onCopySSHWithKey: copySSHWithKey,
         onCopySSHWithPassword: copySSHWithPassword,
@@ -179,6 +182,11 @@ const ClawCard: FC<ClawCardProps> = ({
                 clawId={claw.id}
                 open={showLogs}
                 onOpenChange={setShowLogs}
+            />
+            <ClawConfigDialog
+                clawId={claw.id}
+                open={showConfig}
+                onOpenChange={setShowConfig}
             />
         </>
     )

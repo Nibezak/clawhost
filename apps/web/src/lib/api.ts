@@ -2,6 +2,7 @@ import type {
     BillingHistoryResponse,
     BillingInvoiceResponse,
     Claw,
+    ClawConfigResponse,
     CreateClawData,
     CreateSSHKeyData,
     CustomerPortalResponse,
@@ -16,6 +17,8 @@ import type {
     PurchaseClawData,
     PurchaseClawResponse,
     SSHKey,
+    UpdateClawConfigData,
+    UpdateClawConfigResponse,
     UpdateProfileData,
     UserProfile,
     UserStats,
@@ -91,6 +94,10 @@ export const api = {
         client.post<DiagnosticsRepairResponse>(
             `/claws/${id}/diagnostics/repair`
         ),
+    getClawConfig: (id: string) =>
+        client.post<ClawConfigResponse>(`/claws/${id}/config`),
+    updateClawConfig: (id: string, data: UpdateClawConfigData) =>
+        client.put<UpdateClawConfigResponse>(`/claws/${id}/config`, data),
 
     getSSHKeys: () => client.get<SSHKey[]>('/ssh-keys'),
     createSSHKey: (data: CreateSSHKeyData) =>

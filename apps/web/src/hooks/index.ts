@@ -13,6 +13,8 @@ export {
     useClawDiagnostics,
     useClawLogs,
     useRepairClaw,
+    useClawConfig,
+    useUpdateClawConfig,
     CLAWS_QUERY_KEY
 } from '@/hooks/useClaws'
 

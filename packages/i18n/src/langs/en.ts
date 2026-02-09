@@ -129,6 +129,19 @@ export const en = {
         repairSuccess: 'Instance repaired successfully.',
         repairGatewayNotResponding:
             'Repair applied but gateway is not responding yet. It may need more time to start.',
+        failedToGetConfig: 'Failed to get instance configuration!',
+        failedToUpdateConfig: 'Failed to update instance configuration!',
+        invalidJsonConfig: 'Invalid JSON configuration!',
+        configMustBeObject: 'Configuration must be a JSON object!',
+        configMissingGateway:
+            'Configuration is missing the required "gateway" object!',
+        configMissingGatewayAuth:
+            'Configuration is missing "gateway.auth" with "mode" and "token"!',
+        configMissingChannels:
+            'Configuration is missing the required "channels" object!',
+        configMissingAgents:
+            'Configuration is missing the required "agents" object!',
+        configUpdateSuccess: 'Configuration updated successfully.',
         failedToSendMagicLink: 'Failed to send magic link!',
         rateLimitExceeded: 'Please wait before requesting another login link.',
         webhookProcessingFailed: 'Webhook processing failed!'
@@ -279,6 +292,15 @@ export const en = {
         logsDescription:
             'Latest 100 lines of your gateway log, auto-refreshing',
         scrollToBottom: 'Scroll to new Logs',
+        configuration: 'Raw Configuration',
+        configurationDescription:
+            'View and edit the raw OpenClaw configuration file on your instance',
+        configSave: 'Save',
+        configSaving: 'Saving...',
+        configSaveSuccess: 'Configuration saved.',
+        configInvalidJson: 'Invalid JSON. Please fix syntax errors before saving.',
+        configWarning:
+            'For advanced users only. Incorrect configuration can break your OpenClaw instance. Make sure you know what you are changing before saving.',
         configuringTooltip:
             'This might take some time. It depends on OpenClaw, the server location, and Cloudflare DNS.',
         paymentSuccess: 'Your claw is being created and configured.',
