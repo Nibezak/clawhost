@@ -10,7 +10,13 @@ import {
     restartClaw,
     deleteClaw,
     cancelDeletion,
-    hardDeleteClaw
+    hardDeleteClaw,
+    getClawDiagnostics,
+    getClawLogs,
+    repairClaw,
+    listClawFiles,
+    readClawFile,
+    updateClawFile
 } from '@/controllers/claws'
 
 const app = new Hono<{ Variables: { userId: string } }>()
@@ -25,6 +31,12 @@ app.post('/:id/stop', stopClaw)
 app.post('/:id/restart', restartClaw)
 app.post('/:id/cancel-deletion', cancelDeletion)
 app.post('/:id/hard-delete', hardDeleteClaw)
+app.post('/:id/diagnostics/status', getClawDiagnostics)
+app.post('/:id/diagnostics/logs', getClawLogs)
+app.post('/:id/diagnostics/repair', repairClaw)
+app.post('/:id/files', listClawFiles)
+app.post('/:id/files/read', readClawFile)
+app.put('/:id/files', updateClawFile)
 app.delete('/:id', deleteClaw)
 
 export default app

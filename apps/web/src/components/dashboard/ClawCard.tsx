@@ -10,12 +10,16 @@ import {
     useRestartClaw,
     useDeleteClaw,
     useCancelDeletion,
-    useHardDeleteClaw
+    useHardDeleteClaw,
+    useRepairClaw
 } from '@/hooks'
 import { getStatusConfig, locationFlags, locationNames } from '@/lib/claw-utils'
 import { ClawCardGridView } from '@/components/dashboard/ClawCardGridView'
 import { ClawCardListView } from '@/components/dashboard/ClawCardListView'
 import { ClawCardDialogs } from '@/components/dashboard/ClawCardDialogs'
+import ClawDiagnosticsDialog from '@/components/dashboard/ClawDiagnosticsDialog'
+import ClawLogsDialog from '@/components/dashboard/ClawLogsDialog'
+import ClawConfigDialog from '@/components/dashboard/ClawConfigDialog'
 
 const ClawCard: FC<ClawCardProps> = ({
     claw,
@@ -30,6 +34,9 @@ const ClawCard: FC<ClawCardProps> = ({
     const [showStopModal, setShowStopModal] = useState(false)
     const [showRestartModal, setShowRestartModal] = useState(false)
     const [showHardDeleteModal, setShowHardDeleteModal] = useState(false)
+    const [showDiagnostics, setShowDiagnostics] = useState(false)
+    const [showLogs, setShowLogs] = useState(false)
+    const [showConfig, setShowConfig] = useState(false)
     const [isExpanded, setIsExpanded] = useState(false)
 
     const startMutation = useStartClaw()
@@ -38,6 +45,7 @@ const ClawCard: FC<ClawCardProps> = ({
     const deleteMutation = useDeleteClaw()
     const cancelDeletionMutation = useCancelDeletion()
     const hardDeleteMutation = useHardDeleteClaw()
+    const repairMutation = useRepairClaw()
 
     const isLoading =
         startMutation.isPending ||
@@ -45,7 +53,8 @@ const ClawCard: FC<ClawCardProps> = ({
         restartMutation.isPending ||
         deleteMutation.isPending ||
         cancelDeletionMutation.isPending ||
-        hardDeleteMutation.isPending
+        hardDeleteMutation.isPending ||
+        repairMutation.isPending
 
     const attachedSshKey = claw.sshKeyId
         ? sshKeys.find((k) => k.id === claw.sshKeyId)
@@ -94,6 +103,22 @@ const ClawCard: FC<ClawCardProps> = ({
         setTimeout(() => setPasswordCopied(false), 2000)
     }
 
+    const handleUpdateInstance = () => {
+        repairMutation.mutate(claw.id, {
+            onSuccess: (data) => {
+                showToast(
+                    data.success
+                        ? t('dashboard.updateInstanceSuccess')
+                        : t('dashboard.updateInstanceFailed'),
+                    data.success ? 'success' : 'error'
+                )
+            },
+            onError: () => {
+                showToast(t('dashboard.updateInstanceFailed'), 'error')
+            }
+        })
+    }
+
     const actions: ClawCardActions = {
         onStart: () => startMutation.mutate(claw.id),
         onShowStopModal: () => setShowStopModal(true),
@@ -101,6 +126,10 @@ const ClawCard: FC<ClawCardProps> = ({
         onShowDeleteModal: () => setShowDeleteModal(true),
         onCancelDeletion: () => cancelDeletionMutation.mutate(claw.id),
         onShowHardDeleteModal: () => setShowHardDeleteModal(true),
+        onShowDiagnostics: () => setShowDiagnostics(true),
+        onShowLogs: () => setShowLogs(true),
+        onShowConfig: () => setShowConfig(true),
+        onUpdateInstance: handleUpdateInstance,
         onCopySSH: claw.rootPassword ? copySSHWithPassword : copySSHWithKey,
         onCopySSHWithKey: copySSHWithKey,
         onCopySSHWithPassword: copySSHWithPassword,
@@ -163,6 +192,21 @@ const ClawCard: FC<ClawCardProps> = ({
                 isStopPending={stopMutation.isPending}
                 isRestartPending={restartMutation.isPending}
                 isHardDeletePending={hardDeleteMutation.isPending}
+            />
+            <ClawDiagnosticsDialog
+                clawId={claw.id}
+                open={showDiagnostics}
+                onOpenChange={setShowDiagnostics}
+            />
+            <ClawLogsDialog
+                clawId={claw.id}
+                open={showLogs}
+                onOpenChange={setShowLogs}
+            />
+            <ClawConfigDialog
+                clawId={claw.id}
+                open={showConfig}
+                onOpenChange={setShowConfig}
             />
         </>
     )

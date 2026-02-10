@@ -124,6 +124,18 @@ export const en = {
         failedToFetchVolumePricing: 'Failed to fetch volume pricing!',
         failedToFetchPlanAvailability: 'Failed to fetch plan availability!',
         failedToSendEmail: 'Failed to send email!',
+        failedToGetDiagnostics: 'Failed to connect to the instance!',
+        failedToRepairClaw: 'Failed to repair the instance!',
+        repairSuccess: 'Instance repaired successfully.',
+        repairGatewayNotResponding:
+            'Repair applied but gateway is not responding yet. It may need more time to start.',
+        failedToListFiles: 'Failed to list instance files!',
+        failedToReadFile: 'Failed to read file!',
+        failedToUpdateFile: 'Failed to save file!',
+        invalidFilePath: 'Invalid file path!',
+        fileNotEditable: 'Only JSON files can be edited!',
+        invalidJsonConfig: 'Invalid JSON!',
+        fileSaveSuccess: 'File saved.',
         failedToSendMagicLink: 'Failed to send magic link!',
         rateLimitExceeded: 'Please wait before requesting another login link.',
         webhookProcessingFailed: 'Webhook processing failed!'
@@ -255,7 +267,44 @@ export const en = {
         hardDeleteConfirmation:
             'Are you sure you want to delete this claw immediately? You will lose the remaining time on your current billing period. This action cannot be undone.',
         hardDeleting: 'Deleting...',
-        configuringTooltip: 'This might take some time. It depends on OpenClaw, the server location, and Cloudflare DNS.',
+        diagnostics: 'Diagnostics',
+        diagnosticsDescription: 'Check the health of your OpenClaw instance.',
+        diagnosticsStatus: 'Status',
+        diagnosticsLogs: 'Logs',
+        diagnosticsRepair: 'Repair',
+        diagnosticsRepairDescription:
+            'Remove memory limits, apply latest service configuration, and restart the gateway. This fixes most common issues.',
+        diagnosticsRepairSuccess: 'Instance repaired successfully!',
+        diagnosticsRepairFailed:
+            'Repair applied but gateway is not responding yet.',
+        diagnosticsLoading: 'Connecting to instance...',
+        diagnosticsNoLogs: 'No logs available',
+        diagnosticsIssueDetected: 'An issue was detected with your instance.',
+        diagnosticsHealthy: 'Your instance is running normally.',
+        diagnosticsPort: 'Port 18789',
+        diagnosticsMemory: 'Memory',
+        logsDescription:
+            'Latest 100 lines of your gateway log, auto-refreshing.',
+        scrollToBottom: 'Scroll to new Logs',
+        fileExplorer: 'File Explorer',
+        fileExplorerRoot: 'openclaw',
+        fileExplorerDescription:
+            'Browse and edit OpenClaw configuration files on your instance.',
+        fileExplorerWarning:
+            'For advanced users only. Incorrect configuration can break your OpenClaw instance. Make sure you know what you are changing before saving.',
+        fileExplorerSelectFile: 'Select a file to view its contents.',
+        fileExplorerReadOnly: 'Read-only',
+        fileExplorerSave: 'Save',
+        fileExplorerSaving: 'Saving...',
+        fileExplorerSaved: 'File saved.',
+        fileExplorerInvalidJson:
+            'Invalid JSON. Please fix syntax errors before saving.',
+        fileExplorerNoFiles: 'No files found',
+        updateInstance: 'Update Instance',
+        updateInstanceSuccess: 'Instance updated successfully.',
+        updateInstanceFailed: 'Failed to update instance.',
+        configuringTooltip:
+            'This might take some time. It depends on OpenClaw, the server location, and Cloudflare DNS.',
         paymentSuccess: 'Your claw is being created and configured.',
         status: {
             running: 'Running',
@@ -582,11 +631,20 @@ export const en = {
             '10+ DigitalOcean server locations across US, Europe, Asia, and more',
         release2Feature4:
             'Changelog page to track all platform updates and releases',
-        release3Title: "What's Next",
-        release3Description: 'Upcoming features currently in development.',
-        release3Feature1: 'Server snapshots for backup and restore',
-        release3Feature2: 'Server configurations directly from the platform',
-        release3Feature3: 'Real-time server logs in the dashboard'
+        release3Title: 'Server Insights',
+        release3Description:
+            'Deeper visibility and control over your servers, right from the dashboard.',
+        release3Feature1:
+            'Real-time server logs streamed directly in the dashboard',
+        release3Feature2:
+            'Server diagnostics with one-click automated repair for service issues',
+        release3Feature3:
+            'Built-in file explorer and JSON editor for server configuration files',
+        release4Title: "What's Next",
+        release4Description: 'Upcoming features currently in development.',
+        release4Feature1: 'Server snapshots with one-click backup and restore',
+        release4Feature2: 'Custom domains mapped directly to your servers',
+        release4Feature3: 'Team workspaces for collaborative server management'
     }
 } as const
 

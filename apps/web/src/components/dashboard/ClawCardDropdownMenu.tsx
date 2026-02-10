@@ -20,7 +20,11 @@ import {
     Check,
     CircleNotch,
     Copy,
-    ClockCountdown
+    ClockCountdown,
+    Pulse,
+    Scroll,
+    FolderSimple,
+    ArrowsClockwise
 } from '@phosphor-icons/react'
 
 const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
@@ -117,6 +121,30 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                                 )}
                             </DropdownMenuItem>
                         )}
+                    </>
+                )}
+                {claw.ip && claw.rootPassword && (
+                    <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={actions.onShowDiagnostics}>
+                            <Pulse className='mr-2 h-4 w-4' />
+                            {t('dashboard.diagnostics')}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={actions.onShowLogs}>
+                            <Scroll className='mr-2 h-4 w-4' />
+                            {t('dashboard.diagnosticsLogs')}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={actions.onShowConfig}>
+                            <FolderSimple className='mr-2 h-4 w-4' />
+                            {t('dashboard.fileExplorer')}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={actions.onUpdateInstance}
+                            disabled={isLoading}
+                        >
+                            <ArrowsClockwise className='mr-2 h-4 w-4' />
+                            {t('dashboard.updateInstance')}
+                        </DropdownMenuItem>
                     </>
                 )}
                 {(hasActionItems || claw.rootPassword) && (

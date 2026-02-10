@@ -9,6 +9,12 @@ import restartClaw from '@/controllers/claws/restartClaw'
 import deleteClaw from '@/controllers/claws/deleteClaw'
 import cancelDeletion from '@/controllers/claws/cancelDeletion'
 import hardDeleteClaw from '@/controllers/claws/hardDeleteClaw'
+import getClawDiagnostics from '@/controllers/claws/getClawDiagnostics'
+import getClawLogs from '@/controllers/claws/getClawLogs'
+import repairClaw from '@/controllers/claws/repairClaw'
+import listClawFiles from '@/controllers/claws/listClawFiles'
+import readClawFile from '@/controllers/claws/readClawFile'
+import updateClawFile from '@/controllers/claws/updateClawFile'
 
 export {
     getClaws,
@@ -21,5 +27,11 @@ export {
     restartClaw,
     deleteClaw,
     cancelDeletion,
-    hardDeleteClaw
+    hardDeleteClaw,
+    getClawDiagnostics,
+    getClawLogs,
+    repairClaw,
+    listClawFiles,
+    readClawFile,
+    updateClawFile
 }

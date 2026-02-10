@@ -1,6 +1,12 @@
 import type { ReactNode } from 'react'
 import type { User } from 'firebase/auth'
-import type { ClawStatus, ProviderType, ToastType, ViewMode } from '@/ts/Types'
+import type {
+    ClawStatus,
+    ProviderType,
+    ToastType,
+    UserRole,
+    ViewMode
+} from '@/ts/Types'
 
 export interface MagicLinkEmailProps {
     magicLink: string
@@ -72,6 +78,7 @@ export interface UserProfile {
     id: string
     email: string
     name: string | null
+    role: UserRole
     createdAt: string
 }
 
@@ -266,6 +273,10 @@ export interface ClawCardActions {
     onShowDeleteModal: () => void
     onCancelDeletion: () => void
     onShowHardDeleteModal: () => void
+    onShowDiagnostics: () => void
+    onShowLogs: () => void
+    onShowConfig: () => void
+    onUpdateInstance: () => void
     onCopySSH: () => void
     onCopySSHWithKey: () => void
     onCopySSHWithPassword: () => void
@@ -469,4 +480,67 @@ export interface ArticleMeta {
     modifiedTime?: string
     author: string
     tags: string[]
+}
+
+export interface DiagnosticsStatusResponse {
+    service: string
+    port: string
+    memory: string
+}
+
+export interface DiagnosticsLogsResponse {
+    logs: string
+}
+
+export interface DiagnosticsRepairResponse {
+    success: boolean
+    message: string
+}
+
+export interface ClawFileEntry {
+    path: string
+    name: string
+    isJson: boolean
+}
+
+export interface ClawFilesResponse {
+    files: ClawFileEntry[]
+}
+
+export interface ReadClawFileResponse {
+    content: string
+    path: string
+}
+
+export interface UpdateClawFileData {
+    path: string
+    content: string
+}
+
+export interface UpdateClawFileResponse {
+    success: boolean
+    message: string
+}
+
+export interface UpdateClawFileParams {
+    id: string
+    data: UpdateClawFileData
+}
+
+export interface ClawDiagnosticsDialogProps {
+    clawId: string
+    open: boolean
+    onOpenChange: (open: boolean) => void
+}
+
+export interface ClawLogsDialogProps {
+    clawId: string
+    open: boolean
+    onOpenChange: (open: boolean) => void
+}
+
+export interface ClawFileExplorerDialogProps {
+    clawId: string
+    open: boolean
+    onOpenChange: (open: boolean) => void
 }

@@ -10,6 +10,12 @@ export {
     useCancelDeletion,
     useHardDeleteClaw,
     useSyncClaw,
+    useClawDiagnostics,
+    useClawLogs,
+    useRepairClaw,
+    useClawFiles,
+    useClawFile,
+    useUpdateClawFile,
     CLAWS_QUERY_KEY
 } from '@/hooks/useClaws'
 

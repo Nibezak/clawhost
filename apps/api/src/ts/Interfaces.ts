@@ -554,3 +554,47 @@ export interface ArticleMeta {
     author: string
     tags: string[]
 }
+
+export interface DiagnosticsStatusResponse {
+    service: string
+    port: string
+    memory: string
+}
+
+export interface DiagnosticsLogsResponse {
+    logs: string
+}
+
+export interface DiagnosticsRepairResponse {
+    success: boolean
+    message: string
+}
+
+export interface ClawFileEntry {
+    path: string
+    name: string
+    isJson: boolean
+}
+
+export interface ClawFilesResponse {
+    files: ClawFileEntry[]
+}
+
+export interface ReadClawFileBody {
+    path: string
+}
+
+export interface ReadClawFileResponse {
+    content: string
+    path: string
+}
+
+export interface UpdateClawFileBody {
+    path: string
+    content: string
+}
+
+export interface UpdateClawFileResponse {
+    success: boolean
+    message: string
+}
