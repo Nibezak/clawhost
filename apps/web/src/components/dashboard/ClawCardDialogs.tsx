@@ -29,7 +29,11 @@ const ClawCardDialogs: FC<ClawCardDialogsProps> = ({
     isDeletePending,
     isStopPending,
     isRestartPending,
-    isHardDeletePending
+    isHardDeletePending,
+    showReinstallModal,
+    setShowReinstallModal,
+    onReinstall,
+    isReinstallPending
 }): ReactNode => {
     return (
         <>
@@ -175,6 +179,47 @@ const ClawCardDialogs: FC<ClawCardDialogsProps> = ({
                                 <>
                                     <CircleNotch className='mr-2 h-4 w-4 animate-spin' />
                                     {t('dashboard.hardDeleting')}
+                                </>
+                            ) : (
+                                t('common.confirm')
+                            )}
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog
+                open={showReinstallModal}
+                onOpenChange={setShowReinstallModal}
+            >
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>
+                            {t('dashboard.reinstallClaw')}
+                        </DialogTitle>
+                        <DialogDescription>
+                            {t('dashboard.reinstallClawConfirmation')}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className='mt-4 flex justify-end gap-3'>
+                        <Button
+                            variant='outline'
+                            onClick={() => setShowReinstallModal(false)}
+                        >
+                            {t('common.cancel')}
+                        </Button>
+                        <Button
+                            variant='destructive'
+                            onClick={() => {
+                                onReinstall()
+                                setShowReinstallModal(false)
+                            }}
+                            disabled={isReinstallPending}
+                        >
+                            {isReinstallPending ? (
+                                <>
+                                    <CircleNotch className='mr-2 h-4 w-4 animate-spin' />
+                                    {t('dashboard.reinstalling')}
                                 </>
                             ) : (
                                 t('common.confirm')

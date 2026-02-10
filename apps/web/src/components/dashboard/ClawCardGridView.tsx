@@ -29,7 +29,8 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
     copied,
     passwordCopied,
     hasActionItems,
-    isScheduledForDeletion
+    isScheduledForDeletion,
+    isAdmin
 }): ReactNode => {
     return (
         <Card>
@@ -94,6 +95,7 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
                         passwordCopied={passwordCopied}
                         hasActionItems={hasActionItems}
                         isScheduledForDeletion={isScheduledForDeletion}
+                        isAdmin={isAdmin}
                         compact
                     />
                 </div>

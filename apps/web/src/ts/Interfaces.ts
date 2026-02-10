@@ -279,6 +279,7 @@ export interface ClawCardActions {
     onShowLogs: () => void
     onShowConfig: () => void
     onUpdateInstance: () => void
+    onShowReinstallModal: () => void
     onCopySSH: () => void
     onCopySSHWithKey: () => void
     onCopySSHWithPassword: () => void
@@ -293,6 +294,7 @@ export interface ClawCardDropdownMenuProps {
     passwordCopied: boolean
     hasActionItems: boolean
     isScheduledForDeletion: boolean
+    isAdmin: boolean
     compact?: boolean
 }
 
@@ -314,6 +316,10 @@ export interface ClawCardDialogsProps {
     isStopPending: boolean
     isRestartPending: boolean
     isHardDeletePending: boolean
+    showReinstallModal: boolean
+    setShowReinstallModal: (open: boolean) => void
+    onReinstall: () => void
+    isReinstallPending: boolean
 }
 
 export interface ClawCardGridViewProps {
@@ -331,6 +337,7 @@ export interface ClawCardGridViewProps {
     hasActionItems: boolean
     hasBothOptions: boolean
     isScheduledForDeletion: boolean
+    isAdmin: boolean
 }
 
 export interface ClawCardListViewProps {
@@ -347,6 +354,7 @@ export interface ClawCardListViewProps {
     passwordCopied: boolean
     hasActionItems: boolean
     isScheduledForDeletion: boolean
+    isAdmin: boolean
     isExpanded: boolean
     onToggleExpand: () => void
 }

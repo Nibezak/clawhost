@@ -31,6 +31,7 @@ const ClawCardListView: FC<ClawCardListViewProps> = ({
     passwordCopied,
     hasActionItems,
     isScheduledForDeletion,
+    isAdmin,
     isExpanded,
     onToggleExpand
 }): ReactNode => {
@@ -109,6 +110,7 @@ const ClawCardListView: FC<ClawCardListViewProps> = ({
                             passwordCopied={passwordCopied}
                             hasActionItems={hasActionItems}
                             isScheduledForDeletion={isScheduledForDeletion}
+                            isAdmin={isAdmin}
                         />
                     </div>
                 </div>

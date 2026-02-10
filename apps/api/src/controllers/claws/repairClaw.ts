@@ -1,6 +1,6 @@
 import type { Context } from 'hono'
 
-import { eq, and } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import executeSSH from '@/services/ssh'
@@ -13,10 +13,14 @@ const repairClaw = async (c: Context<{ Variables: { userId: string } }>) => {
         const id = c.req.param('id')
         const admin = await isAdmin(userId)
 
+        if (!admin) {
+            return c.json({ error: t('api.adminAccessDenied') }, 403)
+        }
+
         const claw = await db
             .select()
             .from(claws)
-            .where(admin ? eq(claws.id, id) : and(eq(claws.id, id), eq(claws.userId, userId)))
+            .where(eq(claws.id, id))
             .limit(1)
 
         if (!claw[0]) {

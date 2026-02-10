@@ -130,6 +130,10 @@ export const en = {
         repairSuccess: 'Instance repaired successfully.',
         repairGatewayNotResponding:
             'Repair applied but gateway is not responding yet. It may need more time to start.',
+        failedToReinstallClaw: 'Failed to reinstall the instance!',
+        reinstallSuccess: 'Instance reinstalled successfully.',
+        reinstallGatewayNotResponding:
+            'Reinstall completed but gateway is not responding yet. It may need more time to start.',
         failedToListFiles: 'Failed to list instance files!',
         failedToReadFile: 'Failed to read file!',
         failedToUpdateFile: 'Failed to save file!',
@@ -305,6 +309,13 @@ export const en = {
         updateInstance: 'Update Instance',
         updateInstanceSuccess: 'Instance updated successfully.',
         updateInstanceFailed: 'Failed to update instance.',
+        reinstallInstance: 'Reinstall Instance',
+        reinstallClaw: 'Reinstall Instance',
+        reinstallClawConfirmation:
+            'This will reinstall OpenClaw and reset all configurations on this instance. Your data and server will be preserved, but all services will be restarted. Continue?',
+        reinstalling: 'Reinstalling...',
+        reinstallInstanceSuccess: 'Instance reinstalled successfully.',
+        reinstallInstanceFailed: 'Failed to reinstall instance.',
         configuringTooltip:
             'This might take some time. It depends on OpenClaw, the server location, and Cloudflare DNS.',
         paymentSuccess: 'Your claw is being created and configured.',

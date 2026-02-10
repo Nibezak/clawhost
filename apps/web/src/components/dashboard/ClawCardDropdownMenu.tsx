@@ -24,7 +24,8 @@ import {
     Pulse,
     Scroll,
     FolderSimple,
-    ArrowsClockwise
+    ArrowsClockwise,
+    ArrowCounterClockwise
 } from '@phosphor-icons/react'
 
 const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
@@ -35,6 +36,7 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
     passwordCopied,
     hasActionItems,
     isScheduledForDeletion,
+    isAdmin,
     compact
 }): ReactNode => {
     const iconSize = compact ? 'h-4 w-4' : 'h-5 w-5'
@@ -138,13 +140,24 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                             <FolderSimple className='mr-2 h-4 w-4' />
                             {t('dashboard.fileExplorer')}
                         </DropdownMenuItem>
-                        <DropdownMenuItem
-                            onClick={actions.onUpdateInstance}
-                            disabled={isLoading}
-                        >
-                            <ArrowsClockwise className='mr-2 h-4 w-4' />
-                            {t('dashboard.updateInstance')}
-                        </DropdownMenuItem>
+                        {isAdmin && (
+                            <>
+                                <DropdownMenuItem
+                                    onClick={actions.onUpdateInstance}
+                                    disabled={isLoading}
+                                >
+                                    <ArrowsClockwise className='mr-2 h-4 w-4' />
+                                    {t('dashboard.updateInstance')}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                    onClick={actions.onShowReinstallModal}
+                                    disabled={isLoading}
+                                >
+                                    <ArrowCounterClockwise className='mr-2 h-4 w-4' />
+                                    {t('dashboard.reinstallInstance')}
+                                </DropdownMenuItem>
+                            </>
+                        )}
                     </>
                 )}
                 {(hasActionItems || claw.rootPassword) && (
