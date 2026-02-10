@@ -65,9 +65,7 @@ async function main() {
     const whitelistedPlans = serverTypes.filter(
         (st) => prices[st.name] !== undefined
     )
-    console.log(
-        `   ${whitelistedPlans.length} plans in whitelist\n`
-    )
+    console.log(`   ${whitelistedPlans.length} plans in whitelist\n`)
 
     const createdProducts: {
         planId: string
@@ -125,9 +123,7 @@ async function main() {
 
     if (createdProducts.length > 0) {
         console.log('Add these to your .env file:\n')
-        console.log(
-            `# Polar Product IDs for ${providerName} (auto-generated)`
-        )
+        console.log(`# Polar Product IDs for ${providerName} (auto-generated)`)
         envLines.forEach((line) => console.log(line))
         console.log('')
     }

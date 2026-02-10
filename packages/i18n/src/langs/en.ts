@@ -349,6 +349,7 @@ export const en = {
         provider: 'Provider',
         providerHetzner: 'Hetzner',
         providerDigitalOcean: 'DigitalOcean',
+        providerVultr: 'Vultr',
         providerAws: 'AWS',
         comingSoon: 'Soon',
         location: 'Location',
@@ -458,7 +459,7 @@ export const en = {
         servers: 'Servers',
         zeroConfig: 'Zero Config',
         dashboardPreviewTitle: 'Claws',
-        dashboardPreviewSubtitle: '4 added claws',
+        dashboardPreviewSubtitle: '5 added claws',
         deployNew: 'Deploy New',
         running: 'Running',
         latency: 'latency',
@@ -468,7 +469,7 @@ export const en = {
             'From zero to a fully deployed OpenClaw to use 24/7 with full access.',
         step1Title: 'Select Server',
         step1Description:
-            'Pick from 15+ global locations across two providers. We spin up a dedicated VPS just for you in seconds.',
+            'Pick from 30+ global locations across three providers. We spin up a dedicated VPS just for you in seconds.',
         step2Title: 'Auto-Installation',
         step2Description:
             'OpenClaw is pre-installed with a direct link and VPS details. No setup required.',
@@ -488,7 +489,7 @@ export const en = {
             'Dedicated VPS resources mean no throttling, full bandwidth, and lightning-fast internet.',
         globalLocations: 'Global Locations',
         globalLocationsDescription:
-            'Deploy OpenClaw across 15+ global regions on Hetzner or DigitalOcean and choose the location closest to you.',
+            'Deploy OpenClaw across 30+ global regions on Hetzner, DigitalOcean, or Vultr and choose the location closest to you.',
         fullSshAccess: 'Full SSH Access',
         fullSshAccessDescription:
             'Full root access to your server. You own it, so install anything and customize everything.',
@@ -527,7 +528,7 @@ export const en = {
         pricing: 'Pricing',
         simpleTransparentPricing: 'Simple, Transparent Pricing',
         pricingDescription:
-            'Choose from 25+ servers across two providers and pay only for what you need.',
+            'Choose from 45+ servers across three providers and pay only for what you need.',
         planColumn: 'Server',
         vCpuColumn: 'vCPU',
         ramColumn: 'RAM',
@@ -560,16 +561,16 @@ export const en = {
             'No. We handle all infrastructure, setup, and maintenance. You can configure and manage OpenClaw through its UI, connect to channels, and customize usage — without touching servers or infrastructure.',
         faq5Question: 'What locations are available?',
         faq5Answer:
-            'We offer 15+ server locations worldwide across Hetzner and DigitalOcean, including US, Europe, Asia, and more. You can deploy OpenClaw on multiple servers in different regions if needed.',
+            'We offer 30+ server locations worldwide across Hetzner, DigitalOcean, and Vultr, including US, Europe, Asia, and more. You can deploy OpenClaw on multiple servers in different regions if needed.',
         faq6Question: 'How much does it cost?',
         faq6Answer:
-            'Pricing is based on the server you select. With 25+ server options ranging from entry-level to high-performance across two providers, you choose what fits your needs and budget.',
+            'Pricing is based on the server you select. With 45+ server options ranging from entry-level to high-performance across three providers, you choose what fits your needs and budget.',
         faq7Question: 'Can I access my server directly?',
         faq7Answer:
             'Yes. Along with OpenClaw access via subdomain URL, you have full access to the server and its underlying infrastructure, giving you complete freedom to customize and run anything you need.',
         faq8Question: 'Where are the servers hosted?',
         faq8Answer:
-            'All servers are hosted on Hetzner Cloud and DigitalOcean, trusted cloud providers known for high-performance hardware and excellent uptime, used by large-scale infrastructures.',
+            'All servers are hosted on Hetzner Cloud, DigitalOcean, and Vultr, trusted cloud providers known for high-performance hardware and excellent uptime, used by large-scale infrastructures.',
         comparison: 'Comparison',
         comparisonTitle: 'How We’re Different',
         comparisonDescription:
@@ -658,11 +659,19 @@ export const en = {
             'Server diagnostics with one-click automated repair for service issues',
         release3Feature3:
             'Built-in file explorer and JSON editor for server configuration files',
-        release4Title: "What's Next",
-        release4Description: 'Upcoming features currently in development.',
-        release4Feature1: 'Server snapshots with one-click backup and restore',
-        release4Feature2: 'Custom domains mapped directly to your servers',
-        release4Feature3: 'Team workspaces for collaborative server management'
+        release4Title: 'Vultr Provider',
+        release4Description:
+            'Vultr as a third cloud provider with 22 server plans and 30+ global locations.',
+        release4Feature1: 'Vultr as a third cloud provider',
+        release4Feature2:
+            '22 Vultr server plans across Regular, High Performance, and High Frequency tiers',
+        release4Feature3:
+            '30+ Vultr server locations across US, Europe, Asia, and more',
+        release5Title: "What's Next",
+        release5Description: 'Upcoming features currently in development.',
+        release5Feature1: 'Server snapshots with one-click backup and restore',
+        release5Feature2: 'Custom domains mapped directly to your servers',
+        release5Feature3: 'Team workspaces for collaborative server management'
     }
 } as const
 

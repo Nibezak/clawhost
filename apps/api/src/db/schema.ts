@@ -64,6 +64,7 @@ export const sshKeys = pgTable('ssh_keys', {
     fingerprint: text('fingerprint').notNull(),
     providerKeyId: integer('provider_key_id'),
     digitaloceanKeyId: integer('digitalocean_key_id'),
+    vultrKeyId: integer('vultr_key_id'),
     createdAt: timestamp('created_at').defaultNow().notNull()
 })
 

@@ -36,6 +36,31 @@ const digitaloceanPlanOrder = [
     's-8vcpu-16gb'
 ]
 
+const vultrPlanOrder = [
+    'vc2-1c-1gb',
+    'vc2-1c-2gb',
+    'vc2-2c-2gb',
+    'vc2-2c-4gb',
+    'vc2-4c-8gb',
+    'vc2-6c-16gb',
+    'vc2-8c-32gb',
+    'vc2-16c-64gb',
+    'vhp-1c-1gb-amd',
+    'vhp-1c-2gb-amd',
+    'vhp-2c-2gb-amd',
+    'vhp-2c-4gb-amd',
+    'vhp-4c-8gb-amd',
+    'vhp-4c-12gb-amd',
+    'vhp-8c-16gb-amd',
+    'vhp-12c-24gb-amd',
+    'vhf-1c-2gb',
+    'vhf-2c-4gb',
+    'vhf-4c-8gb',
+    'vhf-8c-16gb',
+    'vhf-8c-32gb',
+    'vhf-12c-48gb'
+]
+
 const hetznerCustomPrices: Record<string, number> = {
     cx23: 10,
     cx33: 15,
@@ -68,10 +93,32 @@ const digitaloceanCustomPrices: Record<string, number> = {
     's-8vcpu-16gb': 150
 }
 
-const disabledPlans = new Set([
-    's-1vcpu-512mb-10gb',
-    's-1vcpu-1gb'
-])
+const vultrCustomPrices: Record<string, number> = {
+    'vc2-1c-1gb': 10,
+    'vc2-1c-2gb': 20,
+    'vc2-2c-2gb': 30,
+    'vc2-2c-4gb': 40,
+    'vc2-4c-8gb': 80,
+    'vc2-6c-16gb': 160,
+    'vc2-8c-32gb': 320,
+    'vc2-16c-64gb': 500,
+    'vhp-1c-1gb-amd': 12,
+    'vhp-1c-2gb-amd': 24,
+    'vhp-2c-2gb-amd': 32,
+    'vhp-2c-4gb-amd': 48,
+    'vhp-4c-8gb-amd': 120,
+    'vhp-4c-12gb-amd': 180,
+    'vhp-8c-16gb-amd': 192,
+    'vhp-12c-24gb-amd': 250,
+    'vhf-1c-2gb': 24,
+    'vhf-2c-4gb': 48,
+    'vhf-4c-8gb': 96,
+    'vhf-8c-16gb': 125,
+    'vhf-8c-32gb': 192,
+    'vhf-12c-48gb': 500
+}
+
+const disabledPlans = new Set(['s-1vcpu-512mb-10gb', 's-1vcpu-1gb'])
 
 const planConfigs: Record<
     ProviderType,
@@ -81,7 +128,8 @@ const planConfigs: Record<
     digitalocean: {
         order: digitaloceanPlanOrder,
         prices: digitaloceanCustomPrices
-    }
+    },
+    vultr: { order: vultrPlanOrder, prices: vultrCustomPrices }
 }
 
 const getPlans = async (c: Context) => {

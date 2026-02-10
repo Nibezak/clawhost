@@ -75,7 +75,9 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
                 const keyId =
                     providerName === 'digitalocean'
                         ? sshKey[0].digitaloceanKeyId
-                        : sshKey[0].providerKeyId
+                        : providerName === 'vultr'
+                          ? sshKey[0].vultrKeyId
+                          : sshKey[0].providerKeyId
                 if (keyId) {
                     providerSshKeyIds = [keyId]
                 }

@@ -286,7 +286,7 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                     <DialogDescription>
                         {t('sshKeys.addSshKeyModalDescription')}
                     </DialogDescription>
-                    <div className='bg-muted flex gap-2 rounded-lg p-1 !mt-3'>
+                    <div className='bg-muted !mt-3 flex gap-2 rounded-lg p-1'>
                         <button
                             type='button'
                             onClick={() => setMode('upload')}

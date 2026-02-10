@@ -18,7 +18,11 @@ const cancelDeletion = async (
         const claw = await db
             .select()
             .from(claws)
-            .where(admin ? eq(claws.id, id) : and(eq(claws.id, id), eq(claws.userId, userId)))
+            .where(
+                admin
+                    ? eq(claws.id, id)
+                    : and(eq(claws.id, id), eq(claws.userId, userId))
+            )
             .limit(1)
 
         if (!claw[0]) {

@@ -97,9 +97,7 @@ export const api = {
             `/claws/${id}/diagnostics/repair`
         ),
     reinstallClaw: (id: string) =>
-        client.post<DiagnosticsRepairResponse>(
-            `/claws/${id}/reinstall`
-        ),
+        client.post<DiagnosticsRepairResponse>(`/claws/${id}/reinstall`),
     listClawFiles: (id: string) =>
         client.post<ClawFilesResponse>(`/claws/${id}/files`),
     readClawFile: (id: string, path: string) =>

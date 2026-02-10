@@ -36,6 +36,22 @@ const ProviderIcon: FC<ProviderIconProps> = ({
         )
     }
 
+    if (provider === 'vultr') {
+        return (
+            <svg
+                className={className || 'h-4 w-4'}
+                viewBox='0 0 48 48'
+                fill='none'
+            >
+                <path
+                    d='M24 0C10.745 0 0 10.745 0 24s10.745 24 24 24 24-10.745 24-24S37.255 0 24 0z'
+                    fill='#007BFC'
+                />
+                <path d='M33.6 14.4H14.4L24 33.6z' fill='white' />
+            </svg>
+        )
+    }
+
     return null
 }
 

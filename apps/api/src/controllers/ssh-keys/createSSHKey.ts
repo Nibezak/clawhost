@@ -53,6 +53,18 @@ const createSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
             console.error('Failed to register SSH key with DigitalOcean:', err)
         }
 
+        let vultrKeyId: number | null = null
+        try {
+            const vultrProvider = getProvider('vultr')
+            const vultrKey = await vultrProvider.createSSHKey(
+                keyLabel,
+                publicKey
+            )
+            vultrKeyId = vultrKey.id
+        } catch (err) {
+            console.error('Failed to register SSH key with Vultr:', err)
+        }
+
         const id = crypto.randomUUID()
         await db.insert(sshKeys).values({
             id,
@@ -61,7 +73,8 @@ const createSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
             publicKey,
             fingerprint: hetznerKey.fingerprint,
             providerKeyId: hetznerKey.id,
-            digitaloceanKeyId
+            digitaloceanKeyId,
+            vultrKeyId
         })
 
         return c.json({

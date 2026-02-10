@@ -42,6 +42,14 @@ const deleteSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
             }
         }
 
+        if (key[0].vultrKeyId) {
+            try {
+                await getProvider('vultr').deleteSSHKey(key[0].vultrKeyId)
+            } catch (err) {
+                console.error('Failed to delete SSH key from Vultr:', err)
+            }
+        }
+
         await db.delete(sshKeys).where(eq(sshKeys.id, id))
 
         return c.json({ success: true })

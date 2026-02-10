@@ -239,6 +239,84 @@ export interface DigitalOceanVolumeResponse {
     volume: DigitalOceanVolume
 }
 
+export interface VultrInstance {
+    id: string
+    label: string
+    main_ip: string
+    status: string
+    plan: string
+    region: string
+    os: string
+    ram: number
+    disk: number
+    vcpu_count: number
+}
+
+export interface VultrInstanceResponse {
+    instance: VultrInstance
+}
+
+export interface VultrInstancesResponse {
+    instances: VultrInstance[]
+    meta: {
+        total: number
+        links: {
+            next: string
+            prev: string
+        }
+    }
+}
+
+export interface VultrPlan {
+    id: string
+    vcpu_count: number
+    ram: number
+    disk: number
+    bandwidth: number
+    monthly_cost: number
+    locations: string[]
+    type: string
+}
+
+export interface VultrPlansResponse {
+    plans: VultrPlan[]
+}
+
+export interface VultrRegion {
+    id: string
+    city: string
+    country: string
+    continent: string
+    options: string[]
+}
+
+export interface VultrRegionsResponse {
+    regions: VultrRegion[]
+}
+
+export interface VultrSSHKey {
+    id: string
+    name: string
+    ssh_key: string
+}
+
+export interface VultrSSHKeyResponse {
+    ssh_key: VultrSSHKey
+}
+
+export interface VultrVolume {
+    id: string
+    label: string
+    size_gb: number
+    region: string
+    status: string
+    attached_to_instance: string
+}
+
+export interface VultrVolumeResponse {
+    block: VultrVolume
+}
+
 export interface ServerStatus {
     status: string
     ip: string

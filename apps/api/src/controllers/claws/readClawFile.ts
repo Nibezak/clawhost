@@ -10,9 +10,7 @@ import { t } from '@openclaw/i18n'
 
 const BASE_DIR = '/home/openclaw/.openclaw'
 
-const readClawFile = async (
-    c: Context<{ Variables: { userId: string } }>
-) => {
+const readClawFile = async (c: Context<{ Variables: { userId: string } }>) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')
@@ -31,7 +29,11 @@ const readClawFile = async (
         const claw = await db
             .select()
             .from(claws)
-            .where(admin ? eq(claws.id, id) : and(eq(claws.id, id), eq(claws.userId, userId)))
+            .where(
+                admin
+                    ? eq(claws.id, id)
+                    : and(eq(claws.id, id), eq(claws.userId, userId))
+            )
             .limit(1)
 
         if (!claw[0]) {

@@ -101,8 +101,12 @@ function generateClawName(): string {
     return namePool.pop()!
 }
 
-function getPolarProductId(providerName: string, planId: string): string | null {
-    const prefix = providerName === 'hetzner' ? '' : `${providerName.toUpperCase()}_`
+function getPolarProductId(
+    providerName: string,
+    planId: string
+): string | null {
+    const prefix =
+        providerName === 'hetzner' ? '' : `${providerName.toUpperCase()}_`
     const envKey = `POLAR_PRODUCT_${prefix}${planId.toUpperCase().replace(/-/g, '_')}`
     const envValue = process.env[envKey]
 
@@ -115,7 +119,9 @@ const initiateClawPurchase = async (
 ) => {
     try {
         if (Date.now() - lastPendingCleanup > CLEANUP_INTERVAL) {
-            await db.delete(pendingClaws).where(lt(pendingClaws.expiresAt, new Date()))
+            await db
+                .delete(pendingClaws)
+                .where(lt(pendingClaws.expiresAt, new Date()))
             lastPendingCleanup = Date.now()
         }
 
@@ -137,12 +143,21 @@ const initiateClawPurchase = async (
             return c.json({ error: t('api.missingRequiredFields') }, 400)
         }
 
-        const validProviders: ProviderType[] = ['hetzner', 'digitalocean']
-        if (providerName && !validProviders.includes(providerName as ProviderType)) {
+        const validProviders: ProviderType[] = [
+            'hetzner',
+            'digitalocean',
+            'vultr'
+        ]
+        if (
+            providerName &&
+            !validProviders.includes(providerName as ProviderType)
+        ) {
             return c.json({ error: t('api.invalidProvider') }, 400)
         }
 
-        const provider = getProvider((providerName || 'hetzner') as ProviderType)
+        const provider = getProvider(
+            (providerName || 'hetzner') as ProviderType
+        )
         const [serverTypes, locations] = await Promise.all([
             provider.getServerTypes(),
             provider.getLocations()

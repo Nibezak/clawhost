@@ -64,13 +64,9 @@ const reinstallClaw = async (c: Context<{ Variables: { userId: string } }>) => {
         const configJson = JSON.stringify(config, null, 2)
         const fullDomain = `${claw[0].subdomain}.clawhost.cloud`
 
-        const reinstallCommands = [
-            'systemctl stop openclaw-gateway || true',
-            'npm install -g openclaw@latest',
-            `cat > /home/openclaw/.openclaw/openclaw.json << 'OCCONFIG'\n${configJson}\nOCCONFIG`,
-            'chown -R openclaw:openclaw /home/openclaw',
-            `cat > /etc/systemd/system/openclaw-gateway.service << 'SYSTEMD'
-[Unit]
+        const configB64 = Buffer.from(configJson).toString('base64')
+
+        const serviceFile = `[Unit]
 Description=OpenClaw Gateway
 After=network.target
 
@@ -89,10 +85,10 @@ StandardOutput=append:/var/log/openclaw-gateway.log
 StandardError=append:/var/log/openclaw-gateway.log
 
 [Install]
-WantedBy=multi-user.target
-SYSTEMD`,
-            `cat > /etc/nginx/sites-available/openclaw << 'NGINXEOF'
-map $http_upgrade $connection_upgrade {
+WantedBy=multi-user.target`
+        const serviceB64 = Buffer.from(serviceFile).toString('base64')
+
+        const nginxConf = `map $http_upgrade $connection_upgrade {
     default upgrade;
     '' close;
 }
@@ -112,22 +108,30 @@ server {
     location / {
         proxy_pass http://127.0.0.1:18789;
         proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection $connection_upgrade;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
+        proxy_set_header Upgrade \\$http_upgrade;
+        proxy_set_header Connection \\$connection_upgrade;
+        proxy_set_header Host \\$host;
+        proxy_set_header X-Real-IP \\$remote_addr;
+        proxy_set_header X-Forwarded-For \\$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \\$scheme;
+        proxy_cache_bypass \\$http_upgrade;
         proxy_read_timeout 86400;
         proxy_send_timeout 86400;
     }
-}
-NGINXEOF`,
+}`
+        const nginxB64 = Buffer.from(nginxConf).toString('base64')
+
+        const reinstallCommands = [
+            'systemctl stop openclaw-gateway || true',
+            'npm install -g openclaw@latest',
+            `echo '${configB64}' | base64 -d > /home/openclaw/.openclaw/openclaw.json`,
+            'chown -R openclaw:openclaw /home/openclaw',
+            `echo '${serviceB64}' | base64 -d > /etc/systemd/system/openclaw-gateway.service`,
+            `echo '${nginxB64}' | base64 -d > /etc/nginx/sites-available/openclaw`,
             'ln -sf /etc/nginx/sites-available/openclaw /etc/nginx/sites-enabled/',
             'rm -f /etc/nginx/sites-enabled/default',
             'mkdir -p /etc/systemd/system/nginx.service.d',
-            `printf '[Service]\\nRestart=always\\nRestartSec=5\\n' > /etc/systemd/system/nginx.service.d/override.conf`,
+            "printf '[Service]\\nRestart=always\\nRestartSec=5\\n' > /etc/systemd/system/nginx.service.d/override.conf",
             'systemctl daemon-reload',
             'nginx -t && systemctl reload nginx',
             'systemctl restart openclaw-gateway',

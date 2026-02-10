@@ -1,4 +1,4 @@
-export type ProviderType = 'hetzner' | 'digitalocean'
+export type ProviderType = 'hetzner' | 'digitalocean' | 'vultr'
 
 export type SubscriptionStatus =
     | 'active'

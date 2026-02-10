@@ -62,7 +62,11 @@ const ClawCardListView: FC<ClawCardListViewProps> = ({
                                             </span>
                                         </TooltipTrigger>
                                         <TooltipContent>
-                                            <p>{t('dashboard.configuringTooltip')}</p>
+                                            <p>
+                                                {t(
+                                                    'dashboard.configuringTooltip'
+                                                )}
+                                            </p>
                                         </TooltipContent>
                                     </Tooltip>
                                 ) : (
@@ -140,8 +144,19 @@ const ClawCardListView: FC<ClawCardListViewProps> = ({
 
                             <CopyableField
                                 label={t('dashboard.provider')}
-                                value={claw.provider === 'hetzner' ? t('createClaw.providerHetzner') : t('createClaw.providerDigitalOcean')}
-                                icon={<ProviderIcon provider={claw.provider} className='h-3.5 w-3.5 shrink-0' />}
+                                value={
+                                    claw.provider === 'hetzner'
+                                        ? t('createClaw.providerHetzner')
+                                        : claw.provider === 'vultr'
+                                          ? t('createClaw.providerVultr')
+                                          : t('createClaw.providerDigitalOcean')
+                                }
+                                icon={
+                                    <ProviderIcon
+                                        provider={claw.provider}
+                                        className='h-3.5 w-3.5 shrink-0'
+                                    />
+                                }
                             />
 
                             <CopyableField
@@ -195,21 +210,37 @@ const ClawCardListView: FC<ClawCardListViewProps> = ({
                             {claw.model && (
                                 <CopyableField
                                     label={t('dashboard.aiModel')}
-                                    value={aiModels.find((m) => m.id === claw.model)?.name || claw.model}
+                                    value={
+                                        aiModels.find(
+                                            (m) => m.id === claw.model
+                                        )?.name || claw.model
+                                    }
                                 />
                             )}
 
                             {claw.currentPeriodStart && (
                                 <CopyableField
                                     label={t('dashboard.lastBilling')}
-                                    value={new Date(claw.currentPeriodStart).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                                    value={new Date(
+                                        claw.currentPeriodStart
+                                    ).toLocaleDateString('en-US', {
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: 'numeric'
+                                    })}
                                 />
                             )}
 
                             {claw.currentPeriodEnd && (
                                 <CopyableField
                                     label={t('dashboard.nextBilling')}
-                                    value={new Date(claw.currentPeriodEnd).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                                    value={new Date(
+                                        claw.currentPeriodEnd
+                                    ).toLocaleDateString('en-US', {
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: 'numeric'
+                                    })}
                                 />
                             )}
 

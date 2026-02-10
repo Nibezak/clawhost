@@ -232,7 +232,22 @@ const MockClawCard: FC<MockClawCardProps> = ({
                                     value={claw.ip}
                                 />
                                 <div
-                                    onClick={() => copyField(t('dashboard.provider'), claw.provider === 'hetzner' ? t('createClaw.providerHetzner') : t('createClaw.providerDigitalOcean'))}
+                                    onClick={() =>
+                                        copyField(
+                                            t('dashboard.provider'),
+                                            claw.provider === 'hetzner'
+                                                ? t(
+                                                      'createClaw.providerHetzner'
+                                                  )
+                                                : claw.provider === 'vultr'
+                                                  ? t(
+                                                        'createClaw.providerVultr'
+                                                    )
+                                                  : t(
+                                                        'createClaw.providerDigitalOcean'
+                                                    )
+                                        )
+                                    }
                                     className='bg-background hover:bg-background/80 group flex cursor-pointer items-center justify-between gap-2 rounded-lg px-3 py-2 transition-colors'
                                 >
                                     <div className='min-w-0'>
@@ -240,12 +255,26 @@ const MockClawCard: FC<MockClawCardProps> = ({
                                             {t('dashboard.provider')}
                                         </span>
                                         <span className='flex items-center gap-1.5 font-mono text-sm'>
-                                            <ProviderIcon provider={claw.provider} className='h-3.5 w-3.5 shrink-0' />
-                                            {claw.provider === 'hetzner' ? t('createClaw.providerHetzner') : t('createClaw.providerDigitalOcean')}
+                                            <ProviderIcon
+                                                provider={claw.provider}
+                                                className='h-3.5 w-3.5 shrink-0'
+                                            />
+                                            {claw.provider === 'hetzner'
+                                                ? t(
+                                                      'createClaw.providerHetzner'
+                                                  )
+                                                : claw.provider === 'vultr'
+                                                  ? t(
+                                                        'createClaw.providerVultr'
+                                                    )
+                                                  : t(
+                                                        'createClaw.providerDigitalOcean'
+                                                    )}
                                         </span>
                                     </div>
                                     <div className='shrink-0'>
-                                        {copiedField === t('dashboard.provider') ? (
+                                        {copiedField ===
+                                        t('dashboard.provider') ? (
                                             <Check className='h-4 w-4 text-green-500' />
                                         ) : (
                                             <Copy className='text-muted-foreground h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100' />

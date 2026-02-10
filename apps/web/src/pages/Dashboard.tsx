@@ -66,12 +66,7 @@ const Dashboard: FC = (): ReactNode => {
 
     const initialClawCount = useRef<number | null>(null)
 
-    const {
-        data: claws,
-        isLoading,
-        isError,
-        refetch
-    } = useClaws()
+    const { data: claws, isLoading, isError, refetch } = useClaws()
 
     useEffect(() => {
         if (!awaitingClaw) return

@@ -59,13 +59,26 @@ const getClaws = async (c: Context<{ Variables: { userId: string } }>) => {
             if (!live) return claw
 
             if (claw.status === 'configuring') {
-                if (live.ip && claw.subdomain && (!claw.ip || claw.ip !== live.ip)) {
+                if (
+                    live.ip &&
+                    claw.subdomain &&
+                    (!claw.ip || claw.ip !== live.ip)
+                ) {
                     try {
-                        const existing = await cloudflare.findDNSRecord(claw.subdomain)
+                        const existing = await cloudflare.findDNSRecord(
+                            claw.subdomain
+                        )
                         if (existing && existing.ip !== live.ip) {
-                            await cloudflare.updateDNSRecord(existing.id, claw.subdomain, live.ip)
+                            await cloudflare.updateDNSRecord(
+                                existing.id,
+                                claw.subdomain,
+                                live.ip
+                            )
                         } else if (!existing) {
-                            await cloudflare.createDNSRecord(claw.subdomain, live.ip)
+                            await cloudflare.createDNSRecord(
+                                claw.subdomain,
+                                live.ip
+                            )
                         }
                     } catch {
                         console.error(`Failed to fix DNS for ${claw.subdomain}`)
