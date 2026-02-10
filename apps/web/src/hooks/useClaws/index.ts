@@ -1,5 +1,7 @@
 import CLAWS_QUERY_KEY from '@/hooks/useClaws/CLAWS_QUERY_KEY'
+import ADMIN_CLAWS_QUERY_KEY from '@/hooks/useClaws/ADMIN_CLAWS_QUERY_KEY'
 import useClaws from '@/hooks/useClaws/useClaws'
+import useAdminClaws from '@/hooks/useClaws/useAdminClaws'
 import useClaw from '@/hooks/useClaws/useClaw'
 import useCreateClaw from '@/hooks/useClaws/useCreateClaw'
 import usePurchaseClaw from '@/hooks/useClaws/usePurchaseClaw'
@@ -19,7 +21,9 @@ import useUpdateClawFile from '@/hooks/useClaws/useUpdateClawFile'
 
 export {
     CLAWS_QUERY_KEY,
+    ADMIN_CLAWS_QUERY_KEY,
     useClaws,
+    useAdminClaws,
     useClaw,
     useCreateClaw,
     usePurchaseClaw,

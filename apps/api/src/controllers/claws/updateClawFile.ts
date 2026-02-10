@@ -5,6 +5,7 @@ import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import executeSSH from '@/services/ssh'
+import { isAdmin } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 
 const BASE_DIR = '/home/openclaw/.openclaw'
@@ -40,10 +41,16 @@ const updateClawFile = async (
             return c.json({ error: t('api.invalidJsonConfig') }, 400)
         }
 
+        const admin = await isAdmin(userId)
+
         const claw = await db
             .select()
             .from(claws)
-            .where(and(eq(claws.id, id), eq(claws.userId, userId)))
+            .where(
+                admin
+                    ? eq(claws.id, id)
+                    : and(eq(claws.id, id), eq(claws.userId, userId))
+            )
             .limit(1)
 
         if (!claw[0]) {

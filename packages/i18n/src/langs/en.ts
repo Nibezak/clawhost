@@ -24,6 +24,7 @@ export const en = {
         sshKeys: 'SSH Keys',
         account: 'Account & Billing',
         signOut: 'Sign out',
+        admin: 'Admin',
         login: 'Login',
         deployOpenClaw: 'Deploy OpenClaw'
     },
@@ -138,7 +139,8 @@ export const en = {
         fileSaveSuccess: 'File saved.',
         failedToSendMagicLink: 'Failed to send magic link!',
         rateLimitExceeded: 'Please wait before requesting another login link.',
-        webhookProcessingFailed: 'Webhook processing failed!'
+        webhookProcessingFailed: 'Webhook processing failed!',
+        adminAccessDenied: 'Admin access required!'
     },
     auth: {
         signIn: 'Sign In',
@@ -306,6 +308,11 @@ export const en = {
         configuringTooltip:
             'This might take some time. It depends on OpenClaw, the server location, and Cloudflare DNS.',
         paymentSuccess: 'Your claw is being created and configured.',
+        adminTitle: 'Admin',
+        adminDescription: 'Manage all claws across the platform.',
+        adminNoClaws: 'No claws on the platform yet.',
+        adminAccessDenied: 'You do not have permission to access this page.',
+        owner: 'Owner',
         status: {
             running: 'Running',
             stopped: 'Stopped',

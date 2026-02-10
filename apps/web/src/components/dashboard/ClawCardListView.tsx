@@ -74,48 +74,6 @@ const ClawCardListView: FC<ClawCardListViewProps> = ({
                                         {status.label}
                                     </span>
                                 )}
-                                {isScheduledForDeletion && (
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <span className='inline-flex cursor-default items-center gap-1 rounded-full bg-white/5 px-2 py-0.5 text-xs font-medium text-gray-400'>
-                                                <ClockCountdown className='h-3 w-3' />
-                                                {t(
-                                                    'dashboard.scheduledDeletionShort',
-                                                    {
-                                                        date: new Date(
-                                                            claw.deletionScheduledAt!
-                                                        ).toLocaleDateString(
-                                                            'en-US',
-                                                            {
-                                                                month: 'short',
-                                                                day: 'numeric'
-                                                            }
-                                                        )
-                                                    }
-                                                )}
-                                            </span>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>
-                                                {t(
-                                                    'dashboard.deletionTooltip',
-                                                    {
-                                                        date: new Date(
-                                                            claw.deletionScheduledAt!
-                                                        ).toLocaleDateString(
-                                                            'en-US',
-                                                            {
-                                                                year: 'numeric',
-                                                                month: 'short',
-                                                                day: 'numeric'
-                                                            }
-                                                        )
-                                                    }
-                                                )}
-                                            </p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                )}
                             </div>
                             {claw.status !== 'configuring' && (
                                 <a
@@ -164,6 +122,13 @@ const ClawCardListView: FC<ClawCardListViewProps> = ({
                         className='border-border mt-4 border-t pt-4'
                     >
                         <div className='grid grid-cols-2 gap-3 md:grid-cols-4'>
+                            {claw.ownerEmail && (
+                                <CopyableField
+                                    label={t('dashboard.owner')}
+                                    value={claw.ownerEmail}
+                                />
+                            )}
+
                             {claw.ip && (
                                 <CopyableField
                                     label={t('dashboard.ipAddress')}

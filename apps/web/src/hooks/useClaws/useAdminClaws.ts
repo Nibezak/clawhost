@@ -1,0 +1,14 @@
+import { useQuery } from '@tanstack/react-query'
+import { api } from '@/lib/api'
+import ADMIN_CLAWS_QUERY_KEY from '@/hooks/useClaws/ADMIN_CLAWS_QUERY_KEY'
+
+const useAdminClaws = () => {
+    return useQuery({
+        queryKey: ADMIN_CLAWS_QUERY_KEY,
+        queryFn: () => api.getAdminClaws(),
+        placeholderData: (previousData) => previousData,
+        refetchInterval: 3000
+    })
+}
+
+export default useAdminClaws

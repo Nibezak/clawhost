@@ -15,9 +15,11 @@ import repairClaw from '@/controllers/claws/repairClaw'
 import listClawFiles from '@/controllers/claws/listClawFiles'
 import readClawFile from '@/controllers/claws/readClawFile'
 import updateClawFile from '@/controllers/claws/updateClawFile'
+import getAdminClaws from '@/controllers/claws/getAdminClaws'
 
 export {
     getClaws,
+    getAdminClaws,
     getClaw,
     createClaw,
     initiateClawPurchase,

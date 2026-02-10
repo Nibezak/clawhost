@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import {
     getClaws,
+    getAdminClaws,
     getClaw,
     createClaw,
     initiateClawPurchase,
@@ -22,6 +23,7 @@ import {
 const app = new Hono<{ Variables: { userId: string } }>()
 
 app.get('/', getClaws)
+app.get('/admin', getAdminClaws)
 app.get('/:id', getClaw)
 app.post('/', createClaw) // Direct creation (for free tier or testing)
 app.post('/purchase', initiateClawPurchase) // Paid creation with Polar checkout

@@ -32,7 +32,8 @@ const PageTitle: FC<PageTitleProps> = ({
     description,
     image,
     url,
-    type
+    type,
+    noIndex
 }): ReactNode => {
     useEffect(() => {
         const fullTitle = `${title} - ClawHost`
@@ -68,6 +69,18 @@ const PageTitle: FC<PageTitleProps> = ({
             setMetaTag('property', 'og:type', type)
         }
     }, [type])
+
+    useEffect(() => {
+        if (noIndex) {
+            setMetaTag('name', 'robots', 'noindex, nofollow')
+        }
+        return () => {
+            if (noIndex) {
+                const meta = document.querySelector('meta[name="robots"]')
+                if (meta) meta.remove()
+            }
+        }
+    }, [noIndex])
 
     return null
 }

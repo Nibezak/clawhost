@@ -5,17 +5,19 @@ import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { getProvider } from '@/services/provider'
+import { isAdmin } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 
 const restartClaw = async (c: Context<{ Variables: { userId: string } }>) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')
+        const admin = await isAdmin(userId)
 
         const claw = await db
             .select()
             .from(claws)
-            .where(and(eq(claws.id, id), eq(claws.userId, userId)))
+            .where(admin ? eq(claws.id, id) : and(eq(claws.id, id), eq(claws.userId, userId)))
             .limit(1)
 
         if (!claw[0] || !claw[0].providerServerId) {

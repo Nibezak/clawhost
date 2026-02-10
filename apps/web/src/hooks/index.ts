@@ -1,5 +1,6 @@
 export {
     useClaws,
+    useAdminClaws,
     useClaw,
     useCreateClaw,
     usePurchaseClaw,

@@ -6,16 +6,17 @@ import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { getProvider } from '@/services/provider'
 import { t } from '@openclaw/i18n'
-import { checkSubdomainReady } from '@/controllers/claws/helpers'
+import { checkSubdomainReady, isAdmin } from '@/controllers/claws/helpers'
 
 const syncClaw = async (c: Context<{ Variables: { userId: string } }>) => {
     const userId = c.get('userId')
     const id = c.req.param('id')
+    const admin = await isAdmin(userId)
 
     const claw = await db
         .select()
         .from(claws)
-        .where(and(eq(claws.id, id), eq(claws.userId, userId)))
+        .where(admin ? eq(claws.id, id) : and(eq(claws.id, id), eq(claws.userId, userId)))
         .limit(1)
 
     if (!claw[0] || !claw[0].providerServerId) {

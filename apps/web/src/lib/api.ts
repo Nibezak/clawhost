@@ -70,6 +70,7 @@ export const api = {
         ),
 
     getClaws: () => client.get<Claw[]>('/claws'),
+    getAdminClaws: () => client.get<Claw[]>('/claws/admin'),
     getClaw: (id: string, sync?: boolean) =>
         client.get<Claw>(`/claws/${id}${sync ? '?sync=true' : ''}`),
     syncClaw: (id: string) => client.post<Claw>(`/claws/${id}/sync`),

@@ -156,8 +156,6 @@ const Landing: FC = (): ReactNode => {
         showToast(t('landing.demoClawDeleted'), 'success')
     }
 
-    const runningCount = mockClaws.filter((c) => c.status === 'running').length
-
     useEffect(() => {
         const handleScroll = () => {
             const sections = [
@@ -383,13 +381,7 @@ const Landing: FC = (): ReactNode => {
                                         </h3>
                                         <p className='text-sm text-gray-500'>
                                             {mockClaws.length > 0
-                                                ? t('landing.demoStatus', {
-                                                      running:
-                                                          String(runningCount),
-                                                      total: String(
-                                                          mockClaws.length
-                                                      )
-                                                  })
+                                                ? `${mockClaws.length} ${mockClaws.length === 1 ? t('dashboard.claw') : t('dashboard.clawsPlural')}`
                                                 : t('dashboard.noClawsYet')}
                                         </p>
                                     </div>

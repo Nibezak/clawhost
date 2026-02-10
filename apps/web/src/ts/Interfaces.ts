@@ -37,6 +37,7 @@ export interface Claw {
     currentPeriodStart: string | null
     currentPeriodEnd: string | null
     volumes?: Volume[]
+    ownerEmail?: string | null
     deletionScheduledAt: string | null
     createdAt: string
 }
@@ -191,6 +192,7 @@ export interface PageTitleProps {
     image?: string
     url?: string
     type?: string
+    noIndex?: boolean
 }
 
 export interface PageHeaderProps {
@@ -363,6 +365,10 @@ export interface GeneratedKeyPair {
 }
 
 export interface ProtectedRouteProps {
+    children: ReactNode
+}
+
+export interface AdminRouteProps {
     children: ReactNode
 }
 
