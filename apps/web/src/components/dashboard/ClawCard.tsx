@@ -10,7 +10,8 @@ import {
     useRestartClaw,
     useDeleteClaw,
     useCancelDeletion,
-    useHardDeleteClaw
+    useHardDeleteClaw,
+    useRepairClaw
 } from '@/hooks'
 import { getStatusConfig, locationFlags, locationNames } from '@/lib/claw-utils'
 import { ClawCardGridView } from '@/components/dashboard/ClawCardGridView'
@@ -44,6 +45,7 @@ const ClawCard: FC<ClawCardProps> = ({
     const deleteMutation = useDeleteClaw()
     const cancelDeletionMutation = useCancelDeletion()
     const hardDeleteMutation = useHardDeleteClaw()
+    const repairMutation = useRepairClaw()
 
     const isLoading =
         startMutation.isPending ||
@@ -51,7 +53,8 @@ const ClawCard: FC<ClawCardProps> = ({
         restartMutation.isPending ||
         deleteMutation.isPending ||
         cancelDeletionMutation.isPending ||
-        hardDeleteMutation.isPending
+        hardDeleteMutation.isPending ||
+        repairMutation.isPending
 
     const attachedSshKey = claw.sshKeyId
         ? sshKeys.find((k) => k.id === claw.sshKeyId)
@@ -100,6 +103,22 @@ const ClawCard: FC<ClawCardProps> = ({
         setTimeout(() => setPasswordCopied(false), 2000)
     }
 
+    const handleUpdateInstance = () => {
+        repairMutation.mutate(claw.id, {
+            onSuccess: (data) => {
+                showToast(
+                    data.success
+                        ? t('dashboard.updateInstanceSuccess')
+                        : t('dashboard.updateInstanceFailed'),
+                    data.success ? 'success' : 'error'
+                )
+            },
+            onError: () => {
+                showToast(t('dashboard.updateInstanceFailed'), 'error')
+            }
+        })
+    }
+
     const actions: ClawCardActions = {
         onStart: () => startMutation.mutate(claw.id),
         onShowStopModal: () => setShowStopModal(true),
@@ -110,6 +129,7 @@ const ClawCard: FC<ClawCardProps> = ({
         onShowDiagnostics: () => setShowDiagnostics(true),
         onShowLogs: () => setShowLogs(true),
         onShowConfig: () => setShowConfig(true),
+        onUpdateInstance: handleUpdateInstance,
         onCopySSH: claw.rootPassword ? copySSHWithPassword : copySSHWithKey,
         onCopySSHWithKey: copySSHWithKey,
         onCopySSHWithPassword: copySSHWithPassword,

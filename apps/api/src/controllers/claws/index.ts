@@ -12,8 +12,9 @@ import hardDeleteClaw from '@/controllers/claws/hardDeleteClaw'
 import getClawDiagnostics from '@/controllers/claws/getClawDiagnostics'
 import getClawLogs from '@/controllers/claws/getClawLogs'
 import repairClaw from '@/controllers/claws/repairClaw'
-import getClawConfig from '@/controllers/claws/getClawConfig'
-import updateClawConfig from '@/controllers/claws/updateClawConfig'
+import listClawFiles from '@/controllers/claws/listClawFiles'
+import readClawFile from '@/controllers/claws/readClawFile'
+import updateClawFile from '@/controllers/claws/updateClawFile'
 
 export {
     getClaws,
@@ -30,6 +31,7 @@ export {
     getClawDiagnostics,
     getClawLogs,
     repairClaw,
-    getClawConfig,
-    updateClawConfig
+    listClawFiles,
+    readClawFile,
+    updateClawFile
 }

@@ -22,3 +22,5 @@ export type ClawStatus =
 export type CopiedFieldType = 'command' | 'private' | null
 
 export type SSHKeyModalMode = 'upload' | 'generate'
+
+export type UserRole = 'user' | 'admin'

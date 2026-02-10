@@ -23,7 +23,8 @@ import {
     ClockCountdown,
     Pulse,
     Scroll,
-    GearSix
+    FolderSimple,
+    ArrowsClockwise
 } from '@phosphor-icons/react'
 
 const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
@@ -134,8 +135,15 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                             {t('dashboard.diagnosticsLogs')}
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={actions.onShowConfig}>
-                            <GearSix className='mr-2 h-4 w-4' />
-                            {t('dashboard.configuration')}
+                            <FolderSimple className='mr-2 h-4 w-4' />
+                            {t('dashboard.fileExplorer')}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={actions.onUpdateInstance}
+                            disabled={isLoading}
+                        >
+                            <ArrowsClockwise className='mr-2 h-4 w-4' />
+                            {t('dashboard.updateInstance')}
                         </DropdownMenuItem>
                     </>
                 )}

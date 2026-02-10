@@ -269,6 +269,7 @@ export interface ClawCardActions {
     onShowDiagnostics: () => void
     onShowLogs: () => void
     onShowConfig: () => void
+    onUpdateInstance: () => void
     onCopySSH: () => void
     onCopySSHWithKey: () => void
     onCopySSHWithPassword: () => void
@@ -489,22 +490,34 @@ export interface DiagnosticsRepairResponse {
     message: string
 }
 
-export interface ClawConfigResponse {
-    config: string
+export interface ClawFileEntry {
+    path: string
+    name: string
+    isJson: boolean
 }
 
-export interface UpdateClawConfigData {
-    config: string
+export interface ClawFilesResponse {
+    files: ClawFileEntry[]
 }
 
-export interface UpdateClawConfigResponse {
+export interface ReadClawFileResponse {
+    content: string
+    path: string
+}
+
+export interface UpdateClawFileData {
+    path: string
+    content: string
+}
+
+export interface UpdateClawFileResponse {
     success: boolean
     message: string
 }
 
-export interface UpdateClawConfigParams {
+export interface UpdateClawFileParams {
     id: string
-    data: UpdateClawConfigData
+    data: UpdateClawFileData
 }
 
 export interface ClawDiagnosticsDialogProps {
@@ -519,7 +532,7 @@ export interface ClawLogsDialogProps {
     onOpenChange: (open: boolean) => void
 }
 
-export interface ClawConfigDialogProps {
+export interface ClawFileExplorerDialogProps {
     clawId: string
     open: boolean
     onOpenChange: (open: boolean) => void

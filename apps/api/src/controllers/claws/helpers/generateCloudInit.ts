@@ -141,18 +141,6 @@ runcmd:
       sleep 10
     done
 
-  - |
-    cat > /usr/local/bin/openclaw-watchdog.sh << 'WATCHDOG'
-    #!/bin/bash
-    if ! curl -sf -o /dev/null --max-time 5 http://127.0.0.1:18789; then
-      systemctl restart openclaw-gateway
-    fi
-    WATCHDOG
-    chmod +x /usr/local/bin/openclaw-watchdog.sh
-
-  - echo "* * * * * root /usr/local/bin/openclaw-watchdog.sh" > /etc/cron.d/openclaw-watchdog
-  - chmod 644 /etc/cron.d/openclaw-watchdog
-
   - ufw allow 22/tcp
   - ufw allow 80/tcp
   - ufw allow 443/tcp
@@ -195,6 +183,14 @@ runcmd:
 
   - ln -sf /etc/nginx/sites-available/openclaw /etc/nginx/sites-enabled/
   - rm -f /etc/nginx/sites-enabled/default
+  - mkdir -p /etc/systemd/system/nginx.service.d
+  - |
+    cat > /etc/systemd/system/nginx.service.d/override.conf <<'NGINXOVERRIDE'
+    [Service]
+    Restart=always
+    RestartSec=5
+    NGINXOVERRIDE
+  - systemctl daemon-reload
   - nginx -t && systemctl reload nginx
   - systemctl enable nginx
 

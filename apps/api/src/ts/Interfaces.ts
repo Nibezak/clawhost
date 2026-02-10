@@ -570,15 +570,31 @@ export interface DiagnosticsRepairResponse {
     message: string
 }
 
-export interface ClawConfigResponse {
-    config: string
+export interface ClawFileEntry {
+    path: string
+    name: string
+    isJson: boolean
 }
 
-export interface UpdateClawConfigBody {
-    config: string
+export interface ClawFilesResponse {
+    files: ClawFileEntry[]
 }
 
-export interface UpdateClawConfigResponse {
+export interface ReadClawFileBody {
+    path: string
+}
+
+export interface ReadClawFileResponse {
+    content: string
+    path: string
+}
+
+export interface UpdateClawFileBody {
+    path: string
+    content: string
+}
+
+export interface UpdateClawFileResponse {
     success: boolean
     message: string
 }

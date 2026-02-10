@@ -22,3 +22,5 @@ export type WebhookEventType =
     | 'order.created'
     | 'order.paid'
     | 'order.refunded'
+
+export type UserRole = 'user' | 'admin'

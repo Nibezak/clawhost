@@ -6,7 +6,11 @@ import { claws } from '@/db/schema'
 import executeSSH from '@/services/ssh'
 import { t } from '@openclaw/i18n'
 
-const getClawConfig = async (c: Context<{ Variables: { userId: string } }>) => {
+const BASE_DIR = '/home/openclaw/.openclaw'
+
+const listClawFiles = async (
+    c: Context<{ Variables: { userId: string } }>
+) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')
@@ -22,28 +26,41 @@ const getClawConfig = async (c: Context<{ Variables: { userId: string } }>) => {
         }
 
         if (!claw[0].ip || !claw[0].rootPassword) {
-            return c.json({ error: t('api.failedToGetConfig') }, 400)
+            return c.json({ error: t('api.failedToListFiles') }, 400)
         }
 
         const output = await executeSSH(
             claw[0].ip,
             claw[0].rootPassword,
-            'cat /home/openclaw/.openclaw/openclaw.json 2>&1'
+            `find ${BASE_DIR} -type f 2>/dev/null | sort`
         )
 
-        return c.json({ config: output })
+        const files = output
+            .split('\n')
+            .filter((line) => line.trim().length > 0)
+            .map((fullPath) => {
+                const relativePath = fullPath.replace(`${BASE_DIR}/`, '')
+                const name = relativePath.split('/').pop() || relativePath
+                return {
+                    path: relativePath,
+                    name,
+                    isJson: name.endsWith('.json')
+                }
+            })
+
+        return c.json({ files })
     } catch (err) {
-        console.error('Get claw config error:', err)
+        console.error('List claw files error:', err)
         return c.json(
             {
                 error:
                     err instanceof Error
                         ? err.message
-                        : t('api.failedToGetConfig')
+                        : t('api.failedToListFiles')
             },
             500
         )
     }
 }
 
-export default getClawConfig
+export default listClawFiles
