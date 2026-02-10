@@ -27,6 +27,7 @@ const updateUserProfile = async (
                 id: users.id,
                 email: users.email,
                 name: users.name,
+                role: users.role,
                 createdAt: users.createdAt
             })
             .from(users)

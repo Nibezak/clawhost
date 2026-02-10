@@ -3,6 +3,7 @@ export type {
     CopiedFieldType,
     SSHKeyModalMode,
     ToastType,
+    UserRole,
     ViewMode
 } from '@/ts/Types'
 

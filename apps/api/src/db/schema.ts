@@ -5,6 +5,7 @@ export const users = pgTable('users', {
     email: text('email').notNull().unique(),
     name: text('name'),
     polarCustomerId: text('polar_customer_id'),
+    role: text('role').notNull().default('user'),
     createdAt: timestamp('created_at').defaultNow().notNull()
 })
 

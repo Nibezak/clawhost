@@ -1,6 +1,12 @@
 import type { ReactNode } from 'react'
 import type { User } from 'firebase/auth'
-import type { ClawStatus, ProviderType, ToastType, ViewMode } from '@/ts/Types'
+import type {
+    ClawStatus,
+    ProviderType,
+    ToastType,
+    UserRole,
+    ViewMode
+} from '@/ts/Types'
 
 export interface MagicLinkEmailProps {
     magicLink: string
@@ -72,6 +78,7 @@ export interface UserProfile {
     id: string
     email: string
     name: string | null
+    role: UserRole
     createdAt: string
 }
 
