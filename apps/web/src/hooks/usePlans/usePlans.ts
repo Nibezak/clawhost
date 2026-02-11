@@ -3,11 +3,17 @@ import { api } from '@/lib/api'
 import PLANS_QUERY_KEY from '@/hooks/usePlans/PLANS_QUERY_KEY'
 
 const usePlans = (provider?: string) => {
-    return useQuery({
+    const query = useQuery({
         queryKey: [...PLANS_QUERY_KEY, provider || 'hetzner'],
         queryFn: () => api.getPlans(provider),
         staleTime: Infinity
     })
+
+    return {
+        ...query,
+        plans: query.data?.plans,
+        atCapacity: query.data?.atCapacity ?? false
+    }
 }
 
 export default usePlans

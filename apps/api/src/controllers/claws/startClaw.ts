@@ -6,6 +6,7 @@ import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { getProvider } from '@/services/provider'
 import { isAdmin } from '@/controllers/claws/helpers'
+import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
 const startClaw = async (c: Context<{ Variables: { userId: string } }>) => {
@@ -25,7 +26,7 @@ const startClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             .limit(1)
 
         if (!claw[0] || !claw[0].providerServerId) {
-            return c.json({ error: t('api.clawNotFound') }, 404)
+            return fail(c, t('api.clawNotFound'), 404)
         }
 
         await db
@@ -42,18 +43,10 @@ const startClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             .where(eq(claws.id, id))
             .limit(1)
 
-        return c.json(updated[0])
+        return ok(c, updated[0], t('api.clawStarted'))
     } catch (err) {
         console.error('Start claw error:', err)
-        return c.json(
-            {
-                error:
-                    err instanceof Error
-                        ? err.message
-                        : t('api.failedToStartClaw')
-            },
-            500
-        )
+        return fail(c, err instanceof Error ? err.message : t('api.failedToStartClaw'), 500)
     }
 }
 

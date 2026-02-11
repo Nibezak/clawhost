@@ -9,6 +9,7 @@ import { checkouts, customers } from '@/lib/polar'
 import { generatePassword } from '@/controllers/claws/helpers'
 import { getProvider } from '@/services/provider'
 import { t } from '@openclaw/i18n'
+import { ok, fail } from '@/lib/response'
 
 const adjectives = [
     'cozy',
@@ -140,7 +141,7 @@ const initiateClawPurchase = async (
         } = await c.req.json<InitiateClawPurchaseBody>()
 
         if (!planId || !location || !priceMonthly) {
-            return c.json({ error: t('api.missingRequiredFields') }, 400)
+            return fail(c, t('api.missingRequiredFields'), 400)
         }
 
         const validProviders: ProviderType[] = [
@@ -152,7 +153,7 @@ const initiateClawPurchase = async (
             providerName &&
             !validProviders.includes(providerName as ProviderType)
         ) {
-            return c.json({ error: t('api.invalidProvider') }, 400)
+            return fail(c, t('api.invalidProvider'), 400)
         }
 
         const provider = getProvider(
@@ -163,13 +164,20 @@ const initiateClawPurchase = async (
             provider.getLocations()
         ])
 
-        if (!serverTypes.find((st) => st.name === planId)) {
-            return c.json({ error: t('api.invalidPlan') }, 400)
+        const MIN_MEMORY_GB = 4
+        const selectedPlan = serverTypes.find((st) => st.name === planId)
+
+        if (!selectedPlan) {
+            return fail(c, t('api.invalidPlan'), 400)
+        }
+
+        if (selectedPlan.memory < MIN_MEMORY_GB) {
+            return fail(c, t('api.planBelowMinimumMemory'), 400)
         }
 
         const selectedLocation = locations.find((l) => l.id === location)
         if (!selectedLocation || selectedLocation.disabled) {
-            return c.json({ error: t('api.invalidLocation') }, 400)
+            return fail(c, t('api.invalidLocation'), 400)
         }
 
         const MAX_CLAWS_PER_ACCOUNT = 50
@@ -179,12 +187,7 @@ const initiateClawPurchase = async (
             .where(eq(claws.userId, userId))
 
         if (clawCount >= MAX_CLAWS_PER_ACCOUNT) {
-            return c.json(
-                {
-                    error: t('api.clawLimitReached')
-                },
-                400
-            )
+            return fail(c, t('api.clawLimitReached'), 400)
         }
 
         const name = rawName || generateClawName()
@@ -193,7 +196,7 @@ const initiateClawPurchase = async (
             volumeSize !== undefined &&
             (volumeSize < 10 || volumeSize > 10240)
         ) {
-            return c.json({ error: t('api.volumeSizeInvalid') }, 400)
+            return fail(c, t('api.volumeSizeInvalid'), 400)
         }
 
         const user = await db
@@ -203,7 +206,7 @@ const initiateClawPurchase = async (
             .limit(1)
 
         if (!user[0]) {
-            return c.json({ error: t('api.userNotFound') }, 404)
+            return fail(c, t('api.userNotFound'), 404)
         }
 
         if (sshKeyId) {
@@ -216,7 +219,7 @@ const initiateClawPurchase = async (
                 .limit(1)
 
             if (!sshKey[0]) {
-                return c.json({ error: t('api.sshKeyNotFound') }, 404)
+                return fail(c, t('api.sshKeyNotFound'), 404)
             }
         }
 
@@ -238,7 +241,7 @@ const initiateClawPurchase = async (
 
         const productId = getPolarProductId(providerName || 'hetzner', planId)
         if (!productId) {
-            return c.json({ error: t('api.paymentNotConfigured') }, 400)
+            return fail(c, t('api.paymentNotConfigured'), 400)
         }
 
         const pendingId = crypto.randomUUID()
@@ -276,21 +279,14 @@ const initiateClawPurchase = async (
             expiresAt
         })
 
-        return c.json({
-            checkoutUrl: checkout.url,
-            checkoutId: checkout.id,
-            pendingClawId: pendingId,
-            expiresAt: expiresAt.toISOString()
-        })
+        return ok(c, { checkoutUrl: checkout.url, checkoutId: checkout.id, pendingClawId: pendingId, expiresAt: expiresAt.toISOString() }, t('api.clawPurchaseInitiated'))
     } catch (err) {
         console.error('Initiate claw purchase error:', err)
-        return c.json(
-            {
-                error:
-                    err instanceof Error
-                        ? err.message
-                        : t('api.failedToInitiatePurchase')
-            },
+        return fail(
+            c,
+            err instanceof Error
+                ? err.message
+                : t('api.failedToInitiatePurchase'),
             500
         )
     }

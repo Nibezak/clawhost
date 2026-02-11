@@ -113,6 +113,13 @@
       "when": 1770955200000,
       "tag": "0015_add_vultr_key_id",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1771041600000,
+      "tag": "0016_add_otp_codes",
+      "breakpoints": true
     }
   ]
 }

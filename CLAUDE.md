@@ -8,7 +8,8 @@ A self-hostable cloud hosting management platform built as a TypeScript monorepo
 openclaw.anywhere/
 ├── apps/
 │   ├── api/              # Hono.js backend API (Node.js)
-│   └── web/              # React + Vite frontend
+│   ├── web/              # React + Vite frontend
+│   └── mobile/           # React Native + Expo mobile app
 ├── packages/
 │   ├── shared/           # @openclaw/shared - HTTP client utility
 │   └── i18n/             # @openclaw/i18n - Internationalization
@@ -21,9 +22,12 @@ openclaw.anywhere/
 ### Backend (apps/api)
 
 - **Framework**: Hono.js
-- **Database**: PostgreSQL with Drizzle ORM
-- **Authentication**: Firebase Admin SDK
-- **External APIs**: Hetzner Cloud, Cloudflare DNS
+- **Database**: Neon (serverless PostgreSQL) with Drizzle ORM
+- **Authentication**: Firebase Admin SDK + OTP (email-based)
+- **Email**: Resend + React Email
+- **Payments**: Polar
+- **Cloud Providers**: Hetzner Cloud, DigitalOcean, Vultr
+- **DNS**: Cloudflare
 - **Runtime**: Node.js 20+ with tsx
 
 ### Frontend (apps/web)
@@ -36,6 +40,14 @@ openclaw.anywhere/
 - **Icons**: Phosphor Icons
 - **Animation**: Framer Motion
 - **Auth**: Firebase
+
+### Mobile (apps/mobile)
+
+- **Framework**: React Native with Expo (~54)
+- **Navigation**: React Navigation (bottom tabs)
+- **Data Fetching**: TanStack React Query
+- **Auth**: Firebase
+- **Icons**: Phosphor Icons
 
 ### Shared Packages
 
@@ -183,11 +195,14 @@ function create(data: CreateUserParams): void {} // USE THIS
 
 **Categories in api Interfaces.ts:**
 
+- Cloud Provider Interface: `CloudProvider`
 - Hetzner Types: `HetznerServer`, `HetznerVolume`, `ServerStatus`, `LocationInfo`, etc.
+- DigitalOcean Types: `DigitalOceanDroplet`, `DigitalOceanSize`, `DigitalOceanRegion`, `DigitalOceanSSHKey`, `DigitalOceanVolume`, etc.
+- Vultr Types: `VultrInstance`, `VultrPlan`, `VultrRegion`, `VultrSSHKey`, `VultrVolume`, etc.
 - Polar Types: `CheckoutSession`, `PolarSubscription`, `PolarOrder`, `PolarCustomer`, etc.
 - Webhook Types: `WebhookEvent`, `WebhookHandlers`, `CheckoutWebhookData`, etc.
 - Controller Types: `ProvisionClawParams`, `ClawCleanupData`, etc.
-- Email Props: `MagicLinkEmailProps`
+- Email Props: `MagicLinkEmailProps`, `OtpCodeEmailProps`
 
 ### React Component Function Pattern
 
@@ -279,9 +294,12 @@ const MyComponent = () => { ... }
 **Tables**:
 
 - `users` - Firebase authenticated users
-- `claws` - Hetzner Cloud server instances
-- `sshKeys` - SSH key management
+- `claws` - Cloud server instances (multi-provider: Hetzner, DigitalOcean, Vultr)
+- `pendingClaws` - Claws awaiting payment confirmation
+- `sshKeys` - SSH key management (with per-provider key IDs)
 - `volumes` - Persistent storage volumes
+- `otpCodes` - OTP authentication codes
+- `rateLimits` - Rate limiting for auth endpoints
 
 **Migrations**: Use Drizzle Kit
 
@@ -296,10 +314,32 @@ pnpm --filter api db:migrate   # Run migrations
 
 **Endpoints**:
 
+- `POST /api/auth/send-otp` - Send OTP code via email
+- `POST /api/auth/verify-otp` - Verify OTP and get Firebase token
+- `POST /api/auth/magic-link` - Send magic link via email
 - `GET/POST /api/claws` - Instance management
 - `GET/POST/DELETE /api/ssh-keys` - SSH key CRUD
 - `GET/PUT /api/users/me` - User profile
-- `GET /api/plans` - Available plans/locations
+- `GET /api/plans` - Available plans/locations (supports `?provider=` query)
+- `POST /api/webhooks/polar` - Polar payment webhooks
+
+### Cloud Provider Abstraction
+
+All three providers (Hetzner, DigitalOcean, Vultr) implement the `CloudProvider` interface with a unified API:
+
+- `createServer`, `getServer`, `getServers`, `startServer`, `stopServer`, `restartServer`, `deleteServer`
+- `createSSHKey`, `deleteSSHKey`
+- `getServerTypes`, `getLocations`, `getDatacenters`
+- `createVolume`, `attachVolume`, `detachVolume`, `deleteVolume`, `getVolume`
+
+Use `getProvider(providerType)` from `@/services/provider` to resolve the correct service.
+
+### External Services Setup
+
+- **Firebase**: Enable Authentication (Email/Password). Generate a service account key for the Admin SDK
+- **Cloudflare**: API token needs DNS edit permissions for the zone. Creates A records for each claw subdomain
+- **Resend**: Verify your sending domain. `FROM_EMAIL` defaults to `OpenClaw <noreply@openclaw.com>`
+- **Polar**: Create an organization, generate an access token, and configure a webhook pointing to `POST /api/webhooks/polar` with the secret
 
 ### State Management (Web)
 
@@ -318,6 +358,28 @@ pnpm --filter api db:migrate   # Run migrations
 
 ## Development
 
+### Prerequisites
+
+- **Node.js**: >= 20
+- **pnpm**: 9.14.2 (`corepack enable` or `npm install -g pnpm@9.14.2`)
+
+### Initial Setup
+
+```bash
+pnpm install                           # Install all dependencies
+pnpm --filter api db:migrate           # Run database migrations
+```
+
+To set up Polar payment products for a provider:
+
+```bash
+pnpm --filter api exec tsx scripts/create-polar-products.ts hetzner
+pnpm --filter api exec tsx scripts/create-polar-products.ts digitalocean
+pnpm --filter api exec tsx scripts/create-polar-products.ts vultr
+```
+
+Each command outputs `POLAR_PRODUCT_*` env vars to add to `apps/api/.env`.
+
 ### Commands
 
 ```bash
@@ -325,6 +387,7 @@ pnpm --filter api db:migrate   # Run migrations
 pnpm dev          # Run all apps
 pnpm dev:web      # Run web only (port 1111)
 pnpm dev:api      # Run API only (port 2222)
+pnpm dev:mobile   # Run mobile (Expo)
 
 # Building
 pnpm build        # Build all apps
@@ -333,6 +396,11 @@ pnpm build        # Build all apps
 pnpm --filter api db:generate
 pnpm --filter api db:migrate
 pnpm --filter api db:studio
+
+# Linting & Formatting
+pnpm check        # tsc + eslint for all apps
+pnpm lint         # ESLint check
+pnpm format       # Prettier + ESLint auto-fix
 ```
 
 ### Ports
@@ -345,37 +413,85 @@ pnpm --filter api db:studio
 **API** (apps/api/.env):
 
 ```
+PORT=2222
+CLIENT=localhost:1111
+
 DATABASE_URL=postgresql://...
+
+# Firebase Admin SDK
 FIREBASE_PROJECT_ID=...
 FIREBASE_PRIVATE_KEY=...
 FIREBASE_CLIENT_EMAIL=...
+
+# Cloud Providers (at least one required)
 HETZNER_API_TOKEN=...
+DIGITALOCEAN_API_TOKEN=...
+VULTR_API_TOKEN=...
+
+# Cloudflare DNS
 CLOUDFLARE_API_TOKEN=...
 CLOUDFLARE_ZONE_ID=...
+
+# Resend (email)
+RESEND_API_KEY=...
+FROM_EMAIL=OpenClaw <noreply@yourdomain.com>
+
+# Polar (payments)
+POLAR_ACCESS_TOKEN=...
+POLAR_ORGANIZATION_ID=...
+POLAR_WEBHOOK_SECRET=...
+POLAR_PRODUCT_HETZNER_CX23=...
+POLAR_PRODUCT_DIGITALOCEAN_S_1VCPU_1GB=...
+POLAR_PRODUCT_VULTR_VC2_1C_1GB=...
+# ... (one POLAR_PRODUCT_* per provider/plan, generated by create-polar-products script)
 ```
 
 **Web** (apps/web/.env):
 
 ```
+VITE_API_URL=/api
 VITE_FIREBASE_API_KEY=...
 VITE_FIREBASE_AUTH_DOMAIN=...
 VITE_FIREBASE_PROJECT_ID=...
+VITE_FIREBASE_STORAGE_BUCKET=...
+VITE_FIREBASE_MESSAGING_SENDER_ID=...
+VITE_FIREBASE_APP_ID=...
+```
+
+**Mobile** (apps/mobile/.env):
+
+```
+EXPO_PUBLIC_API_URL=...
+EXPO_PUBLIC_FIREBASE_API_KEY=...
+EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=...
+EXPO_PUBLIC_FIREBASE_PROJECT_ID=...
+EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET=...
+EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=...
+EXPO_PUBLIC_FIREBASE_APP_ID=...
 ```
 
 ## Key Files
 
-| Purpose      | Path                            |
-| ------------ | ------------------------------- |
-| API Entry    | `apps/api/src/index.ts`         |
-| DB Schema    | `apps/api/src/db/schema.ts`     |
-| API Routes   | `apps/api/src/routes/index.ts`  |
-| Web Entry    | `apps/web/src/main.tsx`         |
-| Web Routes   | `apps/web/src/App.tsx`          |
-| Auth Context | `apps/web/src/lib/auth.tsx`     |
-| API Client   | `apps/web/src/lib/api.ts`       |
-| Stores       | `apps/web/src/lib/store.ts`     |
-| Types        | `apps/web/src/ts/Types.ts`      |
-| Interfaces   | `apps/web/src/ts/Interfaces.ts` |
+| Purpose            | Path                                         |
+| ------------------ | -------------------------------------------- |
+| API Entry          | `apps/api/src/index.ts`                      |
+| DB Schema          | `apps/api/src/db/schema.ts`                  |
+| API Routes         | `apps/api/src/routes/index.ts`               |
+| Provider Resolver  | `apps/api/src/services/provider/getProvider.ts` |
+| Hetzner Service    | `apps/api/src/services/hetzner.ts`           |
+| DigitalOcean Service | `apps/api/src/services/digitalocean.ts`    |
+| Vultr Service      | `apps/api/src/services/vultr.ts`             |
+| Web Entry          | `apps/web/src/main.tsx`                      |
+| Web Routes         | `apps/web/src/App.tsx`                       |
+| Auth Context       | `apps/web/src/lib/auth.tsx`                  |
+| API Client (Web)   | `apps/web/src/lib/api.ts`                    |
+| Stores             | `apps/web/src/lib/store.ts`                  |
+| Mobile Entry       | `apps/mobile/App.tsx`                        |
+| API Client (Mobile)| `apps/mobile/src/lib/api.ts`                 |
+| Types (Web)        | `apps/web/src/ts/Types.ts`                   |
+| Interfaces (Web)   | `apps/web/src/ts/Interfaces.ts`              |
+| Types (API)        | `apps/api/src/ts/Types.ts`                   |
+| Interfaces (API)   | `apps/api/src/ts/Interfaces.ts`              |
 
 ### Internationalization (i18n)
 

@@ -4,6 +4,8 @@ import { logger } from 'hono/logger'
 import { verifyToken } from '@/services/firebase'
 import { db } from '@/db'
 import { users } from '@/db/schema'
+import { ok, fail } from '@/lib/response'
+import { t } from '@openclaw/i18n'
 import {
     authRoutes,
     clawsRoutes,
@@ -30,7 +32,7 @@ app.use(
     })
 )
 
-app.get('/', (c) => c.json({ status: 'ok' }))
+app.get('/', (c) => ok(c, null, t('api.healthOk')))
 
 app.route('/auth', authRoutes)
 app.route('/plans', plansRoutes)
@@ -50,14 +52,14 @@ app.use('/*', async (c, next) => {
     try {
         const authHeader = c.req.header('Authorization')
         if (!authHeader?.startsWith('Bearer ')) {
-            return c.json({ error: 'Unauthorized' }, 401)
+            return fail(c, t('api.unauthorized'), 401)
         }
 
         const token = authHeader.slice(7)
         const decoded = await verifyToken(token)
 
         if (!decoded) {
-            return c.json({ error: 'Invalid token' }, 401)
+            return fail(c, t('api.invalidToken'), 401)
         }
 
         await db
@@ -75,7 +77,7 @@ app.use('/*', async (c, next) => {
         return next()
     } catch (err) {
         console.error('Auth middleware error:', err)
-        return c.json({ error: 'Internal server error' }, 500)
+        return fail(c, t('api.internalServerError'), 500)
     }
 })
 
@@ -83,6 +85,6 @@ app.route('/claws', clawsRoutes)
 app.route('/ssh-keys', sshKeysRoutes)
 app.route('/users', usersRoutes)
 
-app.notFound((c) => c.json({ error: 'Not found' }, 404))
+app.notFound((c) => fail(c, t('api.notFound'), 404))
 
 export default app

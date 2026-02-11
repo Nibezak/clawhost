@@ -7,3 +7,10 @@ export interface RequestConfig {
     getHeaders?: () => Promise<Record<string, string>> | Record<string, string>
     onUnauthorized?: () => Promise<void>
 }
+
+export interface ApiEnvelope<T = unknown> {
+    success: boolean
+    data: T
+    message: string
+    code: number
+}

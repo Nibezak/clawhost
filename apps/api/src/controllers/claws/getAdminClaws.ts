@@ -1,6 +1,6 @@
 import type { Context } from 'hono'
 import type { ProviderType } from '@/ts/Types'
-import type { ServerStatus } from '@/ts/Interfaces'
+import type { BillingPeriod, ServerStatus } from '@/ts/Interfaces'
 
 import { desc } from 'drizzle-orm'
 import { eq } from 'drizzle-orm'
@@ -10,6 +10,7 @@ import { getProvider } from '@/services/provider'
 import { cloudflare } from '@/services/cloudflare'
 import { checkSubdomainReady, isAdmin } from '@/controllers/claws/helpers'
 import { subscriptions } from '@/lib/polar/subscriptions'
+import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
 const transitionCompletedBy: Record<string, string[]> = {
@@ -25,7 +26,7 @@ const getAdminClaws = async (c: Context<{ Variables: { userId: string } }>) => {
     const userId = c.get('userId')
 
     if (!(await isAdmin(userId))) {
-        return c.json({ error: t('api.adminAccessDenied') }, 403)
+        return fail(c, t('api.adminAccessDenied'), 403)
     }
 
     const [allClaws, allVolumes, allUsers] = await Promise.all([
@@ -120,7 +121,7 @@ const getAdminClaws = async (c: Context<{ Variables: { userId: string } }>) => {
         .filter((c) => c.polarSubscriptionId)
         .map((c) => c.polarSubscriptionId!)
 
-    const subMap = new Map<string, { start?: string; end?: string }>()
+    const subMap = new Map<string, BillingPeriod>()
     await Promise.all(
         subIds.map(async (id) => {
             const sub = await subscriptions.get(id)
@@ -146,7 +147,7 @@ const getAdminClaws = async (c: Context<{ Variables: { userId: string } }>) => {
         }
     })
 
-    return c.json(clawsWithVolumes)
+    return ok(c, clawsWithVolumes, t('api.clawsFetched'))
 }
 
 export default getAdminClaws

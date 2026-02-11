@@ -6,6 +6,7 @@ import { claws } from '@/db/schema'
 import executeSSH from '@/services/ssh'
 import { isAdmin } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
+import { ok, fail } from '@/lib/response'
 
 const SEPARATOR = '---CLAWHOST_SEP---'
 
@@ -28,11 +29,11 @@ const getClawDiagnostics = async (
             .limit(1)
 
         if (!claw[0]) {
-            return c.json({ error: t('api.clawNotFound') }, 404)
+            return fail(c, t('api.clawNotFound'), 404)
         }
 
         if (!claw[0].ip || !claw[0].rootPassword) {
-            return c.json({ error: t('api.failedToGetDiagnostics') }, 400)
+            return fail(c, t('api.failedToGetDiagnostics'), 400)
         }
 
         const command = [
@@ -50,20 +51,18 @@ const getClawDiagnostics = async (
         )
         const parts = output.split(SEPARATOR)
 
-        return c.json({
+        return ok(c, {
             service: parts[0]?.trim() || '',
             port: parts[1]?.trim() || '',
             memory: parts[2]?.trim() || ''
-        })
+        }, t('api.diagnosticsFetched'))
     } catch (err) {
         console.error('Get claw diagnostics error:', err)
-        return c.json(
-            {
-                error:
-                    err instanceof Error
-                        ? err.message
-                        : t('api.failedToGetDiagnostics')
-            },
+        return fail(
+            c,
+            err instanceof Error
+                ? err.message
+                : t('api.failedToGetDiagnostics'),
             500
         )
     }

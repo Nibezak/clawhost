@@ -112,13 +112,8 @@ const ClawCard: FC<ClawCardProps> = ({
 
     const handleUpdateInstance = () => {
         repairMutation.mutate(claw.id, {
-            onSuccess: (data) => {
-                showToast(
-                    data.success
-                        ? t('dashboard.updateInstanceSuccess')
-                        : t('dashboard.updateInstanceFailed'),
-                    data.success ? 'success' : 'error'
-                )
+            onSuccess: () => {
+                showToast(t('dashboard.updateInstanceSuccess'), 'success')
             },
             onError: () => {
                 showToast(t('dashboard.updateInstanceFailed'), 'error')
@@ -128,13 +123,8 @@ const ClawCard: FC<ClawCardProps> = ({
 
     const handleReinstall = () => {
         reinstallMutation.mutate(claw.id, {
-            onSuccess: (data) => {
-                showToast(
-                    data.success
-                        ? t('dashboard.reinstallInstanceSuccess')
-                        : t('dashboard.reinstallInstanceFailed'),
-                    data.success ? 'success' : 'error'
-                )
+            onSuccess: () => {
+                showToast(t('dashboard.reinstallInstanceSuccess'), 'success')
             },
             onError: () => {
                 showToast(t('dashboard.reinstallInstanceFailed'), 'error')

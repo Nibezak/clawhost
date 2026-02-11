@@ -99,7 +99,7 @@ const Changelog: FC = (): ReactNode => {
 
                         <div className='rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8'>
                             <span className='text-muted-foreground mb-4 block text-sm'>
-                                February 10, 2026
+                                February 11, 2026
                             </span>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>

@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react'
-import type { MockClawData } from '@/ts/Interfaces'
+import type { Faq, MockClawData, Testimonial } from '@/ts/Interfaces'
 import type { ProviderType } from '@/ts/Types'
 
 import { Link } from 'react-router-dom'
@@ -39,7 +39,7 @@ import {
     X
 } from '@phosphor-icons/react'
 
-function getTestimonials() {
+function getTestimonials(): Testimonial[] {
     return [
         {
             quote: t('landing.testimonial1Quote'),
@@ -68,7 +68,7 @@ function getTestimonials() {
     ]
 }
 
-function getFaqs() {
+function getFaqs(): Faq[] {
     return [
         {
             question: t('landing.faq1Question'),
@@ -109,7 +109,7 @@ const Landing: FC = (): ReactNode => {
     const { user } = useAuth()
     const [pricingProvider, setPricingProvider] =
         useState<ProviderType>('hetzner')
-    const { data: plans, isLoading: plansLoading } = usePlans(pricingProvider)
+    const { plans, isLoading: plansLoading, atCapacity } = usePlans(pricingProvider)
     const { data: gitHubStars } = useGitHubStars()
     const { showToast } = useUIStore()
 
@@ -302,7 +302,7 @@ const Landing: FC = (): ReactNode => {
                                     {t('landing.selfHost')}
 
                                     {gitHubStars && (
-                                        <span className='hidden items-center gap-1.5 rounded-full bg-white/10 px-2 py-0.5 text-xs'>
+                                        <span className='flex items-center gap-1.5 rounded-full bg-white/10 px-2 py-0.5 text-xs'>
                                             {gitHubStars.formatted}
                                             <span className='text-[12px]'>
                                                 ★
@@ -744,6 +744,11 @@ const Landing: FC = (): ReactNode => {
                         </div>
                     ) : plans && plans.length > 0 ? (
                         <>
+                            {atCapacity && (
+                                <p className='mb-4 rounded-md bg-yellow-500/10 px-4 py-3 text-sm text-yellow-400'>
+                                    {t('createClaw.providerAtCapacity')}
+                                </p>
+                            )}
                             <div className='overflow-x-auto'>
                                 <table className='w-full border-collapse'>
                                     <thead>
@@ -767,7 +772,7 @@ const Landing: FC = (): ReactNode => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {plans.map((plan) => {
+                                        {plans.map((plan, index) => {
                                             const totalMonthly = Math.round(
                                                 plan.priceMonthly
                                             )
@@ -786,17 +791,47 @@ const Landing: FC = (): ReactNode => {
                                                 ]
                                             const isDisabled = plan.disabled
 
+                                            const tierStarts: Record<string, Record<string, string>> = {
+                                                hetzner: {
+                                                    cx23: t('landing.tierShared'),
+                                                    cax11: t('landing.tierArm'),
+                                                    ccx13: t('landing.tierDedicated')
+                                                },
+                                                vultr: {
+                                                    'vc2-2c-4gb': t('landing.tierRegular'),
+                                                    'vhp-2c-4gb-amd': t('landing.tierHighPerformance'),
+                                                    'vhf-3c-8gb': t('landing.tierHighFrequency')
+                                                }
+                                            }
+
+                                            const providerTiers = tierStarts[pricingProvider]
+                                            const tierLabel = providerTiers?.[plan.id]
+                                            const showTier = tierLabel && index > 0
+
                                             return (
-                                                <tr
-                                                    key={plan.id}
-                                                    className={`border-b border-white/5 ${
-                                                        isDisabled
-                                                            ? 'opacity-50'
-                                                            : isRecommended
-                                                              ? 'bg-[#ef5350]/5'
-                                                              : ''
-                                                    }`}
-                                                >
+                                                <>
+                                                    {showTier && (
+                                                        <tr key={`tier-${plan.id}`}>
+                                                            <td
+                                                                colSpan={6}
+                                                                className='px-4 pb-2 pt-6'
+                                                            >
+                                                                <span className='font-clash text-xs font-semibold uppercase tracking-wider text-gray-500'>
+                                                                    {tierLabel}
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                    <tr
+                                                        key={plan.id}
+                                                        className={`border-b border-white/5 ${
+                                                            isDisabled
+                                                                ? 'opacity-50'
+                                                                : isRecommended
+                                                                  ? 'bg-[#ef5350]/5'
+                                                                  : ''
+                                                        }`}
+                                                    >
                                                     <td className='px-4 py-4'>
                                                         <div className='flex items-center gap-2'>
                                                             <span className='font-medium text-white'>
@@ -873,6 +908,7 @@ const Landing: FC = (): ReactNode => {
                                                         </Button>
                                                     </td>
                                                 </tr>
+                                                </>
                                             )
                                         })}
                                     </tbody>

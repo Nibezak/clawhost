@@ -5,6 +5,7 @@ import { eq, count } from 'drizzle-orm'
 import { db } from '@/db'
 import { sshKeys } from '@/db/schema'
 import { getProvider } from '@/services/provider'
+import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
 const MAX_SSH_KEYS_PER_ACCOUNT = 50
@@ -15,7 +16,7 @@ const createSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
         const { name, publicKey } = await c.req.json<CreateSSHKeyBody>()
 
         if (!name || !publicKey) {
-            return c.json({ error: t('api.nameAndKeyRequired') }, 400)
+            return fail(c, t('api.nameAndKeyRequired'), 400)
         }
 
         const [{ value: keyCount }] = await db
@@ -24,16 +25,11 @@ const createSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
             .where(eq(sshKeys.userId, userId))
 
         if (keyCount >= MAX_SSH_KEYS_PER_ACCOUNT) {
-            return c.json(
-                {
-                    error: t('api.sshKeyLimitReached')
-                },
-                400
-            )
+            return fail(c, t('api.sshKeyLimitReached'), 400)
         }
 
         if (!publicKey.startsWith('ssh-') && !publicKey.startsWith('ecdsa-')) {
-            return c.json({ error: t('api.invalidSshKeyFormat') }, 400)
+            return fail(c, t('api.invalidSshKeyFormat'), 400)
         }
 
         const keyLabel = `${name}-${userId.slice(0, 8)}`
@@ -77,22 +73,20 @@ const createSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
             vultrKeyId
         })
 
-        return c.json({
+        return ok(c, {
             id,
             name,
             fingerprint: hetznerKey.fingerprint,
             publicKey,
             createdAt: new Date().toISOString()
-        })
+        }, t('api.sshKeyCreated'))
     } catch (err) {
         console.error('Create SSH key error:', err)
-        return c.json(
-            {
-                error:
-                    err instanceof Error
-                        ? err.message
-                        : t('api.failedToCreateSshKey')
-            },
+        return fail(
+            c,
+            err instanceof Error
+                ? err.message
+                : t('api.failedToCreateSshKey'),
             500
         )
     }

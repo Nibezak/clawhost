@@ -4,6 +4,7 @@ import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
 import { sshKeys } from '@/db/schema'
 import { getProvider } from '@/services/provider'
+import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
 const deleteSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
@@ -18,7 +19,7 @@ const deleteSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
             .limit(1)
 
         if (!key[0]) {
-            return c.json({ error: t('api.sshKeyNotFound') }, 404)
+            return fail(c, t('api.sshKeyNotFound'), 404)
         }
 
         if (key[0].providerKeyId) {
@@ -52,16 +53,14 @@ const deleteSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
 
         await db.delete(sshKeys).where(eq(sshKeys.id, id))
 
-        return c.json({ success: true })
+        return ok(c, null, t('api.sshKeyDeleted'))
     } catch (err) {
         console.error('Delete SSH key error:', err)
-        return c.json(
-            {
-                error:
-                    err instanceof Error
-                        ? err.message
-                        : t('api.failedToDeleteSshKey')
-            },
+        return fail(
+            c,
+            err instanceof Error
+                ? err.message
+                : t('api.failedToDeleteSshKey'),
             500
         )
     }

@@ -6,6 +6,7 @@ import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { subscriptions } from '@/lib/polar'
 import { cleanupClaw, isAdmin } from '@/controllers/claws/helpers'
+import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
 const hardDeleteClaw = async (
@@ -27,11 +28,11 @@ const hardDeleteClaw = async (
             .limit(1)
 
         if (!claw[0]) {
-            return c.json({ error: t('api.clawNotFound') }, 404)
+            return fail(c, t('api.clawNotFound'), 404)
         }
 
         if (!claw[0].deletionScheduledAt) {
-            return c.json({ error: t('api.clawNotScheduledForDeletion') }, 400)
+            return fail(c, t('api.clawNotScheduledForDeletion'), 400)
         }
 
         if (claw[0].polarSubscriptionId) {
@@ -48,18 +49,10 @@ const hardDeleteClaw = async (
             subdomain: claw[0].subdomain
         })
 
-        return c.json({ success: true })
+        return ok(c, null, t('api.clawHardDeleted'))
     } catch (err) {
         console.error('Hard delete claw error:', err)
-        return c.json(
-            {
-                error:
-                    err instanceof Error
-                        ? err.message
-                        : t('api.failedToHardDeleteClaw')
-            },
-            500
-        )
+        return fail(c, err instanceof Error ? err.message : t('api.failedToHardDeleteClaw'), 500)
     }
 }
 

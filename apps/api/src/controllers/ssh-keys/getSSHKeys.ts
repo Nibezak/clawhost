@@ -3,6 +3,8 @@ import type { Context } from 'hono'
 import { eq, desc } from 'drizzle-orm'
 import { db } from '@/db'
 import { sshKeys } from '@/db/schema'
+import { ok } from '@/lib/response'
+import { t } from '@openclaw/i18n'
 
 const getSSHKeys = async (c: Context<{ Variables: { userId: string } }>) => {
     const userId = c.get('userId')
@@ -19,7 +21,7 @@ const getSSHKeys = async (c: Context<{ Variables: { userId: string } }>) => {
         .where(eq(sshKeys.userId, userId))
         .orderBy(desc(sshKeys.createdAt))
 
-    return c.json(keys)
+    return ok(c, keys, t('api.sshKeysFetched'))
 }
 
 export default getSSHKeys

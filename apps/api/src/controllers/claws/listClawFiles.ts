@@ -6,6 +6,7 @@ import { claws } from '@/db/schema'
 import executeSSH from '@/services/ssh'
 import { isAdmin } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
+import { ok, fail } from '@/lib/response'
 
 const BASE_DIR = '/home/openclaw/.openclaw'
 
@@ -26,11 +27,11 @@ const listClawFiles = async (c: Context<{ Variables: { userId: string } }>) => {
             .limit(1)
 
         if (!claw[0]) {
-            return c.json({ error: t('api.clawNotFound') }, 404)
+            return fail(c, t('api.clawNotFound'), 404)
         }
 
         if (!claw[0].ip || !claw[0].rootPassword) {
-            return c.json({ error: t('api.failedToListFiles') }, 400)
+            return fail(c, t('api.failedToListFiles'), 400)
         }
 
         const output = await executeSSH(
@@ -52,16 +53,14 @@ const listClawFiles = async (c: Context<{ Variables: { userId: string } }>) => {
                 }
             })
 
-        return c.json({ files })
+        return ok(c, { files }, t('api.filesFetched'))
     } catch (err) {
         console.error('List claw files error:', err)
-        return c.json(
-            {
-                error:
-                    err instanceof Error
-                        ? err.message
-                        : t('api.failedToListFiles')
-            },
+        return fail(
+            c,
+            err instanceof Error
+                ? err.message
+                : t('api.failedToListFiles'),
             500
         )
     }

@@ -2,6 +2,7 @@ import type { Context } from 'hono'
 import type { ProviderType } from '@/ts/Types'
 
 import { getProvider } from '@/services/provider'
+import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
 const hetznerCustomPrices: Record<string, number> = {
@@ -55,8 +56,8 @@ const vultrCustomPrices: Record<string, number> = {
     'vhp-12c-24gb-amd': 250,
     'vhf-1c-2gb': 24,
     'vhf-2c-4gb': 48,
-    'vhf-4c-8gb': 96,
-    'vhf-8c-16gb': 125,
+    'vhf-3c-8gb': 96,
+    'vhf-4c-16gb': 125,
     'vhf-8c-32gb': 192,
     'vhf-12c-48gb': 500
 }
@@ -75,7 +76,7 @@ const getPlanAvailability = async (c: Context) => {
         const customPrices = pricesByProvider[providerName]
 
         if (!customPrices) {
-            return c.json({ error: t('api.invalidProvider') }, 400)
+            return fail(c, t('api.invalidProvider'), 400)
         }
 
         const [serverTypes, datacenters] = await Promise.all([
@@ -104,10 +105,10 @@ const getPlanAvailability = async (c: Context) => {
             availability[planName] = Array.from(locations)
         }
 
-        return c.json(availability)
+        return ok(c, availability, t('api.planAvailabilityFetched'))
     } catch (err) {
         console.error('Failed to fetch plan availability:', err)
-        return c.json({ error: t('api.failedToFetchPlanAvailability') }, 500)
+        return fail(c, t('api.failedToFetchPlanAvailability'), 500)
     }
 }
 

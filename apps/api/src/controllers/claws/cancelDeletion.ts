@@ -5,6 +5,7 @@ import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { subscriptions } from '@/lib/polar'
 import { isAdmin } from '@/controllers/claws/helpers'
+import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
 const cancelDeletion = async (
@@ -26,27 +27,22 @@ const cancelDeletion = async (
             .limit(1)
 
         if (!claw[0]) {
-            return c.json({ error: t('api.clawNotFound') }, 404)
+            return fail(c, t('api.clawNotFound'), 404)
         }
 
         if (!claw[0].deletionScheduledAt) {
-            return c.json({ error: t('api.clawNotScheduledForDeletion') }, 400)
+            return fail(c, t('api.clawNotScheduledForDeletion'), 400)
         }
 
-        // Uncancel the Polar subscription
         if (claw[0].polarSubscriptionId) {
             try {
                 await subscriptions.uncancel(claw[0].polarSubscriptionId)
             } catch (subErr) {
                 console.error('Failed to uncancel subscription:', subErr)
-                return c.json(
-                    { error: t('api.failedToCancelScheduledDeletion') },
-                    500
-                )
+                return fail(c, t('api.failedToCancelScheduledDeletion'), 500)
             }
         }
 
-        // Clear the deletion schedule and restore subscription status
         await db
             .update(claws)
             .set({
@@ -61,18 +57,10 @@ const cancelDeletion = async (
             .where(eq(claws.id, id))
             .limit(1)
 
-        return c.json(updated[0])
+        return ok(c, updated[0], t('api.clawDeletionCancelled'))
     } catch (err) {
         console.error('Cancel deletion error:', err)
-        return c.json(
-            {
-                error:
-                    err instanceof Error
-                        ? err.message
-                        : t('api.failedToCancelDeletion')
-            },
-            500
-        )
+        return fail(c, err instanceof Error ? err.message : t('api.failedToCancelDeletion'), 500)
     }
 }
 

@@ -2,6 +2,7 @@ import type { Context } from 'hono'
 import type { ProviderType } from '@/ts/Types'
 
 import { getProvider } from '@/services/provider'
+import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
 const hetznerPlanOrder = [
@@ -55,8 +56,8 @@ const vultrPlanOrder = [
     'vhp-12c-24gb-amd',
     'vhf-1c-2gb',
     'vhf-2c-4gb',
-    'vhf-4c-8gb',
-    'vhf-8c-16gb',
+    'vhf-3c-8gb',
+    'vhf-4c-16gb',
     'vhf-8c-32gb',
     'vhf-12c-48gb'
 ]
@@ -112,13 +113,17 @@ const vultrCustomPrices: Record<string, number> = {
     'vhp-12c-24gb-amd': 250,
     'vhf-1c-2gb': 24,
     'vhf-2c-4gb': 48,
-    'vhf-4c-8gb': 96,
-    'vhf-8c-16gb': 125,
+    'vhf-3c-8gb': 96,
+    'vhf-4c-16gb': 125,
     'vhf-8c-32gb': 192,
     'vhf-12c-48gb': 500
 }
 
-const disabledPlans = new Set(['s-1vcpu-512mb-10gb', 's-1vcpu-1gb'])
+const MIN_MEMORY_GB = 4
+
+const providerLimits: Partial<Record<ProviderType, number>> = {
+    hetzner: 5
+}
 
 const planConfigs: Record<
     ProviderType,
@@ -139,14 +144,25 @@ const getPlans = async (c: Context) => {
         const config = planConfigs[providerName]
 
         if (!config) {
-            return c.json({ error: t('api.invalidProvider') }, 400)
+            return fail(c, t('api.invalidProvider'), 400)
         }
 
         const provider = getProvider(providerName)
-        const serverTypes = await provider.getServerTypes()
+        const limit = providerLimits[providerName]
+
+        const [serverTypes, servers] = await Promise.all([
+            provider.getServerTypes(),
+            limit ? provider.getServers() : Promise.resolve(null)
+        ])
+
+        const atCapacity = servers && limit ? servers.size >= limit : false
 
         const plans = serverTypes
-            .filter((st) => config.prices[st.name] !== undefined)
+            .filter(
+                (st) =>
+                    config.prices[st.name] !== undefined &&
+                    st.memory >= MIN_MEMORY_GB
+            )
             .map((st) => ({
                 id: st.name,
                 name: st.description,
@@ -155,17 +171,17 @@ const getPlans = async (c: Context) => {
                 disk: st.disk,
                 priceMonthly: config.prices[st.name],
                 architecture: st.architecture,
-                disabled: disabledPlans.has(st.name)
+                disabled: atCapacity
             }))
             .sort(
                 (a, b) =>
                     config.order.indexOf(a.id) - config.order.indexOf(b.id)
             )
 
-        return c.json(plans)
+        return ok(c, { plans, atCapacity }, t('api.plansFetched'))
     } catch (err) {
         console.error('Failed to fetch plans:', err)
-        return c.json({ error: t('api.failedToFetchPlans') }, 500)
+        return fail(c, t('api.failedToFetchPlans'), 500)
     }
 }
 

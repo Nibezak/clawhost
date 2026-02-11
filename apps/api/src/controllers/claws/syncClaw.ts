@@ -5,8 +5,9 @@ import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { getProvider } from '@/services/provider'
-import { t } from '@openclaw/i18n'
 import { checkSubdomainReady, isAdmin } from '@/controllers/claws/helpers'
+import { ok, fail } from '@/lib/response'
+import { t } from '@openclaw/i18n'
 
 const syncClaw = async (c: Context<{ Variables: { userId: string } }>) => {
     const userId = c.get('userId')
@@ -24,7 +25,7 @@ const syncClaw = async (c: Context<{ Variables: { userId: string } }>) => {
         .limit(1)
 
     if (!claw[0] || !claw[0].providerServerId) {
-        return c.json({ error: t('api.clawNotFound') }, 404)
+        return fail(c, t('api.clawNotFound'), 404)
     }
 
     try {
@@ -40,11 +41,11 @@ const syncClaw = async (c: Context<{ Variables: { userId: string } }>) => {
                         .set({ status: 'running', ip: serverStatus.ip })
                         .where(eq(claws.id, id))
 
-                    return c.json({
+                    return ok(c, {
                         ...claw[0],
                         status: 'running',
                         ip: serverStatus.ip
-                    })
+                    }, t('api.clawSynced'))
                 }
             }
 
@@ -53,10 +54,10 @@ const syncClaw = async (c: Context<{ Variables: { userId: string } }>) => {
                 .set({ ip: serverStatus.ip })
                 .where(eq(claws.id, id))
 
-            return c.json({
+            return ok(c, {
                 ...claw[0],
                 ip: serverStatus.ip
-            })
+            }, t('api.clawSynced'))
         }
 
         await db
@@ -64,14 +65,14 @@ const syncClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             .set({ status: serverStatus.status, ip: serverStatus.ip })
             .where(eq(claws.id, id))
 
-        return c.json({
+        return ok(c, {
             ...claw[0],
             status: serverStatus.status,
             ip: serverStatus.ip
-        })
+        }, t('api.clawSynced'))
     } catch (err) {
         console.error('Failed to sync server status:', err)
-        return c.json({ error: t('api.failedToSyncClaw') }, 500)
+        return fail(c, t('api.failedToSyncClaw'), 500)
     }
 }
 

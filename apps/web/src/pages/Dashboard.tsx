@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { useAuth } from '@/lib/auth'
 import { usePreferencesStore, useUIStore } from '@/lib/store'
 import { ROUTES } from '@/lib/routes'
 import {
@@ -26,7 +25,6 @@ import { PageHeader } from '@/components/PageHeader'
 import { ActionButton } from '@/components/ActionButton'
 import { ClawMascot } from '@/components/ClawMascot'
 import {
-    CircleNotch,
     List,
     SquaresFour,
     Lightning
@@ -34,7 +32,6 @@ import {
 import { ClawCard, ClawSkeleton, CreateClawModal } from '@/components/dashboard'
 
 const Dashboard: FC = (): ReactNode => {
-    const { loading: authLoading } = useAuth()
     const navigate = useNavigate()
     const [searchParams, setSearchParams] = useSearchParams()
     const [showCreate, setShowCreate] = useState(false)
@@ -96,8 +93,8 @@ const Dashboard: FC = (): ReactNode => {
     const skeletonCount = userStats?.clawCount ?? 0
     const knowsCount = !isStatsLoading && userStats !== undefined
 
-    const { data: hetznerPlans } = usePlans('hetzner')
-    const { data: digitaloceanPlans } = usePlans('digitalocean')
+    const { plans: hetznerPlans } = usePlans('hetzner')
+    const { plans: digitaloceanPlans } = usePlans('digitalocean')
     const plans = [...(hetznerPlans || []), ...(digitaloceanPlans || [])]
     const { data: locations } = useLocations()
     const { data: sshKeys } = useSSHKeys()
@@ -119,13 +116,7 @@ const Dashboard: FC = (): ReactNode => {
                 transition={{ duration: 0.4 }}
                 className='relative mx-auto w-full max-w-6xl flex-1 px-6 py-8'
             >
-                {authLoading || !claws ? (
-                    <div className='flex min-h-[60vh] items-center justify-center'>
-                        <CircleNotch className='text-primary h-8 w-8 animate-spin' />
-                    </div>
-                ) : (
-                    <>
-                        <PageHeader
+                    <PageHeader
                             title={t('dashboard.title')}
                             description={`${claws?.length ?? 0} ${claws?.length === 1 ? t('dashboard.claw') : t('dashboard.clawsPlural')}`}
                             action={
@@ -268,8 +259,6 @@ const Dashboard: FC = (): ReactNode => {
                                 }}
                             />
                         )}
-                    </>
-                )}
             </motion.main>
 
             <LandingFooter />

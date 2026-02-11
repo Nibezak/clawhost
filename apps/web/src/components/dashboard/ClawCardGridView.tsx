@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react'
-import type { ClawCardGridViewProps } from '@/ts/Interfaces'
+import type { ClawCardGridViewProps, Volume } from '@/ts/Interfaces'
 
 import { t } from '@openclaw/i18n'
 import { Button } from '@/components/ui/button'
@@ -224,7 +224,7 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
                         {claw.volumes && claw.volumes.length > 0 && (
                             <CopyableField
                                 label={t('dashboard.storage')}
-                                value={`${claw.volumes.reduce((sum: number, v: { size: number }) => sum + v.size, 0)} GB`}
+                                value={`${claw.volumes.reduce((sum: number, v: Volume) => sum + v.size, 0)} GB`}
                             />
                         )}
 

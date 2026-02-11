@@ -4,6 +4,13 @@ import type {
     WebhookEventType
 } from '@/ts/Types'
 
+export interface ApiResponse<T = null> {
+    success: boolean
+    data: T
+    message: string
+    code: number
+}
+
 export interface MagicLinkEmailProps {
     magicLink: string
 }
@@ -572,6 +579,19 @@ export interface SendMagicLinkBody {
     redirectUrl: string
 }
 
+export interface SendOtpBody {
+    email: string
+}
+
+export interface VerifyOtpBody {
+    email: string
+    code: string
+}
+
+export interface OtpCodeEmailProps {
+    code: string
+}
+
 export interface CreateSSHKeyBody {
     name: string
     publicKey: string
@@ -675,4 +695,22 @@ export interface UpdateClawFileBody {
 export interface UpdateClawFileResponse {
     success: boolean
     message: string
+}
+
+export interface BillingPeriod {
+    start?: string
+    end?: string
+}
+
+export interface DeleteClawResponse {
+    scheduled: boolean
+    deletionScheduledAt?: string
+    claw?: Record<string, unknown>
+}
+
+export interface InitiateClawPurchaseResponse {
+    checkoutUrl: string
+    checkoutId: string
+    pendingClawId: string
+    expiresAt: string
 }

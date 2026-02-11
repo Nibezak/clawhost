@@ -8,3 +8,6 @@ dist
 *-firebase-adminsdk-*.json
 **/.env
 **/.env.*
+.expo
+android
+ios

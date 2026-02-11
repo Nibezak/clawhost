@@ -73,6 +73,15 @@ export const rateLimits = pgTable('rate_limits', {
     lastSentAt: timestamp('last_sent_at').notNull()
 })
 
+export const otpCodes = pgTable('otp_codes', {
+    id: text('id').primaryKey(),
+    email: text('email').notNull(),
+    codeHash: text('code_hash').notNull(),
+    attempts: integer('attempts').notNull().default(0),
+    expiresAt: timestamp('expires_at').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull()
+})
+
 export const volumes = pgTable('volumes', {
     id: text('id').primaryKey(),
     userId: text('user_id')

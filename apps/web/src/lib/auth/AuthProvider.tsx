@@ -61,9 +61,7 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
                         PROFILE_CACHE_KEY,
                         JSON.stringify(fresh)
                     )
-                } catch {
-                    // Keep existing cached profile if fetch fails
-                }
+                } catch { /* localStorage unavailable */ }
 
                 queryClient.prefetchQuery({
                     queryKey: ['claws'],

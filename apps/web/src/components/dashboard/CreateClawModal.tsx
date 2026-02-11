@@ -13,6 +13,7 @@ import {
     usePlanAvailability
 } from '@/hooks'
 import { generatePassword, locationFlags, aiModels } from '@/lib/claw-utils'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Slider } from '@/components/ui/slider'
@@ -62,7 +63,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     const [name, setName] = useState('')
     const [provider, setProvider] = useState<ProviderType>('hetzner')
 
-    const { data: providerPlans, isLoading: isLoadingPlans } =
+    const { plans: providerPlans, isLoading: isLoadingPlans, atCapacity } =
         usePlans(provider)
     const { data: providerLocations, isLoading: isLoadingLocations } =
         useLocations(provider)
@@ -75,10 +76,16 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     const volumePricing = providerVolumePricing || initialVolumePricing
     const planAvailability = providerPlanAvailability || initialPlanAvailability
 
+    const getFirstEnabledPlan = (planList: typeof plans): string => {
+        const enabled = planList.find((p) => !p.disabled)
+        return enabled?.id || ''
+    }
+
     const initialPlanId =
-        preselectedPlanId && plans.find((p) => p.id === preselectedPlanId)
+        preselectedPlanId &&
+        plans.find((p) => p.id === preselectedPlanId && !p.disabled)
             ? preselectedPlanId
-            : plans[0]?.id || ''
+            : getFirstEnabledPlan(plans)
     const [planId, setPlanId] = useState(initialPlanId)
 
     const isLocationAvailableForPlan = (
@@ -120,9 +127,11 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
 
     useEffect(() => {
         if (!planId && plans.length > 0) {
-            const firstPlan = plans[0].id
-            setPlanId(firstPlan)
-            setLocation(getFirstAvailableLocation(firstPlan))
+            const firstPlan = getFirstEnabledPlan(plans)
+            if (firstPlan) {
+                setPlanId(firstPlan)
+                setLocation(getFirstAvailableLocation(firstPlan))
+            }
         }
     }, [plans, locations])
 
@@ -194,7 +203,9 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
         )
     }
 
-    const selectedPlan = plans.find((p) => p.id === planId)
+    const selectedPlan = plans.find(
+        (p) => p.id === planId && !p.disabled
+    )
 
     return (
         <Dialog open onOpenChange={onClose}>
@@ -256,6 +267,9 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                     />
                                 </svg>
                                 {t('createClaw.providerHetzner')}
+                                <Badge className='border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-xs text-white'>
+                                    {t('landing.recommended')}
+                                </Badge>
                             </button>
                             <button
                                 type='button'
@@ -291,15 +305,17 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                             >
                                 <svg
                                     className='h-4 w-4'
-                                    viewBox='0 0 48 48'
+                                    viewBox='0 0 1024 1024'
                                     fill='none'
                                 >
-                                    <path
-                                        d='M24 0C10.745 0 0 10.745 0 24s10.745 24 24 24 24-10.745 24-24S37.255 0 24 0z'
+                                    <circle
+                                        cx='512'
+                                        cy='512'
+                                        r='512'
                                         fill='#007BFC'
                                     />
                                     <path
-                                        d='M33.6 14.4H14.4L24 33.6z'
+                                        d='M259.9 357.4c-2.5-3.9-3.9-8.6-3.9-13.6 0-14.1 11.5-25.6 25.6-25.6h131.1c9.1 0 17.1 4.8 21.7 12l181.9 288.5c2.5 4 3.9 8.6 3.9 13.6s-1.5 9.7-3.9 13.6l-65.6 104c-4.5 7.2-12.5 12-21.7 12-9.1 0-17.1-4.8-21.7-12L259.9 357.4zm395.3 158.1c4.5 7.2 12.5 11.9 21.7 11.9 9.1 0 17.1-4.8 21.7-11.9l22.6-35.8 43-68.2c2.5-3.9 3.9-8.6 3.9-13.7 0-5-1.5-9.7-3.9-13.7L730.1 330c-4.5-7.2-12.5-12-21.7-12H577.1c-14.1 0-25.6 11.5-25.6 25.6 0 5 1.4 9.7 3.9 13.6l99.8 158.3z'
                                         fill='white'
                                     />
                                 </svg>
@@ -407,6 +423,11 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                             {t('createClaw.plan')}
                             <span className='text-red-400'> *</span>
                         </Label>
+                        {atCapacity && (
+                            <p className='rounded-md bg-yellow-500/10 px-3 py-2 text-xs text-yellow-400'>
+                                {t('createClaw.providerAtCapacity')}
+                            </p>
+                        )}
                         {isProviderLoading ? (
                             <div className='space-y-2'>
                                 {Array.from({ length: 4 }).map((_, i) => (
@@ -419,9 +440,24 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                         ) : (
                             <TooltipProvider delayDuration={200}>
                                 <div className='space-y-2'>
-                                    {plans.map((plan) => {
+                                    {plans.map((plan, index) => {
                                         const isSelected = planId === plan.id
                                         const isDisabled = plan.disabled
+
+                                        const tierStarts: Record<string, Record<string, string>> = {
+                                            hetzner: {
+                                                cx23: t('landing.tierShared'),
+                                                cax11: t('landing.tierArm'),
+                                                ccx13: t('landing.tierDedicated')
+                                            },
+                                            vultr: {
+                                                'vc2-2c-4gb': t('landing.tierRegular'),
+                                                'vhp-2c-4gb-amd': t('landing.tierHighPerformance'),
+                                                'vhf-3c-8gb': t('landing.tierHighFrequency')
+                                            }
+                                        }
+                                        const providerTiers = tierStarts[provider]
+                                        const tierLabel = providerTiers?.[plan.id]
 
                                         const card = (
                                             <label
@@ -483,22 +519,41 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                             </label>
                                         )
 
+                                        const separator = tierLabel && index > 0 ? (
+                                            <div
+                                                key={`tier-${plan.id}`}
+                                                className='pb-1 pt-4'
+                                            >
+                                                <span className='text-muted-foreground text-xs font-semibold uppercase tracking-wider'>
+                                                    {tierLabel}
+                                                </span>
+                                            </div>
+                                        ) : null
+
                                         if (isDisabled) {
                                             return (
-                                                <Tooltip key={plan.id}>
-                                                    <TooltipTrigger asChild>
-                                                        <div>{card}</div>
-                                                    </TooltipTrigger>
-                                                    <TooltipContent>
-                                                        {t(
-                                                            'createClaw.planUnavailable'
-                                                        )}
-                                                    </TooltipContent>
-                                                </Tooltip>
+                                                <>
+                                                    {separator}
+                                                    <Tooltip key={plan.id}>
+                                                        <TooltipTrigger asChild>
+                                                            <div>{card}</div>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>
+                                                            {t(
+                                                                'createClaw.planUnavailable'
+                                                            )}
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                </>
                                             )
                                         }
 
-                                        return <div key={plan.id}>{card}</div>
+                                        return (
+                                            <>
+                                                {separator}
+                                                <div key={plan.id}>{card}</div>
+                                            </>
+                                        )
                                     })}
                                 </div>
                             </TooltipProvider>
@@ -889,7 +944,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                             type='submit'
                             disabled={
                                 purchaseMutation.isPending ||
-                                !planId ||
+                                !selectedPlan ||
                                 !location
                             }
                         >
@@ -898,10 +953,14 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                     <CircleNotch className='h-4 w-4 animate-spin' />
                                     {t('createClaw.redirecting')}
                                 </>
+                            ) : !selectedPlan ? (
+                                t('createClaw.selectServerToContinue')
+                            ) : !location ? (
+                                t('createClaw.selectLocationToContinue')
                             ) : (
                                 t('createClaw.proceedToPayment', {
                                     amount: (
-                                        (selectedPlan?.priceMonthly ?? 0) +
+                                        selectedPlan.priceMonthly +
                                         (volumeSize > 0 && volumePricing
                                             ? volumeSize *
                                               volumePricing.pricePerGbMonthly

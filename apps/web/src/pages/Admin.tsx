@@ -22,8 +22,8 @@ const Admin: FC = (): ReactNode => {
 
     const { data: claws, isLoading, isError, refetch } = useAdminClaws()
 
-    const { data: hetznerPlans } = usePlans('hetzner')
-    const { data: digitaloceanPlans } = usePlans('digitalocean')
+    const { plans: hetznerPlans } = usePlans('hetzner')
+    const { plans: digitaloceanPlans } = usePlans('digitalocean')
     const plans = [...(hetznerPlans || []), ...(digitaloceanPlans || [])]
     const { data: sshKeys } = useSSHKeys()
 

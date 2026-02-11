@@ -8,6 +8,13 @@ import type {
     ViewMode
 } from '@/ts/Types'
 
+export interface ApiResponse<T = null> {
+    success: boolean
+    data: T
+    message: string
+    code: number
+}
+
 export interface MagicLinkEmailProps {
     magicLink: string
 }
@@ -57,6 +64,11 @@ export interface Plan {
     priceMonthly: number
     architecture: string
     disabled?: boolean
+}
+
+export interface PlansResponse {
+    plans: Plan[]
+    atCapacity: boolean
 }
 
 export interface Location {
@@ -416,7 +428,6 @@ export interface PurchaseClawData {
 }
 
 export interface DeleteClawResponse {
-    success: boolean
     scheduled: boolean
     deletionScheduledAt?: string
     claw?: Claw
@@ -436,10 +447,6 @@ export interface CreateSSHKeyData {
 
 export interface UpdateProfileData {
     name?: string
-}
-
-export interface MagicLinkResponse {
-    success: boolean
 }
 
 export interface CustomerPortalResponse {
@@ -506,11 +513,6 @@ export interface DiagnosticsLogsResponse {
     logs: string
 }
 
-export interface DiagnosticsRepairResponse {
-    success: boolean
-    message: string
-}
-
 export interface ClawFileEntry {
     path: string
     name: string
@@ -529,11 +531,6 @@ export interface ReadClawFileResponse {
 export interface UpdateClawFileData {
     path: string
     content: string
-}
-
-export interface UpdateClawFileResponse {
-    success: boolean
-    message: string
 }
 
 export interface UpdateClawFileParams {
@@ -557,4 +554,25 @@ export interface ClawFileExplorerDialogProps {
     clawId: string
     open: boolean
     onOpenChange: (open: boolean) => void
+}
+
+export interface UseProfileOptions {
+    enabled?: boolean
+    staleTime?: number
+}
+
+export interface UseClawOptions {
+    sync?: boolean
+}
+
+export interface Testimonial {
+    quote: string
+    author: string
+    role: string
+    avatar: string
+}
+
+export interface Faq {
+    question: string
+    answer: string
 }

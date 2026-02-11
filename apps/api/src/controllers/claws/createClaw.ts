@@ -13,6 +13,7 @@ import {
     generateToken,
     DOMAIN
 } from '@/controllers/claws/helpers'
+import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
 const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
@@ -31,7 +32,7 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
         } = await c.req.json<CreateClawBody>()
 
         if (!name || !planId || !location) {
-            return c.json({ error: t('api.missingRequiredFields') }, 400)
+            return fail(c, t('api.missingRequiredFields'), 400)
         }
 
         const MAX_CLAWS_PER_ACCOUNT = 50
@@ -41,22 +42,30 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             .where(eq(claws.userId, userId))
 
         if (clawCount >= MAX_CLAWS_PER_ACCOUNT) {
-            return c.json(
-                {
-                    error: t('api.clawLimitReached')
-                },
-                400
-            )
+            return fail(c, t('api.clawLimitReached'), 400)
         }
 
         if (
             volumeSize !== undefined &&
             (volumeSize < 10 || volumeSize > 10240)
         ) {
-            return c.json({ error: t('api.volumeSizeInvalid') }, 400)
+            return fail(c, t('api.volumeSizeInvalid'), 400)
         }
 
         const provider = getProvider(providerName || 'hetzner')
+
+        const MIN_MEMORY_GB = 4
+        const serverTypes = await provider.getServerTypes()
+        const selectedPlan = serverTypes.find((st) => st.name === planId)
+
+        if (!selectedPlan) {
+            return fail(c, t('api.invalidPlan'), 400)
+        }
+
+        if (selectedPlan.memory < MIN_MEMORY_GB) {
+            return fail(c, t('api.planBelowMinimumMemory'), 400)
+        }
+
         const id = crypto.randomUUID()
         const subdomain = generateSlug(id)
         const finalPassword = password || generatePassword()
@@ -159,7 +168,7 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             }
         }
 
-        return c.json({
+        return ok(c, {
             id,
             name,
             provider: providerName || 'hetzner',
@@ -173,18 +182,10 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             rootPassword: finalPassword,
             gatewayToken,
             volume: createdVolume
-        })
+        }, t('api.clawCreated'))
     } catch (err) {
         console.error('Create claw error:', err)
-        return c.json(
-            {
-                error:
-                    err instanceof Error
-                        ? err.message
-                        : t('api.failedToCreateClaw')
-            },
-            500
-        )
+        return fail(c, err instanceof Error ? err.message : t('api.failedToCreateClaw'), 500)
     }
 }
 

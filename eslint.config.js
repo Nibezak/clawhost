@@ -14,6 +14,9 @@ export default tseslint.config(
             '**/.turbo/**',
             '**/drizzle/**',
             '**/.next/**',
+            '**/android/**',
+            '**/ios/**',
+            '**/.expo/**',
             '**/next-env.d.ts',
             '**/*.config.js',
             '**/*.config.cjs'
@@ -64,6 +67,15 @@ export default tseslint.config(
                 'warn',
                 { allowConstantExport: true }
             ]
+        }
+    },
+    {
+        files: ['apps/mobile/**/*.{ts,tsx}'],
+        plugins: {
+            'react-hooks': reactHooks
+        },
+        rules: {
+            ...reactHooks.configs.recommended.rules
         }
     },
     {

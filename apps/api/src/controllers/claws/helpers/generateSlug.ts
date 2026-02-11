@@ -1,6 +1,5 @@
-// Generate a readable slug from claw ID (deterministic, 7 chars)
 export function generateSlug(id: string): string {
-    const chars = 'abcdefghjkmnpqrstuvwxyz23456789' // Removed confusing chars: i, l, o, 0, 1
+    const chars = 'abcdefghjkmnpqrstuvwxyz23456789'
     let hash = 0
     for (let i = 0; i < id.length; i++) {
         hash = (hash << 5) - hash + id.charCodeAt(i)
