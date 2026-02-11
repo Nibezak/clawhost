@@ -2,6 +2,7 @@ import type { Context } from 'hono'
 import type { ProviderType } from '@/ts/Types'
 
 import { getProvider } from '@/services/provider'
+import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
 const getLocations = async (c: Context) => {
@@ -10,10 +11,10 @@ const getLocations = async (c: Context) => {
             'hetzner') as ProviderType
         const provider = getProvider(providerName)
         const locations = await provider.getLocations()
-        return c.json(locations)
+        return ok(c, locations, t('api.locationsFetched'))
     } catch (err) {
         console.error('Failed to fetch locations:', err)
-        return c.json({ error: t('api.failedToFetchLocations') }, 500)
+        return fail(c, t('api.failedToFetchLocations'), 500)
     }
 }
 

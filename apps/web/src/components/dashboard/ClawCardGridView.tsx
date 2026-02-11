@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react'
-import type { ClawCardGridViewProps } from '@/ts/Interfaces'
+import type { ClawCardGridViewProps, Volume } from '@/ts/Interfaces'
 
 import { t } from '@openclaw/i18n'
 import { Button } from '@/components/ui/button'
@@ -29,7 +29,8 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
     copied,
     passwordCopied,
     hasActionItems,
-    isScheduledForDeletion
+    isScheduledForDeletion,
+    isAdmin
 }): ReactNode => {
     return (
         <Card>
@@ -58,7 +59,11 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
                                             </span>
                                         </TooltipTrigger>
                                         <TooltipContent>
-                                            <p>{t('dashboard.configuringTooltip')}</p>
+                                            <p>
+                                                {t(
+                                                    'dashboard.configuringTooltip'
+                                                )}
+                                            </p>
                                         </TooltipContent>
                                     </Tooltip>
                                 ) : (
@@ -70,48 +75,6 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
                                         />
                                         {status.label}
                                     </span>
-                                )}
-                                {isScheduledForDeletion && (
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <span className='inline-flex cursor-default items-center gap-1 rounded-full bg-white/5 px-2 py-0.5 text-xs font-medium text-gray-400'>
-                                                <ClockCountdown className='h-3 w-3' />
-                                                {t(
-                                                    'dashboard.scheduledDeletionShort',
-                                                    {
-                                                        date: new Date(
-                                                            claw.deletionScheduledAt!
-                                                        ).toLocaleDateString(
-                                                            'en-US',
-                                                            {
-                                                                month: 'short',
-                                                                day: 'numeric'
-                                                            }
-                                                        )
-                                                    }
-                                                )}
-                                            </span>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>
-                                                {t(
-                                                    'dashboard.deletionTooltip',
-                                                    {
-                                                        date: new Date(
-                                                            claw.deletionScheduledAt!
-                                                        ).toLocaleDateString(
-                                                            'en-US',
-                                                            {
-                                                                year: 'numeric',
-                                                                month: 'short',
-                                                                day: 'numeric'
-                                                            }
-                                                        )
-                                                    }
-                                                )}
-                                            </p>
-                                        </TooltipContent>
-                                    </Tooltip>
                                 )}
                             </div>
                             {claw.status !== 'configuring' && (
@@ -136,12 +99,20 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
                         passwordCopied={passwordCopied}
                         hasActionItems={hasActionItems}
                         isScheduledForDeletion={isScheduledForDeletion}
+                        isAdmin={isAdmin}
                         compact
                     />
                 </div>
 
                 <div className='border-border mt-4 border-t pt-4'>
                     <div className='grid grid-cols-2 gap-2'>
+                        {claw.ownerEmail && (
+                            <CopyableField
+                                label={t('dashboard.owner')}
+                                value={claw.ownerEmail}
+                            />
+                        )}
+
                         {claw.ip && (
                             <CopyableField
                                 label={t('dashboard.ipAddress')}
@@ -151,8 +122,19 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
 
                         <CopyableField
                             label={t('dashboard.provider')}
-                            value={claw.provider === 'hetzner' ? t('createClaw.providerHetzner') : t('createClaw.providerDigitalOcean')}
-                            icon={<ProviderIcon provider={claw.provider} className='h-3.5 w-3.5 shrink-0' />}
+                            value={
+                                claw.provider === 'hetzner'
+                                    ? t('createClaw.providerHetzner')
+                                    : claw.provider === 'vultr'
+                                      ? t('createClaw.providerVultr')
+                                      : t('createClaw.providerDigitalOcean')
+                            }
+                            icon={
+                                <ProviderIcon
+                                    provider={claw.provider}
+                                    className='h-3.5 w-3.5 shrink-0'
+                                />
+                            }
                         />
 
                         <CopyableField
@@ -206,28 +188,43 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
                         {claw.model && (
                             <CopyableField
                                 label={t('dashboard.aiModel')}
-                                value={aiModels.find((m) => m.id === claw.model)?.name || claw.model}
+                                value={
+                                    aiModels.find((m) => m.id === claw.model)
+                                        ?.name || claw.model
+                                }
                             />
                         )}
 
                         {claw.currentPeriodStart && (
                             <CopyableField
                                 label={t('dashboard.lastBilling')}
-                                value={new Date(claw.currentPeriodStart).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                                value={new Date(
+                                    claw.currentPeriodStart
+                                ).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric'
+                                })}
                             />
                         )}
 
                         {claw.currentPeriodEnd && (
                             <CopyableField
                                 label={t('dashboard.nextBilling')}
-                                value={new Date(claw.currentPeriodEnd).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                                value={new Date(
+                                    claw.currentPeriodEnd
+                                ).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric'
+                                })}
                             />
                         )}
 
                         {claw.volumes && claw.volumes.length > 0 && (
                             <CopyableField
                                 label={t('dashboard.storage')}
-                                value={`${claw.volumes.reduce((sum: number, v: { size: number }) => sum + v.size, 0)} GB`}
+                                value={`${claw.volumes.reduce((sum: number, v: Volume) => sum + v.size, 0)} GB`}
                             />
                         )}
 

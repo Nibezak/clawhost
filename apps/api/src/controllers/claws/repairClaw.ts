@@ -1,28 +1,35 @@
 import type { Context } from 'hono'
 
-import { eq, and } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import executeSSH from '@/services/ssh'
+import { isAdmin } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
+import { ok, fail } from '@/lib/response'
 
 const repairClaw = async (c: Context<{ Variables: { userId: string } }>) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')
+        const admin = await isAdmin(userId)
+
+        if (!admin) {
+            return fail(c, t('api.adminAccessDenied'), 403)
+        }
 
         const claw = await db
             .select()
             .from(claws)
-            .where(and(eq(claws.id, id), eq(claws.userId, userId)))
+            .where(eq(claws.id, id))
             .limit(1)
 
         if (!claw[0]) {
-            return c.json({ error: t('api.clawNotFound') }, 404)
+            return fail(c, t('api.clawNotFound'), 404)
         }
 
         if (!claw[0].ip || !claw[0].rootPassword) {
-            return c.json({ error: t('api.failedToRepairClaw') }, 400)
+            return fail(c, t('api.failedToRepairClaw'), 400)
         }
 
         const repairCommands = [
@@ -54,21 +61,18 @@ const repairClaw = async (c: Context<{ Variables: { userId: string } }>) => {
                 .where(eq(claws.id, id))
         }
 
-        return c.json({
-            success,
-            message: success
-                ? t('api.repairSuccess')
-                : t('api.repairGatewayNotResponding')
-        })
+        if (success) {
+            return ok(c, null, t('api.repairSuccess'))
+        }
+
+        return fail(c, t('api.repairGatewayNotResponding'), 500)
     } catch (err) {
         console.error('Repair claw error:', err)
-        return c.json(
-            {
-                error:
-                    err instanceof Error
-                        ? err.message
-                        : t('api.failedToRepairClaw')
-            },
+        return fail(
+            c,
+            err instanceof Error
+                ? err.message
+                : t('api.failedToRepairClaw'),
             500
         )
     }

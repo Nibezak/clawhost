@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { users } from '@/db/schema'
 import { getPolarClient } from '@/lib/polar'
+import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
 const getCustomerPortal = async (
@@ -20,7 +21,7 @@ const getCustomerPortal = async (
 
         const polarCustomerId = user[0]?.polarCustomerId
         if (!polarCustomerId) {
-            return c.json({ error: t('api.noBillingAccount') }, 404)
+            return fail(c, t('api.noBillingAccount'), 404)
         }
 
         const clientUrl = process.env.CLIENT
@@ -33,10 +34,10 @@ const getCustomerPortal = async (
             returnUrl
         })
 
-        return c.json({ url: session.customerPortalUrl })
+        return ok(c, { url: session.customerPortalUrl }, t('api.customerPortalFetched'))
     } catch (err) {
         console.error('Get customer portal error:', err)
-        return c.json({ error: t('api.failedToGetCustomerPortal') }, 500)
+        return fail(c, t('api.failedToGetCustomerPortal'), 500)
     }
 }
 

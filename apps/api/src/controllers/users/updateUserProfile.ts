@@ -4,6 +4,7 @@ import type { UpdateProfileBody } from '@/ts/Interfaces'
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { users } from '@/db/schema'
+import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
 const updateUserProfile = async (
@@ -14,7 +15,7 @@ const updateUserProfile = async (
         const { name } = await c.req.json<UpdateProfileBody>()
 
         if (name !== undefined && name.length > 100) {
-            return c.json({ error: t('api.nameTooLong') }, 400)
+            return fail(c, t('api.nameTooLong'), 400)
         }
 
         await db
@@ -34,16 +35,14 @@ const updateUserProfile = async (
             .where(eq(users.id, userId))
             .limit(1)
 
-        return c.json(updated[0])
+        return ok(c, updated[0], t('api.profileUpdated'))
     } catch (err) {
         console.error('Update user error:', err)
-        return c.json(
-            {
-                error:
-                    err instanceof Error
-                        ? err.message
-                        : t('api.failedToUpdateProfile')
-            },
+        return fail(
+            c,
+            err instanceof Error
+                ? err.message
+                : t('api.failedToUpdateProfile'),
             500
         )
     }

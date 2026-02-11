@@ -1,6 +1,6 @@
 import type { Context } from 'hono'
 import type { ProviderType } from '@/ts/Types'
-import type { ServerStatus } from '@/ts/Interfaces'
+import type { BillingPeriod, ServerStatus } from '@/ts/Interfaces'
 
 import { eq, desc } from 'drizzle-orm'
 import { db } from '@/db'
@@ -9,6 +9,8 @@ import { getProvider } from '@/services/provider'
 import { cloudflare } from '@/services/cloudflare'
 import { checkSubdomainReady } from '@/controllers/claws/helpers'
 import { subscriptions } from '@/lib/polar/subscriptions'
+import { ok } from '@/lib/response'
+import { t } from '@openclaw/i18n'
 
 const transitionCompletedBy: Record<string, string[]> = {
     stopping: ['off', 'stopped'],
@@ -59,13 +61,26 @@ const getClaws = async (c: Context<{ Variables: { userId: string } }>) => {
             if (!live) return claw
 
             if (claw.status === 'configuring') {
-                if (live.ip && claw.subdomain && (!claw.ip || claw.ip !== live.ip)) {
+                if (
+                    live.ip &&
+                    claw.subdomain &&
+                    (!claw.ip || claw.ip !== live.ip)
+                ) {
                     try {
-                        const existing = await cloudflare.findDNSRecord(claw.subdomain)
+                        const existing = await cloudflare.findDNSRecord(
+                            claw.subdomain
+                        )
                         if (existing && existing.ip !== live.ip) {
-                            await cloudflare.updateDNSRecord(existing.id, claw.subdomain, live.ip)
+                            await cloudflare.updateDNSRecord(
+                                existing.id,
+                                claw.subdomain,
+                                live.ip
+                            )
                         } else if (!existing) {
-                            await cloudflare.createDNSRecord(claw.subdomain, live.ip)
+                            await cloudflare.createDNSRecord(
+                                claw.subdomain,
+                                live.ip
+                            )
                         }
                     } catch {
                         console.error(`Failed to fix DNS for ${claw.subdomain}`)
@@ -102,7 +117,7 @@ const getClaws = async (c: Context<{ Variables: { userId: string } }>) => {
         .filter((c) => c.polarSubscriptionId)
         .map((c) => c.polarSubscriptionId!)
 
-    const subMap = new Map<string, { start?: string; end?: string }>()
+    const subMap = new Map<string, BillingPeriod>()
     await Promise.all(
         subIds.map(async (id) => {
             const sub = await subscriptions.get(id)
@@ -127,7 +142,7 @@ const getClaws = async (c: Context<{ Variables: { userId: string } }>) => {
         }
     })
 
-    return c.json(clawsWithVolumes)
+    return ok(c, clawsWithVolumes, t('api.clawsFetched'))
 }
 
 export default getClaws

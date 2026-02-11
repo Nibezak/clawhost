@@ -4,6 +4,7 @@ import { eq, count } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws, sshKeys, users } from '@/db/schema'
 import { orders } from '@/lib/polar'
+import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
 const getUserStats = async (c: Context<{ Variables: { userId: string } }>) => {
@@ -36,19 +37,17 @@ const getUserStats = async (c: Context<{ Variables: { userId: string } }>) => {
                     1
                 )
                 orderCount = result.totalCount
-            } catch {
-                // If Polar is unreachable, default to 0
-            }
+            } catch { /* empty */ }
         }
 
-        return c.json({
+        return ok(c, {
             clawCount: clawResult[0]?.count || 0,
             sshKeyCount: sshKeyResult[0]?.count || 0,
             orderCount
-        })
+        }, t('api.statsFetched'))
     } catch (err) {
         console.error('Get user stats error:', err)
-        return c.json({ error: t('api.failedToGetStats') }, 500)
+        return fail(c, t('api.failedToGetStats'), 500)
     }
 }
 

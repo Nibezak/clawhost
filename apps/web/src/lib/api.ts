@@ -8,18 +8,15 @@ import type {
     CustomerPortalResponse,
     DeleteClawResponse,
     DiagnosticsLogsResponse,
-    DiagnosticsRepairResponse,
     DiagnosticsStatusResponse,
     Location,
-    MagicLinkResponse,
-    Plan,
+    PlansResponse,
     PlanAvailability,
     PurchaseClawData,
     PurchaseClawResponse,
     ReadClawFileResponse,
     SSHKey,
     UpdateClawFileData,
-    UpdateClawFileResponse,
     UpdateProfileData,
     UserProfile,
     UserStats,
@@ -27,7 +24,8 @@ import type {
 } from '@/ts/Interfaces'
 
 import { RequestClient } from '@openclaw/shared'
-import { clearTokenCache, getCachedToken } from '@/lib/firebase'
+import { signOut } from 'firebase/auth'
+import { auth, clearTokenCache, getCachedToken } from '@/lib/firebase'
 
 const BASE_URL = import.meta.env.VITE_API_URL || '/api'
 
@@ -39,7 +37,10 @@ const client = new RequestClient({
     },
     onUnauthorized: async (): Promise<void> => {
         clearTokenCache()
-        await getCachedToken(true)
+        const token = await getCachedToken(true)
+        if (!token) {
+            await signOut(auth)
+        }
     }
 })
 
@@ -49,13 +50,15 @@ const publicClient = new RequestClient({
 
 export const api = {
     sendMagicLink: (email: string, redirectUrl: string) =>
-        publicClient.post<MagicLinkResponse>('/auth/send-magic-link', {
+        publicClient.post<void>('/auth/send-magic-link', {
             email,
             redirectUrl
         }),
 
     getPlans: (provider?: string) =>
-        client.get<Plan[]>(`/plans${provider ? `?provider=${provider}` : ''}`),
+        client.get<PlansResponse>(
+            `/plans${provider ? `?provider=${provider}` : ''}`
+        ),
     getLocations: (provider?: string) =>
         client.get<Location[]>(
             `/plans/locations${provider ? `?provider=${provider}` : ''}`
@@ -70,6 +73,7 @@ export const api = {
         ),
 
     getClaws: () => client.get<Claw[]>('/claws'),
+    getAdminClaws: () => client.get<Claw[]>('/claws/admin'),
     getClaw: (id: string, sync?: boolean) =>
         client.get<Claw>(`/claws/${id}${sync ? '?sync=true' : ''}`),
     syncClaw: (id: string) => client.post<Claw>(`/claws/${id}/sync`),
@@ -92,15 +96,14 @@ export const api = {
     getClawLogs: (id: string) =>
         client.post<DiagnosticsLogsResponse>(`/claws/${id}/diagnostics/logs`),
     repairClaw: (id: string) =>
-        client.post<DiagnosticsRepairResponse>(
-            `/claws/${id}/diagnostics/repair`
-        ),
+        client.post<void>(`/claws/${id}/diagnostics/repair`),
+    reinstallClaw: (id: string) => client.post<void>(`/claws/${id}/reinstall`),
     listClawFiles: (id: string) =>
         client.post<ClawFilesResponse>(`/claws/${id}/files`),
     readClawFile: (id: string, path: string) =>
         client.post<ReadClawFileResponse>(`/claws/${id}/files/read`, { path }),
     updateClawFile: (id: string, data: UpdateClawFileData) =>
-        client.put<UpdateClawFileResponse>(`/claws/${id}/files`, data),
+        client.put<void>(`/claws/${id}/files`, data),
 
     getSSHKeys: () => client.get<SSHKey[]>('/ssh-keys'),
     createSSHKey: (data: CreateSSHKeyData) =>

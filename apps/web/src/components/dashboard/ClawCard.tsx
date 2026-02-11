@@ -11,7 +11,9 @@ import {
     useDeleteClaw,
     useCancelDeletion,
     useHardDeleteClaw,
-    useRepairClaw
+    useRepairClaw,
+    useReinstallClaw,
+    useProfile
 } from '@/hooks'
 import { getStatusConfig, locationFlags, locationNames } from '@/lib/claw-utils'
 import { ClawCardGridView } from '@/components/dashboard/ClawCardGridView'
@@ -37,6 +39,7 @@ const ClawCard: FC<ClawCardProps> = ({
     const [showDiagnostics, setShowDiagnostics] = useState(false)
     const [showLogs, setShowLogs] = useState(false)
     const [showConfig, setShowConfig] = useState(false)
+    const [showReinstallModal, setShowReinstallModal] = useState(false)
     const [isExpanded, setIsExpanded] = useState(false)
 
     const startMutation = useStartClaw()
@@ -46,6 +49,9 @@ const ClawCard: FC<ClawCardProps> = ({
     const cancelDeletionMutation = useCancelDeletion()
     const hardDeleteMutation = useHardDeleteClaw()
     const repairMutation = useRepairClaw()
+    const reinstallMutation = useReinstallClaw()
+
+    const { data: profile } = useProfile({ enabled: true })
 
     const isLoading =
         startMutation.isPending ||
@@ -54,7 +60,8 @@ const ClawCard: FC<ClawCardProps> = ({
         deleteMutation.isPending ||
         cancelDeletionMutation.isPending ||
         hardDeleteMutation.isPending ||
-        repairMutation.isPending
+        repairMutation.isPending ||
+        reinstallMutation.isPending
 
     const attachedSshKey = claw.sshKeyId
         ? sshKeys.find((k) => k.id === claw.sshKeyId)
@@ -105,16 +112,22 @@ const ClawCard: FC<ClawCardProps> = ({
 
     const handleUpdateInstance = () => {
         repairMutation.mutate(claw.id, {
-            onSuccess: (data) => {
-                showToast(
-                    data.success
-                        ? t('dashboard.updateInstanceSuccess')
-                        : t('dashboard.updateInstanceFailed'),
-                    data.success ? 'success' : 'error'
-                )
+            onSuccess: () => {
+                showToast(t('dashboard.updateInstanceSuccess'), 'success')
             },
             onError: () => {
                 showToast(t('dashboard.updateInstanceFailed'), 'error')
+            }
+        })
+    }
+
+    const handleReinstall = () => {
+        reinstallMutation.mutate(claw.id, {
+            onSuccess: () => {
+                showToast(t('dashboard.reinstallInstanceSuccess'), 'success')
+            },
+            onError: () => {
+                showToast(t('dashboard.reinstallInstanceFailed'), 'error')
             }
         })
     }
@@ -130,6 +143,7 @@ const ClawCard: FC<ClawCardProps> = ({
         onShowLogs: () => setShowLogs(true),
         onShowConfig: () => setShowConfig(true),
         onUpdateInstance: handleUpdateInstance,
+        onShowReinstallModal: () => setShowReinstallModal(true),
         onCopySSH: claw.rootPassword ? copySSHWithPassword : copySSHWithKey,
         onCopySSHWithKey: copySSHWithKey,
         onCopySSHWithPassword: copySSHWithPassword,
@@ -154,6 +168,7 @@ const ClawCard: FC<ClawCardProps> = ({
                     hasActionItems={hasActionItems}
                     hasBothOptions={hasBothOptions}
                     isScheduledForDeletion={isScheduledForDeletion}
+                    isAdmin={profile?.role === 'admin'}
                 />
             ) : (
                 <ClawCardListView
@@ -170,6 +185,7 @@ const ClawCard: FC<ClawCardProps> = ({
                     passwordCopied={passwordCopied}
                     hasActionItems={hasActionItems}
                     isScheduledForDeletion={isScheduledForDeletion}
+                    isAdmin={profile?.role === 'admin'}
                     isExpanded={isExpanded}
                     onToggleExpand={() => setIsExpanded(!isExpanded)}
                 />
@@ -192,6 +208,10 @@ const ClawCard: FC<ClawCardProps> = ({
                 isStopPending={stopMutation.isPending}
                 isRestartPending={restartMutation.isPending}
                 isHardDeletePending={hardDeleteMutation.isPending}
+                showReinstallModal={showReinstallModal}
+                setShowReinstallModal={setShowReinstallModal}
+                onReinstall={handleReinstall}
+                isReinstallPending={reinstallMutation.isPending}
             />
             <ClawDiagnosticsDialog
                 clawId={claw.id}

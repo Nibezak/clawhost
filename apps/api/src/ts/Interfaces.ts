@@ -4,6 +4,13 @@ import type {
     WebhookEventType
 } from '@/ts/Types'
 
+export interface ApiResponse<T = null> {
+    success: boolean
+    data: T
+    message: string
+    code: number
+}
+
 export interface MagicLinkEmailProps {
     magicLink: string
 }
@@ -237,6 +244,84 @@ export interface DigitalOceanSSHKeysResponse {
 
 export interface DigitalOceanVolumeResponse {
     volume: DigitalOceanVolume
+}
+
+export interface VultrInstance {
+    id: string
+    label: string
+    main_ip: string
+    status: string
+    plan: string
+    region: string
+    os: string
+    ram: number
+    disk: number
+    vcpu_count: number
+}
+
+export interface VultrInstanceResponse {
+    instance: VultrInstance
+}
+
+export interface VultrInstancesResponse {
+    instances: VultrInstance[]
+    meta: {
+        total: number
+        links: {
+            next: string
+            prev: string
+        }
+    }
+}
+
+export interface VultrPlan {
+    id: string
+    vcpu_count: number
+    ram: number
+    disk: number
+    bandwidth: number
+    monthly_cost: number
+    locations: string[]
+    type: string
+}
+
+export interface VultrPlansResponse {
+    plans: VultrPlan[]
+}
+
+export interface VultrRegion {
+    id: string
+    city: string
+    country: string
+    continent: string
+    options: string[]
+}
+
+export interface VultrRegionsResponse {
+    regions: VultrRegion[]
+}
+
+export interface VultrSSHKey {
+    id: string
+    name: string
+    ssh_key: string
+}
+
+export interface VultrSSHKeyResponse {
+    ssh_key: VultrSSHKey
+}
+
+export interface VultrVolume {
+    id: string
+    label: string
+    size_gb: number
+    region: string
+    status: string
+    attached_to_instance: string
+}
+
+export interface VultrVolumeResponse {
+    block: VultrVolume
 }
 
 export interface ServerStatus {
@@ -494,6 +579,19 @@ export interface SendMagicLinkBody {
     redirectUrl: string
 }
 
+export interface SendOtpBody {
+    email: string
+}
+
+export interface VerifyOtpBody {
+    email: string
+    code: string
+}
+
+export interface OtpCodeEmailProps {
+    code: string
+}
+
 export interface CreateSSHKeyBody {
     name: string
     publicKey: string
@@ -597,4 +695,22 @@ export interface UpdateClawFileBody {
 export interface UpdateClawFileResponse {
     success: boolean
     message: string
+}
+
+export interface BillingPeriod {
+    start?: string
+    end?: string
+}
+
+export interface DeleteClawResponse {
+    scheduled: boolean
+    deletionScheduledAt?: string
+    claw?: Record<string, unknown>
+}
+
+export interface InitiateClawPurchaseResponse {
+    checkoutUrl: string
+    checkoutId: string
+    pendingClawId: string
+    expiresAt: string
 }

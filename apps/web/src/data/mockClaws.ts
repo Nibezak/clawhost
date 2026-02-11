@@ -64,5 +64,21 @@ export const initialMockClaws: MockClawData[] = [
         serverId: '#48291302',
         createdAt: 'Feb 1, 2026',
         sshKey: 'Deploy Key'
+    },
+    {
+        id: '5',
+        name: 'staging-api',
+        status: 'running',
+        subdomain: 'staging-api',
+        ip: '149.28.76.201',
+        provider: 'vultr',
+        location: 'Amsterdam, NL',
+        locationFlag: '\u{1F1F3}\u{1F1F1}',
+        plan: 'vhp-4c-8gb-amd',
+        planDetails: '4 vCPU, 8GB RAM, 180GB NVMe',
+        monthlyCost: '$120/mo',
+        serverId: '#48291450',
+        createdAt: 'Feb 8, 2026',
+        sshKey: 'My MacBook'
     }
 ]

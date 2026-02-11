@@ -20,7 +20,6 @@ function getZoneId() {
 }
 
 export const cloudflare = {
-    // Create DNS A record for subdomain
     async createDNSRecord(
         subdomain: string,
         ip: string
@@ -43,7 +42,6 @@ export const cloudflare = {
         }
     },
 
-    // Update DNS record IP address
     async updateDNSRecord(
         recordId: string,
         subdomain: string,
@@ -61,7 +59,6 @@ export const cloudflare = {
         })
     },
 
-    // Delete DNS record
     async deleteDNSRecord(recordId: string): Promise<void> {
         const client = getClient()
         const zoneId = getZoneId()
@@ -71,7 +68,6 @@ export const cloudflare = {
         })
     },
 
-    // Find DNS record by subdomain
     async findDNSRecord(
         subdomain: string
     ): Promise<CloudflareDNSLookup | null> {

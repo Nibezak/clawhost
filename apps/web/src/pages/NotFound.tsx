@@ -25,7 +25,7 @@ const NotFound: FC = (): ReactNode => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className='relative flex flex-1 items-center justify-center px-6 py-8'
+                className='relative flex flex-1 items-center justify-center px-6 py-32 pb-48'
             >
                 <div className='max-w-md text-center'>
                     <div className='from-primary/20 to-primary/5 mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br'>

@@ -86,9 +86,10 @@ export const digitalocean: CloudProvider = {
             for (let i = 0; i < 30; i++) {
                 await new Promise((r) => setTimeout(r, 5000))
                 try {
-                    const poll = await getClient().get<DigitalOceanDropletResponse>(
-                        `/droplets/${data.droplet.id}`
-                    )
+                    const poll =
+                        await getClient().get<DigitalOceanDropletResponse>(
+                            `/droplets/${data.droplet.id}`
+                        )
                     ip = getPublicIp(poll.droplet)
                     if (ip) break
                 } catch {
@@ -157,7 +158,9 @@ export const digitalocean: CloudProvider = {
     },
 
     async getServerTypes(): Promise<ServerTypeInfo[]> {
-        const data = await getClient().get<DigitalOceanSizesResponse>('/sizes?per_page=200')
+        const data = await getClient().get<DigitalOceanSizesResponse>(
+            '/sizes?per_page=200'
+        )
 
         const planNames: Record<string, string> = {
             's-1vcpu-512mb-10gb': 'DC11',
@@ -221,7 +224,9 @@ export const digitalocean: CloudProvider = {
     },
 
     async getRawServerTypes(): Promise<RawServerType[]> {
-        const data = await getClient().get<DigitalOceanSizesResponse>('/sizes?per_page=200')
+        const data = await getClient().get<DigitalOceanSizesResponse>(
+            '/sizes?per_page=200'
+        )
         return data.sizes.map((s, i) => ({
             id: i + 1,
             name: s.slug

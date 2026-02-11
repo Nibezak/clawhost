@@ -1,5 +1,5 @@
 import RequestClient from './RequestClient'
 
-export type { RequestOptions, RequestConfig } from './types'
+export type { ApiEnvelope, RequestOptions, RequestConfig } from './types'
 
 export { RequestClient }

@@ -5,22 +5,28 @@ import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { subscriptions } from '@/lib/polar'
-import { cleanupClaw } from '@/controllers/claws/helpers'
+import { cleanupClaw, isAdmin } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
+import { ok, fail } from '@/lib/response'
 
 const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')
+        const admin = await isAdmin(userId)
 
         const claw = await db
             .select()
             .from(claws)
-            .where(and(eq(claws.id, id), eq(claws.userId, userId)))
+            .where(
+                admin
+                    ? eq(claws.id, id)
+                    : and(eq(claws.id, id), eq(claws.userId, userId))
+            )
             .limit(1)
 
         if (!claw[0]) {
-            return c.json({ error: t('api.clawNotFound') }, 404)
+            return fail(c, t('api.clawNotFound'), 404)
         }
 
         if (claw[0].polarSubscriptionId) {
@@ -44,12 +50,7 @@ const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {
                         .where(eq(claws.id, id))
                         .limit(1)
 
-                    return c.json({
-                        success: true,
-                        scheduled: true,
-                        deletionScheduledAt: sub.currentPeriodEnd.toISOString(),
-                        claw: updated[0]
-                    })
+                    return ok(c, { scheduled: true, deletionScheduledAt: sub.currentPeriodEnd.toISOString(), claw: updated[0] }, t('api.clawDeletionScheduled'))
                 }
             } catch (subErr) {
                 console.error(
@@ -73,16 +74,14 @@ const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             subdomain: claw[0].subdomain
         })
 
-        return c.json({ success: true, scheduled: false })
+        return ok(c, { scheduled: false }, t('api.clawDeleted'))
     } catch (err) {
         console.error('Delete claw error:', err)
-        return c.json(
-            {
-                error:
-                    err instanceof Error
-                        ? err.message
-                        : t('api.failedToDeleteClaw')
-            },
+        return fail(
+            c,
+            err instanceof Error
+                ? err.message
+                : t('api.failedToDeleteClaw'),
             500
         )
     }

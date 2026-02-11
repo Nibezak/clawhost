@@ -5,21 +5,28 @@ import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { getProvider } from '@/services/provider'
+import { isAdmin } from '@/controllers/claws/helpers'
+import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
 const restartClaw = async (c: Context<{ Variables: { userId: string } }>) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')
+        const admin = await isAdmin(userId)
 
         const claw = await db
             .select()
             .from(claws)
-            .where(and(eq(claws.id, id), eq(claws.userId, userId)))
+            .where(
+                admin
+                    ? eq(claws.id, id)
+                    : and(eq(claws.id, id), eq(claws.userId, userId))
+            )
             .limit(1)
 
         if (!claw[0] || !claw[0].providerServerId) {
-            return c.json({ error: t('api.clawNotFound') }, 404)
+            return fail(c, t('api.clawNotFound'), 404)
         }
 
         await db
@@ -36,18 +43,10 @@ const restartClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             .where(eq(claws.id, id))
             .limit(1)
 
-        return c.json(updated[0])
+        return ok(c, updated[0], t('api.clawRestarted'))
     } catch (err) {
         console.error('Restart claw error:', err)
-        return c.json(
-            {
-                error:
-                    err instanceof Error
-                        ? err.message
-                        : t('api.failedToRestartClaw')
-            },
-            500
-        )
+        return fail(c, err instanceof Error ? err.message : t('api.failedToRestartClaw'), 500)
     }
 }
 

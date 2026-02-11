@@ -1,4 +1,3 @@
-// Generate a secure random token (64 hex chars = 32 bytes)
 export function generateToken(): string {
     const array = new Uint8Array(32)
     crypto.getRandomValues(array)

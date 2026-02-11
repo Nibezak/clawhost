@@ -7,7 +7,6 @@ import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persist
 import App from '@/App'
 import '@/index.css'
 
-// Query keys that are safe to persist (stable data that rarely changes)
 const PERSISTABLE_QUERIES = new Set(['profile', 'userStats'])
 
 const queryClient = new QueryClient({

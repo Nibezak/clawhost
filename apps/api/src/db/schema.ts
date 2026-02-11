@@ -64,12 +64,22 @@ export const sshKeys = pgTable('ssh_keys', {
     fingerprint: text('fingerprint').notNull(),
     providerKeyId: integer('provider_key_id'),
     digitaloceanKeyId: integer('digitalocean_key_id'),
+    vultrKeyId: integer('vultr_key_id'),
     createdAt: timestamp('created_at').defaultNow().notNull()
 })
 
 export const rateLimits = pgTable('rate_limits', {
     key: text('key').primaryKey(),
     lastSentAt: timestamp('last_sent_at').notNull()
+})
+
+export const otpCodes = pgTable('otp_codes', {
+    id: text('id').primaryKey(),
+    email: text('email').notNull(),
+    codeHash: text('code_hash').notNull(),
+    attempts: integer('attempts').notNull().default(0),
+    expiresAt: timestamp('expires_at').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull()
 })
 
 export const volumes = pgTable('volumes', {

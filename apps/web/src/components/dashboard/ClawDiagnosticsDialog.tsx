@@ -38,15 +38,8 @@ const ClawDiagnosticsDialog: FC<ClawDiagnosticsDialogProps> = ({
 
     const handleRepair = () => {
         repair.mutate(clawId, {
-            onSuccess: (data) => {
-                if (data.success) {
-                    showToast(
-                        t('dashboard.diagnosticsRepairSuccess'),
-                        'success'
-                    )
-                } else {
-                    showToast(t('dashboard.diagnosticsRepairFailed'), 'error')
-                }
+            onSuccess: () => {
+                showToast(t('dashboard.diagnosticsRepairSuccess'), 'success')
             },
             onError: (err) => {
                 showToast(err.message || t('api.failedToRepairClaw'), 'error')

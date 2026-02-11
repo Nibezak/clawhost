@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { users } from '@/db/schema'
 import { orders } from '@/lib/polar'
+import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
 const getOrderInvoice = async (
@@ -14,7 +15,7 @@ const getOrderInvoice = async (
         const orderId = c.req.param('orderId')
 
         if (!orderId) {
-            return c.json({ error: t('api.orderIdRequired') }, 400)
+            return fail(c, t('api.orderIdRequired'), 400)
         }
 
         const user = await db
@@ -25,15 +26,15 @@ const getOrderInvoice = async (
 
         const polarCustomerId = user[0]?.polarCustomerId
         if (!polarCustomerId) {
-            return c.json({ error: t('api.noBillingAccount') }, 404)
+            return fail(c, t('api.noBillingAccount'), 404)
         }
 
         const invoiceUrl = await orders.getInvoiceUrl(orderId)
 
-        return c.json({ url: invoiceUrl })
+        return ok(c, { url: invoiceUrl }, t('api.invoiceFetched'))
     } catch (err) {
         console.error('Get order invoice error:', err)
-        return c.json({ error: t('api.failedToGetInvoice') }, 500)
+        return fail(c, t('api.failedToGetInvoice'), 500)
     }
 }
 

@@ -5,21 +5,28 @@ import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { getProvider } from '@/services/provider'
+import { isAdmin } from '@/controllers/claws/helpers'
+import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
 const getClaw = async (c: Context<{ Variables: { userId: string } }>) => {
     const userId = c.get('userId')
     const id = c.req.param('id')
     const sync = c.req.query('sync') === 'true'
+    const admin = await isAdmin(userId)
 
     const claw = await db
         .select()
         .from(claws)
-        .where(and(eq(claws.id, id), eq(claws.userId, userId)))
+        .where(
+            admin
+                ? eq(claws.id, id)
+                : and(eq(claws.id, id), eq(claws.userId, userId))
+        )
         .limit(1)
 
     if (!claw[0]) {
-        return c.json({ error: t('api.clawNotFound') }, 404)
+        return fail(c, t('api.clawNotFound'), 404)
     }
 
     if (sync && claw[0].providerServerId) {
@@ -36,18 +43,18 @@ const getClaw = async (c: Context<{ Variables: { userId: string } }>) => {
                     .update(claws)
                     .set({ status: serverStatus.status, ip: serverStatus.ip })
                     .where(eq(claws.id, id))
-                return c.json({
+                return ok(c, {
                     ...claw[0],
                     status: serverStatus.status,
                     ip: serverStatus.ip
-                })
+                }, t('api.clawFetched'))
             }
         } catch (err) {
             console.error('Failed to sync server status:', err)
         }
     }
 
-    return c.json(claw[0])
+    return ok(c, claw[0], t('api.clawFetched'))
 }
 
 export default getClaw

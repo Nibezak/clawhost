@@ -8,6 +8,13 @@ import type {
     ViewMode
 } from '@/ts/Types'
 
+export interface ApiResponse<T = null> {
+    success: boolean
+    data: T
+    message: string
+    code: number
+}
+
 export interface MagicLinkEmailProps {
     magicLink: string
 }
@@ -37,6 +44,7 @@ export interface Claw {
     currentPeriodStart: string | null
     currentPeriodEnd: string | null
     volumes?: Volume[]
+    ownerEmail?: string | null
     deletionScheduledAt: string | null
     createdAt: string
 }
@@ -56,6 +64,11 @@ export interface Plan {
     priceMonthly: number
     architecture: string
     disabled?: boolean
+}
+
+export interface PlansResponse {
+    plans: Plan[]
+    atCapacity: boolean
 }
 
 export interface Location {
@@ -191,6 +204,7 @@ export interface PageTitleProps {
     image?: string
     url?: string
     type?: string
+    noIndex?: boolean
 }
 
 export interface PageHeaderProps {
@@ -277,6 +291,7 @@ export interface ClawCardActions {
     onShowLogs: () => void
     onShowConfig: () => void
     onUpdateInstance: () => void
+    onShowReinstallModal: () => void
     onCopySSH: () => void
     onCopySSHWithKey: () => void
     onCopySSHWithPassword: () => void
@@ -291,6 +306,7 @@ export interface ClawCardDropdownMenuProps {
     passwordCopied: boolean
     hasActionItems: boolean
     isScheduledForDeletion: boolean
+    isAdmin: boolean
     compact?: boolean
 }
 
@@ -312,6 +328,10 @@ export interface ClawCardDialogsProps {
     isStopPending: boolean
     isRestartPending: boolean
     isHardDeletePending: boolean
+    showReinstallModal: boolean
+    setShowReinstallModal: (open: boolean) => void
+    onReinstall: () => void
+    isReinstallPending: boolean
 }
 
 export interface ClawCardGridViewProps {
@@ -329,6 +349,7 @@ export interface ClawCardGridViewProps {
     hasActionItems: boolean
     hasBothOptions: boolean
     isScheduledForDeletion: boolean
+    isAdmin: boolean
 }
 
 export interface ClawCardListViewProps {
@@ -345,6 +366,7 @@ export interface ClawCardListViewProps {
     passwordCopied: boolean
     hasActionItems: boolean
     isScheduledForDeletion: boolean
+    isAdmin: boolean
     isExpanded: boolean
     onToggleExpand: () => void
 }
@@ -363,6 +385,10 @@ export interface GeneratedKeyPair {
 }
 
 export interface ProtectedRouteProps {
+    children: ReactNode
+}
+
+export interface AdminRouteProps {
     children: ReactNode
 }
 
@@ -402,7 +428,6 @@ export interface PurchaseClawData {
 }
 
 export interface DeleteClawResponse {
-    success: boolean
     scheduled: boolean
     deletionScheduledAt?: string
     claw?: Claw
@@ -422,10 +447,6 @@ export interface CreateSSHKeyData {
 
 export interface UpdateProfileData {
     name?: string
-}
-
-export interface MagicLinkResponse {
-    success: boolean
 }
 
 export interface CustomerPortalResponse {
@@ -492,11 +513,6 @@ export interface DiagnosticsLogsResponse {
     logs: string
 }
 
-export interface DiagnosticsRepairResponse {
-    success: boolean
-    message: string
-}
-
 export interface ClawFileEntry {
     path: string
     name: string
@@ -515,11 +531,6 @@ export interface ReadClawFileResponse {
 export interface UpdateClawFileData {
     path: string
     content: string
-}
-
-export interface UpdateClawFileResponse {
-    success: boolean
-    message: string
 }
 
 export interface UpdateClawFileParams {
@@ -543,4 +554,25 @@ export interface ClawFileExplorerDialogProps {
     clawId: string
     open: boolean
     onOpenChange: (open: boolean) => void
+}
+
+export interface UseProfileOptions {
+    enabled?: boolean
+    staleTime?: number
+}
+
+export interface UseClawOptions {
+    sync?: boolean
+}
+
+export interface Testimonial {
+    quote: string
+    author: string
+    role: string
+    avatar: string
+}
+
+export interface Faq {
+    question: string
+    answer: string
 }

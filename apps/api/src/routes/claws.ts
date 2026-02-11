@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import {
     getClaws,
+    getAdminClaws,
     getClaw,
     createClaw,
     initiateClawPurchase,
@@ -16,12 +17,14 @@ import {
     repairClaw,
     listClawFiles,
     readClawFile,
-    updateClawFile
+    updateClawFile,
+    reinstallClaw
 } from '@/controllers/claws'
 
 const app = new Hono<{ Variables: { userId: string } }>()
 
 app.get('/', getClaws)
+app.get('/admin', getAdminClaws)
 app.get('/:id', getClaw)
 app.post('/', createClaw) // Direct creation (for free tier or testing)
 app.post('/purchase', initiateClawPurchase) // Paid creation with Polar checkout
@@ -34,6 +37,7 @@ app.post('/:id/hard-delete', hardDeleteClaw)
 app.post('/:id/diagnostics/status', getClawDiagnostics)
 app.post('/:id/diagnostics/logs', getClawLogs)
 app.post('/:id/diagnostics/repair', repairClaw)
+app.post('/:id/reinstall', reinstallClaw)
 app.post('/:id/files', listClawFiles)
 app.post('/:id/files/read', readClawFile)
 app.put('/:id/files', updateClawFile)

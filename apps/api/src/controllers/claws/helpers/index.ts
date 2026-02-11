@@ -8,3 +8,4 @@ export { generateCloudInit }
 export { checkSubdomainReady }
 export { DOMAIN } from '@/controllers/claws/helpers/constants'
 export { cleanupClaw } from '@/controllers/claws/helpers/cleanupClaw'
+export { default as isAdmin } from '@/controllers/claws/helpers/isAdmin'

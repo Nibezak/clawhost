@@ -45,6 +45,16 @@ export async function provisionClaw(
         const providerName = (pending.provider || 'hetzner') as ProviderType
         const provider = getProvider(providerName)
 
+        const MIN_MEMORY_GB = 4
+        const serverTypes = await provider.getServerTypes()
+        const selectedPlan = serverTypes.find(
+            (st) => st.name === pending.planId
+        )
+
+        if (!selectedPlan || selectedPlan.memory < MIN_MEMORY_GB) {
+            return { success: false, error: t('api.planBelowMinimumMemory') }
+        }
+
         const id = crypto.randomUUID()
         const subdomain = generateSlug(id)
         const gatewayToken = generateToken()
@@ -61,7 +71,9 @@ export async function provisionClaw(
                 const keyId =
                     providerName === 'digitalocean'
                         ? sshKey[0].digitaloceanKeyId
-                        : sshKey[0].providerKeyId
+                        : providerName === 'vultr'
+                          ? sshKey[0].vultrKeyId
+                          : sshKey[0].providerKeyId
                 if (keyId) {
                     providerSshKeyIds = [keyId]
                 }
@@ -77,30 +89,12 @@ export async function provisionClaw(
             pending.apiToken || undefined
         )
 
-        const { serverId, ip } = await provider.createServer(
-            `${pending.name}-${id.slice(0, 8)}`,
-            pending.planId,
-            pending.location,
-            pending.rootPassword || undefined,
-            providerSshKeyIds,
-            '',
-            cloudInitScript
-        )
-
-        try {
-            await cloudflare.createDNSRecord(subdomain, ip)
-        } catch (dnsErr) {
-            console.error('Failed to create DNS record:', dnsErr)
-        }
-
         await db.insert(claws).values({
             id,
             userId: pending.userId,
             name: pending.name,
             provider: providerName,
-            providerServerId: serverId.toString(),
-            status: 'configuring',
-            ip,
+            status: 'creating',
             planId: pending.planId,
             location: pending.location,
             rootPassword: pending.rootPassword,
@@ -113,6 +107,41 @@ export async function provisionClaw(
             polarCustomerId: params.customerId,
             subscriptionStatus: 'active'
         })
+
+        let serverId: number
+        let ip: string
+
+        try {
+            const server = await provider.createServer(
+                `${pending.name}-${id.slice(0, 8)}`,
+                pending.planId,
+                pending.location,
+                pending.rootPassword || undefined,
+                providerSshKeyIds,
+                '',
+                cloudInitScript
+            )
+            serverId = server.serverId
+            ip = server.ip
+        } catch (providerErr) {
+            await db.delete(claws).where(eq(claws.id, id))
+            throw providerErr
+        }
+
+        try {
+            await cloudflare.createDNSRecord(subdomain, ip)
+        } catch (dnsErr) {
+            console.error('Failed to create DNS record:', dnsErr)
+        }
+
+        await db
+            .update(claws)
+            .set({
+                providerServerId: serverId.toString(),
+                status: 'configuring',
+                ip
+            })
+            .where(eq(claws.id, id))
 
         if (pending.volumeSize && pending.volumeSize >= 10) {
             try {

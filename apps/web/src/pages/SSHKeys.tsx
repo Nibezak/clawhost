@@ -9,7 +9,6 @@ import type { CopiedFieldType, SSHKeyModalMode } from '@/ts/Types'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { useAuth } from '@/lib/auth'
 import { useUIStore } from '@/lib/store'
 import {
     useSSHKeys,
@@ -286,7 +285,7 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                     <DialogDescription>
                         {t('sshKeys.addSshKeyModalDescription')}
                     </DialogDescription>
-                    <div className='bg-muted flex gap-2 rounded-lg p-1 !mt-3'>
+                    <div className='bg-muted !mt-3 flex gap-2 rounded-lg p-1'>
                         <button
                             type='button'
                             onClick={() => setMode('upload')}
@@ -585,7 +584,6 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
 }
 
 const SSHKeys: FC = (): ReactNode => {
-    const { loading: authLoading } = useAuth()
     const [showCreate, setShowCreate] = useState(false)
 
     const { data: sshKeys, isLoading, isError, refetch } = useSSHKeys()
@@ -610,13 +608,7 @@ const SSHKeys: FC = (): ReactNode => {
                 transition={{ duration: 0.4 }}
                 className='relative mx-auto w-full max-w-6xl flex-1 px-6 py-8'
             >
-                {authLoading || !sshKeys ? (
-                    <div className='flex min-h-[60vh] items-center justify-center'>
-                        <CircleNotch className='text-primary h-8 w-8 animate-spin' />
-                    </div>
-                ) : (
-                    <>
-                        <PageHeader
+                    <PageHeader
                             title={t('sshKeys.title')}
                             description={`${sshKeys?.length ?? 0} ${sshKeys?.length === 1 ? t('sshKeys.key') : t('sshKeys.keys')}`}
                             action={
@@ -749,8 +741,6 @@ const SSHKeys: FC = (): ReactNode => {
                                 onClose={() => setShowCreate(false)}
                             />
                         )}
-                    </>
-                )}
             </motion.main>
 
             <LandingFooter />

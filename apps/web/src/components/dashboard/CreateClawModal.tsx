@@ -13,6 +13,7 @@ import {
     usePlanAvailability
 } from '@/hooks'
 import { generatePassword, locationFlags, aiModels } from '@/lib/claw-utils'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Slider } from '@/components/ui/slider'
@@ -62,8 +63,10 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     const [name, setName] = useState('')
     const [provider, setProvider] = useState<ProviderType>('hetzner')
 
-    const { data: providerPlans, isLoading: isLoadingPlans } = usePlans(provider)
-    const { data: providerLocations, isLoading: isLoadingLocations } = useLocations(provider)
+    const { plans: providerPlans, isLoading: isLoadingPlans, atCapacity } =
+        usePlans(provider)
+    const { data: providerLocations, isLoading: isLoadingLocations } =
+        useLocations(provider)
     const { data: providerVolumePricing } = useVolumePricing(provider)
     const { data: providerPlanAvailability } = usePlanAvailability(provider)
 
@@ -73,10 +76,16 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     const volumePricing = providerVolumePricing || initialVolumePricing
     const planAvailability = providerPlanAvailability || initialPlanAvailability
 
+    const getFirstEnabledPlan = (planList: typeof plans): string => {
+        const enabled = planList.find((p) => !p.disabled)
+        return enabled?.id || ''
+    }
+
     const initialPlanId =
-        preselectedPlanId && plans.find((p) => p.id === preselectedPlanId)
+        preselectedPlanId &&
+        plans.find((p) => p.id === preselectedPlanId && !p.disabled)
             ? preselectedPlanId
-            : plans[0]?.id || ''
+            : getFirstEnabledPlan(plans)
     const [planId, setPlanId] = useState(initialPlanId)
 
     const isLocationAvailableForPlan = (
@@ -118,16 +127,23 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
 
     useEffect(() => {
         if (!planId && plans.length > 0) {
-            const firstPlan = plans[0].id
-            setPlanId(firstPlan)
-            setLocation(getFirstAvailableLocation(firstPlan))
+            const firstPlan = getFirstEnabledPlan(plans)
+            if (firstPlan) {
+                setPlanId(firstPlan)
+                setLocation(getFirstAvailableLocation(firstPlan))
+            }
         }
     }, [plans, locations])
 
     useEffect(() => {
         if (planId && planAvailability) {
-            const currentAvailable = isLocationAvailableForPlan(location, planId)
-            const currentDisabled = locations.find((l) => l.id === location)?.disabled
+            const currentAvailable = isLocationAvailableForPlan(
+                location,
+                planId
+            )
+            const currentDisabled = locations.find(
+                (l) => l.id === location
+            )?.disabled
             if (!currentAvailable || currentDisabled) {
                 setLocation(getFirstAvailableLocation(planId))
             }
@@ -187,7 +203,9 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
         )
     }
 
-    const selectedPlan = plans.find((p) => p.id === planId)
+    const selectedPlan = plans.find(
+        (p) => p.id === planId && !p.disabled
+    )
 
     return (
         <Dialog open onOpenChange={onClose}>
@@ -249,6 +267,9 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                     />
                                 </svg>
                                 {t('createClaw.providerHetzner')}
+                                <Badge className='border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-xs text-white'>
+                                    {t('landing.recommended')}
+                                </Badge>
                             </button>
                             <button
                                 type='button'
@@ -273,6 +294,33 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                 </svg>
                                 {t('createClaw.providerDigitalOcean')}
                             </button>
+                            <button
+                                type='button'
+                                onClick={() => handleProviderChange('vultr')}
+                                className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition ${
+                                    provider === 'vultr'
+                                        ? 'bg-background text-foreground shadow-sm'
+                                        : 'text-muted-foreground hover:text-foreground'
+                                }`}
+                            >
+                                <svg
+                                    className='h-4 w-4'
+                                    viewBox='0 0 1024 1024'
+                                    fill='none'
+                                >
+                                    <circle
+                                        cx='512'
+                                        cy='512'
+                                        r='512'
+                                        fill='#007BFC'
+                                    />
+                                    <path
+                                        d='M259.9 357.4c-2.5-3.9-3.9-8.6-3.9-13.6 0-14.1 11.5-25.6 25.6-25.6h131.1c9.1 0 17.1 4.8 21.7 12l181.9 288.5c2.5 4 3.9 8.6 3.9 13.6s-1.5 9.7-3.9 13.6l-65.6 104c-4.5 7.2-12.5 12-21.7 12-9.1 0-17.1-4.8-21.7-12L259.9 357.4zm395.3 158.1c4.5 7.2 12.5 11.9 21.7 11.9 9.1 0 17.1-4.8 21.7-11.9l22.6-35.8 43-68.2c2.5-3.9 3.9-8.6 3.9-13.7 0-5-1.5-9.7-3.9-13.7L730.1 330c-4.5-7.2-12.5-12-21.7-12H577.1c-14.1 0-25.6 11.5-25.6 25.6 0 5 1.4 9.7 3.9 13.6l99.8 158.3z'
+                                        fill='white'
+                                    />
+                                </svg>
+                                {t('createClaw.providerVultr')}
+                            </button>
                         </div>
                     </div>
 
@@ -284,83 +332,89 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                         {isProviderLoading ? (
                             <div className='grid grid-cols-2 gap-2'>
                                 {Array.from({ length: 6 }).map((_, i) => (
-                                    <Skeleton key={i} className='h-10 rounded-lg' />
+                                    <Skeleton
+                                        key={i}
+                                        className='h-10 rounded-lg'
+                                    />
                                 ))}
                             </div>
                         ) : (
-                        <TooltipProvider delayDuration={200}>
-                            <div className='grid grid-cols-2 gap-2'>
-                                {locations.map((loc) => {
-                                    const isSelected = location === loc.id
-                                    const locFlag = locationFlags[loc.id] || ''
-                                    const unavailableForPlan =
-                                        !isLocationAvailableForPlan(
-                                            loc.id,
-                                            planId
+                            <TooltipProvider delayDuration={200}>
+                                <div className='grid grid-cols-2 gap-2'>
+                                    {locations.map((loc) => {
+                                        const isSelected = location === loc.id
+                                        const locFlag =
+                                            locationFlags[loc.id] || ''
+                                        const unavailableForPlan =
+                                            !isLocationAvailableForPlan(
+                                                loc.id,
+                                                planId
+                                            )
+                                        const isDisabled =
+                                            loc.disabled || unavailableForPlan
+                                        const locationLabel = loc.country
+                                            ? `${loc.city}, ${loc.country}`
+                                            : loc.city
+
+                                        const tooltipText = loc.disabled
+                                            ? t(
+                                                  'createClaw.locationUnavailable'
+                                              )
+                                            : t(
+                                                  'createClaw.locationUnavailableForPlan'
+                                              )
+
+                                        const card = (
+                                            <label
+                                                className={`flex items-center gap-2 rounded-lg px-3 py-2 transition ${
+                                                    isDisabled
+                                                        ? 'bg-muted/50 cursor-not-allowed border border-transparent opacity-50'
+                                                        : isSelected
+                                                          ? 'cursor-pointer border border-[#ef5350]/50 bg-[#ef5350]/20'
+                                                          : 'bg-muted hover:bg-muted/80 cursor-pointer border border-transparent'
+                                                }`}
+                                            >
+                                                <input
+                                                    type='radio'
+                                                    name='location'
+                                                    value={loc.id}
+                                                    checked={isSelected}
+                                                    disabled={isDisabled}
+                                                    onChange={(e) =>
+                                                        setLocation(
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    className='sr-only'
+                                                />
+                                                {locFlag && (
+                                                    <span className='text-lg'>
+                                                        {locFlag}
+                                                    </span>
+                                                )}
+                                                <p className='text-sm font-medium'>
+                                                    {locationLabel}
+                                                </p>
+                                            </label>
                                         )
-                                    const isDisabled =
-                                        loc.disabled || unavailableForPlan
-                                    const locationLabel = loc.country
-                                        ? `${loc.city}, ${loc.country}`
-                                        : loc.city
 
-                                    const tooltipText = loc.disabled
-                                        ? t('createClaw.locationUnavailable')
-                                        : t(
-                                              'createClaw.locationUnavailableForPlan'
-                                          )
+                                        if (isDisabled) {
+                                            return (
+                                                <Tooltip key={loc.id}>
+                                                    <TooltipTrigger asChild>
+                                                        <div>{card}</div>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        {tooltipText}
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            )
+                                        }
 
-                                    const card = (
-                                        <label
-                                            className={`flex items-center gap-2 rounded-lg px-3 py-2 transition ${
-                                                isDisabled
-                                                    ? 'bg-muted/50 cursor-not-allowed border border-transparent opacity-50'
-                                                    : isSelected
-                                                      ? 'cursor-pointer border border-[#ef5350]/50 bg-[#ef5350]/20'
-                                                      : 'bg-muted hover:bg-muted/80 cursor-pointer border border-transparent'
-                                            }`}
-                                        >
-                                            <input
-                                                type='radio'
-                                                name='location'
-                                                value={loc.id}
-                                                checked={isSelected}
-                                                disabled={isDisabled}
-                                                onChange={(e) =>
-                                                    setLocation(e.target.value)
-                                                }
-                                                className='sr-only'
-                                            />
-                                            {locFlag && (
-                                                <span className='text-lg'>
-                                                    {locFlag}
-                                                </span>
-                                            )}
-                                            <p className='text-sm font-medium'>
-                                                {locationLabel}
-                                            </p>
-                                        </label>
-                                    )
-
-                                    if (isDisabled) {
-                                        return (
-                                            <Tooltip key={loc.id}>
-                                                <TooltipTrigger asChild>
-                                                    <div>{card}</div>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    {tooltipText}
-                                                </TooltipContent>
-                                            </Tooltip>
-                                        )
-                                    }
-
-                                    return (
-                                        <div key={loc.id}>{card}</div>
-                                    )
-                                })}
-                            </div>
-                        </TooltipProvider>
+                                        return <div key={loc.id}>{card}</div>
+                                    })}
+                                </div>
+                            </TooltipProvider>
                         )}
                     </div>
 
@@ -369,91 +423,140 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                             {t('createClaw.plan')}
                             <span className='text-red-400'> *</span>
                         </Label>
+                        {atCapacity && (
+                            <p className='rounded-md bg-yellow-500/10 px-3 py-2 text-xs text-yellow-400'>
+                                {t('createClaw.providerAtCapacity')}
+                            </p>
+                        )}
                         {isProviderLoading ? (
                             <div className='space-y-2'>
                                 {Array.from({ length: 4 }).map((_, i) => (
-                                    <Skeleton key={i} className='h-14 rounded-lg' />
+                                    <Skeleton
+                                        key={i}
+                                        className='h-14 rounded-lg'
+                                    />
                                 ))}
                             </div>
                         ) : (
-                        <TooltipProvider delayDuration={200}>
-                            <div className='space-y-2'>
-                                {plans.map((plan) => {
-                                    const isSelected = planId === plan.id
-                                    const isDisabled = plan.disabled
+                            <TooltipProvider delayDuration={200}>
+                                <div className='space-y-2'>
+                                    {plans.map((plan, index) => {
+                                        const isSelected = planId === plan.id
+                                        const isDisabled = plan.disabled
 
-                                    const card = (
-                                        <label
-                                            className={`flex items-center justify-between rounded-lg p-3 transition ${
-                                                isDisabled
-                                                    ? 'bg-muted/50 cursor-not-allowed border border-transparent opacity-50'
-                                                    : isSelected
-                                                      ? 'cursor-pointer border border-[#ef5350]/50 bg-[#ef5350]/20'
-                                                      : 'bg-muted hover:bg-muted/80 cursor-pointer border border-transparent'
-                                            }`}
-                                        >
-                                            <div className='flex items-center gap-3'>
-                                                <input
-                                                    type='radio'
-                                                    name='plan'
-                                                    value={plan.id}
-                                                    checked={isSelected}
-                                                    disabled={isDisabled}
-                                                    onChange={(e) => {
-                                                        const newPlanId =
-                                                            e.target.value
-                                                        setPlanId(newPlanId)
-                                                        if (
-                                                            !isLocationAvailableForPlan(
-                                                                location,
-                                                                newPlanId
-                                                            )
-                                                        ) {
-                                                            setLocation(
-                                                                getFirstAvailableLocation(
+                                        const tierStarts: Record<string, Record<string, string>> = {
+                                            hetzner: {
+                                                cx23: t('landing.tierShared'),
+                                                cax11: t('landing.tierArm'),
+                                                ccx13: t('landing.tierDedicated')
+                                            },
+                                            vultr: {
+                                                'vc2-2c-4gb': t('landing.tierRegular'),
+                                                'vhp-2c-4gb-amd': t('landing.tierHighPerformance'),
+                                                'vhf-3c-8gb': t('landing.tierHighFrequency')
+                                            }
+                                        }
+                                        const providerTiers = tierStarts[provider]
+                                        const tierLabel = providerTiers?.[plan.id]
+
+                                        const card = (
+                                            <label
+                                                className={`flex items-center justify-between rounded-lg p-3 transition ${
+                                                    isDisabled
+                                                        ? 'bg-muted/50 cursor-not-allowed border border-transparent opacity-50'
+                                                        : isSelected
+                                                          ? 'cursor-pointer border border-[#ef5350]/50 bg-[#ef5350]/20'
+                                                          : 'bg-muted hover:bg-muted/80 cursor-pointer border border-transparent'
+                                                }`}
+                                            >
+                                                <div className='flex items-center gap-3'>
+                                                    <input
+                                                        type='radio'
+                                                        name='plan'
+                                                        value={plan.id}
+                                                        checked={isSelected}
+                                                        disabled={isDisabled}
+                                                        onChange={(e) => {
+                                                            const newPlanId =
+                                                                e.target.value
+                                                            setPlanId(newPlanId)
+                                                            if (
+                                                                !isLocationAvailableForPlan(
+                                                                    location,
                                                                     newPlanId
                                                                 )
-                                                            )
-                                                        }
-                                                    }}
-                                                    className='sr-only'
-                                                />
-                                                <div>
-                                                    <p className='text-sm font-medium'>
-                                                        {plan.name.replace(/([A-Za-z])(\d)/, '$1 $2')}
-                                                    </p>
-                                                    <p className='text-muted-foreground text-xs'>
-                                                        {plan.cpu} vCPU /{' '}
-                                                        {plan.memory} GB RAM /{' '}
-                                                        {plan.disk} GB SSD
-                                                    </p>
+                                                            ) {
+                                                                setLocation(
+                                                                    getFirstAvailableLocation(
+                                                                        newPlanId
+                                                                    )
+                                                                )
+                                                            }
+                                                        }}
+                                                        className='sr-only'
+                                                    />
+                                                    <div>
+                                                        <p className='text-sm font-medium'>
+                                                            {plan.name.replace(
+                                                                /([A-Za-z])(\d)/,
+                                                                '$1 $2'
+                                                            )}
+                                                        </p>
+                                                        <p className='text-muted-foreground text-xs'>
+                                                            {plan.cpu} vCPU /{' '}
+                                                            {plan.memory} GB RAM
+                                                            / {plan.disk} GB SSD
+                                                        </p>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <span className='text-sm font-semibold'>
-                                                ${plan.priceMonthly.toFixed(2)}/mo
-                                            </span>
-                                        </label>
-                                    )
-
-                                    if (isDisabled) {
-                                        return (
-                                            <Tooltip key={plan.id}>
-                                                <TooltipTrigger asChild>
-                                                    <div>{card}</div>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    {t('createClaw.planUnavailable')}
-                                                </TooltipContent>
-                                            </Tooltip>
+                                                <span className='text-sm font-semibold'>
+                                                    $
+                                                    {plan.priceMonthly.toFixed(
+                                                        2
+                                                    )}
+                                                    /mo
+                                                </span>
+                                            </label>
                                         )
-                                    }
 
-                                    return (
-                                        <div key={plan.id}>{card}</div>
-                                    )
-                                })}
-                            </div>
-                        </TooltipProvider>
+                                        const separator = tierLabel && index > 0 ? (
+                                            <div
+                                                key={`tier-${plan.id}`}
+                                                className='pb-1 pt-4'
+                                            >
+                                                <span className='text-muted-foreground text-xs font-semibold uppercase tracking-wider'>
+                                                    {tierLabel}
+                                                </span>
+                                            </div>
+                                        ) : null
+
+                                        if (isDisabled) {
+                                            return (
+                                                <>
+                                                    {separator}
+                                                    <Tooltip key={plan.id}>
+                                                        <TooltipTrigger asChild>
+                                                            <div>{card}</div>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent>
+                                                            {t(
+                                                                'createClaw.planUnavailable'
+                                                            )}
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                </>
+                                            )
+                                        }
+
+                                        return (
+                                            <>
+                                                {separator}
+                                                <div key={plan.id}>{card}</div>
+                                            </>
+                                        )
+                                    })}
+                                </div>
+                            </TooltipProvider>
                         )}
                     </div>
 
@@ -789,7 +892,10 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                             )}
                             <div className='flex justify-between text-sm'>
                                 <span className='text-muted-foreground'>
-                                    {selectedPlan.name.replace(/([A-Za-z])(\d)/, '$1 $2')}
+                                    {selectedPlan.name.replace(
+                                        /([A-Za-z])(\d)/,
+                                        '$1 $2'
+                                    )}
                                 </span>
                                 <span>
                                     ${selectedPlan.priceMonthly.toFixed(2)}/mo
@@ -836,17 +942,25 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                         </Button>
                         <Button
                             type='submit'
-                            disabled={purchaseMutation.isPending || !planId || !location}
+                            disabled={
+                                purchaseMutation.isPending ||
+                                !selectedPlan ||
+                                !location
+                            }
                         >
                             {purchaseMutation.isPending ? (
                                 <>
                                     <CircleNotch className='h-4 w-4 animate-spin' />
                                     {t('createClaw.redirecting')}
                                 </>
+                            ) : !selectedPlan ? (
+                                t('createClaw.selectServerToContinue')
+                            ) : !location ? (
+                                t('createClaw.selectLocationToContinue')
                             ) : (
                                 t('createClaw.proceedToPayment', {
                                     amount: (
-                                        (selectedPlan?.priceMonthly ?? 0) +
+                                        selectedPlan.priceMonthly +
                                         (volumeSize > 0 && volumePricing
                                             ? volumeSize *
                                               volumePricing.pricePerGbMonthly

@@ -1,4 +1,4 @@
-import type { RequestConfig, RequestOptions } from './types'
+import type { ApiEnvelope, RequestConfig, RequestOptions } from './types'
 
 class RequestClient {
     private config: RequestConfig
@@ -26,6 +26,17 @@ class RequestClient {
         })
     }
 
+    private isEnvelope(data: unknown): data is ApiEnvelope {
+        return (
+            data !== null &&
+            typeof data === 'object' &&
+            'success' in data &&
+            'data' in data &&
+            'message' in data &&
+            'code' in data
+        )
+    }
+
     private async parseResponse<T>(res: Response): Promise<T> {
         const contentType = res.headers.get('content-type')
         const contentLength = res.headers.get('content-length')
@@ -42,6 +53,13 @@ class RequestClient {
                 throw new Error(text || `Request failed: ${res.status}`)
             }
             data = text
+        }
+
+        if (this.isEnvelope(data)) {
+            if (!data.success) {
+                throw new Error(data.message || `Request failed: ${data.code}`)
+            }
+            return data.data as T
         }
 
         if (!res.ok) {

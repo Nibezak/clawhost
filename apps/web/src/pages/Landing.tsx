@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react'
-import type { MockClawData } from '@/ts/Interfaces'
+import type { Faq, MockClawData, Testimonial } from '@/ts/Interfaces'
 import type { ProviderType } from '@/ts/Types'
 
 import { Link } from 'react-router-dom'
@@ -39,7 +39,7 @@ import {
     X
 } from '@phosphor-icons/react'
 
-function getTestimonials() {
+function getTestimonials(): Testimonial[] {
     return [
         {
             quote: t('landing.testimonial1Quote'),
@@ -68,7 +68,7 @@ function getTestimonials() {
     ]
 }
 
-function getFaqs() {
+function getFaqs(): Faq[] {
     return [
         {
             question: t('landing.faq1Question'),
@@ -107,8 +107,9 @@ function getFaqs() {
 
 const Landing: FC = (): ReactNode => {
     const { user } = useAuth()
-    const [pricingProvider, setPricingProvider] = useState<ProviderType>('hetzner')
-    const { data: plans, isLoading: plansLoading } = usePlans(pricingProvider)
+    const [pricingProvider, setPricingProvider] =
+        useState<ProviderType>('hetzner')
+    const { plans, isLoading: plansLoading, atCapacity } = usePlans(pricingProvider)
     const { data: gitHubStars } = useGitHubStars()
     const { showToast } = useUIStore()
 
@@ -155,8 +156,6 @@ const Landing: FC = (): ReactNode => {
         setMockClaws((prev) => prev.filter((claw) => claw.id !== id))
         showToast(t('landing.demoClawDeleted'), 'success')
     }
-
-    const runningCount = mockClaws.filter((c) => c.status === 'running').length
 
     useEffect(() => {
         const handleScroll = () => {
@@ -303,7 +302,7 @@ const Landing: FC = (): ReactNode => {
                                     {t('landing.selfHost')}
 
                                     {gitHubStars && (
-                                        <span className='hidden items-center gap-1.5 rounded-full bg-white/10 px-2 py-0.5 text-xs'>
+                                        <span className='flex items-center gap-1.5 rounded-full bg-white/10 px-2 py-0.5 text-xs'>
                                             {gitHubStars.formatted}
                                             <span className='text-[12px]'>
                                                 ★
@@ -331,7 +330,7 @@ const Landing: FC = (): ReactNode => {
                             <div className='h-12 w-px bg-white/10' />
                             <div>
                                 <div className='font-clash text-3xl font-bold text-white md:text-4xl'>
-                                    15+
+                                    30+
                                 </div>
                                 <div className='text-sm text-gray-500'>
                                     {t('landing.locations')}
@@ -340,7 +339,7 @@ const Landing: FC = (): ReactNode => {
                             <div className='h-12 w-px bg-white/10' />
                             <div>
                                 <div className='font-clash text-3xl font-bold text-white md:text-4xl'>
-                                    25+
+                                    45+
                                 </div>
                                 <div className='text-sm text-gray-500'>
                                     {t('landing.servers')}
@@ -383,13 +382,7 @@ const Landing: FC = (): ReactNode => {
                                         </h3>
                                         <p className='text-sm text-gray-500'>
                                             {mockClaws.length > 0
-                                                ? t('landing.demoStatus', {
-                                                      running:
-                                                          String(runningCount),
-                                                      total: String(
-                                                          mockClaws.length
-                                                      )
-                                                  })
+                                                ? `${mockClaws.length} ${mockClaws.length === 1 ? t('dashboard.claw') : t('dashboard.clawsPlural')}`
                                                 : t('dashboard.noClawsYet')}
                                         </p>
                                     </div>
@@ -696,26 +689,50 @@ const Landing: FC = (): ReactNode => {
                         <div className='mt-8 flex justify-center'>
                             <div className='flex rounded-lg border border-white/10 bg-white/5 p-1'>
                                 <button
-                                    onClick={() => setPricingProvider('hetzner')}
+                                    onClick={() =>
+                                        setPricingProvider('hetzner')
+                                    }
                                     className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition ${
                                         pricingProvider === 'hetzner'
                                             ? 'bg-white/10 text-white shadow-sm'
                                             : 'text-gray-400 hover:text-white'
                                     }`}
                                 >
-                                    <ProviderIcon provider='hetzner' className='h-4 w-4' />
+                                    <ProviderIcon
+                                        provider='hetzner'
+                                        className='h-4 w-4'
+                                    />
                                     {t('createClaw.providerHetzner')}
                                 </button>
                                 <button
-                                    onClick={() => setPricingProvider('digitalocean')}
+                                    onClick={() =>
+                                        setPricingProvider('digitalocean')
+                                    }
                                     className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition ${
                                         pricingProvider === 'digitalocean'
                                             ? 'bg-white/10 text-white shadow-sm'
                                             : 'text-gray-400 hover:text-white'
                                     }`}
                                 >
-                                    <ProviderIcon provider='digitalocean' className='h-4 w-4' />
+                                    <ProviderIcon
+                                        provider='digitalocean'
+                                        className='h-4 w-4'
+                                    />
                                     {t('createClaw.providerDigitalOcean')}
+                                </button>
+                                <button
+                                    onClick={() => setPricingProvider('vultr')}
+                                    className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition ${
+                                        pricingProvider === 'vultr'
+                                            ? 'bg-white/10 text-white shadow-sm'
+                                            : 'text-gray-400 hover:text-white'
+                                    }`}
+                                >
+                                    <ProviderIcon
+                                        provider='vultr'
+                                        className='h-4 w-4'
+                                    />
+                                    {t('createClaw.providerVultr')}
                                 </button>
                             </div>
                         </div>
@@ -727,6 +744,11 @@ const Landing: FC = (): ReactNode => {
                         </div>
                     ) : plans && plans.length > 0 ? (
                         <>
+                            {atCapacity && (
+                                <p className='mb-4 rounded-md bg-yellow-500/10 px-4 py-3 text-sm text-yellow-400'>
+                                    {t('createClaw.providerAtCapacity')}
+                                </p>
+                            )}
                             <div className='overflow-x-auto'>
                                 <table className='w-full border-collapse'>
                                     <thead>
@@ -750,39 +772,82 @@ const Landing: FC = (): ReactNode => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {plans.map((plan) => {
+                                        {plans.map((plan, index) => {
                                             const totalMonthly = Math.round(
                                                 plan.priceMonthly
                                             )
+                                            const recommendedPlans: Record<
+                                                string,
+                                                string
+                                            > = {
+                                                hetzner: 'cax41',
+                                                digitalocean: 's-2vcpu-4gb',
+                                                vultr: 'vhp-4c-8gb-amd'
+                                            }
                                             const isRecommended =
-                                                pricingProvider === 'hetzner'
-                                                    ? plan.id === 'cax41'
-                                                    : plan.id === 's-2vcpu-4gb'
+                                                plan.id ===
+                                                recommendedPlans[
+                                                    pricingProvider
+                                                ]
                                             const isDisabled = plan.disabled
 
+                                            const tierStarts: Record<string, Record<string, string>> = {
+                                                hetzner: {
+                                                    cx23: t('landing.tierShared'),
+                                                    cax11: t('landing.tierArm'),
+                                                    ccx13: t('landing.tierDedicated')
+                                                },
+                                                vultr: {
+                                                    'vc2-2c-4gb': t('landing.tierRegular'),
+                                                    'vhp-2c-4gb-amd': t('landing.tierHighPerformance'),
+                                                    'vhf-3c-8gb': t('landing.tierHighFrequency')
+                                                }
+                                            }
+
+                                            const providerTiers = tierStarts[pricingProvider]
+                                            const tierLabel = providerTiers?.[plan.id]
+                                            const showTier = tierLabel && index > 0
+
                                             return (
-                                                <tr
-                                                    key={plan.id}
-                                                    className={`border-b border-white/5 ${
-                                                        isDisabled
-                                                            ? 'opacity-50'
-                                                            : isRecommended
-                                                              ? 'bg-[#ef5350]/5'
-                                                              : ''
-                                                    }`}
-                                                >
+                                                <>
+                                                    {showTier && (
+                                                        <tr key={`tier-${plan.id}`}>
+                                                            <td
+                                                                colSpan={6}
+                                                                className='px-4 pb-2 pt-6'
+                                                            >
+                                                                <span className='font-clash text-xs font-semibold uppercase tracking-wider text-gray-500'>
+                                                                    {tierLabel}
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                    <tr
+                                                        key={plan.id}
+                                                        className={`border-b border-white/5 ${
+                                                            isDisabled
+                                                                ? 'opacity-50'
+                                                                : isRecommended
+                                                                  ? 'bg-[#ef5350]/5'
+                                                                  : ''
+                                                        }`}
+                                                    >
                                                     <td className='px-4 py-4'>
                                                         <div className='flex items-center gap-2'>
                                                             <span className='font-medium text-white'>
-                                                                {plan.name.replace(/([A-Za-z])(\d)/, '$1 $2')}
+                                                                {plan.name.replace(
+                                                                    /([A-Za-z])(\d)/,
+                                                                    '$1 $2'
+                                                                )}
                                                             </span>
-                                                            {isRecommended && !isDisabled && (
-                                                                <Badge className='border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-xs text-white'>
-                                                                    {t(
-                                                                        'landing.recommended'
-                                                                    )}
-                                                                </Badge>
-                                                            )}
+                                                            {isRecommended &&
+                                                                !isDisabled && (
+                                                                    <Badge className='border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-xs text-white'>
+                                                                        {t(
+                                                                            'landing.recommended'
+                                                                        )}
+                                                                    </Badge>
+                                                                )}
                                                         </div>
                                                     </td>
                                                     <td className='px-4 py-4 text-center text-gray-300'>
@@ -805,7 +870,9 @@ const Landing: FC = (): ReactNode => {
                                                     <td className='px-4 py-4 text-right'>
                                                         <Button
                                                             size='sm'
-                                                            disabled={isDisabled}
+                                                            disabled={
+                                                                isDisabled
+                                                            }
                                                             className={`gap-2 px-4 ${
                                                                 isDisabled
                                                                     ? 'border-0 bg-white/5 text-gray-500'
@@ -813,10 +880,14 @@ const Landing: FC = (): ReactNode => {
                                                                       ? 'border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90'
                                                                       : 'border-0 bg-white/10 text-white hover:bg-white/20'
                                                             }`}
-                                                            asChild={!isDisabled}
+                                                            asChild={
+                                                                !isDisabled
+                                                            }
                                                         >
                                                             {isDisabled ? (
-                                                                t('createClaw.planUnavailable')
+                                                                t(
+                                                                    'createClaw.planUnavailable'
+                                                                )
                                                             ) : (
                                                                 <Link
                                                                     to={
@@ -837,6 +908,7 @@ const Landing: FC = (): ReactNode => {
                                                         </Button>
                                                     </td>
                                                 </tr>
+                                                </>
                                             )
                                         })}
                                     </tbody>
