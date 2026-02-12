@@ -318,6 +318,11 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                 {t('createClaw.providerVultr')}
                             </button>
                         </div>
+                        {atCapacity && (
+                            <p className='mt-2 rounded-md bg-yellow-500/10 px-3 py-2 text-xs text-yellow-400'>
+                                {t('createClaw.providerAtCapacity')}
+                            </p>
+                        )}
                     </div>
 
                     <div className='space-y-2'>
@@ -347,7 +352,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                 planId
                                             )
                                         const isDisabled =
-                                            loc.disabled || unavailableForPlan
+                                            loc.disabled || unavailableForPlan || atCapacity
                                         const locationLabel = loc.country
                                             ? `${loc.city}, ${loc.country}`
                                             : loc.city
@@ -419,11 +424,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                             {t('createClaw.plan')}
                             <span className='text-red-400'> *</span>
                         </Label>
-                        {atCapacity && (
-                            <p className='rounded-md bg-yellow-500/10 px-3 py-2 text-xs text-yellow-400'>
-                                {t('createClaw.providerAtCapacity')}
-                            </p>
-                        )}
                         {isProviderLoading ? (
                             <div className='space-y-2'>
                                 {Array.from({ length: 4 }).map((_, i) => (

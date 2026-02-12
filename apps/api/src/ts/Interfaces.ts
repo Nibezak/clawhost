@@ -12,6 +12,10 @@ export interface ApiResponse<T = null> {
     version: string
 }
 
+export interface ExportRateLimitData {
+    retryAfter: number
+}
+
 export interface MagicLinkEmailProps {
     magicLink: string
 }

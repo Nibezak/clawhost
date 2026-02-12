@@ -297,6 +297,11 @@ export interface ClawCardActions {
     onCopySSHWithKey: () => void
     onCopySSHWithPassword: () => void
     onCopyPassword: () => void
+    onExport: () => void
+}
+
+export interface ExportRateLimitError extends Error {
+    retryAfter: number
 }
 
 export interface ClawCardDropdownMenuProps {

@@ -136,6 +136,10 @@ export const en = {
         reinstallSuccess: 'Instance reinstalled successfully.',
         reinstallGatewayNotResponding:
             'Reinstall completed but gateway is not responding yet. It may need more time to start.',
+        failedToExportClaw: 'Failed to export claw data!',
+        clawNotReady: 'Claw is not ready for export!',
+        exportRateLimited:
+            'This claw was exported recently. Please wait before exporting again.',
         failedToListFiles: 'Failed to list instance files!',
         failedToReadFile: 'Failed to read file!',
         failedToUpdateFile: 'Failed to save file!',
@@ -145,8 +149,10 @@ export const en = {
         fileSaveSuccess: 'File saved.',
         failedToSendMagicLink: 'Failed to send magic link!',
         rateLimitExceeded: 'Please wait before requesting another login link.',
-        otpExpiredOrNotFound: 'Code expired or not found. Please request a new one.',
-        otpMaxAttemptsReached: 'Too many failed attempts. Please request a new code.',
+        otpExpiredOrNotFound:
+            'Code expired or not found. Please request a new one.',
+        otpMaxAttemptsReached:
+            'Too many failed attempts. Please request a new code.',
         otpInvalidCode: 'Invalid code. Please try again.',
         internalServerError: 'An internal error occurred.',
         webhookProcessingFailed: 'Webhook processing failed!',
@@ -359,6 +365,12 @@ export const en = {
         reinstalling: 'Reinstalling...',
         reinstallInstanceSuccess: 'Instance reinstalled successfully.',
         reinstallInstanceFailed: 'Failed to reinstall instance.',
+        exportData: 'Export Claw (.zip)',
+        exportStarted: 'Preparing export, this may take a moment...',
+        exportFailed: 'Failed to export claw data!',
+        exportRateLimited: 'You can export again in {{minutes}} minutes.',
+        exportRateLimitedSeconds:
+            'You can export again in {{seconds}} seconds.',
         configuringTooltip:
             'This might take some time. It depends on OpenClaw, the server location, and Cloudflare DNS.',
         paymentSuccess: 'Your claw is being created and configured.',
@@ -723,8 +735,9 @@ export const en = {
         release5Title: "What's Next",
         release5Description: 'Upcoming features currently in development.',
         release5Feature1: 'Server snapshots with one-click backup and restore',
-        release5Feature2: 'Export your OpenClaw instance as a portable zip archive',
-        release5Feature3: 'In-app notification system for platform updates and alerts'
+        release5Feature2: 'Export your OpenClaw as a portable zip archive',
+        release5Feature3:
+            'In-app notifications for platform and OpenClaw updates'
     },
     mobile: {
         messages: 'Messages',

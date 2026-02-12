@@ -25,7 +25,8 @@ import {
     Scroll,
     FolderSimple,
     ArrowsClockwise,
-    ArrowCounterClockwise
+    ArrowCounterClockwise,
+    Export
 } from '@phosphor-icons/react'
 
 const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
@@ -56,13 +57,13 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
     }
 
     return (
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
                 <Button variant='ghost' size='icon' className={buttonClassName}>
                     <DotsThreeOutline className={iconSize} />
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align='end'>
+            <DropdownMenuContent align='end' collisionPadding={8}>
                 {(claw.status === 'stopped' || claw.status === 'off') && (
                     <DropdownMenuItem
                         onClick={actions.onStart}
@@ -139,6 +140,10 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                         <DropdownMenuItem onClick={actions.onShowConfig}>
                             <FolderSimple className='mr-2 h-4 w-4' />
                             {t('dashboard.fileExplorer')}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={actions.onExport}>
+                            <Export className='mr-2 h-4 w-4' />
+                            {t('dashboard.exportData')}
                         </DropdownMenuItem>
                         {isAdmin && (
                             <>
