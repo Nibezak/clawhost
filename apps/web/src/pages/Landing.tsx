@@ -109,7 +109,7 @@ const Landing: FC = (): ReactNode => {
     const { user } = useAuth()
     const [pricingProvider, setPricingProvider] =
         useState<ProviderType>('hetzner')
-    const { plans, isLoading: plansLoading, atCapacity } = usePlans(pricingProvider)
+    const { plans, isLoading: plansLoading } = usePlans(pricingProvider)
     const { data: gitHubStars } = useGitHubStars()
     const { showToast } = useUIStore()
 
@@ -744,11 +744,6 @@ const Landing: FC = (): ReactNode => {
                         </div>
                     ) : plans && plans.length > 0 ? (
                         <>
-                            {atCapacity && (
-                                <p className='mb-4 rounded-md bg-yellow-500/10 px-4 py-3 text-sm text-yellow-400'>
-                                    {t('createClaw.providerAtCapacity')}
-                                </p>
-                            )}
                             <div className='overflow-x-auto'>
                                 <table className='w-full border-collapse'>
                                     <thead>
@@ -781,7 +776,7 @@ const Landing: FC = (): ReactNode => {
                                                 string
                                             > = {
                                                 hetzner: 'cax41',
-                                                digitalocean: 's-2vcpu-4gb',
+                                                digitalocean: 's-4vcpu-8gb',
                                                 vultr: 'vhp-4c-8gb-amd'
                                             }
                                             const isRecommended =
@@ -789,8 +784,6 @@ const Landing: FC = (): ReactNode => {
                                                 recommendedPlans[
                                                     pricingProvider
                                                 ]
-                                            const isDisabled = plan.disabled
-
                                             const tierStarts: Record<string, Record<string, string>> = {
                                                 hetzner: {
                                                     cx23: t('landing.tierShared'),
@@ -825,11 +818,9 @@ const Landing: FC = (): ReactNode => {
                                                     <tr
                                                         key={plan.id}
                                                         className={`border-b border-white/5 ${
-                                                            isDisabled
-                                                                ? 'opacity-50'
-                                                                : isRecommended
-                                                                  ? 'bg-[#ef5350]/5'
-                                                                  : ''
+                                                            isRecommended
+                                                                ? 'bg-[#ef5350]/5'
+                                                                : ''
                                                         }`}
                                                     >
                                                     <td className='px-4 py-4'>
@@ -840,8 +831,7 @@ const Landing: FC = (): ReactNode => {
                                                                     '$1 $2'
                                                                 )}
                                                             </span>
-                                                            {isRecommended &&
-                                                                !isDisabled && (
+                                                            {isRecommended && (
                                                                     <Badge className='border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-xs text-white'>
                                                                         {t(
                                                                             'landing.recommended'
@@ -870,41 +860,28 @@ const Landing: FC = (): ReactNode => {
                                                     <td className='px-4 py-4 text-right'>
                                                         <Button
                                                             size='sm'
-                                                            disabled={
-                                                                isDisabled
-                                                            }
                                                             className={`gap-2 px-4 ${
-                                                                isDisabled
-                                                                    ? 'border-0 bg-white/5 text-gray-500'
-                                                                    : isRecommended
-                                                                      ? 'border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90'
-                                                                      : 'border-0 bg-white/10 text-white hover:bg-white/20'
+                                                                isRecommended
+                                                                    ? 'border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90'
+                                                                    : 'border-0 bg-white/10 text-white hover:bg-white/20'
                                                             }`}
-                                                            asChild={
-                                                                !isDisabled
-                                                            }
+                                                            asChild
                                                         >
-                                                            {isDisabled ? (
-                                                                t(
-                                                                    'createClaw.planUnavailable'
-                                                                )
-                                                            ) : (
-                                                                <Link
-                                                                    to={
-                                                                        user
-                                                                            ? `${ROUTES.CLAWS}?plan=${plan.id}`
-                                                                            : `${ROUTES.LOGIN}?plan=${plan.id}`
-                                                                    }
-                                                                >
-                                                                    {user
-                                                                        ? t(
-                                                                              'landing.deploy'
-                                                                          )
-                                                                        : t(
-                                                                              'landing.select'
-                                                                          )}
-                                                                </Link>
-                                                            )}
+                                                            <Link
+                                                                to={
+                                                                    user
+                                                                        ? `${ROUTES.CLAWS}?plan=${plan.id}`
+                                                                        : `${ROUTES.LOGIN}?plan=${plan.id}`
+                                                                }
+                                                            >
+                                                                {user
+                                                                    ? t(
+                                                                          'landing.deploy'
+                                                                      )
+                                                                    : t(
+                                                                          'landing.select'
+                                                                      )}
+                                                            </Link>
                                                         </Button>
                                                     </td>
                                                 </tr>

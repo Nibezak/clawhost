@@ -13,7 +13,6 @@ import {
     usePlanAvailability
 } from '@/hooks'
 import { generatePassword, locationFlags, aiModels } from '@/lib/claw-utils'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Slider } from '@/components/ui/slider'
@@ -267,9 +266,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                     />
                                 </svg>
                                 {t('createClaw.providerHetzner')}
-                                <Badge className='border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-xs text-white'>
-                                    {t('landing.recommended')}
-                                </Badge>
                             </button>
                             <button
                                 type='button'

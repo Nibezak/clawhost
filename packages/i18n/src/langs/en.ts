@@ -587,7 +587,7 @@ export const en = {
         tierRegular: 'Regular Performance',
         tierHighPerformance: 'High Performance',
         tierHighFrequency: 'High Frequency',
-        recommended: 'Affordable',
+        recommended: 'Recommended',
         perMonth: '/mo',
         deploy: 'Deploy',
         select: 'Select',
@@ -723,8 +723,8 @@ export const en = {
         release5Title: "What's Next",
         release5Description: 'Upcoming features currently in development.',
         release5Feature1: 'Server snapshots with one-click backup and restore',
-        release5Feature2: 'Custom domains mapped directly to your servers',
-        release5Feature3: 'Team workspaces for collaborative server management'
+        release5Feature2: 'Export your OpenClaw instance as a portable zip archive',
+        release5Feature3: 'In-app notification system for platform updates and alerts'
     },
     mobile: {
         messages: 'Messages',
