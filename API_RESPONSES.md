@@ -9,16 +9,18 @@ All API responses follow a consistent envelope format.
     "success": true,
     "data": null,
     "message": "Human-readable message.",
-    "code": 200
+    "code": 200,
+    "version": "0.0.31"
 }
 ```
 
-| Field     | Type        | Description                                    |
-| --------- | ----------- | ---------------------------------------------- |
-| `success` | `boolean`   | Whether the request succeeded                  |
-| `data`    | `T \| null` | Response payload (`null` for side-effect-only) |
-| `message` | `string`    | Translated human-readable message              |
-| `code`    | `number`    | HTTP status code                               |
+| Field     | Type        | Description                                       |
+| --------- | ----------- | ------------------------------------------------- |
+| `success` | `boolean`   | Whether the request succeeded                     |
+| `data`    | `T \| null` | Response payload (`null` for side-effect-only)    |
+| `message` | `string`    | Translated human-readable message                 |
+| `code`    | `number`    | HTTP status code                                  |
+| `version` | `string`    | API version from package.json (auto-bumped)       |
 
 ## Response Helpers
 
@@ -51,7 +53,7 @@ return fail(c, t('api.rateLimitExceeded'), 429, { retryAfter: 60 })
 
 ## Client Handling
 
-The shared `RequestClient` in `packages/shared/` detects envelopes automatically via duck-typing (checks for all 4 fields). When an envelope is detected:
+The shared `RequestClient` in `packages/shared/` detects envelopes automatically via duck-typing (checks for all 5 fields). When an envelope is detected:
 
 - `success: true` — unwraps and returns `data` as `T`
 - `success: false` — throws `Error` with the `message`
@@ -74,7 +76,8 @@ GET /claws → 200
     "success": true,
     "data": [{ "id": "abc", "name": "my-claw", ... }],
     "message": "Claws fetched successfully.",
-    "code": 200
+    "code": 200,
+    "version": "0.0.31"
 }
 ```
 
@@ -86,7 +89,8 @@ POST /auth/send-otp → 200
     "success": true,
     "data": null,
     "message": "Code sent successfully.",
-    "code": 200
+    "code": 200,
+    "version": "0.0.31"
 }
 ```
 
@@ -98,7 +102,8 @@ GET /claws/nonexistent → 404
     "success": false,
     "data": null,
     "message": "Claw not found.",
-    "code": 404
+    "code": 404,
+    "version": "0.0.31"
 }
 ```
 
@@ -110,6 +115,7 @@ POST /auth/send-otp → 429
     "success": false,
     "data": { "retryAfter": 45 },
     "message": "Too many requests. Please try again later.",
-    "code": 429
+    "code": 429,
+    "version": "0.0.31"
 }
 ```

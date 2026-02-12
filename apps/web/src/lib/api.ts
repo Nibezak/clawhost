@@ -98,6 +98,29 @@ export const api = {
     repairClaw: (id: string) =>
         client.post<void>(`/claws/${id}/diagnostics/repair`),
     reinstallClaw: (id: string) => client.post<void>(`/claws/${id}/reinstall`),
+    exportClaw: async (id: string, filename: string) => {
+        const token = await getCachedToken()
+        const res = await fetch(`${BASE_URL}/claws/${id}/export`, {
+            headers: token ? { Authorization: `Bearer ${token}` } : {}
+        })
+        if (!res.ok) {
+            if (res.status === 429) {
+                const body = await res.json()
+                const error = new Error(body?.message ?? 'Export rate limited')
+                ;(error as Error & { retryAfter: number }).retryAfter =
+                    body?.data?.retryAfter ?? 0
+                throw error
+            }
+            throw new Error('Export failed')
+        }
+        const blob = await res.blob()
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = filename
+        a.click()
+        URL.revokeObjectURL(url)
+    },
     listClawFiles: (id: string) =>
         client.post<ClawFilesResponse>(`/claws/${id}/files`),
     readClawFile: (id: string, path: string) =>

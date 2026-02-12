@@ -33,7 +33,8 @@ class RequestClient {
             'success' in data &&
             'data' in data &&
             'message' in data &&
-            'code' in data
+            'code' in data &&
+            'version' in data
         )
     }
 

@@ -1,5 +1,9 @@
 import type { FC, ReactNode } from 'react'
-import type { ClawCardProps, ClawCardActions } from '@/ts/Interfaces'
+import type {
+    ClawCardProps,
+    ClawCardActions,
+    ExportRateLimitError
+} from '@/ts/Interfaces'
 
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
@@ -15,6 +19,7 @@ import {
     useReinstallClaw,
     useProfile
 } from '@/hooks'
+import { api } from '@/lib/api'
 import { getStatusConfig, locationFlags, locationNames } from '@/lib/claw-utils'
 import { ClawCardGridView } from '@/components/dashboard/ClawCardGridView'
 import { ClawCardListView } from '@/components/dashboard/ClawCardListView'
@@ -41,6 +46,7 @@ const ClawCard: FC<ClawCardProps> = ({
     const [showConfig, setShowConfig] = useState(false)
     const [showReinstallModal, setShowReinstallModal] = useState(false)
     const [isExpanded, setIsExpanded] = useState(false)
+    const [isExporting, setIsExporting] = useState(false)
 
     const startMutation = useStartClaw()
     const stopMutation = useStopClaw()
@@ -61,7 +67,8 @@ const ClawCard: FC<ClawCardProps> = ({
         cancelDeletionMutation.isPending ||
         hardDeleteMutation.isPending ||
         repairMutation.isPending ||
-        reinstallMutation.isPending
+        reinstallMutation.isPending ||
+        isExporting
 
     const attachedSshKey = claw.sshKeyId
         ? sshKeys.find((k) => k.id === claw.sshKeyId)
@@ -121,6 +128,35 @@ const ClawCard: FC<ClawCardProps> = ({
         })
     }
 
+    const handleExport = async () => {
+        setIsExporting(true)
+        try {
+            await api.exportClaw(claw.id, `${claw.name}-export.tar.gz`)
+        } catch (err) {
+            const retryAfter = (err as ExportRateLimitError).retryAfter
+            if (retryAfter && retryAfter > 30) {
+                const minutes = Math.ceil(retryAfter / 60)
+                showToast(
+                    t('dashboard.exportRateLimited', {
+                        minutes: String(minutes)
+                    }),
+                    'warning'
+                )
+            } else if (retryAfter && retryAfter > 0) {
+                showToast(
+                    t('dashboard.exportRateLimitedSeconds', {
+                        seconds: String(retryAfter)
+                    }),
+                    'warning'
+                )
+            } else {
+                showToast(t('dashboard.exportFailed'), 'error')
+            }
+        } finally {
+            setIsExporting(false)
+        }
+    }
+
     const handleReinstall = () => {
         reinstallMutation.mutate(claw.id, {
             onSuccess: () => {
@@ -147,7 +183,8 @@ const ClawCard: FC<ClawCardProps> = ({
         onCopySSH: claw.rootPassword ? copySSHWithPassword : copySSHWithKey,
         onCopySSHWithKey: copySSHWithKey,
         onCopySSHWithPassword: copySSHWithPassword,
-        onCopyPassword: copyPassword
+        onCopyPassword: copyPassword,
+        onExport: handleExport
     }
 
     return (

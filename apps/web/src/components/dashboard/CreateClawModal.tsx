@@ -13,7 +13,6 @@ import {
     usePlanAvailability
 } from '@/hooks'
 import { generatePassword, locationFlags, aiModels } from '@/lib/claw-utils'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Slider } from '@/components/ui/slider'
@@ -267,9 +266,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                     />
                                 </svg>
                                 {t('createClaw.providerHetzner')}
-                                <Badge className='border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-xs text-white'>
-                                    {t('landing.recommended')}
-                                </Badge>
                             </button>
                             <button
                                 type='button'
@@ -322,6 +318,11 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                 {t('createClaw.providerVultr')}
                             </button>
                         </div>
+                        {atCapacity && (
+                            <p className='mt-2 rounded-md bg-yellow-500/10 px-3 py-2 text-xs text-yellow-400'>
+                                {t('createClaw.providerAtCapacity')}
+                            </p>
+                        )}
                     </div>
 
                     <div className='space-y-2'>
@@ -351,7 +352,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                 planId
                                             )
                                         const isDisabled =
-                                            loc.disabled || unavailableForPlan
+                                            loc.disabled || unavailableForPlan || atCapacity
                                         const locationLabel = loc.country
                                             ? `${loc.city}, ${loc.country}`
                                             : loc.city
@@ -423,11 +424,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                             {t('createClaw.plan')}
                             <span className='text-red-400'> *</span>
                         </Label>
-                        {atCapacity && (
-                            <p className='rounded-md bg-yellow-500/10 px-3 py-2 text-xs text-yellow-400'>
-                                {t('createClaw.providerAtCapacity')}
-                            </p>
-                        )}
                         {isProviderLoading ? (
                             <div className='space-y-2'>
                                 {Array.from({ length: 4 }).map((_, i) => (

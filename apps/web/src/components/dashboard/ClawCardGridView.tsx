@@ -2,18 +2,17 @@ import type { FC, ReactNode } from 'react'
 import type { ClawCardGridViewProps, Volume } from '@/ts/Interfaces'
 
 import { t } from '@openclaw/i18n'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import {
     Tooltip,
     TooltipTrigger,
     TooltipContent
 } from '@/components/ui/tooltip'
-import { ClockCountdown } from '@phosphor-icons/react'
 import { ClawMascot } from '@/components/ClawMascot'
 import ProviderIcon from '@/components/ProviderIcon'
 import { ClawCardDropdownMenu } from '@/components/dashboard/ClawCardDropdownMenu'
 import { CopyableField } from '@/components/dashboard/CopyableField'
+import ScheduledDeletionBanner from '@/components/dashboard/ScheduledDeletionBanner'
 import { generateSlug, aiModels } from '@/lib/claw-utils'
 
 const ClawCardGridView: FC<ClawCardGridViewProps> = ({
@@ -237,35 +236,11 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
                     </div>
 
                     {isScheduledForDeletion && (
-                        <div className='mt-3 flex items-center justify-between rounded-lg border border-white/10 bg-white/5 px-4 py-3'>
-                            <div className='flex items-center gap-2'>
-                                <ClockCountdown className='h-5 w-5 text-gray-400' />
-                                <div>
-                                    <p className='text-sm font-medium text-gray-300'>
-                                        {t('dashboard.scheduledForDeletion')}
-                                    </p>
-                                    <p className='text-xs text-gray-500'>
-                                        {t('dashboard.deletionDate', {
-                                            date: new Date(
-                                                claw.deletionScheduledAt!
-                                            ).toLocaleDateString('en-US', {
-                                                year: 'numeric',
-                                                month: 'short',
-                                                day: 'numeric'
-                                            })
-                                        })}
-                                    </p>
-                                </div>
-                            </div>
-                            <Button
-                                variant='outline'
-                                size='sm'
-                                onClick={actions.onCancelDeletion}
-                                disabled={isLoading}
-                            >
-                                {t('dashboard.cancelDeletion')}
-                            </Button>
-                        </div>
+                        <ScheduledDeletionBanner
+                            deletionScheduledAt={claw.deletionScheduledAt!}
+                            onCancelDeletion={actions.onCancelDeletion}
+                            isLoading={isLoading}
+                        />
                     )}
                 </div>
             </CardContent>

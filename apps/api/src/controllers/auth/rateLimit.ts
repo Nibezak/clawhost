@@ -14,7 +14,10 @@ const getClientIp = (c: Context): string | null => {
     )
 }
 
-const checkRateLimit = async (key: string): Promise<number> => {
+const checkRateLimit = async (
+    key: string,
+    windowMs: number = RATE_LIMIT_WINDOW
+): Promise<number> => {
     const record = await db
         .select()
         .from(rateLimits)
@@ -23,8 +26,8 @@ const checkRateLimit = async (key: string): Promise<number> => {
 
     if (!record) return 0
     const elapsed = Date.now() - record.lastSentAt.getTime()
-    if (elapsed >= RATE_LIMIT_WINDOW) return 0
-    return Math.ceil((RATE_LIMIT_WINDOW - elapsed) / 1000)
+    if (elapsed >= windowMs) return 0
+    return Math.ceil((windowMs - elapsed) / 1000)
 }
 
 const setRateLimit = async (...keys: string[]): Promise<void> => {

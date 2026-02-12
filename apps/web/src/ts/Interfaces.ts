@@ -13,6 +13,7 @@ export interface ApiResponse<T = null> {
     data: T
     message: string
     code: number
+    version: string
 }
 
 export interface MagicLinkEmailProps {
@@ -296,6 +297,11 @@ export interface ClawCardActions {
     onCopySSHWithKey: () => void
     onCopySSHWithPassword: () => void
     onCopyPassword: () => void
+    onExport: () => void
+}
+
+export interface ExportRateLimitError extends Error {
+    retryAfter: number
 }
 
 export interface ClawCardDropdownMenuProps {
@@ -369,6 +375,12 @@ export interface ClawCardListViewProps {
     isAdmin: boolean
     isExpanded: boolean
     onToggleExpand: () => void
+}
+
+export interface ScheduledDeletionBannerProps {
+    deletionScheduledAt: string
+    onCancelDeletion: () => void
+    isLoading: boolean
 }
 
 export interface SSHKeyCardProps {

@@ -17,6 +17,7 @@ import readClawFile from '@/controllers/claws/readClawFile'
 import updateClawFile from '@/controllers/claws/updateClawFile'
 import getAdminClaws from '@/controllers/claws/getAdminClaws'
 import reinstallClaw from '@/controllers/claws/reinstallClaw'
+import exportClaw from '@/controllers/claws/exportClaw'
 
 export {
     getClaws,
@@ -37,5 +38,6 @@ export {
     listClawFiles,
     readClawFile,
     updateClawFile,
-    reinstallClaw
+    reinstallClaw,
+    exportClaw
 }

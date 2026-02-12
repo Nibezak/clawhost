@@ -13,4 +13,5 @@ export interface ApiEnvelope<T = unknown> {
     data: T
     message: string
     code: number
+    version: string
 }

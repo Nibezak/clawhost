@@ -82,6 +82,18 @@ export const otpCodes = pgTable('otp_codes', {
     createdAt: timestamp('created_at').defaultNow().notNull()
 })
 
+export const clawExports = pgTable('claw_exports', {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+        .notNull()
+        .references(() => users.id),
+    clawId: text('claw_id')
+        .notNull()
+        .references(() => claws.id),
+    fileSize: integer('file_size'),
+    createdAt: timestamp('created_at').defaultNow().notNull()
+})
+
 export const volumes = pgTable('volumes', {
     id: text('id').primaryKey(),
     userId: text('user_id')

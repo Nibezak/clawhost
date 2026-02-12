@@ -1,5 +1,7 @@
 import type { Context } from 'hono'
 
+import version from '@/lib/response/version'
+
 const ok = <T>(
     c: Context,
     data: T,
@@ -11,7 +13,8 @@ const ok = <T>(
             success: true,
             data,
             message,
-            code
+            code,
+            version
         },
         200
     )

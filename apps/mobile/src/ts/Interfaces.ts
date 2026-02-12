@@ -6,6 +6,7 @@ export interface ApiResponse<T = null> {
     data: T
     message: string
     code: number
+    version: string
 }
 
 export interface Volume {
