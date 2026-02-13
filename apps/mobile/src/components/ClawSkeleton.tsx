@@ -29,10 +29,19 @@ const ClawSkeleton: FC = (): ReactNode => {
     return (
         <View style={styles.card}>
             <View style={styles.header}>
-                <Animated.View style={[styles.mascotPlaceholder, { opacity: pulseAnim }]} />
+                <Animated.View
+                    style={[styles.mascotPlaceholder, { opacity: pulseAnim }]}
+                />
                 <View style={styles.textPlaceholders}>
-                    <Animated.View style={[styles.namePlaceholder, { opacity: pulseAnim }]} />
-                    <Animated.View style={[styles.subdomainPlaceholder, { opacity: pulseAnim }]} />
+                    <Animated.View
+                        style={[styles.namePlaceholder, { opacity: pulseAnim }]}
+                    />
+                    <Animated.View
+                        style={[
+                            styles.subdomainPlaceholder,
+                            { opacity: pulseAnim }
+                        ]}
+                    />
                 </View>
             </View>
         </View>

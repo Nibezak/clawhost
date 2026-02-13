@@ -19,7 +19,12 @@ import CreateClawModal from '@/components/CreateClawModal'
 const ClawsScreen: FC = (): ReactNode => {
     const insets = useSafeAreaInsets()
     const { user, loading: authLoading } = useAuth()
-    const { data: claws, isLoading, isError, refetch } = useClaws(user)
+    const {
+        data: claws,
+        isPending: isLoading,
+        isError,
+        refetch
+    } = useClaws(user)
     const { data: hetznerPlans } = usePlans(user, 'hetzner')
     const { data: digitaloceanPlans } = usePlans(user, 'digitalocean')
     const { data: vultrPlans } = usePlans(user, 'vultr')
@@ -40,7 +45,10 @@ const ClawsScreen: FC = (): ReactNode => {
     }
 
     const clawCount = claws?.length ?? 0
+    const dataReady = !authLoading && !isLoading
+    const hasClaws = dataReady && clawCount > 0
     const countLabel = `${clawCount} ${clawCount === 1 ? t('dashboard.claw') : t('dashboard.clawsPlural')}`
+    const TAB_BAR_HEIGHT = 80 + insets.bottom
 
     return (
         <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -49,17 +57,25 @@ const ClawsScreen: FC = (): ReactNode => {
             <View style={styles.header}>
                 <View style={styles.headerLeft}>
                     <Text style={styles.title}>{t('dashboard.title')}</Text>
-                    {!isLoading && claws && (
+                    {dataReady && claws && (
                         <Text style={styles.subtitle}>{countLabel}</Text>
                     )}
                 </View>
-                <Pressable
-                    onPress={() => setShowCreateModal(true)}
-                    style={styles.deployButton}
-                >
-                    <Lightning size={16} color={COLORS.white} weight='fill' />
-                    <Text style={styles.deployButtonText}>{t('mobile.deployClaw')}</Text>
-                </Pressable>
+                {hasClaws && (
+                    <Pressable
+                        onPress={() => setShowCreateModal(true)}
+                        style={styles.deployButton}
+                    >
+                        <Lightning
+                            size={16}
+                            color={COLORS.white}
+                            weight='fill'
+                        />
+                        <Text style={styles.deployButtonText}>
+                            {t('mobile.deployClaw')}
+                        </Text>
+                    </Pressable>
+                )}
             </View>
 
             {authLoading || isLoading ? (
@@ -71,19 +87,34 @@ const ClawsScreen: FC = (): ReactNode => {
                     <ClawSkeleton />
                 </View>
             ) : isError ? (
-                <View style={styles.centerContent}>
+                <View
+                    style={[
+                        styles.centerContent,
+                        { paddingBottom: TAB_BAR_HEIGHT }
+                    ]}
+                >
                     <Text style={styles.errorTitle}>
                         {t('errors.failedToLoadClaws')}
                     </Text>
                     <Text style={styles.errorDescription}>
                         {t('errors.failedToLoadClawsDescription')}
                     </Text>
-                    <Pressable onPress={() => refetch()} style={styles.retryButton}>
-                        <Text style={styles.retryText}>{t('common.tryAgain')}</Text>
+                    <Pressable
+                        onPress={() => refetch()}
+                        style={styles.retryButton}
+                    >
+                        <Text style={styles.retryText}>
+                            {t('common.tryAgain')}
+                        </Text>
                     </Pressable>
                 </View>
             ) : clawCount === 0 ? (
-                <View style={styles.centerContent}>
+                <View
+                    style={[
+                        styles.centerContent,
+                        { paddingBottom: TAB_BAR_HEIGHT }
+                    ]}
+                >
                     <View style={styles.emptyIconContainer}>
                         <ClawMascot size={40} />
                     </View>
@@ -103,7 +134,11 @@ const ClawsScreen: FC = (): ReactNode => {
                             end={{ x: 1, y: 0 }}
                             style={styles.emptyDeployGradient}
                         >
-                            <Lightning size={18} color={COLORS.white} weight='fill' />
+                            <Lightning
+                                size={18}
+                                color={COLORS.white}
+                                weight='fill'
+                            />
                             <Text style={styles.emptyDeployText}>
                                 {t('mobile.deployYourFirstClaw')}
                             </Text>
@@ -116,10 +151,18 @@ const ClawsScreen: FC = (): ReactNode => {
                     renderItem={renderClawCard}
                     keyExtractor={(item) => item.id}
                     contentContainerStyle={styles.listContent}
-                    ItemSeparatorComponent={() => <View style={styles.cardSeparator} />}
+                    ItemSeparatorComponent={() => (
+                        <View style={styles.cardSeparator} />
+                    )}
                     showsVerticalScrollIndicator={false}
                 />
             )}
+
+            <LinearGradient
+                colors={['transparent', 'rgba(239,83,80,0.08)']}
+                style={styles.bottomGlow}
+                pointerEvents='none'
+            />
 
             <CreateClawModal
                 visible={showCreateModal}
@@ -179,7 +222,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        paddingHorizontal: SPACING.lg
+        paddingHorizontal: SPACING.xxl
     },
     emptyIconContainer: {
         width: 80,
@@ -243,6 +286,13 @@ const styles = StyleSheet.create({
     },
     cardSeparator: {
         height: 10
+    },
+    bottomGlow: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: 160
     }
 })
 

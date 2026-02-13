@@ -8,7 +8,8 @@ import { ROUTES } from '@/lib/routes'
 
 const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }): ReactNode => {
     const { user, loading } = useAuth()
-    const wasPreviouslyAuthed = localStorage.getItem(AUTH_STORAGE_KEY) === 'true'
+    const wasPreviouslyAuthed =
+        localStorage.getItem(AUTH_STORAGE_KEY) === 'true'
 
     if (!wasPreviouslyAuthed && !user) {
         return <Navigate to={ROUTES.LOGIN} replace />

@@ -42,7 +42,9 @@ const verifyWebhookSignature = (
                 ) {
                     return true
                 }
-            } catch { /* empty */ }
+            } catch {
+                /* empty */
+            }
         }
     }
 

@@ -21,6 +21,7 @@ export const en = {
     },
     nav: {
         claws: 'Claws',
+        playground: 'Playground',
         sshKeys: 'SSH Keys',
         account: 'Account & Billing',
         signOut: 'Sign out',
@@ -65,6 +66,8 @@ export const en = {
         failedToUpdateProfile: 'Failed to update profile!',
         failedToAddSSHKey: 'Failed to add SSH key!',
         failedToCreateClaw: 'Failed to create claw!',
+        failedToLoadLocations: 'Failed to load locations. Please try again.',
+        failedToLoadPlans: 'Failed to load plans. Please try again.',
         invalidPlan: 'Invalid plan selected!',
         invalidLocation: 'Please select a location!',
         failedToGenerateKeyPair:
@@ -182,6 +185,11 @@ export const en = {
         locationsFetched: 'Locations fetched successfully.',
         volumePricingFetched: 'Volume pricing fetched successfully.',
         planAvailabilityFetched: 'Plan availability fetched successfully.',
+        agentsFetched: 'Agents fetched successfully.',
+        agentsFetchFailed: 'Could not reach instance to fetch agents.',
+        agentConfigFetched: 'Agent configuration fetched successfully.',
+        agentConfigUpdated: 'Agent configuration updated successfully.',
+        agentConfigUpdateFailed: 'Could not update agent configuration.',
         diagnosticsFetched: 'Diagnostics fetched successfully.',
         logsFetched: 'Logs fetched successfully.',
         filesFetched: 'Files fetched successfully.',
@@ -374,6 +382,8 @@ export const en = {
         configuringTooltip:
             'This might take some time. It depends on OpenClaw, the server location, and Cloudflare DNS.',
         paymentSuccess: 'Your claw is being created and configured.',
+        userTab: 'User',
+        adminTab: 'Admin',
         adminTitle: 'Admin',
         adminDescription: 'Manage all claws across the platform.',
         adminNoClaws: 'No claws on the platform yet.',
@@ -655,6 +665,12 @@ export const en = {
         comparisonDataOthers: "Don't own your data",
         comparisonMultipleUs: 'Manage multiple instances',
         comparisonMultipleOthers: 'Single instance only',
+        comparisonOpenSourceUs: 'Fully open source',
+        comparisonOpenSourceOthers: 'Closed source',
+        comparisonExportUs: 'Export your OpenClaw anywhere',
+        comparisonExportOthers: 'Vendor lock-in',
+        comparisonProvidersUs: 'Multiple server providers',
+        comparisonProvidersOthers: 'Single provider only',
         readyToOwnYourPrivacy: 'Ready to deploy OpenClaw?',
         ctaDescription:
             'Get a dedicated server with OpenClaw pre-installed. Full root access, global locations, and ready in minutes. You own it at all times.',
@@ -734,10 +750,66 @@ export const en = {
             '30+ Vultr server locations across US, Europe, Asia, and more',
         release5Title: "What's Next",
         release5Description: 'Upcoming features currently in development.',
-        release5Feature1: 'Server snapshots with one-click backup and restore',
+        release5Feature1:
+            'One-click agent playground and overview, add and manage multiple agents',
         release5Feature2: 'Export your OpenClaw as a portable zip archive',
         release5Feature3:
             'In-app notifications for platform and OpenClaw updates'
+    },
+    playground: {
+        title: 'Playground',
+        description:
+            'Visualize your Claws and their agents in an interactive graph.',
+        subtitle: 'Agent topology across your infrastructure',
+        noClawsYet: 'No Claws to Display',
+        noClawsDescription:
+            'Deploy your first Claw to see it in the Playground.',
+        loadingAgents: 'Discovering agents...',
+        unreachable: 'Unreachable',
+        offline: 'Offline',
+        noAgents: 'No agents',
+        agentCount: '{{count}} agent',
+        agentCountPlural: '{{count}} agents',
+        agentModel: 'Model',
+        zoomLabel: '{{percent}}%',
+        fitView: 'Center',
+        nodesOutOfView: 'Claws out of view',
+        addAgent: 'Add agent',
+        listView: 'List view',
+        gridView: 'Grid view',
+        playgroundView: 'Playground',
+        closeDetails: 'Close',
+        tabInfo: 'Info',
+        tabLogs: 'Logs',
+        tabDiagnostics: 'Diagnostics',
+        loadingTip1:
+            'Did you know that you could run multiple agents within one OpenClaw?',
+        loadingTip2: 'Did you know that OpenClaw is open-source?',
+        loadingTip3:
+            'ClawHost is the first ever project to allow one-click OpenClaw hosting.',
+        tabChat: 'Chat',
+        tabConfiguration: 'Configuration',
+        agentOnClaw: 'on {{clawName}}',
+        chatComingSoon: 'Agent chat is coming soon.',
+        chatComingSoonDescription:
+            'You will be able to chat with your agents directly from the playground.',
+        configurationModel: 'Model',
+        configurationModelPlaceholder: 'Select a model',
+        configurationModelDescription:
+            'The AI model this agent uses. Changing the model may require setting the corresponding API key.',
+        configurationEnvVars: 'Environment Variables',
+        configurationEnvVarsDescription:
+            'API keys and environment variables stored in ~/.openclaw/.env on the instance.',
+        configurationAddEnvVar: 'Add Variable',
+        configurationKeyPlaceholder: 'VARIABLE_NAME',
+        configurationValuePlaceholder: 'value',
+        configurationSave: 'Save Configuration',
+        configurationSaving: 'Saving...',
+        configurationSaved: 'Agent configuration saved.',
+        configurationSaveFailed: 'Failed to save agent configuration.',
+        configurationLoading: 'Loading configuration...',
+        configurationLoadFailed: 'Failed to load agent configuration.',
+        configurationRemoveVar: 'Remove'
     },
     mobile: {
         messages: 'Messages',

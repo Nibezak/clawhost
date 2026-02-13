@@ -58,9 +58,7 @@ const deleteSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
         console.error('Delete SSH key error:', err)
         return fail(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToDeleteSshKey'),
+            err instanceof Error ? err.message : t('api.failedToDeleteSshKey'),
             500
         )
     }

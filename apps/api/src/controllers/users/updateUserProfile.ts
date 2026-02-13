@@ -40,9 +40,7 @@ const updateUserProfile = async (
         console.error('Update user error:', err)
         return fail(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToUpdateProfile'),
+            err instanceof Error ? err.message : t('api.failedToUpdateProfile'),
             500
         )
     }

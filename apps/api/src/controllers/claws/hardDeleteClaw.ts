@@ -1,7 +1,7 @@
 import type { Context } from 'hono'
 import type { ProviderType } from '@/ts/Types'
 
-import { eq, and } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { subscriptions } from '@/lib/polar'
@@ -17,14 +17,14 @@ const hardDeleteClaw = async (
         const id = c.req.param('id')
         const admin = await isAdmin(userId)
 
+        if (!admin) {
+            return fail(c, t('api.adminAccessDenied'), 403)
+        }
+
         const claw = await db
             .select()
             .from(claws)
-            .where(
-                admin
-                    ? eq(claws.id, id)
-                    : and(eq(claws.id, id), eq(claws.userId, userId))
-            )
+            .where(eq(claws.id, id))
             .limit(1)
 
         if (!claw[0]) {
@@ -52,7 +52,13 @@ const hardDeleteClaw = async (
         return ok(c, null, t('api.clawHardDeleted'))
     } catch (err) {
         console.error('Hard delete claw error:', err)
-        return fail(c, err instanceof Error ? err.message : t('api.failedToHardDeleteClaw'), 500)
+        return fail(
+            c,
+            err instanceof Error
+                ? err.message
+                : t('api.failedToHardDeleteClaw'),
+            500
+        )
     }
 }
 

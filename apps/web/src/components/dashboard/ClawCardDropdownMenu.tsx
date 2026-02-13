@@ -38,20 +38,17 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
     hasActionItems,
     isScheduledForDeletion,
     isAdmin,
-    compact
+    compact,
+    isPlayground
 }): ReactNode => {
-    const iconSize = compact ? 'h-4 w-4' : 'h-5 w-5'
-    const buttonClassName = compact ? 'h-8 w-8' : undefined
-
     if (isLoading) {
-        return (
-            <Button
-                variant='ghost'
-                size='icon'
-                className={buttonClassName}
-                disabled
-            >
-                <CircleNotch className={`${iconSize} animate-spin`} />
+        return compact ? (
+            <button className='shrink-0 rounded-md p-1 text-gray-500' disabled>
+                <CircleNotch className='h-3.5 w-3.5 animate-spin' />
+            </button>
+        ) : (
+            <Button variant='ghost' size='icon' disabled>
+                <CircleNotch className='h-5 w-5 animate-spin' />
             </Button>
         )
     }
@@ -59,9 +56,18 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
     return (
         <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
-                <Button variant='ghost' size='icon' className={buttonClassName}>
-                    <DotsThreeOutline className={iconSize} />
-                </Button>
+                {compact ? (
+                    <button className='shrink-0 rounded-md p-1 text-gray-500 transition-colors hover:bg-white/10 hover:text-white'>
+                        <DotsThreeOutline
+                            className='h-3.5 w-3.5'
+                            weight='bold'
+                        />
+                    </button>
+                ) : (
+                    <Button variant='ghost' size='icon'>
+                        <DotsThreeOutline className='h-5 w-5' />
+                    </Button>
+                )}
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end' collisionPadding={8}>
                 {(claw.status === 'stopped' || claw.status === 'off') && (
@@ -129,14 +135,20 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                 {claw.ip && claw.rootPassword && (
                     <>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={actions.onShowDiagnostics}>
-                            <Pulse className='mr-2 h-4 w-4' />
-                            {t('dashboard.diagnostics')}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={actions.onShowLogs}>
-                            <Scroll className='mr-2 h-4 w-4' />
-                            {t('dashboard.diagnosticsLogs')}
-                        </DropdownMenuItem>
+                        {!isPlayground && (
+                            <>
+                                <DropdownMenuItem
+                                    onClick={actions.onShowDiagnostics}
+                                >
+                                    <Pulse className='mr-2 h-4 w-4' />
+                                    {t('dashboard.diagnostics')}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={actions.onShowLogs}>
+                                    <Scroll className='mr-2 h-4 w-4' />
+                                    {t('dashboard.diagnosticsLogs')}
+                                </DropdownMenuItem>
+                            </>
+                        )}
                         <DropdownMenuItem onClick={actions.onShowConfig}>
                             <FolderSimple className='mr-2 h-4 w-4' />
                             {t('dashboard.fileExplorer')}
@@ -177,14 +189,16 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                             <ClockCountdown className='mr-2 h-4 w-4' />
                             {t('dashboard.cancelDeletion')}
                         </DropdownMenuItem>
-                        <DropdownMenuItem
-                            onClick={actions.onShowHardDeleteModal}
-                            disabled={isLoading}
-                            className='text-red-400 focus:text-red-400'
-                        >
-                            <Trash className='mr-2 h-4 w-4' />
-                            {t('dashboard.hardDelete')}
-                        </DropdownMenuItem>
+                        {isAdmin && (
+                            <DropdownMenuItem
+                                onClick={actions.onShowHardDeleteModal}
+                                disabled={isLoading}
+                                className='text-red-400 focus:text-red-400'
+                            >
+                                <Trash className='mr-2 h-4 w-4' />
+                                {t('dashboard.hardDelete')}
+                            </DropdownMenuItem>
+                        )}
                     </>
                 ) : (
                     <DropdownMenuItem

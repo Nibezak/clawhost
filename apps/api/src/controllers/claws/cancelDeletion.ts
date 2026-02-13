@@ -60,7 +60,13 @@ const cancelDeletion = async (
         return ok(c, updated[0], t('api.clawDeletionCancelled'))
     } catch (err) {
         console.error('Cancel deletion error:', err)
-        return fail(c, err instanceof Error ? err.message : t('api.failedToCancelDeletion'), 500)
+        return fail(
+            c,
+            err instanceof Error
+                ? err.message
+                : t('api.failedToCancelDeletion'),
+            500
+        )
     }
 }
 

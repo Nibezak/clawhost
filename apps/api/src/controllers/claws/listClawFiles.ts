@@ -58,9 +58,7 @@ const listClawFiles = async (c: Context<{ Variables: { userId: string } }>) => {
         console.error('List claw files error:', err)
         return fail(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToListFiles'),
+            err instanceof Error ? err.message : t('api.failedToListFiles'),
             500
         )
     }

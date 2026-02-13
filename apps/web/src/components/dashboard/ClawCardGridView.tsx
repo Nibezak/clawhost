@@ -8,7 +8,7 @@ import {
     TooltipTrigger,
     TooltipContent
 } from '@/components/ui/tooltip'
-import { ClawMascot } from '@/components/ClawMascot'
+import ClawAvatar from '@/components/ClawAvatar'
 import ProviderIcon from '@/components/ProviderIcon'
 import { ClawCardDropdownMenu } from '@/components/dashboard/ClawCardDropdownMenu'
 import { CopyableField } from '@/components/dashboard/CopyableField'
@@ -36,9 +36,7 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
             <CardContent className='py-4'>
                 <div className='flex items-center justify-between'>
                     <div className='flex items-center gap-3'>
-                        <div className='bg-muted flex h-10 w-10 shrink-0 items-center justify-center rounded-xl'>
-                            <ClawMascot className='h-5 w-5' />
-                        </div>
+                        <ClawAvatar />
 
                         <div className='min-w-0'>
                             <div className='flex flex-wrap items-center gap-2'>

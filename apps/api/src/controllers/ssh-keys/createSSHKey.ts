@@ -73,20 +73,22 @@ const createSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
             vultrKeyId
         })
 
-        return ok(c, {
-            id,
-            name,
-            fingerprint: hetznerKey.fingerprint,
-            publicKey,
-            createdAt: new Date().toISOString()
-        }, t('api.sshKeyCreated'))
+        return ok(
+            c,
+            {
+                id,
+                name,
+                fingerprint: hetznerKey.fingerprint,
+                publicKey,
+                createdAt: new Date().toISOString()
+            },
+            t('api.sshKeyCreated')
+        )
     } catch (err) {
         console.error('Create SSH key error:', err)
         return fail(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToCreateSshKey'),
+            err instanceof Error ? err.message : t('api.failedToCreateSshKey'),
             500
         )
     }

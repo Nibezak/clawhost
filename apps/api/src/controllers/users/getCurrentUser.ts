@@ -33,9 +33,7 @@ const getCurrentUser = async (
         console.error('Get user error:', err)
         return fail(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToGetProfile'),
+            err instanceof Error ? err.message : t('api.failedToGetProfile'),
             500
         )
     }

@@ -37,14 +37,20 @@ const getUserStats = async (c: Context<{ Variables: { userId: string } }>) => {
                     1
                 )
                 orderCount = result.totalCount
-            } catch { /* empty */ }
+            } catch {
+                /* empty */
+            }
         }
 
-        return ok(c, {
-            clawCount: clawResult[0]?.count || 0,
-            sshKeyCount: sshKeyResult[0]?.count || 0,
-            orderCount
-        }, t('api.statsFetched'))
+        return ok(
+            c,
+            {
+                clawCount: clawResult[0]?.count || 0,
+                sshKeyCount: sshKeyResult[0]?.count || 0,
+                orderCount
+            },
+            t('api.statsFetched')
+        )
     } catch (err) {
         console.error('Get user stats error:', err)
         return fail(c, t('api.failedToGetStats'), 500)

@@ -28,12 +28,20 @@ const BillingSkeleton: FC = (): ReactNode => {
     return (
         <View style={styles.container}>
             <View style={styles.leftSection}>
-                <Animated.View style={[styles.namePlaceholder, { opacity: pulseAnim }]} />
-                <Animated.View style={[styles.datePlaceholder, { opacity: pulseAnim }]} />
+                <Animated.View
+                    style={[styles.namePlaceholder, { opacity: pulseAnim }]}
+                />
+                <Animated.View
+                    style={[styles.datePlaceholder, { opacity: pulseAnim }]}
+                />
             </View>
             <View style={styles.rightSection}>
-                <Animated.View style={[styles.amountPlaceholder, { opacity: pulseAnim }]} />
-                <Animated.View style={[styles.badgePlaceholder, { opacity: pulseAnim }]} />
+                <Animated.View
+                    style={[styles.amountPlaceholder, { opacity: pulseAnim }]}
+                />
+                <Animated.View
+                    style={[styles.badgePlaceholder, { opacity: pulseAnim }]}
+                />
             </View>
         </View>
     )

@@ -164,9 +164,7 @@ server {
         console.error('Reinstall claw error:', err)
         return fail(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToReinstallClaw'),
+            err instanceof Error ? err.message : t('api.failedToReinstallClaw'),
             500
         )
     }

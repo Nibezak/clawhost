@@ -57,9 +57,7 @@ const readClawFile = async (c: Context<{ Variables: { userId: string } }>) => {
         console.error('Read claw file error:', err)
         return fail(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToReadFile'),
+            err instanceof Error ? err.message : t('api.failedToReadFile'),
             500
         )
     }

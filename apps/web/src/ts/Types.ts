@@ -2,7 +2,7 @@ export type ProviderType = 'hetzner' | 'digitalocean' | 'vultr'
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info'
 
-export type ViewMode = 'list' | 'grid'
+export type ViewMode = 'list' | 'grid' | 'playground'
 
 export type ClawStatus =
     | 'initializing'
@@ -24,3 +24,11 @@ export type CopiedFieldType = 'command' | 'private' | null
 export type SSHKeyModalMode = 'upload' | 'generate'
 
 export type UserRole = 'user' | 'admin'
+
+export type PlaygroundNodeType = 'claw' | 'agent'
+
+export type PlaygroundDetailTab = 'info' | 'logs' | 'diagnostics'
+
+export type PlaygroundAgentDetailTab = 'chat' | 'configuration'
+
+export type ClawAvatarSize = 'sm' | 'md' | 'lg'

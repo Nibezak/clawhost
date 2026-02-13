@@ -34,7 +34,11 @@ const getCustomerPortal = async (
             returnUrl
         })
 
-        return ok(c, { url: session.customerPortalUrl }, t('api.customerPortalFetched'))
+        return ok(
+            c,
+            { url: session.customerPortalUrl },
+            t('api.customerPortalFetched')
+        )
     } catch (err) {
         console.error('Get customer portal error:', err)
         return fail(c, t('api.failedToGetCustomerPortal'), 500)

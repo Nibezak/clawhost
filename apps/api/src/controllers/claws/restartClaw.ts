@@ -46,7 +46,11 @@ const restartClaw = async (c: Context<{ Variables: { userId: string } }>) => {
         return ok(c, updated[0], t('api.clawRestarted'))
     } catch (err) {
         console.error('Restart claw error:', err)
-        return fail(c, err instanceof Error ? err.message : t('api.failedToRestartClaw'), 500)
+        return fail(
+            c,
+            err instanceof Error ? err.message : t('api.failedToRestartClaw'),
+            500
+        )
     }
 }
 

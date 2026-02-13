@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Logo } from '@/components/Logo'
 import { ROUTES } from '@/lib/routes'
-import { Key, User, SignOut, Lightning, GearSix } from '@phosphor-icons/react'
+import { Key, User, SignOut, Lightning } from '@phosphor-icons/react'
 import { ClawMascotOutline } from '@/components/ClawMascotOutline'
 
 const Header: FC<HeaderProps> = ({
@@ -149,15 +149,6 @@ const Header: FC<HeaderProps> = ({
                                     <User className='h-4 w-4' />
                                     {t('nav.account')}
                                 </DropdownMenuItem>
-                                {profile?.role === 'admin' && (
-                                    <DropdownMenuItem
-                                        onClick={() => navigate(ROUTES.ADMIN)}
-                                        className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.ADMIN ? 'bg-white/10' : ''}`}
-                                    >
-                                        <GearSix className='h-4 w-4' />
-                                        {t('nav.admin')}
-                                    </DropdownMenuItem>
-                                )}
                                 <DropdownMenuSeparator className='bg-white/10' />
                                 <DropdownMenuItem
                                     onClick={signOut}

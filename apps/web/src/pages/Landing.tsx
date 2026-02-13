@@ -784,27 +784,45 @@ const Landing: FC = (): ReactNode => {
                                                 recommendedPlans[
                                                     pricingProvider
                                                 ]
-                                            const tierStarts: Record<string, Record<string, string>> = {
+                                            const tierStarts: Record<
+                                                string,
+                                                Record<string, string>
+                                            > = {
                                                 hetzner: {
-                                                    cx23: t('landing.tierShared'),
+                                                    cx23: t(
+                                                        'landing.tierShared'
+                                                    ),
                                                     cax11: t('landing.tierArm'),
-                                                    ccx13: t('landing.tierDedicated')
+                                                    ccx13: t(
+                                                        'landing.tierDedicated'
+                                                    )
                                                 },
                                                 vultr: {
-                                                    'vc2-2c-4gb': t('landing.tierRegular'),
-                                                    'vhp-2c-4gb-amd': t('landing.tierHighPerformance'),
-                                                    'vhf-3c-8gb': t('landing.tierHighFrequency')
+                                                    'vc2-2c-4gb': t(
+                                                        'landing.tierRegular'
+                                                    ),
+                                                    'vhp-2c-4gb-amd': t(
+                                                        'landing.tierHighPerformance'
+                                                    ),
+                                                    'vhf-3c-8gb': t(
+                                                        'landing.tierHighFrequency'
+                                                    )
                                                 }
                                             }
 
-                                            const providerTiers = tierStarts[pricingProvider]
-                                            const tierLabel = providerTiers?.[plan.id]
-                                            const showTier = tierLabel && index > 0
+                                            const providerTiers =
+                                                tierStarts[pricingProvider]
+                                            const tierLabel =
+                                                providerTiers?.[plan.id]
+                                            const showTier =
+                                                tierLabel && index > 0
 
                                             return (
                                                 <>
                                                     {showTier && (
-                                                        <tr key={`tier-${plan.id}`}>
+                                                        <tr
+                                                            key={`tier-${plan.id}`}
+                                                        >
                                                             <td
                                                                 colSpan={6}
                                                                 className='px-4 pb-2 pt-6'
@@ -823,68 +841,68 @@ const Landing: FC = (): ReactNode => {
                                                                 : ''
                                                         }`}
                                                     >
-                                                    <td className='px-4 py-4'>
-                                                        <div className='flex items-center gap-2'>
-                                                            <span className='font-medium text-white'>
-                                                                {plan.name.replace(
-                                                                    /([A-Za-z])(\d)/,
-                                                                    '$1 $2'
-                                                                )}
-                                                            </span>
-                                                            {isRecommended && (
+                                                        <td className='px-4 py-4'>
+                                                            <div className='flex items-center gap-2'>
+                                                                <span className='font-medium text-white'>
+                                                                    {plan.name.replace(
+                                                                        /([A-Za-z])(\d)/,
+                                                                        '$1 $2'
+                                                                    )}
+                                                                </span>
+                                                                {isRecommended && (
                                                                     <Badge className='border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-xs text-white'>
                                                                         {t(
                                                                             'landing.recommended'
                                                                         )}
                                                                     </Badge>
                                                                 )}
-                                                        </div>
-                                                    </td>
-                                                    <td className='px-4 py-4 text-center text-gray-300'>
-                                                        {plan.cpu}
-                                                    </td>
-                                                    <td className='px-4 py-4 text-center text-gray-300'>
-                                                        {plan.memory} GB
-                                                    </td>
-                                                    <td className='px-4 py-4 text-center text-gray-300'>
-                                                        {plan.disk} GB
-                                                    </td>
-                                                    <td className='px-4 py-4 text-center'>
-                                                        <span className='font-clash font-bold text-white'>
-                                                            ${totalMonthly}
-                                                        </span>
-                                                        <span className='text-sm text-gray-500'>
-                                                            /mo
-                                                        </span>
-                                                    </td>
-                                                    <td className='px-4 py-4 text-right'>
-                                                        <Button
-                                                            size='sm'
-                                                            className={`gap-2 px-4 ${
-                                                                isRecommended
-                                                                    ? 'border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90'
-                                                                    : 'border-0 bg-white/10 text-white hover:bg-white/20'
-                                                            }`}
-                                                            asChild
-                                                        >
-                                                            <Link
-                                                                to={
-                                                                    user
-                                                                        ? `${ROUTES.CLAWS}?plan=${plan.id}`
-                                                                        : `${ROUTES.LOGIN}?plan=${plan.id}`
-                                                                }
+                                                            </div>
+                                                        </td>
+                                                        <td className='px-4 py-4 text-center text-gray-300'>
+                                                            {plan.cpu}
+                                                        </td>
+                                                        <td className='px-4 py-4 text-center text-gray-300'>
+                                                            {plan.memory} GB
+                                                        </td>
+                                                        <td className='px-4 py-4 text-center text-gray-300'>
+                                                            {plan.disk} GB
+                                                        </td>
+                                                        <td className='px-4 py-4 text-center'>
+                                                            <span className='font-clash font-bold text-white'>
+                                                                ${totalMonthly}
+                                                            </span>
+                                                            <span className='text-sm text-gray-500'>
+                                                                /mo
+                                                            </span>
+                                                        </td>
+                                                        <td className='px-4 py-4 text-right'>
+                                                            <Button
+                                                                size='sm'
+                                                                className={`gap-2 px-4 ${
+                                                                    isRecommended
+                                                                        ? 'border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90'
+                                                                        : 'border-0 bg-white/10 text-white hover:bg-white/20'
+                                                                }`}
+                                                                asChild
                                                             >
-                                                                {user
-                                                                    ? t(
-                                                                          'landing.deploy'
-                                                                      )
-                                                                    : t(
-                                                                          'landing.select'
-                                                                      )}
-                                                            </Link>
-                                                        </Button>
-                                                    </td>
-                                                </tr>
+                                                                <Link
+                                                                    to={
+                                                                        user
+                                                                            ? `${ROUTES.CLAWS}?plan=${plan.id}`
+                                                                            : `${ROUTES.LOGIN}?plan=${plan.id}`
+                                                                    }
+                                                                >
+                                                                    {user
+                                                                        ? t(
+                                                                              'landing.deploy'
+                                                                          )
+                                                                        : t(
+                                                                              'landing.select'
+                                                                          )}
+                                                                </Link>
+                                                            </Button>
+                                                        </td>
+                                                    </tr>
                                                 </>
                                             )
                                         })}
@@ -1119,6 +1137,72 @@ const Landing: FC = (): ReactNode => {
                                             <span className='text-gray-400'>
                                                 {t(
                                                     'landing.comparisonMultipleOthers'
+                                                )}
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr className='bg-white/[0.01]'>
+                                    <td className='px-6 py-4'>
+                                        <div className='flex items-center gap-3'>
+                                            <Check className='h-5 w-5 flex-shrink-0 text-green-400' />
+                                            <span className='text-white'>
+                                                {t(
+                                                    'landing.comparisonOpenSourceUs'
+                                                )}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td className='px-6 py-4'>
+                                        <div className='flex items-center gap-3'>
+                                            <X className='h-5 w-5 flex-shrink-0 text-red-400' />
+                                            <span className='text-gray-400'>
+                                                {t(
+                                                    'landing.comparisonOpenSourceOthers'
+                                                )}
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className='px-6 py-4'>
+                                        <div className='flex items-center gap-3'>
+                                            <Check className='h-5 w-5 flex-shrink-0 text-green-400' />
+                                            <span className='text-white'>
+                                                {t(
+                                                    'landing.comparisonExportUs'
+                                                )}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td className='px-6 py-4'>
+                                        <div className='flex items-center gap-3'>
+                                            <X className='h-5 w-5 flex-shrink-0 text-red-400' />
+                                            <span className='text-gray-400'>
+                                                {t(
+                                                    'landing.comparisonExportOthers'
+                                                )}
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr className='bg-white/[0.01]'>
+                                    <td className='px-6 py-4'>
+                                        <div className='flex items-center gap-3'>
+                                            <Check className='h-5 w-5 flex-shrink-0 text-green-400' />
+                                            <span className='text-white'>
+                                                {t(
+                                                    'landing.comparisonProvidersUs'
+                                                )}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td className='px-6 py-4'>
+                                        <div className='flex items-center gap-3'>
+                                            <X className='h-5 w-5 flex-shrink-0 text-red-400' />
+                                            <span className='text-gray-400'>
+                                                {t(
+                                                    'landing.comparisonProvidersOthers'
                                                 )}
                                             </span>
                                         </div>

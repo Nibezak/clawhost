@@ -5,7 +5,11 @@ import { auth } from '@/services/firebase'
 import { getResend, FROM_EMAIL } from '@/services/resend'
 import MagicLinkEmail from '@/emails/MagicLinkEmail'
 import { t } from '@openclaw/i18n'
-import { getClientIp, checkRateLimit, setRateLimit } from '@/controllers/auth/rateLimit'
+import {
+    getClientIp,
+    checkRateLimit,
+    setRateLimit
+} from '@/controllers/auth/rateLimit'
 import { ok, fail } from '@/lib/response'
 
 const sendMagicLink = async (c: Context) => {
@@ -15,7 +19,9 @@ const sendMagicLink = async (c: Context) => {
         if (ip) {
             const ipRetry = await checkRateLimit(`ip:${ip}`)
             if (ipRetry > 0) {
-                return fail(c, t('api.rateLimitExceeded'), 429, { retryAfter: ipRetry })
+                return fail(c, t('api.rateLimitExceeded'), 429, {
+                    retryAfter: ipRetry
+                })
             }
         }
 
@@ -31,7 +37,9 @@ const sendMagicLink = async (c: Context) => {
 
         const emailRetry = await checkRateLimit(`email:${email.toLowerCase()}`)
         if (emailRetry > 0) {
-            return fail(c, t('api.rateLimitExceeded'), 429, { retryAfter: emailRetry })
+            return fail(c, t('api.rateLimitExceeded'), 429, {
+                retryAfter: emailRetry
+            })
         }
 
         const actionCodeSettings = {
@@ -64,9 +72,7 @@ const sendMagicLink = async (c: Context) => {
         console.error('Send magic link error:', err)
         return fail(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToSendMagicLink'),
+            err instanceof Error ? err.message : t('api.failedToSendMagicLink'),
             500
         )
     }

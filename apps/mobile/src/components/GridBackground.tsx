@@ -17,7 +17,11 @@ const GridBackground: FC = (): ReactNode => {
     return (
         <View style={styles.container}>
             <LinearGradient
-                colors={['rgba(239,83,80,0.25)', 'rgba(198,40,40,0.15)', 'transparent']}
+                colors={[
+                    'rgba(239,83,80,0.25)',
+                    'rgba(198,40,40,0.15)',
+                    'transparent'
+                ]}
                 locations={[0, 0.3, 0.7]}
                 style={styles.gradient}
             />

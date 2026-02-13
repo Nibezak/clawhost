@@ -11,7 +11,7 @@ import {
     TooltipContent
 } from '@/components/ui/tooltip'
 import { CaretDown } from '@phosphor-icons/react'
-import { ClawMascot } from '@/components/ClawMascot'
+import ClawAvatar from '@/components/ClawAvatar'
 import ProviderIcon from '@/components/ProviderIcon'
 import { ClawCardDropdownMenu } from '@/components/dashboard/ClawCardDropdownMenu'
 import { CopyableField } from '@/components/dashboard/CopyableField'
@@ -41,9 +41,7 @@ const ClawCardListView: FC<ClawCardListViewProps> = ({
             <CardContent className='py-4'>
                 <div className='flex items-center justify-between'>
                     <div className='flex items-center gap-4'>
-                        <div className='bg-muted flex h-12 w-12 items-center justify-center rounded-xl'>
-                            <ClawMascot className='h-6 w-6' />
-                        </div>
+                        <ClawAvatar size='lg' />
 
                         <div>
                             <div className='flex flex-wrap items-center gap-2'>
@@ -259,7 +257,6 @@ const ClawCardListView: FC<ClawCardListViewProps> = ({
                                 />
                             )}
                         </div>
-
                     </motion.div>
                 )}
 

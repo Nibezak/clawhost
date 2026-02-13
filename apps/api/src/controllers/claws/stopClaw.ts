@@ -46,7 +46,11 @@ const stopClaw = async (c: Context<{ Variables: { userId: string } }>) => {
         return ok(c, updated[0], t('api.clawStopped'))
     } catch (err) {
         console.error('Stop claw error:', err)
-        return fail(c, err instanceof Error ? err.message : t('api.failedToStopClaw'), 500)
+        return fail(
+            c,
+            err instanceof Error ? err.message : t('api.failedToStopClaw'),
+            500
+        )
     }
 }
 

@@ -50,7 +50,16 @@ const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {
                         .where(eq(claws.id, id))
                         .limit(1)
 
-                    return ok(c, { scheduled: true, deletionScheduledAt: sub.currentPeriodEnd.toISOString(), claw: updated[0] }, t('api.clawDeletionScheduled'))
+                    return ok(
+                        c,
+                        {
+                            scheduled: true,
+                            deletionScheduledAt:
+                                sub.currentPeriodEnd.toISOString(),
+                            claw: updated[0]
+                        },
+                        t('api.clawDeletionScheduled')
+                    )
                 }
             } catch (subErr) {
                 console.error(
@@ -79,9 +88,7 @@ const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {
         console.error('Delete claw error:', err)
         return fail(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToDeleteClaw'),
+            err instanceof Error ? err.message : t('api.failedToDeleteClaw'),
             500
         )
     }

@@ -18,6 +18,9 @@ import updateClawFile from '@/controllers/claws/updateClawFile'
 import getAdminClaws from '@/controllers/claws/getAdminClaws'
 import reinstallClaw from '@/controllers/claws/reinstallClaw'
 import exportClaw from '@/controllers/claws/exportClaw'
+import getClawAgents from '@/controllers/claws/getClawAgents'
+import getClawAgentConfig from '@/controllers/claws/getClawAgentConfig'
+import updateClawAgentConfig from '@/controllers/claws/updateClawAgentConfig'
 
 export {
     getClaws,
@@ -39,5 +42,8 @@ export {
     readClawFile,
     updateClawFile,
     reinstallClaw,
-    exportClaw
+    exportClaw,
+    getClawAgents,
+    getClawAgentConfig,
+    updateClawAgentConfig
 }

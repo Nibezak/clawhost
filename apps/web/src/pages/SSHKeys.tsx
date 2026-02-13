@@ -608,139 +608,114 @@ const SSHKeys: FC = (): ReactNode => {
                 transition={{ duration: 0.4 }}
                 className='relative mx-auto w-full max-w-6xl flex-1 px-6 py-8'
             >
-                    <PageHeader
-                            title={t('sshKeys.title')}
-                            description={`${sshKeys?.length ?? 0} ${sshKeys?.length === 1 ? t('sshKeys.key') : t('sshKeys.keys')}`}
-                            action={
-                                !isLoading &&
-                                sshKeys?.length === 0 ? undefined : (
-                                    <ActionButton
-                                        onClick={() => setShowCreate(true)}
-                                        icon={
-                                            <PlusCircle
-                                                className='h-5 w-5'
-                                                weight='bold'
-                                            />
-                                        }
-                                        label={t('sshKeys.addSshKey')}
-                                    />
-                                )
-                            }
-                        />
-
-                        <div className='rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm'>
-                            <div className='mb-6 rounded-lg border border-white/5 bg-white/5'>
-                                <button
-                                    type='button'
-                                    onClick={() =>
-                                        setHowItWorksOpen(!howItWorksOpen)
-                                    }
-                                    className='flex w-full items-center justify-between p-4 text-left'
-                                >
-                                    <h3 className='font-semibold'>
-                                        {t('sshKeys.howSshKeysWork')}
-                                    </h3>
-                                    <CaretDown
-                                        className={`h-4 w-4 text-gray-400 transition-transform ${howItWorksOpen ? 'rotate-180' : ''}`}
+                <PageHeader
+                    title={t('sshKeys.title')}
+                    description={`${sshKeys?.length ?? 0} ${sshKeys?.length === 1 ? t('sshKeys.key') : t('sshKeys.keys')}`}
+                    action={
+                        !isLoading && sshKeys?.length === 0 ? undefined : (
+                            <ActionButton
+                                onClick={() => setShowCreate(true)}
+                                icon={
+                                    <PlusCircle
+                                        className='h-5 w-5'
                                         weight='bold'
                                     />
-                                </button>
-                                {howItWorksOpen && (
-                                    <ol className='text-muted-foreground list-inside list-decimal space-y-1 px-4 pb-4 text-sm'>
-                                        <li>{t('sshKeys.step1')}</li>
-                                        <li>
-                                            {
-                                                t('sshKeys.step2').split(
-                                                    'public key'
-                                                )[0]
-                                            }
-                                            <strong className='text-white'>
-                                                public key
-                                            </strong>
-                                            {t('sshKeys.step2').split(
-                                                'public key'
-                                            )[1] || ' here.'}
-                                        </li>
-                                        <li>{t('sshKeys.step3')}</li>
-                                        <li>
-                                            {t('sshKeys.step4')}{' '}
-                                            <code className='rounded bg-white/10 px-1'>
-                                                {t('sshKeys.step4Command')}
-                                            </code>{' '}
-                                            {t('sshKeys.step4Suffix')}
-                                        </li>
-                                    </ol>
-                                )}
-                            </div>
+                                }
+                                label={t('sshKeys.addSshKey')}
+                            />
+                        )
+                    }
+                />
 
-                            {isError ? (
-                                <ErrorState
-                                    title={t('errors.failedToLoadSSHKeys')}
-                                    description={t(
-                                        'errors.failedToLoadSSHKeysDescription'
-                                    )}
-                                    onRetry={() => refetch()}
-                                />
-                            ) : isLoading &&
-                              knowsCount &&
-                              skeletonCount === 0 ? (
-                                <EmptyState
-                                    icon={
-                                        <Key className='text-primary h-10 w-10' />
-                                    }
-                                    title={t('sshKeys.noSshKeysYet')}
-                                    description={t(
-                                        'sshKeys.noSshKeysDescription'
-                                    )}
-                                    actionLabel={t('sshKeys.addSshKey')}
-                                    actionIcon={
-                                        <PlusCircle
-                                            className='h-5 w-5'
-                                            weight='bold'
-                                        />
-                                    }
-                                    onAction={() => setShowCreate(true)}
-                                />
-                            ) : isLoading && skeletonCount > 0 ? (
-                                <div className='space-y-1.5'>
-                                    {Array.from({ length: skeletonCount }).map(
-                                        (_, i) => (
-                                            <SSHKeySkeleton key={i} />
-                                        )
-                                    )}
-                                </div>
-                            ) : sshKeys?.length === 0 ? (
-                                <EmptyState
-                                    icon={
-                                        <Key className='text-primary h-10 w-10' />
-                                    }
-                                    title={t('sshKeys.noSshKeysYet')}
-                                    description={t(
-                                        'sshKeys.noSshKeysDescription'
-                                    )}
-                                    actionLabel={t('sshKeys.addSshKey')}
-                                    actionIcon={
-                                        <PlusCircle
-                                            className='h-5 w-5'
-                                            weight='bold'
-                                        />
-                                    }
-                                    onAction={() => setShowCreate(true)}
-                                />
-                            ) : (
-                                <div className='space-y-1.5'>
-                                    {sshKeys?.map((key) => (
-                                        <SSHKeyCard key={key.id} sshKey={key} />
-                                    ))}
-                                </div>
+                <div className='rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm'>
+                    <div className='mb-6 rounded-lg border border-white/5 bg-white/5'>
+                        <button
+                            type='button'
+                            onClick={() => setHowItWorksOpen(!howItWorksOpen)}
+                            className='flex w-full items-center justify-between p-4 text-left'
+                        >
+                            <h3 className='font-semibold'>
+                                {t('sshKeys.howSshKeysWork')}
+                            </h3>
+                            <CaretDown
+                                className={`h-4 w-4 text-gray-400 transition-transform ${howItWorksOpen ? 'rotate-180' : ''}`}
+                                weight='bold'
+                            />
+                        </button>
+                        {howItWorksOpen && (
+                            <ol className='text-muted-foreground list-inside list-decimal space-y-1 px-4 pb-4 text-sm'>
+                                <li>{t('sshKeys.step1')}</li>
+                                <li>
+                                    {t('sshKeys.step2').split('public key')[0]}
+                                    <strong className='text-white'>
+                                        public key
+                                    </strong>
+                                    {t('sshKeys.step2').split(
+                                        'public key'
+                                    )[1] || ' here.'}
+                                </li>
+                                <li>{t('sshKeys.step3')}</li>
+                                <li>
+                                    {t('sshKeys.step4')}{' '}
+                                    <code className='rounded bg-white/10 px-1'>
+                                        {t('sshKeys.step4Command')}
+                                    </code>{' '}
+                                    {t('sshKeys.step4Suffix')}
+                                </li>
+                            </ol>
+                        )}
+                    </div>
+
+                    {isError ? (
+                        <ErrorState
+                            title={t('errors.failedToLoadSSHKeys')}
+                            description={t(
+                                'errors.failedToLoadSSHKeysDescription'
+                            )}
+                            onRetry={() => refetch()}
+                        />
+                    ) : isLoading && knowsCount && skeletonCount === 0 ? (
+                        <EmptyState
+                            icon={<Key className='text-primary h-10 w-10' />}
+                            title={t('sshKeys.noSshKeysYet')}
+                            description={t('sshKeys.noSshKeysDescription')}
+                            actionLabel={t('sshKeys.addSshKey')}
+                            actionIcon={
+                                <PlusCircle className='h-5 w-5' weight='bold' />
+                            }
+                            onAction={() => setShowCreate(true)}
+                        />
+                    ) : isLoading && skeletonCount > 0 ? (
+                        <div className='space-y-1.5'>
+                            {Array.from({ length: skeletonCount }).map(
+                                (_, i) => (
+                                    <SSHKeySkeleton key={i} />
+                                )
                             )}
                         </div>
+                    ) : sshKeys?.length === 0 ? (
+                        <EmptyState
+                            icon={<Key className='text-primary h-10 w-10' />}
+                            title={t('sshKeys.noSshKeysYet')}
+                            description={t('sshKeys.noSshKeysDescription')}
+                            actionLabel={t('sshKeys.addSshKey')}
+                            actionIcon={
+                                <PlusCircle className='h-5 w-5' weight='bold' />
+                            }
+                            onAction={() => setShowCreate(true)}
+                        />
+                    ) : (
+                        <div className='space-y-1.5'>
+                            {sshKeys?.map((key) => (
+                                <SSHKeyCard key={key.id} sshKey={key} />
+                            ))}
+                        </div>
+                    )}
+                </div>
 
-                        {showCreate && (
-                            <CreateSSHKeyModal
-                                onClose={() => setShowCreate(false)}
-                            />
-                        )}
+                {showCreate && (
+                    <CreateSSHKeyModal onClose={() => setShowCreate(false)} />
+                )}
             </motion.main>
 
             <LandingFooter />

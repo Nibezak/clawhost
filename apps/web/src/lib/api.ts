@@ -1,7 +1,9 @@
 import type {
+    AgentConfigResponse,
     BillingHistoryResponse,
     BillingInvoiceResponse,
     Claw,
+    ClawAgentsResponse,
     ClawFilesResponse,
     CreateClawData,
     CreateSSHKeyData,
@@ -16,6 +18,7 @@ import type {
     PurchaseClawResponse,
     ReadClawFileResponse,
     SSHKey,
+    UpdateAgentConfigData,
     UpdateClawFileData,
     UpdateProfileData,
     UserProfile,
@@ -98,6 +101,14 @@ export const api = {
     repairClaw: (id: string) =>
         client.post<void>(`/claws/${id}/diagnostics/repair`),
     reinstallClaw: (id: string) => client.post<void>(`/claws/${id}/reinstall`),
+    getClawAgents: (id: string) =>
+        client.post<ClawAgentsResponse>(`/claws/${id}/agents`),
+    getClawAgentConfig: (id: string, agentId: string) =>
+        client.post<AgentConfigResponse>(`/claws/${id}/agent-config`, {
+            agentId
+        }),
+    updateClawAgentConfig: (id: string, data: UpdateAgentConfigData) =>
+        client.put<void>(`/claws/${id}/agent-config`, data),
     exportClaw: async (id: string, filename: string) => {
         const token = await getCachedToken()
         const res = await fetch(`${BASE_URL}/claws/${id}/export`, {

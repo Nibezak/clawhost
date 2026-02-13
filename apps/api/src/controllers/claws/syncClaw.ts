@@ -41,11 +41,15 @@ const syncClaw = async (c: Context<{ Variables: { userId: string } }>) => {
                         .set({ status: 'running', ip: serverStatus.ip })
                         .where(eq(claws.id, id))
 
-                    return ok(c, {
-                        ...claw[0],
-                        status: 'running',
-                        ip: serverStatus.ip
-                    }, t('api.clawSynced'))
+                    return ok(
+                        c,
+                        {
+                            ...claw[0],
+                            status: 'running',
+                            ip: serverStatus.ip
+                        },
+                        t('api.clawSynced')
+                    )
                 }
             }
 
@@ -54,10 +58,14 @@ const syncClaw = async (c: Context<{ Variables: { userId: string } }>) => {
                 .set({ ip: serverStatus.ip })
                 .where(eq(claws.id, id))
 
-            return ok(c, {
-                ...claw[0],
-                ip: serverStatus.ip
-            }, t('api.clawSynced'))
+            return ok(
+                c,
+                {
+                    ...claw[0],
+                    ip: serverStatus.ip
+                },
+                t('api.clawSynced')
+            )
         }
 
         await db
@@ -65,11 +73,15 @@ const syncClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             .set({ status: serverStatus.status, ip: serverStatus.ip })
             .where(eq(claws.id, id))
 
-        return ok(c, {
-            ...claw[0],
-            status: serverStatus.status,
-            ip: serverStatus.ip
-        }, t('api.clawSynced'))
+        return ok(
+            c,
+            {
+                ...claw[0],
+                status: serverStatus.status,
+                ip: serverStatus.ip
+            },
+            t('api.clawSynced')
+        )
     } catch (err) {
         console.error('Failed to sync server status:', err)
         return fail(c, t('api.failedToSyncClaw'), 500)

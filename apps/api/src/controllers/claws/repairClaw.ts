@@ -70,9 +70,7 @@ const repairClaw = async (c: Context<{ Variables: { userId: string } }>) => {
         console.error('Repair claw error:', err)
         return fail(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToRepairClaw'),
+            err instanceof Error ? err.message : t('api.failedToRepairClaw'),
             500
         )
     }

@@ -168,24 +168,32 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             }
         }
 
-        return ok(c, {
-            id,
-            name,
-            provider: providerName || 'hetzner',
-            status: 'configuring',
-            ip,
-            planId,
-            location,
-            subdomain,
-            url: `https://${subdomain}.${DOMAIN}`,
-            createdAt: new Date().toISOString(),
-            rootPassword: finalPassword,
-            gatewayToken,
-            volume: createdVolume
-        }, t('api.clawCreated'))
+        return ok(
+            c,
+            {
+                id,
+                name,
+                provider: providerName || 'hetzner',
+                status: 'configuring',
+                ip,
+                planId,
+                location,
+                subdomain,
+                url: `https://${subdomain}.${DOMAIN}`,
+                createdAt: new Date().toISOString(),
+                rootPassword: finalPassword,
+                gatewayToken,
+                volume: createdVolume
+            },
+            t('api.clawCreated')
+        )
     } catch (err) {
         console.error('Create claw error:', err)
-        return fail(c, err instanceof Error ? err.message : t('api.failedToCreateClaw'), 500)
+        return fail(
+            c,
+            err instanceof Error ? err.message : t('api.failedToCreateClaw'),
+            500
+        )
     }
 }
 

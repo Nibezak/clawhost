@@ -279,7 +279,16 @@ const initiateClawPurchase = async (
             expiresAt
         })
 
-        return ok(c, { checkoutUrl: checkout.url, checkoutId: checkout.id, pendingClawId: pendingId, expiresAt: expiresAt.toISOString() }, t('api.clawPurchaseInitiated'))
+        return ok(
+            c,
+            {
+                checkoutUrl: checkout.url,
+                checkoutId: checkout.id,
+                pendingClawId: pendingId,
+                expiresAt: expiresAt.toISOString()
+            },
+            t('api.clawPurchaseInitiated')
+        )
     } catch (err) {
         console.error('Initiate claw purchase error:', err)
         return fail(

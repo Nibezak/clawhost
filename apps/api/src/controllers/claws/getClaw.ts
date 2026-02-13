@@ -43,11 +43,15 @@ const getClaw = async (c: Context<{ Variables: { userId: string } }>) => {
                     .update(claws)
                     .set({ status: serverStatus.status, ip: serverStatus.ip })
                     .where(eq(claws.id, id))
-                return ok(c, {
-                    ...claw[0],
-                    status: serverStatus.status,
-                    ip: serverStatus.ip
-                }, t('api.clawFetched'))
+                return ok(
+                    c,
+                    {
+                        ...claw[0],
+                        status: serverStatus.status,
+                        ip: serverStatus.ip
+                    },
+                    t('api.clawFetched')
+                )
             }
         } catch (err) {
             console.error('Failed to sync server status:', err)

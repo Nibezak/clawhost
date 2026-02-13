@@ -8,7 +8,11 @@ import { db } from '@/db'
 import { otpCodes } from '@/db/schema'
 import OtpCodeEmail from '@/emails/OtpCodeEmail'
 import { t } from '@openclaw/i18n'
-import { getClientIp, checkRateLimit, setRateLimit } from '@/controllers/auth/rateLimit'
+import {
+    getClientIp,
+    checkRateLimit,
+    setRateLimit
+} from '@/controllers/auth/rateLimit'
 import { ok, fail } from '@/lib/response'
 
 const OTP_EXPIRY_MS = 10 * 60 * 1000
@@ -24,7 +28,9 @@ const sendOtp = async (c: Context) => {
         if (ip) {
             const ipRetry = await checkRateLimit(`ip:${ip}`)
             if (ipRetry > 0) {
-                return fail(c, t('api.rateLimitExceeded'), 429, { retryAfter: ipRetry })
+                return fail(c, t('api.rateLimitExceeded'), 429, {
+                    retryAfter: ipRetry
+                })
             }
         }
 
@@ -36,7 +42,9 @@ const sendOtp = async (c: Context) => {
 
         const emailRetry = await checkRateLimit(`email:${email.toLowerCase()}`)
         if (emailRetry > 0) {
-            return fail(c, t('api.rateLimitExceeded'), 429, { retryAfter: emailRetry })
+            return fail(c, t('api.rateLimitExceeded'), 429, {
+                retryAfter: emailRetry
+            })
         }
 
         const code = String(crypto.randomInt(100000, 999999))
@@ -71,9 +79,7 @@ const sendOtp = async (c: Context) => {
         console.error('Send OTP error:', err)
         return fail(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToSendEmail'),
+            err instanceof Error ? err.message : t('api.failedToSendEmail'),
             500
         )
     }

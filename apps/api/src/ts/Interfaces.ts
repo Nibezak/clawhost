@@ -719,3 +719,35 @@ export interface InitiateClawPurchaseResponse {
     pendingClawId: string
     expiresAt: string
 }
+
+export interface ClawAgent {
+    id: string
+    name: string
+    model: string | null
+    status: string
+    directory: string | null
+}
+
+export interface ClawAgentsResponse {
+    agents: ClawAgent[]
+    reachable: boolean
+}
+
+export interface GetAgentConfigBody {
+    agentId: string
+}
+
+export interface UpdateAgentConfigBody {
+    agentId: string
+    model: string | null
+    envVars: Record<string, string>
+}
+
+export interface AgentConfigResponse {
+    agent: {
+        id: string
+        model: string | null
+    }
+    envVars: Record<string, string>
+    defaultModel: string | null
+}

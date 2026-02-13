@@ -76,9 +76,7 @@ const updateClawFile = async (
         console.error('Update claw file error:', err)
         return fail(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToUpdateFile'),
+            err instanceof Error ? err.message : t('api.failedToUpdateFile'),
             500
         )
     }

@@ -2,7 +2,6 @@ export const ROUTES = {
     HOME: '/',
     LOGIN: '/login',
     CLAWS: '/claws',
-    ADMIN: '/admin',
     SSH_KEYS: '/ssh-keys',
     ACCOUNT: '/account',
     TERMS: '/terms',

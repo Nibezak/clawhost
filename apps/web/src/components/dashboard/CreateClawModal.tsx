@@ -62,8 +62,11 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     const [name, setName] = useState('')
     const [provider, setProvider] = useState<ProviderType>('hetzner')
 
-    const { plans: providerPlans, isLoading: isLoadingPlans, atCapacity } =
-        usePlans(provider)
+    const {
+        plans: providerPlans,
+        isLoading: isLoadingPlans,
+        atCapacity
+    } = usePlans(provider)
     const { data: providerLocations, isLoading: isLoadingLocations } =
         useLocations(provider)
     const { data: providerVolumePricing } = useVolumePricing(provider)
@@ -190,6 +193,15 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                         )
                         return
                     }
+                    localStorage.setItem(
+                        'openclaw_awaiting_purchase',
+                        JSON.stringify({
+                            name,
+                            provider,
+                            planId,
+                            location
+                        })
+                    )
                     window.location.href = data.checkoutUrl
                 },
                 onError: (err: Error) => {
@@ -202,9 +214,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
         )
     }
 
-    const selectedPlan = plans.find(
-        (p) => p.id === planId && !p.disabled
-    )
+    const selectedPlan = plans.find((p) => p.id === planId && !p.disabled)
 
     return (
         <Dialog open onOpenChange={onClose}>
@@ -352,7 +362,9 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                 planId
                                             )
                                         const isDisabled =
-                                            loc.disabled || unavailableForPlan || atCapacity
+                                            loc.disabled ||
+                                            unavailableForPlan ||
+                                            atCapacity
                                         const locationLabel = loc.country
                                             ? `${loc.city}, ${loc.country}`
                                             : loc.city
@@ -440,20 +452,33 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                         const isSelected = planId === plan.id
                                         const isDisabled = plan.disabled
 
-                                        const tierStarts: Record<string, Record<string, string>> = {
+                                        const tierStarts: Record<
+                                            string,
+                                            Record<string, string>
+                                        > = {
                                             hetzner: {
                                                 cx23: t('landing.tierShared'),
                                                 cax11: t('landing.tierArm'),
-                                                ccx13: t('landing.tierDedicated')
+                                                ccx13: t(
+                                                    'landing.tierDedicated'
+                                                )
                                             },
                                             vultr: {
-                                                'vc2-2c-4gb': t('landing.tierRegular'),
-                                                'vhp-2c-4gb-amd': t('landing.tierHighPerformance'),
-                                                'vhf-3c-8gb': t('landing.tierHighFrequency')
+                                                'vc2-2c-4gb': t(
+                                                    'landing.tierRegular'
+                                                ),
+                                                'vhp-2c-4gb-amd': t(
+                                                    'landing.tierHighPerformance'
+                                                ),
+                                                'vhf-3c-8gb': t(
+                                                    'landing.tierHighFrequency'
+                                                )
                                             }
                                         }
-                                        const providerTiers = tierStarts[provider]
-                                        const tierLabel = providerTiers?.[plan.id]
+                                        const providerTiers =
+                                            tierStarts[provider]
+                                        const tierLabel =
+                                            providerTiers?.[plan.id]
 
                                         const card = (
                                             <label
@@ -515,16 +540,17 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                             </label>
                                         )
 
-                                        const separator = tierLabel && index > 0 ? (
-                                            <div
-                                                key={`tier-${plan.id}`}
-                                                className='pb-1 pt-4'
-                                            >
-                                                <span className='text-muted-foreground text-xs font-semibold uppercase tracking-wider'>
-                                                    {tierLabel}
-                                                </span>
-                                            </div>
-                                        ) : null
+                                        const separator =
+                                            tierLabel && index > 0 ? (
+                                                <div
+                                                    key={`tier-${plan.id}`}
+                                                    className='pb-1 pt-4'
+                                                >
+                                                    <span className='text-muted-foreground text-xs font-semibold uppercase tracking-wider'>
+                                                        {tierLabel}
+                                                    </span>
+                                                </div>
+                                            ) : null
 
                                         if (isDisabled) {
                                             return (
