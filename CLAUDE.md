@@ -472,26 +472,26 @@ EXPO_PUBLIC_FIREBASE_APP_ID=...
 
 ## Key Files
 
-| Purpose            | Path                                         |
-| ------------------ | -------------------------------------------- |
-| API Entry          | `apps/api/src/index.ts`                      |
-| DB Schema          | `apps/api/src/db/schema.ts`                  |
-| API Routes         | `apps/api/src/routes/index.ts`               |
-| Provider Resolver  | `apps/api/src/services/provider/getProvider.ts` |
-| Hetzner Service    | `apps/api/src/services/hetzner.ts`           |
-| DigitalOcean Service | `apps/api/src/services/digitalocean.ts`    |
-| Vultr Service      | `apps/api/src/services/vultr.ts`             |
-| Web Entry          | `apps/web/src/main.tsx`                      |
-| Web Routes         | `apps/web/src/App.tsx`                       |
-| Auth Context       | `apps/web/src/lib/auth.tsx`                  |
-| API Client (Web)   | `apps/web/src/lib/api.ts`                    |
-| Stores             | `apps/web/src/lib/store.ts`                  |
-| Mobile Entry       | `apps/mobile/App.tsx`                        |
-| API Client (Mobile)| `apps/mobile/src/lib/api.ts`                 |
-| Types (Web)        | `apps/web/src/ts/Types.ts`                   |
-| Interfaces (Web)   | `apps/web/src/ts/Interfaces.ts`              |
-| Types (API)        | `apps/api/src/ts/Types.ts`                   |
-| Interfaces (API)   | `apps/api/src/ts/Interfaces.ts`              |
+| Purpose              | Path                                            |
+| -------------------- | ----------------------------------------------- |
+| API Entry            | `apps/api/src/index.ts`                         |
+| DB Schema            | `apps/api/src/db/schema.ts`                     |
+| API Routes           | `apps/api/src/routes/index.ts`                  |
+| Provider Resolver    | `apps/api/src/services/provider/getProvider.ts` |
+| Hetzner Service      | `apps/api/src/services/hetzner.ts`              |
+| DigitalOcean Service | `apps/api/src/services/digitalocean.ts`         |
+| Vultr Service        | `apps/api/src/services/vultr.ts`                |
+| Web Entry            | `apps/web/src/main.tsx`                         |
+| Web Routes           | `apps/web/src/App.tsx`                          |
+| Auth Context         | `apps/web/src/lib/auth.tsx`                     |
+| API Client (Web)     | `apps/web/src/lib/api.ts`                       |
+| Stores               | `apps/web/src/lib/store.ts`                     |
+| Mobile Entry         | `apps/mobile/App.tsx`                           |
+| API Client (Mobile)  | `apps/mobile/src/lib/api.ts`                    |
+| Types (Web)          | `apps/web/src/ts/Types.ts`                      |
+| Interfaces (Web)     | `apps/web/src/ts/Interfaces.ts`                 |
+| Types (API)          | `apps/api/src/ts/Types.ts`                      |
+| Interfaces (API)     | `apps/api/src/ts/Interfaces.ts`                 |
 
 ### Internationalization (i18n)
 

@@ -22,6 +22,38 @@ const persister = createSyncStoragePersister({
     key: 'clawhost_query_cache'
 })
 
+document.addEventListener('dblclick', (e) => {
+    e.preventDefault()
+})
+
+document.addEventListener('contextmenu', (e) => {
+    e.preventDefault()
+})
+
+document.addEventListener('keydown', (e) => {
+    const isMod = e.metaKey || e.ctrlKey
+
+    if (
+        isMod &&
+        e.altKey &&
+        ['KeyI', 'KeyJ', 'KeyC', 'KeyU'].includes(e.code)
+    ) {
+        e.preventDefault()
+    }
+
+    if (isMod && e.shiftKey && ['KeyI', 'KeyJ', 'KeyC'].includes(e.code)) {
+        e.preventDefault()
+    }
+
+    if (isMod && e.code === 'KeyU') {
+        e.preventDefault()
+    }
+
+    if (e.code === 'F12') {
+        e.preventDefault()
+    }
+})
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <PersistQueryClientProvider

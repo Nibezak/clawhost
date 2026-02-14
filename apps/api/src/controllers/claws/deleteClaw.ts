@@ -1,5 +1,4 @@
-import type { Context } from 'hono'
-import type { ProviderType } from '@/ts/Types'
+import type { AuthenticatedContext, ProviderType } from '@/ts/Types'
 
 import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
@@ -9,7 +8,7 @@ import { cleanupClaw, isAdmin } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
-const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {
+const deleteClaw = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')
@@ -50,7 +49,16 @@ const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {
                         .where(eq(claws.id, id))
                         .limit(1)
 
-                    return ok(c, { scheduled: true, deletionScheduledAt: sub.currentPeriodEnd.toISOString(), claw: updated[0] }, t('api.clawDeletionScheduled'))
+                    return ok(
+                        c,
+                        {
+                            scheduled: true,
+                            deletionScheduledAt:
+                                sub.currentPeriodEnd.toISOString(),
+                            claw: updated[0]
+                        },
+                        t('api.clawDeletionScheduled')
+                    )
                 }
             } catch (subErr) {
                 console.error(
@@ -79,9 +87,7 @@ const deleteClaw = async (c: Context<{ Variables: { userId: string } }>) => {
         console.error('Delete claw error:', err)
         return fail(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToDeleteClaw'),
+            err instanceof Error ? err.message : t('api.failedToDeleteClaw'),
             500
         )
     }

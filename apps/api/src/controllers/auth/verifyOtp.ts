@@ -53,7 +53,9 @@ const verifyOtp = async (c: Context) => {
         const codeHash = hashCode(code)
         if (codeHash !== record.codeHash) {
             const remaining = MAX_ATTEMPTS - (record.attempts + 1)
-            return fail(c, t('api.otpInvalidCode'), 401, { attemptsRemaining: remaining })
+            return fail(c, t('api.otpInvalidCode'), 401, {
+                attemptsRemaining: remaining
+            })
         }
 
         await db.delete(otpCodes).where(eq(otpCodes.id, record.id))
@@ -82,9 +84,7 @@ const verifyOtp = async (c: Context) => {
         console.error('Verify OTP error:', err)
         return fail(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.internalServerError'),
+            err instanceof Error ? err.message : t('api.internalServerError'),
             500
         )
     }

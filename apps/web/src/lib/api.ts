@@ -1,7 +1,10 @@
 import type {
+    AgentConfigResponse,
     BillingHistoryResponse,
+    ClawEnvVarsResponse,
     BillingInvoiceResponse,
     Claw,
+    ClawAgentsResponse,
     ClawFilesResponse,
     CreateClawData,
     CreateSSHKeyData,
@@ -16,6 +19,11 @@ import type {
     PurchaseClawResponse,
     ReadClawFileResponse,
     SSHKey,
+    CreateAgentData,
+    CreateAgentResponse,
+    DeleteAgentData,
+    UpdateAgentConfigData,
+    UpdateClawEnvVarsData,
     UpdateClawFileData,
     UpdateProfileData,
     UserProfile,
@@ -48,7 +56,7 @@ const publicClient = new RequestClient({
     baseUrl: BASE_URL
 })
 
-export const api = {
+const api = {
     sendMagicLink: (email: string, redirectUrl: string) =>
         publicClient.post<void>('/auth/send-magic-link', {
             email,
@@ -98,6 +106,22 @@ export const api = {
     repairClaw: (id: string) =>
         client.post<void>(`/claws/${id}/diagnostics/repair`),
     reinstallClaw: (id: string) => client.post<void>(`/claws/${id}/reinstall`),
+    getClawAgents: (id: string) =>
+        client.post<ClawAgentsResponse>(`/claws/${id}/agents`),
+    getClawAgentConfig: (id: string, agentId: string) =>
+        client.post<AgentConfigResponse>(`/claws/${id}/agent-config`, {
+            agentId
+        }),
+    updateClawAgentConfig: (id: string, data: UpdateAgentConfigData) =>
+        client.put<void>(`/claws/${id}/agent-config`, data),
+    createClawAgent: (id: string, data: CreateAgentData) =>
+        client.post<CreateAgentResponse>(`/claws/${id}/agents/create`, data),
+    deleteClawAgent: (id: string, data: DeleteAgentData) =>
+        client.post<void>(`/claws/${id}/agents/delete`, data),
+    getClawEnvVars: (id: string) =>
+        client.get<ClawEnvVarsResponse>(`/claws/${id}/env`),
+    updateClawEnvVars: (id: string, data: UpdateClawEnvVarsData) =>
+        client.put<void>(`/claws/${id}/env`, data),
     exportClaw: async (id: string, filename: string) => {
         const token = await getCachedToken()
         const res = await fetch(`${BASE_URL}/claws/${id}/export`, {
@@ -148,3 +172,5 @@ export const api = {
     getCustomerPortal: () =>
         client.post<CustomerPortalResponse>('/users/me/billing/portal')
 }
+
+export default api

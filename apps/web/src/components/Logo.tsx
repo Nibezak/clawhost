@@ -1,11 +1,23 @@
 import type { FC, ReactNode } from 'react'
 
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 const Logo: FC = (): ReactNode => {
+    const { pathname, hash, search } = useLocation()
+    const navigate = useNavigate()
+
+    const handleClick = (e: React.MouseEvent) => {
+        if (pathname === '/') {
+            e.preventDefault()
+            if (hash || search) navigate('/', { replace: true })
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+        }
+    }
+
     return (
         <Link
             to='/'
+            onClick={handleClick}
             className='flex items-center gap-2 transition hover:opacity-80'
         >
             <svg
@@ -91,4 +103,4 @@ const Logo: FC = (): ReactNode => {
     )
 }
 
-export { Logo }
+export default Logo

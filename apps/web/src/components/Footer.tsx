@@ -44,4 +44,4 @@ const Footer: FC = (): ReactNode => {
     )
 }
 
-export { Footer }
+export default Footer

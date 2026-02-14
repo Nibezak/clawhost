@@ -36,7 +36,14 @@ const AppContent: FC = (): ReactNode => {
 
     if (loading) {
         return (
-            <View style={{ flex: 1, backgroundColor: COLORS.background, alignItems: 'center', justifyContent: 'center' }}>
+            <View
+                style={{
+                    flex: 1,
+                    backgroundColor: COLORS.background,
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}
+            >
                 <ActivityIndicator size='large' color={COLORS.accent} />
             </View>
         )
@@ -63,7 +70,14 @@ const App: FC = (): ReactNode => {
 
     if (!fontsLoaded) {
         return (
-            <View style={{ flex: 1, backgroundColor: COLORS.background, alignItems: 'center', justifyContent: 'center' }}>
+            <View
+                style={{
+                    flex: 1,
+                    backgroundColor: COLORS.background,
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}
+            >
                 <ActivityIndicator size='large' color={COLORS.accent} />
             </View>
         )

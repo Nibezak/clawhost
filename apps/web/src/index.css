@@ -178,6 +178,122 @@
     animation: gradient-shift 3s ease infinite;
 }
 
+/* React Flow dark theme */
+.react-flow {
+    --xy-background-color: transparent;
+    --xy-edge-stroke: rgba(255, 255, 255, 0.08);
+    --xy-edge-stroke-selected: rgba(255, 255, 255, 0.08);
+    --xy-minimap-background: #0a0a0f;
+    --xy-minimap-mask-background: rgba(10, 10, 15, 0.6);
+    --xy-node-border-radius: 0;
+    --xy-node-boxshadow-hover: none;
+    --xy-node-boxshadow-selected: none;
+}
+
+.react-flow .react-flow__node {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.playground-grid {
+    background-image:
+        linear-gradient(rgba(239, 83, 80, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(239, 83, 80, 0.05) 1px, transparent 1px);
+    background-size: 24px 24px;
+}
+
+@keyframes playground-node-appear {
+    from {
+        opacity: 0;
+        transform: scale(0.85) translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.playground-node-enter {
+    animation: playground-node-appear 0.4s ease-out;
+}
+
+@keyframes playground-reset-pulse {
+    from {
+        opacity: 0;
+        transform: translateY(6px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.playground-reset-enter {
+    animation: playground-reset-pulse 0.3s ease-out;
+}
+
+@keyframes playground-loading-slide {
+    0% {
+        transform: translateX(-200%);
+    }
+    100% {
+        transform: translateX(400%);
+    }
+}
+
+.playground-loading-bar {
+    width: 40%;
+    animation: playground-loading-slide 1.8s ease-in-out infinite;
+}
+
+.playground-loading-track {
+    box-shadow: 0 0 20px rgba(239, 83, 80, 0.15);
+}
+
+@keyframes playground-tip-fade {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.playground-tip-enter {
+    animation: playground-tip-fade 0.4s ease-out;
+}
+
+.playground-gradient {
+    background:
+        radial-gradient(
+            ellipse 80% 50% at 50% -20%,
+            rgba(239, 83, 80, 0.2),
+            transparent
+        ),
+        radial-gradient(
+            ellipse 60% 40% at 70% 5%,
+            rgba(198, 40, 40, 0.12),
+            transparent
+        );
+}
+
+/* Disable text selection globally */
+body {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+input,
+textarea,
+[contenteditable='true'],
+code,
+pre {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
 /* Smooth scroll */
 html {
     scroll-behavior: smooth;

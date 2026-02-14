@@ -2,24 +2,23 @@ import type { FC, ReactNode } from 'react'
 
 import { Routes, Route } from 'react-router-dom'
 import { AuthProvider } from '@/lib/auth'
-import { ScrollToTop } from '@/components/ScrollToTop'
-import { Toast } from '@/components/Toast'
+import ScrollToTop from '@/components/ScrollToTop'
+import Toast from '@/components/Toast'
 import { TooltipProvider } from '@/components/ui/tooltip'
-import { ROUTES } from '@/lib/routes'
+import ROUTES from '@/lib/routes'
 import Landing from '@/pages/Landing'
 import Login from '@/pages/Login'
 import Dashboard from '@/pages/Dashboard'
 import SSHKeys from '@/pages/SSHKeys'
 import Account from '@/pages/Account'
+import Billing from '@/pages/Billing'
 import Terms from '@/pages/Terms'
 import Privacy from '@/pages/Privacy'
 import Changelog from '@/pages/Changelog'
 import Blog from '@/pages/Blog'
 import BlogPost from '@/pages/BlogPost'
-import Admin from '@/pages/Admin'
 import NotFound from '@/pages/NotFound'
 import ProtectedRoute from '@/components/ProtectedRoute'
-import AdminRoute from '@/components/AdminRoute'
 
 const App: FC = (): ReactNode => {
     return (
@@ -35,14 +34,6 @@ const App: FC = (): ReactNode => {
                     <Route path={ROUTES.CHANGELOG} element={<Changelog />} />
                     <Route path={ROUTES.POSTS} element={<Blog />} />
                     <Route path={ROUTES.POST} element={<BlogPost />} />
-                    <Route
-                        path={ROUTES.ADMIN}
-                        element={
-                            <AdminRoute>
-                                <Admin />
-                            </AdminRoute>
-                        }
-                    />
                     <Route
                         path={ROUTES.CLAWS}
                         element={
@@ -64,6 +55,14 @@ const App: FC = (): ReactNode => {
                         element={
                             <ProtectedRoute>
                                 <Account />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path={ROUTES.BILLING}
+                        element={
+                            <ProtectedRoute>
+                                <Billing />
                             </ProtectedRoute>
                         }
                     />

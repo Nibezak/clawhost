@@ -1,6 +1,8 @@
-import type { ReactNode } from 'react'
+import type { ElementType, ReactNode } from 'react'
 import type { User } from 'firebase/auth'
+import type { Node, Edge } from '@xyflow/react'
 import type {
+    ClawAvatarSize,
     ClawStatus,
     ProviderType,
     ToastType,
@@ -173,6 +175,11 @@ export interface ClawMascotProps {
     className?: string
 }
 
+export interface ClawAvatarProps {
+    size?: ClawAvatarSize
+    className?: string
+}
+
 export interface ProviderIconProps {
     provider: ProviderType
     className?: string
@@ -182,6 +189,11 @@ export interface HeaderProps {
     showNavLinks?: boolean
     navLinks?: NavLink[]
     activeSection?: string
+}
+
+export interface UserDropdownProps {
+    displayName: string
+    onSignOut: () => Promise<void>
 }
 
 export interface EmptyStateProps {
@@ -197,6 +209,12 @@ export interface ErrorStateProps {
     title?: string
     description?: string
     onRetry?: () => void
+}
+
+export interface PanelPlaceholderProps {
+    icon: ReactNode
+    title: string
+    description: string
 }
 
 export interface PageTitleProps {
@@ -277,6 +295,7 @@ export interface CreateClawModalProps {
     volumePricing?: VolumePricing
     planAvailability?: PlanAvailability
     preselectedPlanId?: string | null
+    preselectedProvider?: ProviderType | null
     onClose: () => void
     onNavigateToSSHKeys: () => void
 }
@@ -314,6 +333,7 @@ export interface ClawCardDropdownMenuProps {
     isScheduledForDeletion: boolean
     isAdmin: boolean
     compact?: boolean
+    isPlayground?: boolean
 }
 
 export interface ClawCardDialogsProps {
@@ -400,10 +420,6 @@ export interface ProtectedRouteProps {
     children: ReactNode
 }
 
-export interface AdminRouteProps {
-    children: ReactNode
-}
-
 export interface AuthProviderProps {
     children: ReactNode
 }
@@ -412,6 +428,14 @@ export interface AIModelOption {
     id: string
     name: string
     provider: string
+    envVar: string
+}
+
+export interface AwaitingPurchaseData {
+    name: string
+    provider: ProviderType
+    planId: string
+    location: string
 }
 
 export interface CreateClawData {
@@ -562,6 +586,19 @@ export interface ClawLogsDialogProps {
     onOpenChange: (open: boolean) => void
 }
 
+export interface ClawLogsContentProps {
+    clawId: string
+    enabled: boolean
+    embedded?: boolean
+    mockLogs?: string
+}
+
+export interface ClawDiagnosticsContentProps {
+    clawId: string
+    enabled: boolean
+    mockData?: DiagnosticsStatusResponse
+}
+
 export interface ClawFileExplorerDialogProps {
     clawId: string
     open: boolean
@@ -587,4 +624,156 @@ export interface Testimonial {
 export interface Faq {
     question: string
     answer: string
+}
+
+export interface ClawAgent {
+    id: string
+    name: string
+    model: string | null
+    status: string
+    directory: string | null
+}
+
+export interface ClawAgentsResponse {
+    agents: ClawAgent[]
+    reachable: boolean
+}
+
+export interface PlaygroundClawNodeData {
+    claw: Claw
+    agentCount: number
+    isLoadingAgents: boolean
+    isReachable: boolean
+    isSelected: boolean
+    readOnly?: boolean
+}
+
+export interface PlaygroundAgentNodeData {
+    agent: ClawAgent
+    clawName: string
+    clawId: string
+    isSelected: boolean
+}
+
+export interface PlaygroundClawNodeProps {
+    data: PlaygroundClawNodeData
+}
+
+export interface PlaygroundAgentNodeProps {
+    data: PlaygroundAgentNodeData
+}
+
+export interface PlaygroundCanvasProps {
+    initialNodes: Node[]
+    initialEdges: Edge[]
+    onNodeClick?: (clawId: string) => void
+    onAgentClick?: (agentId: string, clawId: string) => void
+    onPaneClick?: () => void
+    panelOpen?: boolean
+    selectedClawId?: string | null
+    selectedAgentId?: string | null
+    initialZoom?: number
+    allowPageScroll?: boolean
+}
+
+export interface PlaygroundCanvasInnerProps extends PlaygroundCanvasProps {
+    zoom: number
+    onZoomChange: (zoom: number) => void
+    isFitView: boolean
+    onFitViewChange: (value: boolean) => void
+}
+
+export interface PlaygroundDetailPanelProps {
+    claw: Claw
+    plans: Plan[]
+    sshKeys: SSHKey[]
+    onClose: () => void
+    readOnly?: boolean
+}
+
+export interface PlaygroundToolbarProps {
+    zoom: number
+    onFitView: () => void
+    isFitView: boolean
+    nodesOutOfView: boolean
+}
+
+export interface AgentConfigResponse {
+    agent: {
+        id: string
+        name: string
+        model: string | null
+    }
+    envVars: Record<string, string>
+    defaultModel: string | null
+}
+
+export interface UpdateAgentConfigData {
+    agentId: string
+    name?: string
+    model: string | null
+    envVars: Record<string, string>
+}
+
+export interface CreateAgentData {
+    name: string
+    model?: string | null
+    envVars?: Record<string, string>
+}
+
+export interface CreateAgentResponse {
+    agent: ClawAgent
+}
+
+export interface DeleteAgentData {
+    agentId: string
+}
+
+export interface CreateAgentModalProps {
+    clawId: string
+    clawName: string
+    open: boolean
+    onOpenChange: (open: boolean) => void
+}
+
+export interface PlaygroundAgentDetailPanelProps {
+    agent: ClawAgent
+    clawId: string
+    clawName: string
+    isOnlyAgent: boolean
+    onClose: () => void
+    readOnly?: boolean
+}
+
+export interface ClawEnvVarsResponse {
+    envVars: Record<string, string>
+}
+
+export interface UpdateClawEnvVarsData {
+    envVars: Record<string, string>
+}
+
+export interface PlaygroundVariablesContentProps {
+    clawId: string
+    mockEnvVars?: Record<string, string>
+}
+
+export interface HeroButtonsProps {
+    deployLabel: string
+    githubLabel: string
+    showStars: boolean
+    large?: boolean
+}
+
+export interface PlaygroundTabConfig<T extends string = string> {
+    id: T
+    label: string
+    icon: ElementType
+}
+
+export interface DemoPlaygroundData {
+    nodes: Node[]
+    edges: Edge[]
+    claws: Claw[]
+    agentsByClawId: Record<string, ClawAgent[]>
 }

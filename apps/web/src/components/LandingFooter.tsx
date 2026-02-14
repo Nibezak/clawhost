@@ -2,8 +2,8 @@ import type { FC, ReactNode } from 'react'
 
 import { Link } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
-import { Logo } from '@/components/Logo'
-import { ROUTES } from '@/lib/routes'
+import Logo from '@/components/Logo'
+import ROUTES from '@/lib/routes'
 import { GITHUB_REPO_URL } from '@/hooks'
 import { GithubLogo, XLogo } from '@phosphor-icons/react'
 
@@ -27,7 +27,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 <GithubLogo className='h-5 w-5' weight='fill' />
                             </a>
                             <a
-                                href='https://x.com/clawhost'
+                                href='https://x.com/claw_host'
                                 target='_blank'
                                 rel='noopener noreferrer'
                                 className='rounded-lg bg-white/5 p-2 text-gray-400 transition hover:bg-white/10 hover:text-white'
@@ -150,4 +150,4 @@ const LandingFooter: FC = (): ReactNode => {
     )
 }
 
-export { LandingFooter }
+export default LandingFooter

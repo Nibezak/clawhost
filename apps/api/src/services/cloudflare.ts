@@ -19,7 +19,7 @@ function getZoneId() {
     return zoneId
 }
 
-export const cloudflare = {
+const cloudflare = {
     async createDNSRecord(
         subdomain: string,
         ip: string
@@ -30,10 +30,10 @@ export const cloudflare = {
         const record = await client.dns.records.create({
             zone_id: zoneId,
             type: 'A',
-            name: subdomain, // e.g., "abc123" will become "abc123.clawhost.cloud"
+            name: subdomain,
             content: ip,
-            proxied: false, // Direct connection for WebSocket support
-            ttl: 60 // 1 minute TTL for quick updates
+            proxied: false,
+            ttl: 60
         })
 
         return {
@@ -90,3 +90,5 @@ export const cloudflare = {
         }
     }
 }
+
+export default cloudflare

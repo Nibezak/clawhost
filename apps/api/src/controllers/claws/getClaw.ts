@@ -1,5 +1,4 @@
-import type { Context } from 'hono'
-import type { ProviderType } from '@/ts/Types'
+import type { AuthenticatedContext, ProviderType } from '@/ts/Types'
 
 import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
@@ -9,7 +8,7 @@ import { isAdmin } from '@/controllers/claws/helpers'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
-const getClaw = async (c: Context<{ Variables: { userId: string } }>) => {
+const getClaw = async (c: AuthenticatedContext) => {
     const userId = c.get('userId')
     const id = c.req.param('id')
     const sync = c.req.query('sync') === 'true'
@@ -43,11 +42,15 @@ const getClaw = async (c: Context<{ Variables: { userId: string } }>) => {
                     .update(claws)
                     .set({ status: serverStatus.status, ip: serverStatus.ip })
                     .where(eq(claws.id, id))
-                return ok(c, {
-                    ...claw[0],
-                    status: serverStatus.status,
-                    ip: serverStatus.ip
-                }, t('api.clawFetched'))
+                return ok(
+                    c,
+                    {
+                        ...claw[0],
+                        status: serverStatus.status,
+                        ip: serverStatus.ip
+                    },
+                    t('api.clawFetched')
+                )
             }
         } catch (err) {
             console.error('Failed to sync server status:', err)

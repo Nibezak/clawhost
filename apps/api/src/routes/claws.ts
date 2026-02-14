@@ -19,7 +19,14 @@ import {
     readClawFile,
     updateClawFile,
     reinstallClaw,
-    exportClaw
+    exportClaw,
+    getClawAgents,
+    getClawAgentConfig,
+    updateClawAgentConfig,
+    createClawAgent,
+    deleteClawAgent,
+    getClawEnvVars,
+    updateClawEnvVars
 } from '@/controllers/claws'
 
 const app = new Hono<{ Variables: { userId: string } }>()
@@ -27,8 +34,8 @@ const app = new Hono<{ Variables: { userId: string } }>()
 app.get('/', getClaws)
 app.get('/admin', getAdminClaws)
 app.get('/:id', getClaw)
-app.post('/', createClaw) // Direct creation (for free tier or testing)
-app.post('/purchase', initiateClawPurchase) // Paid creation with Polar checkout
+app.post('/', createClaw)
+app.post('/purchase', initiateClawPurchase)
 app.post('/:id/sync', syncClaw)
 app.post('/:id/start', startClaw)
 app.post('/:id/stop', stopClaw)
@@ -40,6 +47,13 @@ app.post('/:id/diagnostics/logs', getClawLogs)
 app.post('/:id/diagnostics/repair', repairClaw)
 app.post('/:id/reinstall', reinstallClaw)
 app.get('/:id/export', exportClaw)
+app.post('/:id/agents', getClawAgents)
+app.post('/:id/agent-config', getClawAgentConfig)
+app.put('/:id/agent-config', updateClawAgentConfig)
+app.post('/:id/agents/create', createClawAgent)
+app.post('/:id/agents/delete', deleteClawAgent)
+app.get('/:id/env', getClawEnvVars)
+app.put('/:id/env', updateClawEnvVars)
 app.post('/:id/files', listClawFiles)
 app.post('/:id/files/read', readClawFile)
 app.put('/:id/files', updateClawFile)

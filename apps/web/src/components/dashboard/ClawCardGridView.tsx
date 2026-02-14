@@ -8,11 +8,12 @@ import {
     TooltipTrigger,
     TooltipContent
 } from '@/components/ui/tooltip'
-import { ClawMascot } from '@/components/ClawMascot'
+import ClawAvatar from '@/components/ClawAvatar'
 import ProviderIcon from '@/components/ProviderIcon'
-import { ClawCardDropdownMenu } from '@/components/dashboard/ClawCardDropdownMenu'
-import { CopyableField } from '@/components/dashboard/CopyableField'
+import ClawCardDropdownMenu from '@/components/dashboard/ClawCardDropdownMenu'
+import CopyableField from '@/components/dashboard/CopyableField'
 import ScheduledDeletionBanner from '@/components/dashboard/ScheduledDeletionBanner'
+import getBaseDomain from '@/lib/getBaseDomain'
 import { generateSlug, aiModels } from '@/lib/claw-utils'
 
 const ClawCardGridView: FC<ClawCardGridViewProps> = ({
@@ -36,9 +37,7 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
             <CardContent className='py-4'>
                 <div className='flex items-center justify-between'>
                     <div className='flex items-center gap-3'>
-                        <div className='bg-muted flex h-10 w-10 shrink-0 items-center justify-center rounded-xl'>
-                            <ClawMascot className='h-5 w-5' />
-                        </div>
+                        <ClawAvatar />
 
                         <div className='min-w-0'>
                             <div className='flex flex-wrap items-center gap-2'>
@@ -78,13 +77,13 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
                             </div>
                             {claw.status !== 'configuring' && (
                                 <a
-                                    href={`https://${claw.subdomain || generateSlug(claw.id)}.clawhost.cloud${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
+                                    href={`https://${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
                                     target='_blank'
                                     rel='noopener noreferrer'
                                     className='text-muted-foreground hover:text-foreground text-sm transition-colors'
                                 >
-                                    {claw.subdomain || generateSlug(claw.id)}
-                                    .clawhost.cloud
+                                    {claw.subdomain || generateSlug(claw.id)}.
+                                    {getBaseDomain()}
                                 </a>
                             )}
                         </div>
@@ -248,4 +247,4 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
     )
 }
 
-export { ClawCardGridView }
+export default ClawCardGridView

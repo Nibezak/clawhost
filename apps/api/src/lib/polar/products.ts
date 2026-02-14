@@ -1,13 +1,14 @@
 import type {
     PolarProduct,
     PolarProductRaw,
+    PolarItemsResult,
     CreatePolarProductParams
 } from '@/ts/Interfaces'
 
 import getPolarClient from '@/lib/polar/getPolarClient'
 import getPolarConfig from '@/lib/polar/getPolarConfig'
 
-export const products = {
+const products = {
     async list(): Promise<PolarProduct[]> {
         const polar = getPolarClient()
         const config = getPolarConfig()
@@ -19,7 +20,7 @@ export const products = {
         const items =
             'result' in result
                 ? result.result
-                : (result as unknown as { items: unknown[] }).items || []
+                : (result as unknown as PolarItemsResult).items || []
 
         return (items as PolarProductRaw[]).map((product) => ({
             id: product.id,
@@ -83,3 +84,5 @@ export const products = {
         })
     }
 }
+
+export default products

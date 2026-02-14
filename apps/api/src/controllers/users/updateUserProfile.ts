@@ -1,5 +1,5 @@
-import type { Context } from 'hono'
 import type { UpdateProfileBody } from '@/ts/Interfaces'
+import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
@@ -8,7 +8,7 @@ import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
 const updateUserProfile = async (
-    c: Context<{ Variables: { userId: string } }>
+    c: AuthenticatedContext
 ) => {
     try {
         const userId = c.get('userId')
@@ -40,9 +40,7 @@ const updateUserProfile = async (
         console.error('Update user error:', err)
         return fail(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToUpdateProfile'),
+            err instanceof Error ? err.message : t('api.failedToUpdateProfile'),
             500
         )
     }

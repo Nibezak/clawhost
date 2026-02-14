@@ -1,11 +1,11 @@
-import type { Context } from 'hono'
 import type { CreateClawBody } from '@/ts/Interfaces'
+import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq, and, count } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws, sshKeys, volumes } from '@/db/schema'
 import { getProvider } from '@/services/provider'
-import { cloudflare } from '@/services/cloudflare'
+import cloudflare from '@/services/cloudflare'
 import {
     generateSlug,
     generatePassword,
@@ -16,7 +16,7 @@ import {
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
-const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
+const createClaw = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const {
@@ -168,24 +168,32 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             }
         }
 
-        return ok(c, {
-            id,
-            name,
-            provider: providerName || 'hetzner',
-            status: 'configuring',
-            ip,
-            planId,
-            location,
-            subdomain,
-            url: `https://${subdomain}.${DOMAIN}`,
-            createdAt: new Date().toISOString(),
-            rootPassword: finalPassword,
-            gatewayToken,
-            volume: createdVolume
-        }, t('api.clawCreated'))
+        return ok(
+            c,
+            {
+                id,
+                name,
+                provider: providerName || 'hetzner',
+                status: 'configuring',
+                ip,
+                planId,
+                location,
+                subdomain,
+                url: `https://${subdomain}.${DOMAIN}`,
+                createdAt: new Date().toISOString(),
+                rootPassword: finalPassword,
+                gatewayToken,
+                volume: createdVolume
+            },
+            t('api.clawCreated')
+        )
     } catch (err) {
         console.error('Create claw error:', err)
-        return fail(c, err instanceof Error ? err.message : t('api.failedToCreateClaw'), 500)
+        return fail(
+            c,
+            err instanceof Error ? err.message : t('api.failedToCreateClaw'),
+            500
+        )
     }
 }
 

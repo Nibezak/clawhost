@@ -1,10 +1,10 @@
-export const ROUTES = {
+const ROUTES = {
     HOME: '/',
     LOGIN: '/login',
     CLAWS: '/claws',
-    ADMIN: '/admin',
     SSH_KEYS: '/ssh-keys',
     ACCOUNT: '/account',
+    BILLING: '/billing',
     TERMS: '/terms',
     PRIVACY: '/privacy',
     CHANGELOG: '/changelog',
@@ -12,4 +12,4 @@ export const ROUTES = {
     POST: '/posts/:slug'
 } as const
 
-export type Route = (typeof ROUTES)[keyof typeof ROUTES]
+export default ROUTES

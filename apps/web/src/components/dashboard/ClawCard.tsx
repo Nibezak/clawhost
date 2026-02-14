@@ -19,11 +19,11 @@ import {
     useReinstallClaw,
     useProfile
 } from '@/hooks'
-import { api } from '@/lib/api'
+import api from '@/lib/api'
 import { getStatusConfig, locationFlags, locationNames } from '@/lib/claw-utils'
-import { ClawCardGridView } from '@/components/dashboard/ClawCardGridView'
-import { ClawCardListView } from '@/components/dashboard/ClawCardListView'
-import { ClawCardDialogs } from '@/components/dashboard/ClawCardDialogs'
+import ClawCardGridView from '@/components/dashboard/ClawCardGridView'
+import ClawCardListView from '@/components/dashboard/ClawCardListView'
+import ClawCardDialogs from '@/components/dashboard/ClawCardDialogs'
 import ClawDiagnosticsDialog from '@/components/dashboard/ClawDiagnosticsDialog'
 import ClawLogsDialog from '@/components/dashboard/ClawLogsDialog'
 import ClawConfigDialog from '@/components/dashboard/ClawConfigDialog'
@@ -269,4 +269,4 @@ const ClawCard: FC<ClawCardProps> = ({
     )
 }
 
-export { ClawCard }
+export default ClawCard

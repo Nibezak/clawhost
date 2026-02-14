@@ -48,7 +48,7 @@ function mapStatus(vultrStatus: string): string {
 
 const UBUNTU_2404_OS_ID = 2284
 
-export const vultr: CloudProvider = {
+const vultr: CloudProvider = {
     async createServer(
         name: string,
         serverType: string,
@@ -302,3 +302,5 @@ export const vultr: CloudProvider = {
         }
     }
 }
+
+export default vultr

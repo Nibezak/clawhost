@@ -1,4 +1,4 @@
-export function generateSlug(id: string): string {
+function generateSlug(id: string): string {
     const chars = 'abcdefghjkmnpqrstuvwxyz23456789'
     let hash = 0
     for (let i = 0; i < id.length; i++) {
@@ -13,3 +13,5 @@ export function generateSlug(id: string): string {
     }
     return slug
 }
+
+export default generateSlug

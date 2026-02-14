@@ -5,7 +5,8 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useUIStore } from '@/lib/store'
-import { ClawMascot } from '@/components/ClawMascot'
+import getBaseDomain from '@/lib/getBaseDomain'
+import ClawMascot from '@/components/ClawMascot'
 import ProviderIcon from '@/components/ProviderIcon'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -135,7 +136,7 @@ const MockClawCard: FC<MockClawCardProps> = ({
                                 </span>
                             </div>
                             <span className='text-muted-foreground text-sm'>
-                                {claw.subdomain}.clawhost.cloud
+                                {claw.subdomain}.{getBaseDomain()}
                             </span>
                         </div>
                     </div>
@@ -314,4 +315,4 @@ const MockClawCard: FC<MockClawCardProps> = ({
     )
 }
 
-export { MockClawCard }
+export default MockClawCard

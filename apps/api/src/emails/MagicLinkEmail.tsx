@@ -25,7 +25,7 @@ import {
     logo
 } from '@/emails/styles'
 
-export const MagicLinkEmail = ({ magicLink }: MagicLinkEmailProps) => {
+const MagicLinkEmail = ({ magicLink }: MagicLinkEmailProps) => {
     return (
         <Html>
             <Head>

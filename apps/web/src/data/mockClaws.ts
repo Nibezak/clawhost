@@ -1,6 +1,6 @@
 import type { MockClawData } from '@/ts/Interfaces'
 
-export const initialMockClaws: MockClawData[] = [
+const initialMockClaws: MockClawData[] = [
     {
         id: '1',
         name: 'personal-claw',
@@ -82,3 +82,5 @@ export const initialMockClaws: MockClawData[] = [
         sshKey: 'My MacBook'
     }
 ]
+
+export default initialMockClaws

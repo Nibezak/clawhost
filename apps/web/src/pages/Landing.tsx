@@ -1,23 +1,28 @@
 import type { FC, ReactNode } from 'react'
-import type { Faq, MockClawData, Testimonial } from '@/ts/Interfaces'
+import type { Faq, Testimonial } from '@/ts/Interfaces'
 import type { ProviderType } from '@/ts/Types'
 
 import { Link } from 'react-router-dom'
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { PageTitle } from '@/components/PageTitle'
-import { Header } from '@/components/Header'
-import { LandingFooter } from '@/components/LandingFooter'
-import { MockClawCard } from '@/components/MockClawCard'
-import { initialMockClaws } from '@/data'
-import { useUIStore } from '@/lib/store'
+import PageTitle from '@/components/PageTitle'
+import Header from '@/components/Header'
+import LandingFooter from '@/components/LandingFooter'
+import HeroButtons from '@/components/HeroButtons'
+import { demoPlaygroundData } from '@/data'
+import {
+    PlaygroundCanvas,
+    PlaygroundDetailPanel,
+    PlaygroundAgentDetailPanel
+} from '@/components/playground'
 import { useAuth } from '@/lib/auth'
-import { ROUTES } from '@/lib/routes'
-import { usePlans, useGitHubStars, GITHUB_REPO_URL } from '@/hooks'
+import ROUTES from '@/lib/routes'
+import { usePlans } from '@/hooks'
 import ProviderIcon from '@/components/ProviderIcon'
+import getBaseDomain from '@/lib/getBaseDomain'
 import {
     ShieldCheck,
     Globe,
@@ -28,11 +33,9 @@ import {
     HardDrives,
     Check,
     CircleNotch,
-    Lightning,
     Sparkle,
     CaretDown,
     Quotes,
-    GithubLogo,
     CreditCard,
     Link as LinkIcon,
     ArrowsClockwise,
@@ -110,52 +113,40 @@ const Landing: FC = (): ReactNode => {
     const [pricingProvider, setPricingProvider] =
         useState<ProviderType>('hetzner')
     const { plans, isLoading: plansLoading } = usePlans(pricingProvider)
-    const { data: gitHubStars } = useGitHubStars()
-    const { showToast } = useUIStore()
 
     const [openFaq, setOpenFaq] = useState<number | null>(null)
     const [activeSection, setActiveSection] = useState('')
-    const [mockClaws, setMockClaws] = useState<MockClawData[]>(initialMockClaws)
 
-    const handleStart = (id: string) => {
-        setMockClaws((prev) =>
-            prev.map((claw) =>
-                claw.id === id ? { ...claw, status: 'running' } : claw
-            )
-        )
-        showToast(t('landing.demoClawStarted'), 'success')
-    }
+    const previewRef = useRef<HTMLDivElement>(null)
+    const { scrollYProgress: previewProgress } = useScroll({
+        target: previewRef,
+        offset: ['start end', 'end start']
+    })
+    const previewScale = useTransform(
+        previewProgress,
+        [0, 0.4, 0.6, 1],
+        [0.92, 1.02, 1.02, 0.92]
+    )
 
-    const handleStop = (id: string) => {
-        setMockClaws((prev) =>
-            prev.map((claw) =>
-                claw.id === id ? { ...claw, status: 'stopped' } : claw
-            )
-        )
-        showToast(t('landing.demoClawStopped'), 'success')
-    }
+    const [demoClawId, setDemoClawId] = useState<string | null>(null)
+    const [demoAgentId, setDemoAgentId] = useState<string | null>(null)
+    const [demoAgentClawId, setDemoAgentClawId] = useState<string | null>(null)
 
-    const handleRestart = (id: string) => {
-        setMockClaws((prev) =>
-            prev.map((claw) =>
-                claw.id === id ? { ...claw, status: 'restarting' } : claw
-            )
-        )
-        showToast(t('landing.demoClawRestarting'), 'success')
-        setTimeout(() => {
-            setMockClaws((prev) =>
-                prev.map((claw) =>
-                    claw.id === id ? { ...claw, status: 'running' } : claw
-                )
-            )
-            showToast(t('landing.demoClawRestarted'), 'success')
-        }, 2000)
-    }
+    const demoClaw = demoClawId
+        ? demoPlaygroundData.claws.find((c) => c.id === demoClawId) || null
+        : null
 
-    const handleDelete = (id: string) => {
-        setMockClaws((prev) => prev.filter((claw) => claw.id !== id))
-        showToast(t('landing.demoClawDeleted'), 'success')
-    }
+    const demoAgentClaw = demoAgentClawId
+        ? demoPlaygroundData.claws.find((c) => c.id === demoAgentClawId) || null
+        : null
+
+    const demoAgentList = demoAgentClaw
+        ? demoPlaygroundData.agentsByClawId[demoAgentClaw.id] || []
+        : []
+
+    const demoAgent = demoAgentId
+        ? demoAgentList.find((a) => a.id === demoAgentId) || null
+        : null
 
     useEffect(() => {
         const handleScroll = () => {
@@ -216,7 +207,7 @@ const Landing: FC = (): ReactNode => {
                 activeSection={activeSection}
             />
 
-            <section className='relative overflow-hidden px-6 pb-24 pt-32'>
+            <section className='relative overflow-hidden px-6 pb-16 pt-32'>
                 <div className='landing-grid pointer-events-none' />
 
                 <motion.div
@@ -271,53 +262,18 @@ const Landing: FC = (): ReactNode => {
                             transition={{ delay: 0.4 }}
                             className='mb-16 flex flex-col gap-4 sm:flex-row'
                         >
-                            <Button
-                                size='lg'
-                                className='gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] px-6 font-semibold text-white hover:opacity-90'
-                                asChild
-                            >
-                                <Link to={user ? ROUTES.CLAWS : ROUTES.LOGIN}>
-                                    <Lightning
-                                        className='h-5 w-5'
-                                        weight='fill'
-                                    />
-                                    {t('nav.deployOpenClaw')}
-                                </Link>
-                            </Button>
-                            <Button
-                                size='lg'
-                                variant='outline'
-                                className='gap-2 border-white/20 bg-white/5 px-6 text-white hover:bg-white/10'
-                                asChild
-                            >
-                                <a
-                                    href={GITHUB_REPO_URL}
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                >
-                                    <GithubLogo
-                                        className='h-5 w-5'
-                                        weight='fill'
-                                    />
-                                    {t('landing.selfHost')}
-
-                                    {gitHubStars && (
-                                        <span className='flex items-center gap-1.5 rounded-full bg-white/10 px-2 py-0.5 text-xs'>
-                                            {gitHubStars.formatted}
-                                            <span className='text-[12px]'>
-                                                ★
-                                            </span>
-                                        </span>
-                                    )}
-                                </a>
-                            </Button>
+                            <HeroButtons
+                                deployLabel={t('nav.deployOpenClaw')}
+                                githubLabel={t('landing.selfHostInstead')}
+                                showStars={true}
+                            />
                         </motion.div>
 
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.5 }}
-                            className='flex items-center gap-8 text-center md:gap-16'
+                            className='grid grid-cols-2 gap-6 text-center md:flex md:items-center md:gap-16'
                         >
                             <div>
                                 <div className='font-clash text-3xl font-bold text-white md:text-4xl'>
@@ -327,7 +283,7 @@ const Landing: FC = (): ReactNode => {
                                     {t('landing.startingPrice')}
                                 </div>
                             </div>
-                            <div className='h-12 w-px bg-white/10' />
+                            <div className='hidden h-12 w-px bg-white/10 md:block' />
                             <div>
                                 <div className='font-clash text-3xl font-bold text-white md:text-4xl'>
                                     30+
@@ -336,7 +292,7 @@ const Landing: FC = (): ReactNode => {
                                     {t('landing.locations')}
                                 </div>
                             </div>
-                            <div className='h-12 w-px bg-white/10' />
+                            <div className='hidden h-12 w-px bg-white/10 md:block' />
                             <div>
                                 <div className='font-clash text-3xl font-bold text-white md:text-4xl'>
                                     45+
@@ -345,7 +301,7 @@ const Landing: FC = (): ReactNode => {
                                     {t('landing.servers')}
                                 </div>
                             </div>
-                            <div className='h-12 w-px bg-white/10' />
+                            <div className='hidden h-12 w-px bg-white/10 md:block' />
                             <div>
                                 <div className='font-clash text-3xl font-bold text-white md:text-4xl'>
                                     Zero
@@ -356,112 +312,110 @@ const Landing: FC = (): ReactNode => {
                             </div>
                         </motion.div>
                     </div>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 40 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.6, duration: 0.6 }}
-                        className='mx-auto mt-20 max-w-4xl'
-                    >
-                        <div className='glow-border overflow-hidden rounded-xl border border-white/10 bg-[#1a1a1f]/90 shadow-2xl backdrop-blur-sm'>
-                            <div className='flex items-center gap-2 border-b border-white/10 bg-[#2a2a30] px-4 py-3'>
-                                <div className='h-3 w-3 rounded-full bg-[#ff5f57]' />
-                                <div className='h-3 w-3 rounded-full bg-[#febc2e]' />
-                                <div className='h-3 w-3 rounded-full bg-[#28c840]' />
-                                <div className='ml-4 flex items-center gap-2 rounded-md bg-white/5 px-3 py-1 text-xs text-gray-400'>
-                                    <Lock className='h-3 w-3' />
-                                    clawhost.cloud/claws
-                                </div>
-                                <div className='flex-1' />
-                            </div>
-                            <div className='p-6'>
-                                <div className='mb-6 flex items-center justify-between'>
-                                    <div>
-                                        <h3 className='text-lg font-semibold text-white'>
-                                            {t('landing.dashboardPreviewTitle')}
-                                        </h3>
-                                        <p className='text-sm text-gray-500'>
-                                            {mockClaws.length > 0
-                                                ? `${mockClaws.length} ${mockClaws.length === 1 ? t('dashboard.claw') : t('dashboard.clawsPlural')}`
-                                                : t('dashboard.noClawsYet')}
-                                        </p>
-                                    </div>
-                                    <Link
-                                        to={user ? ROUTES.CLAWS : ROUTES.LOGIN}
-                                        className='flex items-center gap-2 rounded-lg border border-white/20 bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-white/90'
-                                    >
-                                        <Lightning
-                                            className='h-4 w-4'
-                                            weight='fill'
-                                        />
-                                        {t('createClaw.title')}
-                                    </Link>
-                                </div>
-                                <div className='space-y-3'>
-                                    <AnimatePresence mode='popLayout'>
-                                        {mockClaws.length > 0 ? (
-                                            mockClaws.map((claw) => (
-                                                <motion.div
-                                                    key={claw.id}
-                                                    layout
-                                                    initial={{
-                                                        opacity: 0,
-                                                        scale: 0.95
-                                                    }}
-                                                    animate={{
-                                                        opacity: 1,
-                                                        scale: 1
-                                                    }}
-                                                    exit={{
-                                                        opacity: 0,
-                                                        scale: 0.95,
-                                                        height: 0
-                                                    }}
-                                                    transition={{
-                                                        duration: 0.2
-                                                    }}
-                                                >
-                                                    <MockClawCard
-                                                        claw={claw}
-                                                        onStart={handleStart}
-                                                        onStop={handleStop}
-                                                        onRestart={
-                                                            handleRestart
-                                                        }
-                                                        onDelete={handleDelete}
-                                                    />
-                                                </motion.div>
-                                            ))
-                                        ) : (
-                                            <motion.div
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                className='flex flex-col items-center justify-center py-12 text-center'
-                                            >
-                                                <div className='mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/5'>
-                                                    <HardDrives className='h-8 w-8 text-gray-500' />
-                                                </div>
-                                                <h4 className='mb-2 text-lg font-semibold text-white'>
-                                                    {t('dashboard.noClawsYet')}
-                                                </h4>
-                                                <p className='max-w-xs text-sm text-gray-500'>
-                                                    {t(
-                                                        'dashboard.noClawsDescription'
-                                                    )}
-                                                </p>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
                 </motion.div>
             </section>
 
+            <div ref={previewRef} className='mx-auto mb-32 max-w-6xl px-6'>
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                    style={{ scale: previewScale }}
+                    className='flex h-[80vh] flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0a0a0f]'
+                >
+                    <div className='pointer-events-none flex items-center gap-3 border-b border-white/[0.06] bg-gradient-to-b from-[#1e1e24] to-[#18181e] px-5 py-3'>
+                        <div className='flex items-center gap-2'>
+                            <div className='h-3 w-3 rounded-full bg-[#ff5f57] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
+                            <div className='h-3 w-3 rounded-full bg-[#febc2e] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
+                            <div className='h-3 w-3 rounded-full bg-[#28c840] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
+                        </div>
+                        <div className='flex flex-1 justify-center'>
+                            <div className='flex items-center gap-2 rounded-lg bg-black/30 px-4 py-1.5 text-xs text-gray-500'>
+                                <Lock
+                                    className='h-3 w-3 text-green-500/70'
+                                    weight='fill'
+                                />
+                                <span>{getBaseDomain()}/claws</span>
+                            </div>
+                        </div>
+                        <div className='w-[56px]' />
+                    </div>
+
+                    <div className='flex flex-1 overflow-hidden'>
+                        <div className='relative flex min-w-0 flex-1 overflow-hidden'>
+                            <div className='relative min-w-0 flex-1'>
+                                <div className='playground-grid h-full'>
+                                    <PlaygroundCanvas
+                                        initialNodes={demoPlaygroundData.nodes}
+                                        initialEdges={demoPlaygroundData.edges}
+                                        initialZoom={1.25}
+                                        allowPageScroll
+                                        onNodeClick={(clawId) => {
+                                            setDemoAgentId(null)
+                                            setDemoAgentClawId(null)
+                                            setDemoClawId(
+                                                demoClawId === clawId
+                                                    ? null
+                                                    : clawId
+                                            )
+                                        }}
+                                        onAgentClick={(agentId, clawId) => {
+                                            setDemoClawId(null)
+                                            setDemoAgentId(
+                                                demoAgentId === agentId
+                                                    ? null
+                                                    : agentId
+                                            )
+                                            setDemoAgentClawId(clawId)
+                                        }}
+                                        onPaneClick={() => {
+                                            setDemoClawId(null)
+                                            setDemoAgentId(null)
+                                            setDemoAgentClawId(null)
+                                        }}
+                                        panelOpen={!!demoClaw || !!demoAgent}
+                                        selectedClawId={demoClawId}
+                                        selectedAgentId={demoAgentId}
+                                    />
+                                </div>
+                            </div>
+
+                            <AnimatePresence>
+                                {demoClaw && (
+                                    <PlaygroundDetailPanel
+                                        key='detail-panel'
+                                        claw={demoClaw}
+                                        plans={[]}
+                                        sshKeys={[]}
+                                        onClose={() => setDemoClawId(null)}
+                                        readOnly
+                                    />
+                                )}
+
+                                {demoAgent && demoAgentClaw && (
+                                    <PlaygroundAgentDetailPanel
+                                        key='agent-panel'
+                                        agent={demoAgent}
+                                        clawId={demoAgentClaw.id}
+                                        clawName={demoAgentClaw.name}
+                                        isOnlyAgent={demoAgentList.length <= 1}
+                                        onClose={() => {
+                                            setDemoAgentId(null)
+                                            setDemoAgentClawId(null)
+                                        }}
+                                        readOnly
+                                    />
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    </div>
+                </motion.div>
+            </div>
+
             <section
                 id='how-it-works'
-                className='relative scroll-mt-20 px-6 py-24'
+                className='relative scroll-mt-20 border-t border-white/5 px-6 py-24'
             >
                 <div className='mx-auto max-w-6xl'>
                     <div className='mb-16 text-center'>
@@ -784,27 +738,45 @@ const Landing: FC = (): ReactNode => {
                                                 recommendedPlans[
                                                     pricingProvider
                                                 ]
-                                            const tierStarts: Record<string, Record<string, string>> = {
+                                            const tierStarts: Record<
+                                                string,
+                                                Record<string, string>
+                                            > = {
                                                 hetzner: {
-                                                    cx23: t('landing.tierShared'),
+                                                    cx23: t(
+                                                        'landing.tierShared'
+                                                    ),
                                                     cax11: t('landing.tierArm'),
-                                                    ccx13: t('landing.tierDedicated')
+                                                    ccx13: t(
+                                                        'landing.tierDedicated'
+                                                    )
                                                 },
                                                 vultr: {
-                                                    'vc2-2c-4gb': t('landing.tierRegular'),
-                                                    'vhp-2c-4gb-amd': t('landing.tierHighPerformance'),
-                                                    'vhf-3c-8gb': t('landing.tierHighFrequency')
+                                                    'vc2-2c-4gb': t(
+                                                        'landing.tierRegular'
+                                                    ),
+                                                    'vhp-2c-4gb-amd': t(
+                                                        'landing.tierHighPerformance'
+                                                    ),
+                                                    'vhf-3c-8gb': t(
+                                                        'landing.tierHighFrequency'
+                                                    )
                                                 }
                                             }
 
-                                            const providerTiers = tierStarts[pricingProvider]
-                                            const tierLabel = providerTiers?.[plan.id]
-                                            const showTier = tierLabel && index > 0
+                                            const providerTiers =
+                                                tierStarts[pricingProvider]
+                                            const tierLabel =
+                                                providerTiers?.[plan.id]
+                                            const showTier =
+                                                tierLabel && index > 0
 
                                             return (
                                                 <>
                                                     {showTier && (
-                                                        <tr key={`tier-${plan.id}`}>
+                                                        <tr
+                                                            key={`tier-${plan.id}`}
+                                                        >
                                                             <td
                                                                 colSpan={6}
                                                                 className='px-4 pb-2 pt-6'
@@ -823,68 +795,68 @@ const Landing: FC = (): ReactNode => {
                                                                 : ''
                                                         }`}
                                                     >
-                                                    <td className='px-4 py-4'>
-                                                        <div className='flex items-center gap-2'>
-                                                            <span className='font-medium text-white'>
-                                                                {plan.name.replace(
-                                                                    /([A-Za-z])(\d)/,
-                                                                    '$1 $2'
-                                                                )}
-                                                            </span>
-                                                            {isRecommended && (
+                                                        <td className='px-4 py-4'>
+                                                            <div className='flex items-center gap-2'>
+                                                                <span className='font-medium text-white'>
+                                                                    {plan.name.replace(
+                                                                        /([A-Za-z])(\d)/,
+                                                                        '$1 $2'
+                                                                    )}
+                                                                </span>
+                                                                {isRecommended && (
                                                                     <Badge className='border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-xs text-white'>
                                                                         {t(
                                                                             'landing.recommended'
                                                                         )}
                                                                     </Badge>
                                                                 )}
-                                                        </div>
-                                                    </td>
-                                                    <td className='px-4 py-4 text-center text-gray-300'>
-                                                        {plan.cpu}
-                                                    </td>
-                                                    <td className='px-4 py-4 text-center text-gray-300'>
-                                                        {plan.memory} GB
-                                                    </td>
-                                                    <td className='px-4 py-4 text-center text-gray-300'>
-                                                        {plan.disk} GB
-                                                    </td>
-                                                    <td className='px-4 py-4 text-center'>
-                                                        <span className='font-clash font-bold text-white'>
-                                                            ${totalMonthly}
-                                                        </span>
-                                                        <span className='text-sm text-gray-500'>
-                                                            /mo
-                                                        </span>
-                                                    </td>
-                                                    <td className='px-4 py-4 text-right'>
-                                                        <Button
-                                                            size='sm'
-                                                            className={`gap-2 px-4 ${
-                                                                isRecommended
-                                                                    ? 'border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90'
-                                                                    : 'border-0 bg-white/10 text-white hover:bg-white/20'
-                                                            }`}
-                                                            asChild
-                                                        >
-                                                            <Link
-                                                                to={
-                                                                    user
-                                                                        ? `${ROUTES.CLAWS}?plan=${plan.id}`
-                                                                        : `${ROUTES.LOGIN}?plan=${plan.id}`
-                                                                }
+                                                            </div>
+                                                        </td>
+                                                        <td className='px-4 py-4 text-center text-gray-300'>
+                                                            {plan.cpu}
+                                                        </td>
+                                                        <td className='px-4 py-4 text-center text-gray-300'>
+                                                            {plan.memory} GB
+                                                        </td>
+                                                        <td className='px-4 py-4 text-center text-gray-300'>
+                                                            {plan.disk} GB
+                                                        </td>
+                                                        <td className='px-4 py-4 text-center'>
+                                                            <span className='font-clash font-bold text-white'>
+                                                                ${totalMonthly}
+                                                            </span>
+                                                            <span className='text-sm text-gray-500'>
+                                                                /mo
+                                                            </span>
+                                                        </td>
+                                                        <td className='px-4 py-4 text-right'>
+                                                            <Button
+                                                                size='sm'
+                                                                className={`gap-2 px-4 ${
+                                                                    isRecommended
+                                                                        ? 'border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90'
+                                                                        : 'border-0 bg-white/10 text-white hover:bg-white/20'
+                                                                }`}
+                                                                asChild
                                                             >
-                                                                {user
-                                                                    ? t(
-                                                                          'landing.deploy'
-                                                                      )
-                                                                    : t(
-                                                                          'landing.select'
-                                                                      )}
-                                                            </Link>
-                                                        </Button>
-                                                    </td>
-                                                </tr>
+                                                                <Link
+                                                                    to={
+                                                                        user
+                                                                            ? `${ROUTES.CLAWS}?plan=${plan.id}&provider=${pricingProvider}`
+                                                                            : `${ROUTES.LOGIN}?plan=${plan.id}&provider=${pricingProvider}`
+                                                                    }
+                                                                >
+                                                                    {user
+                                                                        ? t(
+                                                                              'landing.deploy'
+                                                                          )
+                                                                        : t(
+                                                                              'landing.select'
+                                                                          )}
+                                                                </Link>
+                                                            </Button>
+                                                        </td>
+                                                    </tr>
                                                 </>
                                             )
                                         })}
@@ -1124,6 +1096,72 @@ const Landing: FC = (): ReactNode => {
                                         </div>
                                     </td>
                                 </tr>
+                                <tr className='bg-white/[0.01]'>
+                                    <td className='px-6 py-4'>
+                                        <div className='flex items-center gap-3'>
+                                            <Check className='h-5 w-5 flex-shrink-0 text-green-400' />
+                                            <span className='text-white'>
+                                                {t(
+                                                    'landing.comparisonOpenSourceUs'
+                                                )}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td className='px-6 py-4'>
+                                        <div className='flex items-center gap-3'>
+                                            <X className='h-5 w-5 flex-shrink-0 text-red-400' />
+                                            <span className='text-gray-400'>
+                                                {t(
+                                                    'landing.comparisonOpenSourceOthers'
+                                                )}
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className='px-6 py-4'>
+                                        <div className='flex items-center gap-3'>
+                                            <Check className='h-5 w-5 flex-shrink-0 text-green-400' />
+                                            <span className='text-white'>
+                                                {t(
+                                                    'landing.comparisonExportUs'
+                                                )}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td className='px-6 py-4'>
+                                        <div className='flex items-center gap-3'>
+                                            <X className='h-5 w-5 flex-shrink-0 text-red-400' />
+                                            <span className='text-gray-400'>
+                                                {t(
+                                                    'landing.comparisonExportOthers'
+                                                )}
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr className='bg-white/[0.01]'>
+                                    <td className='px-6 py-4'>
+                                        <div className='flex items-center gap-3'>
+                                            <Check className='h-5 w-5 flex-shrink-0 text-green-400' />
+                                            <span className='text-white'>
+                                                {t(
+                                                    'landing.comparisonProvidersUs'
+                                                )}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td className='px-6 py-4'>
+                                        <div className='flex items-center gap-3'>
+                                            <X className='h-5 w-5 flex-shrink-0 text-red-400' />
+                                            <span className='text-gray-400'>
+                                                {t(
+                                                    'landing.comparisonProvidersOthers'
+                                                )}
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -1215,37 +1253,12 @@ const Landing: FC = (): ReactNode => {
                         </p>
 
                         <div className='flex flex-col items-center justify-center gap-4 sm:flex-row'>
-                            <Button
-                                size='lg'
-                                className='gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] px-8 py-6 text-lg font-semibold text-white hover:opacity-90'
-                                asChild
-                            >
-                                <Link to={user ? ROUTES.CLAWS : ROUTES.LOGIN}>
-                                    <Lightning
-                                        className='h-5 w-5'
-                                        weight='fill'
-                                    />
-                                    {t('landing.deployOpenClawNow')}
-                                </Link>
-                            </Button>
-                            <Button
-                                size='lg'
-                                variant='outline'
-                                className='gap-2 border-white/20 bg-white/5 px-8 py-6 text-lg text-white hover:bg-white/10'
-                                asChild
-                            >
-                                <a
-                                    href={GITHUB_REPO_URL}
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                >
-                                    <GithubLogo
-                                        className='h-5 w-5'
-                                        weight='fill'
-                                    />
-                                    {t('landing.selfHostInstead')}
-                                </a>
-                            </Button>
+                            <HeroButtons
+                                deployLabel={t('landing.deployOpenClawNow')}
+                                githubLabel={t('landing.selfHostInstead')}
+                                showStars={true}
+                                large
+                            />
                         </div>
                     </motion.div>
                 </div>

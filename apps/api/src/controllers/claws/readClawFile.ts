@@ -1,5 +1,5 @@
-import type { Context } from 'hono'
 import type { ReadClawFileBody } from '@/ts/Interfaces'
+import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
@@ -11,7 +11,7 @@ import { ok, fail } from '@/lib/response'
 
 const BASE_DIR = '/home/openclaw/.openclaw'
 
-const readClawFile = async (c: Context<{ Variables: { userId: string } }>) => {
+const readClawFile = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')
@@ -57,9 +57,7 @@ const readClawFile = async (c: Context<{ Variables: { userId: string } }>) => {
         console.error('Read claw file error:', err)
         return fail(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToReadFile'),
+            err instanceof Error ? err.message : t('api.failedToReadFile'),
             500
         )
     }

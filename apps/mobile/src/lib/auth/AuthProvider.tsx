@@ -2,8 +2,18 @@ import type { FC, ReactNode } from 'react'
 import type { AuthContextValue } from '@/ts/Interfaces'
 import type { User } from 'firebase/auth'
 
-import { createContext, useContext, useState, useEffect, useCallback } from 'react'
-import { onAuthStateChanged, signInWithCustomToken, signOut as firebaseSignOut } from 'firebase/auth'
+import {
+    createContext,
+    useContext,
+    useState,
+    useEffect,
+    useCallback
+} from 'react'
+import {
+    onAuthStateChanged,
+    signInWithCustomToken,
+    signOut as firebaseSignOut
+} from 'firebase/auth'
 import { auth, clearTokenCache } from '@/lib/firebase'
 import api from '@/lib/api'
 
@@ -27,18 +37,21 @@ const AuthProvider: FC<{ children: ReactNode }> = ({ children }): ReactNode => {
             return undefined
         }
 
-        const unsubscribe = onAuthStateChanged(auth, (firebaseUser: User | null) => {
-            if (firebaseUser) {
-                setUser({
-                    uid: firebaseUser.uid,
-                    email: firebaseUser.email,
-                    displayName: firebaseUser.displayName
-                })
-            } else {
-                setUser(null)
+        const unsubscribe = onAuthStateChanged(
+            auth,
+            (firebaseUser: User | null) => {
+                if (firebaseUser) {
+                    setUser({
+                        uid: firebaseUser.uid,
+                        email: firebaseUser.email,
+                        displayName: firebaseUser.displayName
+                    })
+                } else {
+                    setUser(null)
+                }
+                setLoading(false)
             }
-            setLoading(false)
-        })
+        )
         return unsubscribe
     }, [])
 
@@ -46,11 +59,14 @@ const AuthProvider: FC<{ children: ReactNode }> = ({ children }): ReactNode => {
         await api.sendOtp(email)
     }, [])
 
-    const verifyOtp = useCallback(async (email: string, code: string): Promise<void> => {
-        if (!auth) throw new Error('Auth not initialized')
-        const { customToken } = await api.verifyOtp(email, code)
-        await signInWithCustomToken(auth, customToken)
-    }, [])
+    const verifyOtp = useCallback(
+        async (email: string, code: string): Promise<void> => {
+            if (!auth) throw new Error('Auth not initialized')
+            const { customToken } = await api.verifyOtp(email, code)
+            await signInWithCustomToken(auth, customToken)
+        },
+        []
+    )
 
     const signOut = useCallback(async (): Promise<void> => {
         if (!auth) return
@@ -59,7 +75,9 @@ const AuthProvider: FC<{ children: ReactNode }> = ({ children }): ReactNode => {
     }, [])
 
     return (
-        <AuthContext.Provider value={{ user, loading, sendOtp, verifyOtp, signOut }}>
+        <AuthContext.Provider
+            value={{ user, loading, sendOtp, verifyOtp, signOut }}
+        >
             {children}
         </AuthContext.Provider>
     )

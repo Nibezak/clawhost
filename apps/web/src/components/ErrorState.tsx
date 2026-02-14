@@ -31,4 +31,4 @@ const ErrorState: FC<ErrorStateProps> = ({
     )
 }
 
-export { ErrorState }
+export default ErrorState

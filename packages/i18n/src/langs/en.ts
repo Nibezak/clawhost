@@ -21,8 +21,10 @@ export const en = {
     },
     nav: {
         claws: 'Claws',
+        playground: 'Playground',
         sshKeys: 'SSH Keys',
-        account: 'Account & Billing',
+        account: 'Account',
+        billing: 'Billing',
         signOut: 'Sign out',
         admin: 'Admin',
         login: 'Login',
@@ -65,6 +67,8 @@ export const en = {
         failedToUpdateProfile: 'Failed to update profile!',
         failedToAddSSHKey: 'Failed to add SSH key!',
         failedToCreateClaw: 'Failed to create claw!',
+        failedToLoadLocations: 'Failed to load locations. Please try again.',
+        failedToLoadPlans: 'Failed to load plans. Please try again.',
         invalidPlan: 'Invalid plan selected!',
         invalidLocation: 'Please select a location!',
         failedToGenerateKeyPair:
@@ -128,6 +132,11 @@ export const en = {
         failedToFetchPlanAvailability: 'Failed to fetch plan availability!',
         failedToSendEmail: 'Failed to send email!',
         failedToGetDiagnostics: 'Failed to connect to the instance!',
+        failedToGetDiagnosticsDescription:
+            'Could not retrieve diagnostics. The instance may be offline or starting up.',
+        failedToGetLogs: 'Failed to load logs.',
+        failedToGetLogsDescription:
+            'Could not retrieve logs for this instance. Please try again later.',
         failedToRepairClaw: 'Failed to repair the instance!',
         repairSuccess: 'Instance repaired successfully.',
         repairGatewayNotResponding:
@@ -182,6 +191,19 @@ export const en = {
         locationsFetched: 'Locations fetched successfully.',
         volumePricingFetched: 'Volume pricing fetched successfully.',
         planAvailabilityFetched: 'Plan availability fetched successfully.',
+        agentsFetched: 'Agents fetched successfully.',
+        agentsFetchFailed: 'Could not reach instance to fetch agents.',
+        agentConfigFetched: 'Agent configuration fetched successfully.',
+        agentConfigUpdated: 'Agent configuration updated successfully.',
+        agentConfigUpdateFailed: 'Could not update agent configuration.',
+        agentCreated: 'Agent created successfully.',
+        agentCreateFailed: 'Could not create agent on the instance.',
+        agentDeleted: 'Agent deleted successfully.',
+        agentDeleteFailed: 'Could not delete agent from the instance.',
+        cannotDeleteMainAgent: 'Cannot delete the only remaining agent.',
+        agentNameInvalid:
+            'Agent name must only contain letters, numbers, and dashes.',
+        agentNameDuplicate: 'An agent with this name already exists.',
         diagnosticsFetched: 'Diagnostics fetched successfully.',
         logsFetched: 'Logs fetched successfully.',
         filesFetched: 'Files fetched successfully.',
@@ -222,9 +244,9 @@ export const en = {
     account: {
         title: 'Account',
         description:
-            'Manage your ClawHost account settings, profile information, and billing history.',
+            'Manage your ClawHost account settings and profile information.',
         accountSettings: 'Account',
-        manageYourAccount: 'Manage your account and view all your billings.',
+        manageYourAccount: 'Manage your profile and account settings.',
         profileInformation: 'Profile Information',
         profileDescription: 'Your personal information and display name',
         noNameSet: 'No name set',
@@ -252,6 +274,36 @@ export const en = {
         noBillingHistoryDescription:
             'You have no payments history, once you deploy your first claw you should see your billings here.',
         failedToLoadBilling: 'Failed to load billing history!',
+        viewInvoice: 'View Invoice',
+        failedToLoadInvoice: 'Failed to load invoice!',
+        couponApplied: 'Coupon: {{name}}',
+        manageBilling: 'Manage Billing',
+        failedToLoadPortal: 'Failed to open billing portal!'
+    },
+    billing: {
+        title: 'Billing',
+        description: 'View your payment history and manage your billing.',
+        billingHistory: 'Billing',
+        manageYourBilling: 'View your payment history and manage invoices.',
+        billingDescription: 'Your payment history and invoices',
+        date: 'Date',
+        product: 'Product',
+        amount: 'Amount',
+        status: 'Status',
+        statusPaid: 'Paid',
+        statusPending: 'Pending',
+        statusRefunded: 'Refunded',
+        statusPartiallyRefunded: 'Partially Refunded',
+        billingReasonPurchase: 'Purchase',
+        billingReasonSubscriptionCreate: 'New Subscription',
+        billingReasonSubscriptionCycle: 'Renewal',
+        billingReasonSubscriptionUpdate: 'Subscription Update',
+        noBillingHistory: 'No Billings',
+        noBillingHistoryDescription:
+            'You have no payments history, once you deploy your first claw you should see your billings here.',
+        failedToLoadBilling: 'Failed to load billing history!',
+        failedToLoadBillingDescription:
+            "We couldn't load your billing history. Please check your connection and try again!",
         viewInvoice: 'View Invoice',
         failedToLoadInvoice: 'Failed to load invoice!',
         couponApplied: 'Coupon: {{name}}',
@@ -374,6 +426,8 @@ export const en = {
         configuringTooltip:
             'This might take some time. It depends on OpenClaw, the server location, and Cloudflare DNS.',
         paymentSuccess: 'Your claw is being created and configured.',
+        userTab: 'User',
+        adminTab: 'Admin',
         adminTitle: 'Admin',
         adminDescription: 'Manage all claws across the platform.',
         adminNoClaws: 'No claws on the platform yet.',
@@ -394,7 +448,10 @@ export const en = {
             deleting: 'Deleting...',
             scheduledDeletion: 'Deletion Scheduled',
             unknown: 'Unknown'
-        }
+        },
+        legacyViewWarning:
+            'Grid and list views may be discontinued. Switch to Playground for agents and more.',
+        legacyViewWarningAction: 'Switch to Playground'
     },
     createClaw: {
         title: 'Deploy OpenClaw',
@@ -481,7 +538,9 @@ export const en = {
         publicKeyPlaceholder: 'ssh-rsa AAAA... or ssh-ed25519 AAAA...',
         publicKeyHint: 'Find your public key at',
         publicKeyPath1: '~/.ssh/id_ed25519.pub',
+        publicKeyPathOr: 'or',
         publicKeyPath2: '~/.ssh/id_rsa.pub',
+        important: 'Important:',
         dontHaveSshKey: "Don't have an SSH key? Generate one:",
         sshKeygenCommand: 'ssh-keygen -t ed25519 -C "your-email@example.com"',
         adding: 'Adding...',
@@ -655,6 +714,12 @@ export const en = {
         comparisonDataOthers: "Don't own your data",
         comparisonMultipleUs: 'Manage multiple instances',
         comparisonMultipleOthers: 'Single instance only',
+        comparisonOpenSourceUs: 'Fully open source',
+        comparisonOpenSourceOthers: 'Closed source',
+        comparisonExportUs: 'Export your OpenClaw anywhere',
+        comparisonExportOthers: 'Vendor lock-in',
+        comparisonProvidersUs: 'Multiple server providers',
+        comparisonProvidersOthers: 'Single provider only',
         readyToOwnYourPrivacy: 'Ready to deploy OpenClaw?',
         ctaDescription:
             'Get a dedicated server with OpenClaw pre-installed. Full root access, global locations, and ready in minutes. You own it at all times.',
@@ -686,6 +751,7 @@ export const en = {
             'Track updates, new features, and improvements to ClawHost.',
         subtitle: 'All updates, new features, and improvements to ClawHost.',
         upcomingRelease: 'Upcoming',
+        release1Date: 'February 8, 2026',
         release1Title: 'Initial Release',
         release1Description:
             'The first official release of ClawHost — deploy OpenClaw on your own VPS with one click.',
@@ -705,6 +771,7 @@ export const en = {
         release1Feature10: 'Billing history and invoice management',
         release1Feature11:
             'Auto-provisioning with OpenClaw pre-installed and configured',
+        release2Date: 'February 8, 2026',
         release2Title: 'DigitalOcean & More',
         release2Description:
             'Multi-provider infrastructure and a new way to stay updated on everything ClawHost.',
@@ -715,6 +782,7 @@ export const en = {
             '10+ DigitalOcean server locations across US, Europe, Asia, and more',
         release2Feature4:
             'Changelog page to track all platform updates and releases',
+        release3Date: 'February 10, 2026',
         release3Title: 'Server Insights',
         release3Description:
             'Deeper visibility and control over your servers, right from the dashboard.',
@@ -724,6 +792,7 @@ export const en = {
             'Server diagnostics with one-click automated repair for service issues',
         release3Feature3:
             'Built-in file explorer and JSON editor for server configuration files',
+        release4Date: 'February 11, 2026',
         release4Title: 'Vultr Provider',
         release4Description:
             'Vultr as a third cloud provider with 22 server plans and 30+ global locations.',
@@ -732,12 +801,126 @@ export const en = {
             '22 Vultr server plans across Regular, High Performance, and High Frequency tiers',
         release4Feature3:
             '30+ Vultr server locations across US, Europe, Asia, and more',
-        release5Title: "What's Next",
-        release5Description: 'Upcoming features currently in development.',
-        release5Feature1: 'Server snapshots with one-click backup and restore',
+        release5Date: 'February 14, 2026',
+        release5Title: 'Agents & Data Export',
+        release5Description:
+            'Agent playground, multi-agent management, and portable data export for your OpenClaw instances.',
+        release5Feature1:
+            'One-click agent playground and overview, add and manage multiple agents',
         release5Feature2: 'Export your OpenClaw as a portable zip archive',
         release5Feature3:
-            'In-app notifications for platform and OpenClaw updates'
+            'Interactive playground with graph-based visualization of Claws and agents',
+        release5Feature4:
+            'Removed grid and list view toggle in favor of a unified dashboard layout'
+    },
+    playground: {
+        title: 'Playground',
+        description:
+            'Visualize your Claws and their agents in an interactive graph.',
+        subtitle: 'Agent topology across your infrastructure',
+        noClawsYet: 'No Claws to Display',
+        noClawsDescription:
+            'Deploy your first Claw to see it in the Playground.',
+        loadingAgents: 'Discovering agents...',
+        unreachable: 'Unreachable',
+        offline: 'Offline',
+        noAgents: 'No agents',
+        agentCount: '{{count}} agent',
+        agentCountPlural: '{{count}} agents',
+        agentModel: 'Model',
+        zoomLabel: '{{percent}}%',
+        fitView: 'Center',
+        nodesOutOfView: 'Claws out of view',
+        addAgent: 'Add agent',
+        listView: 'List view',
+        gridView: 'Grid view',
+        playgroundView: 'Playground',
+        closeDetails: 'Close',
+        tabInfo: 'Info',
+        tabLogs: 'Logs',
+        tabDiagnostics: 'Diagnostics',
+        loadingTip1:
+            'Did you know that you could run multiple agents within one OpenClaw?',
+        loadingTip2: 'Did you know that OpenClaw is open-source?',
+        loadingTip3:
+            'ClawHost is the first ever project to allow one-click OpenClaw hosting.',
+        tabChat: 'Chat',
+        tabConfiguration: 'Configuration',
+        agentOnClaw: 'on {{clawName}}',
+        chatComingSoon: 'Agent chat is coming soon.',
+        chatComingSoonDescription:
+            'You will be able to chat with your agents directly from the playground.',
+        configurationModel: 'Model',
+        configurationModelPlaceholder: 'Select a model',
+        configurationModelDescription:
+            'The AI model this agent uses. Changing the model may require setting the corresponding API key.',
+        configurationEnvVars: 'Environment Variables',
+        configurationEnvVarsDescription:
+            'API keys and environment variables stored in ~/.openclaw/.env on the instance.',
+        configurationAddEnvVar: 'Add Variable',
+        configurationKeyPlaceholder: 'VARIABLE_NAME',
+        configurationValuePlaceholder: 'value',
+        configurationSave: 'Save Configuration',
+        configurationSaving: 'Saving...',
+        configurationSaved: 'Agent configuration saved.',
+        configurationSaveFailed: 'Failed to save agent configuration.',
+        configurationLoading: 'Loading configuration...',
+        configurationLoadFailed: 'Failed to load agent configuration.',
+        configurationLoadFailedDescription:
+            'Could not retrieve the configuration for this agent. Please try again later.',
+        configurationRemoveVar: 'Remove',
+        configurationApiKey: 'API Key',
+        configurationApiKeyDescription:
+            'Required for {{modelName}}. This key is stored in ~/.openclaw/.env on the instance.',
+        configurationApiKeyPlaceholder: 'Enter your API key',
+        tabVariables: 'Variables',
+        variablesDescription:
+            'Environment variables stored in ~/.openclaw/.env on this instance.',
+        variablesEmpty: 'No environment variables found.',
+        variablesAddVariable: 'Add Variable',
+        variablesSave: 'Save Variables',
+        variablesSaving: 'Saving...',
+        variablesSaved: 'Environment variables saved.',
+        variablesSaveFailed: 'Failed to save environment variables.',
+        variablesLoading: 'Loading variables...',
+        variablesLoadFailed: 'Failed to load environment variables.',
+        variablesLoadFailedDescription:
+            'Could not retrieve variables for this instance. Please try again later.',
+        variablesInvalidKey: 'Letters, numbers, and underscores only.',
+        variablesEmptyValue: 'Value cannot be empty.',
+        variablesDuplicateKey: 'Duplicate variable name.',
+        variablesDeleteTitle: 'Delete Variable',
+        variablesDeleteDescription:
+            'Are you sure you want to delete {{key}}? This will immediately remove it from the instance.',
+        variablesDeleteConfirm: 'Delete',
+        variablesDontAskAgain: "Don't require confirmation this session",
+        variablesDeleted: 'Variable deleted.',
+        addAgentTitle: 'Add Agent',
+        addAgentDescription: 'Add a new agent to {{clawName}}.',
+        addAgentName: 'Name',
+        addAgentNamePlaceholder: 'Enter agent name',
+        addAgentModel: 'Model',
+        addAgentModelPlaceholder: 'Select a model (optional)',
+        addAgentApiKey: 'API Key',
+        addAgentApiKeyPlaceholder: 'Enter your API key (optional)',
+        addAgentSubmit: 'Add Agent',
+        addAgentSubmitting: 'Adding...',
+        addAgentSuccess: 'Agent added successfully.',
+        addAgentFailed: 'Failed to add agent.',
+        deleteAgent: 'Delete Agent',
+        deleteAgentTitle: 'Delete Agent',
+        deleteAgentDescription:
+            'Are you sure you want to delete the agent "{{agentName}}"? This action cannot be undone. Environment variables will not be removed.',
+        deleteAgentConfirm: 'Delete',
+        deleteAgentDeleting: 'Deleting...',
+        deleteAgentSuccess: 'Agent deleted successfully.',
+        deleteAgentFailed: 'Failed to delete agent.',
+        configurationName: 'Name',
+        configurationNamePlaceholder: 'Enter agent name',
+        configurationNameDescription: 'Letters, numbers, and dashes only.',
+        agentNameRequired: 'Agent name is required.',
+        agentNameInvalidChars: 'Only letters, numbers, and dashes are allowed.',
+        agentNameDuplicate: 'An agent with this name already exists.'
     },
     mobile: {
         messages: 'Messages',

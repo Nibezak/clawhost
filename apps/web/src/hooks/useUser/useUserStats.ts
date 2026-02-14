@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { api } from '@/lib/api'
+import api from '@/lib/api'
 import USER_STATS_QUERY_KEY from '@/hooks/useUser/USER_STATS_QUERY_KEY'
 
 const useUserStats = () => {

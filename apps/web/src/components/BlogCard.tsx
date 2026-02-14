@@ -75,4 +75,4 @@ const BlogCard: FC<BlogCardProps> = ({ post }): ReactNode => {
     )
 }
 
-export { BlogCard }
+export default BlogCard

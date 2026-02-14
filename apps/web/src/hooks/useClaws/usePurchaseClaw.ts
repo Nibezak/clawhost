@@ -1,7 +1,7 @@
 import type { PurchaseClawData } from '@/ts/Interfaces'
 
 import { useMutation } from '@tanstack/react-query'
-import { api } from '@/lib/api'
+import api from '@/lib/api'
 
 const usePurchaseClaw = () => {
     return useMutation({

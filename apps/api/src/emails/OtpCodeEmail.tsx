@@ -33,7 +33,7 @@ const codeStyle = {
     fontFamily: 'monospace'
 }
 
-export const OtpCodeEmail = ({ code }: OtpCodeEmailProps) => {
+const OtpCodeEmail = ({ code }: OtpCodeEmailProps) => {
     return (
         <Html>
             <Head>

@@ -2,7 +2,7 @@ import type { PolarCustomer, CreatePolarCustomerParams } from '@/ts/Interfaces'
 
 import getPolarClient from '@/lib/polar/getPolarClient'
 
-export const customers = {
+const customers = {
     async create(data: CreatePolarCustomerParams): Promise<PolarCustomer> {
         const polar = getPolarClient()
 
@@ -60,3 +60,5 @@ export const customers = {
         }
     }
 }
+
+export default customers

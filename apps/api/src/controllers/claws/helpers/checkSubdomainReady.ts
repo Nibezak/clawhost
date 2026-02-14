@@ -1,4 +1,4 @@
-import { DOMAIN } from '@/controllers/claws/helpers/constants'
+import DOMAIN from '@/controllers/claws/helpers/constants'
 
 const checkSubdomainReady = async (subdomain: string): Promise<boolean> => {
     try {

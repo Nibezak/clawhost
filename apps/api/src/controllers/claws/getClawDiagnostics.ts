@@ -1,4 +1,4 @@
-import type { Context } from 'hono'
+import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
@@ -11,7 +11,7 @@ import { ok, fail } from '@/lib/response'
 const SEPARATOR = '---CLAWHOST_SEP---'
 
 const getClawDiagnostics = async (
-    c: Context<{ Variables: { userId: string } }>
+    c: AuthenticatedContext
 ) => {
     try {
         const userId = c.get('userId')
@@ -51,11 +51,15 @@ const getClawDiagnostics = async (
         )
         const parts = output.split(SEPARATOR)
 
-        return ok(c, {
-            service: parts[0]?.trim() || '',
-            port: parts[1]?.trim() || '',
-            memory: parts[2]?.trim() || ''
-        }, t('api.diagnosticsFetched'))
+        return ok(
+            c,
+            {
+                service: parts[0]?.trim() || '',
+                port: parts[1]?.trim() || '',
+                memory: parts[2]?.trim() || ''
+            },
+            t('api.diagnosticsFetched')
+        )
     } catch (err) {
         console.error('Get claw diagnostics error:', err)
         return fail(

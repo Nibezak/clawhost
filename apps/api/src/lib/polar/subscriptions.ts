@@ -1,9 +1,13 @@
-import type { PolarSubscription, PolarSubscriptionRaw } from '@/ts/Interfaces'
+import type {
+    PolarSubscription,
+    PolarSubscriptionRaw,
+    PolarItemsResult
+} from '@/ts/Interfaces'
 import type { SubscriptionStatus } from '@/ts/Types'
 
 import getPolarClient from '@/lib/polar/getPolarClient'
 
-export const subscriptions = {
+const subscriptions = {
     async get(subscriptionId: string): Promise<PolarSubscription | null> {
         const polar = getPolarClient()
 
@@ -45,7 +49,7 @@ export const subscriptions = {
             const items =
                 'result' in result
                     ? result.result
-                    : (result as unknown as { items: unknown[] }).items || []
+                    : (result as unknown as PolarItemsResult).items || []
 
             return (items as PolarSubscriptionRaw[]).map((sub) => ({
                 id: sub.id,
@@ -147,3 +151,5 @@ export const subscriptions = {
         await polar.subscriptions.revoke({ id: subscriptionId })
     }
 }
+
+export default subscriptions

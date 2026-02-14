@@ -1,4 +1,4 @@
-import type { Context } from 'hono'
+import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
@@ -10,7 +10,7 @@ import { ok, fail } from '@/lib/response'
 
 const BASE_DIR = '/home/openclaw/.openclaw'
 
-const listClawFiles = async (c: Context<{ Variables: { userId: string } }>) => {
+const listClawFiles = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')
@@ -58,9 +58,7 @@ const listClawFiles = async (c: Context<{ Variables: { userId: string } }>) => {
         console.error('List claw files error:', err)
         return fail(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToListFiles'),
+            err instanceof Error ? err.message : t('api.failedToListFiles'),
             500
         )
     }

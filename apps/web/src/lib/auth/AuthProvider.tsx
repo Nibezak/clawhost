@@ -11,7 +11,7 @@ import {
     signOut as firebaseSignOut
 } from 'firebase/auth'
 import { auth, AUTH_STORAGE_KEY, PROFILE_CACHE_KEY } from '@/lib/firebase'
-import { api } from '@/lib/api'
+import api from '@/lib/api'
 import AuthContext from '@/lib/auth/AuthContext'
 
 function readCachedProfile(): CachedProfile | null {
@@ -61,7 +61,9 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
                         PROFILE_CACHE_KEY,
                         JSON.stringify(fresh)
                     )
-                } catch { /* localStorage unavailable */ }
+                } catch {
+                    /* localStorage unavailable */
+                }
 
                 queryClient.prefetchQuery({
                     queryKey: ['claws'],

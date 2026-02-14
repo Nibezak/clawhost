@@ -1,4 +1,8 @@
+import type { Context } from 'hono'
+
 export type ProviderType = 'hetzner' | 'digitalocean' | 'vultr'
+
+export type AuthenticatedContext = Context<{ Variables: { userId: string } }>
 
 export type SubscriptionStatus =
     | 'active'

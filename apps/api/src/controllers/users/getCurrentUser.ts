@@ -1,4 +1,4 @@
-import type { Context } from 'hono'
+import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
@@ -7,7 +7,7 @@ import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
 const getCurrentUser = async (
-    c: Context<{ Variables: { userId: string } }>
+    c: AuthenticatedContext
 ) => {
     try {
         const userId = c.get('userId')
@@ -33,9 +33,7 @@ const getCurrentUser = async (
         console.error('Get user error:', err)
         return fail(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToGetProfile'),
+            err instanceof Error ? err.message : t('api.failedToGetProfile'),
             500
         )
     }

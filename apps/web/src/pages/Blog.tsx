@@ -2,13 +2,14 @@ import type { FC, ReactNode } from 'react'
 
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { Header } from '@/components/Header'
-import { LandingFooter } from '@/components/LandingFooter'
-import { PageBackground } from '@/components/PageBackground'
-import { PageTitle } from '@/components/PageTitle'
-import { JsonLd } from '@/components/JsonLd'
-import { BlogCard } from '@/components/BlogCard'
+import Header from '@/components/Header'
+import LandingFooter from '@/components/LandingFooter'
+import PageBackground from '@/components/PageBackground'
+import PageTitle from '@/components/PageTitle'
+import JsonLd from '@/components/JsonLd'
+import BlogCard from '@/components/BlogCard'
 import { allPosts } from '@/lib/blog'
+import getBaseDomain from '@/lib/getBaseDomain'
 
 const Blog: FC = (): ReactNode => {
     return (
@@ -23,7 +24,7 @@ const Blog: FC = (): ReactNode => {
                     '@type': 'Blog',
                     name: 'ClawHost Blog',
                     description: t('blog.description'),
-                    url: 'https://clawhost.cloud/posts'
+                    url: `https://${getBaseDomain()}/posts`
                 }}
             />
             <PageBackground />
