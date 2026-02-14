@@ -290,6 +290,7 @@ export interface CreateClawModalProps {
     volumePricing?: VolumePricing
     planAvailability?: PlanAvailability
     preselectedPlanId?: string | null
+    preselectedProvider?: ProviderType | null
     onClose: () => void
     onNavigateToSSHKeys: () => void
 }

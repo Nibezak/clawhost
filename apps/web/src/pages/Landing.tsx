@@ -850,8 +850,8 @@ const Landing: FC = (): ReactNode => {
                                                                 <Link
                                                                     to={
                                                                         user
-                                                                            ? `${ROUTES.CLAWS}?plan=${plan.id}`
-                                                                            : `${ROUTES.LOGIN}?plan=${plan.id}`
+                                                                            ? `${ROUTES.CLAWS}?plan=${plan.id}&provider=${pricingProvider}`
+                                                                            : `${ROUTES.LOGIN}?plan=${plan.id}&provider=${pricingProvider}`
                                                                     }
                                                                 >
                                                                     {user

@@ -57,7 +57,13 @@ export const orders = {
 
     async getInvoiceUrl(orderId: string): Promise<string> {
         const polar = getPolarClient()
-        const invoice = await polar.orders.invoice({ id: orderId })
-        return invoice.url
+        try {
+            const invoice = await polar.orders.invoice({ id: orderId })
+            return invoice.url
+        } catch {
+            await polar.orders.generateInvoice({ id: orderId })
+            const invoice = await polar.orders.invoice({ id: orderId })
+            return invoice.url
+        }
     }
 }

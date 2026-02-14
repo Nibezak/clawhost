@@ -1,13 +1,15 @@
 import type { FC, ReactNode } from 'react'
 
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 
 const Logo: FC = (): ReactNode => {
-    const { pathname } = useLocation()
+    const { pathname, hash, search } = useLocation()
+    const navigate = useNavigate()
 
     const handleClick = (e: React.MouseEvent) => {
         if (pathname === '/') {
             e.preventDefault()
+            if (hash || search) navigate('/', { replace: true })
             window.scrollTo({ top: 0, behavior: 'smooth' })
         }
     }

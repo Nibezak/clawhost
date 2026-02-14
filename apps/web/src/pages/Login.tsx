@@ -38,9 +38,16 @@ const Login: FC = (): ReactNode => {
     const navigate = useNavigate()
     const [searchParams] = useSearchParams()
     const planParam = searchParams.get('plan')
+    const deployParam = searchParams.get('deploy')
+    const providerParam = searchParams.get('provider')
 
     const getRedirectUrl = () => {
-        return planParam ? `${ROUTES.CLAWS}?plan=${planParam}` : ROUTES.CLAWS
+        if (planParam) {
+            const providerSuffix = providerParam ? `&provider=${providerParam}` : ''
+            return `${ROUTES.CLAWS}?plan=${planParam}${providerSuffix}`
+        }
+        if (deployParam) return `${ROUTES.CLAWS}?deploy=true`
+        return ROUTES.CLAWS
     }
 
     useEffect(() => {

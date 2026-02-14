@@ -31,7 +31,7 @@ import {
 } from '@phosphor-icons/react'
 import { ActionButton } from '@/components/ActionButton'
 import { api } from '@/lib/api'
-import { ClawMascot } from '@/components/ClawMascot'
+import { ClawMascotOutline } from '@/components/ClawMascotOutline'
 import { EmptyState } from '@/components/EmptyState'
 import { ErrorState } from '@/components/ErrorState'
 import { PageHeader } from '@/components/PageHeader'
@@ -247,7 +247,7 @@ const Account: FC = (): ReactNode => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className='relative mx-auto w-full max-w-6xl flex-1 px-6 py-8'
+                className='relative mx-auto w-full max-w-6xl flex-1 px-6 pb-16 pt-8'
             >
                 {authLoading || !profile ? (
                     <div className='flex min-h-[60vh] items-center justify-center'>
@@ -260,7 +260,7 @@ const Account: FC = (): ReactNode => {
                             description={t('account.manageYourAccount')}
                         />
 
-                        <div className='rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm'>
+                        <div className='rounded-xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm'>
                             <h3 className='mb-1 font-semibold'>
                                 {t('account.profileInformation')}
                             </h3>
@@ -294,7 +294,7 @@ const Account: FC = (): ReactNode => {
                                             </span>
                                         </div>
                                         <div className='flex items-center gap-1.5'>
-                                            <ClawMascot className='h-4 w-4' />
+                                            <ClawMascotOutline className='h-4 w-4' />
                                             <span>
                                                 {userStats?.clawCount ?? 0}{' '}
                                                 {t('account.claws')}
@@ -345,7 +345,7 @@ const Account: FC = (): ReactNode => {
                             </div>
                         </div>
 
-                        <div className='mt-6 rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm'>
+                        <div className='mt-6 rounded-xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm'>
                             <div className='mb-6 flex items-start justify-between'>
                                 <div>
                                     <h3 className='mb-1 font-semibold'>

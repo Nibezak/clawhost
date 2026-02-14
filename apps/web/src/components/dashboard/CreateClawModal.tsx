@@ -56,11 +56,12 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     volumePricing: initialVolumePricing,
     planAvailability: initialPlanAvailability,
     preselectedPlanId,
+    preselectedProvider,
     onClose,
     onNavigateToSSHKeys
 }): ReactNode => {
     const [name, setName] = useState('')
-    const [provider, setProvider] = useState<ProviderType>('hetzner')
+    const [provider, setProvider] = useState<ProviderType>(preselectedProvider || 'hetzner')
 
     const {
         plans: providerPlans,

@@ -31,7 +31,7 @@ const Changelog: FC = (): ReactNode => {
                     {t('changelog.subtitle')}
                 </p>
 
-                <div className='relative space-y-16'>
+                <div className='relative space-y-8 md:space-y-16'>
                     <div className='absolute left-[19px] top-2 hidden h-[calc(100%-2rem)] w-px bg-gradient-to-b from-white/20 via-white/10 to-transparent md:block' />
 
                     <motion.div
