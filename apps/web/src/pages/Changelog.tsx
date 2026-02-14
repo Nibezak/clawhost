@@ -84,12 +84,6 @@ const Changelog: FC = (): ReactNode => {
                                         {t('changelog.release5Feature4')}
                                     </span>
                                 </li>
-                                <li className='flex items-center gap-3'>
-                                    <Check className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
-                                        {t('changelog.release5Feature5')}
-                                    </span>
-                                </li>
                             </ul>
                         </div>
                     </motion.div>

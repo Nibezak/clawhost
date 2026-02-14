@@ -799,10 +799,8 @@ export const en = {
             'One-click agent playground and overview, add and manage multiple agents',
         release5Feature2: 'Export your OpenClaw as a portable zip archive',
         release5Feature3:
-            'In-app notifications for platform and OpenClaw updates',
-        release5Feature4:
             'Interactive playground with graph-based visualization of Claws and agents',
-        release5Feature5:
+        release5Feature4:
             'Removed grid and list view toggle in favor of a unified dashboard layout'
     },
     playground: {

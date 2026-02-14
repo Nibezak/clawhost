@@ -2,25 +2,17 @@ import type { FC, ReactNode } from 'react'
 import type { HeaderProps } from '@/ts/Interfaces'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useNavigate, useLocation, Link } from 'react-router-dom'
+import { useLocation, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
 import { useProfile } from '@/hooks'
 import { Button } from '@/components/ui/button'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Skeleton } from '@/components/ui/skeleton'
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
 import { Logo } from '@/components/Logo'
+import { UserDropdown } from '@/components/UserDropdown'
 import { ROUTES } from '@/lib/routes'
-import { Key, User, SignOut, Lightning, List, X, Receipt } from '@phosphor-icons/react'
-import { ClawMascotOutline } from '@/components/ClawMascotOutline'
+import { Lightning, List, X } from '@phosphor-icons/react'
 
 const Header: FC<HeaderProps> = ({
     showNavLinks = false,
@@ -28,7 +20,6 @@ const Header: FC<HeaderProps> = ({
     activeSection = ''
 }): ReactNode => {
     const { user, loading: authLoading, cachedProfile, signOut } = useAuth()
-    const navigate = useNavigate()
     const location = useLocation()
     const [scrolled, setScrolled] = useState(false)
 
@@ -63,17 +54,6 @@ const Header: FC<HeaderProps> = ({
         user?.email ||
         cachedProfile?.email ||
         ''
-
-    const getInitials = (text: string) => {
-        if (!text) return '?'
-        const parts = text.split(' ')
-        if (parts.length > 1) {
-            return (
-                parts[0].charAt(0) + parts[parts.length - 1].charAt(0)
-            ).toUpperCase()
-        }
-        return text.charAt(0).toUpperCase()
-    }
 
     const isLandingPage = location.pathname === '/'
 
@@ -122,67 +102,10 @@ const Header: FC<HeaderProps> = ({
                                 <Skeleton className='hidden h-4 w-16 rounded bg-white/10 sm:block' />
                             </Button>
                         ) : user || cachedProfile ? (
-                            <DropdownMenu modal={false}>
-                                <DropdownMenuTrigger asChild>
-                                    <Button
-                                        variant='ghost'
-                                        size='sm'
-                                        className='ml-auto flex w-auto items-center gap-2 px-1.5 py-[18px] hover:bg-white/10'
-                                    >
-                                        <Avatar className='h-7 w-7'>
-                                            <AvatarFallback className='bg-gradient-to-br from-[#ef5350] to-[#c62828] text-xs text-white'>
-                                                {getInitials(displayName)}
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        <span className='hidden max-w-[120px] truncate text-sm text-gray-300 sm:block'>
-                                            {displayName}
-                                        </span>
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent
-                                    align='end'
-                                    className='w-56 border-white/10 bg-[#151518]'
-                                >
-                                    <DropdownMenuItem
-                                        onClick={() => navigate(ROUTES.CLAWS)}
-                                        className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.CLAWS ? 'bg-white/10' : ''}`}
-                                    >
-                                        <ClawMascotOutline className='h-4 w-4' />
-                                        {t('nav.claws')}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        onClick={() =>
-                                            navigate(ROUTES.SSH_KEYS)
-                                        }
-                                        className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.SSH_KEYS ? 'bg-white/10' : ''}`}
-                                    >
-                                        <Key className='h-4 w-4' />
-                                        {t('nav.sshKeys')}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        onClick={() => navigate(ROUTES.ACCOUNT)}
-                                        className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.ACCOUNT ? 'bg-white/10' : ''}`}
-                                    >
-                                        <User className='h-4 w-4' />
-                                        {t('nav.account')}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        onClick={() => navigate(ROUTES.BILLING)}
-                                        className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.BILLING ? 'bg-white/10' : ''}`}
-                                    >
-                                        <Receipt className='h-4 w-4' />
-                                        {t('nav.billing')}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuSeparator className='bg-white/10' />
-                                    <DropdownMenuItem
-                                        onClick={signOut}
-                                        className='text-red-400 focus:bg-white/10 focus:text-red-400'
-                                    >
-                                        <SignOut className='h-4 w-4' />
-                                        {t('nav.signOut')}
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                            <UserDropdown
+                                displayName={displayName}
+                                onSignOut={signOut}
+                            />
                         ) : (
                             <div className='flex items-center gap-2'>
                                 <Link

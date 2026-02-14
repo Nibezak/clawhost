@@ -191,6 +191,11 @@ export interface HeaderProps {
     activeSection?: string
 }
 
+export interface UserDropdownProps {
+    displayName: string
+    onSignOut: () => Promise<void>
+}
+
 export interface EmptyStateProps {
     icon: ReactNode
     title: string
