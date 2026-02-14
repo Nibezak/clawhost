@@ -1,4 +1,4 @@
 import demoPlaygroundData from '@/data/demoPlaygroundData'
+import initialMockClaws from '@/data/mockClaws'
 
-export { initialMockClaws } from '@/data/mockClaws'
-export { demoPlaygroundData }
+export { demoPlaygroundData, initialMockClaws }

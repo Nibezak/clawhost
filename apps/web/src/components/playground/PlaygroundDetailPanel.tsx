@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react'
-import type { PlaygroundDetailPanelProps } from '@/ts/Interfaces'
+import type { PlaygroundDetailPanelProps, PlaygroundTabConfig } from '@/ts/Interfaces'
 import type { PlaygroundDetailTab } from '@/ts/Types'
 import type { TranslationKey } from '@openclaw/i18n'
 
@@ -10,7 +10,7 @@ import { X, Info, Scroll, Pulse, Key } from '@phosphor-icons/react'
 import ClawAvatar from '@/components/ClawAvatar'
 import getBaseDomain from '@/lib/getBaseDomain'
 import ProviderIcon from '@/components/ProviderIcon'
-import { CopyableField } from '@/components/dashboard/CopyableField'
+import CopyableField from '@/components/dashboard/CopyableField'
 import ClawLogsContent from '@/components/dashboard/ClawLogsContent'
 import ClawDiagnosticsContent from '@/components/dashboard/ClawDiagnosticsContent'
 import PlaygroundVariablesContent from '@/components/playground/PlaygroundVariablesContent'
@@ -23,7 +23,7 @@ import {
 
 const tabStateMap: Record<string, PlaygroundDetailTab> = {}
 
-const tabs: { id: PlaygroundDetailTab; label: string; icon: typeof Info }[] = [
+const tabs: PlaygroundTabConfig<PlaygroundDetailTab>[] = [
     { id: 'info', label: 'playground.tabInfo', icon: Info },
     { id: 'variables', label: 'playground.tabVariables', icon: Key },
     { id: 'logs', label: 'playground.tabLogs', icon: Scroll },
@@ -260,9 +260,10 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                             clawId={claw.id}
                             enabled
                             embedded
-                            mockLogs={readOnly
-                                ? '2026-02-14T10:23:41Z Starting OpenClaw agent...\n2026-02-14T10:23:42Z Loading model: claude-sonnet-4-5\n2026-02-14T10:23:43Z Agent ready on port 3000\n2026-02-14T10:23:44Z Connected to gateway\n2026-02-14T10:24:01Z Request received: /chat\n2026-02-14T10:24:03Z Response sent (1.2s)\n2026-02-14T10:25:12Z Request received: /chat\n2026-02-14T10:25:14Z Response sent (1.8s)\n2026-02-14T10:26:30Z Health check passed'
-                                : undefined
+                            mockLogs={
+                                readOnly
+                                    ? '2026-02-14T10:23:41Z Starting OpenClaw agent...\n2026-02-14T10:23:42Z Loading model: claude-sonnet-4-5\n2026-02-14T10:23:43Z Agent ready on port 3000\n2026-02-14T10:23:44Z Connected to gateway\n2026-02-14T10:24:01Z Request received: /chat\n2026-02-14T10:24:03Z Response sent (1.2s)\n2026-02-14T10:25:12Z Request received: /chat\n2026-02-14T10:25:14Z Response sent (1.8s)\n2026-02-14T10:26:30Z Health check passed'
+                                    : undefined
                             }
                         />
                     )}
@@ -272,13 +273,15 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                             <ClawDiagnosticsContent
                                 clawId={claw.id}
                                 enabled
-                                mockData={readOnly
-                                    ? {
-                                          service: '● openclaw.service - OpenClaw Agent\n   Loaded: loaded (/etc/systemd/system/openclaw.service; enabled)\n   Active: active (running) since Fri 2026-02-14 10:23:41 UTC\n Main PID: 1847 (node)\n    Tasks: 11 (limit: 4915)\n   Memory: 128.4M\n      CPU: 2.341s\n   CGroup: /system.slice/openclaw.service\n           └─1847 node /opt/openclaw/server.js',
-                                          port: 'tcp  0  0 0.0.0.0:3000  0.0.0.0:*  LISTEN  1847/node',
-                                          memory: 'Mem: 1987Mi total, 128Mi used, 1640Mi free, 219Mi buff/cache\nSwap: 0B total, 0B used, 0B free'
-                                      }
-                                    : undefined
+                                mockData={
+                                    readOnly
+                                        ? {
+                                              service:
+                                                  '● openclaw.service - OpenClaw Agent\n   Loaded: loaded (/etc/systemd/system/openclaw.service; enabled)\n   Active: active (running) since Fri 2026-02-14 10:23:41 UTC\n Main PID: 1847 (node)\n    Tasks: 11 (limit: 4915)\n   Memory: 128.4M\n      CPU: 2.341s\n   CGroup: /system.slice/openclaw.service\n           └─1847 node /opt/openclaw/server.js',
+                                              port: 'tcp  0  0 0.0.0.0:3000  0.0.0.0:*  LISTEN  1847/node',
+                                              memory: 'Mem: 1987Mi total, 128Mi used, 1640Mi free, 219Mi buff/cache\nSwap: 0B total, 0B used, 0B free'
+                                          }
+                                        : undefined
                                 }
                             />
                         </div>
@@ -287,12 +290,14 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                     {activeTab === 'variables' && (
                         <PlaygroundVariablesContent
                             clawId={claw.id}
-                            mockEnvVars={readOnly
-                                ? {
-                                      ANTHROPIC_API_KEY: 'sk-ant-api03-••••••••',
-                                      OPENAI_API_KEY: 'sk-proj-••••••••'
-                                  }
-                                : undefined
+                            mockEnvVars={
+                                readOnly
+                                    ? {
+                                          ANTHROPIC_API_KEY:
+                                              'sk-ant-api03-••••••••',
+                                          OPENAI_API_KEY: 'sk-proj-••••••••'
+                                      }
+                                    : undefined
                             }
                         />
                     )}

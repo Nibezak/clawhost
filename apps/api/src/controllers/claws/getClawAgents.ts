@@ -1,5 +1,5 @@
-import type { Context } from 'hono'
 import type { ClawAgent } from '@/ts/Interfaces'
+import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
@@ -9,7 +9,7 @@ import { isAdmin } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
-const getClawAgents = async (c: Context<{ Variables: { userId: string } }>) => {
+const getClawAgents = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')

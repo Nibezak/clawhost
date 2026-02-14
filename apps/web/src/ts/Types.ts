@@ -32,3 +32,16 @@ export type PlaygroundDetailTab = 'info' | 'logs' | 'diagnostics' | 'variables'
 export type PlaygroundAgentDetailTab = 'chat' | 'configuration'
 
 export type ClawAvatarSize = 'sm' | 'md' | 'lg'
+
+export type Route =
+    | '/'
+    | '/login'
+    | '/claws'
+    | '/ssh-keys'
+    | '/account'
+    | '/billing'
+    | '/terms'
+    | '/privacy'
+    | '/changelog'
+    | '/posts'
+    | '/posts/:slug'

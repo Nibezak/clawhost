@@ -21,4 +21,4 @@ const ScrollToTop: FC = (): ReactNode => {
     return null
 }
 
-export { ScrollToTop }
+export default ScrollToTop

@@ -1,5 +1,4 @@
-import type { Context } from 'hono'
-import type { ProviderType } from '@/ts/Types'
+import type { AuthenticatedContext, ProviderType } from '@/ts/Types'
 import type { BillingPeriod, ServerStatus } from '@/ts/Interfaces'
 
 import { desc } from 'drizzle-orm'
@@ -7,9 +6,9 @@ import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws, users, volumes } from '@/db/schema'
 import { getProvider } from '@/services/provider'
-import { cloudflare } from '@/services/cloudflare'
+import cloudflare from '@/services/cloudflare'
 import { checkSubdomainReady, isAdmin } from '@/controllers/claws/helpers'
-import { subscriptions } from '@/lib/polar/subscriptions'
+import subscriptions from '@/lib/polar/subscriptions'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
@@ -22,7 +21,7 @@ const transitionCompletedBy: Record<string, string[]> = {
     rebuilding: ['running']
 }
 
-const getAdminClaws = async (c: Context<{ Variables: { userId: string } }>) => {
+const getAdminClaws = async (c: AuthenticatedContext) => {
     const userId = c.get('userId')
 
     if (!(await isAdmin(userId))) {

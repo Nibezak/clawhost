@@ -1,6 +1,5 @@
-import type { Context } from 'hono'
 import type { InitiateClawPurchaseBody } from '@/ts/Interfaces'
-import type { ProviderType } from '@/ts/Types'
+import type { AuthenticatedContext, ProviderType } from '@/ts/Types'
 
 import { eq, and, count, lt } from 'drizzle-orm'
 import { db } from '@/db'
@@ -116,7 +115,7 @@ function getPolarProductId(
 }
 
 const initiateClawPurchase = async (
-    c: Context<{ Variables: { userId: string } }>
+    c: AuthenticatedContext
 ) => {
     try {
         if (Date.now() - lastPendingCleanup > CLEANUP_INTERVAL) {

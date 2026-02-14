@@ -8,9 +8,9 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { PageTitle } from '@/components/PageTitle'
-import { Header } from '@/components/Header'
-import { LandingFooter } from '@/components/LandingFooter'
+import PageTitle from '@/components/PageTitle'
+import Header from '@/components/Header'
+import LandingFooter from '@/components/LandingFooter'
 import HeroButtons from '@/components/HeroButtons'
 import { demoPlaygroundData } from '@/data'
 import {
@@ -19,7 +19,7 @@ import {
     PlaygroundAgentDetailPanel
 } from '@/components/playground'
 import { useAuth } from '@/lib/auth'
-import { ROUTES } from '@/lib/routes'
+import ROUTES from '@/lib/routes'
 import { usePlans } from '@/hooks'
 import ProviderIcon from '@/components/ProviderIcon'
 import getBaseDomain from '@/lib/getBaseDomain'
@@ -347,12 +347,8 @@ const Landing: FC = (): ReactNode => {
                             <div className='relative min-w-0 flex-1'>
                                 <div className='playground-grid h-full'>
                                     <PlaygroundCanvas
-                                        initialNodes={
-                                            demoPlaygroundData.nodes
-                                        }
-                                        initialEdges={
-                                            demoPlaygroundData.edges
-                                        }
+                                        initialNodes={demoPlaygroundData.nodes}
+                                        initialEdges={demoPlaygroundData.edges}
                                         initialZoom={1.25}
                                         allowPageScroll
                                         onNodeClick={(clawId) => {
@@ -378,9 +374,7 @@ const Landing: FC = (): ReactNode => {
                                             setDemoAgentId(null)
                                             setDemoAgentClawId(null)
                                         }}
-                                        panelOpen={
-                                            !!demoClaw || !!demoAgent
-                                        }
+                                        panelOpen={!!demoClaw || !!demoAgent}
                                         selectedClawId={demoClawId}
                                         selectedAgentId={demoAgentId}
                                     />
@@ -405,9 +399,7 @@ const Landing: FC = (): ReactNode => {
                                         agent={demoAgent}
                                         clawId={demoAgentClaw.id}
                                         clawName={demoAgentClaw.name}
-                                        isOnlyAgent={
-                                            demoAgentList.length <= 1
-                                        }
+                                        isOnlyAgent={demoAgentList.length <= 1}
                                         onClose={() => {
                                             setDemoAgentId(null)
                                             setDemoAgentClawId(null)

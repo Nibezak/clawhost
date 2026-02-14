@@ -232,4 +232,4 @@ const ClawCardDialogs: FC<ClawCardDialogsProps> = ({
     )
 }
 
-export { ClawCardDialogs }
+export default ClawCardDialogs

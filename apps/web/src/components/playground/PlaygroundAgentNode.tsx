@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react'
 import type { PlaygroundAgentNodeProps } from '@/ts/Interfaces'
 
 import { Handle, Position } from '@xyflow/react'
-import { ClawMascot } from '@/components/ClawMascot'
+import ClawMascot from '@/components/ClawMascot'
 
 const handleStyle = {
     top: 0,

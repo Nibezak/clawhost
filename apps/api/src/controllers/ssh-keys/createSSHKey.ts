@@ -1,5 +1,5 @@
-import type { Context } from 'hono'
 import type { CreateSSHKeyBody } from '@/ts/Interfaces'
+import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq, count } from 'drizzle-orm'
 import { db } from '@/db'
@@ -10,7 +10,7 @@ import { t } from '@openclaw/i18n'
 
 const MAX_SSH_KEYS_PER_ACCOUNT = 50
 
-const createSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
+const createSSHKey = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const { name, publicKey } = await c.req.json<CreateSSHKeyBody>()

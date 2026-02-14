@@ -1,11 +1,11 @@
-import type { Context } from 'hono'
 import type { CreateClawBody } from '@/ts/Interfaces'
+import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq, and, count } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws, sshKeys, volumes } from '@/db/schema'
 import { getProvider } from '@/services/provider'
-import { cloudflare } from '@/services/cloudflare'
+import cloudflare from '@/services/cloudflare'
 import {
     generateSlug,
     generatePassword,
@@ -16,7 +16,7 @@ import {
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
-const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
+const createClaw = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const {

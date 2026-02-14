@@ -41,4 +41,4 @@ const ClawMascot: FC<ClawMascotProps> = ({ className }): ReactNode => {
     )
 }
 
-export { ClawMascot }
+export default ClawMascot

@@ -1,9 +1,9 @@
 import type { CloudProvider } from '@/ts/Interfaces'
 import type { ProviderType } from '@/ts/Types'
 
-import { hetzner } from '@/services/hetzner'
-import { digitalocean } from '@/services/digitalocean'
-import { vultr } from '@/services/vultr'
+import hetzner from '@/services/hetzner'
+import digitalocean from '@/services/digitalocean'
+import vultr from '@/services/vultr'
 
 const providers: Record<ProviderType, CloudProvider> = {
     hetzner,

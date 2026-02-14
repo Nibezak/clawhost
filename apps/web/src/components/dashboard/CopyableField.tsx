@@ -46,4 +46,4 @@ const CopyableField: FC<CopyableFieldProps> = ({
     )
 }
 
-export { CopyableField }
+export default CopyableField

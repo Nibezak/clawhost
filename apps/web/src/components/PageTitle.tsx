@@ -85,4 +85,4 @@ const PageTitle: FC<PageTitleProps> = ({
     return null
 }
 
-export { PageTitle }
+export default PageTitle

@@ -12,12 +12,8 @@ const PanelPlaceholder: FC<PanelPlaceholderProps> = ({
                 {icon}
             </div>
             <div className='text-center'>
-                <p className='text-sm font-medium text-gray-300'>
-                    {title}
-                </p>
-                <p className='mt-1 text-xs text-gray-500'>
-                    {description}
-                </p>
+                <p className='text-sm font-medium text-gray-300'>{title}</p>
+                <p className='mt-1 text-xs text-gray-500'>{description}</p>
             </div>
         </div>
     )

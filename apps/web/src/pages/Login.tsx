@@ -8,13 +8,13 @@ import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
 import { auth } from '@/lib/firebase'
 import { useUIStore } from '@/lib/store'
-import { ROUTES } from '@/lib/routes'
+import ROUTES from '@/lib/routes'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Logo } from '@/components/Logo'
-import { PageBackground } from '@/components/PageBackground'
-import { PageTitle } from '@/components/PageTitle'
+import Logo from '@/components/Logo'
+import PageBackground from '@/components/PageBackground'
+import PageTitle from '@/components/PageTitle'
 import { Envelope, CircleNotch } from '@phosphor-icons/react'
 
 const COOLDOWN_KEY = 'otpSentAt'
@@ -43,7 +43,9 @@ const Login: FC = (): ReactNode => {
 
     const getRedirectUrl = () => {
         if (planParam) {
-            const providerSuffix = providerParam ? `&provider=${providerParam}` : ''
+            const providerSuffix = providerParam
+                ? `&provider=${providerParam}`
+                : ''
             return `${ROUTES.CLAWS}?plan=${planParam}${providerSuffix}`
         }
         if (deployParam) return `${ROUTES.CLAWS}?deploy=true`

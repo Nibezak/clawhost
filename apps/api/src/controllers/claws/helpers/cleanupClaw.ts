@@ -4,9 +4,9 @@ import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws, clawExports, volumes } from '@/db/schema'
 import { getProvider } from '@/services/provider'
-import { cloudflare } from '@/services/cloudflare'
+import cloudflare from '@/services/cloudflare'
 
-export async function cleanupClaw(
+async function cleanupClaw(
     clawId: string,
     claw: ClawCleanupData
 ): Promise<void> {
@@ -52,3 +52,5 @@ export async function cleanupClaw(
     await db.delete(clawExports).where(eq(clawExports.clawId, clawId))
     await db.delete(claws).where(eq(claws.id, clawId))
 }
+
+export default cleanupClaw

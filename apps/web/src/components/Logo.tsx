@@ -103,4 +103,4 @@ const Logo: FC = (): ReactNode => {
     )
 }
 
-export { Logo }
+export default Logo

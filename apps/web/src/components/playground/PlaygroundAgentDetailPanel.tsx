@@ -2,7 +2,8 @@ import type { FC, ReactNode } from 'react'
 import type {
     AgentConfigResponse,
     ClawAgentsResponse,
-    PlaygroundAgentDetailPanelProps
+    PlaygroundAgentDetailPanelProps,
+    PlaygroundTabConfig
 } from '@/ts/Interfaces'
 import type { PlaygroundAgentDetailTab } from '@/ts/Types'
 import type { TranslationKey } from '@openclaw/i18n'
@@ -40,7 +41,7 @@ import {
     DialogTitle
 } from '@/components/ui/dialog'
 import { Skeleton } from '@/components/ui/skeleton'
-import { api } from '@/lib/api'
+import api from '@/lib/api'
 import { useUIStore } from '@/lib/store'
 import { aiModels, validateAgentName } from '@/lib/claw-utils'
 import PLAYGROUND_AGENTS_QUERY_KEY from '@/hooks/usePlayground/PLAYGROUND_AGENTS_QUERY_KEY'
@@ -49,11 +50,7 @@ const agentTabStateMap: Record<string, PlaygroundAgentDetailTab> = {}
 const deletingAgentIds = new Set<string>()
 let skipAgentDeleteConfirmation = false
 
-const tabs: {
-    id: PlaygroundAgentDetailTab
-    label: string
-    icon: typeof ChatCircle
-}[] = [
+const tabs: PlaygroundTabConfig<PlaygroundAgentDetailTab>[] = [
     { id: 'chat', label: 'playground.tabChat', icon: ChatCircle },
     { id: 'configuration', label: 'playground.tabConfiguration', icon: GearSix }
 ]
@@ -127,8 +124,8 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
               },
               envVars: agent.model
                   ? {
-                        [aiModels.find((m) => m.id === agent.model)
-                            ?.envVar || '']: 'sk-••••••••'
+                        [aiModels.find((m) => m.id === agent.model)?.envVar ||
+                        '']: 'sk-••••••••'
                     }
                   : {},
               defaultModel: agent.model
@@ -443,9 +440,18 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                                 </div>
                             ) : isConfigError ? (
                                 <PanelPlaceholder
-                                    icon={<GearSix className='h-6 w-6 text-gray-500' weight='duotone' />}
-                                    title={t('playground.configurationLoadFailed')}
-                                    description={t('playground.configurationLoadFailedDescription')}
+                                    icon={
+                                        <GearSix
+                                            className='h-6 w-6 text-gray-500'
+                                            weight='duotone'
+                                        />
+                                    }
+                                    title={t(
+                                        'playground.configurationLoadFailed'
+                                    )}
+                                    description={t(
+                                        'playground.configurationLoadFailedDescription'
+                                    )}
                                 />
                             ) : (
                                 <div className='space-y-5'>

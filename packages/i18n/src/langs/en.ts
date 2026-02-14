@@ -132,9 +132,11 @@ export const en = {
         failedToFetchPlanAvailability: 'Failed to fetch plan availability!',
         failedToSendEmail: 'Failed to send email!',
         failedToGetDiagnostics: 'Failed to connect to the instance!',
-        failedToGetDiagnosticsDescription: 'Could not retrieve diagnostics. The instance may be offline or starting up.',
+        failedToGetDiagnosticsDescription:
+            'Could not retrieve diagnostics. The instance may be offline or starting up.',
         failedToGetLogs: 'Failed to load logs.',
-        failedToGetLogsDescription: 'Could not retrieve logs for this instance. Please try again later.',
+        failedToGetLogsDescription:
+            'Could not retrieve logs for this instance. Please try again later.',
         failedToRepairClaw: 'Failed to repair the instance!',
         repairSuccess: 'Instance repaired successfully.',
         repairGatewayNotResponding:
@@ -199,7 +201,8 @@ export const en = {
         agentDeleted: 'Agent deleted successfully.',
         agentDeleteFailed: 'Could not delete agent from the instance.',
         cannotDeleteMainAgent: 'Cannot delete the only remaining agent.',
-        agentNameInvalid: 'Agent name must only contain letters, numbers, and dashes.',
+        agentNameInvalid:
+            'Agent name must only contain letters, numbers, and dashes.',
         agentNameDuplicate: 'An agent with this name already exists.',
         diagnosticsFetched: 'Diagnostics fetched successfully.',
         logsFetched: 'Logs fetched successfully.',
@@ -279,8 +282,7 @@ export const en = {
     },
     billing: {
         title: 'Billing',
-        description:
-            'View your payment history and manage your billing.',
+        description: 'View your payment history and manage your billing.',
         billingHistory: 'Billing',
         manageYourBilling: 'View your payment history and manage invoices.',
         billingDescription: 'Your payment history and invoices',
@@ -447,7 +449,8 @@ export const en = {
             scheduledDeletion: 'Deletion Scheduled',
             unknown: 'Unknown'
         },
-        legacyViewWarning: 'Grid and list views may be discontinued. Switch to Playground for agents and more.',
+        legacyViewWarning:
+            'Grid and list views may be discontinued. Switch to Playground for agents and more.',
         legacyViewWarningAction: 'Switch to Playground'
     },
     createClaw: {
@@ -535,7 +538,9 @@ export const en = {
         publicKeyPlaceholder: 'ssh-rsa AAAA... or ssh-ed25519 AAAA...',
         publicKeyHint: 'Find your public key at',
         publicKeyPath1: '~/.ssh/id_ed25519.pub',
+        publicKeyPathOr: 'or',
         publicKeyPath2: '~/.ssh/id_rsa.pub',
+        important: 'Important:',
         dontHaveSshKey: "Don't have an SSH key? Generate one:",
         sshKeygenCommand: 'ssh-keygen -t ed25519 -C "your-email@example.com"',
         adding: 'Adding...',
@@ -727,7 +732,7 @@ export const en = {
         demoClawRestarting: 'Restarting claw...',
         demoClawRestarted: 'Claw restarted.',
         demoClawDeleted: 'Claw deleted.',
-        demoStatus: '{{running}} running, {{total}} total',
+        demoStatus: '{{running}} running, {{total}} total'
     },
     blog: {
         title: 'Blog',
@@ -746,6 +751,7 @@ export const en = {
             'Track updates, new features, and improvements to ClawHost.',
         subtitle: 'All updates, new features, and improvements to ClawHost.',
         upcomingRelease: 'Upcoming',
+        release1Date: 'February 8, 2026',
         release1Title: 'Initial Release',
         release1Description:
             'The first official release of ClawHost — deploy OpenClaw on your own VPS with one click.',
@@ -765,6 +771,7 @@ export const en = {
         release1Feature10: 'Billing history and invoice management',
         release1Feature11:
             'Auto-provisioning with OpenClaw pre-installed and configured',
+        release2Date: 'February 8, 2026',
         release2Title: 'DigitalOcean & More',
         release2Description:
             'Multi-provider infrastructure and a new way to stay updated on everything ClawHost.',
@@ -775,6 +782,7 @@ export const en = {
             '10+ DigitalOcean server locations across US, Europe, Asia, and more',
         release2Feature4:
             'Changelog page to track all platform updates and releases',
+        release3Date: 'February 10, 2026',
         release3Title: 'Server Insights',
         release3Description:
             'Deeper visibility and control over your servers, right from the dashboard.',
@@ -784,6 +792,7 @@ export const en = {
             'Server diagnostics with one-click automated repair for service issues',
         release3Feature3:
             'Built-in file explorer and JSON editor for server configuration files',
+        release4Date: 'February 11, 2026',
         release4Title: 'Vultr Provider',
         release4Description:
             'Vultr as a third cloud provider with 22 server plans and 30+ global locations.',
@@ -792,6 +801,7 @@ export const en = {
             '22 Vultr server plans across Regular, High Performance, and High Frequency tiers',
         release4Feature3:
             '30+ Vultr server locations across US, Europe, Asia, and more',
+        release5Date: 'February 14, 2026',
         release5Title: 'Agents & Data Export',
         release5Description:
             'Agent playground, multi-agent management, and portable data export for your OpenClaw instances.',
@@ -856,7 +866,8 @@ export const en = {
         configurationSaveFailed: 'Failed to save agent configuration.',
         configurationLoading: 'Loading configuration...',
         configurationLoadFailed: 'Failed to load agent configuration.',
-        configurationLoadFailedDescription: 'Could not retrieve the configuration for this agent. Please try again later.',
+        configurationLoadFailedDescription:
+            'Could not retrieve the configuration for this agent. Please try again later.',
         configurationRemoveVar: 'Remove',
         configurationApiKey: 'API Key',
         configurationApiKeyDescription:
@@ -873,7 +884,8 @@ export const en = {
         variablesSaveFailed: 'Failed to save environment variables.',
         variablesLoading: 'Loading variables...',
         variablesLoadFailed: 'Failed to load environment variables.',
-        variablesLoadFailedDescription: 'Could not retrieve variables for this instance. Please try again later.',
+        variablesLoadFailedDescription:
+            'Could not retrieve variables for this instance. Please try again later.',
         variablesInvalidKey: 'Letters, numbers, and underscores only.',
         variablesEmptyValue: 'Value cannot be empty.',
         variablesDuplicateKey: 'Duplicate variable name.',
@@ -897,7 +909,8 @@ export const en = {
         addAgentFailed: 'Failed to add agent.',
         deleteAgent: 'Delete Agent',
         deleteAgentTitle: 'Delete Agent',
-        deleteAgentDescription: 'Are you sure you want to delete the agent "{{agentName}}"? This action cannot be undone. Environment variables will not be removed.',
+        deleteAgentDescription:
+            'Are you sure you want to delete the agent "{{agentName}}"? This action cannot be undone. Environment variables will not be removed.',
         deleteAgentConfirm: 'Delete',
         deleteAgentDeleting: 'Deleting...',
         deleteAgentSuccess: 'Agent deleted successfully.',

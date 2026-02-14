@@ -9,4 +9,4 @@ const PageBackground: FC = (): ReactNode => {
     )
 }
 
-export { PageBackground }
+export default PageBackground

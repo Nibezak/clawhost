@@ -2,10 +2,10 @@ import type { FC, ReactNode } from 'react'
 
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { Header } from '@/components/Header'
-import { LandingFooter } from '@/components/LandingFooter'
-import { PageBackground } from '@/components/PageBackground'
-import { PageTitle } from '@/components/PageTitle'
+import Header from '@/components/Header'
+import LandingFooter from '@/components/LandingFooter'
+import PageBackground from '@/components/PageBackground'
+import PageTitle from '@/components/PageTitle'
 import { Check } from '@phosphor-icons/react'
 
 const Changelog: FC = (): ReactNode => {
@@ -48,7 +48,7 @@ const Changelog: FC = (): ReactNode => {
 
                         <div className='rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8'>
                             <span className='text-muted-foreground mb-4 block text-sm'>
-                                February 14, 2026
+                                {t('changelog.release5Date')}
                             </span>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>
@@ -102,7 +102,7 @@ const Changelog: FC = (): ReactNode => {
 
                         <div className='rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8'>
                             <span className='text-muted-foreground mb-4 block text-sm'>
-                                February 11, 2026
+                                {t('changelog.release4Date')}
                             </span>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>
@@ -150,7 +150,7 @@ const Changelog: FC = (): ReactNode => {
 
                         <div className='rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8'>
                             <span className='text-muted-foreground mb-4 block text-sm'>
-                                February 10, 2026
+                                {t('changelog.release3Date')}
                             </span>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>
@@ -198,7 +198,7 @@ const Changelog: FC = (): ReactNode => {
 
                         <div className='rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8'>
                             <span className='text-muted-foreground mb-4 block text-sm'>
-                                February 8, 2026
+                                {t('changelog.release2Date')}
                             </span>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>
@@ -252,7 +252,7 @@ const Changelog: FC = (): ReactNode => {
 
                         <div className='rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8'>
                             <span className='text-muted-foreground mb-4 block text-sm'>
-                                February 8, 2026
+                                {t('changelog.release1Date')}
                             </span>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>

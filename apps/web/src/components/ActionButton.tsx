@@ -21,4 +21,4 @@ const ActionButton: FC<ActionButtonProps> = ({
     )
 }
 
-export { ActionButton }
+export default ActionButton

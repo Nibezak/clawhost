@@ -22,12 +22,12 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { EmptyState } from '@/components/EmptyState'
-import { ErrorState } from '@/components/ErrorState'
-import { Header } from '@/components/Header'
-import { LandingFooter } from '@/components/LandingFooter'
-import { PageBackground } from '@/components/PageBackground'
-import { PageTitle } from '@/components/PageTitle'
+import EmptyState from '@/components/EmptyState'
+import ErrorState from '@/components/ErrorState'
+import Header from '@/components/Header'
+import LandingFooter from '@/components/LandingFooter'
+import PageBackground from '@/components/PageBackground'
+import PageTitle from '@/components/PageTitle'
 import {
     Dialog,
     DialogContent,
@@ -46,8 +46,8 @@ import {
     Warning,
     CaretDown
 } from '@phosphor-icons/react'
-import { PageHeader } from '@/components/PageHeader'
-import { ActionButton } from '@/components/ActionButton'
+import PageHeader from '@/components/PageHeader'
+import ActionButton from '@/components/ActionButton'
 
 const SSHKeySkeleton: FC = (): ReactNode => {
     return (
@@ -350,7 +350,7 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                                 <code className='bg-muted rounded px-1'>
                                     {t('sshKeys.publicKeyPath1')}
                                 </code>{' '}
-                                or{' '}
+                                {t('sshKeys.publicKeyPathOr')}{' '}
                                 <code className='bg-muted rounded px-1'>
                                     {t('sshKeys.publicKeyPath2')}
                                 </code>
@@ -430,7 +430,9 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                                 <Alert>
                                     <Warning className='h-4 w-4' />
                                     <AlertDescription>
-                                        <strong>Important:</strong>{' '}
+                                        <strong>
+                                            {t('sshKeys.important')}
+                                        </strong>{' '}
                                         {t('sshKeys.importantAfterGenerating')}
                                     </AlertDescription>
                                 </Alert>

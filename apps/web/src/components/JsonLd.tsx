@@ -17,4 +17,4 @@ const JsonLd: FC<JsonLdProps> = ({ data }): ReactNode => {
     return null
 }
 
-export { JsonLd }
+export default JsonLd

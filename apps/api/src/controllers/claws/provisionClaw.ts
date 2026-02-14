@@ -8,7 +8,7 @@ import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws, pendingClaws, sshKeys, volumes } from '@/db/schema'
 import { getProvider } from '@/services/provider'
-import { cloudflare } from '@/services/cloudflare'
+import cloudflare from '@/services/cloudflare'
 import {
     generateSlug,
     generateToken,

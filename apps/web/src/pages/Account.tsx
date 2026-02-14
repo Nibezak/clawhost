@@ -9,13 +9,13 @@ import { useProfile, useUpdateProfile, useUserStats } from '@/hooks'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Header } from '@/components/Header'
-import { LandingFooter } from '@/components/LandingFooter'
-import { PageBackground } from '@/components/PageBackground'
-import { PageTitle } from '@/components/PageTitle'
+import Header from '@/components/Header'
+import LandingFooter from '@/components/LandingFooter'
+import PageBackground from '@/components/PageBackground'
+import PageTitle from '@/components/PageTitle'
 import { CircleNotch, Calendar, Key } from '@phosphor-icons/react'
-import { ClawMascotOutline } from '@/components/ClawMascotOutline'
-import { PageHeader } from '@/components/PageHeader'
+import ClawMascotOutline from '@/components/ClawMascotOutline'
+import PageHeader from '@/components/PageHeader'
 import { Button } from '@/components/ui/button'
 
 const Account: FC = (): ReactNode => {
@@ -116,15 +116,8 @@ const Account: FC = (): ReactNode => {
                         />
 
                         <div className='rounded-xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm'>
-                            <h3 className='mb-1 font-semibold'>
-                                {t('account.profileInformation')}
-                            </h3>
-                            <p className='text-muted-foreground mb-6 text-sm'>
-                                {t('account.profileDescription')}
-                            </p>
-
                             <div className='mb-8 flex items-start gap-6'>
-                                <Avatar className='h-20 w-20'>
+                                <Avatar className='h-20 w-20 shrink-0'>
                                     <AvatarFallback className='bg-gradient-to-br from-[#ef5350] to-[#c62828] text-4xl font-semibold text-white'>
                                         {getInitials(displayName)}
                                     </AvatarFallback>
@@ -140,7 +133,7 @@ const Account: FC = (): ReactNode => {
                                             {email}
                                         </p>
                                     </div>
-                                    <div className='text-muted-foreground flex items-center gap-6 text-sm'>
+                                    <div className='text-muted-foreground flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:gap-6'>
                                         <div className='flex items-center gap-1.5'>
                                             <Calendar className='h-4 w-4' />
                                             <span>

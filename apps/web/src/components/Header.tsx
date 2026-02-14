@@ -9,9 +9,9 @@ import { useAuth } from '@/lib/auth'
 import { useProfile } from '@/hooks'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Logo } from '@/components/Logo'
-import { UserDropdown } from '@/components/UserDropdown'
-import { ROUTES } from '@/lib/routes'
+import Logo from '@/components/Logo'
+import UserDropdown from '@/components/UserDropdown'
+import ROUTES from '@/lib/routes'
 import { Lightning, List, X } from '@phosphor-icons/react'
 
 const Header: FC<HeaderProps> = ({
@@ -68,7 +68,7 @@ const Header: FC<HeaderProps> = ({
                           : 'border-b border-transparent bg-transparent'
                 }`}
             >
-                <div className='mx-auto grid max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-4 px-6 py-4'>
+                <div className='mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4'>
                     <Logo />
 
                     {showNavLinks && navLinks.length > 0 ? (
@@ -194,4 +194,4 @@ const Header: FC<HeaderProps> = ({
     )
 }
 
-export { Header }
+export default Header

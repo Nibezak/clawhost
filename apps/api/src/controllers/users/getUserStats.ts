@@ -1,4 +1,4 @@
-import type { Context } from 'hono'
+import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq, count } from 'drizzle-orm'
 import { db } from '@/db'
@@ -7,7 +7,7 @@ import { orders } from '@/lib/polar'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
-const getUserStats = async (c: Context<{ Variables: { userId: string } }>) => {
+const getUserStats = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
 

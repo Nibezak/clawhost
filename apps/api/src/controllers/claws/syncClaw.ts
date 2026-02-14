@@ -1,5 +1,4 @@
-import type { Context } from 'hono'
-import type { ProviderType } from '@/ts/Types'
+import type { AuthenticatedContext, ProviderType } from '@/ts/Types'
 
 import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
@@ -9,7 +8,7 @@ import { checkSubdomainReady, isAdmin } from '@/controllers/claws/helpers'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
-const syncClaw = async (c: Context<{ Variables: { userId: string } }>) => {
+const syncClaw = async (c: AuthenticatedContext) => {
     const userId = c.get('userId')
     const id = c.req.param('id')
     const admin = await isAdmin(userId)

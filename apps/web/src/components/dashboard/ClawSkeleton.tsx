@@ -25,4 +25,4 @@ const ClawSkeleton: FC = (): ReactNode => {
     )
 }
 
-export { ClawSkeleton }
+export default ClawSkeleton

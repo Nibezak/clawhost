@@ -35,7 +35,7 @@ function getClient() {
     })
 }
 
-export const hetzner: CloudProvider = {
+const hetzner: CloudProvider = {
     async createServer(
         name: string,
         serverType: string,
@@ -281,3 +281,5 @@ export const hetzner: CloudProvider = {
         }
     }
 }
+
+export default hetzner

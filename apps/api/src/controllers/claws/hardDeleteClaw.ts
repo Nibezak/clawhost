@@ -1,5 +1,4 @@
-import type { Context } from 'hono'
-import type { ProviderType } from '@/ts/Types'
+import type { AuthenticatedContext, ProviderType } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
@@ -10,7 +9,7 @@ import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
 const hardDeleteClaw = async (
-    c: Context<{ Variables: { userId: string } }>
+    c: AuthenticatedContext
 ) => {
     try {
         const userId = c.get('userId')

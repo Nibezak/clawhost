@@ -10,8 +10,8 @@ import {
 } from '@/components/ui/tooltip'
 import ClawAvatar from '@/components/ClawAvatar'
 import ProviderIcon from '@/components/ProviderIcon'
-import { ClawCardDropdownMenu } from '@/components/dashboard/ClawCardDropdownMenu'
-import { CopyableField } from '@/components/dashboard/CopyableField'
+import ClawCardDropdownMenu from '@/components/dashboard/ClawCardDropdownMenu'
+import CopyableField from '@/components/dashboard/CopyableField'
 import ScheduledDeletionBanner from '@/components/dashboard/ScheduledDeletionBanner'
 import getBaseDomain from '@/lib/getBaseDomain'
 import { generateSlug, aiModels } from '@/lib/claw-utils'
@@ -82,8 +82,8 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
                                     rel='noopener noreferrer'
                                     className='text-muted-foreground hover:text-foreground text-sm transition-colors'
                                 >
-                                    {claw.subdomain || generateSlug(claw.id)}
-                                    .{getBaseDomain()}
+                                    {claw.subdomain || generateSlug(claw.id)}.
+                                    {getBaseDomain()}
                                 </a>
                             )}
                         </div>
@@ -247,4 +247,4 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
     )
 }
 
-export { ClawCardGridView }
+export default ClawCardGridView

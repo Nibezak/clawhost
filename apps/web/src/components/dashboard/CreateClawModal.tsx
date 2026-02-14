@@ -47,7 +47,7 @@ import {
     TooltipProvider
 } from '@/components/ui/tooltip'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ClawMascot } from '@/components/ClawMascot'
+import ClawMascot from '@/components/ClawMascot'
 
 const CreateClawModal: FC<CreateClawModalProps> = ({
     plans: initialPlans,
@@ -61,7 +61,9 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     onNavigateToSSHKeys
 }): ReactNode => {
     const [name, setName] = useState('')
-    const [provider, setProvider] = useState<ProviderType>(preselectedProvider || 'hetzner')
+    const [provider, setProvider] = useState<ProviderType>(
+        preselectedProvider || 'hetzner'
+    )
 
     const {
         plans: providerPlans,
@@ -999,4 +1001,4 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     )
 }
 
-export { CreateClawModal }
+export default CreateClawModal

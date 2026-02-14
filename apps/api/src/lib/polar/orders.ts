@@ -1,8 +1,12 @@
-import type { PolarOrdersPage, PolarOrderRaw } from '@/ts/Interfaces'
+import type {
+    PolarOrdersPage,
+    PolarOrderRaw,
+    PolarPaginatedResult
+} from '@/ts/Interfaces'
 
 import getPolarClient from '@/lib/polar/getPolarClient'
 
-export const orders = {
+const orders = {
     async listByCustomer(
         customerId: string,
         page: number = 1,
@@ -21,10 +25,7 @@ export const orders = {
             const data =
                 'result' in result
                     ? result.result
-                    : (result as unknown as {
-                          items: unknown[]
-                          pagination: { totalCount: number; maxPage: number }
-                      })
+                    : (result as unknown as PolarPaginatedResult)
 
             const items = (data.items || []) as PolarOrderRaw[]
 
@@ -67,3 +68,5 @@ export const orders = {
         }
     }
 }
+
+export default orders

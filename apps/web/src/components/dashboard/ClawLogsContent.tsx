@@ -105,7 +105,12 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
                 )}
                 {logs.isError && (
                     <PanelPlaceholder
-                        icon={<Scroll className='h-6 w-6 text-gray-500' weight='duotone' />}
+                        icon={
+                            <Scroll
+                                className='h-6 w-6 text-gray-500'
+                                weight='duotone'
+                            />
+                        }
                         title={t('api.failedToGetLogs')}
                         description={t('api.failedToGetLogsDescription')}
                     />

@@ -1,10 +1,10 @@
 import type { FC, ReactNode } from 'react'
 
 import { motion } from 'framer-motion'
-import { Header } from '@/components/Header'
-import { LandingFooter } from '@/components/LandingFooter'
-import { PageBackground } from '@/components/PageBackground'
-import { PageTitle } from '@/components/PageTitle'
+import Header from '@/components/Header'
+import LandingFooter from '@/components/LandingFooter'
+import PageBackground from '@/components/PageBackground'
+import PageTitle from '@/components/PageTitle'
 
 const Privacy: FC = (): ReactNode => {
     return (

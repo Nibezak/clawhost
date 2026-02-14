@@ -7,7 +7,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useUIStore } from '@/lib/store'
-import { ROUTES } from '@/lib/routes'
+import ROUTES from '@/lib/routes'
 import {
     useClaws,
     useAdminClaws,
@@ -18,12 +18,12 @@ import {
     usePlanAvailability
 } from '@/hooks'
 import { useAllClawAgents, usePlaygroundGraph } from '@/hooks/usePlayground'
-import { EmptyState } from '@/components/EmptyState'
-import { ErrorState } from '@/components/ErrorState'
-import { PageTitle } from '@/components/PageTitle'
-import { ActionButton } from '@/components/ActionButton'
-import { ClawMascot } from '@/components/ClawMascot'
-import { Logo } from '@/components/Logo'
+import EmptyState from '@/components/EmptyState'
+import ErrorState from '@/components/ErrorState'
+import PageTitle from '@/components/PageTitle'
+import ActionButton from '@/components/ActionButton'
+import ClawMascot from '@/components/ClawMascot'
+import Logo from '@/components/Logo'
 import { Lightning } from '@phosphor-icons/react'
 import { CreateClawModal } from '@/components/dashboard'
 import {
@@ -34,7 +34,7 @@ import {
 } from '@/components/playground'
 import { useAuth } from '@/lib/auth'
 import { useProfile } from '@/hooks'
-import { UserDropdown } from '@/components/UserDropdown'
+import UserDropdown from '@/components/UserDropdown'
 
 const Dashboard: FC = (): ReactNode => {
     const navigate = useNavigate()
@@ -43,9 +43,8 @@ const Dashboard: FC = (): ReactNode => {
     const [preselectedPlanId, setPreselectedPlanId] = useState<string | null>(
         null
     )
-    const [preselectedProvider, setPreselectedProvider] = useState<ProviderType | null>(
-        null
-    )
+    const [preselectedProvider, setPreselectedProvider] =
+        useState<ProviderType | null>(null)
     const [awaitingClaw, setAwaitingClaw] = useState(
         () => searchParams.get('payment') === 'success'
     )
@@ -89,7 +88,9 @@ const Dashboard: FC = (): ReactNode => {
     useEffect(() => {
         const planParam = searchParams.get('plan')
         const deployParam = searchParams.get('deploy')
-        const providerParam = searchParams.get('provider') as ProviderType | null
+        const providerParam = searchParams.get(
+            'provider'
+        ) as ProviderType | null
         if (planParam) {
             setPreselectedPlanId(planParam)
             if (providerParam) setPreselectedProvider(providerParam)
@@ -189,7 +190,8 @@ const Dashboard: FC = (): ReactNode => {
     const activeClawsLoading = adminMode ? isAdminClawsLoading : isClawsLoading
     const activeIsError = adminMode ? isAdminClawsError : isError
     const activeRefetch = adminMode ? refetchAdmin : refetch
-    const isLoading = authLoading || activeClawsLoading || isModeSwitching || !minLoadingMet
+    const isLoading =
+        authLoading || activeClawsLoading || isModeSwitching || !minLoadingMet
 
     useEffect(() => {
         if (isModeSwitching && !activeClawsLoading) {
@@ -271,9 +273,7 @@ const Dashboard: FC = (): ReactNode => {
             <div className='playground-gradient pointer-events-none fixed inset-0' />
             <PageTitle
                 title={
-                    adminMode
-                        ? t('dashboard.adminTitle')
-                        : t('dashboard.title')
+                    adminMode ? t('dashboard.adminTitle') : t('dashboard.title')
                 }
                 description={
                     adminMode
@@ -287,18 +287,21 @@ const Dashboard: FC = (): ReactNode => {
 
                 <div className='flex items-center gap-3'>
                     {clawFilter}
-                    {!adminMode && !isLoading && displayedClaws && displayedClaws.length > 0 && (
-                        <ActionButton
-                            onClick={() => setShowCreate(true)}
-                            icon={
-                                <Lightning
-                                    className='h-5 w-5'
-                                    weight='fill'
-                                />
-                            }
-                            label={t('createClaw.title')}
-                        />
-                    )}
+                    {!adminMode &&
+                        !isLoading &&
+                        displayedClaws &&
+                        displayedClaws.length > 0 && (
+                            <ActionButton
+                                onClick={() => setShowCreate(true)}
+                                icon={
+                                    <Lightning
+                                        className='h-5 w-5'
+                                        weight='fill'
+                                    />
+                                }
+                                label={t('createClaw.title')}
+                            />
+                        )}
                     <UserDropdown
                         displayName={displayName}
                         onSignOut={signOut}
@@ -309,7 +312,7 @@ const Dashboard: FC = (): ReactNode => {
             <div className='flex flex-1 overflow-hidden'>
                 <div className='relative h-full min-w-0 flex-1'>
                     {activeIsError ? (
-                        <div className='flex h-full items-center justify-center -mt-20'>
+                        <div className='-mt-20 flex h-full items-center justify-center'>
                             <ErrorState
                                 title={t('errors.failedToLoadClaws')}
                                 description={t(
@@ -348,8 +351,7 @@ const Dashboard: FC = (): ReactNode => {
 
                     {!isLoading &&
                         !activeIsError &&
-                        (!displayedClaws ||
-                            displayedClaws.length === 0) && (
+                        (!displayedClaws || displayedClaws.length === 0) && (
                             <div className='pointer-events-none absolute inset-0 z-10 flex items-center justify-center'>
                                 <div className='pointer-events-auto -mt-20'>
                                     <EmptyState

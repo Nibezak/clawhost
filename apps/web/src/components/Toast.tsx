@@ -75,4 +75,4 @@ const Toast: FC = (): ReactNode => {
     )
 }
 
-export { Toast }
+export default Toast

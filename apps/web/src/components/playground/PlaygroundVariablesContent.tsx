@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
-import { api } from '@/lib/api'
+import api from '@/lib/api'
 import { useUIStore } from '@/lib/store'
 import PanelPlaceholder from '@/components/PanelPlaceholder'
 import PLAYGROUND_AGENTS_QUERY_KEY from '@/hooks/usePlayground/PLAYGROUND_AGENTS_QUERY_KEY'
@@ -240,7 +240,9 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
     if (isError) {
         return (
             <PanelPlaceholder
-                icon={<Key className='h-6 w-6 text-gray-500' weight='duotone' />}
+                icon={
+                    <Key className='h-6 w-6 text-gray-500' weight='duotone' />
+                }
                 title={t('playground.variablesLoadFailed')}
                 description={t('playground.variablesLoadFailedDescription')}
             />
@@ -408,8 +410,7 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
                             if (!hasErrors) saveMutation.mutate()
                         }}
                         disabled={
-                            saveMutation.isPending ||
-                            (showErrors && hasErrors)
+                            saveMutation.isPending || (showErrors && hasErrors)
                         }
                         className='flex w-full items-center justify-center gap-2 rounded-lg bg-[#ef5350] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
                     >
@@ -462,9 +463,7 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
                             type='button'
                             role='checkbox'
                             aria-checked={dontAskAgain}
-                            onClick={() =>
-                                setDontAskAgain(!dontAskAgain)
-                            }
+                            onClick={() => setDontAskAgain(!dontAskAgain)}
                             className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
                                 dontAskAgain
                                     ? 'border-[#ef5350] bg-[#ef5350]'

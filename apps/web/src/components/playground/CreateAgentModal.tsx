@@ -1,8 +1,5 @@
 import type { FC, ReactNode } from 'react'
-import type {
-    ClawAgentsResponse,
-    CreateAgentModalProps
-} from '@/ts/Interfaces'
+import type { ClawAgentsResponse, CreateAgentModalProps } from '@/ts/Interfaces'
 import type { TranslationKey } from '@openclaw/i18n'
 
 import { useState, useMemo, useCallback } from 'react'
@@ -23,7 +20,7 @@ import {
     SelectItem,
     SelectGroup
 } from '@/components/ui/select'
-import { api } from '@/lib/api'
+import api from '@/lib/api'
 import { useUIStore } from '@/lib/store'
 import { aiModels, validateAgentName } from '@/lib/claw-utils'
 import PLAYGROUND_AGENTS_QUERY_KEY from '@/hooks/usePlayground/PLAYGROUND_AGENTS_QUERY_KEY'
@@ -43,9 +40,10 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
     const queryClient = useQueryClient()
 
     const existingAgentNames = useMemo(() => {
-        const cached = queryClient.getQueryData<ClawAgentsResponse>(
-            [PLAYGROUND_AGENTS_QUERY_KEY, clawId]
-        )
+        const cached = queryClient.getQueryData<ClawAgentsResponse>([
+            PLAYGROUND_AGENTS_QUERY_KEY,
+            clawId
+        ])
         return cached?.agents.map((a) => a.name) || []
     }, [queryClient, clawId])
 
@@ -96,7 +94,8 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
             queryClient.setQueryData<ClawAgentsResponse>(
                 [PLAYGROUND_AGENTS_QUERY_KEY, clawId],
                 (old) => {
-                    if (!old) return { agents: [response.agent], reachable: true }
+                    if (!old)
+                        return { agents: [response.agent], reachable: true }
                     return {
                         ...old,
                         agents: [...old.agents, response.agent]
@@ -171,7 +170,9 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                                 'playground.addAgentNamePlaceholder'
                             )}
                             className={`w-full rounded-md border bg-white/5 px-3 py-2 text-sm text-white outline-none transition-colors placeholder:text-gray-600 focus:border-[#ef5350]/50 ${
-                                nameError ? 'border-red-500/50' : 'border-white/10'
+                                nameError
+                                    ? 'border-red-500/50'
+                                    : 'border-white/10'
                             }`}
                             autoFocus
                         />
@@ -267,7 +268,11 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                     </button>
                     <button
                         onClick={handleSubmit}
-                        disabled={!name.trim() || !!nameError || createMutation.isPending}
+                        disabled={
+                            !name.trim() ||
+                            !!nameError ||
+                            createMutation.isPending
+                        }
                         className='flex items-center gap-2 rounded-lg bg-[#ef5350] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
                     >
                         {createMutation.isPending ? (

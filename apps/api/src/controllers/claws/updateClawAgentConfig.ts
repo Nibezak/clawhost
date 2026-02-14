@@ -1,5 +1,5 @@
-import type { Context } from 'hono'
 import type { UpdateAgentConfigBody } from '@/ts/Interfaces'
+import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
@@ -12,7 +12,7 @@ import { ok, fail } from '@/lib/response'
 const BASE_DIR = '/home/openclaw/.openclaw'
 
 const updateClawAgentConfig = async (
-    c: Context<{ Variables: { userId: string } }>
+    c: AuthenticatedContext
 ) => {
     try {
         const userId = c.get('userId')
@@ -82,7 +82,8 @@ const updateClawAgentConfig = async (
                 const nameExists = agentList.some(
                     (a, i) =>
                         i !== agentIndex &&
-                        (a.name as string || '').toLowerCase() === body.name!.toLowerCase()
+                        ((a.name as string) || '').toLowerCase() ===
+                            body.name!.toLowerCase()
                 )
 
                 if (nameExists) {

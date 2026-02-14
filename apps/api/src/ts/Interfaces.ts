@@ -767,3 +767,22 @@ export interface CreateClawAgentBody {
 export interface DeleteClawAgentBody {
     agentId: string
 }
+
+export interface PolarPaginatedResult {
+    items: unknown[]
+    pagination: { totalCount: number; maxPage: number }
+}
+
+export interface PolarItemsResult {
+    items: unknown[]
+}
+
+export interface RegionMeta {
+    city: string
+    country: string
+}
+
+export interface PlanConfig {
+    order: string[]
+    prices: Record<string, number>
+}

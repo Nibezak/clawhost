@@ -19,12 +19,12 @@ import {
     useReinstallClaw,
     useProfile
 } from '@/hooks'
-import { api } from '@/lib/api'
+import api from '@/lib/api'
 import ProviderIcon from '@/components/ProviderIcon'
 import getStatusConfig from '@/lib/claw-utils/getStatusConfig'
 import { Plus, WifiSlash } from '@phosphor-icons/react'
-import { ClawCardDropdownMenu } from '@/components/dashboard/ClawCardDropdownMenu'
-import { ClawCardDialogs } from '@/components/dashboard/ClawCardDialogs'
+import ClawCardDropdownMenu from '@/components/dashboard/ClawCardDropdownMenu'
+import ClawCardDialogs from '@/components/dashboard/ClawCardDialogs'
 import ClawDiagnosticsDialog from '@/components/dashboard/ClawDiagnosticsDialog'
 import ClawLogsDialog from '@/components/dashboard/ClawLogsDialog'
 import ClawConfigDialog from '@/components/dashboard/ClawConfigDialog'
@@ -50,7 +50,14 @@ const handleStyle = {
 const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
     data
 }): ReactNode => {
-    const { claw, agentCount, isLoadingAgents, isReachable, isSelected, readOnly } = data
+    const {
+        claw,
+        agentCount,
+        isLoadingAgents,
+        isReachable,
+        isSelected,
+        readOnly
+    } = data
     const statusConfigs = getStatusConfig()
     const status = statusConfigs[claw.status] || statusConfigs.unknown
 
@@ -240,7 +247,9 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                                     copied={copied}
                                     passwordCopied={passwordCopied}
                                     hasActionItems={hasActionItems}
-                                    isScheduledForDeletion={isScheduledForDeletion}
+                                    isScheduledForDeletion={
+                                        isScheduledForDeletion
+                                    }
                                     isAdmin={profile?.role === 'admin'}
                                     isPlayground
                                     compact
@@ -251,9 +260,12 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation()
-                                            if (!isLoadingAgents) setShowAddAgent(true)
+                                            if (!isLoadingAgents)
+                                                setShowAddAgent(true)
                                         }}
-                                        onPointerDown={(e) => e.stopPropagation()}
+                                        onPointerDown={(e) =>
+                                            e.stopPropagation()
+                                        }
                                         onMouseDown={(e) => e.stopPropagation()}
                                         disabled={isLoadingAgents}
                                         className={`shrink-0 rounded-md p-1 transition-colors ${
@@ -262,7 +274,10 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                                                 : 'text-gray-500 hover:bg-white/10 hover:text-white'
                                         }`}
                                     >
-                                        <Plus className='h-3.5 w-3.5' weight='bold' />
+                                        <Plus
+                                            className='h-3.5 w-3.5'
+                                            weight='bold'
+                                        />
                                     </button>
                                 </TooltipTrigger>
                                 <TooltipContent side='top'>

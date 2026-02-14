@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useUIStore } from '@/lib/store'
 import getBaseDomain from '@/lib/getBaseDomain'
-import { ClawMascot } from '@/components/ClawMascot'
+import ClawMascot from '@/components/ClawMascot'
 import ProviderIcon from '@/components/ProviderIcon'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -315,4 +315,4 @@ const MockClawCard: FC<MockClawCardProps> = ({
     )
 }
 
-export { MockClawCard }
+export default MockClawCard

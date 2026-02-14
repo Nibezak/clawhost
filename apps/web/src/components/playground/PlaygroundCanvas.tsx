@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react'
-import type { PlaygroundCanvasProps } from '@/ts/Interfaces'
+import type { PlaygroundCanvasProps, PlaygroundCanvasInnerProps } from '@/ts/Interfaces'
 import type { NodeMouseHandler } from '@xyflow/react'
 
 import { useMemo, useState, useCallback, useEffect, useRef } from 'react'
@@ -15,13 +15,6 @@ import '@xyflow/react/dist/style.css'
 import PlaygroundClawNode from '@/components/playground/PlaygroundClawNode'
 import PlaygroundAgentNode from '@/components/playground/PlaygroundAgentNode'
 import PlaygroundToolbar from '@/components/playground/PlaygroundToolbar'
-
-interface PlaygroundCanvasInnerProps extends PlaygroundCanvasProps {
-    zoom: number
-    onZoomChange: (zoom: number) => void
-    isFitView: boolean
-    onFitViewChange: (value: boolean) => void
-}
 
 const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
     initialNodes,
@@ -145,22 +138,39 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
     useEffect(() => {
         if (prevPanelOpenRef.current !== panelOpen) {
             prevPanelOpenRef.current = panelOpen
-            const viewport = getViewport()
-            const shift = panelWidth / 2
             skipViewportRef.current = true
-            setViewport(
-                {
-                    x: panelOpen ? viewport.x - shift : viewport.x + shift,
-                    y: viewport.y,
-                    zoom: viewport.zoom
-                },
-                { duration: 0 }
-            )
-            setTimeout(() => {
-                skipViewportRef.current = false
-            }, 50)
+
+            if (allowPageScroll && initialZoom) {
+                const targetZoom = panelOpen ? 0.9 : initialZoom
+                const delay = panelOpen ? 50 : 300
+                setTimeout(() => {
+                    fitView({
+                        padding: 0.3,
+                        maxZoom: targetZoom,
+                        minZoom: targetZoom,
+                        duration: 200
+                    })
+                    setTimeout(() => {
+                        skipViewportRef.current = false
+                    }, 250)
+                }, delay)
+            } else {
+                const viewport = getViewport()
+                const shift = panelWidth / 2
+                setViewport(
+                    {
+                        x: panelOpen ? viewport.x - shift : viewport.x + shift,
+                        y: viewport.y,
+                        zoom: viewport.zoom
+                    },
+                    { duration: 0 }
+                )
+                setTimeout(() => {
+                    skipViewportRef.current = false
+                }, 50)
+            }
         }
-    }, [panelOpen, getViewport, setViewport])
+    }, [panelOpen, getViewport, setViewport, fitView, allowPageScroll, initialZoom])
 
     useEffect(() => {
         if (allowPageScroll) return
@@ -365,9 +375,11 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
                 proOptions={{ hideAttribution: true }}
                 elementsSelectable={false}
                 nodesConnectable={false}
-                minZoom={isMobile ? 0.3 : 0.5}
-                maxZoom={1.5}
+                minZoom={allowPageScroll && initialZoom ? 0.9 : isMobile ? 0.3 : 0.5}
+                maxZoom={allowPageScroll && initialZoom ? initialZoom : 1.5}
                 zoomOnScroll={false}
+                zoomOnPinch={!allowPageScroll}
+                zoomOnDoubleClick={!allowPageScroll}
                 panOnDrag={!allowPageScroll}
                 preventScrolling={!allowPageScroll}
                 defaultViewport={{

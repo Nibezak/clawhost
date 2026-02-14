@@ -14,8 +14,8 @@ import { CaretDown } from '@phosphor-icons/react'
 import ClawAvatar from '@/components/ClawAvatar'
 import ProviderIcon from '@/components/ProviderIcon'
 import getBaseDomain from '@/lib/getBaseDomain'
-import { ClawCardDropdownMenu } from '@/components/dashboard/ClawCardDropdownMenu'
-import { CopyableField } from '@/components/dashboard/CopyableField'
+import ClawCardDropdownMenu from '@/components/dashboard/ClawCardDropdownMenu'
+import CopyableField from '@/components/dashboard/CopyableField'
 import ScheduledDeletionBanner from '@/components/dashboard/ScheduledDeletionBanner'
 import { generateSlug, aiModels } from '@/lib/claw-utils'
 
@@ -87,8 +87,8 @@ const ClawCardListView: FC<ClawCardListViewProps> = ({
                                     rel='noopener noreferrer'
                                     className='text-muted-foreground hover:text-foreground text-sm transition-colors'
                                 >
-                                    {claw.subdomain || generateSlug(claw.id)}
-                                    .{getBaseDomain()}
+                                    {claw.subdomain || generateSlug(claw.id)}.
+                                    {getBaseDomain()}
                                 </a>
                             )}
                         </div>
@@ -273,4 +273,4 @@ const ClawCardListView: FC<ClawCardListViewProps> = ({
     )
 }
 
-export { ClawCardListView }
+export default ClawCardListView

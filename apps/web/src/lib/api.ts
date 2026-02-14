@@ -56,7 +56,7 @@ const publicClient = new RequestClient({
     baseUrl: BASE_URL
 })
 
-export const api = {
+const api = {
     sendMagicLink: (email: string, redirectUrl: string) =>
         publicClient.post<void>('/auth/send-magic-link', {
             email,
@@ -172,3 +172,5 @@ export const api = {
     getCustomerPortal: () =>
         client.post<CustomerPortalResponse>('/users/me/billing/portal')
 }
+
+export default api

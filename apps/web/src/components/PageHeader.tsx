@@ -21,4 +21,4 @@ const PageHeader: FC<PageHeaderProps> = ({
     )
 }
 
-export { PageHeader }
+export default PageHeader

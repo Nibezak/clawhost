@@ -47,7 +47,12 @@ const ClawDiagnosticsContent: FC<ClawDiagnosticsContentProps> = ({
         <div className='h-full overflow-y-auto'>
             {diagnostics.isError && (
                 <PanelPlaceholder
-                    icon={<Pulse className='h-6 w-6 text-gray-500' weight='duotone' />}
+                    icon={
+                        <Pulse
+                            className='h-6 w-6 text-gray-500'
+                            weight='duotone'
+                        />
+                    }
                     title={t('api.failedToGetDiagnostics')}
                     description={t('api.failedToGetDiagnosticsDescription')}
                 />

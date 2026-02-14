@@ -1,1 +1,3 @@
-export const DOMAIN = 'clawhost.cloud'
+const DOMAIN = 'clawhost.cloud'
+
+export default DOMAIN

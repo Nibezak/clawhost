@@ -1,5 +1,5 @@
-import type { Context } from 'hono'
 import type { GetAgentConfigBody } from '@/ts/Interfaces'
+import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
@@ -12,7 +12,7 @@ import { ok, fail } from '@/lib/response'
 const ENV_SEPARATOR = '---ENV_SEPARATOR---'
 
 const getClawAgentConfig = async (
-    c: Context<{ Variables: { userId: string } }>
+    c: AuthenticatedContext
 ) => {
     try {
         const userId = c.get('userId')

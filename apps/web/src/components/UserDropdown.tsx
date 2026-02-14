@@ -3,7 +3,7 @@ import type { UserDropdownProps } from '@/ts/Interfaces'
 
 import { useNavigate, useLocation } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
-import { ROUTES } from '@/lib/routes'
+import ROUTES from '@/lib/routes'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
@@ -13,7 +13,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { ClawMascotOutline } from '@/components/ClawMascotOutline'
+import ClawMascotOutline from '@/components/ClawMascotOutline'
 import { Key, User, SignOut, Receipt } from '@phosphor-icons/react'
 
 const UserDropdown: FC<UserDropdownProps> = ({
@@ -97,4 +97,4 @@ const UserDropdown: FC<UserDropdownProps> = ({
     )
 }
 
-export { UserDropdown }
+export default UserDropdown

@@ -215,4 +215,4 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
     )
 }
 
-export { ClawCardDropdownMenu }
+export default ClawCardDropdownMenu

@@ -10,21 +10,21 @@ import { useUserStats, useBillingHistory } from '@/hooks'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { Header } from '@/components/Header'
-import { LandingFooter } from '@/components/LandingFooter'
-import { PageBackground } from '@/components/PageBackground'
-import { PageTitle } from '@/components/PageTitle'
+import Header from '@/components/Header'
+import LandingFooter from '@/components/LandingFooter'
+import PageBackground from '@/components/PageBackground'
+import PageTitle from '@/components/PageTitle'
 import {
     CircleNotch,
     Receipt,
     DownloadSimple,
     ArrowSquareOut
 } from '@phosphor-icons/react'
-import { ActionButton } from '@/components/ActionButton'
-import { api } from '@/lib/api'
-import { EmptyState } from '@/components/EmptyState'
-import { ErrorState } from '@/components/ErrorState'
-import { PageHeader } from '@/components/PageHeader'
+import ActionButton from '@/components/ActionButton'
+import api from '@/lib/api'
+import EmptyState from '@/components/EmptyState'
+import ErrorState from '@/components/ErrorState'
+import PageHeader from '@/components/PageHeader'
 import { Button } from '@/components/ui/button'
 
 const BillingSkeleton: FC = (): ReactNode => {

@@ -1,4 +1,4 @@
-import type { Context } from 'hono'
+import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq, desc } from 'drizzle-orm'
 import { db } from '@/db'
@@ -6,7 +6,7 @@ import { sshKeys } from '@/db/schema'
 import { ok } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
-const getSSHKeys = async (c: Context<{ Variables: { userId: string } }>) => {
+const getSSHKeys = async (c: AuthenticatedContext) => {
     const userId = c.get('userId')
 
     const keys = await db

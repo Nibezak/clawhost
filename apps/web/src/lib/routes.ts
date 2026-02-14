@@ -1,4 +1,4 @@
-export const ROUTES = {
+const ROUTES = {
     HOME: '/',
     LOGIN: '/login',
     CLAWS: '/claws',
@@ -12,4 +12,4 @@ export const ROUTES = {
     POST: '/posts/:slug'
 } as const
 
-export type Route = (typeof ROUTES)[keyof typeof ROUTES]
+export default ROUTES

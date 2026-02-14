@@ -1,5 +1,5 @@
-import type { Context } from 'hono'
 import type { CreateClawAgentBody } from '@/ts/Interfaces'
+import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
@@ -12,7 +12,7 @@ import { ok, fail } from '@/lib/response'
 const BASE_DIR = '/home/openclaw/.openclaw'
 
 const createClawAgent = async (
-    c: Context<{ Variables: { userId: string } }>
+    c: AuthenticatedContext
 ) => {
     try {
         const userId = c.get('userId')
@@ -75,7 +75,8 @@ const createClawAgent = async (
 
             const nameExists = agentList.some(
                 (a) =>
-                    (a.name as string || '').toLowerCase() === body.name.toLowerCase()
+                    ((a.name as string) || '').toLowerCase() ===
+                    body.name.toLowerCase()
             )
 
             if (nameExists) {
@@ -83,8 +84,9 @@ const createClawAgent = async (
             }
 
             if (agentList.length === 0) {
-                const defaultModel =
-                    (agents.defaults as Record<string, unknown>)?.model
+                const defaultModel = (
+                    agents.defaults as Record<string, unknown>
+                )?.model
                 const primaryModel =
                     typeof defaultModel === 'object' && defaultModel !== null
                         ? (defaultModel as Record<string, unknown>).primary
@@ -93,9 +95,7 @@ const createClawAgent = async (
                     id: 'main',
                     name: 'main',
                     model:
-                        typeof primaryModel === 'string'
-                            ? primaryModel
-                            : null,
+                        typeof primaryModel === 'string' ? primaryModel : null,
                     status: 'running'
                 })
             }

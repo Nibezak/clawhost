@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ElementType, ReactNode } from 'react'
 import type { User } from 'firebase/auth'
 import type { Node, Edge } from '@xyflow/react'
 import type {
@@ -676,6 +676,13 @@ export interface PlaygroundCanvasProps {
     allowPageScroll?: boolean
 }
 
+export interface PlaygroundCanvasInnerProps extends PlaygroundCanvasProps {
+    zoom: number
+    onZoomChange: (zoom: number) => void
+    isFitView: boolean
+    onFitViewChange: (value: boolean) => void
+}
+
 export interface PlaygroundDetailPanelProps {
     claw: Claw
     plans: Plan[]
@@ -756,6 +763,12 @@ export interface HeroButtonsProps {
     githubLabel: string
     showStars: boolean
     large?: boolean
+}
+
+export interface PlaygroundTabConfig<T extends string = string> {
+    id: T
+    label: string
+    icon: ElementType
 }
 
 export interface DemoPlaygroundData {
