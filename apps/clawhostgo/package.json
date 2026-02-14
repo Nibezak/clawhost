@@ -1,6 +1,6 @@
 {
     "name": "clawhostgo",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "private": true,
     "main": ".vite/build/main.js",
     "scripts": {

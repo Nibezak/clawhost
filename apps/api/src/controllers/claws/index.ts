@@ -21,6 +21,8 @@ import exportClaw from '@/controllers/claws/exportClaw'
 import getClawAgents from '@/controllers/claws/getClawAgents'
 import getClawAgentConfig from '@/controllers/claws/getClawAgentConfig'
 import updateClawAgentConfig from '@/controllers/claws/updateClawAgentConfig'
+import getClawEnvVars from '@/controllers/claws/getClawEnvVars'
+import updateClawEnvVars from '@/controllers/claws/updateClawEnvVars'
 
 export {
     getClaws,
@@ -45,5 +47,7 @@ export {
     exportClaw,
     getClawAgents,
     getClawAgentConfig,
-    updateClawAgentConfig
+    updateClawAgentConfig,
+    getClawEnvVars,
+    updateClawEnvVars
 }

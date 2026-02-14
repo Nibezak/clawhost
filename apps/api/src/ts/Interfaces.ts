@@ -733,6 +733,10 @@ export interface ClawAgentsResponse {
     reachable: boolean
 }
 
+export interface UpdateClawEnvVarsBody {
+    envVars: Record<string, string>
+}
+
 export interface GetAgentConfigBody {
     agentId: string
 }

@@ -27,7 +27,7 @@ export type UserRole = 'user' | 'admin'
 
 export type PlaygroundNodeType = 'claw' | 'agent'
 
-export type PlaygroundDetailTab = 'info' | 'logs' | 'diagnostics'
+export type PlaygroundDetailTab = 'info' | 'logs' | 'diagnostics' | 'variables'
 
 export type PlaygroundAgentDetailTab = 'chat' | 'configuration'
 

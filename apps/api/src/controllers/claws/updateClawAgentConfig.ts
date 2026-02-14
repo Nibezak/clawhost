@@ -150,6 +150,13 @@ const updateClawAgentConfig = async (
                 )
             }
 
+            await executeSSH(
+                claw[0].ip,
+                claw[0].rootPassword,
+                'systemctl restart openclaw-gateway',
+                10000
+            )
+
             return ok(c, null, t('api.agentConfigUpdated'))
         } catch {
             return fail(c, t('api.agentConfigUpdateFailed'), 500)

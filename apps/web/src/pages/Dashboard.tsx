@@ -3,7 +3,7 @@ import type { AwaitingPurchaseData, Claw } from '@/ts/Interfaces'
 
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { usePreferencesStore, useUIStore } from '@/lib/store'
 import { ROUTES } from '@/lib/routes'
@@ -33,7 +33,7 @@ import {
     SquaresFour,
     Lightning,
     Graph,
-    CircleNotch
+    Warning
 } from '@phosphor-icons/react'
 import { ClawCard, ClawSkeleton, CreateClawModal } from '@/components/dashboard'
 import {
@@ -77,6 +77,7 @@ const Dashboard: FC = (): ReactNode => {
         string | null
     >(null)
     const [adminModeRaw, setAdminMode] = useState(false)
+    const [isModeSwitching, setIsModeSwitching] = useState(false)
     const { instancesViewMode, setInstancesViewMode } = usePreferencesStore()
     const { showToast } = useUIStore()
 
@@ -215,7 +216,14 @@ const Dashboard: FC = (): ReactNode => {
     const activeClawsLoading = adminMode ? isAdminClawsLoading : isClawsLoading
     const activeIsError = adminMode ? isAdminClawsError : isError
     const activeRefetch = adminMode ? refetchAdmin : refetch
-    const isLoading = activeClawsLoading
+    const isLoading = activeClawsLoading || isModeSwitching
+
+    useEffect(() => {
+        if (isModeSwitching && !activeClawsLoading) {
+            const timer = setTimeout(() => setIsModeSwitching(false), 400)
+            return () => clearTimeout(timer)
+        }
+    }, [isModeSwitching, activeClawsLoading])
     const graphClaws = adminMode ? adminClaws || [] : claws || []
     const agentQueries = useAllClawAgents(isPlayground ? graphClaws : [])
     const { nodes, edges } = usePlaygroundGraph(
@@ -313,13 +321,25 @@ const Dashboard: FC = (): ReactNode => {
     const clawFilter = isAdmin ? (
         <div className='flex items-center rounded-lg border border-white/10 p-0.5'>
             <button
-                onClick={() => setAdminMode(false)}
+                onClick={() => {
+                    if (adminMode) setIsModeSwitching(true)
+                    setAdminMode(false)
+                    setSelectedClawId(null)
+                    setSelectedAgentId(null)
+                    setSelectedAgentClawId(null)
+                }}
                 className={`rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${!adminMode ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white'}`}
             >
                 {t('dashboard.userTab')}
             </button>
             <button
-                onClick={() => setAdminMode(true)}
+                onClick={() => {
+                    if (!adminMode) setIsModeSwitching(true)
+                    setAdminMode(true)
+                    setSelectedClawId(null)
+                    setSelectedAgentId(null)
+                    setSelectedAgentClawId(null)
+                }}
                 className={`rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${adminMode ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white'}`}
             >
                 {t('dashboard.adminTab')}
@@ -438,6 +458,7 @@ const Dashboard: FC = (): ReactNode => {
                             <PlaygroundLoadingState />
                         ) : (
                             <PlaygroundCanvas
+                                key={adminMode ? 'admin' : 'user'}
                                 initialNodes={nodes}
                                 initialEdges={edges}
                                 onNodeClick={(clawId) => {
@@ -503,26 +524,30 @@ const Dashboard: FC = (): ReactNode => {
                             )}
                     </div>
 
-                    {selectedClaw && (
-                        <PlaygroundDetailPanel
-                            claw={selectedClaw}
-                            plans={plans}
-                            sshKeys={sshKeys || []}
-                            onClose={() => setSelectedClawId(null)}
-                        />
-                    )}
+                    <AnimatePresence>
+                        {selectedClaw && (
+                            <PlaygroundDetailPanel
+                                key='detail-panel'
+                                claw={selectedClaw}
+                                plans={plans}
+                                sshKeys={sshKeys || []}
+                                onClose={() => setSelectedClawId(null)}
+                            />
+                        )}
 
-                    {selectedAgent && selectedAgentClaw && (
-                        <PlaygroundAgentDetailPanel
-                            agent={selectedAgent}
-                            clawId={selectedAgentClaw.id}
-                            clawName={selectedAgentClaw.name}
-                            onClose={() => {
-                                setSelectedAgentId(null)
-                                setSelectedAgentClawId(null)
-                            }}
-                        />
-                    )}
+                        {selectedAgent && selectedAgentClaw && (
+                            <PlaygroundAgentDetailPanel
+                                key='agent-panel'
+                                agent={selectedAgent}
+                                clawId={selectedAgentClaw.id}
+                                clawName={selectedAgentClaw.name}
+                                onClose={() => {
+                                    setSelectedAgentId(null)
+                                    setSelectedAgentClawId(null)
+                                }}
+                            />
+                        )}
+                    </AnimatePresence>
                 </div>
 
                 {showCreate && plans.length > 0 && locations && (
@@ -609,12 +634,7 @@ const Dashboard: FC = (): ReactNode => {
                             )}
                             onRetry={() => activeRefetch()}
                         />
-                    ) : adminMode && isLoading ? (
-                        <div className='flex min-h-[200px] items-center justify-center'>
-                            <CircleNotch className='text-primary h-8 w-8 animate-spin' />
-                        </div>
-                    ) : !adminMode &&
-                      isLoading &&
+                    ) : isLoading &&
                       knowsCount &&
                       skeletonCount === 0 ? (
                         <EmptyState
@@ -624,9 +644,9 @@ const Dashboard: FC = (): ReactNode => {
                             actionLabel={t('nav.deployOpenClaw')}
                             onAction={() => setShowCreate(true)}
                         />
-                    ) : !adminMode && isLoading && skeletonCount > 0 ? (
+                    ) : isLoading ? (
                         <div className='space-y-1.5'>
-                            {Array.from({ length: skeletonCount }).map(
+                            {Array.from({ length: skeletonCount || 3 }).map(
                                 (_, i) => (
                                     <ClawSkeleton key={i} />
                                 )
@@ -649,27 +669,41 @@ const Dashboard: FC = (): ReactNode => {
                             />
                         )
                     ) : (
-                        <motion.div
-                            key={instancesViewMode}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.15 }}
-                            className={
-                                instancesViewMode === 'grid'
-                                    ? 'grid grid-cols-1 gap-1.5 md:grid-cols-2'
-                                    : 'space-y-1.5'
-                            }
-                        >
-                            {displayedClaws.map((claw) => (
-                                <ClawCard
-                                    key={claw.id}
-                                    claw={claw}
-                                    sshKeys={sshKeys || []}
-                                    plans={plans || []}
-                                    viewMode={instancesViewMode}
-                                />
-                            ))}
-                        </motion.div>
+                        <>
+                            <div className='mb-4 flex items-center gap-3 rounded-lg border border-amber-500/20 bg-amber-500/10 px-4 py-3'>
+                                <Warning className='h-5 w-5 shrink-0 text-amber-400' weight='fill' />
+                                <p className='flex-1 text-sm text-amber-200/90'>
+                                    {t('dashboard.legacyViewWarning')}
+                                </p>
+                                <button
+                                    onClick={() => setInstancesViewMode('playground')}
+                                    className='shrink-0 rounded-md bg-amber-500/20 px-3 py-1.5 text-xs font-medium text-amber-300 transition-colors hover:bg-amber-500/30 hover:text-amber-200'
+                                >
+                                    {t('dashboard.legacyViewWarningAction')}
+                                </button>
+                            </div>
+                            <motion.div
+                                key={instancesViewMode}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.15 }}
+                                className={
+                                    instancesViewMode === 'grid'
+                                        ? 'grid grid-cols-1 gap-1.5 md:grid-cols-2'
+                                        : 'space-y-1.5'
+                                }
+                            >
+                                {displayedClaws.map((claw) => (
+                                    <ClawCard
+                                        key={claw.id}
+                                        claw={claw}
+                                        sshKeys={sshKeys || []}
+                                        plans={plans || []}
+                                        viewMode={instancesViewMode}
+                                    />
+                                ))}
+                            </motion.div>
+                        </>
                     )}
                 </div>
 

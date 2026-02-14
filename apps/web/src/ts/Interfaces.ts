@@ -416,6 +416,7 @@ export interface AIModelOption {
     id: string
     name: string
     provider: string
+    envVar: string
 }
 
 export interface AwaitingPurchaseData {
@@ -656,6 +657,8 @@ export interface PlaygroundCanvasProps {
     panelOpen?: boolean
     selectedClawId?: string | null
     selectedAgentId?: string | null
+    initialZoom?: number
+    allowPageScroll?: boolean
 }
 
 export interface PlaygroundDetailPanelProps {
@@ -694,9 +697,28 @@ export interface PlaygroundAgentDetailPanelProps {
     onClose: () => void
 }
 
-export interface AgentModelOption {
-    id: string
-    name: string
-    provider: string
-    envVar: string
+export interface ClawEnvVarsResponse {
+    envVars: Record<string, string>
+}
+
+export interface UpdateClawEnvVarsData {
+    envVars: Record<string, string>
+}
+
+export interface PlaygroundVariablesContentProps {
+    clawId: string
+}
+
+export interface HeroButtonsProps {
+    deployLabel: string
+    githubLabel: string
+    showStars: boolean
+    large?: boolean
+}
+
+export interface DemoPlaygroundData {
+    nodes: Node[]
+    edges: Edge[]
+    claws: Claw[]
+    agentsByClawId: Record<string, ClawAgent[]>
 }

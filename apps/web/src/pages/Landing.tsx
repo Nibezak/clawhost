@@ -1,22 +1,32 @@
 import type { FC, ReactNode } from 'react'
-import type { Faq, MockClawData, Testimonial } from '@/ts/Interfaces'
+import type { Faq, Testimonial } from '@/ts/Interfaces'
 import type { ProviderType } from '@/ts/Types'
 
 import { Link } from 'react-router-dom'
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import {
+    motion,
+    AnimatePresence,
+    useScroll,
+    useTransform
+} from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PageTitle } from '@/components/PageTitle'
 import { Header } from '@/components/Header'
 import { LandingFooter } from '@/components/LandingFooter'
-import { MockClawCard } from '@/components/MockClawCard'
-import { initialMockClaws } from '@/data'
-import { useUIStore } from '@/lib/store'
+import HeroButtons from '@/components/HeroButtons'
+import { demoPlaygroundData } from '@/data'
+import {
+    PlaygroundCanvas,
+    PlaygroundDetailPanel,
+    PlaygroundAgentDetailPanel,
+    PlaygroundLoadingState
+} from '@/components/playground'
 import { useAuth } from '@/lib/auth'
 import { ROUTES } from '@/lib/routes'
-import { usePlans, useGitHubStars, GITHUB_REPO_URL } from '@/hooks'
+import { usePlans } from '@/hooks'
 import ProviderIcon from '@/components/ProviderIcon'
 import {
     ShieldCheck,
@@ -28,11 +38,9 @@ import {
     HardDrives,
     Check,
     CircleNotch,
-    Lightning,
     Sparkle,
     CaretDown,
     Quotes,
-    GithubLogo,
     CreditCard,
     Link as LinkIcon,
     ArrowsClockwise,
@@ -110,52 +118,78 @@ const Landing: FC = (): ReactNode => {
     const [pricingProvider, setPricingProvider] =
         useState<ProviderType>('hetzner')
     const { plans, isLoading: plansLoading } = usePlans(pricingProvider)
-    const { data: gitHubStars } = useGitHubStars()
-    const { showToast } = useUIStore()
 
     const [openFaq, setOpenFaq] = useState<number | null>(null)
     const [activeSection, setActiveSection] = useState('')
-    const [mockClaws, setMockClaws] = useState<MockClawData[]>(initialMockClaws)
+    const [demoPhase, setDemoPhase] = useState<'idle' | 'loading' | 'ready'>(
+        'idle'
+    )
+    const [demoActive, setDemoActive] = useState(false)
+    const [demoActivated, setDemoActivated] = useState(false)
+    const [selectedClawId, setSelectedClawId] = useState<string | null>(null)
+    const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null)
+    const [selectedAgentClawId, setSelectedAgentClawId] = useState<
+        string | null
+    >(null)
 
-    const handleStart = (id: string) => {
-        setMockClaws((prev) =>
-            prev.map((claw) =>
-                claw.id === id ? { ...claw, status: 'running' } : claw
-            )
-        )
-        showToast(t('landing.demoClawStarted'), 'success')
-    }
+    const previewRef = useRef<HTMLDivElement>(null)
+    const { scrollYProgress } = useScroll({
+        target: previewRef,
+        offset: ['start end', 'end end']
+    })
+    const previewScale = useTransform(scrollYProgress, [0.05, 0.55], [0.65, 1])
+    const previewBorderRadius = useTransform(
+        scrollYProgress,
+        [0.05, 0.55],
+        [20, 12]
+    )
 
-    const handleStop = (id: string) => {
-        setMockClaws((prev) =>
-            prev.map((claw) =>
-                claw.id === id ? { ...claw, status: 'stopped' } : claw
-            )
-        )
-        showToast(t('landing.demoClawStopped'), 'success')
-    }
+    useEffect(() => {
+        if (demoActive) {
+            document.body.style.overflow = 'hidden'
+        } else {
+            document.body.style.overflow = ''
+        }
+        return () => {
+            document.body.style.overflow = ''
+        }
+    }, [demoActive])
 
-    const handleRestart = (id: string) => {
-        setMockClaws((prev) =>
-            prev.map((claw) =>
-                claw.id === id ? { ...claw, status: 'restarting' } : claw
-            )
-        )
-        showToast(t('landing.demoClawRestarting'), 'success')
-        setTimeout(() => {
-            setMockClaws((prev) =>
-                prev.map((claw) =>
-                    claw.id === id ? { ...claw, status: 'running' } : claw
-                )
-            )
-            showToast(t('landing.demoClawRestarted'), 'success')
-        }, 2000)
-    }
+    const handlePlaygroundClick = useCallback(() => {
+        if (demoActive) return
+        setDemoActive(true)
+        setDemoActivated(true)
+        if (demoPhase === 'idle') {
+            setDemoPhase('loading')
+            setTimeout(() => setDemoPhase('ready'), 1500)
+        }
+    }, [demoActive, demoPhase])
 
-    const handleDelete = (id: string) => {
-        setMockClaws((prev) => prev.filter((claw) => claw.id !== id))
-        showToast(t('landing.demoClawDeleted'), 'success')
-    }
+    const handlePlaygroundClose = useCallback(() => {
+        setDemoActive(false)
+        setSelectedClawId(null)
+        setSelectedAgentId(null)
+        setSelectedAgentClawId(null)
+    }, [])
+
+    const selectedClaw =
+        selectedClawId && !selectedAgentId
+            ? demoPlaygroundData.claws.find((c) => c.id === selectedClawId) ||
+              null
+            : null
+
+    const selectedAgentClaw = selectedAgentClawId
+        ? demoPlaygroundData.claws.find(
+              (c) => c.id === selectedAgentClawId
+          ) || null
+        : null
+
+    const selectedAgent =
+        selectedAgentId && selectedAgentClaw
+            ? demoPlaygroundData.agentsByClawId[
+                  selectedAgentClaw.id
+              ]?.find((a) => a.id === selectedAgentId) || null
+            : null
 
     useEffect(() => {
         const handleScroll = () => {
@@ -216,7 +250,7 @@ const Landing: FC = (): ReactNode => {
                 activeSection={activeSection}
             />
 
-            <section className='relative overflow-hidden px-6 pb-24 pt-32'>
+            <section className='relative overflow-hidden px-6 pb-12 pt-32'>
                 <div className='landing-grid pointer-events-none' />
 
                 <motion.div
@@ -271,46 +305,11 @@ const Landing: FC = (): ReactNode => {
                             transition={{ delay: 0.4 }}
                             className='mb-16 flex flex-col gap-4 sm:flex-row'
                         >
-                            <Button
-                                size='lg'
-                                className='gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] px-6 font-semibold text-white hover:opacity-90'
-                                asChild
-                            >
-                                <Link to={user ? ROUTES.CLAWS : ROUTES.LOGIN}>
-                                    <Lightning
-                                        className='h-5 w-5'
-                                        weight='fill'
-                                    />
-                                    {t('nav.deployOpenClaw')}
-                                </Link>
-                            </Button>
-                            <Button
-                                size='lg'
-                                variant='outline'
-                                className='gap-2 border-white/20 bg-white/5 px-6 text-white hover:bg-white/10'
-                                asChild
-                            >
-                                <a
-                                    href={GITHUB_REPO_URL}
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                >
-                                    <GithubLogo
-                                        className='h-5 w-5'
-                                        weight='fill'
-                                    />
-                                    {t('landing.selfHost')}
-
-                                    {gitHubStars && (
-                                        <span className='flex items-center gap-1.5 rounded-full bg-white/10 px-2 py-0.5 text-xs'>
-                                            {gitHubStars.formatted}
-                                            <span className='text-[12px]'>
-                                                ★
-                                            </span>
-                                        </span>
-                                    )}
-                                </a>
-                            </Button>
+                            <HeroButtons
+                                deployLabel={t('nav.deployOpenClaw')}
+                                githubLabel={t('landing.selfHostInstead')}
+                                showStars={true}
+                            />
                         </motion.div>
 
                         <motion.div
@@ -356,108 +355,151 @@ const Landing: FC = (): ReactNode => {
                             </div>
                         </motion.div>
                     </div>
-
-                    <motion.div
-                        initial={{ opacity: 0, y: 40 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.6, duration: 0.6 }}
-                        className='mx-auto mt-20 max-w-4xl'
-                    >
-                        <div className='glow-border overflow-hidden rounded-xl border border-white/10 bg-[#1a1a1f]/90 shadow-2xl backdrop-blur-sm'>
-                            <div className='flex items-center gap-2 border-b border-white/10 bg-[#2a2a30] px-4 py-3'>
-                                <div className='h-3 w-3 rounded-full bg-[#ff5f57]' />
-                                <div className='h-3 w-3 rounded-full bg-[#febc2e]' />
-                                <div className='h-3 w-3 rounded-full bg-[#28c840]' />
-                                <div className='ml-4 flex items-center gap-2 rounded-md bg-white/5 px-3 py-1 text-xs text-gray-400'>
-                                    <Lock className='h-3 w-3' />
-                                    clawhost.cloud/claws
-                                </div>
-                                <div className='flex-1' />
-                            </div>
-                            <div className='p-6'>
-                                <div className='mb-6 flex items-center justify-between'>
-                                    <div>
-                                        <h3 className='text-lg font-semibold text-white'>
-                                            {t('landing.dashboardPreviewTitle')}
-                                        </h3>
-                                        <p className='text-sm text-gray-500'>
-                                            {mockClaws.length > 0
-                                                ? `${mockClaws.length} ${mockClaws.length === 1 ? t('dashboard.claw') : t('dashboard.clawsPlural')}`
-                                                : t('dashboard.noClawsYet')}
-                                        </p>
-                                    </div>
-                                    <Link
-                                        to={user ? ROUTES.CLAWS : ROUTES.LOGIN}
-                                        className='flex items-center gap-2 rounded-lg border border-white/20 bg-white px-4 py-2 text-sm font-semibold text-black hover:bg-white/90'
-                                    >
-                                        <Lightning
-                                            className='h-4 w-4'
-                                            weight='fill'
-                                        />
-                                        {t('createClaw.title')}
-                                    </Link>
-                                </div>
-                                <div className='space-y-3'>
-                                    <AnimatePresence mode='popLayout'>
-                                        {mockClaws.length > 0 ? (
-                                            mockClaws.map((claw) => (
-                                                <motion.div
-                                                    key={claw.id}
-                                                    layout
-                                                    initial={{
-                                                        opacity: 0,
-                                                        scale: 0.95
-                                                    }}
-                                                    animate={{
-                                                        opacity: 1,
-                                                        scale: 1
-                                                    }}
-                                                    exit={{
-                                                        opacity: 0,
-                                                        scale: 0.95,
-                                                        height: 0
-                                                    }}
-                                                    transition={{
-                                                        duration: 0.2
-                                                    }}
-                                                >
-                                                    <MockClawCard
-                                                        claw={claw}
-                                                        onStart={handleStart}
-                                                        onStop={handleStop}
-                                                        onRestart={
-                                                            handleRestart
-                                                        }
-                                                        onDelete={handleDelete}
-                                                    />
-                                                </motion.div>
-                                            ))
-                                        ) : (
-                                            <motion.div
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                className='flex flex-col items-center justify-center py-12 text-center'
-                                            >
-                                                <div className='mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/5'>
-                                                    <HardDrives className='h-8 w-8 text-gray-500' />
-                                                </div>
-                                                <h4 className='mb-2 text-lg font-semibold text-white'>
-                                                    {t('dashboard.noClawsYet')}
-                                                </h4>
-                                                <p className='max-w-xs text-sm text-gray-500'>
-                                                    {t(
-                                                        'dashboard.noClawsDescription'
-                                                    )}
-                                                </p>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
                 </motion.div>
             </section>
+
+            <div ref={previewRef} style={{ height: '160vh' }}>
+                <div className='sticky top-0 z-[60] h-screen'>
+                    <motion.div
+                        style={{
+                            scale: demoActivated ? 1 : previewScale,
+                            borderRadius: demoActivated
+                                ? 12
+                                : previewBorderRadius
+                        }}
+                        className='flex h-full w-full origin-center flex-col overflow-hidden bg-[#0a0a0f]'
+                    >
+                        <div className='flex items-center gap-3 border-b border-white/[0.06] bg-gradient-to-b from-[#1e1e24] to-[#18181e] px-5 py-3'>
+                            <div className='flex items-center gap-2'>
+                                <div className='h-3 w-3 rounded-full bg-[#ff5f57] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
+                                <div className='h-3 w-3 rounded-full bg-[#febc2e] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
+                                <div className='h-3 w-3 rounded-full bg-[#28c840] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
+                            </div>
+                            <div className='flex flex-1 justify-center'>
+                                <div className='flex items-center gap-2 rounded-lg bg-black/30 px-4 py-1.5 text-xs text-gray-500'>
+                                    <Lock
+                                        className='h-3 w-3 text-green-500/70'
+                                        weight='fill'
+                                    />
+                                    <span>
+                                        clawhost.cloud/playground
+                                    </span>
+                                </div>
+                            </div>
+                            {demoActive ? (
+                                <button
+                                    onClick={handlePlaygroundClose}
+                                    className='rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white'
+                                >
+                                    <X
+                                        className='h-4 w-4'
+                                        weight='bold'
+                                    />
+                                </button>
+                            ) : (
+                                <div className='w-[56px]' />
+                            )}
+                        </div>
+
+                        <div className='relative flex flex-1 overflow-hidden'>
+                            {!demoActive && (
+                                <div
+                                    onClick={handlePlaygroundClick}
+                                    className='absolute inset-0 z-10 flex cursor-pointer items-center justify-center'
+                                >
+                                    {demoPhase === 'idle' && (
+                                        <div className='rounded-xl border border-white/10 bg-white/5 px-6 py-3 backdrop-blur-sm transition-colors hover:bg-white/10'>
+                                            <span className='text-sm font-medium text-gray-300'>
+                                                {t(
+                                                    'landing.clickToExplore'
+                                                )}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            <div
+                                className={`relative min-w-0 flex-1 ${demoActive ? '' : 'pointer-events-none'}`}
+                            >
+                                {demoPhase === 'idle' && (
+                                    <div className='playground-grid h-full' />
+                                )}
+                                {demoPhase === 'loading' && (
+                                    <div className='playground-grid h-full'>
+                                        <PlaygroundLoadingState />
+                                    </div>
+                                )}
+                                {demoPhase === 'ready' && (
+                                    <div className='playground-grid h-full'>
+                                        <PlaygroundCanvas
+                                            initialNodes={
+                                                demoPlaygroundData.nodes
+                                            }
+                                            initialEdges={
+                                                demoPlaygroundData.edges
+                                            }
+                                            initialZoom={0.75}
+                                            allowPageScroll
+                                            onNodeClick={(clawId) => {
+                                                setSelectedClawId(clawId)
+                                                setSelectedAgentId(null)
+                                                setSelectedAgentClawId(null)
+                                            }}
+                                            onAgentClick={(
+                                                agentId,
+                                                clawId
+                                            ) => {
+                                                setSelectedAgentId(agentId)
+                                                setSelectedAgentClawId(clawId)
+                                                setSelectedClawId(null)
+                                            }}
+                                            onPaneClick={() => {
+                                                setSelectedClawId(null)
+                                                setSelectedAgentId(null)
+                                                setSelectedAgentClawId(null)
+                                            }}
+                                            panelOpen={
+                                                !!selectedClaw ||
+                                                !!selectedAgent
+                                            }
+                                            selectedClawId={selectedClawId}
+                                            selectedAgentId={selectedAgentId}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+
+                            <AnimatePresence>
+                                {demoActive && selectedClaw && (
+                                    <PlaygroundDetailPanel
+                                        key='detail-panel'
+                                        claw={selectedClaw}
+                                        plans={[]}
+                                        sshKeys={[]}
+                                        onClose={() => setSelectedClawId(null)}
+                                    />
+                                )}
+
+                                {demoActive &&
+                                    selectedAgent &&
+                                    selectedAgentClaw && (
+                                        <PlaygroundAgentDetailPanel
+                                            key='agent-panel'
+                                            agent={selectedAgent}
+                                            clawId={selectedAgentClaw.id}
+                                            clawName={selectedAgentClaw.name}
+                                            onClose={() => {
+                                                setSelectedAgentId(null)
+                                                setSelectedAgentClawId(null)
+                                            }}
+                                        />
+                                    )}
+                            </AnimatePresence>
+                        </div>
+                    </motion.div>
+                </div>
+            </div>
 
             <section
                 id='how-it-works'
@@ -1299,37 +1341,12 @@ const Landing: FC = (): ReactNode => {
                         </p>
 
                         <div className='flex flex-col items-center justify-center gap-4 sm:flex-row'>
-                            <Button
-                                size='lg'
-                                className='gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] px-8 py-6 text-lg font-semibold text-white hover:opacity-90'
-                                asChild
-                            >
-                                <Link to={user ? ROUTES.CLAWS : ROUTES.LOGIN}>
-                                    <Lightning
-                                        className='h-5 w-5'
-                                        weight='fill'
-                                    />
-                                    {t('landing.deployOpenClawNow')}
-                                </Link>
-                            </Button>
-                            <Button
-                                size='lg'
-                                variant='outline'
-                                className='gap-2 border-white/20 bg-white/5 px-8 py-6 text-lg text-white hover:bg-white/10'
-                                asChild
-                            >
-                                <a
-                                    href={GITHUB_REPO_URL}
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                >
-                                    <GithubLogo
-                                        className='h-5 w-5'
-                                        weight='fill'
-                                    />
-                                    {t('landing.selfHostInstead')}
-                                </a>
-                            </Button>
+                            <HeroButtons
+                                deployLabel={t('landing.deployOpenClawNow')}
+                                githubLabel={t('landing.selfHostInstead')}
+                                showStars={true}
+                                large
+                            />
                         </div>
                     </motion.div>
                 </div>

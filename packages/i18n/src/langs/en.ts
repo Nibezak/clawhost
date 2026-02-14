@@ -404,7 +404,9 @@ export const en = {
             deleting: 'Deleting...',
             scheduledDeletion: 'Deletion Scheduled',
             unknown: 'Unknown'
-        }
+        },
+        legacyViewWarning: 'Grid and list views may be discontinued. Switch to Playground for agents and more.',
+        legacyViewWarningAction: 'Switch to Playground'
     },
     createClaw: {
         title: 'Deploy OpenClaw',
@@ -527,6 +529,7 @@ export const en = {
         locations: 'Locations',
         servers: 'Servers',
         zeroConfig: 'Zero Config',
+        clickToExplore: 'Click to explore the playground',
         dashboardPreviewTitle: 'Claws',
         dashboardPreviewSubtitle: '5 added claws',
         deployNew: 'Deploy New',
@@ -683,7 +686,7 @@ export const en = {
         demoClawRestarting: 'Restarting claw...',
         demoClawRestarted: 'Claw restarted.',
         demoClawDeleted: 'Claw deleted.',
-        demoStatus: '{{running}} running, {{total}} total'
+        demoStatus: '{{running}} running, {{total}} total',
     },
     blog: {
         title: 'Blog',
@@ -809,7 +812,31 @@ export const en = {
         configurationSaveFailed: 'Failed to save agent configuration.',
         configurationLoading: 'Loading configuration...',
         configurationLoadFailed: 'Failed to load agent configuration.',
-        configurationRemoveVar: 'Remove'
+        configurationRemoveVar: 'Remove',
+        configurationApiKey: 'API Key',
+        configurationApiKeyDescription:
+            'Required for {{modelName}}. This key is stored in ~/.openclaw/.env on the instance.',
+        configurationApiKeyPlaceholder: 'Enter your API key',
+        tabVariables: 'Variables',
+        variablesDescription:
+            'Environment variables stored in ~/.openclaw/.env on this instance.',
+        variablesEmpty: 'No environment variables found.',
+        variablesAddVariable: 'Add Variable',
+        variablesSave: 'Save Variables',
+        variablesSaving: 'Saving...',
+        variablesSaved: 'Environment variables saved.',
+        variablesSaveFailed: 'Failed to save environment variables.',
+        variablesLoading: 'Loading variables...',
+        variablesLoadFailed: 'Failed to load environment variables.',
+        variablesInvalidKey: 'Letters, numbers, and underscores only.',
+        variablesEmptyValue: 'Value cannot be empty.',
+        variablesDuplicateKey: 'Duplicate variable name.',
+        variablesDeleteTitle: 'Delete Variable',
+        variablesDeleteDescription:
+            'Are you sure you want to delete {{key}}? This will immediately remove it from the instance.',
+        variablesDeleteConfirm: 'Delete',
+        variablesDontAskAgain: "Don't require confirmation this session",
+        variablesDeleted: 'Variable deleted.'
     },
     mobile: {
         messages: 'Messages',

@@ -5,6 +5,7 @@ import PlaygroundCanvas from '@/components/playground/PlaygroundCanvas'
 import PlaygroundDetailPanel from '@/components/playground/PlaygroundDetailPanel'
 import PlaygroundLoadingState from '@/components/playground/PlaygroundLoadingState'
 import PlaygroundToolbar from '@/components/playground/PlaygroundToolbar'
+import PlaygroundVariablesContent from '@/components/playground/PlaygroundVariablesContent'
 
 export {
     PlaygroundClawNode,
@@ -13,5 +14,6 @@ export {
     PlaygroundCanvas,
     PlaygroundDetailPanel,
     PlaygroundLoadingState,
-    PlaygroundToolbar
+    PlaygroundToolbar,
+    PlaygroundVariablesContent
 }

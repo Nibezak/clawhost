@@ -13,11 +13,13 @@ export type {
 
 export type {
     AgentConfigResponse,
-    AgentModelOption,
+    AIModelOption,
     Claw,
+    ClawEnvVarsResponse,
     ClawAgent,
     ClawAvatarProps,
     ClawAgentsResponse,
+    HeroButtonsProps,
     Location,
     Plan,
     PlaygroundAgentDetailPanelProps,
@@ -28,10 +30,12 @@ export type {
     PlaygroundClawNodeProps,
     PlaygroundDetailPanelProps,
     PlaygroundToolbarProps,
+    PlaygroundVariablesContentProps,
     SSHKey,
     BillingHistoryResponse,
     BillingOrder,
     UpdateAgentConfigData,
+    UpdateClawEnvVarsData,
     UserProfile,
     UserStats,
     Volume,
@@ -58,5 +62,6 @@ export type {
     StatusConfig,
     CreateClawData,
     CreateSSHKeyData,
+    DemoPlaygroundData,
     UpdateProfileData
 } from '@/ts/Interfaces'

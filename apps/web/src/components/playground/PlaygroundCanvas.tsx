@@ -32,6 +32,8 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
     panelOpen,
     selectedClawId,
     selectedAgentId,
+    initialZoom,
+    allowPageScroll,
     zoom,
     onZoomChange,
     isFitView,
@@ -102,8 +104,9 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
                     return { ...node, data: { ...node.data, isSelected } }
                 }
                 if (node.type === 'agentNode') {
-                    const parts = node.id.replace('agent-', '').split('-')
-                    const agentId = parts.slice(1).join('-') || parts[0]
+                    const nodeData = node.data as Record<string, unknown>
+                    const agentObj = nodeData.agent as Record<string, unknown>
+                    const agentId = agentObj?.id as string
                     const isSelected = selectedAgentId === agentId
                     if (
                         (node.data as Record<string, unknown>).isSelected ===
@@ -159,6 +162,8 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
     }, [panelOpen, getViewport, setViewport])
 
     useEffect(() => {
+        if (allowPageScroll) return
+
         const el = containerRef.current
         if (!el) return
 
@@ -208,7 +213,7 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
         })
         return () =>
             el.removeEventListener('wheel', handleWheel, { capture: true })
-    }, [getViewport, setViewport])
+    }, [getViewport, setViewport, allowPageScroll])
 
     const [nodesOutOfView, setNodesOutOfView] = useState(false)
 
@@ -242,7 +247,16 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
     })
 
     const handleNodeClick: NodeMouseHandler = useCallback(
-        (_event, node) => {
+        (event, node) => {
+            const target = event.target as HTMLElement
+            if (
+                target.closest('[role="menu"]') ||
+                target.closest('[role="menuitem"]') ||
+                target.closest('[role="dialog"]') ||
+                target.closest('[data-radix-dropdown-menu-content]')
+            ) {
+                return
+            }
             if (node.type === 'clawNode' && onNodeClick) {
                 const clawId = node.id.replace('claw-', '')
                 onNodeClick(clawId)
@@ -339,14 +353,25 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
                 onPaneClick={handlePaneClick}
                 nodeTypes={nodeTypes}
                 fitView
-                fitViewOptions={{ padding: 0.3 }}
+                fitViewOptions={{
+                    padding: 0.3,
+                    ...(initialZoom
+                        ? { maxZoom: initialZoom, minZoom: initialZoom }
+                        : {})
+                }}
                 proOptions={{ hideAttribution: true }}
                 elementsSelectable={false}
                 nodesConnectable={false}
                 minZoom={0.5}
                 maxZoom={1.5}
                 zoomOnScroll={false}
-                defaultViewport={{ x: 0, y: 0, zoom: 0.8 }}
+                panOnDrag={!allowPageScroll}
+                preventScrolling={!allowPageScroll}
+                defaultViewport={{
+                    x: 0,
+                    y: 0,
+                    zoom: initialZoom ?? 0.8
+                }}
             />
             <PlaygroundToolbar
                 zoom={zoom}
@@ -366,9 +391,11 @@ const PlaygroundCanvas: FC<PlaygroundCanvasProps> = ({
     onPaneClick,
     panelOpen,
     selectedClawId,
-    selectedAgentId
+    selectedAgentId,
+    initialZoom,
+    allowPageScroll
 }): ReactNode => {
-    const [zoom, setZoom] = useState(0.8)
+    const [zoom, setZoom] = useState(initialZoom ?? 0.8)
     const [isFitView, setIsFitView] = useState(true)
 
     return (
@@ -382,6 +409,8 @@ const PlaygroundCanvas: FC<PlaygroundCanvasProps> = ({
                 panelOpen={panelOpen}
                 selectedClawId={selectedClawId}
                 selectedAgentId={selectedAgentId}
+                initialZoom={initialZoom}
+                allowPageScroll={allowPageScroll}
                 zoom={zoom}
                 onZoomChange={setZoom}
                 isFitView={isFitView}

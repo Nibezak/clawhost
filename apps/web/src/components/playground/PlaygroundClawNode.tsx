@@ -226,6 +226,8 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                     <div
                         className='flex shrink-0 items-center'
                         onClick={(e) => e.stopPropagation()}
+                        onPointerDown={(e) => e.stopPropagation()}
+                        onMouseDown={(e) => e.stopPropagation()}
                     >
                         <ClawCardDropdownMenu
                             claw={claw}
@@ -244,6 +246,8 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                         <TooltipTrigger asChild>
                             <button
                                 onClick={(e) => e.stopPropagation()}
+                                onPointerDown={(e) => e.stopPropagation()}
+                                onMouseDown={(e) => e.stopPropagation()}
                                 className='shrink-0 rounded-md p-1 text-gray-500 transition-colors hover:bg-white/10 hover:text-white'
                             >
                                 <Plus className='h-3.5 w-3.5' weight='bold' />

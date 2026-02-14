@@ -15,6 +15,7 @@ interface SelectProps {
     onValueChange: (value: string) => void
     children: React.ReactNode
     disabled?: boolean
+    displayValue?: string
 }
 
 interface SelectTriggerProps {
@@ -52,8 +53,20 @@ const SelectContext = React.createContext<{
     setDisplayText: () => {}
 })
 
-const Select = ({ value, onValueChange, children, disabled }: SelectProps) => {
-    const [displayText, setDisplayText] = React.useState('')
+const Select = ({
+    value,
+    onValueChange,
+    children,
+    disabled,
+    displayValue
+}: SelectProps) => {
+    const [displayText, setDisplayText] = React.useState(displayValue || '')
+
+    React.useEffect(() => {
+        if (displayValue !== undefined) {
+            setDisplayText(displayValue)
+        }
+    }, [displayValue])
 
     return (
         <SelectContext.Provider

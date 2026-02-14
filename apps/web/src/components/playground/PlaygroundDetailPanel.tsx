@@ -4,13 +4,15 @@ import type { PlaygroundDetailTab } from '@/ts/Types'
 import type { TranslationKey } from '@openclaw/i18n'
 
 import { useCallback, useState } from 'react'
+import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { X, Info, Scroll, Pulse } from '@phosphor-icons/react'
+import { X, Info, Scroll, Pulse, Key } from '@phosphor-icons/react'
 import ClawAvatar from '@/components/ClawAvatar'
 import ProviderIcon from '@/components/ProviderIcon'
 import { CopyableField } from '@/components/dashboard/CopyableField'
 import ClawLogsContent from '@/components/dashboard/ClawLogsContent'
 import ClawDiagnosticsContent from '@/components/dashboard/ClawDiagnosticsContent'
+import PlaygroundVariablesContent from '@/components/playground/PlaygroundVariablesContent'
 import {
     locationFlags,
     locationNames,
@@ -22,6 +24,7 @@ const tabStateMap: Record<string, PlaygroundDetailTab> = {}
 
 const tabs: { id: PlaygroundDetailTab; label: string; icon: typeof Info }[] = [
     { id: 'info', label: 'playground.tabInfo', icon: Info },
+    { id: 'variables', label: 'playground.tabVariables', icon: Key },
     { id: 'logs', label: 'playground.tabLogs', icon: Scroll },
     { id: 'diagnostics', label: 'playground.tabDiagnostics', icon: Pulse }
 ]
@@ -53,7 +56,13 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
         : null
 
     return (
-        <div className='animate-in slide-in-from-right h-full w-[380px] shrink-0 overflow-hidden duration-200'>
+        <motion.div
+            initial={false}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'tween', duration: 0.2 }}
+            className='h-full w-[380px] shrink-0 overflow-hidden'
+        >
             <div className='flex h-full w-[380px] flex-col border-l border-white/10 bg-[#0a0a0f]/95 backdrop-blur-xl'>
                 <div className='flex items-center justify-between border-b border-white/10 px-5 py-4'>
                     <div className='flex items-center gap-3'>
@@ -88,10 +97,10 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className={`flex flex-1 items-center justify-center gap-1.5 px-3 py-2.5 text-xs font-medium transition-colors ${
+                            className={`flex flex-1 items-center justify-center gap-1.5 border-b-2 px-3 py-2.5 text-xs font-medium transition-colors ${
                                 activeTab === tab.id
-                                    ? 'border-b-2 border-[#ef5350] text-white'
-                                    : 'text-gray-500 hover:text-gray-300'
+                                    ? 'border-[#ef5350] text-white'
+                                    : 'border-transparent text-gray-500 hover:text-gray-300'
                             }`}
                         >
                             <tab.icon
@@ -253,9 +262,13 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                             <ClawDiagnosticsContent clawId={claw.id} enabled />
                         </div>
                     )}
+
+                    {activeTab === 'variables' && (
+                        <PlaygroundVariablesContent clawId={claw.id} />
+                    )}
                 </div>
             </div>
-        </div>
+        </motion.div>
     )
 }
 

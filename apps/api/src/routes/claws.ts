@@ -22,7 +22,9 @@ import {
     exportClaw,
     getClawAgents,
     getClawAgentConfig,
-    updateClawAgentConfig
+    updateClawAgentConfig,
+    getClawEnvVars,
+    updateClawEnvVars
 } from '@/controllers/claws'
 
 const app = new Hono<{ Variables: { userId: string } }>()
@@ -46,6 +48,8 @@ app.get('/:id/export', exportClaw)
 app.post('/:id/agents', getClawAgents)
 app.post('/:id/agent-config', getClawAgentConfig)
 app.put('/:id/agent-config', updateClawAgentConfig)
+app.get('/:id/env', getClawEnvVars)
+app.put('/:id/env', updateClawEnvVars)
 app.post('/:id/files', listClawFiles)
 app.post('/:id/files/read', readClawFile)
 app.put('/:id/files', updateClawFile)
