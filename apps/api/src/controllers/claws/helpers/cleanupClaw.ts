@@ -2,7 +2,7 @@ import type { ClawCleanupData } from '@/ts/Interfaces'
 
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
-import { claws, volumes } from '@/db/schema'
+import { claws, clawExports, volumes } from '@/db/schema'
 import { getProvider } from '@/services/provider'
 import { cloudflare } from '@/services/cloudflare'
 
@@ -49,5 +49,6 @@ export async function cleanupClaw(
         }
     }
 
+    await db.delete(clawExports).where(eq(clawExports.clawId, clawId))
     await db.delete(claws).where(eq(claws.id, clawId))
 }

@@ -23,6 +23,8 @@ import {
     getClawAgents,
     getClawAgentConfig,
     updateClawAgentConfig,
+    createClawAgent,
+    deleteClawAgent,
     getClawEnvVars,
     updateClawEnvVars
 } from '@/controllers/claws'
@@ -48,6 +50,8 @@ app.get('/:id/export', exportClaw)
 app.post('/:id/agents', getClawAgents)
 app.post('/:id/agent-config', getClawAgentConfig)
 app.put('/:id/agent-config', updateClawAgentConfig)
+app.post('/:id/agents/create', createClawAgent)
+app.post('/:id/agents/delete', deleteClawAgent)
 app.get('/:id/env', getClawEnvVars)
 app.put('/:id/env', updateClawEnvVars)
 app.post('/:id/files', listClawFiles)

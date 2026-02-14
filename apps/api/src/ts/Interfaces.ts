@@ -743,6 +743,7 @@ export interface GetAgentConfigBody {
 
 export interface UpdateAgentConfigBody {
     agentId: string
+    name?: string
     model: string | null
     envVars: Record<string, string>
 }
@@ -750,8 +751,19 @@ export interface UpdateAgentConfigBody {
 export interface AgentConfigResponse {
     agent: {
         id: string
+        name: string
         model: string | null
     }
     envVars: Record<string, string>
     defaultModel: string | null
+}
+
+export interface CreateClawAgentBody {
+    name: string
+    model?: string | null
+    envVars?: Record<string, string>
+}
+
+export interface DeleteClawAgentBody {
+    agentId: string
 }

@@ -7,17 +7,23 @@ import {
     CircleNotch,
     Wrench,
     CheckCircle,
-    Warning
+    Warning,
+    Pulse
 } from '@phosphor-icons/react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useClawDiagnostics, useRepairClaw } from '@/hooks'
+import PanelPlaceholder from '@/components/PanelPlaceholder'
 import useUIStore from '@/lib/store/useUIStore'
 
 const ClawDiagnosticsContent: FC<ClawDiagnosticsContentProps> = ({
     clawId,
-    enabled
+    enabled,
+    mockData
 }): ReactNode => {
-    const diagnostics = useClawDiagnostics(clawId, enabled)
+    const query = useClawDiagnostics(clawId, enabled && !mockData)
+    const diagnostics = mockData
+        ? { data: mockData, isPending: false, isError: false }
+        : query
     const repair = useRepairClaw()
     const showToast = useUIStore((s) => s.showToast)
 
@@ -40,10 +46,11 @@ const ClawDiagnosticsContent: FC<ClawDiagnosticsContentProps> = ({
     return (
         <div className='h-full overflow-y-auto'>
             {diagnostics.isError && (
-                <div className='text-sm text-red-400'>
-                    {diagnostics.error?.message ||
-                        t('api.failedToGetDiagnostics')}
-                </div>
+                <PanelPlaceholder
+                    icon={<Pulse className='h-6 w-6 text-gray-500' weight='duotone' />}
+                    title={t('api.failedToGetDiagnostics')}
+                    description={t('api.failedToGetDiagnosticsDescription')}
+                />
             )}
             {(diagnostics.isPending || diagnostics.data) && (
                 <div className='space-y-5'>

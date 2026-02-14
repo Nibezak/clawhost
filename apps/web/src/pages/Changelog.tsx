@@ -6,7 +6,7 @@ import { Header } from '@/components/Header'
 import { LandingFooter } from '@/components/LandingFooter'
 import { PageBackground } from '@/components/PageBackground'
 import { PageTitle } from '@/components/PageTitle'
-import { Check, Clock } from '@phosphor-icons/react'
+import { Check } from '@phosphor-icons/react'
 
 const Changelog: FC = (): ReactNode => {
     return (
@@ -42,16 +42,13 @@ const Changelog: FC = (): ReactNode => {
                     >
                         <div className='absolute left-0 top-1 hidden md:block'>
                             <div className='flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03]'>
-                                <Clock
-                                    className='h-5 w-5 text-gray-400'
-                                    weight='fill'
-                                />
+                                <div className='h-2 w-2 rounded-full bg-white/60' />
                             </div>
                         </div>
 
                         <div className='rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8'>
                             <span className='text-muted-foreground mb-4 block text-sm'>
-                                {t('changelog.upcomingRelease')}
+                                February 14, 2026
                             </span>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>

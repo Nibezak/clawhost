@@ -1,11 +1,21 @@
 import type { FC, ReactNode } from 'react'
 
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 const Logo: FC = (): ReactNode => {
+    const { pathname } = useLocation()
+
+    const handleClick = (e: React.MouseEvent) => {
+        if (pathname === '/') {
+            e.preventDefault()
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+        }
+    }
+
     return (
         <Link
             to='/'
+            onClick={handleClick}
             className='flex items-center gap-2 transition hover:opacity-80'
         >
             <svg

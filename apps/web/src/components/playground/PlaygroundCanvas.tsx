@@ -53,7 +53,8 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
     const { fitView, getViewport, setViewport } = useReactFlow()
     const skipViewportRef = useRef(true)
     const containerRef = useRef<HTMLDivElement>(null)
-    const panelWidth = 380
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768
+    const panelWidth = isMobile ? 0 : 380
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -195,9 +196,10 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
                 const pointX = (mouseX - viewport.x) / viewport.zoom
                 const pointY = (mouseY - viewport.y) / viewport.zoom
                 const zoomFactor = 1 + e.deltaY * 0.01
+                const minZoomVal = isMobile ? 0.3 : 0.5
                 const newZoom = Math.min(
                     1.5,
-                    Math.max(0.5, viewport.zoom * zoomFactor)
+                    Math.max(minZoomVal, viewport.zoom * zoomFactor)
                 )
                 setViewport({
                     x: mouseX - pointX * newZoom,
@@ -306,8 +308,9 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
 
         const gw = maxX - minX
         const gh = maxY - minY
+        const minZoomVal = isMobile ? 0.3 : 0.5
         const targetZoom = Math.max(
-            0.5,
+            minZoomVal,
             Math.min(
                 1.5,
                 Math.min(
@@ -362,7 +365,7 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
                 proOptions={{ hideAttribution: true }}
                 elementsSelectable={false}
                 nodesConnectable={false}
-                minZoom={0.5}
+                minZoom={isMobile ? 0.3 : 0.5}
                 maxZoom={1.5}
                 zoomOnScroll={false}
                 panOnDrag={!allowPageScroll}
@@ -373,12 +376,14 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
                     zoom: initialZoom ?? 0.8
                 }}
             />
-            <PlaygroundToolbar
-                zoom={zoom}
-                onFitView={handleFitView}
-                isFitView={isFitView}
-                nodesOutOfView={nodesOutOfView}
-            />
+            {nodes.length > 0 && !allowPageScroll && (
+                <PlaygroundToolbar
+                    zoom={zoom}
+                    onFitView={handleFitView}
+                    isFitView={isFitView}
+                    nodesOutOfView={nodesOutOfView}
+                />
+            )}
         </div>
     )
 }

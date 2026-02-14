@@ -12,8 +12,9 @@ import { JsonLd } from '@/components/JsonLd'
 import { getPostComponent, getPostMeta } from '@/lib/blog'
 import { ROUTES } from '@/lib/routes'
 import NotFound from '@/pages/NotFound'
+import getBaseDomain from '@/lib/getBaseDomain'
 
-const SITE_URL = 'https://clawhost.cloud'
+const SITE_URL = `https://${getBaseDomain()}`
 
 const BlogPost: FC = (): ReactNode => {
     const { slug } = useParams<{ slug: string }>()

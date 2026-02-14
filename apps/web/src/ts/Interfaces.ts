@@ -206,6 +206,12 @@ export interface ErrorStateProps {
     onRetry?: () => void
 }
 
+export interface PanelPlaceholderProps {
+    icon: ReactNode
+    title: string
+    description: string
+}
+
 export interface PageTitleProps {
     title: string
     description?: string
@@ -578,11 +584,13 @@ export interface ClawLogsContentProps {
     clawId: string
     enabled: boolean
     embedded?: boolean
+    mockLogs?: string
 }
 
 export interface ClawDiagnosticsContentProps {
     clawId: string
     enabled: boolean
+    mockData?: DiagnosticsStatusResponse
 }
 
 export interface ClawFileExplorerDialogProps {
@@ -631,6 +639,7 @@ export interface PlaygroundClawNodeData {
     isLoadingAgents: boolean
     isReachable: boolean
     isSelected: boolean
+    readOnly?: boolean
 }
 
 export interface PlaygroundAgentNodeData {
@@ -666,6 +675,7 @@ export interface PlaygroundDetailPanelProps {
     plans: Plan[]
     sshKeys: SSHKey[]
     onClose: () => void
+    readOnly?: boolean
 }
 
 export interface PlaygroundToolbarProps {
@@ -678,6 +688,7 @@ export interface PlaygroundToolbarProps {
 export interface AgentConfigResponse {
     agent: {
         id: string
+        name: string
         model: string | null
     }
     envVars: Record<string, string>
@@ -686,15 +697,39 @@ export interface AgentConfigResponse {
 
 export interface UpdateAgentConfigData {
     agentId: string
+    name?: string
     model: string | null
     envVars: Record<string, string>
+}
+
+export interface CreateAgentData {
+    name: string
+    model?: string | null
+    envVars?: Record<string, string>
+}
+
+export interface CreateAgentResponse {
+    agent: ClawAgent
+}
+
+export interface DeleteAgentData {
+    agentId: string
+}
+
+export interface CreateAgentModalProps {
+    clawId: string
+    clawName: string
+    open: boolean
+    onOpenChange: (open: boolean) => void
 }
 
 export interface PlaygroundAgentDetailPanelProps {
     agent: ClawAgent
     clawId: string
     clawName: string
+    isOnlyAgent: boolean
     onClose: () => void
+    readOnly?: boolean
 }
 
 export interface ClawEnvVarsResponse {
@@ -707,6 +742,7 @@ export interface UpdateClawEnvVarsData {
 
 export interface PlaygroundVariablesContentProps {
     clawId: string
+    mockEnvVars?: Record<string, string>
 }
 
 export interface HeroButtonsProps {

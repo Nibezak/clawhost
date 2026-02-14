@@ -4,16 +4,21 @@ import type { ClawLogsContentProps } from '@/ts/Interfaces'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { t } from '@openclaw/i18n'
 import { Button } from '@/components/ui/button'
-import { ArrowDown } from '@phosphor-icons/react'
+import { ArrowDown, Scroll } from '@phosphor-icons/react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useClawLogs } from '@/hooks'
+import PanelPlaceholder from '@/components/PanelPlaceholder'
 
 const ClawLogsContent: FC<ClawLogsContentProps> = ({
     clawId,
     enabled,
-    embedded
+    embedded,
+    mockLogs
 }): ReactNode => {
-    const logs = useClawLogs(clawId, enabled)
+    const query = useClawLogs(clawId, enabled && !mockLogs)
+    const logs = mockLogs
+        ? { data: { logs: mockLogs }, isPending: false, isError: false }
+        : query
     const scrollRef = useRef<HTMLDivElement>(null)
     const isAtBottomRef = useRef(true)
     const isFirstLoadRef = useRef(true)
@@ -99,11 +104,11 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
                     <Skeleton className='h-full w-full rounded-md border border-zinc-800' />
                 )}
                 {logs.isError && (
-                    <div
-                        className={`text-sm text-red-400 ${embedded ? 'p-4' : ''}`}
-                    >
-                        {logs.error?.message || t('api.failedToGetDiagnostics')}
-                    </div>
+                    <PanelPlaceholder
+                        icon={<Scroll className='h-6 w-6 text-gray-500' weight='duotone' />}
+                        title={t('api.failedToGetLogs')}
+                        description={t('api.failedToGetLogsDescription')}
+                    />
                 )}
                 {logs.data && !embedded && (
                     <pre className='overflow-auto whitespace-pre-wrap break-words rounded-md border border-zinc-800 bg-black p-3 text-xs leading-snug text-zinc-300'>

@@ -26,12 +26,14 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/lib/api'
 import { useUIStore } from '@/lib/store'
+import PanelPlaceholder from '@/components/PanelPlaceholder'
 import PLAYGROUND_AGENTS_QUERY_KEY from '@/hooks/usePlayground/PLAYGROUND_AGENTS_QUERY_KEY'
 
 let skipDeleteConfirmation = false
 
 const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
-    clawId
+    clawId,
+    mockEnvVars
 }): ReactNode => {
     const [envVars, setEnvVars] = useState<
         Array<{ key: string; value: string }>
@@ -77,16 +79,21 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
     )
 
     const {
-        data: envData,
-        isLoading,
-        isError
+        data: queryEnvData,
+        isLoading: queryIsLoading,
+        isError: queryIsError
     } = useQuery({
         queryKey: ['claw-env', clawId],
         queryFn: () => api.getClawEnvVars(clawId),
         staleTime: 0,
         gcTime: 0,
-        retry: 1
+        retry: 1,
+        enabled: !mockEnvVars
     })
+
+    const envData = mockEnvVars ? { envVars: mockEnvVars } : queryEnvData
+    const isLoading = mockEnvVars ? false : queryIsLoading
+    const isError = mockEnvVars ? false : queryIsError
 
     useEffect(() => {
         if (envData) {
@@ -232,11 +239,11 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
 
     if (isError) {
         return (
-            <div className='py-12 text-center'>
-                <p className='text-xs text-gray-500'>
-                    {t('playground.variablesLoadFailed')}
-                </p>
-            </div>
+            <PanelPlaceholder
+                icon={<Key className='h-6 w-6 text-gray-500' weight='duotone' />}
+                title={t('playground.variablesLoadFailed')}
+                description={t('playground.variablesLoadFailedDescription')}
+            />
         )
     }
 

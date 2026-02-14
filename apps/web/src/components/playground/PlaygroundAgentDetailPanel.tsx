@@ -1,7 +1,10 @@
 import type { FC, ReactNode } from 'react'
-import type { PlaygroundAgentDetailPanelProps } from '@/ts/Interfaces'
+import type {
+    AgentConfigResponse,
+    ClawAgentsResponse,
+    PlaygroundAgentDetailPanelProps
+} from '@/ts/Interfaces'
 import type { PlaygroundAgentDetailTab } from '@/ts/Types'
-
 import type { TranslationKey } from '@openclaw/i18n'
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
@@ -17,9 +20,11 @@ import {
     Eye,
     EyeSlash,
     Copy,
-    Check
+    Check,
+    Trash
 } from '@phosphor-icons/react'
-import { ClawMascotOutline } from '@/components/ClawMascotOutline'
+import ClawAvatar from '@/components/ClawAvatar'
+import PanelPlaceholder from '@/components/PanelPlaceholder'
 import {
     Select,
     SelectTrigger,
@@ -27,13 +32,22 @@ import {
     SelectItem,
     SelectGroup
 } from '@/components/ui/select'
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle
+} from '@/components/ui/dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 import { api } from '@/lib/api'
 import { useUIStore } from '@/lib/store'
-import { aiModels } from '@/lib/claw-utils'
+import { aiModels, validateAgentName } from '@/lib/claw-utils'
 import PLAYGROUND_AGENTS_QUERY_KEY from '@/hooks/usePlayground/PLAYGROUND_AGENTS_QUERY_KEY'
 
 const agentTabStateMap: Record<string, PlaygroundAgentDetailTab> = {}
+const deletingAgentIds = new Set<string>()
+let skipAgentDeleteConfirmation = false
 
 const tabs: {
     id: PlaygroundAgentDetailTab
@@ -48,7 +62,9 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
     agent,
     clawId,
     clawName,
-    onClose
+    isOnlyAgent,
+    onClose,
+    readOnly
 }): ReactNode => {
     const activeTab = agentTabStateMap[agent.id] || 'chat'
     const setActiveTab = useCallback(
@@ -59,13 +75,27 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
         [agent.id]
     )
     const [, setRenderKey] = useState(0)
+    const [agentName, setAgentName] = useState('')
+    const [nameError, setNameError] = useState<TranslationKey | null>(null)
     const [selectedModel, setSelectedModel] = useState<string>('')
     const [apiKeyValue, setApiKeyValue] = useState('')
     const [hasChanges, setHasChanges] = useState(false)
     const [showApiKey, setShowApiKey] = useState(false)
     const [copied, setCopied] = useState(false)
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+    const [dontAskAgain, setDontAskAgain] = useState(false)
+    const [, setDeleteRenderKey] = useState(0)
     const { showToast } = useUIStore()
     const queryClient = useQueryClient()
+    const isDeleting = deletingAgentIds.has(agent.id)
+
+    const existingAgentNames = useMemo(() => {
+        const cached = queryClient.getQueryData<ClawAgentsResponse>([
+            PLAYGROUND_AGENTS_QUERY_KEY,
+            clawId
+        ])
+        return cached?.agents.map((a) => a.name) || []
+    }, [queryClient, clawId])
 
     const modelsByProvider = useMemo(() => {
         const grouped: Record<string, typeof aiModels> = {}
@@ -88,18 +118,37 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
         [selectedModel]
     )
 
+    const mockConfigData: AgentConfigResponse | undefined = readOnly
+        ? {
+              agent: {
+                  id: agent.id,
+                  name: agent.name,
+                  model: agent.model
+              },
+              envVars: agent.model
+                  ? {
+                        [aiModels.find((m) => m.id === agent.model)
+                            ?.envVar || '']: 'sk-••••••••'
+                    }
+                  : {},
+              defaultModel: agent.model
+          }
+        : undefined
+
     const {
-        data: configData,
+        data: queryConfigData,
         isLoading: isConfigLoading,
         isError: isConfigError
     } = useQuery({
         queryKey: ['agent-config', clawId, agent.id],
         queryFn: () => api.getClawAgentConfig(clawId, agent.id),
-        enabled: activeTab === 'configuration',
+        enabled: activeTab === 'configuration' && !readOnly,
         staleTime: 0,
         gcTime: 0,
         retry: 1
     })
+
+    const configData = readOnly ? mockConfigData : queryConfigData
 
     useEffect(() => {
         if (activeTab !== 'configuration') {
@@ -111,6 +160,9 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
 
     useEffect(() => {
         if (configData) {
+            setAgentName(configData.agent.name || agent.name)
+            setNameError(null)
+
             const model =
                 configData.agent.model || configData.defaultModel || ''
             setSelectedModel(model)
@@ -124,7 +176,7 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
 
             setHasChanges(false)
         }
-    }, [configData])
+    }, [configData, agent.name])
 
     const saveMutation = useMutation({
         mutationFn: () => {
@@ -133,8 +185,11 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                 envVarsObj[selectedModelOption.envVar] = apiKeyValue
             }
 
+            const nameChanged = agentName !== agent.name
+
             return api.updateClawAgentConfig(clawId, {
                 agentId: agent.id,
+                name: nameChanged ? agentName : undefined,
                 model: selectedModel || null,
                 envVars: envVarsObj
             })
@@ -142,12 +197,41 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
         onSuccess: () => {
             showToast(t('playground.configurationSaved'), 'success')
             setHasChanges(false)
-            queryClient.invalidateQueries({
-                queryKey: ['agent-config', clawId, agent.id]
-            })
-            queryClient.invalidateQueries({
-                queryKey: [PLAYGROUND_AGENTS_QUERY_KEY, clawId]
-            })
+
+            const newName = agentName
+            queryClient.setQueryData<ClawAgentsResponse>(
+                [PLAYGROUND_AGENTS_QUERY_KEY, clawId],
+                (old) => {
+                    if (!old) return old
+                    return {
+                        ...old,
+                        agents: old.agents.map((a) =>
+                            a.id === agent.id
+                                ? {
+                                      ...a,
+                                      name: newName,
+                                      model: selectedModel || null
+                                  }
+                                : a
+                        )
+                    }
+                }
+            )
+
+            queryClient.setQueryData<AgentConfigResponse>(
+                ['agent-config', clawId, agent.id],
+                (old) => {
+                    if (!old) return old
+                    return {
+                        ...old,
+                        agent: {
+                            ...old.agent,
+                            name: newName,
+                            model: selectedModel || null
+                        }
+                    }
+                }
+            )
             queryClient.invalidateQueries({
                 queryKey: ['claw-env', clawId]
             })
@@ -156,6 +240,78 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
             showToast(t('playground.configurationSaveFailed'), 'error')
         }
     })
+
+    const executeDelete = useCallback(() => {
+        const agentId = agent.id
+        deletingAgentIds.add(agentId)
+        setShowDeleteConfirm(false)
+        setDeleteRenderKey((k) => k + 1)
+
+        api.deleteClawAgent(clawId, { agentId })
+            .then(() => {
+                showToast(t('playground.deleteAgentSuccess'), 'success')
+                queryClient.setQueryData<ClawAgentsResponse>(
+                    [PLAYGROUND_AGENTS_QUERY_KEY, clawId],
+                    (old) => {
+                        if (!old) return old
+                        return {
+                            ...old,
+                            agents: old.agents.filter((a) => a.id !== agentId)
+                        }
+                    }
+                )
+                onClose()
+            })
+            .catch(() => {
+                showToast(t('playground.deleteAgentFailed'), 'error')
+            })
+            .finally(() => {
+                deletingAgentIds.delete(agentId)
+            })
+    }, [agent.id, clawId, showToast, queryClient, onClose])
+
+    const handleDeleteClick = useCallback(() => {
+        if (skipAgentDeleteConfirmation) {
+            executeDelete()
+        } else {
+            setShowDeleteConfirm(true)
+            setDontAskAgain(false)
+        }
+    }, [executeDelete])
+
+    const handleConfirmDelete = useCallback(() => {
+        if (dontAskAgain) {
+            skipAgentDeleteConfirmation = true
+        }
+        executeDelete()
+    }, [dontAskAgain, executeDelete])
+
+    const handleNameChange = useCallback(
+        (value: string) => {
+            setAgentName(value)
+            setHasChanges(true)
+            const error = validateAgentName(
+                value,
+                existingAgentNames,
+                agent.name
+            )
+            setNameError(error)
+        },
+        [existingAgentNames, agent.name]
+    )
+
+    const handleSave = useCallback(() => {
+        const error = validateAgentName(
+            agentName,
+            existingAgentNames,
+            agent.name
+        )
+        if (error) {
+            setNameError(error)
+            return
+        }
+        saveMutation.mutate()
+    }, [agentName, existingAgentNames, agent.name, saveMutation])
 
     const handleModelChange = useCallback(
         (model: string) => {
@@ -183,33 +339,48 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
 
     return (
         <motion.div
-            initial={false}
+            initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'tween', duration: 0.2 }}
-            className='h-full w-[380px] shrink-0 overflow-hidden'
+            className='h-full w-[90vw] shrink-0 overflow-hidden md:w-[380px]'
         >
-            <div className='flex h-full w-[380px] flex-col border-l border-white/10 bg-[#0a0a0f]/95 backdrop-blur-xl'>
-                <div className='flex items-center justify-between border-b border-white/10 px-5 py-4'>
-                    <div className='flex items-center gap-3'>
-                        <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/5'>
-                            <ClawMascotOutline className='h-4 w-4 text-gray-400' />
-                        </div>
-                        <div>
-                            <h3 className='text-sm font-semibold text-white'>
+            <div className='flex h-full w-full flex-col border-l border-white/10 bg-[#0a0a0f] md:bg-[#0a0a0f]/95 md:backdrop-blur-xl'>
+                <div className='flex items-center justify-between border-b border-white/10 px-5 py-2.5'>
+                    <div className='flex items-center gap-2.5'>
+                        <ClawAvatar />
+                        <div className='space-y-0'>
+                            <h3 className='text-sm font-semibold leading-tight text-white'>
                                 {agent.name}
                             </h3>
-                            <span className='text-xs text-gray-500'>
+                            <span className='block text-xs leading-tight text-gray-500'>
                                 {t('playground.agentOnClaw', { clawName })}
                             </span>
                         </div>
                     </div>
-                    <button
-                        onClick={onClose}
-                        className='rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white'
-                    >
-                        <X className='h-4 w-4' weight='bold' />
-                    </button>
+                    <div className='flex items-center gap-1'>
+                        {!readOnly && !isOnlyAgent && agent.id !== 'main' && (
+                            <button
+                                onClick={() =>
+                                    !isDeleting && handleDeleteClick()
+                                }
+                                disabled={isDeleting}
+                                className='rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-red-500/10 hover:text-red-400 disabled:cursor-not-allowed'
+                            >
+                                {isDeleting ? (
+                                    <CircleNotch className='h-4 w-4 animate-spin text-red-400' />
+                                ) : (
+                                    <Trash className='h-4 w-4' weight='bold' />
+                                )}
+                            </button>
+                        )}
+                        <button
+                            onClick={onClose}
+                            className='rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white'
+                        >
+                            <X className='h-4 w-4' weight='bold' />
+                        </button>
+                    </div>
                 </div>
 
                 <div className='flex border-b border-white/10'>
@@ -217,7 +388,7 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className={`flex flex-1 items-center justify-center gap-1.5 border-b-2 px-3 py-2.5 text-xs font-medium transition-colors ${
+                            className={`flex flex-1 items-center justify-center gap-1.5 border-b-2 px-3 py-2 text-xs font-medium transition-colors ${
                                 activeTab === tab.id
                                     ? 'border-[#ef5350] text-white'
                                     : 'border-transparent text-gray-500 hover:text-gray-300'
@@ -236,7 +407,7 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
 
                 <div className='flex min-h-0 flex-1 flex-col overflow-hidden'>
                     {activeTab === 'chat' && (
-                        <div className='flex h-full flex-col items-center justify-center gap-3 p-5'>
+                        <div className='flex h-full flex-col items-center justify-center gap-3 px-14 pb-16'>
                             <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-white/5'>
                                 <ChatTeardropText
                                     className='h-6 w-6 text-gray-500'
@@ -271,15 +442,45 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                                     <Skeleton className='h-10 w-full rounded-lg' />
                                 </div>
                             ) : isConfigError ? (
-                                <div className='py-12 text-center'>
-                                    <p className='text-xs text-gray-500'>
-                                        {t(
-                                            'playground.configurationLoadFailed'
-                                        )}
-                                    </p>
-                                </div>
+                                <PanelPlaceholder
+                                    icon={<GearSix className='h-6 w-6 text-gray-500' weight='duotone' />}
+                                    title={t('playground.configurationLoadFailed')}
+                                    description={t('playground.configurationLoadFailedDescription')}
+                                />
                             ) : (
                                 <div className='space-y-5'>
+                                    <div>
+                                        <label className='mb-2 block text-xs font-medium text-gray-400'>
+                                            {t('playground.configurationName')}
+                                        </label>
+                                        <input
+                                            type='text'
+                                            value={agentName}
+                                            onChange={(e) =>
+                                                handleNameChange(e.target.value)
+                                            }
+                                            placeholder={t(
+                                                'playground.configurationNamePlaceholder'
+                                            )}
+                                            className={`w-full rounded-md border bg-white/5 px-3 py-2 text-sm text-white outline-none transition-colors placeholder:text-gray-600 focus:border-[#ef5350]/50 ${
+                                                nameError
+                                                    ? 'border-red-500/50'
+                                                    : 'border-white/10'
+                                            }`}
+                                        />
+                                        {nameError ? (
+                                            <p className='mt-1.5 text-[11px] text-red-400'>
+                                                {t(nameError)}
+                                            </p>
+                                        ) : (
+                                            <p className='mt-1.5 text-[11px] text-gray-600'>
+                                                {t(
+                                                    'playground.configurationNameDescription'
+                                                )}
+                                            </p>
+                                        )}
+                                    </div>
+
                                     <div>
                                         <label className='mb-2 block text-xs font-medium text-gray-400'>
                                             {t('playground.configurationModel')}
@@ -362,7 +563,9 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                                                     {apiKeyValue && (
                                                         <button
                                                             type='button'
-                                                            onClick={handleCopyApiKey}
+                                                            onClick={
+                                                                handleCopyApiKey
+                                                            }
                                                             className='rounded p-1 text-gray-500 transition-colors hover:text-gray-300'
                                                         >
                                                             {copied ? (
@@ -409,10 +612,12 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                                     )}
 
                                     <button
-                                        onClick={() => saveMutation.mutate()}
+                                        onClick={handleSave}
                                         disabled={
+                                            readOnly ||
                                             saveMutation.isPending ||
-                                            !hasChanges
+                                            !hasChanges ||
+                                            !!nameError
                                         }
                                         className='flex w-full items-center justify-center gap-2 rounded-lg bg-[#ef5350] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
                                     >
@@ -424,9 +629,7 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                                                 )}
                                             </>
                                         ) : (
-                                            t(
-                                                'playground.configurationSave'
-                                            )
+                                            t('playground.configurationSave')
                                         )}
                                     </button>
                                 </div>
@@ -435,6 +638,61 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                     )}
                 </div>
             </div>
+
+            <Dialog
+                open={showDeleteConfirm}
+                onOpenChange={setShowDeleteConfirm}
+            >
+                <DialogContent className='max-w-sm'>
+                    <DialogHeader>
+                        <DialogTitle>
+                            {t('playground.deleteAgentTitle')}
+                        </DialogTitle>
+                        <DialogDescription>
+                            {t('playground.deleteAgentDescription', {
+                                agentName: agent.name
+                            })}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <label className='mt-3 flex cursor-pointer items-center gap-2.5'>
+                        <button
+                            type='button'
+                            role='checkbox'
+                            aria-checked={dontAskAgain}
+                            onClick={() => setDontAskAgain(!dontAskAgain)}
+                            className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
+                                dontAskAgain
+                                    ? 'border-[#ef5350] bg-[#ef5350]'
+                                    : 'border-white/20 bg-white/5 hover:border-white/30'
+                            }`}
+                        >
+                            {dontAskAgain && (
+                                <Check
+                                    className='h-3 w-3 text-white'
+                                    weight='bold'
+                                />
+                            )}
+                        </button>
+                        <span className='text-xs text-gray-400'>
+                            {t('playground.variablesDontAskAgain')}
+                        </span>
+                    </label>
+                    <div className='mt-4 flex justify-end gap-3'>
+                        <button
+                            onClick={() => setShowDeleteConfirm(false)}
+                            className='rounded-lg px-4 py-2 text-sm font-medium text-gray-400 transition-colors hover:text-white'
+                        >
+                            {t('common.cancel')}
+                        </button>
+                        <button
+                            onClick={handleConfirmDelete}
+                            className='rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700'
+                        >
+                            {t('playground.deleteAgentConfirm')}
+                        </button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </motion.div>
     )
 }

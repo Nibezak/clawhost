@@ -19,6 +19,9 @@ import type {
     PurchaseClawResponse,
     ReadClawFileResponse,
     SSHKey,
+    CreateAgentData,
+    CreateAgentResponse,
+    DeleteAgentData,
     UpdateAgentConfigData,
     UpdateClawEnvVarsData,
     UpdateClawFileData,
@@ -111,6 +114,10 @@ export const api = {
         }),
     updateClawAgentConfig: (id: string, data: UpdateAgentConfigData) =>
         client.put<void>(`/claws/${id}/agent-config`, data),
+    createClawAgent: (id: string, data: CreateAgentData) =>
+        client.post<CreateAgentResponse>(`/claws/${id}/agents/create`, data),
+    deleteClawAgent: (id: string, data: DeleteAgentData) =>
+        client.post<void>(`/claws/${id}/agents/delete`, data),
     getClawEnvVars: (id: string) =>
         client.get<ClawEnvVarsResponse>(`/claws/${id}/env`),
     updateClawEnvVars: (id: string, data: UpdateClawEnvVarsData) =>

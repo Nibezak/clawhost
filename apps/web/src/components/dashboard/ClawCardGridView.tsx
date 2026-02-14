@@ -13,6 +13,7 @@ import ProviderIcon from '@/components/ProviderIcon'
 import { ClawCardDropdownMenu } from '@/components/dashboard/ClawCardDropdownMenu'
 import { CopyableField } from '@/components/dashboard/CopyableField'
 import ScheduledDeletionBanner from '@/components/dashboard/ScheduledDeletionBanner'
+import getBaseDomain from '@/lib/getBaseDomain'
 import { generateSlug, aiModels } from '@/lib/claw-utils'
 
 const ClawCardGridView: FC<ClawCardGridViewProps> = ({
@@ -76,13 +77,13 @@ const ClawCardGridView: FC<ClawCardGridViewProps> = ({
                             </div>
                             {claw.status !== 'configuring' && (
                                 <a
-                                    href={`https://${claw.subdomain || generateSlug(claw.id)}.clawhost.cloud${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
+                                    href={`https://${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
                                     target='_blank'
                                     rel='noopener noreferrer'
                                     className='text-muted-foreground hover:text-foreground text-sm transition-colors'
                                 >
                                     {claw.subdomain || generateSlug(claw.id)}
-                                    .clawhost.cloud
+                                    .{getBaseDomain()}
                                 </a>
                             )}
                         </div>

@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react'
 import type { PlaygroundAgentNodeProps } from '@/ts/Interfaces'
 
 import { Handle, Position } from '@xyflow/react'
-import { ClawMascotOutline } from '@/components/ClawMascotOutline'
+import { ClawMascot } from '@/components/ClawMascot'
 
 const handleStyle = {
     top: 0,
@@ -37,7 +37,7 @@ const PlaygroundAgentNode: FC<PlaygroundAgentNodeProps> = ({
 
             <div className='px-3.5 py-3'>
                 <div className='flex items-center gap-2'>
-                    <ClawMascotOutline className='h-4 w-4 text-gray-400' />
+                    <ClawMascot className='h-4 w-4' />
                     <span className='flex-1 truncate text-sm font-medium text-white'>
                         {agent.name}
                     </span>

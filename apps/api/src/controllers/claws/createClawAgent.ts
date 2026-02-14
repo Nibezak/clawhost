@@ -1,5 +1,5 @@
 import type { Context } from 'hono'
-import type { UpdateAgentConfigBody } from '@/ts/Interfaces'
+import type { CreateClawAgentBody } from '@/ts/Interfaces'
 
 import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
@@ -11,16 +11,20 @@ import { ok, fail } from '@/lib/response'
 
 const BASE_DIR = '/home/openclaw/.openclaw'
 
-const updateClawAgentConfig = async (
+const createClawAgent = async (
     c: Context<{ Variables: { userId: string } }>
 ) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')
-        const body = await c.req.json<UpdateAgentConfigBody>()
+        const body = await c.req.json<CreateClawAgentBody>()
 
-        if (!body.agentId || typeof body.agentId !== 'string') {
+        if (!body.name || typeof body.name !== 'string') {
             return fail(c, t('api.missingRequiredFields'), 400)
+        }
+
+        if (!/^[a-zA-Z0-9-]+$/.test(body.name)) {
+            return fail(c, t('api.agentNameInvalid'), 400)
         }
 
         const admin = await isAdmin(userId)
@@ -40,7 +44,7 @@ const updateClawAgentConfig = async (
         }
 
         if (!claw[0].ip || !claw[0].rootPassword) {
-            return fail(c, t('api.agentConfigUpdateFailed'), 400)
+            return fail(c, t('api.agentCreateFailed'), 400)
         }
 
         try {
@@ -68,42 +72,45 @@ const updateClawAgentConfig = async (
             }
 
             const agentList = agents.list as Record<string, unknown>[]
-            const agentIndex = agentList.findIndex(
+
+            const nameExists = agentList.some(
                 (a) =>
-                    (a.id as string) === body.agentId ||
-                    (a.name as string) === body.agentId
+                    (a.name as string || '').toLowerCase() === body.name.toLowerCase()
             )
 
-            if (body.name !== undefined) {
-                if (!/^[a-zA-Z0-9-]+$/.test(body.name)) {
-                    return fail(c, t('api.agentNameInvalid'), 400)
-                }
-
-                const nameExists = agentList.some(
-                    (a, i) =>
-                        i !== agentIndex &&
-                        (a.name as string || '').toLowerCase() === body.name!.toLowerCase()
-                )
-
-                if (nameExists) {
-                    return fail(c, t('api.agentNameDuplicate'), 400)
-                }
+            if (nameExists) {
+                return fail(c, t('api.agentNameDuplicate'), 400)
             }
 
-            if (agentIndex >= 0) {
-                if (body.name !== undefined) {
-                    agentList[agentIndex].name = body.name
-                }
-                if (body.model !== undefined) {
-                    agentList[agentIndex].model = body.model
-                }
-            } else {
+            if (agentList.length === 0) {
+                const defaultModel =
+                    (agents.defaults as Record<string, unknown>)?.model
+                const primaryModel =
+                    typeof defaultModel === 'object' && defaultModel !== null
+                        ? (defaultModel as Record<string, unknown>).primary
+                        : defaultModel
                 agentList.push({
-                    id: body.agentId,
-                    name: body.agentId,
-                    model: body.model
+                    id: 'main',
+                    name: 'main',
+                    model:
+                        typeof primaryModel === 'string'
+                            ? primaryModel
+                            : null,
+                    status: 'running'
                 })
             }
+
+            const agentId = `${body.name
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-|-$/g, '')}-${Date.now()}`
+
+            agentList.push({
+                id: agentId,
+                name: body.name,
+                model: body.model || null,
+                status: 'idle'
+            })
 
             const configJson = JSON.stringify(config, null, 4)
             const escapedConfig = configJson.replace(/'/g, "'\\''")
@@ -143,8 +150,8 @@ const updateClawAgentConfig = async (
                         const key = trimmed.substring(0, eqIndex).trim()
                         existingKeys.add(key)
 
-                        if (key in body.envVars) {
-                            const value = body.envVars[key]
+                        if (key in body.envVars!) {
+                            const value = body.envVars![key]
                             if (value === '') return
                             existingLines.push(`${key}=${value}`)
                         } else {
@@ -176,20 +183,30 @@ const updateClawAgentConfig = async (
                 10000
             )
 
-            return ok(c, null, t('api.agentConfigUpdated'))
+            return ok(
+                c,
+                {
+                    agent: {
+                        id: agentId,
+                        name: body.name,
+                        model: body.model || null,
+                        status: 'idle',
+                        directory: null
+                    }
+                },
+                t('api.agentCreated')
+            )
         } catch {
-            return fail(c, t('api.agentConfigUpdateFailed'), 500)
+            return fail(c, t('api.agentCreateFailed'), 500)
         }
     } catch (err) {
-        console.error('Update agent config error:', err)
+        console.error('Create claw agent error:', err)
         return fail(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.agentConfigUpdateFailed'),
+            err instanceof Error ? err.message : t('api.agentCreateFailed'),
             500
         )
     }
 }
 
-export default updateClawAgentConfig
+export default createClawAgent

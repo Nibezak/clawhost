@@ -55,6 +55,7 @@ const getClawAgentConfig = async (
             const configRaw = (parts[0] || '{}').trim()
             const envRaw = (parts[1] || '').trim()
 
+            let agentName: string = body.agentId
             let agentModel: string | null = null
             let defaultModel: string | null = null
 
@@ -74,6 +75,7 @@ const getClawAgentConfig = async (
                 )
 
                 if (agent) {
+                    agentName = (agent.name as string) || body.agentId
                     agentModel = (agent.model as string) || null
                 }
             } catch {
@@ -105,6 +107,7 @@ const getClawAgentConfig = async (
                 {
                     agent: {
                         id: body.agentId,
+                        name: agentName,
                         model: agentModel
                     },
                     envVars,

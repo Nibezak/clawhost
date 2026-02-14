@@ -1,8 +1,9 @@
 import type { FC, ReactNode } from 'react'
 import type { HeaderProps } from '@/ts/Interfaces'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
 import { useProfile } from '@/hooks'
@@ -18,7 +19,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Logo } from '@/components/Logo'
 import { ROUTES } from '@/lib/routes'
-import { Key, User, SignOut, Lightning } from '@phosphor-icons/react'
+import { Key, User, SignOut, Lightning, List, X } from '@phosphor-icons/react'
 import { ClawMascotOutline } from '@/components/ClawMascotOutline'
 
 const Header: FC<HeaderProps> = ({
@@ -39,6 +40,17 @@ const Header: FC<HeaderProps> = ({
         handleScroll()
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
+
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+    const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), [])
+
+    useEffect(() => {
+        if (!mobileMenuOpen) return
+        const onScroll = () => setMobileMenuOpen(false)
+        window.addEventListener('scroll', onScroll)
+        return () => window.removeEventListener('scroll', onScroll)
+    }, [mobileMenuOpen])
 
     const { data: profile } = useProfile({
         enabled: !!user,
@@ -66,125 +78,189 @@ const Header: FC<HeaderProps> = ({
     const isLandingPage = location.pathname === '/'
 
     return (
-        <header
-            className={`${isLandingPage ? 'fixed' : 'relative'} left-0 right-0 top-0 z-50 transition-all duration-300 ${
-                scrolled
-                    ? 'border-b border-white/10 bg-[#0a0a0f]/80 backdrop-blur-xl'
-                    : 'border-b border-transparent bg-transparent'
-            }`}
-        >
-            <div className='mx-auto grid max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-4 px-6 py-4'>
-                <Logo />
+        <>
+            <header
+                className={`${isLandingPage ? 'fixed' : 'relative'} left-0 right-0 top-0 z-50 transition-all duration-300 ${
+                    mobileMenuOpen
+                        ? 'border-b border-transparent bg-[#0a0a0f] backdrop-blur-xl'
+                        : scrolled
+                          ? 'border-b border-white/10 bg-[#0a0a0f]/80 backdrop-blur-xl'
+                          : 'border-b border-transparent bg-transparent'
+                }`}
+            >
+                <div className='mx-auto grid max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-4 px-6 py-4'>
+                    <Logo />
 
-                {showNavLinks && navLinks.length > 0 ? (
-                    <nav className='hidden items-center justify-center gap-6 md:flex'>
-                        {navLinks.map((link) => (
-                            <a
-                                key={link.href}
-                                href={link.href}
-                                className={`text-sm font-medium transition ${
-                                    activeSection === link.id
-                                        ? 'text-white'
-                                        : 'text-gray-400 hover:text-white'
-                                }`}
-                            >
-                                {link.label}
-                            </a>
-                        ))}
-                    </nav>
-                ) : (
-                    <div />
-                )}
-
-                <div className='flex items-center gap-3'>
-                    {authLoading && !cachedProfile ? (
-                        <Button
-                            variant='ghost'
-                            size='sm'
-                            className='pointer-events-none ml-auto flex w-auto items-center gap-2 px-1.5 py-5'
-                        >
-                            <Skeleton className='h-7 w-7 shrink-0 rounded-full bg-white/10' />
-                            <Skeleton className='hidden h-4 w-16 rounded bg-white/10 sm:block' />
-                        </Button>
-                    ) : user || cachedProfile ? (
-                        <DropdownMenu modal={false}>
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant='ghost'
-                                    size='sm'
-                                    className='ml-auto flex w-auto items-center gap-2 px-1.5 py-[18px] hover:bg-white/10'
+                    {showNavLinks && navLinks.length > 0 ? (
+                        <nav className='hidden items-center justify-center gap-6 md:flex'>
+                            {navLinks.map((link) => (
+                                <a
+                                    key={link.href}
+                                    href={link.href}
+                                    className={`text-sm font-medium transition ${
+                                        activeSection === link.id
+                                            ? 'text-white'
+                                            : 'text-gray-400 hover:text-white'
+                                    }`}
                                 >
-                                    <Avatar className='h-7 w-7'>
-                                        <AvatarFallback className='bg-gradient-to-br from-[#ef5350] to-[#c62828] text-xs text-white'>
-                                            {getInitials(displayName)}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <span className='hidden max-w-[120px] truncate text-sm text-gray-300 sm:block'>
-                                        {displayName}
-                                    </span>
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent
-                                align='end'
-                                className='w-56 border-white/10 bg-[#151518]'
-                            >
-                                <DropdownMenuItem
-                                    onClick={() => navigate(ROUTES.CLAWS)}
-                                    className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.CLAWS ? 'bg-white/10' : ''}`}
-                                >
-                                    <ClawMascotOutline className='h-4 w-4' />
-                                    {t('nav.claws')}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() => navigate(ROUTES.SSH_KEYS)}
-                                    className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.SSH_KEYS ? 'bg-white/10' : ''}`}
-                                >
-                                    <Key className='h-4 w-4' />
-                                    {t('nav.sshKeys')}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() => navigate(ROUTES.ACCOUNT)}
-                                    className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.ACCOUNT ? 'bg-white/10' : ''}`}
-                                >
-                                    <User className='h-4 w-4' />
-                                    {t('nav.account')}
-                                </DropdownMenuItem>
-                                <DropdownMenuSeparator className='bg-white/10' />
-                                <DropdownMenuItem
-                                    onClick={signOut}
-                                    className='text-red-400 focus:bg-white/10 focus:text-red-400'
-                                >
-                                    <SignOut className='h-4 w-4' />
-                                    {t('nav.signOut')}
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                                    {link.label}
+                                </a>
+                            ))}
+                        </nav>
                     ) : (
-                        <div className='flex items-center gap-2'>
-                            <Link
-                                to={ROUTES.LOGIN}
-                                className='hidden px-3 py-1.5 text-sm text-gray-400 transition hover:text-white sm:block'
-                            >
-                                {t('nav.login')}
-                            </Link>
-                            <Button
-                                size='lg'
-                                className='gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] px-4 text-white hover:opacity-90'
-                                asChild
-                            >
-                                <Link to={ROUTES.LOGIN}>
-                                    <Lightning
-                                        className='h-4 w-4'
-                                        weight='fill'
-                                    />
-                                    {t('nav.deployOpenClaw')}
-                                </Link>
-                            </Button>
-                        </div>
+                        <div />
                     )}
+
+                    <div className='flex items-center gap-3'>
+                        {authLoading && !cachedProfile ? (
+                            <Button
+                                variant='ghost'
+                                size='sm'
+                                className='pointer-events-none ml-auto flex w-auto items-center gap-2 px-1.5 py-5'
+                            >
+                                <Skeleton className='h-7 w-7 shrink-0 rounded-full bg-white/10' />
+                                <Skeleton className='hidden h-4 w-16 rounded bg-white/10 sm:block' />
+                            </Button>
+                        ) : user || cachedProfile ? (
+                            <DropdownMenu modal={false}>
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant='ghost'
+                                        size='sm'
+                                        className='ml-auto flex w-auto items-center gap-2 px-1.5 py-[18px] hover:bg-white/10'
+                                    >
+                                        <Avatar className='h-7 w-7'>
+                                            <AvatarFallback className='bg-gradient-to-br from-[#ef5350] to-[#c62828] text-xs text-white'>
+                                                {getInitials(displayName)}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <span className='hidden max-w-[120px] truncate text-sm text-gray-300 sm:block'>
+                                            {displayName}
+                                        </span>
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent
+                                    align='end'
+                                    className='w-56 border-white/10 bg-[#151518]'
+                                >
+                                    <DropdownMenuItem
+                                        onClick={() => navigate(ROUTES.CLAWS)}
+                                        className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.CLAWS ? 'bg-white/10' : ''}`}
+                                    >
+                                        <ClawMascotOutline className='h-4 w-4' />
+                                        {t('nav.claws')}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        onClick={() =>
+                                            navigate(ROUTES.SSH_KEYS)
+                                        }
+                                        className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.SSH_KEYS ? 'bg-white/10' : ''}`}
+                                    >
+                                        <Key className='h-4 w-4' />
+                                        {t('nav.sshKeys')}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        onClick={() => navigate(ROUTES.ACCOUNT)}
+                                        className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.ACCOUNT ? 'bg-white/10' : ''}`}
+                                    >
+                                        <User className='h-4 w-4' />
+                                        {t('nav.account')}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator className='bg-white/10' />
+                                    <DropdownMenuItem
+                                        onClick={signOut}
+                                        className='text-red-400 focus:bg-white/10 focus:text-red-400'
+                                    >
+                                        <SignOut className='h-4 w-4' />
+                                        {t('nav.signOut')}
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        ) : (
+                            <div className='flex items-center gap-2'>
+                                <Link
+                                    to={ROUTES.LOGIN}
+                                    className='hidden px-3 py-1.5 text-sm text-gray-400 transition hover:text-white sm:block'
+                                >
+                                    {t('nav.login')}
+                                </Link>
+                                <Button
+                                    size='lg'
+                                    className='gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] px-4 text-white hover:opacity-90'
+                                    asChild
+                                >
+                                    <Link to={ROUTES.LOGIN}>
+                                        <Lightning
+                                            className='h-4 w-4'
+                                            weight='fill'
+                                        />
+                                        {t('nav.deployOpenClaw')}
+                                    </Link>
+                                </Button>
+                            </div>
+                        )}
+                        {showNavLinks && navLinks.length > 0 && (
+                            <button
+                                onClick={() =>
+                                    setMobileMenuOpen(!mobileMenuOpen)
+                                }
+                                className='rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white md:hidden'
+                            >
+                                {mobileMenuOpen ? (
+                                    <X className='h-5 w-5' weight='bold' />
+                                ) : (
+                                    <List className='h-5 w-5' weight='bold' />
+                                )}
+                            </button>
+                        )}
+                    </div>
                 </div>
-            </div>
-        </header>
+
+                <AnimatePresence>
+                    {mobileMenuOpen && showNavLinks && navLinks.length > 0 && (
+                        <>
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.2 }}
+                                className='border-b border-white/10 bg-[#0a0a0f] px-6 pb-6 pt-2 md:hidden'
+                            >
+                                <nav className='flex flex-col gap-1'>
+                                    {navLinks.map((link) => (
+                                        <a
+                                            key={link.href}
+                                            href={link.href}
+                                            onClick={closeMobileMenu}
+                                            className={`rounded-lg px-3 py-2.5 text-sm font-medium transition ${
+                                                activeSection === link.id
+                                                    ? 'bg-white/10 text-white'
+                                                    : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                                            }`}
+                                        >
+                                            {link.label}
+                                        </a>
+                                    ))}
+                                </nav>
+                            </motion.div>
+                        </>
+                    )}
+                </AnimatePresence>
+            </header>
+
+            <AnimatePresence>
+                {mobileMenuOpen && showNavLinks && navLinks.length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className='fixed inset-0 z-40 md:hidden'
+                        onClick={closeMobileMenu}
+                    />
+                )}
+            </AnimatePresence>
+        </>
     )
 }
 

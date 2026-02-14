@@ -8,6 +8,7 @@ import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { X, Info, Scroll, Pulse, Key } from '@phosphor-icons/react'
 import ClawAvatar from '@/components/ClawAvatar'
+import getBaseDomain from '@/lib/getBaseDomain'
 import ProviderIcon from '@/components/ProviderIcon'
 import { CopyableField } from '@/components/dashboard/CopyableField'
 import ClawLogsContent from '@/components/dashboard/ClawLogsContent'
@@ -33,7 +34,8 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
     claw,
     plans,
     sshKeys,
-    onClose
+    onClose,
+    readOnly
 }): ReactNode => {
     const activeTab = tabStateMap[claw.id] || 'info'
     const setActiveTab = useCallback(
@@ -57,29 +59,29 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
 
     return (
         <motion.div
-            initial={false}
+            initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'tween', duration: 0.2 }}
-            className='h-full w-[380px] shrink-0 overflow-hidden'
+            className='h-full w-[90vw] shrink-0 overflow-hidden md:w-[380px]'
         >
-            <div className='flex h-full w-[380px] flex-col border-l border-white/10 bg-[#0a0a0f]/95 backdrop-blur-xl'>
-                <div className='flex items-center justify-between border-b border-white/10 px-5 py-4'>
-                    <div className='flex items-center gap-3'>
+            <div className='flex h-full w-full flex-col border-l border-white/10 bg-[#0a0a0f] md:bg-[#0a0a0f]/95 md:backdrop-blur-xl'>
+                <div className='flex items-center justify-between border-b border-white/10 px-5 py-2.5'>
+                    <div className='flex items-center gap-2.5'>
                         <ClawAvatar />
-                        <div>
-                            <h3 className='text-sm font-semibold text-white'>
+                        <div className='space-y-0'>
+                            <h3 className='text-sm font-semibold leading-tight text-white'>
                                 {claw.name}
                             </h3>
                             {claw.status !== 'configuring' && (
                                 <a
-                                    href={`https://${claw.subdomain || generateSlug(claw.id)}.clawhost.cloud${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
+                                    href={`https://${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
                                     target='_blank'
                                     rel='noopener noreferrer'
-                                    className='text-xs text-gray-500 transition-colors hover:text-gray-300'
+                                    className='block text-xs leading-tight text-gray-500 transition-colors hover:text-gray-300'
                                 >
-                                    {claw.subdomain || generateSlug(claw.id)}
-                                    .clawhost.cloud
+                                    {claw.subdomain || generateSlug(claw.id)}.
+                                    {getBaseDomain()}
                                 </a>
                             )}
                         </div>
@@ -97,7 +99,7 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className={`flex flex-1 items-center justify-center gap-1.5 border-b-2 px-3 py-2.5 text-xs font-medium transition-colors ${
+                            className={`flex flex-1 items-center justify-center gap-1.5 border-b-2 px-3 py-2 text-xs font-medium transition-colors ${
                                 activeTab === tab.id
                                     ? 'border-[#ef5350] text-white'
                                     : 'border-transparent text-gray-500 hover:text-gray-300'
@@ -254,17 +256,45 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                     )}
 
                     {activeTab === 'logs' && (
-                        <ClawLogsContent clawId={claw.id} enabled embedded />
+                        <ClawLogsContent
+                            clawId={claw.id}
+                            enabled
+                            embedded
+                            mockLogs={readOnly
+                                ? '2026-02-14T10:23:41Z Starting OpenClaw agent...\n2026-02-14T10:23:42Z Loading model: claude-sonnet-4-5\n2026-02-14T10:23:43Z Agent ready on port 3000\n2026-02-14T10:23:44Z Connected to gateway\n2026-02-14T10:24:01Z Request received: /chat\n2026-02-14T10:24:03Z Response sent (1.2s)\n2026-02-14T10:25:12Z Request received: /chat\n2026-02-14T10:25:14Z Response sent (1.8s)\n2026-02-14T10:26:30Z Health check passed'
+                                : undefined
+                            }
+                        />
                     )}
 
                     {activeTab === 'diagnostics' && (
                         <div className='h-full overflow-y-auto p-5'>
-                            <ClawDiagnosticsContent clawId={claw.id} enabled />
+                            <ClawDiagnosticsContent
+                                clawId={claw.id}
+                                enabled
+                                mockData={readOnly
+                                    ? {
+                                          service: '● openclaw.service - OpenClaw Agent\n   Loaded: loaded (/etc/systemd/system/openclaw.service; enabled)\n   Active: active (running) since Fri 2026-02-14 10:23:41 UTC\n Main PID: 1847 (node)\n    Tasks: 11 (limit: 4915)\n   Memory: 128.4M\n      CPU: 2.341s\n   CGroup: /system.slice/openclaw.service\n           └─1847 node /opt/openclaw/server.js',
+                                          port: 'tcp  0  0 0.0.0.0:3000  0.0.0.0:*  LISTEN  1847/node',
+                                          memory: 'Mem: 1987Mi total, 128Mi used, 1640Mi free, 219Mi buff/cache\nSwap: 0B total, 0B used, 0B free'
+                                      }
+                                    : undefined
+                                }
+                            />
                         </div>
                     )}
 
                     {activeTab === 'variables' && (
-                        <PlaygroundVariablesContent clawId={claw.id} />
+                        <PlaygroundVariablesContent
+                            clawId={claw.id}
+                            mockEnvVars={readOnly
+                                ? {
+                                      ANTHROPIC_API_KEY: 'sk-ant-api03-••••••••',
+                                      OPENAI_API_KEY: 'sk-proj-••••••••'
+                                  }
+                                : undefined
+                            }
+                        />
                     )}
                 </div>
             </div>

@@ -81,7 +81,7 @@ const Dashboard: FC = (): ReactNode => {
     const { instancesViewMode, setInstancesViewMode } = usePreferencesStore()
     const { showToast } = useUIStore()
 
-    const { user, cachedProfile, signOut } = useAuth()
+    const { user, loading: authLoading, cachedProfile, signOut } = useAuth()
     const { data: profile } = useProfile({
         enabled: !!user,
         staleTime: 1000 * 60 * 5
@@ -216,11 +216,11 @@ const Dashboard: FC = (): ReactNode => {
     const activeClawsLoading = adminMode ? isAdminClawsLoading : isClawsLoading
     const activeIsError = adminMode ? isAdminClawsError : isError
     const activeRefetch = adminMode ? refetchAdmin : refetch
-    const isLoading = activeClawsLoading || isModeSwitching
+    const isLoading = authLoading || activeClawsLoading || isModeSwitching
 
     useEffect(() => {
         if (isModeSwitching && !activeClawsLoading) {
-            const timer = setTimeout(() => setIsModeSwitching(false), 400)
+            const timer = setTimeout(() => setIsModeSwitching(false), 1800)
             return () => clearTimeout(timer)
         }
     }, [isModeSwitching, activeClawsLoading])
@@ -241,20 +241,25 @@ const Dashboard: FC = (): ReactNode => {
         ? activeClaws?.find((c) => c.id === selectedAgentClawId) || null
         : null
 
-    const selectedAgent =
+    const selectedAgentResult =
         selectedAgentId && selectedAgentClaw
             ? (() => {
                   const clawIndex = graphClaws.findIndex(
                       (c) => c.id === selectedAgentClawId
                   )
                   const query = clawIndex >= 0 ? agentQueries[clawIndex] : null
-                  return (
-                      query?.data?.agents?.find(
-                          (a) => a.id === selectedAgentId
-                      ) || null
-                  )
+                  const agents = query?.data?.agents || []
+                  const agent =
+                      agents.find((a) => a.id === selectedAgentId) || null
+                  return {
+                      agent,
+                      isOnly: agents.length <= 1
+                  }
               })()
             : null
+
+    const selectedAgent = selectedAgentResult?.agent || null
+    const isSelectedAgentOnly = selectedAgentResult?.isOnly || false
 
     const viewSwitcher = (
         <div className='flex items-center rounded-lg border border-white/10 p-0.5'>
@@ -375,7 +380,7 @@ const Dashboard: FC = (): ReactNode => {
                     <div className='flex items-center gap-3'>
                         {clawFilter}
                         {viewSwitcher}
-                        {!adminMode && (
+                        {!adminMode && !isLoading && displayedClaws && displayedClaws.length > 0 && (
                             <ActionButton
                                 onClick={() => setShowCreate(true)}
                                 icon={
@@ -541,6 +546,7 @@ const Dashboard: FC = (): ReactNode => {
                                 agent={selectedAgent}
                                 clawId={selectedAgentClaw.id}
                                 clawName={selectedAgentClaw.name}
+                                isOnlyAgent={isSelectedAgentOnly}
                                 onClose={() => {
                                     setSelectedAgentId(null)
                                     setSelectedAgentClawId(null)
@@ -602,9 +608,7 @@ const Dashboard: FC = (): ReactNode => {
                     }
                     description={`${displayedClaws.length} ${displayedClaws.length === 1 ? t('dashboard.claw') : t('dashboard.clawsPlural')}`}
                     action={
-                        !isLoading &&
-                        !adminMode &&
-                        displayedClaws.length === 0 ? undefined : (
+                        adminMode || (isLoading ? (knowsCount && skeletonCount > 0) : displayedClaws.length > 0) ? (
                             <div className='flex items-center gap-2'>
                                 {clawFilter}
                                 {viewSwitcher}
@@ -621,7 +625,7 @@ const Dashboard: FC = (): ReactNode => {
                                     />
                                 )}
                             </div>
-                        )
+                        ) : undefined
                     }
                 />
 

@@ -6,6 +6,7 @@ import PlaygroundDetailPanel from '@/components/playground/PlaygroundDetailPanel
 import PlaygroundLoadingState from '@/components/playground/PlaygroundLoadingState'
 import PlaygroundToolbar from '@/components/playground/PlaygroundToolbar'
 import PlaygroundVariablesContent from '@/components/playground/PlaygroundVariablesContent'
+import CreateAgentModal from '@/components/playground/CreateAgentModal'
 
 export {
     PlaygroundClawNode,
@@ -15,5 +16,6 @@ export {
     PlaygroundDetailPanel,
     PlaygroundLoadingState,
     PlaygroundToolbar,
-    PlaygroundVariablesContent
+    PlaygroundVariablesContent,
+    CreateAgentModal
 }

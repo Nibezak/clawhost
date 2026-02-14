@@ -28,26 +28,6 @@ const demoClaws: Claw[] = [
         currentPeriodEnd: null,
         deletionScheduledAt: null,
         createdAt: '2026-01-15T00:00:00Z'
-    },
-    {
-        id: 'demo-2',
-        name: 'team-project',
-        provider: 'digitalocean',
-        status: 'running',
-        ip: '192.241.145.32',
-        planId: 's-2vcpu-4gb',
-        location: 'New York 1, US',
-        rootPassword: null,
-        sshKeyId: null,
-        providerServerId: '48291187',
-        subdomain: 'team-project',
-        gatewayToken: null,
-        model: 'gpt-4o',
-        subscriptionStatus: 'active',
-        currentPeriodStart: null,
-        currentPeriodEnd: null,
-        deletionScheduledAt: null,
-        createdAt: '2026-01-22T00:00:00Z'
     }
 ]
 
@@ -64,22 +44,6 @@ const demoAgents: ClawAgent[][] = [
             id: 'agent-1b',
             name: 'test-runner',
             model: 'gpt-4o',
-            status: 'running',
-            directory: null
-        }
-    ],
-    [
-        {
-            id: 'agent-2a',
-            name: 'copilot',
-            model: 'gpt-4o',
-            status: 'running',
-            directory: null
-        },
-        {
-            id: 'agent-2b',
-            name: 'reviewer',
-            model: 'gemini-2.0-flash',
             status: 'running',
             directory: null
         }
@@ -117,7 +81,8 @@ const buildDemoGraph = (): DemoPlaygroundData => {
                 claw,
                 agentCount: agents.length,
                 isLoadingAgents: false,
-                isReachable: true
+                isReachable: true,
+                readOnly: true
             } as Record<string, unknown>,
             draggable: false
         })

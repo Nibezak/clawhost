@@ -28,6 +28,7 @@ import { ClawCardDialogs } from '@/components/dashboard/ClawCardDialogs'
 import ClawDiagnosticsDialog from '@/components/dashboard/ClawDiagnosticsDialog'
 import ClawLogsDialog from '@/components/dashboard/ClawLogsDialog'
 import ClawConfigDialog from '@/components/dashboard/ClawConfigDialog'
+import CreateAgentModal from '@/components/playground/CreateAgentModal'
 import {
     Tooltip,
     TooltipTrigger,
@@ -49,7 +50,7 @@ const handleStyle = {
 const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
     data
 }): ReactNode => {
-    const { claw, agentCount, isLoadingAgents, isReachable, isSelected } = data
+    const { claw, agentCount, isLoadingAgents, isReachable, isSelected, readOnly } = data
     const statusConfigs = getStatusConfig()
     const status = statusConfigs[claw.status] || statusConfigs.unknown
 
@@ -68,6 +69,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
     const [showConfig, setShowConfig] = useState(false)
     const [showReinstallModal, setShowReinstallModal] = useState(false)
     const [isExporting, setIsExporting] = useState(false)
+    const [showAddAgent, setShowAddAgent] = useState(false)
 
     const startMutation = useStartClaw()
     const stopMutation = useStopClaw()
@@ -223,40 +225,52 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                             {status.label}
                         </span>
                     </div>
-                    <div
-                        className='flex shrink-0 items-center'
-                        onClick={(e) => e.stopPropagation()}
-                        onPointerDown={(e) => e.stopPropagation()}
-                        onMouseDown={(e) => e.stopPropagation()}
-                    >
-                        <ClawCardDropdownMenu
-                            claw={claw}
-                            actions={actions}
-                            isLoading={isMutating}
-                            copied={copied}
-                            passwordCopied={passwordCopied}
-                            hasActionItems={hasActionItems}
-                            isScheduledForDeletion={isScheduledForDeletion}
-                            isAdmin={profile?.role === 'admin'}
-                            isPlayground
-                            compact
-                        />
-                    </div>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <button
+                    {!readOnly && (
+                        <>
+                            <div
+                                className='flex shrink-0 items-center'
                                 onClick={(e) => e.stopPropagation()}
                                 onPointerDown={(e) => e.stopPropagation()}
                                 onMouseDown={(e) => e.stopPropagation()}
-                                className='shrink-0 rounded-md p-1 text-gray-500 transition-colors hover:bg-white/10 hover:text-white'
                             >
-                                <Plus className='h-3.5 w-3.5' weight='bold' />
-                            </button>
-                        </TooltipTrigger>
-                        <TooltipContent side='top'>
-                            <p>{t('playground.addAgent')}</p>
-                        </TooltipContent>
-                    </Tooltip>
+                                <ClawCardDropdownMenu
+                                    claw={claw}
+                                    actions={actions}
+                                    isLoading={isMutating}
+                                    copied={copied}
+                                    passwordCopied={passwordCopied}
+                                    hasActionItems={hasActionItems}
+                                    isScheduledForDeletion={isScheduledForDeletion}
+                                    isAdmin={profile?.role === 'admin'}
+                                    isPlayground
+                                    compact
+                                />
+                            </div>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            if (!isLoadingAgents) setShowAddAgent(true)
+                                        }}
+                                        onPointerDown={(e) => e.stopPropagation()}
+                                        onMouseDown={(e) => e.stopPropagation()}
+                                        disabled={isLoadingAgents}
+                                        className={`shrink-0 rounded-md p-1 transition-colors ${
+                                            isLoadingAgents
+                                                ? 'cursor-not-allowed text-gray-700'
+                                                : 'text-gray-500 hover:bg-white/10 hover:text-white'
+                                        }`}
+                                    >
+                                        <Plus className='h-3.5 w-3.5' weight='bold' />
+                                    </button>
+                                </TooltipTrigger>
+                                <TooltipContent side='top'>
+                                    <p>{t('playground.addAgent')}</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </>
+                    )}
                 </div>
 
                 <div className='px-4 py-3'>
@@ -353,6 +367,12 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                 clawId={claw.id}
                 open={showConfig}
                 onOpenChange={setShowConfig}
+            />
+            <CreateAgentModal
+                clawId={claw.id}
+                clawName={claw.name}
+                open={showAddAgent}
+                onOpenChange={setShowAddAgent}
             />
         </>
     )

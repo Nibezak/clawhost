@@ -60,8 +60,12 @@ export type {
     ProviderIconProps,
     SSHKeyCardProps,
     StatusConfig,
+    CreateAgentData,
+    CreateAgentModalProps,
+    CreateAgentResponse,
     CreateClawData,
     CreateSSHKeyData,
+    DeleteAgentData,
     DemoPlaygroundData,
     UpdateProfileData
 } from '@/ts/Interfaces'

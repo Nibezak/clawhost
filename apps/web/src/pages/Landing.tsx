@@ -3,13 +3,8 @@ import type { Faq, Testimonial } from '@/ts/Interfaces'
 import type { ProviderType } from '@/ts/Types'
 
 import { Link } from 'react-router-dom'
-import { useState, useEffect, useRef, useCallback } from 'react'
-import {
-    motion,
-    AnimatePresence,
-    useScroll,
-    useTransform
-} from 'framer-motion'
+import { useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -21,13 +16,13 @@ import { demoPlaygroundData } from '@/data'
 import {
     PlaygroundCanvas,
     PlaygroundDetailPanel,
-    PlaygroundAgentDetailPanel,
-    PlaygroundLoadingState
+    PlaygroundAgentDetailPanel
 } from '@/components/playground'
 import { useAuth } from '@/lib/auth'
 import { ROUTES } from '@/lib/routes'
 import { usePlans } from '@/hooks'
 import ProviderIcon from '@/components/ProviderIcon'
+import getBaseDomain from '@/lib/getBaseDomain'
 import {
     ShieldCheck,
     Globe,
@@ -121,75 +116,37 @@ const Landing: FC = (): ReactNode => {
 
     const [openFaq, setOpenFaq] = useState<number | null>(null)
     const [activeSection, setActiveSection] = useState('')
-    const [demoPhase, setDemoPhase] = useState<'idle' | 'loading' | 'ready'>(
-        'idle'
-    )
-    const [demoActive, setDemoActive] = useState(false)
-    const [demoActivated, setDemoActivated] = useState(false)
-    const [selectedClawId, setSelectedClawId] = useState<string | null>(null)
-    const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null)
-    const [selectedAgentClawId, setSelectedAgentClawId] = useState<
-        string | null
-    >(null)
 
     const previewRef = useRef<HTMLDivElement>(null)
-    const { scrollYProgress } = useScroll({
+    const { scrollYProgress: previewProgress } = useScroll({
         target: previewRef,
-        offset: ['start end', 'end end']
+        offset: ['start end', 'end start']
     })
-    const previewScale = useTransform(scrollYProgress, [0.05, 0.55], [0.65, 1])
-    const previewBorderRadius = useTransform(
-        scrollYProgress,
-        [0.05, 0.55],
-        [20, 12]
+    const previewScale = useTransform(
+        previewProgress,
+        [0, 0.4, 0.6, 1],
+        [0.92, 1.02, 1.02, 0.92]
     )
 
-    useEffect(() => {
-        if (demoActive) {
-            document.body.style.overflow = 'hidden'
-        } else {
-            document.body.style.overflow = ''
-        }
-        return () => {
-            document.body.style.overflow = ''
-        }
-    }, [demoActive])
+    const [demoClawId, setDemoClawId] = useState<string | null>(null)
+    const [demoAgentId, setDemoAgentId] = useState<string | null>(null)
+    const [demoAgentClawId, setDemoAgentClawId] = useState<string | null>(null)
 
-    const handlePlaygroundClick = useCallback(() => {
-        if (demoActive) return
-        setDemoActive(true)
-        setDemoActivated(true)
-        if (demoPhase === 'idle') {
-            setDemoPhase('loading')
-            setTimeout(() => setDemoPhase('ready'), 1500)
-        }
-    }, [demoActive, demoPhase])
-
-    const handlePlaygroundClose = useCallback(() => {
-        setDemoActive(false)
-        setSelectedClawId(null)
-        setSelectedAgentId(null)
-        setSelectedAgentClawId(null)
-    }, [])
-
-    const selectedClaw =
-        selectedClawId && !selectedAgentId
-            ? demoPlaygroundData.claws.find((c) => c.id === selectedClawId) ||
-              null
-            : null
-
-    const selectedAgentClaw = selectedAgentClawId
-        ? demoPlaygroundData.claws.find(
-              (c) => c.id === selectedAgentClawId
-          ) || null
+    const demoClaw = demoClawId
+        ? demoPlaygroundData.claws.find((c) => c.id === demoClawId) || null
         : null
 
-    const selectedAgent =
-        selectedAgentId && selectedAgentClaw
-            ? demoPlaygroundData.agentsByClawId[
-                  selectedAgentClaw.id
-              ]?.find((a) => a.id === selectedAgentId) || null
-            : null
+    const demoAgentClaw = demoAgentClawId
+        ? demoPlaygroundData.claws.find((c) => c.id === demoAgentClawId) || null
+        : null
+
+    const demoAgentList = demoAgentClaw
+        ? demoPlaygroundData.agentsByClawId[demoAgentClaw.id] || []
+        : []
+
+    const demoAgent = demoAgentId
+        ? demoAgentList.find((a) => a.id === demoAgentId) || null
+        : null
 
     useEffect(() => {
         const handleScroll = () => {
@@ -250,7 +207,7 @@ const Landing: FC = (): ReactNode => {
                 activeSection={activeSection}
             />
 
-            <section className='relative overflow-hidden px-6 pb-12 pt-32'>
+            <section className='relative overflow-hidden px-6 pb-16 pt-32'>
                 <div className='landing-grid pointer-events-none' />
 
                 <motion.div
@@ -316,7 +273,7 @@ const Landing: FC = (): ReactNode => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.5 }}
-                            className='flex items-center gap-8 text-center md:gap-16'
+                            className='grid grid-cols-2 gap-6 text-center md:flex md:items-center md:gap-16'
                         >
                             <div>
                                 <div className='font-clash text-3xl font-bold text-white md:text-4xl'>
@@ -326,7 +283,7 @@ const Landing: FC = (): ReactNode => {
                                     {t('landing.startingPrice')}
                                 </div>
                             </div>
-                            <div className='h-12 w-px bg-white/10' />
+                            <div className='hidden h-12 w-px bg-white/10 md:block' />
                             <div>
                                 <div className='font-clash text-3xl font-bold text-white md:text-4xl'>
                                     30+
@@ -335,7 +292,7 @@ const Landing: FC = (): ReactNode => {
                                     {t('landing.locations')}
                                 </div>
                             </div>
-                            <div className='h-12 w-px bg-white/10' />
+                            <div className='hidden h-12 w-px bg-white/10 md:block' />
                             <div>
                                 <div className='font-clash text-3xl font-bold text-white md:text-4xl'>
                                     45+
@@ -344,7 +301,7 @@ const Landing: FC = (): ReactNode => {
                                     {t('landing.servers')}
                                 </div>
                             </div>
-                            <div className='h-12 w-px bg-white/10' />
+                            <div className='hidden h-12 w-px bg-white/10 md:block' />
                             <div>
                                 <div className='font-clash text-3xl font-bold text-white md:text-4xl'>
                                     Zero
@@ -358,152 +315,115 @@ const Landing: FC = (): ReactNode => {
                 </motion.div>
             </section>
 
-            <div ref={previewRef} style={{ height: '160vh' }}>
-                <div className='sticky top-0 z-[60] h-screen'>
-                    <motion.div
-                        style={{
-                            scale: demoActivated ? 1 : previewScale,
-                            borderRadius: demoActivated
-                                ? 12
-                                : previewBorderRadius
-                        }}
-                        className='flex h-full w-full origin-center flex-col overflow-hidden bg-[#0a0a0f]'
-                    >
-                        <div className='flex items-center gap-3 border-b border-white/[0.06] bg-gradient-to-b from-[#1e1e24] to-[#18181e] px-5 py-3'>
-                            <div className='flex items-center gap-2'>
-                                <div className='h-3 w-3 rounded-full bg-[#ff5f57] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
-                                <div className='h-3 w-3 rounded-full bg-[#febc2e] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
-                                <div className='h-3 w-3 rounded-full bg-[#28c840] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
-                            </div>
-                            <div className='flex flex-1 justify-center'>
-                                <div className='flex items-center gap-2 rounded-lg bg-black/30 px-4 py-1.5 text-xs text-gray-500'>
-                                    <Lock
-                                        className='h-3 w-3 text-green-500/70'
-                                        weight='fill'
-                                    />
-                                    <span>
-                                        clawhost.cloud/playground
-                                    </span>
-                                </div>
-                            </div>
-                            {demoActive ? (
-                                <button
-                                    onClick={handlePlaygroundClose}
-                                    className='rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white'
-                                >
-                                    <X
-                                        className='h-4 w-4'
-                                        weight='bold'
-                                    />
-                                </button>
-                            ) : (
-                                <div className='w-[56px]' />
-                            )}
+            <div ref={previewRef} className='mx-auto mb-32 max-w-6xl px-6'>
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                    style={{ scale: previewScale }}
+                    className='flex h-[80vh] flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0a0a0f]'
+                >
+                    <div className='pointer-events-none flex items-center gap-3 border-b border-white/[0.06] bg-gradient-to-b from-[#1e1e24] to-[#18181e] px-5 py-3'>
+                        <div className='flex items-center gap-2'>
+                            <div className='h-3 w-3 rounded-full bg-[#ff5f57] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
+                            <div className='h-3 w-3 rounded-full bg-[#febc2e] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
+                            <div className='h-3 w-3 rounded-full bg-[#28c840] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
                         </div>
+                        <div className='flex flex-1 justify-center'>
+                            <div className='flex items-center gap-2 rounded-lg bg-black/30 px-4 py-1.5 text-xs text-gray-500'>
+                                <Lock
+                                    className='h-3 w-3 text-green-500/70'
+                                    weight='fill'
+                                />
+                                <span>{getBaseDomain()}/claws</span>
+                            </div>
+                        </div>
+                        <div className='w-[56px]' />
+                    </div>
 
-                        <div className='relative flex flex-1 overflow-hidden'>
-                            {!demoActive && (
-                                <div
-                                    onClick={handlePlaygroundClick}
-                                    className='absolute inset-0 z-10 flex cursor-pointer items-center justify-center'
-                                >
-                                    {demoPhase === 'idle' && (
-                                        <div className='rounded-xl border border-white/10 bg-white/5 px-6 py-3 backdrop-blur-sm transition-colors hover:bg-white/10'>
-                                            <span className='text-sm font-medium text-gray-300'>
-                                                {t(
-                                                    'landing.clickToExplore'
-                                                )}
-                                            </span>
-                                        </div>
-                                    )}
+                    <div className='flex flex-1 overflow-hidden'>
+                        <div className='relative flex min-w-0 flex-1 overflow-hidden'>
+                            <div className='relative min-w-0 flex-1'>
+                                <div className='playground-grid h-full'>
+                                    <PlaygroundCanvas
+                                        initialNodes={
+                                            demoPlaygroundData.nodes
+                                        }
+                                        initialEdges={
+                                            demoPlaygroundData.edges
+                                        }
+                                        initialZoom={1.25}
+                                        allowPageScroll
+                                        onNodeClick={(clawId) => {
+                                            setDemoAgentId(null)
+                                            setDemoAgentClawId(null)
+                                            setDemoClawId(
+                                                demoClawId === clawId
+                                                    ? null
+                                                    : clawId
+                                            )
+                                        }}
+                                        onAgentClick={(agentId, clawId) => {
+                                            setDemoClawId(null)
+                                            setDemoAgentId(
+                                                demoAgentId === agentId
+                                                    ? null
+                                                    : agentId
+                                            )
+                                            setDemoAgentClawId(clawId)
+                                        }}
+                                        onPaneClick={() => {
+                                            setDemoClawId(null)
+                                            setDemoAgentId(null)
+                                            setDemoAgentClawId(null)
+                                        }}
+                                        panelOpen={
+                                            !!demoClaw || !!demoAgent
+                                        }
+                                        selectedClawId={demoClawId}
+                                        selectedAgentId={demoAgentId}
+                                    />
                                 </div>
-                            )}
-
-                            <div
-                                className={`relative min-w-0 flex-1 ${demoActive ? '' : 'pointer-events-none'}`}
-                            >
-                                {demoPhase === 'idle' && (
-                                    <div className='playground-grid h-full' />
-                                )}
-                                {demoPhase === 'loading' && (
-                                    <div className='playground-grid h-full'>
-                                        <PlaygroundLoadingState />
-                                    </div>
-                                )}
-                                {demoPhase === 'ready' && (
-                                    <div className='playground-grid h-full'>
-                                        <PlaygroundCanvas
-                                            initialNodes={
-                                                demoPlaygroundData.nodes
-                                            }
-                                            initialEdges={
-                                                demoPlaygroundData.edges
-                                            }
-                                            initialZoom={0.75}
-                                            allowPageScroll
-                                            onNodeClick={(clawId) => {
-                                                setSelectedClawId(clawId)
-                                                setSelectedAgentId(null)
-                                                setSelectedAgentClawId(null)
-                                            }}
-                                            onAgentClick={(
-                                                agentId,
-                                                clawId
-                                            ) => {
-                                                setSelectedAgentId(agentId)
-                                                setSelectedAgentClawId(clawId)
-                                                setSelectedClawId(null)
-                                            }}
-                                            onPaneClick={() => {
-                                                setSelectedClawId(null)
-                                                setSelectedAgentId(null)
-                                                setSelectedAgentClawId(null)
-                                            }}
-                                            panelOpen={
-                                                !!selectedClaw ||
-                                                !!selectedAgent
-                                            }
-                                            selectedClawId={selectedClawId}
-                                            selectedAgentId={selectedAgentId}
-                                        />
-                                    </div>
-                                )}
                             </div>
 
                             <AnimatePresence>
-                                {demoActive && selectedClaw && (
+                                {demoClaw && (
                                     <PlaygroundDetailPanel
                                         key='detail-panel'
-                                        claw={selectedClaw}
+                                        claw={demoClaw}
                                         plans={[]}
                                         sshKeys={[]}
-                                        onClose={() => setSelectedClawId(null)}
+                                        onClose={() => setDemoClawId(null)}
+                                        readOnly
                                     />
                                 )}
 
-                                {demoActive &&
-                                    selectedAgent &&
-                                    selectedAgentClaw && (
-                                        <PlaygroundAgentDetailPanel
-                                            key='agent-panel'
-                                            agent={selectedAgent}
-                                            clawId={selectedAgentClaw.id}
-                                            clawName={selectedAgentClaw.name}
-                                            onClose={() => {
-                                                setSelectedAgentId(null)
-                                                setSelectedAgentClawId(null)
-                                            }}
-                                        />
-                                    )}
+                                {demoAgent && demoAgentClaw && (
+                                    <PlaygroundAgentDetailPanel
+                                        key='agent-panel'
+                                        agent={demoAgent}
+                                        clawId={demoAgentClaw.id}
+                                        clawName={demoAgentClaw.name}
+                                        isOnlyAgent={
+                                            demoAgentList.length <= 1
+                                        }
+                                        onClose={() => {
+                                            setDemoAgentId(null)
+                                            setDemoAgentClawId(null)
+                                        }}
+                                        readOnly
+                                    />
+                                )}
                             </AnimatePresence>
                         </div>
-                    </motion.div>
-                </div>
+                    </div>
+                </motion.div>
             </div>
 
             <section
                 id='how-it-works'
-                className='relative scroll-mt-20 px-6 py-24'
+                className='relative scroll-mt-20 border-t border-white/5 px-6 py-24'
             >
                 <div className='mx-auto max-w-6xl'>
                     <div className='mb-16 text-center'>
