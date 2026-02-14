@@ -4,6 +4,7 @@ export const ROUTES = {
     CLAWS: '/claws',
     SSH_KEYS: '/ssh-keys',
     ACCOUNT: '/account',
+    BILLING: '/billing',
     TERMS: '/terms',
     PRIVACY: '/privacy',
     CHANGELOG: '/changelog',

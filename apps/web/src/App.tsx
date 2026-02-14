@@ -11,6 +11,7 @@ import Login from '@/pages/Login'
 import Dashboard from '@/pages/Dashboard'
 import SSHKeys from '@/pages/SSHKeys'
 import Account from '@/pages/Account'
+import Billing from '@/pages/Billing'
 import Terms from '@/pages/Terms'
 import Privacy from '@/pages/Privacy'
 import Changelog from '@/pages/Changelog'
@@ -54,6 +55,14 @@ const App: FC = (): ReactNode => {
                         element={
                             <ProtectedRoute>
                                 <Account />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path={ROUTES.BILLING}
+                        element={
+                            <ProtectedRoute>
+                                <Billing />
                             </ProtectedRoute>
                         }
                     />
