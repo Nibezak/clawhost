@@ -831,6 +831,7 @@ export const en = {
         zoomLabel: '{{percent}}%',
         fitView: 'Center',
         nodesOutOfView: 'Claws out of view',
+        nodeOutOfView: 'Claw out of view',
         addAgent: 'Add agent',
         listView: 'List view',
         gridView: 'Grid view',

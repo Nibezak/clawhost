@@ -696,6 +696,7 @@ export interface PlaygroundToolbarProps {
     onFitView: () => void
     isFitView: boolean
     nodesOutOfView: boolean
+    clawCount: number
 }
 
 export interface AgentConfigResponse {

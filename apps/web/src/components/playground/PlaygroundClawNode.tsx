@@ -22,7 +22,8 @@ import {
 import api from '@/lib/api'
 import ProviderIcon from '@/components/ProviderIcon'
 import getStatusConfig from '@/lib/claw-utils/getStatusConfig'
-import { Plus, WifiSlash } from '@phosphor-icons/react'
+import { Plus, WifiSlash, Clock } from '@phosphor-icons/react'
+import ClawMascot from '@/components/ClawMascot'
 import ClawCardDropdownMenu from '@/components/dashboard/ClawCardDropdownMenu'
 import ClawCardDialogs from '@/components/dashboard/ClawCardDialogs'
 import ClawDiagnosticsDialog from '@/components/dashboard/ClawDiagnosticsDialog'
@@ -324,6 +325,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                             </div>
                         ) : (
                             <div className='flex items-center gap-1.5 rounded-md bg-[#ef5350]/10 px-2 py-1'>
+                                <ClawMascot className='h-3 w-3 text-[#ef5350]' />
                                 <span className='text-xs text-[#ef5350]'>
                                     {agentCount === 1
                                         ? t('playground.agentCount', {
@@ -334,6 +336,28 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                                           })}
                                 </span>
                             </div>
+                        )}
+                        {isScheduledForDeletion && (
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <div className='flex items-center gap-1.5 rounded-md bg-gray-500/10 px-2 py-1'>
+                                        <Clock className='h-3 w-3 text-gray-400' weight='fill' />
+                                        <span className='text-xs text-gray-400'>
+                                            {t('dashboard.scheduledDeletionShort', {
+                                                date: new Date(claw.deletionScheduledAt!).toLocaleDateString('en-US', {
+                                                    month: 'short',
+                                                    day: 'numeric'
+                                                })
+                                            })}
+                                        </span>
+                                    </div>
+                                </TooltipTrigger>
+                                <TooltipContent side='top'>
+                                    <p>
+                                        {t('dashboard.scheduledForDeletion')}
+                                    </p>
+                                </TooltipContent>
+                            </Tooltip>
                         )}
                     </div>
                 </div>

@@ -394,6 +394,7 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
                     onFitView={handleFitView}
                     isFitView={isFitView}
                     nodesOutOfView={nodesOutOfView}
+                    clawCount={nodes.filter((n) => n.type === 'clawNode').length}
                 />
             )}
         </div>
