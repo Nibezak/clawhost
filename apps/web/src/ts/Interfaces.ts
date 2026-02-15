@@ -837,9 +837,16 @@ export interface UseAgentChatParams {
 export interface UseAgentChatReturn {
     messages: ChatMessage[]
     connectionState: GatewayConnectionState
+    isLoading: boolean
     isStreaming: boolean
     sendMessage: (text: string) => void
     abortResponse: () => void
+}
+
+export interface GatewayPendingRequest {
+    resolve: (payload: unknown) => void
+    reject: (error: Error) => void
+    timer: ReturnType<typeof setTimeout>
 }
 
 export interface AgentChatProps {
@@ -849,4 +856,23 @@ export interface AgentChatProps {
     gatewayToken: string | null | undefined
     agentModel: string | null
     readOnly?: boolean
+}
+
+export interface ChatBubbleProps {
+    message: ChatMessage
+}
+
+export interface ChatInputProps {
+    isConnected: boolean
+    isStreaming: boolean
+    onSend: (text: string) => void
+    onAbort: () => void
+}
+
+export interface ChatEmptyStateProps {
+    isError: boolean
+}
+
+export interface ChatStatusBarProps {
+    connectionState: GatewayConnectionState
 }

@@ -1,4 +1,4 @@
-import AgentChat from '@/components/playground/AgentChat'
+import { AgentChat } from '@/components/playground/AgentChat'
 import PlaygroundClawNode from '@/components/playground/PlaygroundClawNode'
 import PlaygroundAgentNode from '@/components/playground/PlaygroundAgentNode'
 import PlaygroundAgentDetailPanel from '@/components/playground/PlaygroundAgentDetailPanel'

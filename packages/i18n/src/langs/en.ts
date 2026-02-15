@@ -762,13 +762,15 @@ export const en = {
             'Track updates, new features, and improvements to ClawHost.',
         subtitle: 'All updates, new features, and improvements to ClawHost.',
         upcomingRelease: 'Upcoming',
-        upcomingReleaseTitle: 'Channel & Skill Management',
+        upcomingReleaseTitle: 'Channels, Skills & Agent Chat',
         upcomingReleaseDescription:
-            'Full control over your OpenClaw channels and skills — manage everything directly from ClawHost without SSH.',
+            'Full control over your OpenClaw channels, skills, and agents — manage and chat with everything directly from the dashboard.',
         upcomingReleaseFeature1:
-            'Manage channels directly on ClawHost — add, remove, and configure channels without touching the server',
+            'Manage channels directly — add, remove, and configure channels without touching the server',
         upcomingReleaseFeature2:
-            'Manage skills directly on ClawHost — install, update, and organize agent skills from the dashboard',
+            'Manage skills directly — install, update, and organize agent skills from the dashboard',
+        upcomingReleaseFeature3:
+            'Chat with your agents from the playground — interact with any agent in real time',
         release1Date: 'February 8, 2026',
         release1Title: 'Initial Release',
         release1Description:

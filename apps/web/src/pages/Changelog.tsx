@@ -6,7 +6,7 @@ import Header from '@/components/Header'
 import LandingFooter from '@/components/LandingFooter'
 import PageBackground from '@/components/PageBackground'
 import PageTitle from '@/components/PageTitle'
-import { Check } from '@phosphor-icons/react'
+import { Check, Circle } from '@phosphor-icons/react'
 
 const Changelog: FC = (): ReactNode => {
     return (
@@ -32,7 +32,7 @@ const Changelog: FC = (): ReactNode => {
                 </p>
 
                 <div className='relative space-y-8 md:space-y-16'>
-                    <div className='absolute left-[19px] top-2 hidden h-[calc(100%-2rem)] w-px bg-gradient-to-b from-white/20 via-white/10 to-transparent md:block' />
+                    <div className='absolute left-[19px] top-6 hidden h-[calc(100%-3rem)] w-px bg-gradient-to-b from-white/20 via-white/10 to-transparent md:block' />
 
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -61,15 +61,21 @@ const Changelog: FC = (): ReactNode => {
 
                             <ul className='space-y-3'>
                                 <li className='flex items-center gap-3'>
-                                    <Check className='h-4 w-4 flex-shrink-0 text-amber-400' />
+                                    <Circle className='h-2.5 w-2.5 flex-shrink-0 text-amber-400' weight='fill' />
                                     <span className='text-sm text-white'>
                                         {t('changelog.upcomingReleaseFeature1')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <Check className='h-4 w-4 flex-shrink-0 text-amber-400' />
+                                    <Circle className='h-2.5 w-2.5 flex-shrink-0 text-amber-400' weight='fill' />
                                     <span className='text-sm text-white'>
                                         {t('changelog.upcomingReleaseFeature2')}
+                                    </span>
+                                </li>
+                                <li className='flex items-center gap-3'>
+                                    <Circle className='h-2.5 w-2.5 flex-shrink-0 text-amber-400' weight='fill' />
+                                    <span className='text-sm text-white'>
+                                        {t('changelog.upcomingReleaseFeature3')}
                                     </span>
                                 </li>
                             </ul>
@@ -133,7 +139,7 @@ const Changelog: FC = (): ReactNode => {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4, delay: 0.2 }}
+                        transition={{ duration: 0.4, delay: 0.3 }}
                         className='relative md:pl-14'
                     >
                         <div className='absolute left-0 top-1 hidden md:block'>
@@ -181,7 +187,7 @@ const Changelog: FC = (): ReactNode => {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4, delay: 0.3 }}
+                        transition={{ duration: 0.4, delay: 0.4 }}
                         className='relative md:pl-14'
                     >
                         <div className='absolute left-0 top-1 hidden md:block'>
@@ -229,7 +235,7 @@ const Changelog: FC = (): ReactNode => {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4, delay: 0.4 }}
+                        transition={{ duration: 0.4, delay: 0.5 }}
                         className='relative md:pl-14'
                     >
                         <div className='absolute left-0 top-1 hidden md:block'>
@@ -283,7 +289,7 @@ const Changelog: FC = (): ReactNode => {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4, delay: 0.5 }}
+                        transition={{ duration: 0.4, delay: 0.6 }}
                         className='relative md:pl-14'
                     >
                         <div className='absolute left-0 top-1 hidden md:block'>

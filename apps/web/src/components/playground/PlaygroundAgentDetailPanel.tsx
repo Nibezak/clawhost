@@ -23,7 +23,7 @@ import {
     Check,
     Trash
 } from '@phosphor-icons/react'
-import AgentChat from '@/components/playground/AgentChat'
+import { AgentChat } from '@/components/playground/AgentChat'
 import ClawAvatar from '@/components/ClawAvatar'
 import PanelPlaceholder from '@/components/PanelPlaceholder'
 import {

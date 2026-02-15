@@ -1,14 +1,7 @@
-import type { GatewayConnectionState } from '@/ts/Types'
+import type { GatewayConnectionState, GatewayEventHandler } from '@/ts/Types'
+import type { GatewayPendingRequest } from '@/ts/Interfaces'
 
 import getBaseDomain from '@/lib/getBaseDomain'
-
-type EventHandler = (payload: unknown) => void
-
-interface PendingRequest {
-    resolve: (payload: unknown) => void
-    reject: (error: Error) => void
-    timer: ReturnType<typeof setTimeout>
-}
 
 const REQUEST_TIMEOUT = 15000
 const MAX_RECONNECT_DELAY = 30000
@@ -18,8 +11,8 @@ class GatewayClient {
     private token: string
     private subdomain: string
     private requestId = 0
-    private pending = new Map<string, PendingRequest>()
-    private listeners = new Map<string, Set<EventHandler>>()
+    private pending = new Map<string, GatewayPendingRequest>()
+    private listeners = new Map<string, Set<GatewayEventHandler>>()
     private _state: GatewayConnectionState = 'disconnected'
     private onStateChange: ((state: GatewayConnectionState) => void) | null =
         null
@@ -54,7 +47,6 @@ class GatewayClient {
 
         const domain = getBaseDomain()
         const url = `wss://${this.subdomain}.${domain}/`
-        console.error('[GW] connecting to:', url)
 
         try {
             this.ws = new WebSocket(url)
@@ -72,15 +64,13 @@ class GatewayClient {
                     string,
                     unknown
                 >
-                console.error('[GW] frame:', JSON.stringify(frame))
                 this.handleFrame(frame)
             } catch {
-                console.error('[GW] malformed frame:', event.data)
+                /* malformed frame */
             }
         }
 
-        this.ws.onclose = (event) => {
-            console.error('[GW] close:', event.code, event.reason)
+        this.ws.onclose = () => {
             this.ws = null
             if (!this.intentionalClose) {
                 this.setState('disconnected')
@@ -88,8 +78,7 @@ class GatewayClient {
             }
         }
 
-        this.ws.onerror = (event) => {
-            console.error('[GW] error:', event)
+        this.ws.onerror = () => {
             if (this._state === 'connecting') {
                 this.setState('error')
             }
@@ -206,14 +195,14 @@ class GatewayClient {
         })
     }
 
-    on(event: string, handler: EventHandler): void {
+    on(event: string, handler: GatewayEventHandler): void {
         if (!this.listeners.has(event)) {
             this.listeners.set(event, new Set())
         }
         this.listeners.get(event)!.add(handler)
     }
 
-    off(event: string, handler: EventHandler): void {
+    off(event: string, handler: GatewayEventHandler): void {
         this.listeners.get(event)?.delete(handler)
     }
 
@@ -244,7 +233,6 @@ class GatewayClient {
     }
 
     private sendRaw(frame: Record<string, unknown>): void {
-        console.error('[GW] send:', JSON.stringify(frame))
         if (this.ws?.readyState === WebSocket.OPEN) {
             this.ws.send(JSON.stringify(frame))
         }

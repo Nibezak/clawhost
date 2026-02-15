@@ -9,17 +9,7 @@ import type { GatewayConnectionState } from '@/ts/Types'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import GatewayClient from '@/lib/gateway/GatewayClient'
-
-const extractText = (content: unknown): string => {
-    if (typeof content === 'string') return content
-    if (Array.isArray(content)) {
-        return content
-            .filter((c) => c.type === 'text')
-            .map((c) => c.text)
-            .join('\n')
-    }
-    return ''
-}
+import extractText from '@/hooks/useAgentChat/extractText'
 
 const useAgentChat = ({
     subdomain,
@@ -30,6 +20,7 @@ const useAgentChat = ({
     const [messages, setMessages] = useState<ChatMessage[]>([])
     const [connectionState, setConnectionState] =
         useState<GatewayConnectionState>('disconnected')
+    const [isLoading, setIsLoading] = useState(true)
     const [isStreaming, setIsStreaming] = useState(false)
     const clientRef = useRef<GatewayClient | null>(null)
     const currentRunIdRef = useRef<string | null>(null)
@@ -58,12 +49,17 @@ const useAgentChat = ({
 
         if (!enabled || !subdomain || !gatewayToken) {
             setConnectionState('disconnected')
+            setIsLoading(false)
             return
         }
 
         const client = new GatewayClient(subdomain, gatewayToken, (state) => {
             if (!mountedRef.current) return
             setConnectionState(state)
+
+            if (state === 'error') {
+                setIsLoading(false)
+            }
 
             if (state === 'connected') {
                 client
@@ -100,8 +96,11 @@ const useAgentChat = ({
                             }
                             setMessages(loaded)
                         }
+                        setIsLoading(false)
                     })
-                    .catch(() => {})
+                    .catch(() => {
+                        if (mountedRef.current) setIsLoading(false)
+                    })
             }
         })
 
@@ -272,6 +271,7 @@ const useAgentChat = ({
     return {
         messages,
         connectionState,
+        isLoading,
         isStreaming,
         sendMessage,
         abortResponse

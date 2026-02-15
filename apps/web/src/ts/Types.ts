@@ -39,6 +39,8 @@ export type ChatMessageRole = 'user' | 'assistant'
 
 export type ChatMessageStatus = 'complete' | 'streaming' | 'error' | 'aborted'
 
+export type GatewayEventHandler = (payload: unknown) => void
+
 export type Route =
     | '/'
     | '/login'
