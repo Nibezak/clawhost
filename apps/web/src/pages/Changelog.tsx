@@ -41,6 +41,48 @@ const Changelog: FC = (): ReactNode => {
                         className='relative md:pl-14'
                     >
                         <div className='absolute left-0 top-1 hidden md:block'>
+                            <div className='flex h-10 w-10 items-center justify-center rounded-full border border-amber-500/30 bg-amber-500/10'>
+                                <div className='h-2 w-2 animate-pulse rounded-full bg-amber-400' />
+                            </div>
+                        </div>
+
+                        <div className='rounded-2xl border border-amber-500/10 bg-amber-500/[0.02] p-8'>
+                            <span className='mb-4 block text-sm font-medium text-amber-400'>
+                                {t('changelog.upcomingRelease')}
+                            </span>
+
+                            <h2 className='font-clash mb-2 text-2xl font-bold'>
+                                {t('changelog.upcomingReleaseTitle')}
+                            </h2>
+
+                            <p className='text-muted-foreground mb-6 leading-relaxed'>
+                                {t('changelog.upcomingReleaseDescription')}
+                            </p>
+
+                            <ul className='space-y-3'>
+                                <li className='flex items-center gap-3'>
+                                    <Check className='h-4 w-4 flex-shrink-0 text-amber-400' />
+                                    <span className='text-sm text-white'>
+                                        {t('changelog.upcomingReleaseFeature1')}
+                                    </span>
+                                </li>
+                                <li className='flex items-center gap-3'>
+                                    <Check className='h-4 w-4 flex-shrink-0 text-amber-400' />
+                                    <span className='text-sm text-white'>
+                                        {t('changelog.upcomingReleaseFeature2')}
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.2 }}
+                        className='relative md:pl-14'
+                    >
+                        <div className='absolute left-0 top-1 hidden md:block'>
                             <div className='flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03]'>
                                 <div className='h-2 w-2 rounded-full bg-white/60' />
                             </div>

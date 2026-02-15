@@ -33,6 +33,12 @@ export type PlaygroundAgentDetailTab = 'chat' | 'configuration'
 
 export type ClawAvatarSize = 'sm' | 'md' | 'lg'
 
+export type GatewayConnectionState = 'disconnected' | 'connecting' | 'authenticating' | 'connected' | 'error'
+
+export type ChatMessageRole = 'user' | 'assistant'
+
+export type ChatMessageStatus = 'complete' | 'streaming' | 'error' | 'aborted'
+
 export type Route =
     | '/'
     | '/login'

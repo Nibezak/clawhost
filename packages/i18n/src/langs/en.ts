@@ -18,7 +18,8 @@ export const en = {
         all: 'All',
         unknown: 'Unknown',
         pageNotFound: 'Page Not Found',
-        closeNotification: 'Close notification'
+        closeNotification: 'Close notification',
+        beta: 'Beta'
     },
     nav: {
         claws: 'Claws',
@@ -761,6 +762,13 @@ export const en = {
             'Track updates, new features, and improvements to ClawHost.',
         subtitle: 'All updates, new features, and improvements to ClawHost.',
         upcomingRelease: 'Upcoming',
+        upcomingReleaseTitle: 'Channel & Skill Management',
+        upcomingReleaseDescription:
+            'Full control over your OpenClaw channels and skills — manage everything directly from ClawHost without SSH.',
+        upcomingReleaseFeature1:
+            'Manage channels directly on ClawHost — add, remove, and configure channels without touching the server',
+        upcomingReleaseFeature2:
+            'Manage skills directly on ClawHost — install, update, and organize agent skills from the dashboard',
         release1Date: 'February 8, 2026',
         release1Title: 'Initial Release',
         release1Description:
@@ -931,7 +939,32 @@ export const en = {
         configurationNameDescription: 'Letters, numbers, and dashes only.',
         agentNameRequired: 'Agent name is required.',
         agentNameInvalidChars: 'Only letters, numbers, and dashes are allowed.',
-        agentNameDuplicate: 'An agent with this name already exists.'
+        agentNameDuplicate: 'An agent with this name already exists.',
+        chatConnecting: 'Connecting...',
+        chatAuthenticating: 'Authenticating...',
+        chatDisconnected: 'Disconnected',
+        chatError: 'Connection error',
+        chatConnected: 'Connected',
+        chatInputPlaceholder: 'Type a message...',
+        chatInputDisabled: 'Connect to chat with this agent',
+        chatSend: 'Send',
+        chatAbort: 'Stop',
+        chatLoadingHistory: 'Loading messages...',
+        chatNoMessages: 'No messages yet.',
+        chatNoMessagesDescription:
+            'Send a message to start a conversation with this agent.',
+        chatErrorMessage: 'An error occurred while generating a response.',
+        chatAbortedMessage: 'Response was stopped.',
+        chatReadOnlyPlaceholder: 'Chat available on your own Claws.',
+        chatReadOnlyUser: 'Hello! Can you help me set up a Node.js project?',
+        chatReadOnlyAssistant:
+            'Of course! I can help you initialize a new Node.js project. Would you like me to create a package.json with some common dependencies?',
+        chatConnectionFailed: 'Failed to connect to this agent.',
+        chatConnectionFailedDescription:
+            'Make sure the Claw is running and reachable.',
+        chatNotConfigured: 'Agent not configured.',
+        chatNotConfiguredDescription:
+            'Select a model and set an API key in the Configuration tab to start chatting.'
     },
     privacy: {
         title: 'Privacy Policy',

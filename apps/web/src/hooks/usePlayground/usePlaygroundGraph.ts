@@ -52,7 +52,8 @@ const usePlaygroundGraph = (
                     claw,
                     agentCount: agents.length,
                     isLoadingAgents: isLoading,
-                    isReachable
+                    isReachable,
+                    isSelected: false
                 } as Record<string, unknown>,
                 draggable: false
             })

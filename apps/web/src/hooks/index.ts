@@ -61,3 +61,5 @@ export {
     usePlaygroundGraph,
     PLAYGROUND_AGENTS_QUERY_KEY
 } from '@/hooks/usePlayground'
+
+export { useAgentChat } from '@/hooks/useAgentChat'

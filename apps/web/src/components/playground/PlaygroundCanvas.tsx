@@ -28,6 +28,7 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
     panelOpen,
     selectedClawId,
     selectedAgentId,
+    selectedAgentClawId,
     initialZoom,
     allowPageScroll,
     zoom,
@@ -59,10 +60,41 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
         return () => clearTimeout(timer)
     }, [])
 
+    const selectedClawIdRef = useRef(selectedClawId)
+    const selectedAgentIdRef = useRef(selectedAgentId)
+    const selectedAgentClawIdRef = useRef(selectedAgentClawId)
+    selectedClawIdRef.current = selectedClawId
+    selectedAgentIdRef.current = selectedAgentId
+    selectedAgentClawIdRef.current = selectedAgentClawId
+
     const prevNodeCountRef = useRef(initialNodes.length)
 
     useEffect(() => {
-        setNodes(initialNodes)
+        const curSelectedClawId = selectedClawIdRef.current
+        const curSelectedAgentId = selectedAgentIdRef.current
+        const curSelectedAgentClawId = selectedAgentClawIdRef.current
+
+        setNodes(
+            initialNodes.map((node) => {
+                if (node.type === 'clawNode') {
+                    const clawId = node.id.replace('claw-', '')
+                    const isSelected =
+                        curSelectedClawId === clawId && !curSelectedAgentId
+                    return { ...node, data: { ...node.data, isSelected } }
+                }
+                if (node.type === 'agentNode') {
+                    const nodeData = node.data as Record<string, unknown>
+                    const agentObj = nodeData.agent as Record<string, unknown>
+                    const agentId = agentObj?.id as string
+                    const clawId = nodeData.clawId as string
+                    const isSelected =
+                        curSelectedAgentId === agentId &&
+                        curSelectedAgentClawId === clawId
+                    return { ...node, data: { ...node.data, isSelected } }
+                }
+                return node
+            })
+        )
         setEdges(initialEdges)
 
         if (initialNodes.length !== prevNodeCountRef.current && isFitView) {
@@ -104,7 +136,10 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
                     const nodeData = node.data as Record<string, unknown>
                     const agentObj = nodeData.agent as Record<string, unknown>
                     const agentId = agentObj?.id as string
-                    const isSelected = selectedAgentId === agentId
+                    const clawId = nodeData.clawId as string
+                    const isSelected =
+                        selectedAgentId === agentId &&
+                        selectedAgentClawId === clawId
                     if (
                         (node.data as Record<string, unknown>).isSelected ===
                         isSelected
@@ -115,7 +150,7 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
                 return node
             })
         )
-    }, [selectedClawId, selectedAgentId, setNodes])
+    }, [selectedClawId, selectedAgentId, selectedAgentClawId, setNodes])
 
     useEffect(() => {
         let timeout: ReturnType<typeof setTimeout>
@@ -424,6 +459,7 @@ const PlaygroundCanvas: FC<PlaygroundCanvasProps> = ({
     panelOpen,
     selectedClawId,
     selectedAgentId,
+    selectedAgentClawId,
     initialZoom,
     allowPageScroll
 }): ReactNode => {
@@ -441,6 +477,7 @@ const PlaygroundCanvas: FC<PlaygroundCanvasProps> = ({
                 panelOpen={panelOpen}
                 selectedClawId={selectedClawId}
                 selectedAgentId={selectedAgentId}
+                selectedAgentClawId={selectedAgentClawId}
                 initialZoom={initialZoom}
                 allowPageScroll={allowPageScroll}
                 zoom={zoom}

@@ -2,8 +2,11 @@ import type { ElementType, ReactNode } from 'react'
 import type { User } from 'firebase/auth'
 import type { Node, Edge } from '@xyflow/react'
 import type {
+    ChatMessageRole,
+    ChatMessageStatus,
     ClawAvatarSize,
     ClawStatus,
+    GatewayConnectionState,
     ProviderType,
     ToastType,
     UserRole,
@@ -148,6 +151,8 @@ export interface UIState {
 export interface PreferencesState {
     instancesViewMode: ViewMode
     setInstancesViewMode: (mode: ViewMode) => void
+    adminMode: boolean
+    setAdminMode: (mode: boolean) => void
 }
 
 export interface CachedProfile {
@@ -673,6 +678,7 @@ export interface PlaygroundCanvasProps {
     panelOpen?: boolean
     selectedClawId?: string | null
     selectedAgentId?: string | null
+    selectedAgentClawId?: string | null
     initialZoom?: number
     allowPageScroll?: boolean
 }
@@ -745,6 +751,8 @@ export interface PlaygroundAgentDetailPanelProps {
     isOnlyAgent: boolean
     onClose: () => void
     readOnly?: boolean
+    gatewayToken?: string | null
+    subdomain?: string | null
 }
 
 export interface ClawEnvVarsResponse {
@@ -778,4 +786,67 @@ export interface DemoPlaygroundData {
     edges: Edge[]
     claws: Claw[]
     agentsByClawId: Record<string, ClawAgent[]>
+}
+
+export interface ChatHistoryEntry {
+    role: string
+    content: unknown
+}
+
+export interface ChatMessage {
+    id: string
+    role: ChatMessageRole
+    content: string
+    status: ChatMessageStatus
+    runId?: string
+}
+
+export interface ChatEventPayload {
+    runId: string
+    sessionKey: string
+    seq: number
+    state: 'delta' | 'final' | 'aborted' | 'error'
+    message?: unknown
+    errorMessage?: string
+}
+
+export interface ChatSendParams {
+    sessionKey: string
+    message: string
+    idempotencyKey: string
+    deliver: boolean
+}
+
+export interface ChatHistoryParams {
+    sessionKey: string
+    limit: number
+}
+
+export interface ChatAbortParams {
+    sessionKey: string
+    runId: string
+}
+
+export interface UseAgentChatParams {
+    subdomain: string | null | undefined
+    gatewayToken: string | null | undefined
+    agentId: string
+    enabled: boolean
+}
+
+export interface UseAgentChatReturn {
+    messages: ChatMessage[]
+    connectionState: GatewayConnectionState
+    isStreaming: boolean
+    sendMessage: (text: string) => void
+    abortResponse: () => void
+}
+
+export interface AgentChatProps {
+    agentId: string
+    clawId: string
+    subdomain: string | null | undefined
+    gatewayToken: string | null | undefined
+    agentModel: string | null
+    readOnly?: boolean
 }

@@ -6,7 +6,7 @@ import { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { useUIStore } from '@/lib/store'
+import { useUIStore, usePreferencesStore } from '@/lib/store'
 import ROUTES from '@/lib/routes'
 import {
     useClaws,
@@ -53,9 +53,9 @@ const Dashboard: FC = (): ReactNode => {
     const [selectedAgentClawId, setSelectedAgentClawId] = useState<
         string | null
     >(null)
-    const [adminModeRaw, setAdminMode] = useState(false)
     const [isModeSwitching, setIsModeSwitching] = useState(false)
     const { showToast } = useUIStore()
+    const { adminMode: adminModeRaw, setAdminMode } = usePreferencesStore()
 
     const [minLoadingMet, setMinLoadingMet] = useState(false)
 
@@ -361,6 +361,7 @@ const Dashboard: FC = (): ReactNode => {
                             panelOpen={!!selectedClaw || !!selectedAgent}
                             selectedClawId={selectedClawId}
                             selectedAgentId={selectedAgentId}
+                            selectedAgentClawId={selectedAgentClawId}
                         />
                     )}
 
@@ -421,6 +422,8 @@ const Dashboard: FC = (): ReactNode => {
                             clawId={selectedAgentClaw.id}
                             clawName={selectedAgentClaw.name}
                             isOnlyAgent={isSelectedAgentOnly}
+                            gatewayToken={selectedAgentClaw.gatewayToken}
+                            subdomain={selectedAgentClaw.subdomain}
                             onClose={() => {
                                 setSelectedAgentId(null)
                                 setSelectedAgentClawId(null)

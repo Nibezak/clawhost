@@ -1,12 +1,11 @@
 function sanitizeClaw<T extends Record<string, unknown>>(
     claw: T
-): Omit<T, 'rootPassword' | 'gatewayToken'> {
+): Omit<T, 'rootPassword'> {
     const {
         rootPassword: _,
-        gatewayToken: __,
         ...safe
-    } = claw as T & { rootPassword?: unknown; gatewayToken?: unknown }
-    return safe as Omit<T, 'rootPassword' | 'gatewayToken'>
+    } = claw as T & { rootPassword?: unknown }
+    return safe as Omit<T, 'rootPassword'>
 }
 
 export default sanitizeClaw
