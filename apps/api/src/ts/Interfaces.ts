@@ -768,6 +768,10 @@ export interface DeleteClawAgentBody {
     agentId: string
 }
 
+export interface OrderCustomerResult {
+    customerId: string
+}
+
 export interface PolarPaginatedResult {
     items: unknown[]
     pagination: { totalCount: number; maxPage: number }

@@ -3,6 +3,7 @@ import type { FC, ReactNode } from 'react'
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, Warning, X, Info } from '@phosphor-icons/react'
+import { t } from '@openclaw/i18n'
 import { useUIStore } from '@/lib/store'
 
 const icons = {
@@ -64,7 +65,7 @@ const Toast: FC = (): ReactNode => {
                         </span>
                         <button
                             onClick={hideToast}
-                            aria-label='Close notification'
+                            aria-label={t('common.closeNotification')}
                             className='ml-2 text-gray-400 transition hover:text-white'
                         >
                             <X className='h-4 w-4' />

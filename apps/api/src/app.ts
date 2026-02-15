@@ -1,3 +1,5 @@
+import type { HonoEnv } from '@/ts/Types'
+
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { bodyLimit } from 'hono/body-limit'
@@ -15,7 +17,7 @@ import {
     webhooksRoutes
 } from '@/routes'
 
-const app = new Hono<{ Variables: { userId: string } }>()
+const app = new Hono<HonoEnv>()
 
 const isDev = process.env.NODE_ENV !== 'production'
 

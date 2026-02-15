@@ -1,4 +1,5 @@
 import type {
+    OrderCustomerResult,
     PolarOrdersPage,
     PolarOrderRaw,
     PolarPaginatedResult
@@ -56,7 +57,7 @@ const orders = {
         }
     },
 
-    async get(orderId: string): Promise<{ customerId: string } | null> {
+    async get(orderId: string): Promise<OrderCustomerResult | null> {
         const polar = getPolarClient()
         try {
             const order = await polar.orders.get({ id: orderId })

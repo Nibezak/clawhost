@@ -1,3 +1,5 @@
+import type { HonoEnv } from '@/ts/Types'
+
 import { Hono } from 'hono'
 import {
     getClaws,
@@ -30,7 +32,7 @@ import {
 } from '@/controllers/claws'
 import adminOnly from '@/middleware/adminOnly'
 
-const app = new Hono<{ Variables: { userId: string } }>()
+const app = new Hono<HonoEnv>()
 
 app.get('/', getClaws)
 app.get('/admin', adminOnly, getAdminClaws)

@@ -1,3 +1,5 @@
+import type { HonoEnv } from '@/ts/Types'
+
 import { Hono } from 'hono'
 import {
     getCurrentUser,
@@ -8,7 +10,7 @@ import {
     updateUserProfile
 } from '@/controllers/users'
 
-const app = new Hono<{ Variables: { userId: string } }>()
+const app = new Hono<HonoEnv>()
 
 app.get('/me', getCurrentUser)
 app.get('/me/stats', getUserStats)

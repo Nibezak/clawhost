@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react'
-import type { MockClawCardProps } from '@/ts/Interfaces'
+import type { CopyableFieldProps, MockClawCardProps } from '@/ts/Interfaces'
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -81,7 +81,7 @@ const MockClawCard: FC<MockClawCardProps> = ({
         showToast(t('dashboard.passwordCopiedToClipboard'), 'success')
     }
 
-    const CopyableField: FC<{ label: string; value: string }> = ({
+    const CopyableField: FC<CopyableFieldProps> = ({
         label,
         value
     }): ReactNode => (

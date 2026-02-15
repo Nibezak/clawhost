@@ -194,6 +194,7 @@ export interface HeaderProps {
 export interface UserDropdownProps {
     displayName: string
     onSignOut: () => Promise<void>
+    onOpen?: () => void
 }
 
 export interface EmptyStateProps {

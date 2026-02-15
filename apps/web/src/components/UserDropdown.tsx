@@ -18,7 +18,8 @@ import { Key, User, SignOut, Receipt } from '@phosphor-icons/react'
 
 const UserDropdown: FC<UserDropdownProps> = ({
     displayName,
-    onSignOut
+    onSignOut,
+    onOpen
 }): ReactNode => {
     const navigate = useNavigate()
     const location = useLocation()
@@ -34,8 +35,12 @@ const UserDropdown: FC<UserDropdownProps> = ({
         return text.charAt(0).toUpperCase()
     }
 
+    const handleOpenChange = (open: boolean) => {
+        if (open && onOpen) onOpen()
+    }
+
     return (
-        <DropdownMenu modal={false}>
+        <DropdownMenu modal={false} onOpenChange={handleOpenChange}>
             <DropdownMenuTrigger asChild>
                 <Button
                     variant='ghost'
