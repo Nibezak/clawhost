@@ -15,6 +15,10 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({ children }): ReactNode => {
         return <Navigate to={ROUTES.LOGIN} replace />
     }
 
+    if (loading && wasPreviouslyAuthed) {
+        return null
+    }
+
     if (!loading && !user) {
         return <Navigate to={ROUTES.LOGIN} replace />
     }

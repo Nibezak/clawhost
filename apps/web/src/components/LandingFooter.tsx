@@ -5,7 +5,8 @@ import { t } from '@openclaw/i18n'
 import Logo from '@/components/Logo'
 import ROUTES from '@/lib/routes'
 import { GITHUB_REPO_URL } from '@/hooks'
-import { GithubLogo, XLogo } from '@phosphor-icons/react'
+import { TWITTER_URL, FACEBOOK_URL, INSTAGRAM_URL, THREADS_URL, YOUTUBE_URL, TIKTOK_URL, SUPPORT_EMAIL } from '@/lib/links'
+import { FacebookLogo, GithubLogo, InstagramLogo, ThreadsLogo, TiktokLogo, XLogo, YoutubeLogo } from '@phosphor-icons/react'
 
 const LandingFooter: FC = (): ReactNode => {
     return (
@@ -27,12 +28,52 @@ const LandingFooter: FC = (): ReactNode => {
                                 <GithubLogo className='h-5 w-5' weight='fill' />
                             </a>
                             <a
-                                href='https://x.com/claw_host'
+                                href={TWITTER_URL}
                                 target='_blank'
                                 rel='noopener noreferrer'
                                 className='rounded-lg bg-white/5 p-2 text-gray-400 transition hover:bg-white/10 hover:text-white'
                             >
                                 <XLogo className='h-5 w-5' weight='fill' />
+                            </a>
+                            <a
+                                href={FACEBOOK_URL}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                className='rounded-lg bg-white/5 p-2 text-gray-400 transition hover:bg-white/10 hover:text-white'
+                            >
+                                <FacebookLogo className='h-5 w-5' weight='fill' />
+                            </a>
+                            <a
+                                href={INSTAGRAM_URL}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                className='rounded-lg bg-white/5 p-2 text-gray-400 transition hover:bg-white/10 hover:text-white'
+                            >
+                                <InstagramLogo className='h-5 w-5' weight='fill' />
+                            </a>
+                            <a
+                                href={THREADS_URL}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                className='rounded-lg bg-white/5 p-2 text-gray-400 transition hover:bg-white/10 hover:text-white'
+                            >
+                                <ThreadsLogo className='h-5 w-5' weight='fill' />
+                            </a>
+                            <a
+                                href={YOUTUBE_URL}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                className='rounded-lg bg-white/5 p-2 text-gray-400 transition hover:bg-white/10 hover:text-white'
+                            >
+                                <YoutubeLogo className='h-5 w-5' weight='fill' />
+                            </a>
+                            <a
+                                href={TIKTOK_URL}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                className='rounded-lg bg-white/5 p-2 text-gray-400 transition hover:bg-white/10 hover:text-white'
+                            >
+                                <TiktokLogo className='h-5 w-5' weight='fill' />
                             </a>
                         </div>
                         <p className='mt-4 text-sm text-gray-500'>
@@ -136,7 +177,7 @@ const LandingFooter: FC = (): ReactNode => {
                             </li>
                             <li>
                                 <a
-                                    href='mailto:support@clawhost.cloud'
+                                    href={SUPPORT_EMAIL}
                                     className='text-gray-400 transition hover:text-white'
                                 >
                                     {t('footer.getInTouch')}

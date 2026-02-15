@@ -1,10 +1,7 @@
 import type { AuthenticatedContext } from '@/ts/Types'
 
-import { eq, and } from 'drizzle-orm'
-import { db } from '@/db'
-import { claws } from '@/db/schema'
 import executeSSH from '@/services/ssh'
-import { isAdmin } from '@/controllers/claws/helpers'
+import { findUserClaw } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
@@ -14,30 +11,20 @@ const listClawFiles = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')
-        const admin = await isAdmin(userId)
+        const claw = await findUserClaw(userId, id)
 
-        const claw = await db
-            .select()
-            .from(claws)
-            .where(
-                admin
-                    ? eq(claws.id, id)
-                    : and(eq(claws.id, id), eq(claws.userId, userId))
-            )
-            .limit(1)
-
-        if (!claw[0]) {
+        if (!claw) {
             return fail(c, t('api.clawNotFound'), 404)
         }
 
-        if (!claw[0].ip || !claw[0].rootPassword) {
+        if (!claw.ip || !claw.rootPassword) {
             return fail(c, t('api.failedToListFiles'), 400)
         }
 
         const output = await executeSSH(
-            claw[0].ip,
-            claw[0].rootPassword,
-            `find ${BASE_DIR} -type f 2>/dev/null | sort`
+            claw.ip,
+            claw.rootPassword,
+            `find -P ${BASE_DIR} -type f 2>/dev/null | sort`
         )
 
         const files = output
@@ -54,13 +41,8 @@ const listClawFiles = async (c: AuthenticatedContext) => {
             })
 
         return ok(c, { files }, t('api.filesFetched'))
-    } catch (err) {
-        console.error('List claw files error:', err)
-        return fail(
-            c,
-            err instanceof Error ? err.message : t('api.failedToListFiles'),
-            500
-        )
+    } catch {
+        return fail(c, t('api.failedToListFiles'), 500)
     }
 }
 

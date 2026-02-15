@@ -1,7 +1,11 @@
 export type {
+    ChatMessageRole,
+    ChatMessageStatus,
     ClawAvatarSize,
     ClawStatus,
     CopiedFieldType,
+    GatewayConnectionState,
+    GatewayEventHandler,
     PlaygroundAgentDetailTab,
     PlaygroundDetailTab,
     PlaygroundNodeType,
@@ -67,5 +71,19 @@ export type {
     CreateSSHKeyData,
     DeleteAgentData,
     DemoPlaygroundData,
-    UpdateProfileData
+    UpdateProfileData,
+    AgentChatProps,
+    ChatAbortParams,
+    ChatBubbleProps,
+    ChatEmptyStateProps,
+    ChatEventPayload,
+    ChatHistoryParams,
+    ChatHistoryEntry,
+    ChatInputProps,
+    ChatMessage,
+    ChatSendParams,
+    ChatStatusBarProps,
+    GatewayPendingRequest,
+    UseAgentChatParams,
+    UseAgentChatReturn
 } from '@/ts/Interfaces'

@@ -1,4 +1,5 @@
 import type {
+    OrderCustomerResult,
     PolarOrdersPage,
     PolarOrderRaw,
     PolarPaginatedResult
@@ -53,6 +54,16 @@ const orders = {
             }
         } catch {
             return { items: [], totalCount: 0, maxPage: 1 }
+        }
+    },
+
+    async get(orderId: string): Promise<OrderCustomerResult | null> {
+        const polar = getPolarClient()
+        try {
+            const order = await polar.orders.get({ id: orderId })
+            return { customerId: order.customerId }
+        } catch {
+            return null
         }
     },
 

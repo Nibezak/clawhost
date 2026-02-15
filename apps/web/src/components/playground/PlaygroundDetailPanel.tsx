@@ -1,5 +1,8 @@
 import type { FC, ReactNode } from 'react'
-import type { PlaygroundDetailPanelProps, PlaygroundTabConfig } from '@/ts/Interfaces'
+import type {
+    PlaygroundDetailPanelProps,
+    PlaygroundTabConfig
+} from '@/ts/Interfaces'
 import type { PlaygroundDetailTab } from '@/ts/Types'
 import type { TranslationKey } from '@openclaw/i18n'
 

@@ -17,7 +17,9 @@ export const en = {
         none: 'None',
         all: 'All',
         unknown: 'Unknown',
-        pageNotFound: 'Page Not Found'
+        pageNotFound: 'Page Not Found',
+        closeNotification: 'Close notification',
+        beta: 'Beta'
     },
     nav: {
         claws: 'Claws',
@@ -94,10 +96,17 @@ export const en = {
         volumeSizeInvalid: 'Volume size must be between 10 and 10240 GB!',
         paymentNotConfigured: 'Payment not configured for this plan!',
         invalidSshKeyFormat: 'Invalid SSH public key format!',
+        sshKeyInUse: 'This SSH key is currently in use by one or more claws!',
+        inputTooLong: 'Input exceeds maximum allowed length!',
+        invalidEnvVars: 'Invalid environment variable names or values!',
+        invalidEmailFormat: 'Invalid email format!',
+        invalidRedirectUrl: 'Invalid redirect URL!',
+        fileTooLarge: 'File content exceeds the maximum allowed size!',
         nameAndKeyRequired: 'Name and public key are required!',
         nameTooLong: 'Name must be 100 characters or less!',
         noBillingAccount: 'No billing account found!',
         orderIdRequired: 'Order ID is required!',
+        orderNotFound: 'Order not found!',
         emailRequired: 'Email is required!',
         redirectUrlRequired: 'Redirect URL is required!',
         invalidWebhook: 'Invalid webhook!',
@@ -316,6 +325,8 @@ export const en = {
             'View and manage your deployed OpenClaw instances. Start, stop, restart, and monitor your VPS servers.',
         claw: 'claw',
         clawsPlural: 'claws',
+        clawCountLabel: '{{count}} claws',
+        clawCountLabelSingular: '{{count}} claw',
         newClaw: 'New Claw',
         noClawsYet: 'No Claws',
         noClawsDescription:
@@ -751,6 +762,15 @@ export const en = {
             'Track updates, new features, and improvements to ClawHost.',
         subtitle: 'All updates, new features, and improvements to ClawHost.',
         upcomingRelease: 'Upcoming',
+        upcomingReleaseTitle: 'Channels, Skills & Agent Chat',
+        upcomingReleaseDescription:
+            'Full control over your OpenClaw channels, skills, and agents — manage and chat with everything directly from the dashboard.',
+        upcomingReleaseFeature1:
+            'Manage channels directly — add, remove, and configure channels without touching the server',
+        upcomingReleaseFeature2:
+            'Manage skills directly — install, update, and organize agent skills from the dashboard',
+        upcomingReleaseFeature3:
+            'Chat with your agents from the playground — interact with any agent in real time',
         release1Date: 'February 8, 2026',
         release1Title: 'Initial Release',
         release1Description:
@@ -821,7 +841,7 @@ export const en = {
         noClawsYet: 'No Claws to Display',
         noClawsDescription:
             'Deploy your first Claw to see it in the Playground.',
-        loadingAgents: 'Discovering agents...',
+        loadingAgents: 'Agents',
         unreachable: 'Unreachable',
         offline: 'Offline',
         noAgents: 'No agents',
@@ -831,6 +851,7 @@ export const en = {
         zoomLabel: '{{percent}}%',
         fitView: 'Center',
         nodesOutOfView: 'Claws out of view',
+        nodeOutOfView: 'Claw out of view',
         addAgent: 'Add agent',
         listView: 'List view',
         gridView: 'Grid view',
@@ -920,7 +941,154 @@ export const en = {
         configurationNameDescription: 'Letters, numbers, and dashes only.',
         agentNameRequired: 'Agent name is required.',
         agentNameInvalidChars: 'Only letters, numbers, and dashes are allowed.',
-        agentNameDuplicate: 'An agent with this name already exists.'
+        agentNameDuplicate: 'An agent with this name already exists.',
+        chatConnecting: 'Connecting...',
+        chatAuthenticating: 'Authenticating...',
+        chatDisconnected: 'Disconnected',
+        chatError: 'Connection error',
+        chatConnected: 'Connected',
+        chatInputPlaceholder: 'Type a message...',
+        chatInputDisabled: 'Connect to chat with this agent',
+        chatSend: 'Send',
+        chatAbort: 'Stop',
+        chatLoadingHistory: 'Loading messages...',
+        chatNoMessages: 'No messages yet.',
+        chatNoMessagesDescription:
+            'Send a message to start a conversation with this agent.',
+        chatErrorMessage: 'An error occurred while generating a response.',
+        chatAbortedMessage: 'Response was stopped.',
+        chatReadOnlyPlaceholder: 'Chat available on your own Claws.',
+        chatReadOnlyUser: 'Hello! Can you help me set up a Node.js project?',
+        chatReadOnlyAssistant:
+            'Of course! I can help you initialize a new Node.js project. Would you like me to create a package.json with some common dependencies?',
+        chatConnectionFailed: 'Failed to connect to this agent.',
+        chatConnectionFailedDescription:
+            'Make sure the Claw is running and reachable.',
+        chatNotConfigured: 'Agent not configured.',
+        chatNotConfiguredDescription:
+            'Select a model and set an API key in the Configuration tab to start chatting.'
+    },
+    privacy: {
+        title: 'Privacy Policy',
+        description:
+            'Learn how ClawHost collects, uses, and protects your personal data.',
+        lastUpdated: 'Last updated: February 7, 2026',
+        introTitle: '1. Introduction',
+        introText:
+            'ClawHost ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our Service.',
+        collectTitle: '2. Information We Collect',
+        collectText: 'We collect information in the following ways:',
+        personalInfoTitle: 'Personal Information',
+        personalInfoEmail:
+            'Email address (for account creation and communication)',
+        personalInfoName: 'Name (optional, for personalization)',
+        personalInfoPayment:
+            'Payment information (processed securely by third-party providers)',
+        serverInfoTitle: 'Server Information',
+        serverInfoConfig:
+            'Server configuration and status (hosted on Hetzner Cloud)',
+        serverInfoIp: 'Server IP address and location',
+        serverInfoResources: 'Resource allocation (CPU, RAM, storage)',
+        useTitle: '3. How We Use Your Information',
+        useText: 'We use the collected information to:',
+        useProvide: 'Provide and maintain our Service',
+        useTransactions: 'Process transactions and send billing information',
+        useNotices: 'Send important notices and updates',
+        useSupport: 'Respond to customer support requests',
+        useAnalyze: 'Monitor and analyze usage patterns to improve our Service',
+        useFraud: 'Detect and prevent fraud or abuse',
+        sharingTitle: '4. Data Sharing and Disclosure',
+        sharingText:
+            'We do not sell your personal information. We may share information with:',
+        sharingProviders:
+            'Service providers who assist in operating our Service (e.g., cloud infrastructure providers)',
+        sharingLegal:
+            'Legal authorities when required by law or to protect our rights',
+        sharingBusiness:
+            'Business partners in case of merger, acquisition, or sale of assets',
+        securityTitle: '5. Data Security',
+        securityText:
+            'We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. This includes encryption, secure servers, and regular security assessments.',
+        retentionTitle: '6. Data Retention',
+        retentionText:
+            'We retain your personal information for as long as your account is active or as needed to provide you services. We may retain certain information as required by law or for legitimate business purposes.',
+        rightsTitle: '7. Your Rights',
+        rightsText: 'Depending on your location, you may have the right to:',
+        rightsAccess: 'Access your personal data',
+        rightsCorrect: 'Correct inaccurate data',
+        rightsDelete: 'Request deletion of your data',
+        rightsObject: 'Object to processing of your data',
+        rightsPortability: 'Data portability',
+        rightsWithdraw: 'Withdraw consent at any time',
+        cookiesTitle: '8. Cookies and Tracking',
+        cookiesText:
+            'We do not use cookies. Authentication is handled through Firebase and does not rely on cookies stored in your browser.',
+        transfersTitle: '9. International Data Transfers',
+        transfersText:
+            'Your information may be transferred to and processed in countries other than your own. We ensure appropriate safeguards are in place to protect your data in accordance with this Privacy Policy.',
+        eligibilityTitle: '10. Eligibility',
+        eligibilityText:
+            'Our Service is available to anyone. There are no age restrictions for using ClawHost.',
+        changesTitle: '11. Changes to This Policy',
+        changesText:
+            'We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last updated" date.',
+        contactTitle: '12. Contact Us',
+        contactText:
+            'If you have questions about this Privacy Policy or wish to exercise your rights, please contact us at'
+    },
+    terms: {
+        title: 'Terms of Service',
+        description:
+            'Read the terms and conditions for using ClawHost services.',
+        lastUpdated: 'Last updated: February 7, 2026',
+        acceptanceTitle: '1. Acceptance of Terms',
+        acceptanceText:
+            'By accessing and using ClawHost ("Service"), you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to these terms, please do not use our Service.',
+        serviceTitle: '2. Description of Service',
+        serviceText:
+            'ClawHost provides one-click OpenClaw deployment on dedicated servers. We enable users to deploy, manage, and access pre-configured OpenClaw instances with full root access and dedicated resources.',
+        responsibilitiesTitle: '3. User Responsibilities',
+        responsibilitiesText: 'You agree to:',
+        responsibilitiesAccurate:
+            'Provide accurate and complete registration information',
+        responsibilitiesSecurity:
+            'Maintain the security of your account credentials',
+        responsibilitiesCompliance:
+            'Use the Service in compliance with all applicable laws',
+        responsibilitiesLegal:
+            'Not use the Service for any illegal or unauthorized purpose',
+        responsibilitiesAccess:
+            'Not attempt to gain unauthorized access to any systems or networks',
+        prohibitedTitle: '4. Prohibited Uses',
+        prohibitedText: 'You may not use our Service to:',
+        prohibitedMalware:
+            'Distribute malware, viruses, or any harmful software',
+        prohibitedDos: 'Conduct denial-of-service attacks or network abuse',
+        prohibitedSpam: 'Send spam or unsolicited communications',
+        prohibitedIllegal: 'Host or distribute illegal content',
+        prohibitedIp:
+            'Violate any third-party rights including intellectual property',
+        prohibitedMining: 'Mine cryptocurrency',
+        prohibitedOther:
+            'Any other unlawful or harmful activities that we may determine to be inappropriate at our discretion',
+        paymentTitle: '5. Payment and Billing',
+        paymentText:
+            'Services are billed on a fixed monthly basis. All payments are non-refundable. When you pay for a server, you have access to it for the full billing period. If you cancel, the cancellation takes effect at the end of the current billing period. Prices are subject to change with reasonable notice. Failure to pay may result in suspension or termination of your account.',
+        availabilityTitle: '6. Service Availability',
+        availabilityText:
+            'We strive to maintain high availability but do not guarantee uninterrupted access to the Service. We reserve the right to modify, suspend, or discontinue any part of the Service at any time with or without notice.',
+        liabilityTitle: '7. Limitation of Liability',
+        liabilityText:
+            'To the maximum extent permitted by law, ClawHost shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly.',
+        terminationTitle: '8. Termination',
+        terminationText:
+            'We may terminate or suspend your account and access to the Service immediately, without prior notice, for conduct that we believe violates these Terms or is harmful to other users, us, or third parties, or for any other reason.',
+        changesToTermsTitle: '9. Changes to Terms',
+        changesToTermsText:
+            'We reserve the right to modify these terms at any time. We will notify users of any material changes via email or through the Service. Continued use of the Service after such modifications constitutes acceptance of the updated terms.',
+        contactTitle: '10. Contact Information',
+        contactText:
+            'If you have any questions about these Terms, please contact us at'
     },
     mobile: {
         messages: 'Messages',

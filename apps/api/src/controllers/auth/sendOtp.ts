@@ -16,6 +16,7 @@ import {
 import { ok, fail } from '@/lib/response'
 
 const OTP_EXPIRY_MS = 10 * 60 * 1000
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const hashCode = (code: string): string => {
     return crypto.createHash('sha256').update(code).digest('hex')
@@ -38,6 +39,10 @@ const sendOtp = async (c: Context) => {
 
         if (!email) {
             return fail(c, t('api.emailRequired'), 400)
+        }
+
+        if (!EMAIL_REGEX.test(email) || email.length > 320) {
+            return fail(c, t('api.invalidEmailFormat'), 400)
         }
 
         const emailRetry = await checkRateLimit(`email:${email.toLowerCase()}`)
@@ -75,13 +80,8 @@ const sendOtp = async (c: Context) => {
         if (ip) keys.push(`ip:${ip}`)
         await setRateLimit(...keys)
         return ok(c, null, t('api.otpSent'))
-    } catch (err) {
-        console.error('Send OTP error:', err)
-        return fail(
-            c,
-            err instanceof Error ? err.message : t('api.failedToSendEmail'),
-            500
-        )
+    } catch {
+        return fail(c, t('api.failedToSendEmail'), 500)
     }
 }
 

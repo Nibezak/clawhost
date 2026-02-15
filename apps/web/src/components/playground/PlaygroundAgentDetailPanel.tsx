@@ -17,13 +17,13 @@ import {
     ChatCircle,
     GearSix,
     CircleNotch,
-    ChatTeardropText,
     Eye,
     EyeSlash,
     Copy,
     Check,
     Trash
 } from '@phosphor-icons/react'
+import { AgentChat } from '@/components/playground/AgentChat'
 import ClawAvatar from '@/components/ClawAvatar'
 import PanelPlaceholder from '@/components/PanelPlaceholder'
 import {
@@ -61,7 +61,9 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
     clawName,
     isOnlyAgent,
     onClose,
-    readOnly
+    readOnly,
+    gatewayToken,
+    subdomain
 }): ReactNode => {
     const activeTab = agentTabStateMap[agent.id] || 'chat'
     const setActiveTab = useCallback(
@@ -398,28 +400,25 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                                 }
                             />
                             {t(tab.label as TranslationKey)}
+                            {tab.id === 'chat' && (
+                                <span className='rounded bg-white/10 px-1 py-0.5 text-[9px] font-medium uppercase leading-none text-gray-400'>
+                                    {t('common.beta')}
+                                </span>
+                            )}
                         </button>
                     ))}
                 </div>
 
                 <div className='flex min-h-0 flex-1 flex-col overflow-hidden'>
                     {activeTab === 'chat' && (
-                        <div className='flex h-full flex-col items-center justify-center gap-3 px-14 pb-16'>
-                            <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-white/5'>
-                                <ChatTeardropText
-                                    className='h-6 w-6 text-gray-500'
-                                    weight='duotone'
-                                />
-                            </div>
-                            <div className='text-center'>
-                                <p className='text-sm font-medium text-gray-300'>
-                                    {t('playground.chatComingSoon')}
-                                </p>
-                                <p className='mt-1 text-xs text-gray-500'>
-                                    {t('playground.chatComingSoonDescription')}
-                                </p>
-                            </div>
-                        </div>
+                        <AgentChat
+                            agentId={agent.id}
+                            clawId={clawId}
+                            subdomain={subdomain}
+                            gatewayToken={gatewayToken}
+                            agentModel={agent.model}
+                            readOnly={readOnly}
+                        />
                     )}
 
                     {activeTab === 'configuration' && (

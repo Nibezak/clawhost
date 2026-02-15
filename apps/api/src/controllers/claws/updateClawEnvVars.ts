@@ -1,19 +1,14 @@
 import type { UpdateClawEnvVarsBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
-import { eq, and } from 'drizzle-orm'
-import { db } from '@/db'
-import { claws } from '@/db/schema'
 import executeSSH from '@/services/ssh'
-import { isAdmin } from '@/controllers/claws/helpers'
+import { findUserClaw, validateEnvVars } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
 const BASE_DIR = '/home/openclaw/.openclaw'
 
-const updateClawEnvVars = async (
-    c: AuthenticatedContext
-) => {
+const updateClawEnvVars = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')
@@ -23,30 +18,24 @@ const updateClawEnvVars = async (
             return fail(c, t('api.missingRequiredFields'), 400)
         }
 
-        const admin = await isAdmin(userId)
+        if (!validateEnvVars(body.envVars)) {
+            return fail(c, t('api.invalidEnvVars'), 400)
+        }
 
-        const claw = await db
-            .select()
-            .from(claws)
-            .where(
-                admin
-                    ? eq(claws.id, id)
-                    : and(eq(claws.id, id), eq(claws.userId, userId))
-            )
-            .limit(1)
+        const claw = await findUserClaw(userId, id)
 
-        if (!claw[0]) {
+        if (!claw) {
             return fail(c, t('api.clawNotFound'), 404)
         }
 
-        if (!claw[0].ip || !claw[0].rootPassword) {
+        if (!claw.ip || !claw.rootPassword) {
             return fail(c, t('api.failedToUpdateFile'), 400)
         }
 
         try {
             const existingEnv = await executeSSH(
-                claw[0].ip,
-                claw[0].rootPassword,
+                claw.ip,
+                claw.rootPassword,
                 `cat ${BASE_DIR}/.env 2>/dev/null || echo ''`,
                 5000
             )
@@ -73,33 +62,22 @@ const updateClawEnvVars = async (
             })
 
             const envContent = newLines.join('\n')
-            const escapedEnv = envContent.replace(/'/g, "'\\''")
+
+            const envB64 = Buffer.from(envContent).toString('base64')
 
             await executeSSH(
-                claw[0].ip,
-                claw[0].rootPassword,
-                `echo '${escapedEnv}' > ${BASE_DIR}/.env`,
-                5000
-            )
-
-            await executeSSH(
-                claw[0].ip,
-                claw[0].rootPassword,
-                'systemctl restart openclaw-gateway',
-                10000
+                claw.ip,
+                claw.rootPassword,
+                `echo '${envB64}' | base64 -d > ${BASE_DIR}/.env && systemctl restart openclaw-gateway`,
+                15000
             )
 
             return ok(c, null, t('api.fileSaveSuccess'))
         } catch {
             return fail(c, t('api.failedToUpdateFile'), 500)
         }
-    } catch (err) {
-        console.error('Update claw env vars error:', err)
-        return fail(
-            c,
-            err instanceof Error ? err.message : t('api.failedToUpdateFile'),
-            500
-        )
+    } catch {
+        return fail(c, t('api.failedToUpdateFile'), 500)
     }
 }
 

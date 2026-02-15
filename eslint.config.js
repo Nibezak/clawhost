@@ -54,7 +54,8 @@ export default tseslint.config(
                     maxBOF: 0
                 }
             ],
-            'eol-last': ['error', 'never']
+            'eol-last': ['error', 'never'],
+            'no-empty': ['error', { allowEmptyCatch: true }]
         }
     },
     {

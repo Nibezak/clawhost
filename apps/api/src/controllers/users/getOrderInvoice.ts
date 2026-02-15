@@ -7,9 +7,7 @@ import { orders } from '@/lib/polar'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
-const getOrderInvoice = async (
-    c: AuthenticatedContext
-) => {
+const getOrderInvoice = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const orderId = c.req.param('orderId')
@@ -18,22 +16,28 @@ const getOrderInvoice = async (
             return fail(c, t('api.orderIdRequired'), 400)
         }
 
-        const user = await db
-            .select({ polarCustomerId: users.polarCustomerId })
-            .from(users)
-            .where(eq(users.id, userId))
-            .limit(1)
+        const [user, order] = await Promise.all([
+            db
+                .select({ polarCustomerId: users.polarCustomerId })
+                .from(users)
+                .where(eq(users.id, userId))
+                .limit(1),
+            orders.get(orderId)
+        ])
 
         const polarCustomerId = user[0]?.polarCustomerId
         if (!polarCustomerId) {
             return fail(c, t('api.noBillingAccount'), 404)
         }
 
+        if (!order || order.customerId !== polarCustomerId) {
+            return fail(c, t('api.orderNotFound'), 404)
+        }
+
         const invoiceUrl = await orders.getInvoiceUrl(orderId)
 
         return ok(c, { url: invoiceUrl }, t('api.invoiceFetched'))
-    } catch (err) {
-        console.error('Get order invoice error:', err)
+    } catch {
         return fail(c, t('api.failedToGetInvoice'), 500)
     }
 }

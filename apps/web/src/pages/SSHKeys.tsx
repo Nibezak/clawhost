@@ -614,7 +614,7 @@ const SSHKeys: FC = (): ReactNode => {
                     title={t('sshKeys.title')}
                     description={`${sshKeys?.length ?? 0} ${sshKeys?.length === 1 ? t('sshKeys.key') : t('sshKeys.keys')}`}
                     action={
-                        !isLoading && sshKeys?.length === 0 ? undefined : (
+                        sshKeys && sshKeys.length > 0 ? (
                             <ActionButton
                                 onClick={() => setShowCreate(true)}
                                 icon={
@@ -625,7 +625,7 @@ const SSHKeys: FC = (): ReactNode => {
                                 }
                                 label={t('sshKeys.addSshKey')}
                             />
-                        )
+                        ) : undefined
                     }
                 />
 

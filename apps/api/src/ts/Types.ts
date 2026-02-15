@@ -2,7 +2,9 @@ import type { Context } from 'hono'
 
 export type ProviderType = 'hetzner' | 'digitalocean' | 'vultr'
 
-export type AuthenticatedContext = Context<{ Variables: { userId: string } }>
+export type HonoEnv = { Variables: { userId: string } }
+
+export type AuthenticatedContext = Context<HonoEnv>
 
 export type SubscriptionStatus =
     | 'active'
@@ -28,3 +30,5 @@ export type WebhookEventType =
     | 'order.refunded'
 
 export type UserRole = 'user' | 'admin'
+
+export type Environment = 'development' | 'production'

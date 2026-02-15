@@ -1,6 +1,8 @@
 import type { FC, ReactNode } from 'react'
 
 import { motion } from 'framer-motion'
+import { t } from '@openclaw/i18n'
+import { LEGAL_EMAIL } from '@/lib/links'
 import Header from '@/components/Header'
 import LandingFooter from '@/components/LandingFooter'
 import PageBackground from '@/components/PageBackground'
@@ -10,8 +12,8 @@ const Terms: FC = (): ReactNode => {
     return (
         <div className='relative flex min-h-screen flex-col bg-[#0a0a0f] text-white'>
             <PageTitle
-                title='Terms of Service'
-                description='Read the terms and conditions for using ClawHost services.'
+                title={t('terms.title')}
+                description={t('terms.description')}
             />
             <PageBackground />
             <Header />
@@ -23,176 +25,118 @@ const Terms: FC = (): ReactNode => {
                 className='relative mx-auto w-full max-w-6xl flex-1 px-6 py-12'
             >
                 <h1 className='font-clash mb-2 text-4xl font-bold'>
-                    Terms of Service
+                    {t('terms.title')}
                 </h1>
                 <p className='text-muted-foreground mb-12'>
-                    Last updated: February 7, 2026
+                    {t('terms.lastUpdated')}
                 </p>
 
                 <div className='prose prose-invert prose-sm max-w-none space-y-8'>
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
-                            1. Acceptance of Terms
+                            {t('terms.acceptanceTitle')}
                         </h2>
                         <p className='text-muted-foreground leading-relaxed'>
-                            By accessing and using ClawHost ("Service"), you
-                            accept and agree to be bound by the terms and
-                            provisions of this agreement. If you do not agree to
-                            these terms, please do not use our Service.
+                            {t('terms.acceptanceText')}
                         </p>
                     </section>
 
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
-                            2. Description of Service
+                            {t('terms.serviceTitle')}
                         </h2>
                         <p className='text-muted-foreground leading-relaxed'>
-                            ClawHost provides one-click OpenClaw deployment on
-                            dedicated servers. We enable users to deploy,
-                            manage, and access pre-configured OpenClaw instances
-                            with full root access and dedicated resources.
+                            {t('terms.serviceText')}
                         </p>
                     </section>
 
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
-                            3. User Responsibilities
+                            {t('terms.responsibilitiesTitle')}
                         </h2>
                         <p className='text-muted-foreground leading-relaxed'>
-                            You agree to:
+                            {t('terms.responsibilitiesText')}
                         </p>
                         <ul className='text-muted-foreground mt-2 list-inside list-disc space-y-2'>
-                            <li>
-                                Provide accurate and complete registration
-                                information
-                            </li>
-                            <li>
-                                Maintain the security of your account
-                                credentials
-                            </li>
-                            <li>
-                                Use the Service in compliance with all
-                                applicable laws
-                            </li>
-                            <li>
-                                Not use the Service for any illegal or
-                                unauthorized purpose
-                            </li>
-                            <li>
-                                Not attempt to gain unauthorized access to any
-                                systems or networks
-                            </li>
+                            <li>{t('terms.responsibilitiesAccurate')}</li>
+                            <li>{t('terms.responsibilitiesSecurity')}</li>
+                            <li>{t('terms.responsibilitiesCompliance')}</li>
+                            <li>{t('terms.responsibilitiesLegal')}</li>
+                            <li>{t('terms.responsibilitiesAccess')}</li>
                         </ul>
                     </section>
 
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
-                            4. Prohibited Uses
+                            {t('terms.prohibitedTitle')}
                         </h2>
                         <p className='text-muted-foreground leading-relaxed'>
-                            You may not use our Service to:
+                            {t('terms.prohibitedText')}
                         </p>
                         <ul className='text-muted-foreground mt-2 list-inside list-disc space-y-2'>
-                            <li>
-                                Distribute malware, viruses, or any harmful
-                                software
-                            </li>
-                            <li>
-                                Conduct denial-of-service attacks or network
-                                abuse
-                            </li>
-                            <li>Send spam or unsolicited communications</li>
-                            <li>Host or distribute illegal content</li>
-                            <li>
-                                Violate any third-party rights including
-                                intellectual property
-                            </li>
-                            <li>Mine cryptocurrency</li>
-                            <li>
-                                Any other unlawful or harmful activities that we
-                                may determine to be inappropriate at our
-                                discretion
-                            </li>
+                            <li>{t('terms.prohibitedMalware')}</li>
+                            <li>{t('terms.prohibitedDos')}</li>
+                            <li>{t('terms.prohibitedSpam')}</li>
+                            <li>{t('terms.prohibitedIllegal')}</li>
+                            <li>{t('terms.prohibitedIp')}</li>
+                            <li>{t('terms.prohibitedMining')}</li>
+                            <li>{t('terms.prohibitedOther')}</li>
                         </ul>
                     </section>
 
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
-                            5. Payment and Billing
+                            {t('terms.paymentTitle')}
                         </h2>
                         <p className='text-muted-foreground leading-relaxed'>
-                            Services are billed on a fixed monthly basis. All
-                            payments are non-refundable. When you pay for a
-                            server, you have access to it for the full billing
-                            period. If you cancel, the cancellation takes effect
-                            at the end of the current billing period. Prices are
-                            subject to change with reasonable notice. Failure to
-                            pay may result in suspension or termination of your
-                            account.
+                            {t('terms.paymentText')}
                         </p>
                     </section>
 
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
-                            6. Service Availability
+                            {t('terms.availabilityTitle')}
                         </h2>
                         <p className='text-muted-foreground leading-relaxed'>
-                            We strive to maintain high availability but do not
-                            guarantee uninterrupted access to the Service. We
-                            reserve the right to modify, suspend, or discontinue
-                            any part of the Service at any time with or without
-                            notice.
+                            {t('terms.availabilityText')}
                         </p>
                     </section>
 
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
-                            7. Limitation of Liability
+                            {t('terms.liabilityTitle')}
                         </h2>
                         <p className='text-muted-foreground leading-relaxed'>
-                            To the maximum extent permitted by law, ClawHost
-                            shall not be liable for any indirect, incidental,
-                            special, consequential, or punitive damages, or any
-                            loss of profits or revenues, whether incurred
-                            directly or indirectly.
+                            {t('terms.liabilityText')}
                         </p>
                     </section>
 
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
-                            8. Termination
+                            {t('terms.terminationTitle')}
                         </h2>
                         <p className='text-muted-foreground leading-relaxed'>
-                            We may terminate or suspend your account and access
-                            to the Service immediately, without prior notice,
-                            for conduct that we believe violates these Terms or
-                            is harmful to other users, us, or third parties, or
-                            for any other reason.
+                            {t('terms.terminationText')}
                         </p>
                     </section>
 
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
-                            9. Changes to Terms
+                            {t('terms.changesToTermsTitle')}
                         </h2>
                         <p className='text-muted-foreground leading-relaxed'>
-                            We reserve the right to modify these terms at any
-                            time. We will notify users of any material changes
-                            via email or through the Service. Continued use of
-                            the Service after such modifications constitutes
-                            acceptance of the updated terms.
+                            {t('terms.changesToTermsText')}
                         </p>
                     </section>
 
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
-                            10. Contact Information
+                            {t('terms.contactTitle')}
                         </h2>
                         <p className='text-muted-foreground leading-relaxed'>
-                            If you have any questions about these Terms, please
-                            contact us at{' '}
+                            {t('terms.contactText')}{' '}
                             <a
-                                href='mailto:legal@clawhost.cloud'
+                                href={LEGAL_EMAIL}
                                 className='text-primary hover:underline'
                             >
                                 legal@clawhost.cloud

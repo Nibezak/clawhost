@@ -52,7 +52,8 @@ const usePlaygroundGraph = (
                     claw,
                     agentCount: agents.length,
                     isLoadingAgents: isLoading,
-                    isReachable
+                    isReachable,
+                    isSelected: false
                 } as Record<string, unknown>,
                 draggable: false
             })
@@ -98,17 +99,9 @@ const usePlaygroundGraph = (
         nodes.forEach((node) => {
             const dagreNode = g.node(node.id)
             if (dagreNode) {
-                const width =
-                    node.type === 'clawNode'
-                        ? CLAW_NODE_WIDTH
-                        : AGENT_NODE_WIDTH
-                const height =
-                    node.type === 'clawNode'
-                        ? CLAW_NODE_HEIGHT
-                        : AGENT_NODE_HEIGHT
                 node.position = {
-                    x: dagreNode.x - width / 2,
-                    y: dagreNode.y - height / 2
+                    x: dagreNode.x - dagreNode.width / 2,
+                    y: dagreNode.y - dagreNode.height / 2
                 }
             }
         })

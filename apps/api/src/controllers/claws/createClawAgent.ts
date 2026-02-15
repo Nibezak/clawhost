@@ -1,19 +1,15 @@
 import type { CreateClawAgentBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
-import { eq, and } from 'drizzle-orm'
-import { db } from '@/db'
-import { claws } from '@/db/schema'
 import executeSSH from '@/services/ssh'
-import { isAdmin } from '@/controllers/claws/helpers'
+import { findUserClaw, validateEnvVars } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
 const BASE_DIR = '/home/openclaw/.openclaw'
+const ENV_SEPARATOR = '---ENV_SEPARATOR---'
 
-const createClawAgent = async (
-    c: AuthenticatedContext
-) => {
+const createClawAgent = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')
@@ -27,37 +23,31 @@ const createClawAgent = async (
             return fail(c, t('api.agentNameInvalid'), 400)
         }
 
-        const admin = await isAdmin(userId)
+        const claw = await findUserClaw(userId, id)
 
-        const claw = await db
-            .select()
-            .from(claws)
-            .where(
-                admin
-                    ? eq(claws.id, id)
-                    : and(eq(claws.id, id), eq(claws.userId, userId))
-            )
-            .limit(1)
-
-        if (!claw[0]) {
+        if (!claw) {
             return fail(c, t('api.clawNotFound'), 404)
         }
 
-        if (!claw[0].ip || !claw[0].rootPassword) {
+        if (!claw.ip || !claw.rootPassword) {
             return fail(c, t('api.agentCreateFailed'), 400)
         }
 
         try {
-            const configOutput = await executeSSH(
-                claw[0].ip,
-                claw[0].rootPassword,
-                `cat ${BASE_DIR}/openclaw.json 2>/dev/null || echo '{}'`,
+            const output = await executeSSH(
+                claw.ip,
+                claw.rootPassword,
+                `cat ${BASE_DIR}/openclaw.json 2>/dev/null || echo '{}'; echo '${ENV_SEPARATOR}'; cat ${BASE_DIR}/.env 2>/dev/null || echo ''`,
                 5000
             )
 
+            const parts = output.split(ENV_SEPARATOR)
+            const configOutput = (parts[0] || '{}').trim()
+            const envRaw = (parts[1] || '').trim()
+
             let config: Record<string, unknown> = {}
             try {
-                config = JSON.parse(configOutput.trim())
+                config = JSON.parse(configOutput)
             } catch {
                 config = {}
             }
@@ -113,51 +103,39 @@ const createClawAgent = async (
             })
 
             const configJson = JSON.stringify(config, null, 4)
-            const escapedConfig = configJson.replace(/'/g, "'\\''")
-
-            await executeSSH(
-                claw[0].ip,
-                claw[0].rootPassword,
-                `echo '${escapedConfig}' > ${BASE_DIR}/openclaw.json`,
-                5000
-            )
+            const configB64 = Buffer.from(configJson).toString('base64')
+            let writeCommand = `echo '${configB64}' | base64 -d > ${BASE_DIR}/openclaw.json`
 
             if (body.envVars && Object.keys(body.envVars).length > 0) {
-                const existingEnv = await executeSSH(
-                    claw[0].ip,
-                    claw[0].rootPassword,
-                    `cat ${BASE_DIR}/.env 2>/dev/null || echo ''`,
-                    5000
-                )
+                if (!validateEnvVars(body.envVars)) {
+                    return fail(c, t('api.invalidEnvVars'), 400)
+                }
 
                 const existingLines: string[] = []
                 const existingKeys = new Set<string>()
 
-                existingEnv
-                    .trim()
-                    .split('\n')
-                    .forEach((line) => {
-                        const trimmed = line.trim()
-                        if (!trimmed || trimmed.startsWith('#')) {
-                            existingLines.push(line)
-                            return
-                        }
-                        const eqIndex = trimmed.indexOf('=')
-                        if (eqIndex === -1) {
-                            existingLines.push(line)
-                            return
-                        }
-                        const key = trimmed.substring(0, eqIndex).trim()
-                        existingKeys.add(key)
+                envRaw.split('\n').forEach((line) => {
+                    const trimmed = line.trim()
+                    if (!trimmed || trimmed.startsWith('#')) {
+                        existingLines.push(line)
+                        return
+                    }
+                    const eqIndex = trimmed.indexOf('=')
+                    if (eqIndex === -1) {
+                        existingLines.push(line)
+                        return
+                    }
+                    const key = trimmed.substring(0, eqIndex).trim()
+                    existingKeys.add(key)
 
-                        if (key in body.envVars!) {
-                            const value = body.envVars![key]
-                            if (value === '') return
-                            existingLines.push(`${key}=${value}`)
-                        } else {
-                            existingLines.push(line)
-                        }
-                    })
+                    if (key in body.envVars!) {
+                        const value = body.envVars![key]
+                        if (value === '') return
+                        existingLines.push(`${key}=${value}`)
+                    } else {
+                        existingLines.push(line)
+                    }
+                })
 
                 Object.entries(body.envVars).forEach(([key, value]) => {
                     if (!existingKeys.has(key) && value !== '') {
@@ -166,21 +144,15 @@ const createClawAgent = async (
                 })
 
                 const envContent = existingLines.join('\n')
-                const escapedEnv = envContent.replace(/'/g, "'\\''")
-
-                await executeSSH(
-                    claw[0].ip,
-                    claw[0].rootPassword,
-                    `echo '${escapedEnv}' > ${BASE_DIR}/.env`,
-                    5000
-                )
+                const envB64 = Buffer.from(envContent).toString('base64')
+                writeCommand += ` && echo '${envB64}' | base64 -d > ${BASE_DIR}/.env`
             }
 
             await executeSSH(
-                claw[0].ip,
-                claw[0].rootPassword,
-                'systemctl restart openclaw-gateway',
-                10000
+                claw.ip,
+                claw.rootPassword,
+                `${writeCommand} && systemctl restart openclaw-gateway`,
+                15000
             )
 
             return ok(
@@ -199,13 +171,8 @@ const createClawAgent = async (
         } catch {
             return fail(c, t('api.agentCreateFailed'), 500)
         }
-    } catch (err) {
-        console.error('Create claw agent error:', err)
-        return fail(
-            c,
-            err instanceof Error ? err.message : t('api.agentCreateFailed'),
-            500
-        )
+    } catch {
+        return fail(c, t('api.agentCreateFailed'), 500)
     }
 }
 

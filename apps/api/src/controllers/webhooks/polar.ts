@@ -13,6 +13,7 @@ import { provisionClaw } from '@/controllers/claws/provisionClaw'
 import { getProvider } from '@/services/provider'
 import { cleanupClaw } from '@/controllers/claws/helpers'
 import { ok, fail } from '@/lib/response'
+import { getEnvironment, PROD } from '@/lib/environment'
 import { t } from '@openclaw/i18n'
 
 const handlePolarWebhook = async (c: Context) => {
@@ -31,6 +32,13 @@ const handlePolarWebhook = async (c: Context) => {
             },
 
             onSubscriptionActive: async (data: SubscriptionWebhookData) => {
+                const currentEnv = getEnvironment(c)
+                const eventEnv = data.metadata?.environment || PROD
+
+                if (eventEnv !== currentEnv) {
+                    return
+                }
+
                 const existingClaw = await db
                     .select()
                     .from(claws)
@@ -46,14 +54,16 @@ const handlePolarWebhook = async (c: Context) => {
                     return
                 }
 
-                provisionClaw({
-                    pendingClawId,
-                    subscriptionId: data.id,
-                    customerId: data.customerId,
-                    productId: data.productId
-                }).catch((err) => {
+                try {
+                    await provisionClaw({
+                        pendingClawId,
+                        subscriptionId: data.id,
+                        customerId: data.customerId,
+                        productId: data.productId
+                    })
+                } catch (err) {
                     console.error(`Failed to provision claw: ${err}`)
-                })
+                }
             },
 
             onSubscriptionCanceled: async (data: SubscriptionWebhookData) => {
@@ -105,24 +115,32 @@ const handlePolarWebhook = async (c: Context) => {
                     return
                 }
 
-                await db
-                    .update(claws)
-                    .set({ subscriptionStatus: 'revoked' })
-                    .where(eq(claws.id, claw[0].id))
-
                 if (claw[0].providerServerId) {
-                    try {
-                        const provider = getProvider(
-                            (claw[0].provider || 'hetzner') as ProviderType
-                        )
-                        await provider.stopServer(claw[0].providerServerId)
-                        await db
+                    const provider = getProvider(
+                        (claw[0].provider || 'hetzner') as ProviderType
+                    )
+                    await Promise.all([
+                        db
                             .update(claws)
-                            .set({ status: 'stopped' })
-                            .where(eq(claws.id, claw[0].id))
-                    } catch (err) {
-                        console.error(`Failed to stop server: ${err}`)
-                    }
+                            .set({ subscriptionStatus: 'revoked' })
+                            .where(eq(claws.id, claw[0].id)),
+                        provider
+                            .stopServer(claw[0].providerServerId)
+                            .then(() =>
+                                db
+                                    .update(claws)
+                                    .set({ status: 'stopped' })
+                                    .where(eq(claws.id, claw[0].id))
+                            )
+                            .catch((err) =>
+                                console.error(`Failed to stop server: ${err}`)
+                            )
+                    ])
+                } else {
+                    await db
+                        .update(claws)
+                        .set({ subscriptionStatus: 'revoked' })
+                        .where(eq(claws.id, claw[0].id))
                 }
             },
 
@@ -137,31 +155,27 @@ const handlePolarWebhook = async (c: Context) => {
             },
 
             onSubscriptionUpdated: async (data: SubscriptionWebhookData) => {
-                await db
+                const updated = await db
                     .update(claws)
                     .set({ subscriptionStatus: data.status })
                     .where(eq(claws.polarSubscriptionId, data.id))
+                    .returning()
 
-                if (data.status === 'past_due') {
-                    const claw = await db
-                        .select()
-                        .from(claws)
-                        .where(eq(claws.polarSubscriptionId, data.id))
-                        .limit(1)
-
-                    if (claw[0]?.providerServerId) {
-                        try {
-                            const provider = getProvider(
-                                (claw[0].provider || 'hetzner') as ProviderType
-                            )
-                            await provider.stopServer(claw[0].providerServerId)
-                            await db
-                                .update(claws)
-                                .set({ status: 'stopped' })
-                                .where(eq(claws.id, claw[0].id))
-                        } catch (err) {
-                            console.error(`Failed to stop server: ${err}`)
-                        }
+                if (
+                    data.status === 'past_due' &&
+                    updated[0]?.providerServerId
+                ) {
+                    try {
+                        const provider = getProvider(
+                            (updated[0].provider || 'hetzner') as ProviderType
+                        )
+                        await provider.stopServer(updated[0].providerServerId)
+                        await db
+                            .update(claws)
+                            .set({ status: 'stopped' })
+                            .where(eq(claws.id, updated[0].id))
+                    } catch (err) {
+                        console.error(`Failed to stop server: ${err}`)
                     }
                 }
             }

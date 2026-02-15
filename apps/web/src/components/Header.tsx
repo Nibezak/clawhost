@@ -105,6 +105,7 @@ const Header: FC<HeaderProps> = ({
                             <UserDropdown
                                 displayName={displayName}
                                 onSignOut={signOut}
+                                onOpen={closeMobileMenu}
                             />
                         ) : (
                             <div className='flex items-center gap-2'>

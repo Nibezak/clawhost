@@ -646,3 +646,4 @@ pnpm check           # Run tsc + eslint for both api and web
 15. **No section markers** - Never write comments like `// Section Name`, `{/* Section */}`, `// ========`, or category headers in files
 16. **Strict formatting compliance** - Every line of code must follow the Prettier and ESLint rules defined above. 4-space indentation, single quotes, no semicolons, no trailing commas, no end-of-file newlines. No exceptions
 17. **Run checks after changes** - After writing or modifying code, verify with `pnpm lint` and `pnpm format:check` to ensure compliance
+18. **Use camelCase for SVG attributes in JSX** - React requires camelCase for SVG/HTML attributes. Use `stopColor` not `stop-color`, `stopOpacity` not `stop-opacity`, `fillRule` not `fill-rule`, `clipPath` not `clip-path`, `strokeWidth` not `stroke-width`, etc.

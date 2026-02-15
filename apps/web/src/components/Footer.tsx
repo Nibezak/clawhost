@@ -2,6 +2,7 @@ import type { FC, ReactNode } from 'react'
 
 import { Link } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
+import { SUPPORT_EMAIL } from '@/lib/links'
 
 const Footer: FC = (): ReactNode => {
     return (
@@ -32,7 +33,7 @@ const Footer: FC = (): ReactNode => {
                             {t('footer.changelog')}
                         </Link>
                         <a
-                            href='mailto:support@clawhost.cloud'
+                            href={SUPPORT_EMAIL}
                             className='text-muted-foreground hover:text-foreground text-sm transition-colors'
                         >
                             {t('footer.getInTouch')}

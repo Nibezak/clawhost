@@ -2,7 +2,7 @@ import type { ClawCleanupData } from '@/ts/Interfaces'
 
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
-import { claws, clawExports, volumes } from '@/db/schema'
+import { claws, volumes } from '@/db/schema'
 import { getProvider } from '@/services/provider'
 import cloudflare from '@/services/cloudflare'
 
@@ -17,39 +17,25 @@ async function cleanupClaw(
         .from(volumes)
         .where(eq(volumes.clawId, clawId))
 
-    for (const vol of clawVolumes) {
-        if (vol.providerVolumeId) {
-            try {
-                await provider.detachVolume(vol.providerVolumeId)
-                await provider.deleteVolume(vol.providerVolumeId)
-            } catch (volErr) {
-                console.error('Failed to delete volume:', volErr)
-            }
-        }
-    }
+    await Promise.allSettled([
+        ...clawVolumes
+            .filter((vol) => vol.providerVolumeId)
+            .map(async (vol) => {
+                await provider.detachVolume(vol.providerVolumeId!)
+                await provider.deleteVolume(vol.providerVolumeId!)
+            }),
+        claw.subdomain
+            ? cloudflare
+                  .findDNSRecord(claw.subdomain)
+                  .then((rec) =>
+                      rec ? cloudflare.deleteDNSRecord(rec.id) : null
+                  )
+            : Promise.resolve(),
+        claw.providerServerId
+            ? provider.deleteServer(claw.providerServerId)
+            : Promise.resolve()
+    ])
 
-    await db.delete(volumes).where(eq(volumes.clawId, clawId))
-
-    if (claw.subdomain) {
-        try {
-            const dnsRecord = await cloudflare.findDNSRecord(claw.subdomain)
-            if (dnsRecord) {
-                await cloudflare.deleteDNSRecord(dnsRecord.id)
-            }
-        } catch (dnsErr) {
-            console.error('Failed to delete DNS record:', dnsErr)
-        }
-    }
-
-    if (claw.providerServerId) {
-        try {
-            await provider.deleteServer(claw.providerServerId)
-        } catch (serverErr) {
-            console.error('Failed to delete server:', serverErr)
-        }
-    }
-
-    await db.delete(clawExports).where(eq(clawExports.clawId, clawId))
     await db.delete(claws).where(eq(claws.id, clawId))
 }
 

@@ -1,43 +1,28 @@
 import type { AuthenticatedContext } from '@/ts/Types'
 
-import { eq, and } from 'drizzle-orm'
-import { db } from '@/db'
-import { claws } from '@/db/schema'
 import executeSSH from '@/services/ssh'
-import { isAdmin } from '@/controllers/claws/helpers'
+import { findUserClaw } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
-const getClawEnvVars = async (
-    c: AuthenticatedContext
-) => {
+const getClawEnvVars = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')
-        const admin = await isAdmin(userId)
+        const claw = await findUserClaw(userId, id)
 
-        const claw = await db
-            .select()
-            .from(claws)
-            .where(
-                admin
-                    ? eq(claws.id, id)
-                    : and(eq(claws.id, id), eq(claws.userId, userId))
-            )
-            .limit(1)
-
-        if (!claw[0]) {
+        if (!claw) {
             return fail(c, t('api.clawNotFound'), 404)
         }
 
-        if (!claw[0].ip || !claw[0].rootPassword) {
+        if (!claw.ip || !claw.rootPassword) {
             return fail(c, t('api.failedToReadFile'), 400)
         }
 
         try {
             const envRaw = await executeSSH(
-                claw[0].ip,
-                claw[0].rootPassword,
+                claw.ip,
+                claw.rootPassword,
                 "cat /home/openclaw/.openclaw/.env 2>/dev/null || echo ''",
                 10000
             )

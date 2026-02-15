@@ -1,5 +1,8 @@
 import type { FC, ReactNode } from 'react'
-import type { PlaygroundCanvasProps, PlaygroundCanvasInnerProps } from '@/ts/Interfaces'
+import type {
+    PlaygroundCanvasProps,
+    PlaygroundCanvasInnerProps
+} from '@/ts/Interfaces'
 import type { NodeMouseHandler } from '@xyflow/react'
 
 import { useMemo, useState, useCallback, useEffect, useRef } from 'react'
@@ -25,6 +28,7 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
     panelOpen,
     selectedClawId,
     selectedAgentId,
+    selectedAgentClawId,
     initialZoom,
     allowPageScroll,
     zoom,
@@ -56,10 +60,41 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
         return () => clearTimeout(timer)
     }, [])
 
+    const selectedClawIdRef = useRef(selectedClawId)
+    const selectedAgentIdRef = useRef(selectedAgentId)
+    const selectedAgentClawIdRef = useRef(selectedAgentClawId)
+    selectedClawIdRef.current = selectedClawId
+    selectedAgentIdRef.current = selectedAgentId
+    selectedAgentClawIdRef.current = selectedAgentClawId
+
     const prevNodeCountRef = useRef(initialNodes.length)
 
     useEffect(() => {
-        setNodes(initialNodes)
+        const curSelectedClawId = selectedClawIdRef.current
+        const curSelectedAgentId = selectedAgentIdRef.current
+        const curSelectedAgentClawId = selectedAgentClawIdRef.current
+
+        setNodes(
+            initialNodes.map((node) => {
+                if (node.type === 'clawNode') {
+                    const clawId = node.id.replace('claw-', '')
+                    const isSelected =
+                        curSelectedClawId === clawId && !curSelectedAgentId
+                    return { ...node, data: { ...node.data, isSelected } }
+                }
+                if (node.type === 'agentNode') {
+                    const nodeData = node.data as Record<string, unknown>
+                    const agentObj = nodeData.agent as Record<string, unknown>
+                    const agentId = agentObj?.id as string
+                    const clawId = nodeData.clawId as string
+                    const isSelected =
+                        curSelectedAgentId === agentId &&
+                        curSelectedAgentClawId === clawId
+                    return { ...node, data: { ...node.data, isSelected } }
+                }
+                return node
+            })
+        )
         setEdges(initialEdges)
 
         if (initialNodes.length !== prevNodeCountRef.current && isFitView) {
@@ -101,7 +136,10 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
                     const nodeData = node.data as Record<string, unknown>
                     const agentObj = nodeData.agent as Record<string, unknown>
                     const agentId = agentObj?.id as string
-                    const isSelected = selectedAgentId === agentId
+                    const clawId = nodeData.clawId as string
+                    const isSelected =
+                        selectedAgentId === agentId &&
+                        selectedAgentClawId === clawId
                     if (
                         (node.data as Record<string, unknown>).isSelected ===
                         isSelected
@@ -112,7 +150,7 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
                 return node
             })
         )
-    }, [selectedClawId, selectedAgentId, setNodes])
+    }, [selectedClawId, selectedAgentId, selectedAgentClawId, setNodes])
 
     useEffect(() => {
         let timeout: ReturnType<typeof setTimeout>
@@ -170,7 +208,14 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
                 }, 50)
             }
         }
-    }, [panelOpen, getViewport, setViewport, fitView, allowPageScroll, initialZoom])
+    }, [
+        panelOpen,
+        getViewport,
+        setViewport,
+        fitView,
+        allowPageScroll,
+        initialZoom
+    ])
 
     useEffect(() => {
         if (allowPageScroll) return
@@ -375,7 +420,9 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
                 proOptions={{ hideAttribution: true }}
                 elementsSelectable={false}
                 nodesConnectable={false}
-                minZoom={allowPageScroll && initialZoom ? 0.9 : isMobile ? 0.3 : 0.5}
+                minZoom={
+                    allowPageScroll && initialZoom ? 0.9 : isMobile ? 0.3 : 0.5
+                }
                 maxZoom={allowPageScroll && initialZoom ? initialZoom : 1.5}
                 zoomOnScroll={false}
                 zoomOnPinch={!allowPageScroll}
@@ -394,6 +441,9 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
                     onFitView={handleFitView}
                     isFitView={isFitView}
                     nodesOutOfView={nodesOutOfView}
+                    clawCount={
+                        nodes.filter((n) => n.type === 'clawNode').length
+                    }
                 />
             )}
         </div>
@@ -409,6 +459,7 @@ const PlaygroundCanvas: FC<PlaygroundCanvasProps> = ({
     panelOpen,
     selectedClawId,
     selectedAgentId,
+    selectedAgentClawId,
     initialZoom,
     allowPageScroll
 }): ReactNode => {
@@ -426,6 +477,7 @@ const PlaygroundCanvas: FC<PlaygroundCanvasProps> = ({
                 panelOpen={panelOpen}
                 selectedClawId={selectedClawId}
                 selectedAgentId={selectedAgentId}
+                selectedAgentClawId={selectedAgentClawId}
                 initialZoom={initialZoom}
                 allowPageScroll={allowPageScroll}
                 zoom={zoom}

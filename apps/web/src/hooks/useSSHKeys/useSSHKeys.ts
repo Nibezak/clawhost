@@ -7,7 +7,7 @@ const useSSHKeys = () => {
         queryKey: SSH_KEYS_QUERY_KEY,
         queryFn: api.getSSHKeys,
         placeholderData: (previousData) => previousData,
-        refetchInterval: 3000
+        refetchInterval: 30000
     })
 }
 

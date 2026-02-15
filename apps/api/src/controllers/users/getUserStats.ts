@@ -37,9 +37,7 @@ const getUserStats = async (c: AuthenticatedContext) => {
                     1
                 )
                 orderCount = result.totalCount
-            } catch {
-                /* empty */
-            }
+            } catch {}
         }
 
         return ok(

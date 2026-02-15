@@ -9,6 +9,7 @@ import { generatePassword } from '@/controllers/claws/helpers'
 import { getProvider } from '@/services/provider'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
+import { getEnvironment } from '@/lib/environment'
 
 const adjectives = [
     'cozy',
@@ -114,9 +115,7 @@ function getPolarProductId(
     else return null
 }
 
-const initiateClawPurchase = async (
-    c: AuthenticatedContext
-) => {
+const initiateClawPurchase = async (c: AuthenticatedContext) => {
     try {
         if (Date.now() - lastPendingCleanup > CLEANUP_INTERVAL) {
             await db
@@ -179,16 +178,6 @@ const initiateClawPurchase = async (
             return fail(c, t('api.invalidLocation'), 400)
         }
 
-        const MAX_CLAWS_PER_ACCOUNT = 50
-        const [{ value: clawCount }] = await db
-            .select({ value: count() })
-            .from(claws)
-            .where(eq(claws.userId, userId))
-
-        if (clawCount >= MAX_CLAWS_PER_ACCOUNT) {
-            return fail(c, t('api.clawLimitReached'), 400)
-        }
-
         const name = rawName || generateClawName()
 
         if (
@@ -198,36 +187,45 @@ const initiateClawPurchase = async (
             return fail(c, t('api.volumeSizeInvalid'), 400)
         }
 
-        const user = await db
-            .select()
-            .from(users)
-            .where(eq(users.id, userId))
-            .limit(1)
+        const [clawCountResult, userResult, sshKeyResult] = await Promise.all([
+            db
+                .select({ value: count() })
+                .from(claws)
+                .where(eq(claws.userId, userId)),
+            db.select().from(users).where(eq(users.id, userId)).limit(1),
+            sshKeyId
+                ? db
+                      .select()
+                      .from(sshKeys)
+                      .where(
+                          and(
+                              eq(sshKeys.id, sshKeyId),
+                              eq(sshKeys.userId, userId)
+                          )
+                      )
+                      .limit(1)
+                : Promise.resolve(null)
+        ])
 
-        if (!user[0]) {
+        const MAX_CLAWS_PER_ACCOUNT = 50
+        if (clawCountResult[0].value >= MAX_CLAWS_PER_ACCOUNT) {
+            return fail(c, t('api.clawLimitReached'), 400)
+        }
+
+        if (!userResult[0]) {
             return fail(c, t('api.userNotFound'), 404)
         }
 
-        if (sshKeyId) {
-            const sshKey = await db
-                .select()
-                .from(sshKeys)
-                .where(
-                    and(eq(sshKeys.id, sshKeyId), eq(sshKeys.userId, userId))
-                )
-                .limit(1)
-
-            if (!sshKey[0]) {
-                return fail(c, t('api.sshKeyNotFound'), 404)
-            }
+        if (sshKeyId && (!sshKeyResult || !sshKeyResult[0])) {
+            return fail(c, t('api.sshKeyNotFound'), 404)
         }
 
-        let polarCustomerId = user[0].polarCustomerId
+        let polarCustomerId = userResult[0].polarCustomerId
 
         if (!polarCustomerId) {
             const customer = await customers.getOrCreate({
-                email: user[0].email,
-                name: user[0].name || undefined,
+                email: userResult[0].email,
+                name: userResult[0].name || undefined,
                 externalId: userId
             })
             polarCustomerId = customer.id
@@ -248,14 +246,15 @@ const initiateClawPurchase = async (
 
         const checkout = await checkouts.create({
             productId,
-            customerEmail: user[0].email,
+            customerEmail: userResult[0].email,
             customerId: polarCustomerId,
             metadata: {
                 pendingClawId: pendingId,
                 userId,
                 planId,
                 location,
-                name
+                name,
+                environment: getEnvironment(c)
             }
         })
 
@@ -288,15 +287,8 @@ const initiateClawPurchase = async (
             },
             t('api.clawPurchaseInitiated')
         )
-    } catch (err) {
-        console.error('Initiate claw purchase error:', err)
-        return fail(
-            c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToInitiatePurchase'),
-            500
-        )
+    } catch {
+        return fail(c, t('api.failedToInitiatePurchase'), 500)
     }
 }
 
