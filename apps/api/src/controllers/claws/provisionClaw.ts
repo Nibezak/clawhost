@@ -46,7 +46,18 @@ export async function provisionClaw(
         const provider = getProvider(providerName)
 
         const MIN_MEMORY_GB = 4
-        const serverTypes = await provider.getServerTypes()
+
+        const [serverTypes, sshKeyResult] = await Promise.all([
+            provider.getServerTypes(),
+            pending.sshKeyId
+                ? db
+                      .select()
+                      .from(sshKeys)
+                      .where(eq(sshKeys.id, pending.sshKeyId))
+                      .limit(1)
+                : Promise.resolve(null)
+        ])
+
         const selectedPlan = serverTypes.find(
             (st) => st.name === pending.planId
         )
@@ -60,23 +71,15 @@ export async function provisionClaw(
         const gatewayToken = generateToken()
 
         let providerSshKeyIds: number[] | undefined
-        if (pending.sshKeyId) {
-            const sshKey = await db
-                .select()
-                .from(sshKeys)
-                .where(eq(sshKeys.id, pending.sshKeyId))
-                .limit(1)
-
-            if (sshKey[0]) {
-                const keyId =
-                    providerName === 'digitalocean'
-                        ? sshKey[0].digitaloceanKeyId
-                        : providerName === 'vultr'
-                          ? sshKey[0].vultrKeyId
-                          : sshKey[0].providerKeyId
-                if (keyId) {
-                    providerSshKeyIds = [keyId]
-                }
+        if (sshKeyResult && sshKeyResult[0]) {
+            const keyId =
+                providerName === 'digitalocean'
+                    ? sshKeyResult[0].digitaloceanKeyId
+                    : providerName === 'vultr'
+                      ? sshKeyResult[0].vultrKeyId
+                      : sshKeyResult[0].providerKeyId
+            if (keyId) {
+                providerSshKeyIds = [keyId]
             }
         }
 
@@ -128,20 +131,21 @@ export async function provisionClaw(
             throw providerErr
         }
 
-        try {
-            await cloudflare.createDNSRecord(subdomain, ip)
-        } catch (dnsErr) {
-            console.error('Failed to create DNS record:', dnsErr)
-        }
-
-        await db
-            .update(claws)
-            .set({
-                providerServerId: serverId.toString(),
-                status: 'configuring',
-                ip
-            })
-            .where(eq(claws.id, id))
+        await Promise.all([
+            cloudflare
+                .createDNSRecord(subdomain, ip)
+                .catch((dnsErr) =>
+                    console.error('Failed to create DNS record:', dnsErr)
+                ),
+            db
+                .update(claws)
+                .set({
+                    providerServerId: serverId.toString(),
+                    status: 'configuring',
+                    ip
+                })
+                .where(eq(claws.id, id))
+        ])
 
         if (pending.volumeSize && pending.volumeSize >= 10) {
             try {
@@ -173,10 +177,7 @@ export async function provisionClaw(
         console.error('Provision claw error:', err)
         return {
             success: false,
-            error:
-                err instanceof Error
-                    ? err.message
-                    : t('api.failedToProvisionClaw')
+            error: t('api.failedToProvisionClaw')
         }
     }
 }

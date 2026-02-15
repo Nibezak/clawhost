@@ -7,13 +7,19 @@ import type { SubscriptionStatus } from '@/ts/Types'
 
 import getPolarClient from '@/lib/polar/getPolarClient'
 
+const SUB_CACHE_TTL = 60_000
+const subCache = new Map<string, { data: PolarSubscription; expiry: number }>()
+
 const subscriptions = {
     async get(subscriptionId: string): Promise<PolarSubscription | null> {
+        const cached = subCache.get(subscriptionId)
+        if (cached && Date.now() < cached.expiry) return cached.data
+
         const polar = getPolarClient()
 
         try {
             const sub = await polar.subscriptions.get({ id: subscriptionId })
-            return {
+            const result: PolarSubscription = {
                 id: sub.id,
                 status: sub.status as SubscriptionStatus,
                 customerId: sub.customerId,
@@ -33,6 +39,11 @@ const subscriptions = {
                 endedAt: sub.endedAt ? new Date(sub.endedAt) : undefined,
                 metadata: sub.metadata as Record<string, string> | undefined
             }
+            subCache.set(subscriptionId, {
+                data: result,
+                expiry: Date.now() + SUB_CACHE_TTL
+            })
+            return result
         } catch {
             return null
         }

@@ -77,27 +77,28 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
                 localStorage.removeItem(AUTH_STORAGE_KEY)
                 localStorage.removeItem(PROFILE_CACHE_KEY)
                 setCachedProfile(null)
+                queryClient.clear()
             }
         })
         return unsubscribe
     }, [queryClient])
 
-    const sendOtp = async (email: string) => {
+    const sendOtp = useCallback(async (email: string) => {
         const redirectUrl = `${window.location.origin}/login`
         await api.sendMagicLink(email, redirectUrl)
         window.localStorage.setItem('emailForSignIn', email)
-    }
+    }, [])
 
-    const verifyOtp = async (email: string) => {
+    const verifyOtp = useCallback(async (email: string) => {
         if (isSignInWithEmailLink(auth, window.location.href)) {
             await signInWithEmailLink(auth, email, window.location.href)
             window.localStorage.removeItem('emailForSignIn')
         }
-    }
+    }, [])
 
-    const signOut = async () => {
+    const signOut = useCallback(async () => {
         await firebaseSignOut(auth)
-    }
+    }, [])
 
     return (
         <AuthContext.Provider

@@ -283,7 +283,22 @@ const Dashboard: FC = (): ReactNode => {
             />
 
             <div className='relative z-10 flex items-center justify-between border-b border-white/10 bg-[#0a0a0f]/80 px-6 py-3 backdrop-blur-xl'>
-                <Logo />
+                <div className='flex items-center gap-3'>
+                    <Logo />
+                    {!isLoading &&
+                        displayedClaws &&
+                        displayedClaws.length > 0 && (
+                            <span className='rounded-md bg-white/5 px-2 py-1 text-xs text-gray-400'>
+                                {displayedClaws.length === 1
+                                    ? t('dashboard.clawCountLabelSingular', {
+                                          count: String(displayedClaws.length)
+                                      })
+                                    : t('dashboard.clawCountLabel', {
+                                          count: String(displayedClaws.length)
+                                      })}
+                            </span>
+                        )}
+                </div>
 
                 <div className='flex items-center gap-3'>
                     {clawFilter}

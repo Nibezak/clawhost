@@ -21,6 +21,16 @@ const parseWebhook = async (c: Context): Promise<WebhookEvent | null> => {
         return null
     }
 
+    const WEBHOOK_TOLERANCE_SECONDS = 300
+    const ts = parseInt(timestamp, 10)
+    if (
+        isNaN(ts) ||
+        Math.abs(Date.now() / 1000 - ts) > WEBHOOK_TOLERANCE_SECONDS
+    ) {
+        console.error('Webhook timestamp out of tolerance')
+        return null
+    }
+
     const payload = await c.req.text()
 
     if (

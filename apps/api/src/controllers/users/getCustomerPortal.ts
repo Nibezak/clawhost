@@ -7,9 +7,7 @@ import { getPolarClient } from '@/lib/polar'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
-const getCustomerPortal = async (
-    c: AuthenticatedContext
-) => {
+const getCustomerPortal = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
 

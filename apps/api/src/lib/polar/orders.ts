@@ -56,6 +56,16 @@ const orders = {
         }
     },
 
+    async get(orderId: string): Promise<{ customerId: string } | null> {
+        const polar = getPolarClient()
+        try {
+            const order = await polar.orders.get({ id: orderId })
+            return { customerId: order.customerId }
+        } catch {
+            return null
+        }
+    },
+
     async getInvoiceUrl(orderId: string): Promise<string> {
         const polar = getPolarClient()
         try {

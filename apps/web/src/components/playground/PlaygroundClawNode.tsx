@@ -341,21 +341,30 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <div className='flex items-center gap-1.5 rounded-md bg-gray-500/10 px-2 py-1'>
-                                        <Clock className='h-3 w-3 text-gray-400' weight='fill' />
+                                        <Clock
+                                            className='h-3 w-3 text-gray-400'
+                                            weight='fill'
+                                        />
                                         <span className='text-xs text-gray-400'>
-                                            {t('dashboard.scheduledDeletionShort', {
-                                                date: new Date(claw.deletionScheduledAt!).toLocaleDateString('en-US', {
-                                                    month: 'short',
-                                                    day: 'numeric'
-                                                })
-                                            })}
+                                            {t(
+                                                'dashboard.scheduledDeletionShort',
+                                                {
+                                                    date: new Date(
+                                                        claw.deletionScheduledAt!
+                                                    ).toLocaleDateString(
+                                                        'en-US',
+                                                        {
+                                                            month: 'short',
+                                                            day: 'numeric'
+                                                        }
+                                                    )
+                                                }
+                                            )}
                                         </span>
                                     </div>
                                 </TooltipTrigger>
                                 <TooltipContent side='top'>
-                                    <p>
-                                        {t('dashboard.scheduledForDeletion')}
-                                    </p>
+                                    <p>{t('dashboard.scheduledForDeletion')}</p>
                                 </TooltipContent>
                             </Tooltip>
                         )}

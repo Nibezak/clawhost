@@ -89,21 +89,37 @@ const hetzner: CloudProvider = {
 
     async getServers(): Promise<Map<string, ServerStatus>> {
         const result = new Map<string, ServerStatus>()
-        let page = 1
-        let hasMore = true
-        while (hasMore) {
-            const data = await getClient().get<HetznerServersResponse>(
-                `/servers?per_page=50&page=${page}`
-            )
-            for (const server of data.servers) {
-                result.set(String(server.id), {
-                    status: server.status,
-                    ip: server.public_net.ipv4.ip
-                })
-            }
-            hasMore = page < data.meta.pagination.last_page
-            page++
+        const first = await getClient().get<HetznerServersResponse>(
+            '/servers?per_page=50&page=1'
+        )
+
+        for (const server of first.servers) {
+            result.set(String(server.id), {
+                status: server.status,
+                ip: server.public_net.ipv4.ip
+            })
         }
+
+        const lastPage = first.meta.pagination.last_page
+        if (lastPage > 1) {
+            const remaining = await Promise.all(
+                Array.from({ length: lastPage - 1 }, (_, i) =>
+                    getClient().get<HetznerServersResponse>(
+                        `/servers?per_page=50&page=${i + 2}`
+                    )
+                )
+            )
+
+            for (const data of remaining) {
+                for (const server of data.servers) {
+                    result.set(String(server.id), {
+                        status: server.status,
+                        ip: server.public_net.ipv4.ip
+                    })
+                }
+            }
+        }
+
         return result
     },
 

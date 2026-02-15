@@ -1,38 +1,23 @@
 import type { AuthenticatedContext } from '@/ts/Types'
 
-import { eq, and } from 'drizzle-orm'
-import { db } from '@/db'
-import { claws } from '@/db/schema'
 import executeSSH from '@/services/ssh'
-import { isAdmin } from '@/controllers/claws/helpers'
+import { findUserClaw } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
 const SEPARATOR = '---CLAWHOST_SEP---'
 
-const getClawDiagnostics = async (
-    c: AuthenticatedContext
-) => {
+const getClawDiagnostics = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')
-        const admin = await isAdmin(userId)
+        const claw = await findUserClaw(userId, id)
 
-        const claw = await db
-            .select()
-            .from(claws)
-            .where(
-                admin
-                    ? eq(claws.id, id)
-                    : and(eq(claws.id, id), eq(claws.userId, userId))
-            )
-            .limit(1)
-
-        if (!claw[0]) {
+        if (!claw) {
             return fail(c, t('api.clawNotFound'), 404)
         }
 
-        if (!claw[0].ip || !claw[0].rootPassword) {
+        if (!claw.ip || !claw.rootPassword) {
             return fail(c, t('api.failedToGetDiagnostics'), 400)
         }
 
@@ -44,11 +29,7 @@ const getClawDiagnostics = async (
             'free -h 2>&1'
         ].join('; ')
 
-        const output = await executeSSH(
-            claw[0].ip,
-            claw[0].rootPassword,
-            command
-        )
+        const output = await executeSSH(claw.ip, claw.rootPassword, command)
         const parts = output.split(SEPARATOR)
 
         return ok(

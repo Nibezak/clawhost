@@ -6,9 +6,7 @@ import { users } from '@/db/schema'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
-const getCurrentUser = async (
-    c: AuthenticatedContext
-) => {
+const getCurrentUser = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
 

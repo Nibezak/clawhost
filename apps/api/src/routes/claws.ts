@@ -28,11 +28,12 @@ import {
     getClawEnvVars,
     updateClawEnvVars
 } from '@/controllers/claws'
+import adminOnly from '@/middleware/adminOnly'
 
 const app = new Hono<{ Variables: { userId: string } }>()
 
 app.get('/', getClaws)
-app.get('/admin', getAdminClaws)
+app.get('/admin', adminOnly, getAdminClaws)
 app.get('/:id', getClaw)
 app.post('/', createClaw)
 app.post('/purchase', initiateClawPurchase)
@@ -41,11 +42,11 @@ app.post('/:id/start', startClaw)
 app.post('/:id/stop', stopClaw)
 app.post('/:id/restart', restartClaw)
 app.post('/:id/cancel-deletion', cancelDeletion)
-app.post('/:id/hard-delete', hardDeleteClaw)
+app.post('/:id/hard-delete', adminOnly, hardDeleteClaw)
 app.post('/:id/diagnostics/status', getClawDiagnostics)
 app.post('/:id/diagnostics/logs', getClawLogs)
-app.post('/:id/diagnostics/repair', repairClaw)
-app.post('/:id/reinstall', reinstallClaw)
+app.post('/:id/diagnostics/repair', adminOnly, repairClaw)
+app.post('/:id/reinstall', adminOnly, reinstallClaw)
 app.get('/:id/export', exportClaw)
 app.post('/:id/agents', getClawAgents)
 app.post('/:id/agent-config', getClawAgentConfig)

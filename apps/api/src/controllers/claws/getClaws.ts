@@ -6,7 +6,7 @@ import { db } from '@/db'
 import { claws, volumes } from '@/db/schema'
 import { getProvider } from '@/services/provider'
 import cloudflare from '@/services/cloudflare'
-import { checkSubdomainReady } from '@/controllers/claws/helpers'
+import { checkSubdomainReady, sanitizeClaw } from '@/controllers/claws/helpers'
 import subscriptions from '@/lib/polar/subscriptions'
 import { ok } from '@/lib/response'
 import { t } from '@openclaw/i18n'
@@ -65,29 +65,33 @@ const getClaws = async (c: AuthenticatedContext) => {
                     claw.subdomain &&
                     (!claw.ip || claw.ip !== live.ip)
                 ) {
-                    try {
-                        const existing = await cloudflare.findDNSRecord(
-                            claw.subdomain
-                        )
-                        if (existing && existing.ip !== live.ip) {
-                            await cloudflare.updateDNSRecord(
-                                existing.id,
-                                claw.subdomain,
-                                live.ip
-                            )
-                        } else if (!existing) {
-                            await cloudflare.createDNSRecord(
-                                claw.subdomain,
-                                live.ip
-                            )
-                        }
-                    } catch {
-                        console.error(`Failed to fix DNS for ${claw.subdomain}`)
-                    }
-                    await db
-                        .update(claws)
-                        .set({ ip: live.ip })
-                        .where(eq(claws.id, claw.id))
+                    await Promise.all([
+                        cloudflare
+                            .findDNSRecord(claw.subdomain)
+                            .then(async (existing) => {
+                                if (existing && existing.ip !== live.ip) {
+                                    await cloudflare.updateDNSRecord(
+                                        existing.id,
+                                        claw.subdomain!,
+                                        live.ip!
+                                    )
+                                } else if (!existing) {
+                                    await cloudflare.createDNSRecord(
+                                        claw.subdomain!,
+                                        live.ip!
+                                    )
+                                }
+                            })
+                            .catch(() => {
+                                console.error(
+                                    `Failed to fix DNS for ${claw.subdomain}`
+                                )
+                            }),
+                        db
+                            .update(claws)
+                            .set({ ip: live.ip })
+                            .where(eq(claws.id, claw.id))
+                    ])
                 }
 
                 if (live.status === 'running' && claw.subdomain) {
@@ -141,7 +145,7 @@ const getClaws = async (c: AuthenticatedContext) => {
         }
     })
 
-    return ok(c, clawsWithVolumes, t('api.clawsFetched'))
+    return ok(c, clawsWithVolumes.map(sanitizeClaw), t('api.clawsFetched'))
 }
 
 export default getClaws

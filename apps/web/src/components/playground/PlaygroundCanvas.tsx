@@ -1,5 +1,8 @@
 import type { FC, ReactNode } from 'react'
-import type { PlaygroundCanvasProps, PlaygroundCanvasInnerProps } from '@/ts/Interfaces'
+import type {
+    PlaygroundCanvasProps,
+    PlaygroundCanvasInnerProps
+} from '@/ts/Interfaces'
 import type { NodeMouseHandler } from '@xyflow/react'
 
 import { useMemo, useState, useCallback, useEffect, useRef } from 'react'
@@ -170,7 +173,14 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
                 }, 50)
             }
         }
-    }, [panelOpen, getViewport, setViewport, fitView, allowPageScroll, initialZoom])
+    }, [
+        panelOpen,
+        getViewport,
+        setViewport,
+        fitView,
+        allowPageScroll,
+        initialZoom
+    ])
 
     useEffect(() => {
         if (allowPageScroll) return
@@ -375,7 +385,9 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
                 proOptions={{ hideAttribution: true }}
                 elementsSelectable={false}
                 nodesConnectable={false}
-                minZoom={allowPageScroll && initialZoom ? 0.9 : isMobile ? 0.3 : 0.5}
+                minZoom={
+                    allowPageScroll && initialZoom ? 0.9 : isMobile ? 0.3 : 0.5
+                }
                 maxZoom={allowPageScroll && initialZoom ? initialZoom : 1.5}
                 zoomOnScroll={false}
                 zoomOnPinch={!allowPageScroll}
@@ -394,7 +406,9 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
                     onFitView={handleFitView}
                     isFitView={isFitView}
                     nodesOutOfView={nodesOutOfView}
-                    clawCount={nodes.filter((n) => n.type === 'clawNode').length}
+                    clawCount={
+                        nodes.filter((n) => n.type === 'clawNode').length
+                    }
                 />
             )}
         </div>

@@ -7,9 +7,7 @@ import { orders } from '@/lib/polar'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
-const getBillingHistory = async (
-    c: AuthenticatedContext
-) => {
+const getBillingHistory = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const page = Math.max(1, parseInt(c.req.query('page') || '1', 10))

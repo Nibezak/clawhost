@@ -1,11 +1,10 @@
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import crypto from 'crypto'
-import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
-import { claws, clawExports } from '@/db/schema'
+import { clawExports } from '@/db/schema'
 import sshBuffer from '@/services/sshBuffer'
-import { isAdmin } from '@/controllers/claws/helpers'
+import { findUserClaw } from '@/controllers/claws/helpers'
 import { checkRateLimit, setRateLimit } from '@/controllers/auth/rateLimit'
 import { t } from '@openclaw/i18n'
 import { fail } from '@/lib/response'
@@ -16,23 +15,13 @@ const exportClaw = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')
-        const admin = await isAdmin(userId)
+        const claw = await findUserClaw(userId, id)
 
-        const claw = await db
-            .select()
-            .from(claws)
-            .where(
-                admin
-                    ? eq(claws.id, id)
-                    : and(eq(claws.id, id), eq(claws.userId, userId))
-            )
-            .limit(1)
-
-        if (!claw[0]) {
+        if (!claw) {
             return fail(c, t('api.clawNotFound'), 404)
         }
 
-        if (!claw[0].ip || !claw[0].rootPassword) {
+        if (!claw.ip || !claw.rootPassword) {
             return fail(c, t('api.clawNotReady'), 400)
         }
 
@@ -46,21 +35,22 @@ const exportClaw = async (c: AuthenticatedContext) => {
         }
 
         const buffer = await sshBuffer(
-            claw[0].ip,
-            claw[0].rootPassword,
+            claw.ip,
+            claw.rootPassword,
             'tar czf - -C /home/openclaw .openclaw'
         )
 
-        await db.insert(clawExports).values({
-            id: crypto.randomUUID(),
-            userId,
-            clawId: id,
-            fileSize: buffer.length
-        })
+        await Promise.all([
+            db.insert(clawExports).values({
+                id: crypto.randomUUID(),
+                userId,
+                clawId: id,
+                fileSize: buffer.length
+            }),
+            setRateLimit(`export:${id}`)
+        ])
 
-        await setRateLimit(`export:${id}`)
-
-        const filename = `${claw[0].name}-export.tar.gz`
+        const filename = `${claw.name}-export.tar.gz`
 
         return new Response(new Uint8Array(buffer), {
             headers: {

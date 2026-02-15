@@ -64,6 +64,7 @@ const Toast: FC = (): ReactNode => {
                         </span>
                         <button
                             onClick={hideToast}
+                            aria-label='Close notification'
                             className='ml-2 text-gray-400 transition hover:text-white'
                         >
                             <X className='h-4 w-4' />

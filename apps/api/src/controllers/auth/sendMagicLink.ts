@@ -12,6 +12,23 @@ import {
 } from '@/controllers/auth/rateLimit'
 import { ok, fail } from '@/lib/response'
 
+const ALLOWED_REDIRECT_ORIGINS = [
+    'https://clawhost.cloud',
+    'https://www.clawhost.cloud',
+    'http://localhost:1111'
+]
+
+const isAllowedRedirectUrl = (url: string): boolean => {
+    try {
+        const parsed = new URL(url)
+        return ALLOWED_REDIRECT_ORIGINS.some(
+            (origin) => `${parsed.protocol}//${parsed.host}` === origin
+        )
+    } catch {
+        return false
+    }
+}
+
 const sendMagicLink = async (c: Context) => {
     try {
         const ip = getClientIp(c)
@@ -33,6 +50,10 @@ const sendMagicLink = async (c: Context) => {
 
         if (!redirectUrl) {
             return fail(c, t('api.redirectUrlRequired'), 400)
+        }
+
+        if (!isAllowedRedirectUrl(redirectUrl)) {
+            return fail(c, t('api.invalidRedirectUrl'), 400)
         }
 
         const emailRetry = await checkRateLimit(`email:${email.toLowerCase()}`)
@@ -68,13 +89,8 @@ const sendMagicLink = async (c: Context) => {
         if (ip) keys.push(`ip:${ip}`)
         await setRateLimit(...keys)
         return ok(c, null, t('api.magicLinkSent'))
-    } catch (err) {
-        console.error('Send magic link error:', err)
-        return fail(
-            c,
-            err instanceof Error ? err.message : t('api.failedToSendMagicLink'),
-            500
-        )
+    } catch {
+        return fail(c, t('api.failedToSendMagicLink'), 500)
     }
 }
 

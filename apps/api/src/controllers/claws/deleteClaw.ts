@@ -1,10 +1,14 @@
 import type { AuthenticatedContext, ProviderType } from '@/ts/Types'
 
-import { eq, and } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { subscriptions } from '@/lib/polar'
-import { cleanupClaw, isAdmin } from '@/controllers/claws/helpers'
+import {
+    cleanupClaw,
+    findUserClaw,
+    sanitizeClaw
+} from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
@@ -12,28 +16,18 @@ const deleteClaw = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')
-        const admin = await isAdmin(userId)
+        const claw = await findUserClaw(userId, id)
 
-        const claw = await db
-            .select()
-            .from(claws)
-            .where(
-                admin
-                    ? eq(claws.id, id)
-                    : and(eq(claws.id, id), eq(claws.userId, userId))
-            )
-            .limit(1)
-
-        if (!claw[0]) {
+        if (!claw) {
             return fail(c, t('api.clawNotFound'), 404)
         }
 
-        if (claw[0].polarSubscriptionId) {
+        if (claw.polarSubscriptionId) {
             try {
-                const sub = await subscriptions.get(claw[0].polarSubscriptionId)
+                const sub = await subscriptions.get(claw.polarSubscriptionId)
 
                 if (sub && sub.currentPeriodEnd) {
-                    await subscriptions.cancel(claw[0].polarSubscriptionId)
+                    await subscriptions.cancel(claw.polarSubscriptionId)
 
                     await db
                         .update(claws)
@@ -43,19 +37,17 @@ const deleteClaw = async (c: AuthenticatedContext) => {
                         })
                         .where(eq(claws.id, id))
 
-                    const updated = await db
-                        .select()
-                        .from(claws)
-                        .where(eq(claws.id, id))
-                        .limit(1)
-
                     return ok(
                         c,
                         {
                             scheduled: true,
                             deletionScheduledAt:
                                 sub.currentPeriodEnd.toISOString(),
-                            claw: updated[0]
+                            claw: sanitizeClaw({
+                                ...claw,
+                                deletionScheduledAt: sub.currentPeriodEnd,
+                                subscriptionStatus: 'canceled'
+                            })
                         },
                         t('api.clawDeletionScheduled')
                     )
@@ -68,28 +60,27 @@ const deleteClaw = async (c: AuthenticatedContext) => {
             }
         }
 
-        if (claw[0].polarSubscriptionId) {
-            try {
-                await subscriptions.revoke(claw[0].polarSubscriptionId)
-            } catch (subErr) {
-                console.error('Failed to revoke subscription:', subErr)
-            }
-        }
-
-        await cleanupClaw(id, {
-            provider: (claw[0].provider || 'hetzner') as ProviderType,
-            providerServerId: claw[0].providerServerId,
-            subdomain: claw[0].subdomain
-        })
+        await Promise.all([
+            claw.polarSubscriptionId
+                ? subscriptions
+                      .revoke(claw.polarSubscriptionId)
+                      .catch((subErr) => {
+                          console.error(
+                              'Failed to revoke subscription:',
+                              subErr
+                          )
+                      })
+                : Promise.resolve(),
+            cleanupClaw(id, {
+                provider: (claw.provider || 'hetzner') as ProviderType,
+                providerServerId: claw.providerServerId,
+                subdomain: claw.subdomain
+            })
+        ])
 
         return ok(c, { scheduled: false }, t('api.clawDeleted'))
-    } catch (err) {
-        console.error('Delete claw error:', err)
-        return fail(
-            c,
-            err instanceof Error ? err.message : t('api.failedToDeleteClaw'),
-            500
-        )
+    } catch {
+        return fail(c, t('api.failedToDeleteClaw'), 500)
     }
 }
 

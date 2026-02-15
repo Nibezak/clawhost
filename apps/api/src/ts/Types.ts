@@ -28,3 +28,5 @@ export type WebhookEventType =
     | 'order.refunded'
 
 export type UserRole = 'user' | 'admin'
+
+export type Environment = 'development' | 'production'

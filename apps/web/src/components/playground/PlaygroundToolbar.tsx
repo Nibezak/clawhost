@@ -32,7 +32,9 @@ const PlaygroundToolbar: FC<PlaygroundToolbarProps> = ({
                 >
                     <ArrowCounterClockwise className='h-4 w-4' weight='bold' />
                     <span className='text-xs font-medium'>
-                        {clawCount === 1 ? t('playground.nodeOutOfView') : t('playground.nodesOutOfView')}
+                        {clawCount === 1
+                            ? t('playground.nodeOutOfView')
+                            : t('playground.nodesOutOfView')}
                     </span>
                 </button>
             ) : isFitView ? (
