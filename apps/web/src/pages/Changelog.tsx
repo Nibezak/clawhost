@@ -61,21 +61,39 @@ const Changelog: FC = (): ReactNode => {
 
                             <ul className='space-y-3'>
                                 <li className='flex items-center gap-3'>
-                                    <Circle className='h-2.5 w-2.5 flex-shrink-0 text-amber-400' weight='fill' />
+                                    <Circle
+                                        className='h-2.5 w-2.5 flex-shrink-0 text-amber-400'
+                                        weight='fill'
+                                    />
                                     <span className='text-sm text-white'>
                                         {t('changelog.upcomingReleaseFeature1')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <Circle className='h-2.5 w-2.5 flex-shrink-0 text-amber-400' weight='fill' />
+                                    <Circle
+                                        className='h-2.5 w-2.5 flex-shrink-0 text-amber-400'
+                                        weight='fill'
+                                    />
                                     <span className='text-sm text-white'>
                                         {t('changelog.upcomingReleaseFeature2')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <Circle className='h-2.5 w-2.5 flex-shrink-0 text-amber-400' weight='fill' />
+                                    <Circle
+                                        className='h-2.5 w-2.5 flex-shrink-0 text-amber-400'
+                                        weight='fill'
+                                    />
                                     <span className='text-sm text-white'>
                                         {t('changelog.upcomingReleaseFeature3')}
+                                    </span>
+                                </li>
+                                <li className='flex items-center gap-3'>
+                                    <Circle
+                                        className='h-2.5 w-2.5 flex-shrink-0 text-amber-400'
+                                        weight='fill'
+                                    />
+                                    <span className='text-sm text-white'>
+                                        {t('changelog.upcomingReleaseFeature4')}
                                     </span>
                                 </li>
                             </ul>

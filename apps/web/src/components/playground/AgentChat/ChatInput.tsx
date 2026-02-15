@@ -60,10 +60,7 @@ const ChatInput: FC<ChatInputProps> = ({
                         disabled={!isConnected || !input.trim()}
                         className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#ef5350] text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
                     >
-                        <PaperPlaneRight
-                            className='h-4 w-4'
-                            weight='bold'
-                        />
+                        <PaperPlaneRight className='h-4 w-4' weight='bold' />
                     </button>
                 )}
             </div>

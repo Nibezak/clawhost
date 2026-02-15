@@ -11,8 +11,7 @@ export type {
     PlaygroundNodeType,
     SSHKeyModalMode,
     ToastType,
-    UserRole,
-    ViewMode
+    UserRole
 } from '@/ts/Types'
 
 export type {
@@ -48,7 +47,6 @@ export type {
     ToastData,
     UIState,
     AuthContextType,
-    ClawCardProps,
     ClawDiagnosticsContentProps,
     ClawLogsContentProps,
     CopyableFieldProps,

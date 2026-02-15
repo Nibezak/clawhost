@@ -165,8 +165,7 @@ export const en = {
         fileNotEditable: 'Only JSON files can be edited!',
         invalidJsonConfig: 'Invalid JSON!',
         fileSaveSuccess: 'File saved.',
-        failedToSendMagicLink: 'Failed to send magic link!',
-        rateLimitExceeded: 'Please wait before requesting another login link.',
+        rateLimitExceeded: 'Please wait before requesting another code.',
         otpExpiredOrNotFound:
             'Code expired or not found. Please request a new one.',
         otpMaxAttemptsReached:
@@ -217,7 +216,6 @@ export const en = {
         logsFetched: 'Logs fetched successfully.',
         filesFetched: 'Files fetched successfully.',
         fileFetched: 'File fetched successfully.',
-        magicLinkSent: 'Magic link sent successfully.',
         otpSent: 'Code sent successfully.',
         otpVerified: 'Code verified successfully.',
         webhookReceived: 'Webhook received.',
@@ -226,29 +224,37 @@ export const en = {
         notFound: 'Not found.',
         healthOk: 'API is running.'
     },
+    emails: {
+        otpSubject: 'Your ClawHost sign-in code',
+        otpPreview: 'Your ClawHost sign-in code: {{code}}',
+        otpHeading: 'Your sign-in code is:',
+        otpExpiry: 'Code expires in 10 minutes. If this wasn’t you, ignore this email.',
+    },
     auth: {
         signIn: 'Sign In',
         signInDescription:
             'Sign in to your ClawHost account to manage your OpenClaw instances.',
-        signingIn: 'Signing In',
-        signingYouIn: 'Signing you in',
-        loggingInAs: 'Logging in as',
+        signingIn: 'Signing in...',
+        verifyCode: 'Verify Code',
+        verifying: 'Verifying...',
         checkYourEmail: 'Check Your Email',
         checkYourEmailHeading: 'Check your email',
-        sentLoginLink: 'We sent a login link to',
-        clickLinkToSignIn:
-            'Click the link in the email to sign in. You can close this tab.',
+        codeSentTo: 'We sent a 6-digit code to',
         signInToDeployOpenClaw:
             'Sign-in to manage and deploy OpenClaw instances.',
         emailAddress: 'Email Address',
         emailPlaceholder: 'example@clawhost.cloud',
         continueWithEmail: 'Continue with Email',
         sending: 'Sending...',
-        magicLinkDescription:
-            "We'll send you a magic link to sign in. No password needed.",
+        otpDescription: "We'll send you a code to sign in. No password needed.",
         welcomeBack: 'Welcome back.',
-        enterEmailForConfirmation: 'Please enter your email for confirmation',
-        resendIn: 'Resend in {{seconds}}s'
+        resendIn: 'Resend in {{seconds}}s',
+        resendCode: 'Resend code',
+        changeEmail: 'Change email',
+        invalidCode: 'Invalid code',
+        or: 'or',
+        continueWithGoogle: 'Continue with Google',
+        continueWithGithub: 'Continue with GitHub'
     },
     account: {
         title: 'Account',
@@ -448,21 +454,18 @@ export const en = {
             running: 'Running',
             stopped: 'Stopped',
             off: 'Off',
-            starting: 'Starting...',
-            stopping: 'Stopping...',
-            creating: 'Creating...',
-            configuring: 'Configuring...',
-            initializing: 'Setting up...',
-            migrating: 'Migrating...',
-            rebuilding: 'Rebuilding...',
+            starting: 'Starting',
+            stopping: 'Stopping',
+            creating: 'Creating',
+            configuring: 'Configuring',
+            initializing: 'Setting up',
+            migrating: 'Migrating',
+            rebuilding: 'Rebuilding',
             restarting: 'Restarting',
-            deleting: 'Deleting...',
+            deleting: 'Deleting',
             scheduledDeletion: 'Deletion Scheduled',
             unknown: 'Unknown'
         },
-        legacyViewWarning:
-            'Grid and list views may be discontinued. Switch to Playground for agents and more.',
-        legacyViewWarningAction: 'Switch to Playground'
     },
     createClaw: {
         title: 'Deploy OpenClaw',
@@ -764,27 +767,29 @@ export const en = {
         upcomingRelease: 'Upcoming',
         upcomingReleaseTitle: 'Channels, Skills & Agent Chat',
         upcomingReleaseDescription:
-            'Full control over your OpenClaw channels, skills, and agents — manage and chat with everything directly from the dashboard.',
+            'Full control over your OpenClaw channels, skills, and agents. Manage and chat with everything directly from the dashboard.',
         upcomingReleaseFeature1:
-            'Manage channels directly — add, remove, and configure channels without touching the server',
+            'Manage channels directly, add, remove, and configure channels without touching the server',
         upcomingReleaseFeature2:
-            'Manage skills directly — install, update, and organize agent skills from the dashboard',
+            'Manage skills directly, install, update, and organize agent skills from the dashboard',
         upcomingReleaseFeature3:
-            'Chat with your agents from the playground — interact with any agent in real time',
+            'Chat with your agents from the playground, interact with any agent in real time',
+        upcomingReleaseFeature4:
+            'Sign in with Google or GitHub, fast, secure authentication without email codes',
         release1Date: 'February 8, 2026',
         release1Title: 'Initial Release',
         release1Description:
-            'The first official release of ClawHost — deploy OpenClaw on your own VPS with one click.',
+            'The first official release of ClawHost. Deploy OpenClaw on your own VPS with one click.',
         release1Feature1: 'One-click OpenClaw deployment on Hetzner Cloud',
         release1Feature2:
-            'Dashboard to manage claws — start, stop, restart, and delete instances',
+            'Dashboard to manage claws, start, stop, restart, and delete instances',
         release1Feature3:
             '18 Hetzner server plans with dedicated vCPU, RAM, and storage options',
         release1Feature4:
             '6 Hetzner server locations across US, Europe, and Asia',
         release1Feature5: 'SSH key management for passwordless server access',
         release1Feature6: 'Additional volume storage support up to 10 TB',
-        release1Feature7: 'Magic link authentication — no passwords needed',
+        release1Feature7: 'Magic link authentication, no passwords needed',
         release1Feature8: 'Online access to OpenClaw via secure subdomains',
         release1Feature9:
             'Payment integration with transparent per-server pricing',
@@ -853,9 +858,6 @@ export const en = {
         nodesOutOfView: 'Claws out of view',
         nodeOutOfView: 'Claw out of view',
         addAgent: 'Add agent',
-        listView: 'List view',
-        gridView: 'Grid view',
-        playgroundView: 'Playground',
         closeDetails: 'Close',
         tabInfo: 'Info',
         tabLogs: 'Logs',
@@ -868,9 +870,6 @@ export const en = {
         tabChat: 'Chat',
         tabConfiguration: 'Configuration',
         agentOnClaw: 'on {{clawName}}',
-        chatComingSoon: 'Agent chat is coming soon.',
-        chatComingSoonDescription:
-            'You will be able to chat with your agents directly from the playground.',
         configurationModel: 'Model',
         configurationModelPlaceholder: 'Select a model',
         configurationModelDescription:

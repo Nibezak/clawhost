@@ -2,8 +2,6 @@ export type ProviderType = 'hetzner' | 'digitalocean' | 'vultr'
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info'
 
-export type ViewMode = 'list' | 'grid' | 'playground'
-
 export type ClawStatus =
     | 'initializing'
     | 'starting'
@@ -33,11 +31,18 @@ export type PlaygroundAgentDetailTab = 'chat' | 'configuration'
 
 export type ClawAvatarSize = 'sm' | 'md' | 'lg'
 
-export type GatewayConnectionState = 'disconnected' | 'connecting' | 'authenticating' | 'connected' | 'error'
+export type GatewayConnectionState =
+    | 'disconnected'
+    | 'connecting'
+    | 'authenticating'
+    | 'connected'
+    | 'error'
 
 export type ChatMessageRole = 'user' | 'assistant'
 
 export type ChatMessageStatus = 'complete' | 'streaming' | 'error' | 'aborted'
+
+export type LoginLoadingMethod = 'email' | 'google' | 'github' | 'resend' | null
 
 export type GatewayEventHandler = (payload: unknown) => void
 

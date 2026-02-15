@@ -66,10 +66,14 @@ const useAgentChat = ({
                     .send('sessions.list', {})
                     .then((result) => {
                         if (!mountedRef.current) return
-                        const sessions = result as Array<Record<string, unknown>>
+                        const sessions = result as Array<
+                            Record<string, unknown>
+                        >
                         if (Array.isArray(sessions) && sessions.length > 0) {
                             const latest = sessions[sessions.length - 1]
-                            sessionKeyRef.current = (latest.key || latest.sessionKey || `agent:${agentId}:main`) as string
+                            sessionKeyRef.current = (latest.key ||
+                                latest.sessionKey ||
+                                `agent:${agentId}:main`) as string
                         }
                         return client.send('chat.history', {
                             sessionKey: sessionKeyRef.current,
@@ -79,17 +83,25 @@ const useAgentChat = ({
                     .then((result) => {
                         if (!mountedRef.current) return
                         const data = result as Record<string, unknown>
-                        const history = (data?.messages || []) as ChatHistoryEntry[]
+                        const history = (data?.messages ||
+                            []) as ChatHistoryEntry[]
                         if (Array.isArray(history) && history.length > 0) {
                             const loaded: ChatMessage[] = []
                             for (let i = 0; i < history.length; i++) {
                                 const msg = history[i]
-                                if (msg.role === 'toolResult' || msg.role === 'toolCall') continue
+                                if (
+                                    msg.role === 'toolResult' ||
+                                    msg.role === 'toolCall'
+                                )
+                                    continue
                                 const text = extractText(msg.content)
                                 if (!text.trim()) continue
                                 loaded.push({
                                     id: `history-${i}`,
-                                    role: msg.role === 'user' ? 'user' : 'assistant',
+                                    role:
+                                        msg.role === 'user'
+                                            ? 'user'
+                                            : 'assistant',
                                     content: text,
                                     status: 'complete' as const
                                 })
@@ -111,13 +123,15 @@ const useAgentChat = ({
 
             const event = payload as ChatEventPayload
             const text = extractText(
-                (event.message as Record<string, unknown>)?.content ?? event.message
+                (event.message as Record<string, unknown>)?.content ??
+                    event.message
             )
 
             if (event.state === 'delta' || event.state === 'final') {
                 if (text) {
                     if (!currentRunIdRef.current) {
-                        currentRunIdRef.current = event.runId || crypto.randomUUID()
+                        currentRunIdRef.current =
+                            event.runId || crypto.randomUUID()
                         setIsStreaming(true)
                         streamBufferRef.current = text
                         setMessages((prev) => [
@@ -221,41 +235,32 @@ const useAgentChat = ({
             client.disconnect()
             clientRef.current = null
         }
-    }, [
-        subdomain,
-        gatewayToken,
-        agentId,
-        enabled,
-        flushStreamBuffer
-    ])
+    }, [subdomain, gatewayToken, agentId, enabled, flushStreamBuffer])
 
-    const sendMessage = useCallback(
-        (text: string) => {
-            if (!clientRef.current || !text.trim()) return
+    const sendMessage = useCallback((text: string) => {
+        if (!clientRef.current || !text.trim()) return
 
-            const userMessage: ChatMessage = {
-                id: crypto.randomUUID(),
-                role: 'user',
-                content: text.trim(),
-                status: 'complete'
-            }
+        const userMessage: ChatMessage = {
+            id: crypto.randomUUID(),
+            role: 'user',
+            content: text.trim(),
+            status: 'complete'
+        }
 
-            setMessages((prev) => [...prev, userMessage])
-            streamBufferRef.current = ''
-            currentRunIdRef.current = null
+        setMessages((prev) => [...prev, userMessage])
+        streamBufferRef.current = ''
+        currentRunIdRef.current = null
 
-            clientRef.current
-                .send('chat.send', {
-                    sessionKey: sessionKeyRef.current,
-                    message: text.trim(),
-                    deliver: false,
-                    timeoutMs: 120000,
-                    idempotencyKey: crypto.randomUUID()
-                })
-                .catch(() => {})
-        },
-        []
-    )
+        clientRef.current
+            .send('chat.send', {
+                sessionKey: sessionKeyRef.current,
+                message: text.trim(),
+                deliver: false,
+                timeoutMs: 120000,
+                idempotencyKey: crypto.randomUUID()
+            })
+            .catch(() => {})
+    }, [])
 
     const abortResponse = useCallback(() => {
         if (!clientRef.current || !currentRunIdRef.current) return

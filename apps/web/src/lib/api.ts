@@ -28,6 +28,7 @@ import type {
     UpdateProfileData,
     UserProfile,
     UserStats,
+    VerifyOtpResponse,
     VolumePricing
 } from '@/ts/Interfaces'
 
@@ -57,10 +58,12 @@ const publicClient = new RequestClient({
 })
 
 const api = {
-    sendMagicLink: (email: string, redirectUrl: string) =>
-        publicClient.post<void>('/auth/send-magic-link', {
+    sendOtp: (email: string) =>
+        publicClient.post<void>('/auth/send-otp', { email }),
+    verifyOtp: (email: string, code: string) =>
+        publicClient.post<VerifyOtpResponse>('/auth/verify-otp', {
             email,
-            redirectUrl
+            code
         }),
 
     getPlans: (provider?: string) =>

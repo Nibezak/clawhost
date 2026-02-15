@@ -5,9 +5,11 @@ import type { AuthProviderProps, CachedProfile } from '@/ts/Interfaces'
 import { useCallback, useEffect, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import {
+    GoogleAuthProvider,
+    GithubAuthProvider,
     onAuthStateChanged,
-    signInWithEmailLink,
-    isSignInWithEmailLink,
+    signInWithCustomToken,
+    signInWithPopup,
     signOut as firebaseSignOut
 } from 'firebase/auth'
 import { auth, AUTH_STORAGE_KEY, PROFILE_CACHE_KEY } from '@/lib/firebase'
@@ -82,16 +84,20 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
     }, [queryClient])
 
     const sendOtp = useCallback(async (email: string) => {
-        const redirectUrl = `${window.location.origin}/login`
-        await api.sendMagicLink(email, redirectUrl)
-        window.localStorage.setItem('emailForSignIn', email)
+        await api.sendOtp(email)
     }, [])
 
-    const verifyOtp = useCallback(async (email: string) => {
-        if (isSignInWithEmailLink(auth, window.location.href)) {
-            await signInWithEmailLink(auth, email, window.location.href)
-            window.localStorage.removeItem('emailForSignIn')
-        }
+    const verifyOtp = useCallback(async (email: string, code: string) => {
+        const { customToken } = await api.verifyOtp(email, code)
+        await signInWithCustomToken(auth, customToken)
+    }, [])
+
+    const signInWithGoogle = useCallback(async () => {
+        await signInWithPopup(auth, new GoogleAuthProvider())
+    }, [])
+
+    const signInWithGithub = useCallback(async () => {
+        await signInWithPopup(auth, new GithubAuthProvider())
     }, [])
 
     const signOut = useCallback(async () => {
@@ -107,6 +113,8 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
                 updateCachedProfile,
                 sendOtp,
                 verifyOtp,
+                signInWithGoogle,
+                signInWithGithub,
                 signOut
             }}
         >

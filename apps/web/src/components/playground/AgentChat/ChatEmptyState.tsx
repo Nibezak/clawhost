@@ -4,9 +4,7 @@ import type { ChatEmptyStateProps } from '@/ts/Interfaces'
 import { t } from '@openclaw/i18n'
 import { ChatTeardropText, WifiSlash } from '@phosphor-icons/react'
 
-const ChatEmptyState: FC<ChatEmptyStateProps> = ({
-    isError
-}): ReactNode => {
+const ChatEmptyState: FC<ChatEmptyStateProps> = ({ isError }): ReactNode => {
     if (isError) {
         return (
             <div className='flex h-full flex-col items-center justify-center gap-3 px-14 pb-16'>

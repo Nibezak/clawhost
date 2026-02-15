@@ -5,8 +5,24 @@ import { t } from '@openclaw/i18n'
 import Logo from '@/components/Logo'
 import ROUTES from '@/lib/routes'
 import { GITHUB_REPO_URL } from '@/hooks'
-import { TWITTER_URL, FACEBOOK_URL, INSTAGRAM_URL, THREADS_URL, YOUTUBE_URL, TIKTOK_URL, SUPPORT_EMAIL } from '@/lib/links'
-import { FacebookLogo, GithubLogo, InstagramLogo, ThreadsLogo, TiktokLogo, XLogo, YoutubeLogo } from '@phosphor-icons/react'
+import {
+    TWITTER_URL,
+    FACEBOOK_URL,
+    INSTAGRAM_URL,
+    THREADS_URL,
+    YOUTUBE_URL,
+    TIKTOK_URL,
+    SUPPORT_EMAIL
+} from '@/lib/links'
+import {
+    FacebookLogo,
+    GithubLogo,
+    InstagramLogo,
+    ThreadsLogo,
+    TiktokLogo,
+    XLogo,
+    YoutubeLogo
+} from '@phosphor-icons/react'
 
 const LandingFooter: FC = (): ReactNode => {
     return (
@@ -41,7 +57,10 @@ const LandingFooter: FC = (): ReactNode => {
                                 rel='noopener noreferrer'
                                 className='rounded-lg bg-white/5 p-2 text-gray-400 transition hover:bg-white/10 hover:text-white'
                             >
-                                <FacebookLogo className='h-5 w-5' weight='fill' />
+                                <FacebookLogo
+                                    className='h-5 w-5'
+                                    weight='fill'
+                                />
                             </a>
                             <a
                                 href={INSTAGRAM_URL}
@@ -49,7 +68,10 @@ const LandingFooter: FC = (): ReactNode => {
                                 rel='noopener noreferrer'
                                 className='rounded-lg bg-white/5 p-2 text-gray-400 transition hover:bg-white/10 hover:text-white'
                             >
-                                <InstagramLogo className='h-5 w-5' weight='fill' />
+                                <InstagramLogo
+                                    className='h-5 w-5'
+                                    weight='fill'
+                                />
                             </a>
                             <a
                                 href={THREADS_URL}
@@ -57,7 +79,10 @@ const LandingFooter: FC = (): ReactNode => {
                                 rel='noopener noreferrer'
                                 className='rounded-lg bg-white/5 p-2 text-gray-400 transition hover:bg-white/10 hover:text-white'
                             >
-                                <ThreadsLogo className='h-5 w-5' weight='fill' />
+                                <ThreadsLogo
+                                    className='h-5 w-5'
+                                    weight='fill'
+                                />
                             </a>
                             <a
                                 href={YOUTUBE_URL}
@@ -65,7 +90,10 @@ const LandingFooter: FC = (): ReactNode => {
                                 rel='noopener noreferrer'
                                 className='rounded-lg bg-white/5 p-2 text-gray-400 transition hover:bg-white/10 hover:text-white'
                             >
-                                <YoutubeLogo className='h-5 w-5' weight='fill' />
+                                <YoutubeLogo
+                                    className='h-5 w-5'
+                                    weight='fill'
+                                />
                             </a>
                             <a
                                 href={TIKTOK_URL}

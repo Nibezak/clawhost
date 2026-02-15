@@ -16,10 +16,6 @@ export interface ExportRateLimitData {
     retryAfter: number
 }
 
-export interface MagicLinkEmailProps {
-    magicLink: string
-}
-
 export interface CloudProvider {
     createServer(
         name: string,
@@ -577,11 +573,6 @@ export interface ClawCleanupData {
     provider: ProviderType
     providerServerId: string | null
     subdomain: string | null
-}
-
-export interface SendMagicLinkBody {
-    email: string
-    redirectUrl: string
 }
 
 export interface SendOtpBody {

@@ -191,7 +191,9 @@ const Dashboard: FC = (): ReactNode => {
     const activeIsError = adminMode ? isAdminClawsError : isError
     const activeRefetch = adminMode ? refetchAdmin : refetch
     const isLoading =
-        authLoading || activeClawsLoading || isModeSwitching || !minLoadingMet
+        authLoading ||
+        isModeSwitching ||
+        (!awaitingClaw && (activeClawsLoading || !minLoadingMet))
 
     useEffect(() => {
         if (isModeSwitching && !activeClawsLoading) {
@@ -200,7 +202,7 @@ const Dashboard: FC = (): ReactNode => {
         }
     }, [isModeSwitching, activeClawsLoading])
 
-    const graphClaws = adminMode ? adminClaws || [] : claws || []
+    const graphClaws = displayedClaws
     const agentQueries = useAllClawAgents(graphClaws)
     const { nodes, edges } = usePlaygroundGraph(graphClaws, agentQueries)
 

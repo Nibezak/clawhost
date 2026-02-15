@@ -22,7 +22,7 @@ import {
 import api from '@/lib/api'
 import ProviderIcon from '@/components/ProviderIcon'
 import getStatusConfig from '@/lib/claw-utils/getStatusConfig'
-import { Plus, WifiSlash, Clock } from '@phosphor-icons/react'
+import { Plus, WifiSlash, Clock, CircleNotch } from '@phosphor-icons/react'
 import ClawMascot from '@/components/ClawMascot'
 import ClawCardDropdownMenu from '@/components/dashboard/ClawCardDropdownMenu'
 import ClawCardDialogs from '@/components/dashboard/ClawCardDialogs'
@@ -227,9 +227,16 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                         <span
                             className={`inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium ${status.bgColor}`}
                         >
-                            <span
-                                className={`h-1.5 w-1.5 rounded-full ${status.color} ${status.pulse ? 'animate-pulse' : ''}`}
-                            />
+                            {status.pulse ? (
+                                <CircleNotch
+                                    className={`h-3 w-3 animate-spin ${status.color.replace('bg-', 'text-')}`}
+                                    weight='bold'
+                                />
+                            ) : (
+                                <span
+                                    className={`h-1.5 w-1.5 rounded-full ${status.color}`}
+                                />
+                            )}
                             {status.label}
                         </span>
                     </div>

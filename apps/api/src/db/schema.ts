@@ -11,6 +11,7 @@ export const users = pgTable('users', {
     id: text('id').primaryKey(),
     email: text('email').notNull().unique(),
     name: text('name'),
+    authMethods: text('auth_methods').array().default([]),
     polarCustomerId: text('polar_customer_id'),
     role: text('role').notNull().default('user'),
     createdAt: timestamp('created_at', { withTimezone: true })

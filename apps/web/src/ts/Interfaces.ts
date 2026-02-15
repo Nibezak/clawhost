@@ -9,8 +9,7 @@ import type {
     GatewayConnectionState,
     ProviderType,
     ToastType,
-    UserRole,
-    ViewMode
+    UserRole
 } from '@/ts/Types'
 
 export interface ApiResponse<T = null> {
@@ -19,10 +18,6 @@ export interface ApiResponse<T = null> {
     message: string
     code: number
     version: string
-}
-
-export interface MagicLinkEmailProps {
-    magicLink: string
 }
 
 export interface Volume {
@@ -149,8 +144,6 @@ export interface UIState {
 }
 
 export interface PreferencesState {
-    instancesViewMode: ViewMode
-    setInstancesViewMode: (mode: ViewMode) => void
     adminMode: boolean
     setAdminMode: (mode: boolean) => void
 }
@@ -160,13 +153,19 @@ export interface CachedProfile {
     name: string | null
 }
 
+export interface VerifyOtpResponse {
+    customToken: string
+}
+
 export interface AuthContextType {
     user: User | null
     loading: boolean
     cachedProfile: CachedProfile | null
     updateCachedProfile: (data: Partial<CachedProfile>) => void
     sendOtp: (email: string) => Promise<void>
-    verifyOtp: (email: string) => Promise<void>
+    verifyOtp: (email: string, code: string) => Promise<void>
+    signInWithGoogle: () => Promise<void>
+    signInWithGithub: () => Promise<void>
     signOut: () => Promise<void>
 }
 
@@ -245,43 +244,11 @@ export interface ActionButtonProps {
     size?: 'default' | 'sm' | 'lg'
 }
 
-export interface MockClawData {
-    id: string
-    name: string
-    status: 'running' | 'stopped' | 'restarting'
-    subdomain: string
-    ip: string
-    provider: ProviderType
-    location: string
-    locationFlag: string
-    plan: string
-    planDetails: string
-    monthlyCost: string
-    serverId: string
-    createdAt: string
-    sshKey: string
-}
-
-export interface MockClawCardProps {
-    claw: MockClawData
-    onStart?: (id: string) => void
-    onStop?: (id: string) => void
-    onRestart?: (id: string) => void
-    onDelete?: (id: string) => void
-}
-
 export interface StatusConfig {
     color: string
     bgColor: string
     label: string
     pulse?: boolean
-}
-
-export interface ClawCardProps {
-    claw: Claw
-    sshKeys: SSHKey[]
-    plans: Plan[]
-    viewMode?: ViewMode
 }
 
 export interface CopyableFieldProps {
@@ -364,49 +331,6 @@ export interface ClawCardDialogsProps {
     setShowReinstallModal: (open: boolean) => void
     onReinstall: () => void
     isReinstallPending: boolean
-}
-
-export interface ClawCardGridViewProps {
-    claw: Claw
-    status: StatusConfig
-    flag: string | null
-    locationName: string
-    plan: Plan | undefined
-    monthlyPrice: number | null
-    attachedSshKey: SSHKey | null
-    actions: ClawCardActions
-    isLoading: boolean
-    copied: boolean
-    passwordCopied: boolean
-    hasActionItems: boolean
-    hasBothOptions: boolean
-    isScheduledForDeletion: boolean
-    isAdmin: boolean
-}
-
-export interface ClawCardListViewProps {
-    claw: Claw
-    status: StatusConfig
-    flag: string | null
-    locationName: string
-    plan: Plan | undefined
-    monthlyPrice: number | null
-    attachedSshKey: SSHKey | null
-    actions: ClawCardActions
-    isLoading: boolean
-    copied: boolean
-    passwordCopied: boolean
-    hasActionItems: boolean
-    isScheduledForDeletion: boolean
-    isAdmin: boolean
-    isExpanded: boolean
-    onToggleExpand: () => void
-}
-
-export interface ScheduledDeletionBannerProps {
-    deletionScheduledAt: string
-    onCancelDeletion: () => void
-    isLoading: boolean
 }
 
 export interface SSHKeyCardProps {

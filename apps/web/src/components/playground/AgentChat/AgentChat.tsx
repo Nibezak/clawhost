@@ -114,12 +114,17 @@ const AgentChat: FC<AgentChatProps> = ({
 
     if (!subdomain || !gatewayToken) {
         return (
-            <ChatEmptyState isError />
+            <div className='flex h-full flex-col'>
+                <div className='flex-1 overflow-y-auto'>
+                    <ChatEmptyState isError />
+                </div>
+            </div>
         )
     }
 
     const isConnected = connectionState === 'connected'
-    const isError = connectionState === 'error' || connectionState === 'disconnected'
+    const isError =
+        connectionState === 'error' || connectionState === 'disconnected'
 
     if (isLoading) {
         return (
