@@ -16,25 +16,31 @@ import {
     useDeleteSSHKey,
     useUserStats
 } from '@/hooks'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import EmptyState from '@/components/EmptyState'
-import ErrorState from '@/components/ErrorState'
-import Header from '@/components/Header'
-import LandingFooter from '@/components/LandingFooter'
-import PageBackground from '@/components/PageBackground'
-import PageTitle from '@/components/PageTitle'
 import {
+    Button,
+    Input,
+    Label,
+    Card,
+    CardContent,
+    Skeleton,
+    Alert,
+    AlertDescription,
     Dialog,
     DialogContent,
     DialogDescription,
     DialogHeader,
     DialogTitle
-} from '@/components/ui/dialog'
+} from '@/components/ui'
+import {
+    EmptyState,
+    ErrorState,
+    Header,
+    LandingFooter,
+    PageBackground,
+    PageTitle,
+    PageHeader,
+    ActionButton
+} from '@/components'
 import {
     PlusCircle,
     Key,
@@ -46,8 +52,6 @@ import {
     Warning,
     CaretDown
 } from '@phosphor-icons/react'
-import PageHeader from '@/components/PageHeader'
-import ActionButton from '@/components/ActionButton'
 
 const SSHKeySkeleton: FC = (): ReactNode => {
     return (

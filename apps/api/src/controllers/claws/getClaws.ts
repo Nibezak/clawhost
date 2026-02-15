@@ -2,6 +2,7 @@ import type { AuthenticatedContext, ProviderType } from '@/ts/Types'
 import type { BillingPeriod, ServerStatus } from '@/ts/Interfaces'
 
 import { eq, desc } from 'drizzle-orm'
+import { clawStatus } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws, volumes } from '@/db/schema'
 import { getProvider } from '@/services/provider'
@@ -12,12 +13,12 @@ import { ok } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
 const transitionCompletedBy: Record<string, string[]> = {
-    stopping: ['off', 'stopped'],
-    starting: ['running'],
-    creating: ['running'],
-    initializing: ['running'],
-    migrating: ['running'],
-    rebuilding: ['running']
+    [clawStatus.stopping]: [clawStatus.off, clawStatus.stopped],
+    [clawStatus.starting]: [clawStatus.running],
+    [clawStatus.creating]: [clawStatus.running],
+    [clawStatus.initializing]: [clawStatus.running],
+    [clawStatus.migrating]: [clawStatus.running],
+    [clawStatus.rebuilding]: [clawStatus.running]
 }
 
 const getClaws = async (c: AuthenticatedContext) => {
@@ -59,7 +60,7 @@ const getClaws = async (c: AuthenticatedContext) => {
             const live = providerServers.get(claw.providerServerId)
             if (!live) return claw
 
-            if (claw.status === 'configuring') {
+            if (claw.status === clawStatus.configuring) {
                 if (
                     live.ip &&
                     claw.subdomain &&
@@ -94,16 +95,20 @@ const getClaws = async (c: AuthenticatedContext) => {
                     ])
                 }
 
-                if (live.status === 'running' && claw.subdomain) {
+                if (live.status === clawStatus.running && claw.subdomain) {
                     const ready = await checkSubdomainReady(claw.subdomain)
                     if (ready) {
                         await db
                             .update(claws)
-                            .set({ status: 'running', ip: live.ip })
+                            .set({ status: clawStatus.running, ip: live.ip })
                             .where(eq(claws.id, claw.id))
-                        return { ...claw, status: 'running', ip: live.ip }
+                        return { ...claw, status: clawStatus.running, ip: live.ip }
                     }
                 }
+                return { ...claw, ip: live.ip }
+            }
+
+            if (claw.status === clawStatus.unreachable) {
                 return { ...claw, ip: live.ip }
             }
 

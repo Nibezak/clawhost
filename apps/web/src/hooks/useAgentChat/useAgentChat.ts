@@ -55,26 +55,42 @@ const useAgentChat = ({
 
         const client = new GatewayClient(subdomain, gatewayToken, (state) => {
             if (!mountedRef.current) return
+            console.error('[chat] state:', state)
             setConnectionState(state)
 
-            if (state === 'error') {
+            if (state === 'error' || state === 'disconnected') {
                 setIsLoading(false)
             }
 
             if (state === 'connected') {
+                console.error('[chat] connected, loading sessions...')
                 client
                     .send('sessions.list', {})
                     .then((result) => {
                         if (!mountedRef.current) return
-                        const sessions = result as Array<
-                            Record<string, unknown>
-                        >
-                        if (Array.isArray(sessions) && sessions.length > 0) {
-                            const latest = sessions[sessions.length - 1]
-                            sessionKeyRef.current = (latest.key ||
-                                latest.sessionKey ||
-                                `agent:${agentId}:main`) as string
+                        console.error('[chat] sessions.list raw:', JSON.stringify(result).slice(0, 1000))
+                        const raw = result as Record<string, unknown>
+                        const sessions = Array.isArray(raw)
+                            ? raw
+                            : Array.isArray(
+                                    (raw as Record<string, unknown>)
+                                        ?.sessions
+                                )
+                              ? ((raw as Record<string, unknown>).sessions as Array<Record<string, unknown>>)
+                              : []
+                        console.error('[chat] parsed sessions:', sessions.length, 'items')
+                        if (sessions.length > 0) {
+                            const latest = sessions[
+                                sessions.length - 1
+                            ] as Record<string, unknown>
+                            console.error('[chat] latest session:', JSON.stringify(latest).slice(0, 500))
+                            const resolved = (latest.key ||
+                                latest.sessionKey) as string | undefined
+                            if (resolved) {
+                                sessionKeyRef.current = resolved
+                            }
                         }
+                        console.error('[chat] using sessionKey:', sessionKeyRef.current)
                         return client.send('chat.history', {
                             sessionKey: sessionKeyRef.current,
                             limit: 500
@@ -82,10 +98,19 @@ const useAgentChat = ({
                     })
                     .then((result) => {
                         if (!mountedRef.current) return
-                        const data = result as Record<string, unknown>
-                        const history = (data?.messages ||
-                            []) as ChatHistoryEntry[]
-                        if (Array.isArray(history) && history.length > 0) {
+                        console.error('[chat] chat.history raw:', JSON.stringify(result).slice(0, 2000))
+                        const raw = result as Record<string, unknown>
+                        const history = (
+                            Array.isArray(raw)
+                                ? raw
+                                : Array.isArray(raw?.messages)
+                                  ? (raw.messages as ChatHistoryEntry[])
+                                  : Array.isArray(raw?.history)
+                                    ? (raw.history as ChatHistoryEntry[])
+                                    : []
+                        ) as ChatHistoryEntry[]
+                        console.error('[chat] parsed history:', history.length, 'messages')
+                        if (history.length > 0) {
                             const loaded: ChatMessage[] = []
                             for (let i = 0; i < history.length; i++) {
                                 const msg = history[i]
@@ -106,11 +131,13 @@ const useAgentChat = ({
                                     status: 'complete' as const
                                 })
                             }
+                            console.error('[chat] loaded messages:', loaded.length)
                             setMessages(loaded)
                         }
                         setIsLoading(false)
                     })
-                    .catch(() => {
+                    .catch((err) => {
+                        console.error('[chat] error loading:', err)
                         if (mountedRef.current) setIsLoading(false)
                     })
             }
@@ -120,6 +147,7 @@ const useAgentChat = ({
 
         const handleChatEvent = (payload: unknown) => {
             if (!mountedRef.current) return
+            console.error('[chat] event:', JSON.stringify(payload).slice(0, 1000))
 
             const event = payload as ChatEventPayload
             const text = extractText(
@@ -251,15 +279,18 @@ const useAgentChat = ({
         streamBufferRef.current = ''
         currentRunIdRef.current = null
 
+        console.error('[chat] sending to session:', sessionKeyRef.current, 'message:', text.trim().slice(0, 100))
         clientRef.current
             .send('chat.send', {
                 sessionKey: sessionKeyRef.current,
                 message: text.trim(),
-                deliver: false,
+                deliver: true,
                 timeoutMs: 120000,
                 idempotencyKey: crypto.randomUUID()
             })
-            .catch(() => {})
+            .catch((err) => {
+                console.error(err)
+            })
     }, [])
 
     const abortResponse = useCallback(() => {
@@ -270,7 +301,9 @@ const useAgentChat = ({
                 sessionKey: sessionKeyRef.current,
                 runId: currentRunIdRef.current
             })
-            .catch(() => {})
+            .catch((err) => {
+                console.error(err)
+            })
     }, [])
 
     return {

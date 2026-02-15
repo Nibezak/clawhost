@@ -2,8 +2,8 @@ import type { FC, ReactNode } from 'react'
 
 import { Link } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
-import Logo from '@/components/Logo'
-import ROUTES from '@/lib/routes'
+import { Logo } from '@/components'
+import { ROUTES } from '@/lib'
 import { GITHUB_REPO_URL } from '@/hooks'
 import {
     TWITTER_URL,

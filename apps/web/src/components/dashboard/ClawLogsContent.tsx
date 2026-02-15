@@ -3,11 +3,10 @@ import type { ClawLogsContentProps } from '@/ts/Interfaces'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { t } from '@openclaw/i18n'
-import { Button } from '@/components/ui/button'
+import { Button, Skeleton } from '@/components/ui'
 import { ArrowDown, Scroll } from '@phosphor-icons/react'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useClawLogs } from '@/hooks'
-import PanelPlaceholder from '@/components/PanelPlaceholder'
+import { PanelPlaceholder } from '@/components'
 
 const ClawLogsContent: FC<ClawLogsContentProps> = ({
     clawId,

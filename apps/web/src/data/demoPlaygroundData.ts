@@ -81,7 +81,6 @@ const buildDemoGraph = (): DemoPlaygroundData => {
                 claw,
                 agentCount: agents.length,
                 isLoadingAgents: false,
-                isReachable: true,
                 readOnly: true
             } as Record<string, unknown>,
             draggable: false

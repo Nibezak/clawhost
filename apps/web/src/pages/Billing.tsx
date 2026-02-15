@@ -7,25 +7,24 @@ import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
 import { useUIStore } from '@/lib/store'
 import { useUserStats, useBillingHistory } from '@/hooks'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import Header from '@/components/Header'
-import LandingFooter from '@/components/LandingFooter'
-import PageBackground from '@/components/PageBackground'
-import PageTitle from '@/components/PageTitle'
+import { Badge, Card, CardContent, Skeleton, Button } from '@/components/ui'
+import {
+    Header,
+    LandingFooter,
+    PageBackground,
+    PageTitle,
+    ActionButton,
+    EmptyState,
+    ErrorState,
+    PageHeader
+} from '@/components'
 import {
     CircleNotch,
     Receipt,
     DownloadSimple,
     ArrowSquareOut
 } from '@phosphor-icons/react'
-import ActionButton from '@/components/ActionButton'
-import api from '@/lib/api'
-import EmptyState from '@/components/EmptyState'
-import ErrorState from '@/components/ErrorState'
-import PageHeader from '@/components/PageHeader'
-import { Button } from '@/components/ui/button'
+import { api } from '@/lib'
 
 const BillingSkeleton: FC = (): ReactNode => {
     return (

@@ -462,6 +462,7 @@ export const en = {
             migrating: 'Migrating',
             rebuilding: 'Rebuilding',
             restarting: 'Restarting',
+            unreachable: 'Unreachable',
             deleting: 'Deleting',
             scheduledDeletion: 'Deletion Scheduled',
             unknown: 'Unknown'

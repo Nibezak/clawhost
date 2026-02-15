@@ -3,11 +3,9 @@ import type { FC, ReactNode } from 'react'
 import { lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { AuthProvider } from '@/lib/auth'
-import ScrollToTop from '@/components/ScrollToTop'
-import Toast from '@/components/Toast'
-import { TooltipProvider } from '@/components/ui/tooltip'
-import ROUTES from '@/lib/routes'
-import ProtectedRoute from '@/components/ProtectedRoute'
+import { ScrollToTop, Toast, ProtectedRoute } from '@/components'
+import { TooltipProvider } from '@/components/ui'
+import { ROUTES } from '@/lib'
 
 const Landing = lazy(() => import('@/pages/Landing'))
 const Login = lazy(() => import('@/pages/Login'))

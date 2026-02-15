@@ -3,14 +3,15 @@ import type { ClawFileExplorerDialogProps } from '@/ts/Interfaces'
 
 import { useState, useCallback } from 'react'
 import { t } from '@openclaw/i18n'
-import { Button } from '@/components/ui/button'
 import {
+    Button,
     Dialog,
     DialogContent,
     DialogDescription,
     DialogHeader,
-    DialogTitle
-} from '@/components/ui/dialog'
+    DialogTitle,
+    Skeleton
+} from '@/components/ui'
 import {
     CircleNotch,
     FloppyDisk,
@@ -20,10 +21,9 @@ import {
     FolderOpen,
     X
 } from '@phosphor-icons/react'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useQueryClient } from '@tanstack/react-query'
 import { useClawFiles, useClawFile, useUpdateClawFile } from '@/hooks'
-import useUIStore from '@/lib/store/useUIStore'
+import { useUIStore } from '@/lib/store'
 import CodeMirror, { EditorView } from '@uiw/react-codemirror'
 import { createTheme } from '@uiw/codemirror-themes'
 import { tags } from '@lezer/highlight'

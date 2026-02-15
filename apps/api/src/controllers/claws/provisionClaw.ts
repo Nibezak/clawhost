@@ -5,6 +5,7 @@ import type {
 import type { ProviderType } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
+import { clawStatus } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws, pendingClaws, sshKeys, volumes } from '@/db/schema'
 import { getProvider } from '@/services/provider'
@@ -97,7 +98,7 @@ export async function provisionClaw(
             userId: pending.userId,
             name: pending.name,
             provider: providerName,
-            status: 'creating',
+            status: clawStatus.creating,
             planId: pending.planId,
             location: pending.location,
             rootPassword: pending.rootPassword,
@@ -141,7 +142,7 @@ export async function provisionClaw(
                 .update(claws)
                 .set({
                     providerServerId: serverId.toString(),
-                    status: 'configuring',
+                    status: clawStatus.configuring,
                     ip
                 })
                 .where(eq(claws.id, id))

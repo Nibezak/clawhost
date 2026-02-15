@@ -2,10 +2,7 @@ import type { FC, ReactNode } from 'react'
 
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import Header from '@/components/Header'
-import LandingFooter from '@/components/LandingFooter'
-import PageBackground from '@/components/PageBackground'
-import PageTitle from '@/components/PageTitle'
+import { Header, LandingFooter, PageBackground, PageTitle } from '@/components'
 import { Check, Circle } from '@phosphor-icons/react'
 
 const Changelog: FC = (): ReactNode => {

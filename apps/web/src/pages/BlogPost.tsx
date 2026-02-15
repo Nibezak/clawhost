@@ -4,15 +4,16 @@ import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { ArrowLeft, CalendarBlank, Clock } from '@phosphor-icons/react'
-import Header from '@/components/Header'
-import LandingFooter from '@/components/LandingFooter'
-import PageBackground from '@/components/PageBackground'
-import PageTitle from '@/components/PageTitle'
-import JsonLd from '@/components/JsonLd'
+import {
+    Header,
+    LandingFooter,
+    PageBackground,
+    PageTitle,
+    JsonLd
+} from '@/components'
 import { getPostComponent, getPostMeta } from '@/lib/blog'
-import ROUTES from '@/lib/routes'
+import { ROUTES, getBaseDomain } from '@/lib'
 import NotFound from '@/pages/NotFound'
-import getBaseDomain from '@/lib/getBaseDomain'
 
 const SITE_URL = `https://${getBaseDomain()}`
 

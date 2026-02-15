@@ -2,14 +2,15 @@ import type { FC, ReactNode } from 'react'
 import type { ClawCardDropdownMenuProps } from '@/ts/Interfaces'
 
 import { t } from '@openclaw/i18n'
-import { Button } from '@/components/ui/button'
+import { clawStatus } from '@openclaw/shared'
 import {
+    Button,
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
+} from '@/components/ui'
 import {
     Play,
     Square,
@@ -70,7 +71,7 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                 )}
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end' collisionPadding={8}>
-                {(claw.status === 'stopped' || claw.status === 'off') && (
+                {(claw.status === clawStatus.stopped || claw.status === clawStatus.off) && (
                     <DropdownMenuItem
                         onClick={actions.onStart}
                         disabled={isLoading}
@@ -79,7 +80,7 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                         {t('dashboard.start')}
                     </DropdownMenuItem>
                 )}
-                {claw.status === 'running' && (
+                {claw.status === clawStatus.running && (
                     <>
                         <DropdownMenuItem
                             onClick={actions.onShowStopModal}

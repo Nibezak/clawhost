@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import api from '@/lib/api'
+import { api } from '@/lib'
 import LOCATIONS_QUERY_KEY from '@/hooks/usePlans/LOCATIONS_QUERY_KEY'
 
 const useLocations = (provider?: string) => {

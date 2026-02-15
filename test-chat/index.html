@@ -447,7 +447,7 @@
                     const res = await wsRequest('chat.send', {
                         sessionKey,
                         message: text,
-                        deliver: false,
+                        deliver: true,
                         timeoutMs: 120000,
                         idempotencyKey: uuid()
                     })

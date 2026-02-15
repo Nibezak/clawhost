@@ -8,7 +8,7 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle
-} from '@/components/ui/dialog'
+} from '@/components/ui'
 import ClawDiagnosticsContent from '@/components/dashboard/ClawDiagnosticsContent'
 
 const ClawDiagnosticsDialog: FC<ClawDiagnosticsDialogProps> = ({

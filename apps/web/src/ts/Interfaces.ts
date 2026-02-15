@@ -573,7 +573,6 @@ export interface PlaygroundClawNodeData {
     claw: Claw
     agentCount: number
     isLoadingAgents: boolean
-    isReachable: boolean
     isSelected: boolean
     readOnly?: boolean
 }

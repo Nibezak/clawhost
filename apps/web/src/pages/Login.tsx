@@ -7,13 +7,9 @@ import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
 import { useUIStore } from '@/lib/store'
-import ROUTES from '@/lib/routes'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import Logo from '@/components/Logo'
-import PageBackground from '@/components/PageBackground'
-import PageTitle from '@/components/PageTitle'
+import { ROUTES } from '@/lib'
+import { Button, Input, Label } from '@/components/ui'
+import { Logo, PageBackground, PageTitle } from '@/components'
 import { Envelope, CircleNotch, ArrowLeft } from '@phosphor-icons/react'
 
 const COOLDOWN_KEY = 'otpSentAt'
@@ -321,7 +317,11 @@ const Login: FC = (): ReactNode => {
                                 {loadingMethod === 'google' ? (
                                     <CircleNotch className='h-[18px] w-[18px] animate-spin' />
                                 ) : (
-                                    <svg width='18' height='18' viewBox='0 0 24 24'>
+                                    <svg
+                                        width='18'
+                                        height='18'
+                                        viewBox='0 0 24 24'
+                                    >
                                         <path
                                             d='M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z'
                                             fill='#4285F4'
@@ -421,7 +421,9 @@ const Login: FC = (): ReactNode => {
                             onClick={() => handleVerifyOtp(code.join(''))}
                             size='lg'
                             className='w-full gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90'
-                            disabled={!!loadingMethod || code.some((d) => d === '')}
+                            disabled={
+                                !!loadingMethod || code.some((d) => d === '')
+                            }
                         >
                             {loadingMethod === 'email' ? (
                                 <>

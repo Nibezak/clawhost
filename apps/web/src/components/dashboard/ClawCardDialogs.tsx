@@ -2,14 +2,14 @@ import type { FC, ReactNode } from 'react'
 import type { ClawCardDialogsProps } from '@/ts/Interfaces'
 
 import { t } from '@openclaw/i18n'
-import { Button } from '@/components/ui/button'
 import {
+    Button,
     Dialog,
     DialogContent,
     DialogDescription,
     DialogHeader,
     DialogTitle
-} from '@/components/ui/dialog'
+} from '@/components/ui'
 import { CircleNotch } from '@phosphor-icons/react'
 
 const ClawCardDialogs: FC<ClawCardDialogsProps> = ({

@@ -9,14 +9,16 @@ import type { TranslationKey } from '@openclaw/i18n'
 import { useCallback, useState } from 'react'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
+import { clawStatus } from '@openclaw/shared'
 import { X, Info, Scroll, Pulse, Key } from '@phosphor-icons/react'
-import ClawAvatar from '@/components/ClawAvatar'
-import getBaseDomain from '@/lib/getBaseDomain'
-import ProviderIcon from '@/components/ProviderIcon'
-import CopyableField from '@/components/dashboard/CopyableField'
-import ClawLogsContent from '@/components/dashboard/ClawLogsContent'
-import ClawDiagnosticsContent from '@/components/dashboard/ClawDiagnosticsContent'
-import PlaygroundVariablesContent from '@/components/playground/PlaygroundVariablesContent'
+import { ClawAvatar, ProviderIcon } from '@/components'
+import { getBaseDomain } from '@/lib'
+import {
+    CopyableField,
+    ClawLogsContent,
+    ClawDiagnosticsContent
+} from '@/components/dashboard'
+import { PlaygroundVariablesContent } from '@/components/playground'
 import {
     locationFlags,
     locationNames,
@@ -76,7 +78,7 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                             <h3 className='text-sm font-semibold leading-tight text-white'>
                                 {claw.name}
                             </h3>
-                            {claw.status !== 'configuring' && (
+                            {claw.status !== clawStatus.configuring && (
                                 <a
                                     href={`https://${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
                                     target='_blank'

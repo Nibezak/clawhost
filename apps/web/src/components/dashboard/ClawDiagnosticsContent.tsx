@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react'
 import type { ClawDiagnosticsContentProps } from '@/ts/Interfaces'
 
 import { t } from '@openclaw/i18n'
-import { Button } from '@/components/ui/button'
+import { Button, Skeleton } from '@/components/ui'
 import {
     CircleNotch,
     Wrench,
@@ -10,10 +10,9 @@ import {
     Warning,
     Pulse
 } from '@phosphor-icons/react'
-import { Skeleton } from '@/components/ui/skeleton'
 import { useClawDiagnostics, useRepairClaw } from '@/hooks'
-import PanelPlaceholder from '@/components/PanelPlaceholder'
-import useUIStore from '@/lib/store/useUIStore'
+import { PanelPlaceholder } from '@/components'
+import { useUIStore } from '@/lib/store'
 
 const ClawDiagnosticsContent: FC<ClawDiagnosticsContentProps> = ({
     clawId,

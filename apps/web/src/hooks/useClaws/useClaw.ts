@@ -1,7 +1,7 @@
 import type { UseClawOptions } from '@/ts/Interfaces'
 
 import { useQuery } from '@tanstack/react-query'
-import api from '@/lib/api'
+import { api } from '@/lib'
 
 const useClaw = (id: string, options?: UseClawOptions) => {
     return useQuery({

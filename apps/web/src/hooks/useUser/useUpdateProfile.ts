@@ -1,7 +1,7 @@
 import type { UpdateProfileData } from '@/ts/Interfaces'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import api from '@/lib/api'
+import { api } from '@/lib'
 import PROFILE_QUERY_KEY from '@/hooks/useUser/PROFILE_QUERY_KEY'
 
 const useUpdateProfile = () => {

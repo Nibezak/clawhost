@@ -6,8 +6,9 @@ import { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { t } from '@openclaw/i18n'
+import { clawStatus } from '@openclaw/shared'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
-import ROUTES from '@/lib/routes'
+import { ROUTES } from '@/lib'
 import {
     useClaws,
     useAdminClaws,
@@ -17,13 +18,15 @@ import {
     useVolumePricing,
     usePlanAvailability
 } from '@/hooks'
-import { useAllClawAgents, usePlaygroundGraph } from '@/hooks/usePlayground'
-import EmptyState from '@/components/EmptyState'
-import ErrorState from '@/components/ErrorState'
-import PageTitle from '@/components/PageTitle'
-import ActionButton from '@/components/ActionButton'
-import ClawMascot from '@/components/ClawMascot'
-import Logo from '@/components/Logo'
+import { useAllClawAgents, usePlaygroundGraph } from '@/hooks'
+import {
+    EmptyState,
+    ErrorState,
+    PageTitle,
+    ActionButton,
+    ClawMascot,
+    Logo
+} from '@/components'
 import { Lightning } from '@phosphor-icons/react'
 import { CreateClawModal } from '@/components/dashboard'
 import {
@@ -34,7 +37,7 @@ import {
 } from '@/components/playground'
 import { useAuth } from '@/lib/auth'
 import { useProfile } from '@/hooks'
-import UserDropdown from '@/components/UserDropdown'
+import { UserDropdown } from '@/components'
 
 const Dashboard: FC = (): ReactNode => {
     const navigate = useNavigate()
@@ -157,7 +160,7 @@ const Dashboard: FC = (): ReactNode => {
                 id: 'awaiting-purchase',
                 name: purchase.name || '',
                 provider: purchase.provider,
-                status: 'creating',
+                status: clawStatus.creating,
                 ip: null,
                 planId: purchase.planId,
                 location: purchase.location,
@@ -406,7 +409,7 @@ const Dashboard: FC = (): ReactNode => {
                         )}
                 </div>
 
-                <AnimatePresence>
+                <AnimatePresence mode='wait'>
                     {selectedClaw && (
                         <PlaygroundDetailPanel
                             key='detail-panel'

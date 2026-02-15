@@ -1,7 +1,7 @@
 import type { GatewayConnectionState, GatewayEventHandler } from '@/ts/Types'
 import type { GatewayPendingRequest } from '@/ts/Interfaces'
 
-import getBaseDomain from '@/lib/getBaseDomain'
+import { getBaseDomain } from '@/lib'
 
 const REQUEST_TIMEOUT = 15000
 const MAX_RECONNECT_DELAY = 30000
@@ -47,6 +47,7 @@ class GatewayClient {
 
         const domain = getBaseDomain()
         const url = `wss://${this.subdomain}.${domain}/`
+        console.error('[GW] connecting to:', url)
 
         try {
             this.ws = new WebSocket(url)
@@ -64,14 +65,21 @@ class GatewayClient {
                     string,
                     unknown
                 >
+                console.error('[GW] frame:', JSON.stringify(frame).slice(0, 500))
                 this.handleFrame(frame)
             } catch {
                 /* malformed frame */
             }
         }
 
-        this.ws.onclose = () => {
+        this.ws.onclose = (ev) => {
+            console.error('[GW] close:', ev.code, ev.reason)
             this.ws = null
+            this.pending.forEach((req) => {
+                clearTimeout(req.timer)
+                req.reject(new Error('Connection closed'))
+            })
+            this.pending.clear()
             if (!this.intentionalClose) {
                 this.setState('disconnected')
                 this.scheduleReconnect()
@@ -233,6 +241,7 @@ class GatewayClient {
     }
 
     private sendRaw(frame: Record<string, unknown>): void {
+        console.error('[GW] send:', JSON.stringify(frame).slice(0, 500))
         if (this.ws?.readyState === WebSocket.OPEN) {
             this.ws.send(JSON.stringify(frame))
         }

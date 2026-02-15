@@ -20,14 +20,14 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogDescription
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
-import api from '@/lib/api'
+    DialogDescription,
+    Button,
+    Skeleton
+} from '@/components/ui'
+import { api } from '@/lib'
 import { useUIStore } from '@/lib/store'
-import PanelPlaceholder from '@/components/PanelPlaceholder'
-import PLAYGROUND_AGENTS_QUERY_KEY from '@/hooks/usePlayground/PLAYGROUND_AGENTS_QUERY_KEY'
+import { PanelPlaceholder } from '@/components'
+import { PLAYGROUND_AGENTS_QUERY_KEY } from '@/hooks'
 
 let skipDeleteConfirmation = false
 

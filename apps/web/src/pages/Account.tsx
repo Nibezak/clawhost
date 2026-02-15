@@ -6,17 +6,16 @@ import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
 import { useUIStore } from '@/lib/store'
 import { useProfile, useUpdateProfile, useUserStats } from '@/hooks'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import Header from '@/components/Header'
-import LandingFooter from '@/components/LandingFooter'
-import PageBackground from '@/components/PageBackground'
-import PageTitle from '@/components/PageTitle'
+import { Input, Label, Avatar, AvatarFallback, Button } from '@/components/ui'
+import {
+    Header,
+    LandingFooter,
+    PageBackground,
+    PageTitle,
+    ClawMascotOutline,
+    PageHeader
+} from '@/components'
 import { CircleNotch, Calendar, Key } from '@phosphor-icons/react'
-import ClawMascotOutline from '@/components/ClawMascotOutline'
-import PageHeader from '@/components/PageHeader'
-import { Button } from '@/components/ui/button'
 
 const Account: FC = (): ReactNode => {
     const { user, loading: authLoading, updateCachedProfile } = useAuth()

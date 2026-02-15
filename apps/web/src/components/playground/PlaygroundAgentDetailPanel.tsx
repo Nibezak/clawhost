@@ -23,28 +23,25 @@ import {
     Check,
     Trash
 } from '@phosphor-icons/react'
-import { AgentChat } from '@/components/playground/AgentChat'
-import ClawAvatar from '@/components/ClawAvatar'
-import PanelPlaceholder from '@/components/PanelPlaceholder'
+import { AgentChat } from '@/components/playground'
+import { ClawAvatar, PanelPlaceholder } from '@/components'
 import {
     Select,
     SelectTrigger,
     SelectContent,
     SelectItem,
-    SelectGroup
-} from '@/components/ui/select'
-import {
+    SelectGroup,
     Dialog,
     DialogContent,
     DialogDescription,
     DialogHeader,
-    DialogTitle
-} from '@/components/ui/dialog'
-import { Skeleton } from '@/components/ui/skeleton'
-import api from '@/lib/api'
+    DialogTitle,
+    Skeleton
+} from '@/components/ui'
+import { api } from '@/lib'
 import { useUIStore } from '@/lib/store'
 import { aiModels, validateAgentName } from '@/lib/claw-utils'
-import PLAYGROUND_AGENTS_QUERY_KEY from '@/hooks/usePlayground/PLAYGROUND_AGENTS_QUERY_KEY'
+import { PLAYGROUND_AGENTS_QUERY_KEY } from '@/hooks'
 
 const agentTabStateMap: Record<string, PlaygroundAgentDetailTab> = {}
 const deletingAgentIds = new Set<string>()

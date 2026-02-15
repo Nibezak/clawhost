@@ -11,19 +11,17 @@ import {
     DialogContent,
     DialogDescription,
     DialogHeader,
-    DialogTitle
-} from '@/components/ui/dialog'
-import {
+    DialogTitle,
     Select,
     SelectTrigger,
     SelectContent,
     SelectItem,
     SelectGroup
-} from '@/components/ui/select'
-import api from '@/lib/api'
+} from '@/components/ui'
+import { api } from '@/lib'
 import { useUIStore } from '@/lib/store'
 import { aiModels, validateAgentName } from '@/lib/claw-utils'
-import PLAYGROUND_AGENTS_QUERY_KEY from '@/hooks/usePlayground/PLAYGROUND_AGENTS_QUERY_KEY'
+import { PLAYGROUND_AGENTS_QUERY_KEY } from '@/hooks'
 
 const CreateAgentModal: FC<CreateAgentModalProps> = ({
     clawId,

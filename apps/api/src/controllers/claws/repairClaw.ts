@@ -1,6 +1,7 @@
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
+import { clawStatus } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import executeSSH from '@/services/ssh'
@@ -46,10 +47,10 @@ const repairClaw = async (c: AuthenticatedContext) => {
         )
         const success = output.includes('GATEWAY_OK')
 
-        if (success && claw[0].status === 'configuring') {
+        if (success && claw[0].status === clawStatus.configuring) {
             await db
                 .update(claws)
-                .set({ status: 'running' })
+                .set({ status: clawStatus.running })
                 .where(eq(claws.id, id))
         }
 

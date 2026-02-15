@@ -1,6 +1,10 @@
 import type { ClawAgent } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
+import { eq } from 'drizzle-orm'
+import { clawStatus } from '@openclaw/shared'
+import { db } from '@/db'
+import { claws } from '@/db/schema'
 import executeSSH from '@/services/ssh'
 import { findUserClaw } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
@@ -17,6 +21,7 @@ const getClawAgents = async (c: AuthenticatedContext) => {
         }
 
         if (!claw.ip || !claw.rootPassword) {
+            await db.update(claws).set({ status: clawStatus.unreachable }).where(eq(claws.id, id))
             return ok(
                 c,
                 { agents: [], reachable: false },
@@ -85,8 +90,14 @@ const getClawAgents = async (c: AuthenticatedContext) => {
                 ]
             }
 
+            if (claw.status === clawStatus.unreachable) {
+                await db.update(claws).set({ status: clawStatus.running }).where(eq(claws.id, id))
+            }
             return ok(c, { agents, reachable: true }, t('api.agentsFetched'))
         } catch {
+            if (claw.status === clawStatus.running) {
+                await db.update(claws).set({ status: clawStatus.unreachable }).where(eq(claws.id, id))
+            }
             return ok(
                 c,
                 { agents: [], reachable: false },

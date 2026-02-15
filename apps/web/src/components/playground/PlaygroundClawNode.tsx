@@ -7,6 +7,7 @@ import type {
 
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
+import { clawStatus } from '@openclaw/shared'
 import { useUIStore } from '@/lib/store'
 import {
     useStartClaw,
@@ -19,22 +20,20 @@ import {
     useReinstallClaw,
     useProfile
 } from '@/hooks'
-import api from '@/lib/api'
-import ProviderIcon from '@/components/ProviderIcon'
-import getStatusConfig from '@/lib/claw-utils/getStatusConfig'
-import { Plus, WifiSlash, Clock, CircleNotch } from '@phosphor-icons/react'
-import ClawMascot from '@/components/ClawMascot'
-import ClawCardDropdownMenu from '@/components/dashboard/ClawCardDropdownMenu'
-import ClawCardDialogs from '@/components/dashboard/ClawCardDialogs'
-import ClawDiagnosticsDialog from '@/components/dashboard/ClawDiagnosticsDialog'
-import ClawLogsDialog from '@/components/dashboard/ClawLogsDialog'
-import ClawConfigDialog from '@/components/dashboard/ClawConfigDialog'
-import CreateAgentModal from '@/components/playground/CreateAgentModal'
+import { api } from '@/lib'
+import { ProviderIcon } from '@/components'
+import { getStatusConfig } from '@/lib/claw-utils'
+import { Plus, Clock, CircleNotch } from '@phosphor-icons/react'
+import { ClawMascot } from '@/components'
 import {
-    Tooltip,
-    TooltipTrigger,
-    TooltipContent
-} from '@/components/ui/tooltip'
+    ClawCardDropdownMenu,
+    ClawCardDialogs,
+    ClawDiagnosticsDialog,
+    ClawLogsDialog,
+    ClawConfigDialog
+} from '@/components/dashboard'
+import { CreateAgentModal } from '@/components/playground'
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import { Handle, Position } from '@xyflow/react'
 
 const handleStyle = {
@@ -55,15 +54,15 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
         claw,
         agentCount,
         isLoadingAgents,
-        isReachable,
         isSelected,
         readOnly
     } = data
     const statusConfigs = getStatusConfig()
     const status = statusConfigs[claw.status] || statusConfigs.unknown
 
-    const isRunning = claw.status === 'running'
-    const isOffline = claw.status === 'stopped' || claw.status === 'off'
+    const isRunning = claw.status === clawStatus.running
+    const isOffline = claw.status === clawStatus.stopped || claw.status === clawStatus.off
+    const isUnreachable = claw.status === clawStatus.unreachable
 
     const { showToast } = useUIStore()
     const [copied, setCopied] = useState(false)
@@ -103,9 +102,9 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
 
     const isScheduledForDeletion = !!claw.deletionScheduledAt
     const hasActionItems =
-        claw.status === 'running' ||
-        claw.status === 'stopped' ||
-        claw.status === 'off'
+        claw.status === clawStatus.running ||
+        claw.status === clawStatus.stopped ||
+        claw.status === clawStatus.off
 
     const copySSHWithKey = () => {
         const command = `ssh root@${claw.ip}`
@@ -210,7 +209,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                 className={`playground-node-enter relative w-[280px] cursor-pointer rounded-xl border bg-[#151518] ${
                     isSelected
                         ? 'border-[#ef5350]/50 shadow-[0_0_20px_rgba(239,83,80,0.15)]'
-                        : isOffline || !isReachable
+                        : isOffline || isUnreachable
                           ? 'border-white/5 opacity-50'
                           : 'border-white/10'
                 } ${isRunning && !isSelected ? 'shadow-[0_0_30px_rgba(239,83,80,0.08)]' : ''}`}
@@ -311,14 +310,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                                     {t('playground.loadingAgents')}
                                 </span>
                             </div>
-                        ) : !isReachable && !isOffline ? (
-                            <div className='flex items-center gap-1.5 rounded-md bg-red-500/10 px-2 py-1'>
-                                <WifiSlash className='h-3 w-3 text-red-400' />
-                                <span className='text-xs text-red-400'>
-                                    {t('playground.unreachable')}
-                                </span>
-                            </div>
-                        ) : isOffline ? (
+                        ) : isOffline || isUnreachable ? (
                             <div className='flex items-center gap-1.5 rounded-md bg-gray-500/10 px-2 py-1'>
                                 <span className='text-xs text-gray-400'>
                                     {t('playground.offline')}

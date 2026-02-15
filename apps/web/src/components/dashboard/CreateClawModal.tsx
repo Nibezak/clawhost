@@ -13,24 +13,27 @@ import {
     usePlanAvailability
 } from '@/hooks'
 import { generatePassword, locationFlags, aiModels } from '@/lib/claw-utils'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Slider } from '@/components/ui/slider'
-import { Label } from '@/components/ui/label'
 import {
+    Button,
+    Input,
+    Slider,
+    Label,
     Select,
     SelectTrigger,
     SelectContent,
     SelectItem,
-    SelectGroup
-} from '@/components/ui/select'
-import {
+    SelectGroup,
     Dialog,
     DialogContent,
     DialogDescription,
     DialogHeader,
-    DialogTitle
-} from '@/components/ui/dialog'
+    DialogTitle,
+    Tooltip,
+    TooltipTrigger,
+    TooltipContent,
+    TooltipProvider,
+    Skeleton
+} from '@/components/ui'
 import {
     CircleNotch,
     Eye,
@@ -40,14 +43,7 @@ import {
     ArrowClockwise,
     CaretDown
 } from '@phosphor-icons/react'
-import {
-    Tooltip,
-    TooltipTrigger,
-    TooltipContent,
-    TooltipProvider
-} from '@/components/ui/tooltip'
-import { Skeleton } from '@/components/ui/skeleton'
-import ClawMascot from '@/components/ClawMascot'
+import { ClawMascot } from '@/components'
 
 const CreateClawModal: FC<CreateClawModalProps> = ({
     plans: initialPlans,

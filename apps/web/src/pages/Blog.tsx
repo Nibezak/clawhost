@@ -2,14 +2,16 @@ import type { FC, ReactNode } from 'react'
 
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import Header from '@/components/Header'
-import LandingFooter from '@/components/LandingFooter'
-import PageBackground from '@/components/PageBackground'
-import PageTitle from '@/components/PageTitle'
-import JsonLd from '@/components/JsonLd'
-import BlogCard from '@/components/BlogCard'
+import {
+    Header,
+    LandingFooter,
+    PageBackground,
+    PageTitle,
+    JsonLd,
+    BlogCard
+} from '@/components'
 import { allPosts } from '@/lib/blog'
-import getBaseDomain from '@/lib/getBaseDomain'
+import { getBaseDomain } from '@/lib'
 
 const Blog: FC = (): ReactNode => {
     return (
