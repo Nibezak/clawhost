@@ -2,6 +2,7 @@ import type { FC, ReactNode } from 'react'
 
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
+import { LEGAL_EMAIL } from '@/lib/links'
 import Header from '@/components/Header'
 import LandingFooter from '@/components/LandingFooter'
 import PageBackground from '@/components/PageBackground'
@@ -135,7 +136,7 @@ const Terms: FC = (): ReactNode => {
                         <p className='text-muted-foreground leading-relaxed'>
                             {t('terms.contactText')}{' '}
                             <a
-                                href='mailto:legal@clawhost.cloud'
+                                href={LEGAL_EMAIL}
                                 className='text-primary hover:underline'
                             >
                                 legal@clawhost.cloud
