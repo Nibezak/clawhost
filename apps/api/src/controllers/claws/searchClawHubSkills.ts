@@ -6,7 +6,6 @@ import { findUserClaw } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
-const BASE_DIR = '/home/openclaw/.openclaw'
 const ENSURE_CLAWHUB = 'command -v clawhub >/dev/null 2>&1 || npm install -g clawhub >/dev/null 2>&1;'
 
 const searchClawHubSkills = async (c: AuthenticatedContext) => {
