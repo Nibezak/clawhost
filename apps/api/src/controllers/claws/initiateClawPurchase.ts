@@ -258,7 +258,7 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
             }
         })
 
-        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
+        const expiresAt = new Date(Date.now() + 60 * 60 * 1000)
 
         await db.insert(pendingClaws).values({
             id: pendingId,

@@ -12,7 +12,8 @@ const clawStatus = {
     unknown: 'unknown',
     creating: 'creating',
     configuring: 'configuring',
-    restarting: 'restarting'
+    restarting: 'restarting',
+    awaitingPayment: 'awaiting_payment'
 } as const
 
 export default clawStatus

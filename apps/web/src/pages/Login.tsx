@@ -281,18 +281,14 @@ const Login: FC = (): ReactNode => {
                                 className='w-full gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90'
                                 disabled={!!loadingMethod || cooldown > 0}
                             >
-                                {loadingMethod === 'email' ? (
-                                    <>
-                                        <CircleNotch className='h-4 w-4 animate-spin' />
-                                        {t('auth.sending')}
-                                    </>
-                                ) : cooldown > 0 ? (
-                                    t('auth.resendIn', {
-                                        seconds: String(cooldown)
-                                    })
-                                ) : (
-                                    t('auth.continueWithEmail')
+                                {loadingMethod === 'email' && (
+                                    <CircleNotch className='h-4 w-4 animate-spin' />
                                 )}
+                                {cooldown > 0
+                                    ? t('auth.resendIn', {
+                                          seconds: String(cooldown)
+                                      })
+                                    : t('auth.continueWithEmail')}
                             </Button>
 
                             <p className='text-center text-sm text-gray-500'>
@@ -425,14 +421,10 @@ const Login: FC = (): ReactNode => {
                                 !!loadingMethod || code.some((d) => d === '')
                             }
                         >
-                            {loadingMethod === 'email' ? (
-                                <>
-                                    <CircleNotch className='h-4 w-4 animate-spin' />
-                                    {t('auth.verifying')}
-                                </>
-                            ) : (
-                                t('auth.verifyCode')
+                            {loadingMethod === 'email' && (
+                                <CircleNotch className='h-4 w-4 animate-spin' />
                             )}
+                            {t('auth.verifyCode')}
                         </Button>
 
                         <button

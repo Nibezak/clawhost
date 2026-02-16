@@ -14,9 +14,9 @@ export type UserRole = 'user' | 'admin'
 
 export type PlaygroundNodeType = 'claw' | 'agent'
 
-export type PlaygroundDetailTab = 'info' | 'logs' | 'diagnostics' | 'variables'
+export type PlaygroundDetailTab = 'info' | 'variables' | 'logs' | 'diagnostics' | 'skills'
 
-export type PlaygroundAgentDetailTab = 'chat' | 'configuration'
+export type PlaygroundAgentDetailTab = 'chat' | 'configuration' | 'channels' | 'skills'
 
 export type ClawAvatarSize = 'sm' | 'md' | 'lg'
 
@@ -32,6 +32,8 @@ export type ChatMessageRole = 'user' | 'assistant'
 export type ChatMessageStatus = 'complete' | 'streaming' | 'error' | 'aborted'
 
 export type LoginLoadingMethod = 'email' | 'google' | 'github' | 'resend' | null
+
+export type ChatContentBlockType = 'text' | 'image'
 
 export type GatewayEventHandler = (payload: unknown) => void
 

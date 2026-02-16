@@ -901,33 +901,23 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                 end={{ x: 1, y: 0 }}
                                 style={styles.submitGradient}
                             >
-                                {purchaseMutation.isPending ? (
-                                    <>
-                                        <ActivityIndicator
-                                            size='small'
-                                            color={COLORS.white}
-                                        />
-                                        <Text style={styles.submitText}>
-                                            {t('createClaw.redirecting')}
-                                        </Text>
-                                    </>
-                                ) : !selectedPlan ? (
-                                    <Text style={styles.submitText}>
-                                        {t('createClaw.selectServerToContinue')}
-                                    </Text>
-                                ) : !location ? (
-                                    <Text style={styles.submitText}>
-                                        {t(
-                                            'createClaw.selectLocationToContinue'
-                                        )}
-                                    </Text>
-                                ) : (
-                                    <Text style={styles.submitText}>
-                                        {t('createClaw.proceedToPayment', {
-                                            amount: totalMonthly.toFixed(2)
-                                        })}
-                                    </Text>
+                                {purchaseMutation.isPending && (
+                                    <ActivityIndicator
+                                        size='small'
+                                        color={COLORS.white}
+                                    />
                                 )}
+                                <Text style={styles.submitText}>
+                                    {!selectedPlan
+                                        ? t('createClaw.selectServerToContinue')
+                                        : !location
+                                          ? t(
+                                                'createClaw.selectLocationToContinue'
+                                            )
+                                          : t('createClaw.proceedToPayment', {
+                                                amount: totalMonthly.toFixed(2)
+                                            })}
+                                </Text>
                             </LinearGradient>
                         </Pressable>
                     </View>

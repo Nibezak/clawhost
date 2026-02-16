@@ -192,15 +192,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                         )
                         return
                     }
-                    localStorage.setItem(
-                        'openclaw_awaiting_purchase',
-                        JSON.stringify({
-                            name,
-                            provider,
-                            planId,
-                            location
-                        })
-                    )
                     window.location.href = data.checkoutUrl
                 },
                 onError: (err: Error) => {
@@ -969,12 +960,10 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                 !location
                             }
                         >
-                            {purchaseMutation.isPending ? (
-                                <>
-                                    <CircleNotch className='h-4 w-4 animate-spin' />
-                                    {t('createClaw.redirecting')}
-                                </>
-                            ) : !selectedPlan ? (
+                            {purchaseMutation.isPending && (
+                                <CircleNotch className='h-4 w-4 animate-spin' />
+                            )}
+                            {!selectedPlan ? (
                                 t('createClaw.selectServerToContinue')
                             ) : !location ? (
                                 t('createClaw.selectLocationToContinue')

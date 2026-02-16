@@ -781,3 +781,61 @@ export interface PlanConfig {
     order: string[]
     prices: Record<string, number>
 }
+
+export interface ChannelConfig {
+    enabled: boolean
+    dmPolicy?: string
+    allowFrom?: string[]
+    botToken?: string
+    token?: string
+    applicationId?: string
+    appToken?: string
+    signingSecret?: string
+}
+
+export interface ClawChannelsResponse {
+    channels: Record<string, ChannelConfig>
+}
+
+export interface UpdateClawChannelsBody {
+    channels: Record<string, ChannelConfig>
+}
+
+export interface SkillEntryConfig {
+    enabled: boolean
+    apiKey?: string
+    env?: Record<string, string>
+    config?: Record<string, unknown>
+}
+
+export interface BundledSkillInfo {
+    name: string
+    enabled: boolean
+    description?: string
+}
+
+export interface ClawSkillsResponse {
+    skills: BundledSkillInfo[]
+    entries: Record<string, SkillEntryConfig>
+}
+
+export interface UpdateClawSkillsBody {
+    entries: Record<string, SkillEntryConfig>
+}
+
+export interface AgentSkillInfo {
+    name: string
+}
+
+export interface GetAgentSkillsBody {
+    agentId: string
+}
+
+export interface GetAgentSkillsResponse {
+    skills: AgentSkillInfo[]
+}
+
+export interface UpdateAgentSkillsBody {
+    action: 'install' | 'remove'
+    skillName: string
+}

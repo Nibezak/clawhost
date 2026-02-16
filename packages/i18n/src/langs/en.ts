@@ -140,6 +140,7 @@ export const en = {
         failedToFetchVolumePricing: 'Failed to fetch volume pricing!',
         failedToFetchPlanAvailability: 'Failed to fetch plan availability!',
         failedToSendEmail: 'Failed to send email!',
+        failedToGetVersion: 'Failed to get version.',
         failedToGetDiagnostics: 'Failed to connect to the instance!',
         failedToGetDiagnosticsDescription:
             'Could not retrieve diagnostics. The instance may be offline or starting up.',
@@ -222,13 +223,30 @@ export const en = {
         unauthorized: 'Unauthorized.',
         invalidToken: 'Invalid token.',
         notFound: 'Not found.',
-        healthOk: 'API is running.'
+        healthOk: 'API is running.',
+        channelsFetched: 'Channels fetched successfully.',
+        channelsUpdated: 'Channels updated successfully.',
+        channelsUpdateFailed: 'Could not update channels.',
+        channelsFetchFailed: 'Could not fetch channels.',
+        channelMissingRequired: 'Missing required fields for enabled channel.',
+        skillsFetched: 'Skills fetched successfully.',
+        skillsUpdated: 'Skills updated successfully.',
+        skillsUpdateFailed: 'Could not update skills.',
+        skillsFetchFailed: 'Could not fetch skills.',
+        agentSkillsFetched: 'Agent skills fetched successfully.',
+        agentSkillsUpdated: 'Agent skills updated successfully.',
+        agentSkillsUpdateFailed: 'Could not update agent skills.',
+        agentSkillsFetchFailed: 'Could not fetch agent skills.',
+        invalidSkillName:
+            'Skill name must only contain letters, numbers, dashes, and underscores.',
+        skillNotFound: 'Skill not found.'
     },
     emails: {
         otpSubject: 'Your ClawHost sign-in code',
         otpPreview: 'Your ClawHost sign-in code: {{code}}',
         otpHeading: 'Your sign-in code is:',
-        otpExpiry: 'Code expires in 10 minutes. If this wasn’t you, ignore this email.',
+        otpExpiry:
+            'Code expires in 10 minutes. If this wasn’t you, ignore this email.'
     },
     auth: {
         signIn: 'Sign In',
@@ -236,7 +254,6 @@ export const en = {
             'Sign in to your ClawHost account to manage your OpenClaw instances.',
         signingIn: 'Signing in...',
         verifyCode: 'Verify Code',
-        verifying: 'Verifying...',
         checkYourEmail: 'Check Your Email',
         checkYourEmailHeading: 'Check your email',
         codeSentTo: 'We sent a 6-digit code to',
@@ -245,7 +262,6 @@ export const en = {
         emailAddress: 'Email Address',
         emailPlaceholder: 'example@clawhost.cloud',
         continueWithEmail: 'Continue with Email',
-        sending: 'Sending...',
         otpDescription: "We'll send you a code to sign in. No password needed.",
         welcomeBack: 'Welcome back.',
         resendIn: 'Resend in {{seconds}}s',
@@ -342,18 +358,15 @@ export const en = {
         deleteClawWarning:
             'Your subscription will be cancelled and the server will be deleted at the end of your current billing period. You can keep using it until then.',
         actionCannotBeUndone: 'This action cannot be undone.',
-        deleting: 'Deleting...',
         start: 'Start',
         stop: 'Stop',
         restart: 'Restart',
         stopClaw: 'Stop Claw',
         stopClawConfirmation:
             'Are you sure you want to stop the server? This will kill everything that is running including OpenClaw, but you can start anytime. Stopping does not stop billing — delete the server to stop being charged.',
-        stopping: 'Stopping...',
         restartClaw: 'Restart Claw',
         restartClawConfirmation:
             'Are you sure you want to restart the server? This will kill everything that is running including OpenClaw.',
-        restarting: 'Restarting...',
         copyPassword: 'Copy Password',
         copySshWithKey: 'Copy SSH (with key)',
         copySshWithPassword: 'Copy SSH (with password)',
@@ -375,6 +388,7 @@ export const en = {
         aiModel: 'AI Model',
         nextBilling: 'Next Billing',
         lastBilling: 'Last Billing',
+        version: 'Version',
         gatewayToken: 'Gateway Token',
         gatewayTokenDescription:
             'Use this token to authenticate with your gateway',
@@ -390,7 +404,6 @@ export const en = {
         hardDeleteClaw: 'Force Delete',
         hardDeleteConfirmation:
             'Are you sure you want to delete this claw immediately? You will lose the remaining time on your current billing period. This action cannot be undone.',
-        hardDeleting: 'Deleting...',
         diagnostics: 'Diagnostics',
         diagnosticsDescription: 'Check the health of your OpenClaw instance.',
         diagnosticsStatus: 'Status',
@@ -419,7 +432,6 @@ export const en = {
         fileExplorerSelectFile: 'Select a file to view its contents.',
         fileExplorerReadOnly: 'Read-only',
         fileExplorerSave: 'Save',
-        fileExplorerSaving: 'Saving...',
         fileExplorerSaved: 'File saved.',
         fileExplorerInvalidJson:
             'Invalid JSON. Please fix syntax errors before saving.',
@@ -431,7 +443,6 @@ export const en = {
         reinstallClaw: 'Reinstall Instance',
         reinstallClawConfirmation:
             'This will reinstall OpenClaw and reset all configurations on this instance. Your data and server will be preserved, but all services will be restarted. Continue?',
-        reinstalling: 'Reinstalling...',
         reinstallInstanceSuccess: 'Instance reinstalled successfully.',
         reinstallInstanceFailed: 'Failed to reinstall instance.',
         exportData: 'Export Claw (.zip)',
@@ -465,8 +476,9 @@ export const en = {
             unreachable: 'Unreachable',
             deleting: 'Deleting',
             scheduledDeletion: 'Deletion Scheduled',
+            awaitingPayment: 'Awaiting Payment',
             unknown: 'Unknown'
-        },
+        }
     },
     createClaw: {
         title: 'Deploy OpenClaw',
@@ -502,7 +514,6 @@ export const en = {
         storageWithSize: 'Storage',
         totalMonthly: 'Total monthly',
         creating: 'Creating...',
-        redirecting: 'Redirecting...',
         proceedToPayment: 'Pay ${{amount}} to Deploy',
         selectServerToContinue: 'Select a server to continue',
         selectLocationToContinue: 'Select a location to continue',
@@ -558,7 +569,6 @@ export const en = {
         important: 'Important:',
         dontHaveSshKey: "Don't have an SSH key? Generate one:",
         sshKeygenCommand: 'ssh-keygen -t ed25519 -C "your-email@example.com"',
-        adding: 'Adding...',
         keyName: 'Key Name',
         keyNamePlaceholder: 'My Generated Key',
         importantAfterGenerating:
@@ -573,8 +583,7 @@ export const en = {
         privateKeyKeepSecret: 'Private Key (keep secret!)',
         downloadPrivateKey: 'Download Private Key',
         publicKeyWillBeSaved: 'Public Key (will be saved)',
-        savePublicKey: 'Save Public Key',
-        saving: 'Saving...'
+        savePublicKey: 'Save Public Key'
     },
     landing: {
         title: 'Deploy OpenClaw. One click. Done.',
@@ -862,7 +871,7 @@ export const en = {
         closeDetails: 'Close',
         tabInfo: 'Info',
         tabLogs: 'Logs',
-        tabDiagnostics: 'Diagnostics',
+        tabDiagnostics: 'Health',
         loadingTip1:
             'Did you know that you could run multiple agents within one OpenClaw?',
         loadingTip2: 'Did you know that OpenClaw is open-source?',
@@ -870,7 +879,10 @@ export const en = {
             'ClawHost is the first ever project to allow one-click OpenClaw hosting.',
         tabChat: 'Chat',
         tabConfiguration: 'Configuration',
+        tabSettings: 'Settings',
+        tabEnvs: 'Envs',
         agentOnClaw: 'on {{clawName}}',
+        cannotDeleteDefaultAgent: 'Default agent cannot be removed',
         configurationModel: 'Model',
         configurationModelPlaceholder: 'Select a model',
         configurationModelDescription:
@@ -925,7 +937,6 @@ export const en = {
         addAgentApiKey: 'API Key',
         addAgentApiKeyPlaceholder: 'Enter your API key (optional)',
         addAgentSubmit: 'Add Agent',
-        addAgentSubmitting: 'Adding...',
         addAgentSuccess: 'Agent added successfully.',
         addAgentFailed: 'Failed to add agent.',
         deleteAgent: 'Delete Agent',
@@ -966,7 +977,84 @@ export const en = {
             'Make sure the Claw is running and reachable.',
         chatNotConfigured: 'Agent not configured.',
         chatNotConfiguredDescription:
-            'Select a model and set an API key in the Configuration tab to start chatting.'
+            'Select a model and set an API key in the Configuration tab to start chatting.',
+        chatToday: 'Today',
+        chatYesterday: 'Yesterday',
+        chatExpandFullscreen: 'Expand chat',
+        chatAttachFile: 'Attach file',
+        chatDropFiles: 'Drop files to attach',
+        chatDropFilesDescription: 'Images, PDFs, and text files up to 5 MB.',
+        chatAttachmentNotSupported:
+            'This file type is not supported. Use images, PDFs, or text files.',
+        chatNoPreview: 'No preview available.',
+        chatDownloadFile: 'Download file',
+        chatScrollToBottom: 'Scroll to Bottom',
+        tabChannels: 'Channels',
+        channelsDescription:
+            'Configure messaging channels for this instance. Channels are shared across all agents.',
+        channelsWhatsApp: 'WhatsApp',
+        channelsTelegram: 'Telegram',
+        channelsDiscord: 'Discord',
+        channelsSlack: 'Slack',
+        channelsSignal: 'Signal',
+        channelsIMessage: 'iMessage',
+        channelsEnabled: 'Enabled',
+        channelsBotToken: 'Bot Token',
+        channelsBotTokenPlaceholder: 'Enter bot token',
+        channelsAppToken: 'App Token',
+        channelsAppTokenPlaceholder: 'Enter app token',
+        channelsToken: 'Bot Token',
+        channelsTokenPlaceholder: 'Enter bot token',
+        channelsApplicationId: 'Application ID',
+        channelsApplicationIdPlaceholder: 'Enter application ID',
+        channelsSigningSecret: 'Signing Secret',
+        channelsSigningSecretPlaceholder: 'Enter signing secret',
+        channelsDmPolicy: 'DM Policy',
+        channelsDmPolicyOpen: 'Open',
+        channelsDmPolicyPairing: 'Pairing',
+        channelsDmPolicyAllowlist: 'Allowlist',
+        channelsDmPolicyDisabled: 'Disabled',
+        channelsAllowFrom: 'Allow From',
+        channelsAllowFromPlaceholder: 'Allowed IDs, comma separated',
+        channelsSave: 'Save',
+        channelsSaved: 'Channels updated successfully.',
+        channelsSaveFailed: 'Failed to update channels.',
+        channelsLoading: 'Loading channels...',
+        channelsLoadFailed: 'Failed to load channels.',
+        channelsLoadFailedDescription:
+            'Could not retrieve channel configuration. Please try again.',
+        channelsNoChanges: 'No changes to save.',
+        tabSkills: 'Skills',
+        skillsDescription:
+            'Manage shared skills available to all agents on this instance.',
+        skillsSearch: 'Search skills...',
+        skillsNoResults: 'No skills match your search.',
+        skillsEmpty: 'No bundled skills found on this instance.',
+        skillsSave: 'Save Skills',
+        skillsEnable: 'Enable',
+        skillsDisable: 'Disable',
+        skillsSaved: 'Skills updated successfully.',
+        skillsSaveFailed: 'Failed to update skills.',
+        skillsLoading: 'Loading skills...',
+        skillsLoadFailed: 'Failed to load skills.',
+        skillsLoadFailedDescription:
+            'Could not retrieve skills configuration. Please try again.',
+        agentSkillsDescription: 'Skills installed in this agent workspace.',
+        agentSkillsInstall: 'Install Skill',
+        agentSkillsInstalling: 'Installing...',
+        agentSkillsInstalled: 'Skill installed successfully.',
+        agentSkillsInstallFailed: 'Failed to install skill.',
+        agentSkillsRemove: 'Remove',
+        agentSkillsRemoving: 'Removing...',
+        agentSkillsRemoved: 'Skill removed successfully.',
+        agentSkillsRemoveFailed: 'Failed to remove skill.',
+        agentSkillsEmpty: 'No skills installed.',
+        agentSkillsEmptyDescription:
+            'Install a skill to extend this agent capabilities.',
+        agentSkillsNamePlaceholder: 'Skill name',
+        agentSkillsConfirmRemove: 'Remove skill "{{skillName}}"?',
+        agentSkillsConfirmRemoveDescription:
+            'This will delete the skill from the agent workspace.'
     },
     privacy: {
         title: 'Privacy Policy',

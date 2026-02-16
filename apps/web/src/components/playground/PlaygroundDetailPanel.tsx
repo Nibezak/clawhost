@@ -6,19 +6,24 @@ import type {
 import type { PlaygroundDetailTab } from '@/ts/Types'
 import type { TranslationKey } from '@openclaw/i18n'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { clawStatus } from '@openclaw/shared'
-import { X, Info, Scroll, Pulse, Key } from '@phosphor-icons/react'
+import { X, Info, Scroll, Pulse, Key, Lightning } from '@phosphor-icons/react'
 import { ClawAvatar, ProviderIcon } from '@/components'
+import { Skeleton } from '@/components/ui'
 import { getBaseDomain } from '@/lib'
 import {
     CopyableField,
     ClawLogsContent,
     ClawDiagnosticsContent
 } from '@/components/dashboard'
-import { PlaygroundVariablesContent } from '@/components/playground'
+import {
+    PlaygroundVariablesContent,
+    PlaygroundSkillsContent
+} from '@/components/playground'
+import { useClawVersion } from '@/hooks'
 import {
     locationFlags,
     locationNames,
@@ -30,7 +35,8 @@ const tabStateMap: Record<string, PlaygroundDetailTab> = {}
 
 const tabs: PlaygroundTabConfig<PlaygroundDetailTab>[] = [
     { id: 'info', label: 'playground.tabInfo', icon: Info },
-    { id: 'variables', label: 'playground.tabVariables', icon: Key },
+    { id: 'variables', label: 'playground.tabEnvs', icon: Key },
+    { id: 'skills', label: 'playground.tabSkills', icon: Lightning },
     { id: 'logs', label: 'playground.tabLogs', icon: Scroll },
     { id: 'diagnostics', label: 'playground.tabDiagnostics', icon: Pulse }
 ]
@@ -61,6 +67,20 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
     const attachedSshKey = claw.sshKeyId
         ? sshKeys.find((k) => k.id === claw.sshKeyId)
         : null
+
+    const isInfoTab = activeTab === 'info'
+    const versionQuery = useClawVersion(
+        claw.id,
+        isInfoTab && !readOnly && !!claw.ip
+    )
+    const showVersion = readOnly || !!claw.ip
+    const versionLoading = !readOnly && versionQuery.isPending
+    const versionDisplay = useMemo(() => {
+        if (readOnly) return '2026.2.13'
+        if (versionQuery.isPending) return null
+        if (versionQuery.isError || !versionQuery.data) return null
+        return versionQuery.data.version
+    }, [readOnly, versionQuery.isPending, versionQuery.isError, versionQuery.data])
 
     return (
         <motion.div
@@ -136,6 +156,22 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                     <CopyableField
                                         label={t('dashboard.ipAddress')}
                                         value={claw.ip}
+                                    />
+                                )}
+
+                                {showVersion && versionLoading && (
+                                    <div className='bg-background rounded-lg px-3 py-2'>
+                                        <span className='text-muted-foreground block text-xs'>
+                                            {t('dashboard.version')}
+                                        </span>
+                                        <Skeleton className='mt-1 h-5 w-24' />
+                                    </div>
+                                )}
+
+                                {showVersion && versionDisplay && (
+                                    <CopyableField
+                                        label={t('dashboard.version')}
+                                        value={versionDisplay}
                                     />
                                 )}
 
@@ -290,6 +326,10 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                 }
                             />
                         </div>
+                    )}
+
+                    {activeTab === 'skills' && (
+                        <PlaygroundSkillsContent clawId={claw.id} />
                     )}
 
                     {activeTab === 'variables' && (

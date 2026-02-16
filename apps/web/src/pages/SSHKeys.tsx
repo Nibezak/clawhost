@@ -133,11 +133,10 @@ const SSHKeyCard: FC<SSHKeyCardProps> = ({ sshKey }): ReactNode => {
                             }}
                             disabled={deleteMutation.isPending}
                         >
-                            {deleteMutation.isPending ? (
+                            {deleteMutation.isPending && (
                                 <CircleNotch className='h-4 w-4 animate-spin' />
-                            ) : (
-                                t('common.confirm')
                             )}
+                            {t('common.confirm')}
                         </Button>
                     </div>
                 </DialogContent>
@@ -405,14 +404,10 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                                 className='flex-1'
                                 disabled={createMutation.isPending}
                             >
-                                {createMutation.isPending ? (
-                                    <>
-                                        <CircleNotch className='mr-2 h-4 w-4 animate-spin' />
-                                        {t('sshKeys.adding')}
-                                    </>
-                                ) : (
-                                    t('common.addKey')
+                                {createMutation.isPending && (
+                                    <CircleNotch className='mr-2 h-4 w-4 animate-spin' />
                                 )}
+                                {t('common.addKey')}
                             </Button>
                         </div>
                     </form>
@@ -570,14 +565,10 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                                         onClick={() => handleCreate()}
                                         disabled={createMutation.isPending}
                                     >
-                                        {createMutation.isPending ? (
-                                            <>
-                                                <CircleNotch className='mr-2 h-4 w-4 animate-spin' />
-                                                {t('sshKeys.saving')}
-                                            </>
-                                        ) : (
-                                            t('sshKeys.savePublicKey')
+                                        {createMutation.isPending && (
+                                            <CircleNotch className='mr-2 h-4 w-4 animate-spin' />
                                         )}
+                                        {t('sshKeys.savePublicKey')}
                                     </Button>
                                 </div>
                             </>

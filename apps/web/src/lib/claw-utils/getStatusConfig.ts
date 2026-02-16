@@ -79,6 +79,12 @@ const getStatusConfig = (): Record<string, StatusConfig> => {
             label: t('dashboard.status.deleting'),
             pulse: true
         },
+        [clawStatus.awaitingPayment]: {
+            color: 'bg-amber-500',
+            bgColor: 'bg-amber-500/10',
+            label: t('dashboard.status.awaitingPayment'),
+            pulse: true
+        },
         [clawStatus.unknown]: {
             color: 'bg-gray-400',
             bgColor: 'bg-gray-400/10',

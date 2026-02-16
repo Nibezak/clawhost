@@ -19,6 +19,7 @@ import useClawFiles from '@/hooks/useClaws/useClawFiles'
 import useClawFile from '@/hooks/useClaws/useClawFile'
 import useUpdateClawFile from '@/hooks/useClaws/useUpdateClawFile'
 import useReinstallClaw from '@/hooks/useClaws/useReinstallClaw'
+import useClawVersion from '@/hooks/useClaws/useClawVersion'
 
 export {
     CLAWS_QUERY_KEY,
@@ -41,5 +42,6 @@ export {
     useClawFiles,
     useClawFile,
     useUpdateClawFile,
-    useReinstallClaw
+    useReinstallClaw,
+    useClawVersion
 }

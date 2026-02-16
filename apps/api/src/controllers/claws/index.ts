@@ -25,6 +25,13 @@ import createClawAgent from '@/controllers/claws/createClawAgent'
 import deleteClawAgent from '@/controllers/claws/deleteClawAgent'
 import getClawEnvVars from '@/controllers/claws/getClawEnvVars'
 import updateClawEnvVars from '@/controllers/claws/updateClawEnvVars'
+import getClawChannels from '@/controllers/claws/getClawChannels'
+import updateClawChannels from '@/controllers/claws/updateClawChannels'
+import getClawSkills from '@/controllers/claws/getClawSkills'
+import updateClawSkills from '@/controllers/claws/updateClawSkills'
+import getAgentSkills from '@/controllers/claws/getAgentSkills'
+import updateAgentSkills from '@/controllers/claws/updateAgentSkills'
+import getClawVersion from '@/controllers/claws/getClawVersion'
 
 export {
     getClaws,
@@ -53,5 +60,12 @@ export {
     createClawAgent,
     deleteClawAgent,
     getClawEnvVars,
-    updateClawEnvVars
+    updateClawEnvVars,
+    getClawChannels,
+    updateClawChannels,
+    getClawSkills,
+    updateClawSkills,
+    getAgentSkills,
+    updateAgentSkills,
+    getClawVersion
 }

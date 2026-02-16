@@ -1,0 +1,40 @@
+import type { FC, ReactNode } from 'react'
+import type { ChatDateSeparatorProps } from '@/ts/Interfaces'
+
+import { t } from '@openclaw/i18n'
+
+const ChatDateSeparator: FC<ChatDateSeparatorProps> = ({ date }): ReactNode => {
+    const messageDate = new Date(date)
+    const today = new Date()
+    const yesterday = new Date()
+    yesterday.setDate(yesterday.getDate() - 1)
+
+    const isSameDay = (a: Date, b: Date): boolean =>
+        a.getFullYear() === b.getFullYear() &&
+        a.getMonth() === b.getMonth() &&
+        a.getDate() === b.getDate()
+
+    let label: string
+    if (isSameDay(messageDate, today)) {
+        label = t('playground.chatToday')
+    } else if (isSameDay(messageDate, yesterday)) {
+        label = t('playground.chatYesterday')
+    } else {
+        label = messageDate.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric'
+        })
+    }
+
+    return (
+        <div className='flex items-center gap-3 py-2'>
+            <div className='h-px flex-1 bg-white/10' />
+            <span className='text-[11px] font-medium text-gray-500'>
+                {label}
+            </span>
+            <div className='h-px flex-1 bg-white/10' />
+        </div>
+    )
+}
+
+export default ChatDateSeparator

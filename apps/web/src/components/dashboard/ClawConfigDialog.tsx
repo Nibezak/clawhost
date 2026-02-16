@@ -500,16 +500,11 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                         size='sm'
                     >
                         {updateFile.isPending ? (
-                            <>
-                                <CircleNotch className='mr-2 h-4 w-4 animate-spin' />
-                                {t('dashboard.fileExplorerSaving')}
-                            </>
+                            <CircleNotch className='mr-2 h-4 w-4 animate-spin' />
                         ) : (
-                            <>
-                                <FloppyDisk className='mr-2 h-4 w-4' />
-                                {t('dashboard.fileExplorerSave')}
-                            </>
+                            <FloppyDisk className='mr-2 h-4 w-4' />
                         )}
+                        {t('dashboard.fileExplorerSave')}
                     </Button>
                 </div>
             </DialogContent>

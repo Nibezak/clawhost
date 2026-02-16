@@ -96,6 +96,10 @@ const updateClawAgentConfig = async (c: AuthenticatedContext) => {
                 })
             }
 
+            agentList.forEach((a) => {
+                delete a.status
+            })
+
             const configJson = JSON.stringify(config, null, 4)
             const configB64 = Buffer.from(configJson).toString('base64')
             let writeCommand = `echo '${configB64}' | base64 -d > ${BASE_DIR}/openclaw.json`

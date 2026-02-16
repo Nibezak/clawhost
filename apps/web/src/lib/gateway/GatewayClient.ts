@@ -14,8 +14,7 @@ class GatewayClient {
     private pending = new Map<string, GatewayPendingRequest>()
     private listeners = new Map<string, Set<GatewayEventHandler>>()
     private _state: GatewayConnectionState = 'disconnected'
-    private onStateChange: ((state: GatewayConnectionState) => void) | null =
-        null
+    private stateListeners = new Set<(state: GatewayConnectionState) => void>()
     private reconnectAttempts = 0
     private reconnectTimer: ReturnType<typeof setTimeout> | null = null
     private intentionalClose = false
@@ -27,7 +26,9 @@ class GatewayClient {
     ) {
         this.subdomain = subdomain
         this.token = token
-        this.onStateChange = onStateChange || null
+        if (onStateChange) {
+            this.stateListeners.add(onStateChange)
+        }
     }
 
     get state(): GatewayConnectionState {
@@ -36,7 +37,17 @@ class GatewayClient {
 
     private setState(state: GatewayConnectionState): void {
         this._state = state
-        this.onStateChange?.(state)
+        this.stateListeners.forEach((handler) => handler(state))
+    }
+
+    addStateListener(handler: (state: GatewayConnectionState) => void): void {
+        this.stateListeners.add(handler)
+    }
+
+    removeStateListener(
+        handler: (state: GatewayConnectionState) => void
+    ): void {
+        this.stateListeners.delete(handler)
     }
 
     connect(): void {
@@ -47,7 +58,6 @@ class GatewayClient {
 
         const domain = getBaseDomain()
         const url = `wss://${this.subdomain}.${domain}/`
-        console.error('[GW] connecting to:', url)
 
         try {
             this.ws = new WebSocket(url)
@@ -65,15 +75,13 @@ class GatewayClient {
                     string,
                     unknown
                 >
-                console.error('[GW] frame:', JSON.stringify(frame).slice(0, 500))
                 this.handleFrame(frame)
             } catch {
                 /* malformed frame */
             }
         }
 
-        this.ws.onclose = (ev) => {
-            console.error('[GW] close:', ev.code, ev.reason)
+        this.ws.onclose = () => {
             this.ws = null
             this.pending.forEach((req) => {
                 clearTimeout(req.timer)
@@ -154,7 +162,7 @@ class GatewayClient {
                 instanceId: crypto.randomUUID()
             },
             role: 'operator',
-            scopes: ['operator.admin'],
+            scopes: ['operator.admin', 'operator.read', 'operator.write'],
             auth: { token: this.token }
         }
 
@@ -228,6 +236,7 @@ class GatewayClient {
         })
         this.pending.clear()
         this.listeners.clear()
+        this.stateListeners.clear()
 
         if (this.ws) {
             this.ws.onclose = null
@@ -241,7 +250,6 @@ class GatewayClient {
     }
 
     private sendRaw(frame: Record<string, unknown>): void {
-        console.error('[GW] send:', JSON.stringify(frame).slice(0, 500))
         if (this.ws?.readyState === WebSocket.OPEN) {
             this.ws.send(JSON.stringify(frame))
         }

@@ -361,13 +361,6 @@ export interface AIModelOption {
     envVar: string
 }
 
-export interface AwaitingPurchaseData {
-    name: string
-    provider: ProviderType
-    planId: string
-    location: string
-}
-
 export interface CreateClawData {
     name: string
     provider: ProviderType
@@ -467,6 +460,10 @@ export interface ArticleMeta {
     modifiedTime?: string
     author: string
     tags: string[]
+}
+
+export interface ClawVersionResponse {
+    version: string
 }
 
 export interface DiagnosticsStatusResponse {
@@ -716,12 +713,21 @@ export interface ChatHistoryEntry {
     content: unknown
 }
 
+export interface ChatImageSource {
+    type: string
+    mediaType: string
+    data: string
+    filename?: string
+}
+
 export interface ChatMessage {
     id: string
     role: ChatMessageRole
     content: string
     status: ChatMessageStatus
     runId?: string
+    timestamp?: string
+    images?: ChatImageSource[]
 }
 
 export interface ChatEventPayload {
@@ -733,11 +739,23 @@ export interface ChatEventPayload {
     errorMessage?: string
 }
 
+export interface ChatAttachment {
+    type: string
+    source: ChatImageSource
+}
+
+export interface ChatLightboxProps {
+    image: ChatImageSource
+    fileName?: string
+    onClose: () => void
+}
+
 export interface ChatSendParams {
     sessionKey: string
     message: string
     idempotencyKey: string
     deliver: boolean
+    attachments?: ChatAttachment[]
 }
 
 export interface ChatHistoryParams {
@@ -762,7 +780,7 @@ export interface UseAgentChatReturn {
     connectionState: GatewayConnectionState
     isLoading: boolean
     isStreaming: boolean
-    sendMessage: (text: string) => void
+    sendMessage: (text: string, attachments?: ChatAttachment[], previews?: ChatImageSource[]) => void
     abortResponse: () => void
 }
 
@@ -774,6 +792,7 @@ export interface GatewayPendingRequest {
 
 export interface AgentChatProps {
     agentId: string
+    agentName?: string
     clawId: string
     subdomain: string | null | undefined
     gatewayToken: string | null | undefined
@@ -785,11 +804,29 @@ export interface ChatBubbleProps {
     message: ChatMessage
 }
 
+export interface ChatInputAttachment {
+    file: File
+    preview: string
+}
+
+export interface ChatInputHandle {
+    addFiles: (files: File[]) => void
+}
+
 export interface ChatInputProps {
     isConnected: boolean
     isStreaming: boolean
-    onSend: (text: string) => void
+    onSend: (text: string, attachments?: ChatAttachment[], previews?: ChatImageSource[]) => void
     onAbort: () => void
+    allowAttach?: boolean
+}
+
+export interface ChatMarkdownProps {
+    content: string
+}
+
+export interface ChatDateSeparatorProps {
+    date: string
 }
 
 export interface ChatEmptyStateProps {
@@ -798,4 +835,67 @@ export interface ChatEmptyStateProps {
 
 export interface ChatStatusBarProps {
     connectionState: GatewayConnectionState
+}
+
+export interface ChannelConfig {
+    enabled: boolean
+    dmPolicy?: string
+    allowFrom?: string[]
+    botToken?: string
+    token?: string
+    applicationId?: string
+    appToken?: string
+    signingSecret?: string
+}
+
+export interface ClawChannelsResponse {
+    channels: Record<string, ChannelConfig>
+}
+
+export interface UpdateClawChannelsData {
+    channels: Record<string, ChannelConfig>
+}
+
+export interface SkillEntryConfig {
+    enabled: boolean
+    apiKey?: string
+    env?: Record<string, string>
+    config?: Record<string, unknown>
+}
+
+export interface BundledSkillInfo {
+    name: string
+    enabled: boolean
+    description?: string
+}
+
+export interface ClawSkillsResponse {
+    skills: BundledSkillInfo[]
+    entries: Record<string, SkillEntryConfig>
+}
+
+export interface UpdateClawSkillsData {
+    entries: Record<string, SkillEntryConfig>
+}
+
+export interface AgentSkillInfo {
+    name: string
+}
+
+export interface GetAgentSkillsResponse {
+    skills: AgentSkillInfo[]
+}
+
+export interface UpdateAgentSkillsData {
+    action: 'install' | 'remove'
+    skillName: string
+}
+
+export interface PlaygroundChannelsContentProps {
+    clawId: string
+}
+
+export interface PlaygroundSkillsContentProps {
+    clawId: string
+    agentId?: string
 }

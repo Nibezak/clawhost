@@ -8,6 +8,8 @@ import PlaygroundLoadingState from '@/components/playground/PlaygroundLoadingSta
 import PlaygroundToolbar from '@/components/playground/PlaygroundToolbar'
 import PlaygroundVariablesContent from '@/components/playground/PlaygroundVariablesContent'
 import CreateAgentModal from '@/components/playground/CreateAgentModal'
+import PlaygroundChannelsContent from '@/components/playground/PlaygroundChannelsContent'
+import PlaygroundSkillsContent from '@/components/playground/PlaygroundSkillsContent'
 
 export {
     AgentChat,
@@ -19,5 +21,7 @@ export {
     PlaygroundLoadingState,
     PlaygroundToolbar,
     PlaygroundVariablesContent,
-    CreateAgentModal
+    CreateAgentModal,
+    PlaygroundChannelsContent,
+    PlaygroundSkillsContent
 }

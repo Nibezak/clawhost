@@ -28,7 +28,14 @@ import {
     createClawAgent,
     deleteClawAgent,
     getClawEnvVars,
-    updateClawEnvVars
+    updateClawEnvVars,
+    getClawChannels,
+    updateClawChannels,
+    getClawSkills,
+    updateClawSkills,
+    getAgentSkills,
+    updateAgentSkills,
+    getClawVersion
 } from '@/controllers/claws'
 import adminOnly from '@/middleware/adminOnly'
 
@@ -57,9 +64,16 @@ app.post('/:id/agents/create', createClawAgent)
 app.post('/:id/agents/delete', deleteClawAgent)
 app.get('/:id/env', getClawEnvVars)
 app.put('/:id/env', updateClawEnvVars)
+app.post('/:id/channels', getClawChannels)
+app.put('/:id/channels', updateClawChannels)
+app.post('/:id/skills', getClawSkills)
+app.put('/:id/skills', updateClawSkills)
+app.post('/:id/agents/:agentId/skills', getAgentSkills)
+app.put('/:id/agents/:agentId/skills', updateAgentSkills)
 app.post('/:id/files', listClawFiles)
 app.post('/:id/files/read', readClawFile)
 app.put('/:id/files', updateClawFile)
+app.post('/:id/version', getClawVersion)
 app.delete('/:id', deleteClaw)
 
 export default app
