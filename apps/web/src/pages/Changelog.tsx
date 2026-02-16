@@ -93,40 +93,40 @@ const Changelog: FC = (): ReactNode => {
 
                         <div className='rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8'>
                             <span className='text-muted-foreground mb-4 block text-sm'>
-                                {t('changelog.release6Date')}
+                                {t('changelog.release7Date')}
                             </span>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>
-                                {t('changelog.release6Title')}
+                                {t('changelog.release7Title')}
                             </h2>
 
                             <p className='text-muted-foreground mb-6 leading-relaxed'>
-                                {t('changelog.release6Description')}
+                                {t('changelog.release7Description')}
                             </p>
 
                             <ul className='space-y-3'>
                                 <li className='flex items-center gap-3'>
                                     <Check className='h-4 w-4 flex-shrink-0 text-green-400' />
                                     <span className='text-sm text-white'>
-                                        {t('changelog.release6Feature1')}
+                                        {t('changelog.release7Feature1')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
                                     <Check className='h-4 w-4 flex-shrink-0 text-green-400' />
                                     <span className='text-sm text-white'>
-                                        {t('changelog.release6Feature2')}
+                                        {t('changelog.release7Feature2')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
                                     <Check className='h-4 w-4 flex-shrink-0 text-green-400' />
                                     <span className='text-sm text-white'>
-                                        {t('changelog.release6Feature3')}
+                                        {t('changelog.release7Feature3')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
                                     <Check className='h-4 w-4 flex-shrink-0 text-green-400' />
                                     <span className='text-sm text-white'>
-                                        {t('changelog.release6Feature4')}
+                                        {t('changelog.release7Feature4')}
                                     </span>
                                 </li>
                             </ul>

@@ -64,3 +64,5 @@ export {
 } from '@/hooks/usePlayground'
 
 export { useAgentChat } from '@/hooks/useAgentChat'
+
+export { default as useSpeechRecognition } from '@/hooks/useSpeechRecognition'

@@ -115,10 +115,14 @@ const ChatBubble: FC<ChatBubbleProps> = ({ message }): ReactNode => {
         </div>
     )
 
+    const formattedTime = message.timestamp
+        ? new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        : null
+
     if (isUser) {
         return (
             <>
-                <div className='flex justify-end'>
+                <div className='flex flex-col items-end gap-1'>
                     <div className='max-w-[85%] rounded-2xl rounded-br-md bg-[#ef5350]/15 px-3.5 py-2.5'>
                         {hasAttachments && renderAttachments(message.images!)}
                         {showAsFileCard && !hasNonImageAttachments && (
@@ -134,6 +138,9 @@ const ChatBubble: FC<ChatBubbleProps> = ({ message }): ReactNode => {
                             </p>
                         )}
                     </div>
+                    {formattedTime && (
+                        <span className='px-1 text-[10px] text-gray-600'>{formattedTime}</span>
+                    )}
                 </div>
                 {lightboxImage && (
                     <ChatLightbox image={lightboxImage} fileName={lightboxFileName} onClose={() => setLightboxImage(null)} />
@@ -144,7 +151,7 @@ const ChatBubble: FC<ChatBubbleProps> = ({ message }): ReactNode => {
 
     return (
         <>
-            <div className='flex justify-start'>
+            <div className='flex flex-col items-start gap-1'>
                 <div className='max-w-[85%] rounded-2xl rounded-bl-md bg-white/5 px-3.5 py-2.5'>
                     {hasAttachments && renderAttachments(message.images!)}
                     <div className='text-sm text-gray-300'>
@@ -170,6 +177,9 @@ const ChatBubble: FC<ChatBubbleProps> = ({ message }): ReactNode => {
                         </div>
                     )}
                 </div>
+                {formattedTime && (
+                    <span className='px-1 text-[10px] text-gray-600'>{formattedTime}</span>
+                )}
             </div>
             {lightboxImage && (
                 <ChatLightbox image={lightboxImage} onClose={() => setLightboxImage(null)} />

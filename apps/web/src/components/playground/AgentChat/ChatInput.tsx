@@ -3,7 +3,8 @@ import type { ChatAttachment, ChatImageSource, ChatInputAttachment, ChatInputHan
 
 import { useState, useRef, useCallback, useEffect, forwardRef, useImperativeHandle } from 'react'
 import { t } from '@openclaw/i18n'
-import { PaperPlaneRight, Stop, Paperclip, X } from '@phosphor-icons/react'
+import { PaperPlaneRight, Stop, Paperclip, X, Microphone } from '@phosphor-icons/react'
+import { useSpeechRecognition } from '@/hooks'
 
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
 const DOCUMENT_TYPES = ['application/pdf', 'text/plain']
@@ -20,6 +21,7 @@ const ChatInputInner: ForwardRefRenderFunction<ChatInputHandle, ChatInputProps> 
     const [attachments, setAttachments] = useState<ChatInputAttachment[]>([])
     const textareaRef = useRef<HTMLTextAreaElement>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
+    const { isRecording, isTranscribing, toggle: toggleVoice } = useSpeechRecognition(setInput)
 
     const resizeTextarea = useCallback(() => {
         const el = textareaRef.current
@@ -175,38 +177,48 @@ const ChatInputInner: ForwardRefRenderFunction<ChatInputHandle, ChatInputProps> 
                 </div>
             )}
             <div className='flex items-end gap-2'>
-                {allowAttach && (
-                    <>
-                        <button
-                            onClick={handleAttachClick}
-                            disabled={!isConnected}
-                            className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-white/5 hover:text-white disabled:cursor-not-allowed disabled:opacity-50'
-                        >
-                            <Paperclip className='h-4 w-4' weight='bold' />
-                        </button>
-                        <input
-                            ref={fileInputRef}
-                            type='file'
-                            multiple
-                            accept='image/jpeg,image/png,image/gif,image/webp,application/pdf,text/plain'
-                            onChange={handleFileChange}
-                            className='hidden'
-                        />
-                    </>
-                )}
+                <button
+                    onClick={handleAttachClick}
+                    disabled={!isConnected || !allowAttach}
+                    className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50'
+                >
+                    <Paperclip className='h-4 w-4' weight='bold' />
+                </button>
+                <input
+                    ref={fileInputRef}
+                    type='file'
+                    multiple
+                    accept='image/jpeg,image/png,image/gif,image/webp,application/pdf,text/plain'
+                    onChange={handleFileChange}
+                    className='hidden'
+                />
+                <button
+                    onClick={toggleVoice}
+                    disabled={!isConnected || !allowAttach || isTranscribing}
+                    title={t('playground.chatVoiceInput')}
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+                        isRecording
+                            ? 'animate-pulse bg-[#ef5350] text-white'
+                            : isTranscribing
+                                ? 'bg-white/10 text-white'
+                                : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                    }`}
+                >
+                    {isTranscribing ? (
+                        <div className='h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white' />
+                    ) : (
+                        <Microphone className='h-4 w-4' weight='bold' />
+                    )}
+                </button>
                 <textarea
                     ref={textareaRef}
                     value={input}
                     onChange={handleChange}
                     onKeyDown={handleKeyDown}
                     rows={1}
-                    placeholder={
-                        isConnected
-                            ? t('playground.chatInputPlaceholder')
-                            : t('playground.chatInputDisabled')
-                    }
-                    disabled={!isConnected}
-                    className='flex-1 resize-none rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none transition-colors placeholder:text-gray-600 focus:border-[#ef5350]/50 disabled:cursor-not-allowed disabled:text-gray-500'
+                    placeholder={t('playground.chatInputPlaceholder')}
+                    disabled={!isConnected || !allowAttach}
+                    className='flex-1 resize-none rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none transition-colors placeholder:text-gray-600 focus:border-[#ef5350]/50 disabled:cursor-not-allowed disabled:opacity-50'
                 />
                 {isStreaming ? (
                     <button
@@ -218,7 +230,7 @@ const ChatInputInner: ForwardRefRenderFunction<ChatInputHandle, ChatInputProps> 
                 ) : (
                     <button
                         onClick={handleSend}
-                        disabled={!isConnected || (!input.trim() && attachments.length === 0)}
+                        disabled={!isConnected || !allowAttach || (!input.trim() && attachments.length === 0)}
                         className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#ef5350] text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
                     >
                         <PaperPlaneRight className='h-4 w-4' weight='bold' />

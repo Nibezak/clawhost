@@ -838,6 +838,12 @@ export interface ChatStatusBarProps {
     connectionState: GatewayConnectionState
 }
 
+export interface UseSpeechRecognitionReturn {
+    isRecording: boolean
+    isTranscribing: boolean
+    toggle: () => void
+}
+
 export interface ChannelConfig {
     enabled: boolean
     dmPolicy?: string
@@ -912,6 +918,59 @@ export interface ChannelFieldDefinition {
 }
 
 export interface PlaygroundSkillsContentProps {
+    clawId: string
+    agentId?: string
+}
+
+export interface ClawHubSearchResult {
+    slug: string
+    name: string
+    description: string
+    author: string
+    version: string
+    downloads: number
+    tags: string[]
+}
+
+export interface ClawHubInstalledSkill {
+    slug: string
+    name: string
+    version: string
+    hasUpdate: boolean
+    latestVersion?: string
+}
+
+export interface ClawHubSearchResponse {
+    skills: ClawHubSearchResult[]
+}
+
+export interface ClawHubInstalledResponse {
+    skills: ClawHubInstalledSkill[]
+}
+
+export interface ClawHubUpdatesResponse {
+    updates: ClawHubInstalledSkill[]
+}
+
+export interface SearchClawHubData {
+    query?: string
+    limit?: number
+    page?: number
+    agentId?: string
+}
+
+export interface ClawHubSkillActionData {
+    slug: string
+    agentId?: string
+}
+
+export interface ClawHubUpdateData {
+    slug?: string
+    all?: boolean
+    agentId?: string
+}
+
+export interface PlaygroundClawHubContentProps {
     clawId: string
     agentId?: string
 }

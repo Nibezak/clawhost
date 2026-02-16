@@ -239,7 +239,19 @@ export const en = {
         agentSkillsFetchFailed: 'Could not fetch agent skills.',
         invalidSkillName:
             'Skill name must only contain letters, numbers, dashes, and underscores.',
-        skillNotFound: 'Skill not found.'
+        skillNotFound: 'Skill not found.',
+        clawHubSearchSuccess: 'ClawHub search completed.',
+        clawHubSearchFailed: 'Could not search ClawHub.',
+        clawHubFetched: 'ClawHub skills fetched.',
+        clawHubFetchFailed: 'Could not fetch ClawHub skills.',
+        clawHubInstalled: 'Skill installed from ClawHub.',
+        clawHubInstallFailed: 'Could not install skill from ClawHub.',
+        clawHubRemoved: 'ClawHub skill removed.',
+        clawHubRemoveFailed: 'Could not remove ClawHub skill.',
+        clawHubUpdated: 'Skill updated.',
+        clawHubUpdateFailed: 'Could not update ClawHub skill.',
+        clawHubUpdatesFetched: 'Update check completed.',
+        clawHubUpdatesFailed: 'Could not check for updates.'
     },
     emails: {
         otpSubject: 'Your ClawHost sign-in code',
@@ -782,18 +794,30 @@ export const en = {
             'Native mobile app to monitor and manage your OpenClaw instances on the go',
         upcomingReleaseFeature2:
             'Desktop app for a seamless local experience on macOS, Windows, and Linux',
-        release6Date: 'February 16, 2026',
-        release6Title: 'Channels, Skills & Agent Chat',
-        release6Description:
+        release7Date: 'February 16, 2026',
+        release7Title: 'Channels, Skills & Agent Chat',
+        release7Description:
             'Full control over your OpenClaw channels, skills, and agents. Manage and chat with everything directly from the dashboard.',
-        release6Feature1:
+        release7Feature1:
             'Manage channels directly, add, remove, and configure channels without touching the server',
-        release6Feature2:
+        release7Feature2:
             'Manage skills directly, install, update, and organize agent skills from the dashboard',
-        release6Feature3:
+        release7Feature3:
             'Chat with your agents from the playground, interact with any agent in real time',
-        release6Feature4:
+        release7Feature4:
             'Sign in with Google or GitHub, fast, secure authentication without email codes',
+        release6Date: 'February 15, 2026',
+        release6Title: 'Chat Refactoring & Voice Input',
+        release6Description:
+            'Major chat and playground improvements with voice interaction, ClawHub skills marketplace, and file attachments for agents.',
+        release6Feature1:
+            'Chat and playground refactoring for a smoother, more responsive experience',
+        release6Feature2:
+            'Voice interaction with chats, record and transcribe speech directly in the browser',
+        release6Feature3:
+            'ClawHub skills integration with 5,000+ skills available to install and manage',
+        release6Feature4:
+            'Attachments view and usage for agents, send images and documents in chat',
         release1Date: 'February 8, 2026',
         release1Title: 'Initial Release',
         release1Description:
@@ -992,6 +1016,9 @@ export const en = {
         chatAttachFile: 'Attach file',
         chatDropFiles: 'Drop files to attach',
         chatDropFilesDescription: 'Images, PDFs, and text files up to 5 MB.',
+        chatVoiceInput: 'Voice input',
+        chatVoiceListening: 'Listening...',
+        chatVoiceNotSupported: 'Voice input is not supported in this browser.',
         chatAttachmentNotSupported:
             'This file type is not supported. Use images, PDFs, or text files.',
         chatNoPreview: 'No preview available.',
@@ -1062,7 +1089,30 @@ export const en = {
         agentSkillsNamePlaceholder: 'Skill name',
         agentSkillsConfirmRemove: 'Remove skill "{{skillName}}"?',
         agentSkillsConfirmRemoveDescription:
-            'This will delete the skill from the agent workspace.'
+            'This will delete the skill from the agent workspace.',
+        skillsBundledTab: 'Bundled',
+        skillsClawHubTab: 'ClawHub',
+        clawHubSearch: 'Search ClawHub skills...',
+        clawHubNoResults: 'No skills found on ClawHub.',
+        clawHubEmpty: 'No ClawHub skills installed.',
+        clawHubEmptyDescription:
+            'Search and install skills from the ClawHub marketplace.',
+        clawHubInstall: 'Install',
+        clawHubInstalled: 'Skill installed from ClawHub.',
+        clawHubInstallFailed: 'Failed to install skill from ClawHub.',
+        clawHubRemove: 'Remove',
+        clawHubRemoved: 'ClawHub skill removed.',
+        clawHubRemoveFailed: 'Failed to remove ClawHub skill.',
+        clawHubUpdate: 'Update',
+        clawHubUpdated: 'Skill updated from ClawHub.',
+        clawHubUpdateFailed: 'Failed to update ClawHub skill.',
+        clawHubUpdateAvailable: 'v{{version}} available',
+        clawHubBy: 'by {{author}}',
+        clawHubDownloads: '{{count}} downloads',
+        clawHubVersion: 'v{{version}}',
+        clawHubLoadFailed: 'Failed to load ClawHub.',
+        clawHubLoadFailedDescription:
+            'Could not connect to ClawHub marketplace. Please try again.'
     },
     privacy: {
         title: 'Privacy Policy',
