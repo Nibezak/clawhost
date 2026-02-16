@@ -26,7 +26,9 @@ const ChatInputInner: ForwardRefRenderFunction<ChatInputHandle, ChatInputProps> 
         if (!el) return
         el.style.height = 'auto'
         const maxHeight = 4 * 24
-        el.style.height = `${Math.min(el.scrollHeight, maxHeight)}px`
+        const newHeight = Math.min(el.scrollHeight, maxHeight)
+        el.style.height = `${newHeight}px`
+        el.style.overflowY = el.scrollHeight > maxHeight ? 'auto' : 'hidden'
     }, [])
 
     useEffect(() => {
