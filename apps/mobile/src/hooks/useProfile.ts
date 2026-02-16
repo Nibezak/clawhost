@@ -2,8 +2,7 @@ import type { FirebaseUser } from '@/ts/Interfaces'
 
 import { useQuery } from '@tanstack/react-query'
 import api from '@/lib/api'
-
-const PROFILE_QUERY_KEY = ['profile'] as const
+import PROFILE_QUERY_KEY from '@/hooks/PROFILE_QUERY_KEY'
 
 const useProfile = (user: FirebaseUser | null) => {
     return useQuery({
@@ -15,4 +14,3 @@ const useProfile = (user: FirebaseUser | null) => {
 }
 
 export default useProfile
-export { PROFILE_QUERY_KEY }

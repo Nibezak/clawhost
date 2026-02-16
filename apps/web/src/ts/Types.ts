@@ -37,6 +37,8 @@ export type ChatContentBlockType = 'text' | 'image'
 
 export type GatewayEventHandler = (payload: unknown) => void
 
+export type GatewayStateListener = (state: GatewayConnectionState) => void
+
 export type Route =
     | '/'
     | '/login'

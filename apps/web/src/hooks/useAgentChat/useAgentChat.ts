@@ -10,7 +10,7 @@ import type {
 import type { GatewayConnectionState } from '@/ts/Types'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import SharedGateway from '@/lib/gateway/SharedGateway'
+import { SharedGateway } from '@/lib/gateway'
 import extractText from '@/hooks/useAgentChat/extractText'
 import extractImages from '@/hooks/useAgentChat/extractImages'
 import stripMetadata from '@/hooks/useAgentChat/stripMetadata'

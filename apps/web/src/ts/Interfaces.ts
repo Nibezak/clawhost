@@ -1,6 +1,7 @@
 import type { ElementType, ReactNode } from 'react'
 import type { User } from 'firebase/auth'
 import type { Node, Edge } from '@xyflow/react'
+import type { TranslationKey } from '@openclaw/i18n'
 import type {
     ChatMessageRole,
     ChatMessageStatus,
@@ -893,6 +894,21 @@ export interface UpdateAgentSkillsData {
 
 export interface PlaygroundChannelsContentProps {
     clawId: string
+}
+
+export interface ChannelDefinition {
+    key: string
+    label: TranslationKey
+    icon: ElementType
+    fields: ChannelFieldDefinition[]
+}
+
+export interface ChannelFieldDefinition {
+    key: keyof ChannelConfig
+    label: TranslationKey
+    placeholder: TranslationKey
+    required?: boolean
+    secret?: boolean
 }
 
 export interface PlaygroundSkillsContentProps {

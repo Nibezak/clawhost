@@ -8,7 +8,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { CaretDown, ChatCircleDots } from 'phosphor-react-native'
 import { t } from '@openclaw/i18n'
 import { clawStatus } from '@openclaw/shared'
-import COLORS from '@/lib/theme/colors'
+import { COLORS } from '@/lib/theme'
 import {
     getStatusConfig,
     locationFlags,

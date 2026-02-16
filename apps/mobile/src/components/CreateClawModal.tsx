@@ -28,7 +28,7 @@ import {
 } from 'phosphor-react-native'
 import * as Clipboard from 'expo-clipboard'
 import { t } from '@openclaw/i18n'
-import { useAuth } from '@/lib/auth/AuthProvider'
+import { useAuth } from '@/lib/auth'
 import {
     usePlans,
     useLocations,

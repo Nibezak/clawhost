@@ -2,7 +2,7 @@ import type { StatusConfig } from '@/ts/Interfaces'
 
 import { t } from '@openclaw/i18n'
 import { clawStatus } from '@openclaw/shared'
-import COLORS from '@/lib/theme/colors'
+import { COLORS } from '@/lib/theme'
 
 const getStatusConfig = (): Record<string, StatusConfig> => {
     return {

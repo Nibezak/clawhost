@@ -9,7 +9,7 @@ import { claws, users, volumes } from '@/db/schema'
 import { getProvider } from '@/services/provider'
 import cloudflare from '@/services/cloudflare'
 import { checkSubdomainReady, sanitizeClaw } from '@/controllers/claws/helpers'
-import subscriptions from '@/lib/polar/subscriptions'
+import { subscriptions } from '@/lib/polar'
 import { ok } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 

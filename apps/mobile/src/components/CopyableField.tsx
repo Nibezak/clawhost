@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import * as Clipboard from 'expo-clipboard'
 import { t } from '@openclaw/i18n'
-import COLORS from '@/lib/theme/colors'
+import { COLORS } from '@/lib/theme'
 
 const CopyableField: FC<CopyableFieldProps> = ({
     label,

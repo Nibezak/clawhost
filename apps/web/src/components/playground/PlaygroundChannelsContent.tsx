@@ -1,10 +1,10 @@
-import type { ElementType, FC, ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 import type {
     ChannelConfig,
+    ChannelDefinition,
     ClawChannelsResponse,
     PlaygroundChannelsContentProps
 } from '@/ts/Interfaces'
-import type { TranslationKey } from '@openclaw/i18n'
 
 import { useState, useEffect, useCallback } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -25,21 +25,6 @@ import { PanelPlaceholder } from '@/components'
 import { Skeleton } from '@/components/ui'
 import { api } from '@/lib'
 import { useUIStore } from '@/lib/store'
-
-interface ChannelDefinition {
-    key: string
-    label: TranslationKey
-    icon: ElementType
-    fields: ChannelFieldDefinition[]
-}
-
-interface ChannelFieldDefinition {
-    key: keyof ChannelConfig
-    label: TranslationKey
-    placeholder: TranslationKey
-    required?: boolean
-    secret?: boolean
-}
 
 const CHANNEL_DEFINITIONS: ChannelDefinition[] = [
     {

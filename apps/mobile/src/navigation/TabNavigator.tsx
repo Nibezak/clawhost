@@ -6,10 +6,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { User } from 'phosphor-react-native'
 import { BlurView } from 'expo-blur'
 import { t } from '@openclaw/i18n'
-import COLORS from '@/lib/theme/colors'
-import ClawMascotOutline from '@/components/ClawMascotOutline'
-import ClawsScreen from '@/screens/ClawsScreen'
-import AccountScreen from '@/screens/AccountScreen'
+import { COLORS } from '@/lib/theme'
+import { ClawMascotOutline } from '@/components'
+import { ClawsScreen, AccountScreen } from '@/screens'
 
 const Tab = createBottomTabNavigator<RootTabParamList>()
 

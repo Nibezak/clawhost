@@ -7,14 +7,16 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Lightning } from 'phosphor-react-native'
 import { t } from '@openclaw/i18n'
-import { useAuth } from '@/lib/auth/AuthProvider'
+import { useAuth } from '@/lib/auth'
 import { useClaws, usePlans } from '@/hooks'
 import { COLORS, SPACING, TYPOGRAPHY } from '@/lib/theme'
-import GridBackground from '@/components/GridBackground'
-import ClawMascot from '@/components/ClawMascot'
-import ClawCard from '@/components/ClawCard'
-import ClawSkeleton from '@/components/ClawSkeleton'
-import CreateClawModal from '@/components/CreateClawModal'
+import {
+    GridBackground,
+    ClawMascot,
+    ClawCard,
+    ClawSkeleton,
+    CreateClawModal
+} from '@/components'
 
 const ClawsScreen: FC = (): ReactNode => {
     const insets = useSafeAreaInsets()
