@@ -892,3 +892,7 @@ export interface ClawHubInstalledResponse {
 export interface ClawHubUpdatesResponse {
     updates: ClawHubInstalledSkill[]
 }
+
+export interface RootLayoutProps {
+    children: React.ReactNode
+}
