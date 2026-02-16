@@ -69,6 +69,9 @@ const deleteClawAgent = async (c: AuthenticatedContext) => {
             }
 
             agentList.splice(agentIndex, 1)
+            agentList.forEach((a) => {
+                delete a.status
+            })
             agents.list = agentList
 
             const configJson = JSON.stringify(config, null, 4)

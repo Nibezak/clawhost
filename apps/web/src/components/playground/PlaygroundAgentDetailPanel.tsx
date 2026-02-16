@@ -9,7 +9,7 @@ import type { PlaygroundAgentDetailTab } from '@/ts/Types'
 import type { TranslationKey } from '@openclaw/i18n'
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { t } from '@openclaw/i18n'
 import {
@@ -21,30 +21,36 @@ import {
     EyeSlash,
     Copy,
     Check,
-    Trash
+    Trash,
+    ChatsCircle,
+    Lightning,
+    ArrowsOut,
+    ArrowsIn
 } from '@phosphor-icons/react'
-import { AgentChat } from '@/components/playground/AgentChat'
-import ClawAvatar from '@/components/ClawAvatar'
-import PanelPlaceholder from '@/components/PanelPlaceholder'
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
+import {
+    AgentChat,
+    PlaygroundChannelsContent,
+    PlaygroundSkillsContent
+} from '@/components/playground'
+import { ClawAvatar, PanelPlaceholder } from '@/components'
 import {
     Select,
     SelectTrigger,
     SelectContent,
     SelectItem,
-    SelectGroup
-} from '@/components/ui/select'
-import {
+    SelectGroup,
     Dialog,
     DialogContent,
     DialogDescription,
     DialogHeader,
-    DialogTitle
-} from '@/components/ui/dialog'
-import { Skeleton } from '@/components/ui/skeleton'
-import api from '@/lib/api'
+    DialogTitle,
+    Skeleton
+} from '@/components/ui'
+import { api } from '@/lib'
 import { useUIStore } from '@/lib/store'
 import { aiModels, validateAgentName } from '@/lib/claw-utils'
-import PLAYGROUND_AGENTS_QUERY_KEY from '@/hooks/usePlayground/PLAYGROUND_AGENTS_QUERY_KEY'
+import { PLAYGROUND_AGENTS_QUERY_KEY } from '@/hooks'
 
 const agentTabStateMap: Record<string, PlaygroundAgentDetailTab> = {}
 const deletingAgentIds = new Set<string>()
@@ -52,7 +58,9 @@ let skipAgentDeleteConfirmation = false
 
 const tabs: PlaygroundTabConfig<PlaygroundAgentDetailTab>[] = [
     { id: 'chat', label: 'playground.tabChat', icon: ChatCircle },
-    { id: 'configuration', label: 'playground.tabConfiguration', icon: GearSix }
+    { id: 'channels', label: 'playground.tabChannels', icon: ChatsCircle },
+    { id: 'skills', label: 'playground.tabSkills', icon: Lightning },
+    { id: 'configuration', label: 'playground.tabSettings', icon: GearSix }
 ]
 
 const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
@@ -83,6 +91,7 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
     const [copied, setCopied] = useState(false)
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
     const [dontAskAgain, setDontAskAgain] = useState(false)
+    const [isExpanded, setIsExpanded] = useState(false)
     const [, setDeleteRenderKey] = useState(0)
     const { showToast } = useUIStore()
     const queryClient = useQueryClient()
@@ -342,7 +351,7 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'tween', duration: 0.2 }}
-            className='h-full w-[90vw] shrink-0 overflow-hidden md:w-[380px]'
+            className={isExpanded ? 'fixed inset-0 z-50 overflow-hidden' : 'h-full w-[90vw] shrink-0 overflow-hidden md:w-[380px]'}
         >
             <div className='flex h-full w-full flex-col border-l border-white/10 bg-[#0a0a0f] md:bg-[#0a0a0f]/95 md:backdrop-blur-xl'>
                 <div className='flex items-center justify-between border-b border-white/10 px-5 py-2.5'>
@@ -358,20 +367,50 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                         </div>
                     </div>
                     <div className='flex items-center gap-1'>
-                        {!readOnly && !isOnlyAgent && agent.id !== 'main' && (
+                        {(activeTab === 'chat' || isExpanded) && (
                             <button
-                                onClick={() =>
-                                    !isDeleting && handleDeleteClick()
-                                }
-                                disabled={isDeleting}
-                                className='rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-red-500/10 hover:text-red-400 disabled:cursor-not-allowed'
+                                onClick={() => setIsExpanded(!isExpanded)}
+                                className='rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white'
                             >
-                                {isDeleting ? (
-                                    <CircleNotch className='h-4 w-4 animate-spin text-red-400' />
+                                {isExpanded ? (
+                                    <ArrowsIn className='h-4 w-4' weight='bold' />
                                 ) : (
-                                    <Trash className='h-4 w-4' weight='bold' />
+                                    <ArrowsOut className='h-4 w-4' weight='bold' />
                                 )}
                             </button>
+                        )}
+                        {!readOnly && (
+                            agent.id === 'main' || isOnlyAgent ? (
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <span className='inline-flex'>
+                                            <button
+                                                disabled
+                                                className='cursor-not-allowed rounded-lg p-1.5 text-gray-500 opacity-50 transition-colors'
+                                            >
+                                                <Trash className='h-4 w-4' weight='bold' />
+                                            </button>
+                                        </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent side='bottom'>
+                                        <p>{t('playground.cannotDeleteDefaultAgent')}</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            ) : (
+                                <button
+                                    onClick={() =>
+                                        !isDeleting && handleDeleteClick()
+                                    }
+                                    disabled={isDeleting}
+                                    className='rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed'
+                                >
+                                    {isDeleting ? (
+                                        <CircleNotch className='h-4 w-4 animate-spin text-white' />
+                                    ) : (
+                                        <Trash className='h-4 w-4' weight='bold' />
+                                    )}
+                                </button>
+                            )
                         )}
                         <button
                             onClick={onClose}
@@ -382,37 +421,45 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                     </div>
                 </div>
 
-                <div className='flex border-b border-white/10'>
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
-                            className={`flex flex-1 items-center justify-center gap-1.5 border-b-2 px-3 py-2 text-xs font-medium transition-colors ${
-                                activeTab === tab.id
-                                    ? 'border-[#ef5350] text-white'
-                                    : 'border-transparent text-gray-500 hover:text-gray-300'
-                            }`}
+                <AnimatePresence>
+                    {!isExpanded && (
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2, ease: 'easeInOut' }}
+                            className='overflow-hidden'
                         >
-                            <tab.icon
-                                className='h-3.5 w-3.5'
-                                weight={
-                                    activeTab === tab.id ? 'fill' : 'regular'
-                                }
-                            />
-                            {t(tab.label as TranslationKey)}
-                            {tab.id === 'chat' && (
-                                <span className='rounded bg-white/10 px-1 py-0.5 text-[9px] font-medium uppercase leading-none text-gray-400'>
-                                    {t('common.beta')}
-                                </span>
-                            )}
-                        </button>
-                    ))}
-                </div>
+                            <div className='flex border-b border-white/10'>
+                                {tabs.map((tab) => (
+                                    <button
+                                        key={tab.id}
+                                        onClick={() => setActiveTab(tab.id)}
+                                        className={`flex flex-1 items-center justify-center gap-1.5 border-b-2 px-3 py-2 text-xs font-medium transition-colors ${
+                                            activeTab === tab.id
+                                                ? 'border-[#ef5350] text-white'
+                                                : 'border-transparent text-gray-500 hover:text-gray-300'
+                                        }`}
+                                    >
+                                        <tab.icon
+                                            className='h-3.5 w-3.5'
+                                            weight={
+                                                activeTab === tab.id ? 'fill' : 'regular'
+                                            }
+                                        />
+                                        {t(tab.label as TranslationKey)}
+                                    </button>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 <div className='flex min-h-0 flex-1 flex-col overflow-hidden'>
-                    {activeTab === 'chat' && (
+                    {(isExpanded || activeTab === 'chat') && (
                         <AgentChat
                             agentId={agent.id}
+                            agentName={agent.name}
                             clawId={clawId}
                             subdomain={subdomain}
                             gatewayToken={gatewayToken}
@@ -421,7 +468,18 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                         />
                     )}
 
-                    {activeTab === 'configuration' && (
+                    {!isExpanded && activeTab === 'channels' && (
+                        <PlaygroundChannelsContent clawId={clawId} />
+                    )}
+
+                    {!isExpanded && activeTab === 'skills' && (
+                        <PlaygroundSkillsContent
+                            clawId={clawId}
+                            agentId={agent.id}
+                        />
+                    )}
+
+                    {!isExpanded && activeTab === 'configuration' && (
                         <div className='h-full overflow-y-auto p-5'>
                             {isConfigLoading ? (
                                 <div className='space-y-5'>

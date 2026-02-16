@@ -29,13 +29,11 @@ function escapeHtml(str: string): string {
 function injectMeta(html: string, meta: PrerenderMeta): string {
     const fullTitle = `${meta.title} - ClawHost`
 
-    // Replace existing title
     html = html.replace(
         /<title>.*?<\/title>/,
         `<title>${escapeHtml(fullTitle)}</title>`
     )
 
-    // Replace existing meta tags with page-specific values
     html = html.replace(
         /<meta name="description"[^>]*\/>/,
         `<meta name="description" content="${escapeHtml(meta.description)}" />`
@@ -69,12 +67,10 @@ function injectMeta(html: string, meta: PrerenderMeta): string {
         `<meta name="twitter:image" content="${meta.image}" />`
     )
 
-    // Build additional tags
     let extraTags = `
     <meta property="og:url" content="${meta.url}" />
     <link rel="canonical" href="${meta.url}" />`
 
-    // Article-specific meta tags
     if (meta.articleMeta) {
         extraTags += `
     <meta property="article:published_time" content="${meta.articleMeta.publishedTime}" />`
@@ -99,7 +95,6 @@ function injectMeta(html: string, meta: PrerenderMeta): string {
     return html
 }
 
-// Generate /posts/index.html (listing page)
 const listingHtml = injectMeta(template, {
     title: 'Blog',
     description:
@@ -125,7 +120,6 @@ const listingHtml = injectMeta(template, {
 fs.mkdirSync(path.join(DIST, 'posts'), { recursive: true })
 fs.writeFileSync(path.join(DIST, 'posts', 'index.html'), listingHtml)
 
-// Generate /posts/<slug>/index.html for each post
 for (const post of posts) {
     const imageUrl = post.coverImage
         ? `${SITE_URL}${post.coverImage}`

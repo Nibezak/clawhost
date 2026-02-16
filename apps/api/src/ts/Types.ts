@@ -29,6 +29,8 @@ export type WebhookEventType =
     | 'order.paid'
     | 'order.refunded'
 
+export type AuthMethod = 'email' | 'google' | 'github'
+
 export type UserRole = 'user' | 'admin'
 
 export type Environment = 'development' | 'production'

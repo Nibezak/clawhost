@@ -15,9 +15,9 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
 import { t } from '@openclaw/i18n'
-import { useAuth } from '@/lib/auth/AuthProvider'
+import { useAuth } from '@/lib/auth'
 import { COLORS, SPACING, TYPOGRAPHY } from '@/lib/theme'
-import ClawMascot from '@/components/ClawMascot'
+import { ClawMascot } from '@/components'
 
 const COOLDOWN_DURATION = 60
 const CODE_LENGTH = 6

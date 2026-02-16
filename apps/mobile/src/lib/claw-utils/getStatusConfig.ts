@@ -1,80 +1,86 @@
 import type { StatusConfig } from '@/ts/Interfaces'
 
 import { t } from '@openclaw/i18n'
-import COLORS from '@/lib/theme/colors'
+import { clawStatus } from '@openclaw/shared'
+import { COLORS } from '@/lib/theme'
 
 const getStatusConfig = (): Record<string, StatusConfig> => {
     return {
-        running: {
+        [clawStatus.running]: {
             color: COLORS.statusRunning,
             bgColor: COLORS.statusRunningBg,
             label: t('dashboard.status.running')
         },
-        stopped: {
+        [clawStatus.stopped]: {
             color: COLORS.statusStopped,
             bgColor: COLORS.statusStoppedBg,
             label: t('dashboard.status.stopped')
         },
-        off: {
+        [clawStatus.off]: {
             color: COLORS.statusStopped,
             bgColor: COLORS.statusStoppedBg,
             label: t('dashboard.status.stopped')
         },
-        starting: {
+        [clawStatus.starting]: {
             color: COLORS.statusStarting,
             bgColor: COLORS.statusStartingBg,
             label: t('dashboard.status.starting'),
             pulse: true
         },
-        stopping: {
+        [clawStatus.stopping]: {
             color: COLORS.statusStarting,
             bgColor: COLORS.statusStartingBg,
             label: t('dashboard.status.stopping'),
             pulse: true
         },
-        creating: {
+        [clawStatus.creating]: {
             color: COLORS.statusCreating,
             bgColor: COLORS.statusCreatingBg,
             label: t('dashboard.status.creating'),
             pulse: true
         },
-        configuring: {
+        [clawStatus.configuring]: {
             color: COLORS.statusCreating,
             bgColor: COLORS.statusCreatingBg,
             label: t('dashboard.status.configuring'),
             pulse: true
         },
-        initializing: {
+        [clawStatus.initializing]: {
             color: COLORS.statusCreating,
             bgColor: COLORS.statusCreatingBg,
             label: t('dashboard.status.initializing'),
             pulse: true
         },
-        migrating: {
+        [clawStatus.migrating]: {
             color: COLORS.statusMigrating,
             bgColor: COLORS.statusMigratingBg,
             label: t('dashboard.status.migrating'),
             pulse: true
         },
-        rebuilding: {
+        [clawStatus.rebuilding]: {
             color: COLORS.statusRebuilding,
             bgColor: COLORS.statusRebuildingBg,
             label: t('dashboard.status.rebuilding'),
             pulse: true
         },
-        restarting: {
+        [clawStatus.restarting]: {
             color: COLORS.statusStarting,
             bgColor: COLORS.statusStartingBg,
             label: t('dashboard.status.restarting'),
             pulse: true
         },
-        deleting: {
+        [clawStatus.unreachable]: {
+            color: COLORS.statusDeleting,
+            bgColor: COLORS.statusDeletingBg,
+            label: t('dashboard.status.unreachable')
+        },
+        [clawStatus.deleting]: {
             color: COLORS.statusDeleting,
             bgColor: COLORS.statusDeletingBg,
             label: t('dashboard.status.deleting'),
             pulse: true
         },
-        unknown: {
+        [clawStatus.unknown]: {
             color: COLORS.statusStopped,
             bgColor: COLORS.statusStoppedBg,
             label: t('dashboard.status.unknown')

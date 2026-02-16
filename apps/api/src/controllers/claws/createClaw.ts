@@ -2,6 +2,7 @@ import type { CreateClawBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq, and, count } from 'drizzle-orm'
+import { clawStatus } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws, sshKeys, volumes } from '@/db/schema'
 import { getProvider } from '@/services/provider'
@@ -129,7 +130,7 @@ const createClaw = async (c: AuthenticatedContext) => {
                 name,
                 provider: providerName || 'hetzner',
                 providerServerId: serverId.toString(),
-                status: 'configuring',
+                status: clawStatus.configuring,
                 ip,
                 planId,
                 location,
@@ -179,7 +180,7 @@ const createClaw = async (c: AuthenticatedContext) => {
                 id,
                 name,
                 provider: providerName || 'hetzner',
-                status: 'configuring',
+                status: clawStatus.configuring,
                 ip,
                 planId,
                 location,

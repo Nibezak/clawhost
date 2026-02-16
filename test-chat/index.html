@@ -284,7 +284,7 @@
                                     },
                                     auth: { token: GATEWAY_TOKEN },
                                     role: 'operator',
-                                    scopes: ['operator.admin']
+                                    scopes: ['operator.admin', 'operator.read', 'operator.write']
                                 }
                             })
                         )
@@ -447,7 +447,7 @@
                     const res = await wsRequest('chat.send', {
                         sessionKey,
                         message: text,
-                        deliver: false,
+                        deliver: true,
                         timeoutMs: 120000,
                         idempotencyKey: uuid()
                     })

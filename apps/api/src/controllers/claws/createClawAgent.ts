@@ -85,8 +85,7 @@ const createClawAgent = async (c: AuthenticatedContext) => {
                     id: 'main',
                     name: 'main',
                     model:
-                        typeof primaryModel === 'string' ? primaryModel : null,
-                    status: 'running'
+                        typeof primaryModel === 'string' ? primaryModel : null
                 })
             }
 
@@ -98,8 +97,7 @@ const createClawAgent = async (c: AuthenticatedContext) => {
             agentList.push({
                 id: agentId,
                 name: body.name,
-                model: body.model || null,
-                status: 'idle'
+                model: body.model || null
             })
 
             const configJson = JSON.stringify(config, null, 4)

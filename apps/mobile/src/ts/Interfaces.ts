@@ -124,6 +124,10 @@ export interface ProviderIconProps {
     size?: number
 }
 
+export interface AuthProviderProps {
+    children: ReactNode
+}
+
 export interface AuthContextValue {
     user: FirebaseUser | null
     loading: boolean

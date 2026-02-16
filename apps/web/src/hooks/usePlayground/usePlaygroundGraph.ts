@@ -32,9 +32,6 @@ const usePlaygroundGraph = (
             const query = agentQueries[index]
             const agentsData = query?.data
             const agents = agentsData?.agents || []
-            const isReachable = query?.isError
-                ? false
-                : (agentsData?.reachable ?? true)
             const isLoading = query?.isLoading ?? false
 
             const clawNodeId = `claw-${claw.id}`
@@ -52,7 +49,6 @@ const usePlaygroundGraph = (
                     claw,
                     agentCount: agents.length,
                     isLoadingAgents: isLoading,
-                    isReachable,
                     isSelected: false
                 } as Record<string, unknown>,
                 draggable: false

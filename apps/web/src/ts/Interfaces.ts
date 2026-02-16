@@ -1,6 +1,7 @@
 import type { ElementType, ReactNode } from 'react'
 import type { User } from 'firebase/auth'
 import type { Node, Edge } from '@xyflow/react'
+import type { TranslationKey } from '@openclaw/i18n'
 import type {
     ChatMessageRole,
     ChatMessageStatus,
@@ -9,8 +10,7 @@ import type {
     GatewayConnectionState,
     ProviderType,
     ToastType,
-    UserRole,
-    ViewMode
+    UserRole
 } from '@/ts/Types'
 
 export interface ApiResponse<T = null> {
@@ -19,10 +19,6 @@ export interface ApiResponse<T = null> {
     message: string
     code: number
     version: string
-}
-
-export interface MagicLinkEmailProps {
-    magicLink: string
 }
 
 export interface Volume {
@@ -149,8 +145,6 @@ export interface UIState {
 }
 
 export interface PreferencesState {
-    instancesViewMode: ViewMode
-    setInstancesViewMode: (mode: ViewMode) => void
     adminMode: boolean
     setAdminMode: (mode: boolean) => void
 }
@@ -160,13 +154,19 @@ export interface CachedProfile {
     name: string | null
 }
 
+export interface VerifyOtpResponse {
+    customToken: string
+}
+
 export interface AuthContextType {
     user: User | null
     loading: boolean
     cachedProfile: CachedProfile | null
     updateCachedProfile: (data: Partial<CachedProfile>) => void
     sendOtp: (email: string) => Promise<void>
-    verifyOtp: (email: string) => Promise<void>
+    verifyOtp: (email: string, code: string) => Promise<void>
+    signInWithGoogle: () => Promise<void>
+    signInWithGithub: () => Promise<void>
     signOut: () => Promise<void>
 }
 
@@ -245,43 +245,11 @@ export interface ActionButtonProps {
     size?: 'default' | 'sm' | 'lg'
 }
 
-export interface MockClawData {
-    id: string
-    name: string
-    status: 'running' | 'stopped' | 'restarting'
-    subdomain: string
-    ip: string
-    provider: ProviderType
-    location: string
-    locationFlag: string
-    plan: string
-    planDetails: string
-    monthlyCost: string
-    serverId: string
-    createdAt: string
-    sshKey: string
-}
-
-export interface MockClawCardProps {
-    claw: MockClawData
-    onStart?: (id: string) => void
-    onStop?: (id: string) => void
-    onRestart?: (id: string) => void
-    onDelete?: (id: string) => void
-}
-
 export interface StatusConfig {
     color: string
     bgColor: string
     label: string
     pulse?: boolean
-}
-
-export interface ClawCardProps {
-    claw: Claw
-    sshKeys: SSHKey[]
-    plans: Plan[]
-    viewMode?: ViewMode
 }
 
 export interface CopyableFieldProps {
@@ -366,49 +334,6 @@ export interface ClawCardDialogsProps {
     isReinstallPending: boolean
 }
 
-export interface ClawCardGridViewProps {
-    claw: Claw
-    status: StatusConfig
-    flag: string | null
-    locationName: string
-    plan: Plan | undefined
-    monthlyPrice: number | null
-    attachedSshKey: SSHKey | null
-    actions: ClawCardActions
-    isLoading: boolean
-    copied: boolean
-    passwordCopied: boolean
-    hasActionItems: boolean
-    hasBothOptions: boolean
-    isScheduledForDeletion: boolean
-    isAdmin: boolean
-}
-
-export interface ClawCardListViewProps {
-    claw: Claw
-    status: StatusConfig
-    flag: string | null
-    locationName: string
-    plan: Plan | undefined
-    monthlyPrice: number | null
-    attachedSshKey: SSHKey | null
-    actions: ClawCardActions
-    isLoading: boolean
-    copied: boolean
-    passwordCopied: boolean
-    hasActionItems: boolean
-    isScheduledForDeletion: boolean
-    isAdmin: boolean
-    isExpanded: boolean
-    onToggleExpand: () => void
-}
-
-export interface ScheduledDeletionBannerProps {
-    deletionScheduledAt: string
-    onCancelDeletion: () => void
-    isLoading: boolean
-}
-
 export interface SSHKeyCardProps {
     sshKey: SSHKey
 }
@@ -435,13 +360,6 @@ export interface AIModelOption {
     name: string
     provider: string
     envVar: string
-}
-
-export interface AwaitingPurchaseData {
-    name: string
-    provider: ProviderType
-    planId: string
-    location: string
 }
 
 export interface CreateClawData {
@@ -543,6 +461,10 @@ export interface ArticleMeta {
     modifiedTime?: string
     author: string
     tags: string[]
+}
+
+export interface ClawVersionResponse {
+    version: string
 }
 
 export interface DiagnosticsStatusResponse {
@@ -649,7 +571,6 @@ export interface PlaygroundClawNodeData {
     claw: Claw
     agentCount: number
     isLoadingAgents: boolean
-    isReachable: boolean
     isSelected: boolean
     readOnly?: boolean
 }
@@ -793,12 +714,21 @@ export interface ChatHistoryEntry {
     content: unknown
 }
 
+export interface ChatImageSource {
+    type: string
+    mediaType: string
+    data: string
+    filename?: string
+}
+
 export interface ChatMessage {
     id: string
     role: ChatMessageRole
     content: string
     status: ChatMessageStatus
     runId?: string
+    timestamp?: string
+    images?: ChatImageSource[]
 }
 
 export interface ChatEventPayload {
@@ -810,11 +740,23 @@ export interface ChatEventPayload {
     errorMessage?: string
 }
 
+export interface ChatAttachment {
+    type: string
+    source: ChatImageSource
+}
+
+export interface ChatLightboxProps {
+    image: ChatImageSource
+    fileName?: string
+    onClose: () => void
+}
+
 export interface ChatSendParams {
     sessionKey: string
     message: string
     idempotencyKey: string
     deliver: boolean
+    attachments?: ChatAttachment[]
 }
 
 export interface ChatHistoryParams {
@@ -839,7 +781,7 @@ export interface UseAgentChatReturn {
     connectionState: GatewayConnectionState
     isLoading: boolean
     isStreaming: boolean
-    sendMessage: (text: string) => void
+    sendMessage: (text: string, attachments?: ChatAttachment[], previews?: ChatImageSource[]) => void
     abortResponse: () => void
 }
 
@@ -851,6 +793,7 @@ export interface GatewayPendingRequest {
 
 export interface AgentChatProps {
     agentId: string
+    agentName?: string
     clawId: string
     subdomain: string | null | undefined
     gatewayToken: string | null | undefined
@@ -862,11 +805,29 @@ export interface ChatBubbleProps {
     message: ChatMessage
 }
 
+export interface ChatInputAttachment {
+    file: File
+    preview: string
+}
+
+export interface ChatInputHandle {
+    addFiles: (files: File[]) => void
+}
+
 export interface ChatInputProps {
     isConnected: boolean
     isStreaming: boolean
-    onSend: (text: string) => void
+    onSend: (text: string, attachments?: ChatAttachment[], previews?: ChatImageSource[]) => void
     onAbort: () => void
+    allowAttach?: boolean
+}
+
+export interface ChatMarkdownProps {
+    content: string
+}
+
+export interface ChatDateSeparatorProps {
+    date: string
 }
 
 export interface ChatEmptyStateProps {
@@ -875,4 +836,82 @@ export interface ChatEmptyStateProps {
 
 export interface ChatStatusBarProps {
     connectionState: GatewayConnectionState
+}
+
+export interface ChannelConfig {
+    enabled: boolean
+    dmPolicy?: string
+    allowFrom?: string[]
+    botToken?: string
+    token?: string
+    applicationId?: string
+    appToken?: string
+    signingSecret?: string
+}
+
+export interface ClawChannelsResponse {
+    channels: Record<string, ChannelConfig>
+}
+
+export interface UpdateClawChannelsData {
+    channels: Record<string, ChannelConfig>
+}
+
+export interface SkillEntryConfig {
+    enabled: boolean
+    apiKey?: string
+    env?: Record<string, string>
+    config?: Record<string, unknown>
+}
+
+export interface BundledSkillInfo {
+    name: string
+    enabled: boolean
+    description?: string
+}
+
+export interface ClawSkillsResponse {
+    skills: BundledSkillInfo[]
+    entries: Record<string, SkillEntryConfig>
+}
+
+export interface UpdateClawSkillsData {
+    entries: Record<string, SkillEntryConfig>
+}
+
+export interface AgentSkillInfo {
+    name: string
+}
+
+export interface GetAgentSkillsResponse {
+    skills: AgentSkillInfo[]
+}
+
+export interface UpdateAgentSkillsData {
+    action: 'install' | 'remove'
+    skillName: string
+}
+
+export interface PlaygroundChannelsContentProps {
+    clawId: string
+}
+
+export interface ChannelDefinition {
+    key: string
+    label: TranslationKey
+    icon: ElementType
+    fields: ChannelFieldDefinition[]
+}
+
+export interface ChannelFieldDefinition {
+    key: keyof ChannelConfig
+    label: TranslationKey
+    placeholder: TranslationKey
+    required?: boolean
+    secret?: boolean
+}
+
+export interface PlaygroundSkillsContentProps {
+    clawId: string
+    agentId?: string
 }

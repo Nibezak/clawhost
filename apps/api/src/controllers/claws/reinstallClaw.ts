@@ -1,11 +1,13 @@
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
+import { clawStatus } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import executeSSH from '@/services/ssh'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
+import { OPENCLAW_VERSION } from '@/controllers/claws/helpers'
 
 const reinstallClaw = async (c: AuthenticatedContext) => {
     try {
@@ -116,7 +118,7 @@ server {
 
         const reinstallCommands = [
             'systemctl stop openclaw-gateway || true',
-            'npm install -g openclaw@latest',
+            `npm install -g openclaw@${OPENCLAW_VERSION}`,
             `echo '${configB64}' | base64 -d > /home/openclaw/.openclaw/openclaw.json`,
             'chown -R openclaw:openclaw /home/openclaw',
             `echo '${serviceB64}' | base64 -d > /etc/systemd/system/openclaw-gateway.service`,
@@ -140,10 +142,10 @@ server {
         )
         const success = output.includes('GATEWAY_OK')
 
-        if (success && claw[0].status === 'configuring') {
+        if (success && claw[0].status === clawStatus.configuring) {
             await db
                 .update(claws)
-                .set({ status: 'running' })
+                .set({ status: clawStatus.running })
                 .where(eq(claws.id, id))
         }
 

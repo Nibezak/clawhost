@@ -3,11 +3,7 @@ import type { PlaygroundToolbarProps } from '@/ts/Interfaces'
 
 import { t } from '@openclaw/i18n'
 import { CornersIn, ArrowCounterClockwise } from '@phosphor-icons/react'
-import {
-    Tooltip,
-    TooltipTrigger,
-    TooltipContent
-} from '@/components/ui/tooltip'
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 
 const PlaygroundToolbar: FC<PlaygroundToolbarProps> = ({
     zoom,

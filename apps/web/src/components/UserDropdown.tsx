@@ -3,17 +3,18 @@ import type { UserDropdownProps } from '@/ts/Interfaces'
 
 import { useNavigate, useLocation } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
-import ROUTES from '@/lib/routes'
-import { Button } from '@/components/ui/button'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { ROUTES } from '@/lib'
 import {
+    Button,
+    Avatar,
+    AvatarFallback,
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
-import ClawMascotOutline from '@/components/ClawMascotOutline'
+} from '@/components/ui'
+import { ClawMascotOutline } from '@/components'
 import { Key, User, SignOut, Receipt } from '@phosphor-icons/react'
 
 const UserDropdown: FC<UserDropdownProps> = ({

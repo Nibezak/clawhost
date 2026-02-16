@@ -6,6 +6,7 @@ import type {
 import type { ProviderType } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
+import { clawStatus } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { parseWebhook, handleWebhook } from '@/lib/polar'
@@ -108,7 +109,7 @@ const handlePolarWebhook = async (c: Context) => {
                             .update(claws)
                             .set({
                                 subscriptionStatus: 'revoked',
-                                status: 'stopped'
+                                status: clawStatus.stopped
                             })
                             .where(eq(claws.id, claw[0].id))
                     }
@@ -129,7 +130,7 @@ const handlePolarWebhook = async (c: Context) => {
                             .then(() =>
                                 db
                                     .update(claws)
-                                    .set({ status: 'stopped' })
+                                    .set({ status: clawStatus.stopped })
                                     .where(eq(claws.id, claw[0].id))
                             )
                             .catch((err) =>
@@ -172,7 +173,7 @@ const handlePolarWebhook = async (c: Context) => {
                         await provider.stopServer(updated[0].providerServerId)
                         await db
                             .update(claws)
-                            .set({ status: 'stopped' })
+                            .set({ status: clawStatus.stopped })
                             .where(eq(claws.id, updated[0].id))
                     } catch (err) {
                         console.error(`Failed to stop server: ${err}`)

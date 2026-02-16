@@ -3,10 +3,7 @@ import type { FC, ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { LEGAL_EMAIL } from '@/lib/links'
-import Header from '@/components/Header'
-import LandingFooter from '@/components/LandingFooter'
-import PageBackground from '@/components/PageBackground'
-import PageTitle from '@/components/PageTitle'
+import { Header, LandingFooter, PageBackground, PageTitle } from '@/components'
 
 const Privacy: FC = (): ReactNode => {
     return (

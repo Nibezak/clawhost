@@ -5,13 +5,17 @@ import type {
     BillingInvoiceResponse,
     Claw,
     ClawAgentsResponse,
+    ClawChannelsResponse,
     ClawFilesResponse,
+    ClawSkillsResponse,
+    ClawVersionResponse,
     CreateClawData,
     CreateSSHKeyData,
     CustomerPortalResponse,
     DeleteClawResponse,
     DiagnosticsLogsResponse,
     DiagnosticsStatusResponse,
+    GetAgentSkillsResponse,
     Location,
     PlansResponse,
     PlanAvailability,
@@ -23,11 +27,15 @@ import type {
     CreateAgentResponse,
     DeleteAgentData,
     UpdateAgentConfigData,
+    UpdateAgentSkillsData,
+    UpdateClawChannelsData,
     UpdateClawEnvVarsData,
     UpdateClawFileData,
+    UpdateClawSkillsData,
     UpdateProfileData,
     UserProfile,
     UserStats,
+    VerifyOtpResponse,
     VolumePricing
 } from '@/ts/Interfaces'
 
@@ -57,10 +65,12 @@ const publicClient = new RequestClient({
 })
 
 const api = {
-    sendMagicLink: (email: string, redirectUrl: string) =>
-        publicClient.post<void>('/auth/send-magic-link', {
+    sendOtp: (email: string) =>
+        publicClient.post<void>('/auth/send-otp', { email }),
+    verifyOtp: (email: string, code: string) =>
+        publicClient.post<VerifyOtpResponse>('/auth/verify-otp', {
             email,
-            redirectUrl
+            code
         }),
 
     getPlans: (provider?: string) =>
@@ -106,6 +116,8 @@ const api = {
     repairClaw: (id: string) =>
         client.post<void>(`/claws/${id}/diagnostics/repair`),
     reinstallClaw: (id: string) => client.post<void>(`/claws/${id}/reinstall`),
+    getClawVersion: (id: string) =>
+        client.post<ClawVersionResponse>(`/claws/${id}/version`),
     getClawAgents: (id: string) =>
         client.post<ClawAgentsResponse>(`/claws/${id}/agents`),
     getClawAgentConfig: (id: string, agentId: string) =>
@@ -118,6 +130,21 @@ const api = {
         client.post<CreateAgentResponse>(`/claws/${id}/agents/create`, data),
     deleteClawAgent: (id: string, data: DeleteAgentData) =>
         client.post<void>(`/claws/${id}/agents/delete`, data),
+    getClawChannels: (id: string) =>
+        client.post<ClawChannelsResponse>(`/claws/${id}/channels`),
+    updateClawChannels: (id: string, data: UpdateClawChannelsData) =>
+        client.put<void>(`/claws/${id}/channels`, data),
+    getClawSkills: (id: string) =>
+        client.post<ClawSkillsResponse>(`/claws/${id}/skills`),
+    updateClawSkills: (id: string, data: UpdateClawSkillsData) =>
+        client.put<void>(`/claws/${id}/skills`, data),
+    getAgentSkills: (clawId: string, agentId: string) =>
+        client.post<GetAgentSkillsResponse>(
+            `/claws/${clawId}/agents/${agentId}/skills`,
+            { agentId }
+        ),
+    updateAgentSkills: (clawId: string, agentId: string, data: UpdateAgentSkillsData) =>
+        client.put<void>(`/claws/${clawId}/agents/${agentId}/skills`, data),
     getClawEnvVars: (id: string) =>
         client.get<ClawEnvVarsResponse>(`/claws/${id}/env`),
     updateClawEnvVars: (id: string, data: UpdateClawEnvVarsData) =>

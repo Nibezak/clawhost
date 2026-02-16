@@ -67,7 +67,7 @@ const sendOtp = async (c: Context) => {
         const { error } = await getResend().emails.send({
             from: FROM_EMAIL,
             to: email,
-            subject: 'Your ClawHost sign-in code',
+            subject: t('emails.otpSubject'),
             react: OtpCodeEmail({ code })
         })
 

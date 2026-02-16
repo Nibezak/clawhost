@@ -18,7 +18,7 @@ import type {
     DatacenterAvailability
 } from '@/ts/Interfaces'
 
-import { RequestClient } from '@openclaw/shared'
+import { RequestClient, clawStatus } from '@openclaw/shared'
 
 function getClient() {
     const token = process.env.VULTR_API_TOKEN
@@ -37,11 +37,11 @@ function getClient() {
 
 function mapStatus(vultrStatus: string): string {
     const statusMap: Record<string, string> = {
-        active: 'running',
-        pending: 'initializing',
-        suspended: 'stopped',
-        resizing: 'migrating',
-        halted: 'off'
+        active: clawStatus.running,
+        pending: clawStatus.initializing,
+        suspended: clawStatus.stopped,
+        resizing: clawStatus.migrating,
+        halted: clawStatus.off
     }
     return statusMap[vultrStatus] || vultrStatus
 }

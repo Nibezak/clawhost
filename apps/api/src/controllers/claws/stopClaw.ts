@@ -1,6 +1,7 @@
 import type { AuthenticatedContext, ProviderType } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
+import { clawStatus } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { getProvider } from '@/services/provider'
@@ -21,7 +22,7 @@ const stopClaw = async (c: AuthenticatedContext) => {
         const previousStatus = claw.status
         await db
             .update(claws)
-            .set({ status: 'stopping' })
+            .set({ status: clawStatus.stopping })
             .where(eq(claws.id, id))
 
         try {
@@ -38,7 +39,7 @@ const stopClaw = async (c: AuthenticatedContext) => {
 
         return ok(
             c,
-            sanitizeClaw({ ...claw, status: 'stopping' }),
+            sanitizeClaw({ ...claw, status: clawStatus.stopping }),
             t('api.clawStopped')
         )
     } catch {

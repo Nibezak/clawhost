@@ -16,25 +16,31 @@ import {
     useDeleteSSHKey,
     useUserStats
 } from '@/hooks'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import EmptyState from '@/components/EmptyState'
-import ErrorState from '@/components/ErrorState'
-import Header from '@/components/Header'
-import LandingFooter from '@/components/LandingFooter'
-import PageBackground from '@/components/PageBackground'
-import PageTitle from '@/components/PageTitle'
 import {
+    Button,
+    Input,
+    Label,
+    Card,
+    CardContent,
+    Skeleton,
+    Alert,
+    AlertDescription,
     Dialog,
     DialogContent,
     DialogDescription,
     DialogHeader,
     DialogTitle
-} from '@/components/ui/dialog'
+} from '@/components/ui'
+import {
+    EmptyState,
+    ErrorState,
+    Header,
+    LandingFooter,
+    PageBackground,
+    PageTitle,
+    PageHeader,
+    ActionButton
+} from '@/components'
 import {
     PlusCircle,
     Key,
@@ -46,8 +52,6 @@ import {
     Warning,
     CaretDown
 } from '@phosphor-icons/react'
-import PageHeader from '@/components/PageHeader'
-import ActionButton from '@/components/ActionButton'
 
 const SSHKeySkeleton: FC = (): ReactNode => {
     return (
@@ -129,11 +133,10 @@ const SSHKeyCard: FC<SSHKeyCardProps> = ({ sshKey }): ReactNode => {
                             }}
                             disabled={deleteMutation.isPending}
                         >
-                            {deleteMutation.isPending ? (
+                            {deleteMutation.isPending && (
                                 <CircleNotch className='h-4 w-4 animate-spin' />
-                            ) : (
-                                t('common.confirm')
                             )}
+                            {t('common.confirm')}
                         </Button>
                     </div>
                 </DialogContent>
@@ -401,14 +404,10 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                                 className='flex-1'
                                 disabled={createMutation.isPending}
                             >
-                                {createMutation.isPending ? (
-                                    <>
-                                        <CircleNotch className='mr-2 h-4 w-4 animate-spin' />
-                                        {t('sshKeys.adding')}
-                                    </>
-                                ) : (
-                                    t('common.addKey')
+                                {createMutation.isPending && (
+                                    <CircleNotch className='mr-2 h-4 w-4 animate-spin' />
                                 )}
+                                {t('common.addKey')}
                             </Button>
                         </div>
                     </form>
@@ -566,14 +565,10 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                                         onClick={() => handleCreate()}
                                         disabled={createMutation.isPending}
                                     >
-                                        {createMutation.isPending ? (
-                                            <>
-                                                <CircleNotch className='mr-2 h-4 w-4 animate-spin' />
-                                                {t('sshKeys.saving')}
-                                            </>
-                                        ) : (
-                                            t('sshKeys.savePublicKey')
+                                        {createMutation.isPending && (
+                                            <CircleNotch className='mr-2 h-4 w-4 animate-spin' />
                                         )}
+                                        {t('sshKeys.savePublicKey')}
                                     </Button>
                                 </div>
                             </>

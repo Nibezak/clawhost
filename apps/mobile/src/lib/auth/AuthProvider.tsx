@@ -1,10 +1,8 @@
 import type { FC, ReactNode } from 'react'
-import type { AuthContextValue } from '@/ts/Interfaces'
+import type { AuthProviderProps, FirebaseUser } from '@/ts/Interfaces'
 import type { User } from 'firebase/auth'
 
 import {
-    createContext,
-    useContext,
     useState,
     useEffect,
     useCallback
@@ -16,19 +14,10 @@ import {
 } from 'firebase/auth'
 import { auth, clearTokenCache } from '@/lib/firebase'
 import api from '@/lib/api'
+import AuthContext from '@/lib/auth/AuthContext'
 
-const noop = async () => {}
-
-const AuthContext = createContext<AuthContextValue>({
-    user: null,
-    loading: true,
-    sendOtp: noop,
-    verifyOtp: noop,
-    signOut: noop
-})
-
-const AuthProvider: FC<{ children: ReactNode }> = ({ children }): ReactNode => {
-    const [user, setUser] = useState<AuthContextValue['user']>(null)
+const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
+    const [user, setUser] = useState<FirebaseUser | null>(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -83,7 +72,4 @@ const AuthProvider: FC<{ children: ReactNode }> = ({ children }): ReactNode => {
     )
 }
 
-const useAuth = (): AuthContextValue => useContext(AuthContext)
-
 export default AuthProvider
-export { useAuth }

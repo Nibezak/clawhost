@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react'
 
 import { useEffect, useRef } from 'react'
 import { Animated, StyleSheet, View } from 'react-native'
-import COLORS from '@/lib/theme/colors'
+import { COLORS } from '@/lib/theme'
 
 const ClawSkeleton: FC = (): ReactNode => {
     const pulseAnim = useRef(new Animated.Value(0.3)).current

@@ -2,9 +2,9 @@ import type { FC, ReactNode } from 'react'
 import type { HeroButtonsProps } from '@/ts/Interfaces'
 
 import { Link } from 'react-router-dom'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
-import ROUTES from '@/lib/routes'
+import { ROUTES } from '@/lib'
 import { useGitHubStars, GITHUB_REPO_URL } from '@/hooks'
 import { Lightning, GithubLogo } from '@phosphor-icons/react'
 

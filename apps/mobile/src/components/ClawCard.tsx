@@ -7,7 +7,8 @@ import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { CaretDown, ChatCircleDots } from 'phosphor-react-native'
 import { t } from '@openclaw/i18n'
-import COLORS from '@/lib/theme/colors'
+import { clawStatus } from '@openclaw/shared'
+import { COLORS } from '@/lib/theme'
 import {
     getStatusConfig,
     locationFlags,
@@ -78,7 +79,7 @@ const ClawCard: FC<ClawCardProps> = ({ claw, plan }): ReactNode => {
                         </Text>
                         <StatusBadge status={claw.status} config={status} />
                     </View>
-                    {claw.status !== 'configuring' && (
+                    {claw.status !== clawStatus.configuring && (
                         <Text style={styles.subdomain} numberOfLines={1}>
                             {subdomain}.clawhost.cloud
                         </Text>
@@ -225,7 +226,7 @@ const ClawCard: FC<ClawCardProps> = ({ claw, plan }): ReactNode => {
                 </>
             )}
 
-            {claw.status === 'running' && (
+            {claw.status === clawStatus.running && (
                 <Pressable style={styles.chatButton} onPress={() => {}}>
                     <LinearGradient
                         colors={['#ef5350', '#c62828']}

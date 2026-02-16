@@ -1,15 +1,33 @@
-import type { FC, ReactNode } from 'react'
-import type { AgentChatProps } from '@/ts/Interfaces'
+import type { FC, ReactNode, DragEvent } from 'react'
+import type {
+    AgentChatProps,
+    ChatAttachment,
+    ChatImageSource,
+    ChatInputHandle,
+    ChatMessage
+} from '@/ts/Interfaces'
 
-import { useRef, useEffect, useCallback } from 'react'
+import { useRef, useState, useEffect, useCallback } from 'react'
 import { t } from '@openclaw/i18n'
-import { GearSix } from '@phosphor-icons/react'
+import { GearSix, ArrowDown } from '@phosphor-icons/react'
 import { useAgentChat } from '@/hooks/useAgentChat'
 import ChatBubble from '@/components/playground/AgentChat/ChatBubble'
 import ChatInput from '@/components/playground/AgentChat/ChatInput'
 import ChatEmptyState from '@/components/playground/AgentChat/ChatEmptyState'
 import ChatSkeleton from '@/components/playground/AgentChat/ChatSkeleton'
 import ChatStatusBar from '@/components/playground/AgentChat/ChatStatusBar'
+import ChatDateSeparator from '@/components/playground/AgentChat/ChatDateSeparator'
+
+const isDifferentDay = (a: ChatMessage, b: ChatMessage): boolean => {
+    if (!a.timestamp || !b.timestamp) return false
+    const dateA = new Date(a.timestamp)
+    const dateB = new Date(b.timestamp)
+    return (
+        dateA.getFullYear() !== dateB.getFullYear() ||
+        dateA.getMonth() !== dateB.getMonth() ||
+        dateA.getDate() !== dateB.getDate()
+    )
+}
 
 const AgentChat: FC<AgentChatProps> = ({
     agentId,
@@ -19,7 +37,11 @@ const AgentChat: FC<AgentChatProps> = ({
     readOnly
 }): ReactNode => {
     const scrollRef = useRef<HTMLDivElement>(null)
+    const chatInputRef = useRef<ChatInputHandle>(null)
     const isNearBottomRef = useRef(true)
+    const [isDragging, setIsDragging] = useState(false)
+    const [showScrollButton, setShowScrollButton] = useState(false)
+    const dragCounterRef = useRef(0)
 
     const {
         messages,
@@ -39,23 +61,60 @@ const AgentChat: FC<AgentChatProps> = ({
         const el = scrollRef.current
         if (!el) return
         const threshold = 100
-        isNearBottomRef.current =
-            el.scrollHeight - el.scrollTop - el.clientHeight < threshold
+        const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < threshold
+        isNearBottomRef.current = nearBottom
+        setShowScrollButton(!nearBottom)
+    }, [])
+
+    const scrollToBottom = useCallback(() => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
+        }
     }, [])
 
     useEffect(() => {
         if (isNearBottomRef.current && scrollRef.current) {
-            scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+            requestAnimationFrame(() => {
+                if (scrollRef.current) {
+                    scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+                }
+            })
         }
     }, [messages])
 
     const handleSend = useCallback(
-        (text: string) => {
-            sendMessage(text)
+        (text: string, attachments?: ChatAttachment[], previews?: ChatImageSource[]) => {
+            sendMessage(text, attachments, previews)
             isNearBottomRef.current = true
         },
         [sendMessage]
     )
+
+    const handleDragEnter = useCallback((e: DragEvent) => {
+        e.preventDefault()
+        dragCounterRef.current += 1
+        if (dragCounterRef.current === 1) setIsDragging(true)
+    }, [])
+
+    const handleDragLeave = useCallback((e: DragEvent) => {
+        e.preventDefault()
+        dragCounterRef.current -= 1
+        if (dragCounterRef.current === 0) setIsDragging(false)
+    }, [])
+
+    const handleDragOver = useCallback((e: DragEvent) => {
+        e.preventDefault()
+    }, [])
+
+    const handleDrop = useCallback((e: DragEvent) => {
+        e.preventDefault()
+        dragCounterRef.current = 0
+        setIsDragging(false)
+        const files = Array.from(e.dataTransfer.files)
+        if (files.length > 0 && chatInputRef.current) {
+            chatInputRef.current.addFiles(files)
+        }
+    }, [])
 
     if (readOnly) {
         return (
@@ -114,12 +173,17 @@ const AgentChat: FC<AgentChatProps> = ({
 
     if (!subdomain || !gatewayToken) {
         return (
-            <ChatEmptyState isError />
+            <div className='flex h-full flex-col'>
+                <div className='flex-1 overflow-y-auto'>
+                    <ChatEmptyState isError />
+                </div>
+            </div>
         )
     }
 
     const isConnected = connectionState === 'connected'
-    const isError = connectionState === 'error' || connectionState === 'disconnected'
+    const isError =
+        connectionState === 'error' || connectionState === 'disconnected'
 
     if (isLoading) {
         return (
@@ -138,7 +202,24 @@ const AgentChat: FC<AgentChatProps> = ({
     }
 
     return (
-        <div className='flex h-full flex-col'>
+        <div
+            className='relative flex h-full flex-col'
+            onDragEnter={handleDragEnter}
+            onDragLeave={handleDragLeave}
+            onDragOver={handleDragOver}
+            onDrop={handleDrop}
+        >
+            {isDragging && (
+                <div className='absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[#ef5350]/40 bg-black/60'>
+                    <p className='text-sm font-medium text-gray-200/80'>
+                        {t('playground.chatDropFiles')}
+                    </p>
+                    <p className='text-xs text-gray-400/70'>
+                        {t('playground.chatDropFilesDescription')}
+                    </p>
+                </div>
+            )}
+
             {!isLoading && !isConnected && (
                 <ChatStatusBar connectionState={connectionState} />
             )}
@@ -152,18 +233,41 @@ const AgentChat: FC<AgentChatProps> = ({
                     <ChatEmptyState isError={isError} />
                 ) : (
                     <div className='space-y-3 p-4'>
-                        {messages.map((msg) => (
-                            <ChatBubble key={msg.id} message={msg} />
+                        {messages.map((msg, idx) => (
+                            <div key={msg.id}>
+                                {(idx === 0 ||
+                                    isDifferentDay(messages[idx - 1], msg)) &&
+                                    msg.timestamp && (
+                                        <ChatDateSeparator
+                                            date={msg.timestamp}
+                                        />
+                                    )}
+                                <ChatBubble message={msg} />
+                            </div>
                         ))}
                     </div>
                 )}
             </div>
 
+            {showScrollButton && messages.length > 0 && (
+                <div className='flex justify-center pb-0.5'>
+                    <button
+                        onClick={scrollToBottom}
+                        className='absolute bottom-[4.25rem] z-10 flex items-center gap-1.5 rounded-full border border-white/10 bg-[#0a0a0f] px-3 py-1.5 text-xs text-gray-400 shadow-lg transition-colors hover:border-white/20 hover:text-white'
+                    >
+                        <ArrowDown className='h-3 w-3' weight='bold' />
+                        {t('playground.chatScrollToBottom')}
+                    </button>
+                </div>
+            )}
+
             <ChatInput
+                ref={chatInputRef}
                 isConnected={isConnected}
                 isStreaming={isStreaming}
                 onSend={handleSend}
                 onAbort={abortResponse}
+                allowAttach
             />
         </div>
     )

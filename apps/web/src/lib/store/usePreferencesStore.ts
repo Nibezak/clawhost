@@ -6,8 +6,6 @@ import { persist } from 'zustand/middleware'
 const usePreferencesStore = create<PreferencesState>()(
     persist(
         (set) => ({
-            instancesViewMode: 'playground',
-            setInstancesViewMode: (mode) => set({ instancesViewMode: mode }),
             adminMode: false,
             setAdminMode: (mode) => set({ adminMode: mode })
         }),

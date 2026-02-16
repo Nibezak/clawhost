@@ -6,12 +6,15 @@ import { Link } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import PageTitle from '@/components/PageTitle'
-import Header from '@/components/Header'
-import LandingFooter from '@/components/LandingFooter'
-import HeroButtons from '@/components/HeroButtons'
+import { Button, Badge } from '@/components/ui'
+import {
+    PageTitle,
+    Header,
+    LandingFooter,
+    HeroButtons,
+    ProviderIcon,
+    PlansSkeleton
+} from '@/components'
 import { demoPlaygroundData } from '@/data'
 import {
     PlaygroundCanvas,
@@ -19,10 +22,9 @@ import {
     PlaygroundAgentDetailPanel
 } from '@/components/playground'
 import { useAuth } from '@/lib/auth'
-import ROUTES from '@/lib/routes'
+import { ROUTES } from '@/lib'
 import { usePlans } from '@/hooks'
-import ProviderIcon from '@/components/ProviderIcon'
-import getBaseDomain from '@/lib/getBaseDomain'
+import { getBaseDomain } from '@/lib'
 import {
     ShieldCheck,
     Globe,
@@ -32,7 +34,6 @@ import {
     Gauge,
     HardDrives,
     Check,
-    CircleNotch,
     Sparkle,
     CaretDown,
     Quotes,
@@ -693,9 +694,7 @@ const Landing: FC = (): ReactNode => {
                     </div>
 
                     {plansLoading ? (
-                        <div className='flex items-center justify-center py-12'>
-                            <CircleNotch className='h-8 w-8 animate-spin text-gray-400' />
-                        </div>
+                        <PlansSkeleton />
                     ) : plans && plans.length > 0 ? (
                         <>
                             <div className='overflow-x-auto'>

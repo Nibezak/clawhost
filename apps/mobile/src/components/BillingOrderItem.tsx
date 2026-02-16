@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 import { DownloadSimple } from 'phosphor-react-native'
 import { t } from '@openclaw/i18n'
-import COLORS from '@/lib/theme/colors'
+import { COLORS } from '@/lib/theme'
 
 const BillingOrderItem: FC<BillingOrderItemProps> = ({
     order,

@@ -19,7 +19,7 @@ import type {
     RegionMeta
 } from '@/ts/Interfaces'
 
-import { RequestClient } from '@openclaw/shared'
+import { RequestClient, clawStatus } from '@openclaw/shared'
 
 function getClient() {
     const token = process.env.DIGITALOCEAN_API_TOKEN
@@ -43,10 +43,10 @@ function getPublicIp(droplet: DigitalOceanDropletResponse['droplet']): string {
 
 function mapStatus(doStatus: string): string {
     const statusMap: Record<string, string> = {
-        new: 'initializing',
-        active: 'running',
-        off: 'off',
-        archive: 'stopped'
+        new: clawStatus.initializing,
+        active: clawStatus.running,
+        off: clawStatus.off,
+        archive: clawStatus.stopped
     }
     return statusMap[doStatus] || doStatus
 }

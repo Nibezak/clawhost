@@ -18,6 +18,7 @@ export {
     useClawFile,
     useUpdateClawFile,
     useReinstallClaw,
+    useClawVersion,
     CLAWS_QUERY_KEY
 } from '@/hooks/useClaws'
 

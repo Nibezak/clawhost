@@ -1,7 +1,7 @@
-import type { GatewayConnectionState, GatewayEventHandler } from '@/ts/Types'
+import type { GatewayConnectionState, GatewayEventHandler, GatewayStateListener } from '@/ts/Types'
 import type { GatewayPendingRequest } from '@/ts/Interfaces'
 
-import getBaseDomain from '@/lib/getBaseDomain'
+import { getBaseDomain } from '@/lib'
 
 const REQUEST_TIMEOUT = 15000
 const MAX_RECONNECT_DELAY = 30000
@@ -14,8 +14,7 @@ class GatewayClient {
     private pending = new Map<string, GatewayPendingRequest>()
     private listeners = new Map<string, Set<GatewayEventHandler>>()
     private _state: GatewayConnectionState = 'disconnected'
-    private onStateChange: ((state: GatewayConnectionState) => void) | null =
-        null
+    private stateListeners = new Set<GatewayStateListener>()
     private reconnectAttempts = 0
     private reconnectTimer: ReturnType<typeof setTimeout> | null = null
     private intentionalClose = false
@@ -23,11 +22,13 @@ class GatewayClient {
     constructor(
         subdomain: string,
         token: string,
-        onStateChange?: (state: GatewayConnectionState) => void
+        onStateChange?: GatewayStateListener
     ) {
         this.subdomain = subdomain
         this.token = token
-        this.onStateChange = onStateChange || null
+        if (onStateChange) {
+            this.stateListeners.add(onStateChange)
+        }
     }
 
     get state(): GatewayConnectionState {
@@ -36,7 +37,15 @@ class GatewayClient {
 
     private setState(state: GatewayConnectionState): void {
         this._state = state
-        this.onStateChange?.(state)
+        this.stateListeners.forEach((handler) => handler(state))
+    }
+
+    addStateListener(handler: GatewayStateListener): void {
+        this.stateListeners.add(handler)
+    }
+
+    removeStateListener(handler: GatewayStateListener): void {
+        this.stateListeners.delete(handler)
     }
 
     connect(): void {
@@ -65,13 +74,16 @@ class GatewayClient {
                     unknown
                 >
                 this.handleFrame(frame)
-            } catch {
-                /* malformed frame */
-            }
+            } catch {}
         }
 
         this.ws.onclose = () => {
             this.ws = null
+            this.pending.forEach((req) => {
+                clearTimeout(req.timer)
+                req.reject(new Error('Connection closed'))
+            })
+            this.pending.clear()
             if (!this.intentionalClose) {
                 this.setState('disconnected')
                 this.scheduleReconnect()
@@ -146,7 +158,7 @@ class GatewayClient {
                 instanceId: crypto.randomUUID()
             },
             role: 'operator',
-            scopes: ['operator.admin'],
+            scopes: ['operator.admin', 'operator.read', 'operator.write'],
             auth: { token: this.token }
         }
 
@@ -220,6 +232,7 @@ class GatewayClient {
         })
         this.pending.clear()
         this.listeners.clear()
+        this.stateListeners.clear()
 
         if (this.ws) {
             this.ws.onclose = null

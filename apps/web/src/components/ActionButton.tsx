@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from 'react'
 import type { ActionButtonProps } from '@/ts/Interfaces'
 
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui'
 
 const ActionButton: FC<ActionButtonProps> = ({
     onClick,

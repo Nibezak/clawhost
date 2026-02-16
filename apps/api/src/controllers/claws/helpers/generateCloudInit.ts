@@ -1,3 +1,5 @@
+import OPENCLAW_VERSION from '@/controllers/claws/helpers/openclawVersion'
+
 function getProviderEnvVar(model: string): string | null {
     if (model.startsWith('anthropic/')) return 'ANTHROPIC_API_KEY'
     if (model.startsWith('openai/')) return 'OPENAI_API_KEY'
@@ -89,7 +91,7 @@ runcmd:
   - apt-get update -o Dir::Etc::sourcelist="sources.list.d/nodesource.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
   - apt-get install -y nodejs
 
-  - npm install -g openclaw@latest
+  - npm install -g openclaw@${OPENCLAW_VERSION}
 
   - useradd -r -m -d /home/openclaw -s /bin/bash openclaw
   - echo 'openclaw ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/openclaw

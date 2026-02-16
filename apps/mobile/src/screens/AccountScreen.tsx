@@ -17,7 +17,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Calendar, Key, ArrowSquareOut } from 'phosphor-react-native'
 import { t } from '@openclaw/i18n'
-import { useAuth } from '@/lib/auth/AuthProvider'
+import { useAuth } from '@/lib/auth'
 import api from '@/lib/api'
 import {
     useProfile,
@@ -26,10 +26,12 @@ import {
     useBillingHistory
 } from '@/hooks'
 import { COLORS, SPACING, TYPOGRAPHY } from '@/lib/theme'
-import ClawMascot from '@/components/ClawMascot'
-import GridBackground from '@/components/GridBackground'
-import BillingOrderItem from '@/components/BillingOrderItem'
-import BillingSkeleton from '@/components/BillingSkeleton'
+import {
+    ClawMascot,
+    GridBackground,
+    BillingOrderItem,
+    BillingSkeleton
+} from '@/components'
 
 const BILLING_PAGE_SIZE = 10
 

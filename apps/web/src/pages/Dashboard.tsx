@@ -1,13 +1,13 @@
 import type { FC, ReactNode } from 'react'
-import type { AwaitingPurchaseData, Claw } from '@/ts/Interfaces'
+import type { Claw } from '@/ts/Interfaces'
 import type { ProviderType } from '@/ts/Types'
 
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
-import ROUTES from '@/lib/routes'
+import { ROUTES } from '@/lib'
 import {
     useClaws,
     useAdminClaws,
@@ -17,13 +17,15 @@ import {
     useVolumePricing,
     usePlanAvailability
 } from '@/hooks'
-import { useAllClawAgents, usePlaygroundGraph } from '@/hooks/usePlayground'
-import EmptyState from '@/components/EmptyState'
-import ErrorState from '@/components/ErrorState'
-import PageTitle from '@/components/PageTitle'
-import ActionButton from '@/components/ActionButton'
-import ClawMascot from '@/components/ClawMascot'
-import Logo from '@/components/Logo'
+import { useAllClawAgents, usePlaygroundGraph } from '@/hooks'
+import {
+    EmptyState,
+    ErrorState,
+    PageTitle,
+    ActionButton,
+    ClawMascot,
+    Logo
+} from '@/components'
 import { Lightning } from '@phosphor-icons/react'
 import { CreateClawModal } from '@/components/dashboard'
 import {
@@ -34,7 +36,7 @@ import {
 } from '@/components/playground'
 import { useAuth } from '@/lib/auth'
 import { useProfile } from '@/hooks'
-import UserDropdown from '@/components/UserDropdown'
+import { UserDropdown } from '@/components'
 
 const Dashboard: FC = (): ReactNode => {
     const navigate = useNavigate()
@@ -103,8 +105,6 @@ const Dashboard: FC = (): ReactNode => {
         }
     }, [searchParams, setSearchParams])
 
-    const initialClawCount = useRef<number | null>(null)
-
     const {
         data: claws,
         isLoading: isClawsLoading,
@@ -119,65 +119,15 @@ const Dashboard: FC = (): ReactNode => {
     } = useAdminClaws(adminMode)
 
     useEffect(() => {
-        if (!awaitingClaw) return
-        if (claws && initialClawCount.current === null) {
-            initialClawCount.current = claws.length
-        }
-        if (
-            claws &&
-            initialClawCount.current !== null &&
-            claws.length > initialClawCount.current
-        ) {
+        if (awaitingClaw && !isClawsLoading) {
             setAwaitingClaw(false)
-            initialClawCount.current = null
-            localStorage.removeItem('openclaw_awaiting_purchase')
         }
-    }, [awaitingClaw, claws])
-
-    useEffect(() => {
-        if (!awaitingClaw) return
-        const timeout = setTimeout(() => {
-            setAwaitingClaw(false)
-            initialClawCount.current = null
-            localStorage.removeItem('openclaw_awaiting_purchase')
-        }, 60000)
-        return () => clearTimeout(timeout)
-    }, [awaitingClaw])
+    }, [awaitingClaw, isClawsLoading])
 
     const displayedClaws = useMemo((): Claw[] => {
         if (adminMode) return adminClaws || []
-        const real = claws || []
-        if (!awaitingClaw) return real
-
-        try {
-            const raw = localStorage.getItem('openclaw_awaiting_purchase')
-            if (!raw) return real
-            const purchase = JSON.parse(raw) as AwaitingPurchaseData
-            const optimistic: Claw = {
-                id: 'awaiting-purchase',
-                name: purchase.name || '',
-                provider: purchase.provider,
-                status: 'creating',
-                ip: null,
-                planId: purchase.planId,
-                location: purchase.location,
-                rootPassword: null,
-                sshKeyId: null,
-                providerServerId: null,
-                subdomain: null,
-                gatewayToken: null,
-                model: null,
-                subscriptionStatus: null,
-                currentPeriodStart: null,
-                currentPeriodEnd: null,
-                deletionScheduledAt: null,
-                createdAt: new Date().toISOString()
-            }
-            return [optimistic, ...real]
-        } catch {
-            return real
-        }
-    }, [claws, awaitingClaw, adminMode, adminClaws])
+        return claws || []
+    }, [claws, adminMode, adminClaws])
 
     const { plans: hetznerPlans } = usePlans('hetzner')
     const { plans: digitaloceanPlans } = usePlans('digitalocean')
@@ -191,7 +141,9 @@ const Dashboard: FC = (): ReactNode => {
     const activeIsError = adminMode ? isAdminClawsError : isError
     const activeRefetch = adminMode ? refetchAdmin : refetch
     const isLoading =
-        authLoading || activeClawsLoading || isModeSwitching || !minLoadingMet
+        authLoading ||
+        isModeSwitching ||
+        (!awaitingClaw && (activeClawsLoading || !minLoadingMet))
 
     useEffect(() => {
         if (isModeSwitching && !activeClawsLoading) {
@@ -200,7 +152,7 @@ const Dashboard: FC = (): ReactNode => {
         }
     }, [isModeSwitching, activeClawsLoading])
 
-    const graphClaws = adminMode ? adminClaws || [] : claws || []
+    const graphClaws = displayedClaws
     const agentQueries = useAllClawAgents(graphClaws)
     const { nodes, edges } = usePlaygroundGraph(graphClaws, agentQueries)
 
@@ -404,7 +356,7 @@ const Dashboard: FC = (): ReactNode => {
                         )}
                 </div>
 
-                <AnimatePresence>
+                <AnimatePresence mode='wait'>
                     {selectedClaw && (
                         <PlaygroundDetailPanel
                             key='detail-panel'

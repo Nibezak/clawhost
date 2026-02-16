@@ -1,6 +1,7 @@
 import type { AuthenticatedContext, ProviderType } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
+import { clawStatus } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { getProvider } from '@/services/provider'
@@ -25,20 +26,20 @@ const syncClaw = async (c: AuthenticatedContext) => {
         const provider = getProvider(claw.provider as ProviderType)
         const serverStatus = await provider.getServer(claw.providerServerId)
 
-        if (claw.status === 'configuring') {
-            if (serverStatus.status === 'running' && claw.subdomain) {
+        if (claw.status === clawStatus.configuring) {
+            if (serverStatus.status === clawStatus.running && claw.subdomain) {
                 const ready = await checkSubdomainReady(claw.subdomain)
                 if (ready) {
                     await db
                         .update(claws)
-                        .set({ status: 'running', ip: serverStatus.ip })
+                        .set({ status: clawStatus.running, ip: serverStatus.ip })
                         .where(eq(claws.id, id))
 
                     return ok(
                         c,
                         sanitizeClaw({
                             ...claw,
-                            status: 'running',
+                            status: clawStatus.running,
                             ip: serverStatus.ip
                         }),
                         t('api.clawSynced')

@@ -202,7 +202,7 @@ function create(data: CreateUserParams): void {} // USE THIS
 - Polar Types: `CheckoutSession`, `PolarSubscription`, `PolarOrder`, `PolarCustomer`, etc.
 - Webhook Types: `WebhookEvent`, `WebhookHandlers`, `CheckoutWebhookData`, etc.
 - Controller Types: `ProvisionClawParams`, `ClawCleanupData`, etc.
-- Email Props: `MagicLinkEmailProps`, `OtpCodeEmailProps`
+- Email Props: `OtpCodeEmailProps`
 
 ### React Component Function Pattern
 
@@ -647,3 +647,4 @@ pnpm check           # Run tsc + eslint for both api and web
 16. **Strict formatting compliance** - Every line of code must follow the Prettier and ESLint rules defined above. 4-space indentation, single quotes, no semicolons, no trailing commas, no end-of-file newlines. No exceptions
 17. **Run checks after changes** - After writing or modifying code, verify with `pnpm lint` and `pnpm format:check` to ensure compliance
 18. **Use camelCase for SVG attributes in JSX** - React requires camelCase for SVG/HTML attributes. Use `stopColor` not `stop-color`, `stopOpacity` not `stop-opacity`, `fillRule` not `fill-rule`, `clipPath` not `clip-path`, `strokeWidth` not `stroke-width`, etc.
+19. **Full cleanup on feature removal** - When removing a feature, delete ALL related code: components, hooks, store properties, interfaces/types, translation keys, utility functions, data files, barrel exports, API routes/controllers, and constants. Never leave orphaned code behind
