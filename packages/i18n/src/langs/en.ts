@@ -795,29 +795,29 @@ export const en = {
         upcomingReleaseFeature2:
             'Desktop app for a seamless local experience on macOS, Windows, and Linux',
         release7Date: 'February 16, 2026',
-        release7Title: 'Channels, Skills & Agent Chat',
+        release7Title: 'Chat Refactoring & Voice Input',
         release7Description:
-            'Full control over your OpenClaw channels, skills, and agents. Manage and chat with everything directly from the dashboard.',
-        release7Feature1:
-            'Manage channels directly, add, remove, and configure channels without touching the server',
-        release7Feature2:
-            'Manage skills directly, install, update, and organize agent skills from the dashboard',
-        release7Feature3:
-            'Chat with your agents from the playground, interact with any agent in real time',
-        release7Feature4:
-            'Sign in with Google or GitHub, fast, secure authentication without email codes',
-        release6Date: 'February 15, 2026',
-        release6Title: 'Chat Refactoring & Voice Input',
-        release6Description:
             'Major chat and playground improvements with voice interaction, ClawHub skills marketplace, and file attachments for agents.',
-        release6Feature1:
+        release7Feature1:
             'Chat and playground refactoring for a smoother, more responsive experience',
-        release6Feature2:
+        release7Feature2:
             'Voice interaction with chats, record and transcribe speech directly in the browser',
-        release6Feature3:
+        release7Feature3:
             'ClawHub skills integration with 5,000+ skills available to install and manage',
-        release6Feature4:
+        release7Feature4:
             'Attachments view and usage for agents, send images and documents in chat',
+        release6Date: 'February 16, 2026',
+        release6Title: 'Channels, Skills & Agent Chat',
+        release6Description:
+            'Full control over your OpenClaw channels, skills, and agents. Manage and chat with everything directly from the dashboard.',
+        release6Feature1:
+            'Manage channels directly, add, remove, and configure channels without touching the server',
+        release6Feature2:
+            'Manage skills directly, install, update, and organize agent skills from the dashboard',
+        release6Feature3:
+            'Chat with your agents from the playground, interact with any agent in real time',
+        release6Feature4:
+            'Sign in with Google or GitHub, fast, secure authentication without email codes',
         release1Date: 'February 8, 2026',
         release1Title: 'Initial Release',
         release1Description:
