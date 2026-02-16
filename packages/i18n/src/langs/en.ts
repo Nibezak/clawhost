@@ -775,16 +775,24 @@ export const en = {
             'Track updates, new features, and improvements to ClawHost.',
         subtitle: 'All updates, new features, and improvements to ClawHost.',
         upcomingRelease: 'Upcoming',
-        upcomingReleaseTitle: 'Channels, Skills & Agent Chat',
+        upcomingReleaseTitle: 'Mobile, Desktop & Self-Hosting',
         upcomingReleaseDescription:
-            'Full control over your OpenClaw channels, skills, and agents. Manage and chat with everything directly from the dashboard.',
+            'Manage your OpenClaw instances from anywhere. Native mobile and desktop apps, plus one-click self-hosting.',
         upcomingReleaseFeature1:
-            'Manage channels directly, add, remove, and configure channels without touching the server',
+            'Native mobile app to monitor and manage your OpenClaw instances on the go',
         upcomingReleaseFeature2:
+            'Desktop app for a seamless local experience on macOS, Windows, and Linux',
+        release6Date: 'February 16, 2026',
+        release6Title: 'Channels, Skills & Agent Chat',
+        release6Description:
+            'Full control over your OpenClaw channels, skills, and agents. Manage and chat with everything directly from the dashboard.',
+        release6Feature1:
+            'Manage channels directly, add, remove, and configure channels without touching the server',
+        release6Feature2:
             'Manage skills directly, install, update, and organize agent skills from the dashboard',
-        upcomingReleaseFeature3:
+        release6Feature3:
             'Chat with your agents from the playground, interact with any agent in real time',
-        upcomingReleaseFeature4:
+        release6Feature4:
             'Sign in with Google or GitHub, fast, secure authentication without email codes',
         release1Date: 'February 8, 2026',
         release1Title: 'Initial Release',
