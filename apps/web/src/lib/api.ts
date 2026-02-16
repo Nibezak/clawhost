@@ -29,6 +29,12 @@ import type {
     UpdateAgentConfigData,
     UpdateAgentSkillsData,
     UpdateClawChannelsData,
+    SearchClawHubData,
+    ClawHubSkillActionData,
+    ClawHubUpdateData,
+    ClawHubSearchResponse,
+    ClawHubInstalledResponse,
+    ClawHubUpdatesResponse,
     UpdateClawEnvVarsData,
     UpdateClawFileData,
     UpdateClawSkillsData,
@@ -145,6 +151,24 @@ const api = {
         ),
     updateAgentSkills: (clawId: string, agentId: string, data: UpdateAgentSkillsData) =>
         client.put<void>(`/claws/${clawId}/agents/${agentId}/skills`, data),
+    searchClawHubSkills: (clawId: string, data: SearchClawHubData) =>
+        client.post<ClawHubSearchResponse>(`/claws/${clawId}/clawhub/search`, data),
+    getClawHubInstalled: (clawId: string, agentId?: string) =>
+        client.post<ClawHubInstalledResponse>(
+            `/claws/${clawId}/clawhub/installed`,
+            agentId ? { agentId } : {}
+        ),
+    installClawHubSkill: (clawId: string, data: ClawHubSkillActionData) =>
+        client.post<void>(`/claws/${clawId}/clawhub/install`, data),
+    removeClawHubSkill: (clawId: string, data: ClawHubSkillActionData) =>
+        client.post<void>(`/claws/${clawId}/clawhub/remove`, data),
+    updateClawHubSkill: (clawId: string, data: ClawHubUpdateData) =>
+        client.post<void>(`/claws/${clawId}/clawhub/update`, data),
+    checkClawHubUpdates: (clawId: string, agentId?: string) =>
+        client.post<ClawHubUpdatesResponse>(
+            `/claws/${clawId}/clawhub/updates`,
+            agentId ? { agentId } : {}
+        ),
     getClawEnvVars: (id: string) =>
         client.get<ClawEnvVarsResponse>(`/claws/${id}/env`),
     updateClawEnvVars: (id: string, data: UpdateClawEnvVarsData) =>

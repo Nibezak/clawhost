@@ -839,3 +839,56 @@ export interface UpdateAgentSkillsBody {
     action: 'install' | 'remove'
     skillName: string
 }
+
+export interface ClawHubSearchResult {
+    slug: string
+    name: string
+    description: string
+    author: string
+    version: string
+    downloads: number
+    tags: string[]
+}
+
+export interface ClawHubInstalledSkill {
+    slug: string
+    name: string
+    version: string
+    hasUpdate: boolean
+    latestVersion?: string
+}
+
+export interface SearchClawHubSkillsBody {
+    query?: string
+    limit?: number
+    page?: number
+    agentId?: string
+}
+
+export interface ClawHubInstallBody {
+    slug: string
+    agentId?: string
+}
+
+export interface ClawHubRemoveBody {
+    slug: string
+    agentId?: string
+}
+
+export interface ClawHubUpdateBody {
+    slug?: string
+    all?: boolean
+    agentId?: string
+}
+
+export interface ClawHubSearchResponse {
+    skills: ClawHubSearchResult[]
+}
+
+export interface ClawHubInstalledResponse {
+    skills: ClawHubInstalledSkill[]
+}
+
+export interface ClawHubUpdatesResponse {
+    updates: ClawHubInstalledSkill[]
+}

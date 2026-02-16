@@ -11,6 +11,7 @@ export type {
     PlaygroundNodeType,
     SSHKeyModalMode,
     ToastType,
+    SkillsViewTab,
     UserRole
 } from '@/ts/Types'
 
@@ -83,5 +84,14 @@ export type {
     ChatStatusBarProps,
     GatewayPendingRequest,
     UseAgentChatParams,
-    UseAgentChatReturn
+    UseAgentChatReturn,
+    ClawHubSearchResult,
+    ClawHubInstalledSkill,
+    ClawHubSearchResponse,
+    ClawHubInstalledResponse,
+    ClawHubUpdatesResponse,
+    SearchClawHubData,
+    ClawHubSkillActionData,
+    ClawHubUpdateData,
+    PlaygroundClawHubContentProps
 } from '@/ts/Interfaces'

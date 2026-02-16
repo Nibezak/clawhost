@@ -35,7 +35,13 @@ import {
     updateClawSkills,
     getAgentSkills,
     updateAgentSkills,
-    getClawVersion
+    getClawVersion,
+    searchClawHubSkills,
+    getClawHubInstalled,
+    installClawHubSkill,
+    removeClawHubSkill,
+    updateClawHubSkill,
+    checkClawHubUpdates
 } from '@/controllers/claws'
 import adminOnly from '@/middleware/adminOnly'
 
@@ -74,6 +80,12 @@ app.post('/:id/files', listClawFiles)
 app.post('/:id/files/read', readClawFile)
 app.put('/:id/files', updateClawFile)
 app.post('/:id/version', getClawVersion)
+app.post('/:id/clawhub/search', searchClawHubSkills)
+app.post('/:id/clawhub/installed', getClawHubInstalled)
+app.post('/:id/clawhub/install', installClawHubSkill)
+app.post('/:id/clawhub/remove', removeClawHubSkill)
+app.post('/:id/clawhub/update', updateClawHubSkill)
+app.post('/:id/clawhub/updates', checkClawHubUpdates)
 app.delete('/:id', deleteClaw)
 
 export default app

@@ -51,3 +51,5 @@ export type Route =
     | '/changelog'
     | '/posts'
     | '/posts/:slug'
+
+export type SkillsViewTab = 'bundled' | 'clawhub'

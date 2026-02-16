@@ -239,7 +239,19 @@ export const en = {
         agentSkillsFetchFailed: 'Could not fetch agent skills.',
         invalidSkillName:
             'Skill name must only contain letters, numbers, dashes, and underscores.',
-        skillNotFound: 'Skill not found.'
+        skillNotFound: 'Skill not found.',
+        clawHubSearchSuccess: 'ClawHub search completed.',
+        clawHubSearchFailed: 'Could not search ClawHub.',
+        clawHubFetched: 'ClawHub skills fetched.',
+        clawHubFetchFailed: 'Could not fetch ClawHub skills.',
+        clawHubInstalled: 'Skill installed from ClawHub.',
+        clawHubInstallFailed: 'Could not install skill from ClawHub.',
+        clawHubRemoved: 'ClawHub skill removed.',
+        clawHubRemoveFailed: 'Could not remove ClawHub skill.',
+        clawHubUpdated: 'Skill updated.',
+        clawHubUpdateFailed: 'Could not update ClawHub skill.',
+        clawHubUpdatesFetched: 'Update check completed.',
+        clawHubUpdatesFailed: 'Could not check for updates.'
     },
     emails: {
         otpSubject: 'Your ClawHost sign-in code',
@@ -782,6 +794,18 @@ export const en = {
             'Native mobile app to monitor and manage your OpenClaw instances on the go',
         upcomingReleaseFeature2:
             'Desktop app for a seamless local experience on macOS, Windows, and Linux',
+        release7Date: 'February 16, 2026',
+        release7Title: 'Chat Refactoring & Voice Input',
+        release7Description:
+            'Major chat and playground improvements with voice interaction, ClawHub skills marketplace, and file attachments for agents.',
+        release7Feature1:
+            'Chat and playground refactoring for a smoother, more responsive experience',
+        release7Feature2:
+            'Voice interaction with chats, record and transcribe speech directly in the browser',
+        release7Feature3:
+            'ClawHub skills integration with 5,000+ skills available to install and manage',
+        release7Feature4:
+            'Attachments view and usage for agents, send images and documents in chat',
         release6Date: 'February 16, 2026',
         release6Title: 'Channels, Skills & Agent Chat',
         release6Description:
@@ -992,6 +1016,9 @@ export const en = {
         chatAttachFile: 'Attach file',
         chatDropFiles: 'Drop files to attach',
         chatDropFilesDescription: 'Images, PDFs, and text files up to 5 MB.',
+        chatVoiceInput: 'Voice input',
+        chatVoiceListening: 'Listening...',
+        chatVoiceNotSupported: 'Voice input is not supported in this browser.',
         chatAttachmentNotSupported:
             'This file type is not supported. Use images, PDFs, or text files.',
         chatNoPreview: 'No preview available.',
@@ -1062,7 +1089,30 @@ export const en = {
         agentSkillsNamePlaceholder: 'Skill name',
         agentSkillsConfirmRemove: 'Remove skill "{{skillName}}"?',
         agentSkillsConfirmRemoveDescription:
-            'This will delete the skill from the agent workspace.'
+            'This will delete the skill from the agent workspace.',
+        skillsBundledTab: 'Bundled',
+        skillsClawHubTab: 'ClawHub',
+        clawHubSearch: 'Search ClawHub skills...',
+        clawHubNoResults: 'No skills found on ClawHub.',
+        clawHubEmpty: 'No ClawHub skills installed.',
+        clawHubEmptyDescription:
+            'Search and install skills from the ClawHub marketplace.',
+        clawHubInstall: 'Install',
+        clawHubInstalled: 'Skill installed from ClawHub.',
+        clawHubInstallFailed: 'Failed to install skill from ClawHub.',
+        clawHubRemove: 'Remove',
+        clawHubRemoved: 'ClawHub skill removed.',
+        clawHubRemoveFailed: 'Failed to remove ClawHub skill.',
+        clawHubUpdate: 'Update',
+        clawHubUpdated: 'Skill updated from ClawHub.',
+        clawHubUpdateFailed: 'Failed to update ClawHub skill.',
+        clawHubUpdateAvailable: 'v{{version}} available',
+        clawHubBy: 'by {{author}}',
+        clawHubDownloads: '{{count}} downloads',
+        clawHubVersion: 'v{{version}}',
+        clawHubLoadFailed: 'Failed to load ClawHub.',
+        clawHubLoadFailedDescription:
+            'Could not connect to ClawHub marketplace. Please try again.'
     },
     privacy: {
         title: 'Privacy Policy',
