@@ -122,7 +122,9 @@ const vultrCustomPrices: Record<string, number> = {
 
 const MIN_MEMORY_GB = 4
 
-const providerLimits: Partial<Record<ProviderType, number>> = {}
+const providerLimits: Partial<Record<ProviderType, number>> = {
+    hetzner: 10
+}
 
 const planConfigs: Record<ProviderType, PlanConfig> = {
     hetzner: { order: hetznerPlanOrder, prices: hetznerCustomPrices },
