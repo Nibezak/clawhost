@@ -12,6 +12,7 @@ import ChatSidebarClawHeader from '@/components/chat/ChatSidebarClawHeader'
 const ChatSidebar: FC<ChatSidebarProps> = ({
     clawsWithAgents,
     selectedAgent,
+    selectedClawId,
     onAgentSelect,
     onConfigureAgent,
     onCreateAgent,
@@ -43,6 +44,7 @@ const ChatSidebar: FC<ChatSidebarProps> = ({
                             <ChatSidebarClawHeader
                                 claw={claw}
                                 isReachable={isReachable}
+                                isSelected={selectedClawId === claw.id && !selectedAgent}
                                 statusConfig={status}
                                 onOpenClawSettings={onOpenClawSettings}
                                 onCreateAgent={onCreateAgent}

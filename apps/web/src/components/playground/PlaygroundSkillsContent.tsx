@@ -476,21 +476,9 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                                             {isPending ? (
                                                 <CircleNotch className='h-3 w-3 animate-spin' />
                                             ) : active ? (
-                                                isAgentMode ? (
-                                                    t(
-                                                        'playground.agentSkillsRemove'
-                                                    )
-                                                ) : (
-                                                    t(
-                                                        'playground.skillsDisable'
-                                                    )
-                                                )
-                                            ) : isAgentMode ? (
-                                                t(
-                                                    'playground.agentSkillsInstall'
-                                                )
+                                                t('playground.clawHubRemove')
                                             ) : (
-                                                t('playground.skillsEnable')
+                                                t('playground.clawHubInstall')
                                             )}
                                         </button>
                                     </div>
@@ -598,7 +586,7 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                             })}
 
                         {isBrowseError && (
-                            <div className='flex items-center justify-center py-8'>
+                            <div className='flex flex-1 items-center justify-center'>
                                 <PanelPlaceholder
                                     icon={
                                         <Storefront

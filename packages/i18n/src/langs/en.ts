@@ -288,7 +288,11 @@ export const en = {
         invalidCode: 'Invalid code',
         or: 'or',
         continueWithGoogle: 'Continue with Google',
-        continueWithGithub: 'Continue with GitHub'
+        continueWithGithub: 'Continue with GitHub',
+        agreementNotice: 'By continuing, you agree to our',
+        termsOfService: 'Terms of Service',
+        andWord: 'and',
+        privacyPolicy: 'Privacy Policy'
     },
     account: {
         title: 'Account',
@@ -1098,8 +1102,6 @@ export const en = {
         skillsNoResults: 'No skills match your search.',
         skillsEmpty: 'No bundled skills found on this instance.',
         skillsSave: 'Save Skills',
-        skillsEnable: 'Enable',
-        skillsDisable: 'Disable',
         skillsSaved: 'Skills updated successfully.',
         skillsSaveFailed: 'Failed to update skills.',
         skillsLoading: 'Loading skills...',
@@ -1107,11 +1109,9 @@ export const en = {
         skillsLoadFailedDescription:
             'Could not retrieve skills configuration. Please try again.',
         agentSkillsDescription: 'Skills installed in this agent workspace.',
-        agentSkillsInstall: 'Install',
         agentSkillsInstalling: 'Installing...',
         agentSkillsInstalled: 'Skill installed successfully.',
         agentSkillsInstallFailed: 'Failed to install skill.',
-        agentSkillsRemove: 'Remove',
         agentSkillsRemoving: 'Removing...',
         agentSkillsRemoved: 'Skill removed successfully.',
         agentSkillsRemoveFailed: 'Failed to remove skill.',
@@ -1150,11 +1150,14 @@ export const en = {
         title: 'Privacy Policy',
         description:
             'Learn how ClawHost collects, uses, and protects your personal data.',
-        lastUpdated: 'Last updated: February 7, 2026',
+        lastUpdated: 'Last updated: February 17, 2026',
         introTitle: '1. Introduction',
         introText:
             'ClawHost ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our Service.',
-        collectTitle: '2. Information We Collect',
+        authTitle: '2. Authentication',
+        authText:
+            'ClawHost uses Google Firebase Authentication to manage user accounts. You may sign in with email, Google, or GitHub. By using these sign-in methods, you agree to their respective terms and privacy policies. These providers may collect basic data such as your email address, name, and device information. We only store your email address and display name.',
+        collectTitle: '3. Information We Collect',
         collectText: 'We collect information in the following ways:',
         personalInfoTitle: 'Personal Information',
         personalInfoEmail:
@@ -1167,7 +1170,7 @@ export const en = {
             'Server configuration and status (hosted on Hetzner Cloud)',
         serverInfoIp: 'Server IP address and location',
         serverInfoResources: 'Resource allocation (CPU, RAM, storage)',
-        useTitle: '3. How We Use Your Information',
+        useTitle: '4. How We Use Your Information',
         useText: 'We use the collected information to:',
         useProvide: 'Provide and maintain our Service',
         useTransactions: 'Process transactions and send billing information',
@@ -1175,7 +1178,7 @@ export const en = {
         useSupport: 'Respond to customer support requests',
         useAnalyze: 'Monitor and analyze usage patterns to improve our Service',
         useFraud: 'Detect and prevent fraud or abuse',
-        sharingTitle: '4. Data Sharing and Disclosure',
+        sharingTitle: '5. Data Sharing and Disclosure',
         sharingText:
             'We do not sell your personal information. We may share information with:',
         sharingProviders:
@@ -1184,13 +1187,13 @@ export const en = {
             'Legal authorities when required by law or to protect our rights',
         sharingBusiness:
             'Business partners in case of merger, acquisition, or sale of assets',
-        securityTitle: '5. Data Security',
+        securityTitle: '6. Data Security',
         securityText:
             'We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. This includes encryption, secure servers, and regular security assessments.',
-        retentionTitle: '6. Data Retention',
+        retentionTitle: '7. Data Retention',
         retentionText:
             'We retain your personal information for as long as your account is active or as needed to provide you services. We may retain certain information as required by law or for legitimate business purposes.',
-        rightsTitle: '7. Your Rights',
+        rightsTitle: '8. Your Rights',
         rightsText: 'Depending on your location, you may have the right to:',
         rightsAccess: 'Access your personal data',
         rightsCorrect: 'Correct inaccurate data',
@@ -1198,19 +1201,19 @@ export const en = {
         rightsObject: 'Object to processing of your data',
         rightsPortability: 'Data portability',
         rightsWithdraw: 'Withdraw consent at any time',
-        cookiesTitle: '8. Cookies and Tracking',
+        cookiesTitle: '9. Cookies and Tracking',
         cookiesText:
             'We do not use cookies. Authentication is handled through Firebase and does not rely on cookies stored in your browser.',
-        transfersTitle: '9. International Data Transfers',
+        transfersTitle: '10. International Data Transfers',
         transfersText:
             'Your information may be transferred to and processed in countries other than your own. We ensure appropriate safeguards are in place to protect your data in accordance with this Privacy Policy.',
-        eligibilityTitle: '10. Eligibility',
+        eligibilityTitle: '11. Eligibility',
         eligibilityText:
             'Our Service is available to anyone. There are no age restrictions for using ClawHost.',
-        changesTitle: '11. Changes to This Policy',
+        changesTitle: '12. Changes to This Policy',
         changesText:
             'We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last updated" date.',
-        contactTitle: '12. Contact Us',
+        contactTitle: '13. Contact Us',
         contactText:
             'If you have questions about this Privacy Policy or wish to exercise your rights, please contact us at'
     },
@@ -1218,14 +1221,17 @@ export const en = {
         title: 'Terms of Service',
         description:
             'Read the terms and conditions for using ClawHost services.',
-        lastUpdated: 'Last updated: February 7, 2026',
+        lastUpdated: 'Last updated: February 17, 2026',
         acceptanceTitle: '1. Acceptance of Terms',
         acceptanceText:
             'By accessing and using ClawHost ("Service"), you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to these terms, please do not use our Service.',
         serviceTitle: '2. Description of Service',
         serviceText:
             'ClawHost provides one-click OpenClaw deployment on dedicated servers. We enable users to deploy, manage, and access pre-configured OpenClaw instances with full root access and dedicated resources.',
-        responsibilitiesTitle: '3. User Responsibilities',
+        authTitle: '3. Authentication',
+        authText:
+            'ClawHost uses Google Firebase Authentication to manage sign-in. You may authenticate with email, Google, or GitHub. By using these methods, you agree to the respective terms and privacy policies of Google and GitHub. These providers may collect basic information such as your email address, name, and device data.',
+        responsibilitiesTitle: '4. User Responsibilities',
         responsibilitiesText: 'You agree to:',
         responsibilitiesAccurate:
             'Provide accurate and complete registration information',
@@ -1237,7 +1243,7 @@ export const en = {
             'Not use the Service for any illegal or unauthorized purpose',
         responsibilitiesAccess:
             'Not attempt to gain unauthorized access to any systems or networks',
-        prohibitedTitle: '4. Prohibited Uses',
+        prohibitedTitle: '5. Prohibited Uses',
         prohibitedText: 'You may not use our Service to:',
         prohibitedMalware:
             'Distribute malware, viruses, or any harmful software',
@@ -1249,22 +1255,22 @@ export const en = {
         prohibitedMining: 'Mine cryptocurrency',
         prohibitedOther:
             'Any other unlawful or harmful activities that we may determine to be inappropriate at our discretion',
-        paymentTitle: '5. Payment and Billing',
+        paymentTitle: '6. Payment and Billing',
         paymentText:
             'Services are billed on a fixed monthly basis. All payments are non-refundable. When you pay for a server, you have access to it for the full billing period. If you cancel, the cancellation takes effect at the end of the current billing period. Prices are subject to change with reasonable notice. Failure to pay may result in suspension or termination of your account.',
-        availabilityTitle: '6. Service Availability',
+        availabilityTitle: '7. Service Availability',
         availabilityText:
             'We strive to maintain high availability but do not guarantee uninterrupted access to the Service. We reserve the right to modify, suspend, or discontinue any part of the Service at any time with or without notice.',
-        liabilityTitle: '7. Limitation of Liability',
+        liabilityTitle: '8. Limitation of Liability',
         liabilityText:
             'To the maximum extent permitted by law, ClawHost shall not be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly.',
-        terminationTitle: '8. Termination',
+        terminationTitle: '9. Termination',
         terminationText:
             'We may terminate or suspend your account and access to the Service immediately, without prior notice, for conduct that we believe violates these Terms or is harmful to other users, us, or third parties, or for any other reason.',
-        changesToTermsTitle: '9. Changes to Terms',
+        changesToTermsTitle: '10. Changes to Terms',
         changesToTermsText:
             'We reserve the right to modify these terms at any time. We will notify users of any material changes via email or through the Service. Continued use of the Service after such modifications constitutes acceptance of the updated terms.',
-        contactTitle: '10. Contact Information',
+        contactTitle: '11. Contact Information',
         contactText:
             'If you have any questions about these Terms, please contact us at'
     },

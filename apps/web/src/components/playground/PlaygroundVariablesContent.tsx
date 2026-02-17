@@ -22,7 +22,8 @@ import {
     DialogTitle,
     DialogDescription,
     Button,
-    Skeleton
+    Skeleton,
+    Checkbox
 } from '@/components/ui'
 import { api } from '@/lib'
 import { useUIStore } from '@/lib/store'
@@ -250,8 +251,8 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
     }
 
     return (
-        <div className='h-full overflow-y-auto p-5'>
-            <div className='space-y-3'>
+        <div className='flex h-full flex-col overflow-y-auto p-5'>
+            <div className='flex min-h-0 flex-1 flex-col space-y-3'>
                 <div className='space-y-2'>
                     {envVars.map((envVar, index) => {
                         const keyError =
@@ -375,7 +376,7 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
                 </div>
 
                 {envVars.length === 0 ? (
-                    <div className='flex flex-col items-center gap-3 py-8'>
+                    <div className='flex flex-1 flex-col items-center justify-center gap-3'>
                         <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-white/5'>
                             <Key
                                 className='h-5 w-5 text-gray-500'
@@ -459,24 +460,10 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
                         </DialogDescription>
                     </DialogHeader>
                     <label className='mt-3 flex cursor-pointer items-center gap-2.5'>
-                        <button
-                            type='button'
-                            role='checkbox'
-                            aria-checked={dontAskAgain}
-                            onClick={() => setDontAskAgain(!dontAskAgain)}
-                            className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
-                                dontAskAgain
-                                    ? 'border-[#ef5350] bg-[#ef5350]'
-                                    : 'border-white/20 bg-white/5 hover:border-white/30'
-                            }`}
-                        >
-                            {dontAskAgain && (
-                                <Check
-                                    className='h-3 w-3 text-white'
-                                    weight='bold'
-                                />
-                            )}
-                        </button>
+                        <Checkbox
+                            checked={dontAskAgain}
+                            onCheckedChange={(checked) => setDontAskAgain(!!checked)}
+                        />
                         <span className='text-xs text-gray-400'>
                             {t('playground.variablesDontAskAgain')}
                         </span>

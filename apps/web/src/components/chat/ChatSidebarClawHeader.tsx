@@ -30,6 +30,7 @@ import {
 const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
     claw,
     isReachable,
+    isSelected,
     statusConfig,
     onOpenClawSettings,
     onCreateAgent
@@ -189,9 +190,12 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                             <p>{statusConfig.label}</p>
                         </TooltipContent>
                     </Tooltip>
-                    <p className='text-[11px] font-medium uppercase tracking-wider text-gray-500'>
+                    <button
+                        onClick={() => onOpenClawSettings(claw.id)}
+                        className={`text-[11px] font-medium uppercase tracking-wider transition-colors hover:text-white ${isSelected ? 'text-white' : 'text-gray-500'}`}
+                    >
                         {claw.name}
-                    </p>
+                    </button>
                 </div>
                 <div className='flex items-center gap-0.5'>
                     <button

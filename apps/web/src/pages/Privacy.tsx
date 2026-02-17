@@ -40,6 +40,15 @@ const Privacy: FC = (): ReactNode => {
 
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
+                            {t('privacy.authTitle')}
+                        </h2>
+                        <p className='text-muted-foreground leading-relaxed'>
+                            {t('privacy.authText')}
+                        </p>
+                    </section>
+
+                    <section>
+                        <h2 className='mb-3 text-xl font-semibold'>
                             {t('privacy.collectTitle')}
                         </h2>
                         <p className='text-muted-foreground mb-3 leading-relaxed'>

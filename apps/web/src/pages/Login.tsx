@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react'
 import type { LoginLoadingMethod } from '@/ts/Types'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
@@ -359,6 +359,23 @@ const Login: FC = (): ReactNode => {
                                 {t('auth.continueWithGithub')}
                             </button>
                         </div>
+
+                        <p className='mt-6 text-center text-xs text-gray-500'>
+                            {t('auth.agreementNotice')}{' '}
+                            <Link
+                                to={ROUTES.TERMS}
+                                className='text-gray-400 underline hover:text-white'
+                            >
+                                {t('auth.termsOfService')}
+                            </Link>{' '}
+                            {t('auth.andWord')}{' '}
+                            <Link
+                                to={ROUTES.PRIVACY}
+                                className='text-gray-400 underline hover:text-white'
+                            >
+                                {t('auth.privacyPolicy')}
+                            </Link>
+                        </p>
                     </div>
                 ) : (
                     <div className='rounded-xl border border-white/10 bg-white/[0.02] p-8 backdrop-blur-sm'>

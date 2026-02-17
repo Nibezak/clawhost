@@ -24,7 +24,7 @@ const CopyableField: FC<CopyableFieldProps> = ({
     return (
         <div
             onClick={handleCopy}
-            className='bg-background hover:bg-background/80 group flex cursor-pointer items-center justify-between gap-2 rounded-lg px-3 py-2 transition-colors'
+            className='group flex cursor-pointer items-center justify-between gap-2 rounded-lg bg-white/5 px-3 py-2 transition-colors hover:bg-white/10'
         >
             <div className='min-w-0'>
                 <span className='text-muted-foreground block text-xs'>

@@ -46,7 +46,8 @@ import {
     DialogDescription,
     DialogHeader,
     DialogTitle,
-    Skeleton
+    Skeleton,
+    Checkbox
 } from '@/components/ui'
 import { api } from '@/lib'
 import { useUIStore } from '@/lib/store'
@@ -736,24 +737,10 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                         </DialogDescription>
                     </DialogHeader>
                     <label className='mt-3 flex cursor-pointer items-center gap-2.5'>
-                        <button
-                            type='button'
-                            role='checkbox'
-                            aria-checked={dontAskAgain}
-                            onClick={() => setDontAskAgain(!dontAskAgain)}
-                            className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
-                                dontAskAgain
-                                    ? 'border-[#ef5350] bg-[#ef5350]'
-                                    : 'border-white/20 bg-white/5 hover:border-white/30'
-                            }`}
-                        >
-                            {dontAskAgain && (
-                                <Check
-                                    className='h-3 w-3 text-white'
-                                    weight='bold'
-                                />
-                            )}
-                        </button>
+                        <Checkbox
+                            checked={dontAskAgain}
+                            onCheckedChange={(checked) => setDontAskAgain(!!checked)}
+                        />
                         <span className='text-xs text-gray-400'>
                             {t('playground.variablesDontAskAgain')}
                         </span>

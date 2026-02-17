@@ -105,11 +105,17 @@ const ChatView: FC<ChatViewProps> = ({
         return claws.find((c) => c.id === settingsClawId) || null
     }, [claws, settingsClawId])
 
+    const handleAgentSelect = useCallback((selection: ChatSelectedAgent) => {
+        setSettingsClawId(null)
+        onAgentSelect(selection)
+    }, [onAgentSelect])
+
     const handleOpenConfig = useCallback((agentId: string, clawId: string) => {
         setConfigAgent({ agentId, clawId })
         setSettingsClawId(null)
+        onAgentSelect({ agentId, clawId })
         onAgentTabChange?.(AGENT_DETAIL_TABS.CONFIGURATION)
-    }, [onAgentTabChange])
+    }, [onAgentSelect, onAgentTabChange])
 
     const handleCloseConfig = useCallback(() => {
         setConfigAgent(null)
@@ -118,7 +124,8 @@ const ChatView: FC<ChatViewProps> = ({
     const handleOpenClawSettings = useCallback((clawId: string) => {
         setSettingsClawId(clawId)
         setConfigAgent(null)
-    }, [])
+        onAgentSelect(null)
+    }, [onAgentSelect])
 
     const handleCloseClawSettings = useCallback(() => {
         setSettingsClawId(null)
@@ -129,22 +136,34 @@ const ChatView: FC<ChatViewProps> = ({
         setSettingsClawId(null)
     }, [])
 
-    const panelOpen = !!configAgent || !!settingsClawId
+    const panelOpen = !!configAgent
 
     return (
         <div className='relative flex h-full w-full overflow-hidden'>
-            <div onClick={panelOpen ? handleClosePanels : undefined}>
+            <div>
                 <ChatSidebar
                     clawsWithAgents={clawsWithAgents}
                     selectedAgent={selectedAgent}
-                    onAgentSelect={onAgentSelect}
+                    selectedClawId={settingsClawId}
+                    onAgentSelect={handleAgentSelect}
                     onConfigureAgent={handleOpenConfig}
                     onCreateAgent={onCreateAgent}
                     onOpenClawSettings={handleOpenClawSettings}
                 />
             </div>
             <div className='flex min-w-0 flex-1 flex-col' onClick={panelOpen ? handleClosePanels : undefined}>
-                {activeAgent && activeClaw ? (
+                {settingsClaw && !selectedAgent ? (
+                    <PlaygroundDetailPanel
+                        key={`fullscreen-${settingsClaw.id}`}
+                        claw={settingsClaw}
+                        plans={plans}
+                        sshKeys={sshKeys}
+                        onClose={handleCloseClawSettings}
+                        initialTab={initialClawTab}
+                        onTabChange={onClawTabChange}
+                        fullScreen
+                    />
+                ) : activeAgent && activeClaw ? (
                     <AgentChat
                         key={`${activeClaw.id}-${activeAgent.id}`}
                         agentId={activeAgent.id}
@@ -174,17 +193,6 @@ const ChatView: FC<ChatViewProps> = ({
                         onTabChange={onAgentTabChange}
                         onClose={handleCloseConfig}
                         hideChatTab
-                    />
-                )}
-                {settingsClaw && !configAgent && (
-                    <PlaygroundDetailPanel
-                        key={`settings-${settingsClaw.id}`}
-                        claw={settingsClaw}
-                        plans={plans}
-                        sshKeys={sshKeys}
-                        onClose={handleCloseClawSettings}
-                        initialTab={initialClawTab}
-                        onTabChange={onClawTabChange}
                     />
                 )}
             </AnimatePresence>

@@ -120,11 +120,18 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
                     </pre>
                 )}
                 {logs.data && embedded && (
-                    <div className='flex flex-col gap-1 bg-black/50 p-4'>
+                    <div className={`flex flex-col gap-1 bg-black/50 p-4 ${parsedLines.length === 0 ? 'h-full items-center justify-center' : ''}`}>
                         {parsedLines.length === 0 && (
-                            <span className='text-xs text-zinc-500'>
-                                {t('dashboard.diagnosticsNoLogs')}
-                            </span>
+                            <PanelPlaceholder
+                                icon={
+                                    <Scroll
+                                        className='h-6 w-6 text-gray-500'
+                                        weight='duotone'
+                                    />
+                                }
+                                title={t('dashboard.diagnosticsNoLogs')}
+                                description=''
+                            />
                         )}
                         {parsedLines.map((line, i) => (
                             <div key={i} className='flex gap-2'>
