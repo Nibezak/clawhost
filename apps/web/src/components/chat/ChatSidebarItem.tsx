@@ -45,7 +45,7 @@ const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
                     e.stopPropagation()
                     onConfigure()
                 }}
-                className='flex h-6 w-6 shrink-0 items-center justify-center rounded-md text-gray-500 opacity-0 transition-all hover:bg-white/10 hover:text-white group-hover:opacity-100'
+                className='hidden h-6 w-6 shrink-0 items-center justify-center rounded-md text-gray-500 opacity-0 transition-all hover:bg-white/10 hover:text-white group-hover:opacity-100 md:flex'
             >
                 <GearSix className='h-3.5 w-3.5' weight='bold' />
             </div>

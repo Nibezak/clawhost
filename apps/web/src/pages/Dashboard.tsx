@@ -409,7 +409,9 @@ const Dashboard: FC = (): ReactNode => {
                                         : 'regular'
                                 }
                             />
-                            {t('dashboard.chatTab')}
+                            <span className={dashboardTab === DASHBOARD_TABS.CHAT ? '' : 'hidden md:inline'}>
+                                {t('dashboard.chatTab')}
+                            </span>
                         </button>
                         <button
                             onClick={() => setDashboardTab(DASHBOARD_TABS.PLAYGROUND)}
@@ -423,7 +425,9 @@ const Dashboard: FC = (): ReactNode => {
                                         : 'regular'
                                 }
                             />
-                            {t('dashboard.playgroundTab')}
+                            <span className={dashboardTab === DASHBOARD_TABS.PLAYGROUND ? '' : 'hidden md:inline'}>
+                                {t('dashboard.playgroundTab')}
+                            </span>
                         </button>
                     </div>
                 </div>

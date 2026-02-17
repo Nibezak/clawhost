@@ -1,7 +1,7 @@
 import type { FC, ReactNode } from 'react'
 import type { ChatSidebarProps } from '@/ts/Interfaces'
 
-import { useMemo } from 'react'
+import { useMemo, useCallback } from 'react'
 import { t } from '@openclaw/i18n'
 import { Robot } from '@phosphor-icons/react'
 import { Skeleton } from '@/components/ui'
@@ -16,13 +16,24 @@ const ChatSidebar: FC<ChatSidebarProps> = ({
     onAgentSelect,
     onConfigureAgent,
     onCreateAgent,
-    onOpenClawSettings
+    onOpenClawSettings,
+    onClose
 }): ReactNode => {
     const statusConfigs = useMemo(() => getStatusConfig(), [])
 
+    const handleAgentClick = useCallback((agentId: string, clawId: string) => {
+        onAgentSelect({ agentId, clawId })
+        onClose?.()
+    }, [onAgentSelect, onClose])
+
+    const handleClawSettings = useCallback((clawId: string) => {
+        onOpenClawSettings(clawId)
+        onClose?.()
+    }, [onOpenClawSettings, onClose])
+
     if (clawsWithAgents.length === 0) {
         return (
-            <div className='flex h-full w-[280px] shrink-0 flex-col items-center justify-center border-r border-white/10 px-6'>
+            <div className='flex h-full w-full shrink-0 flex-col items-center justify-center px-6 md:w-[280px] md:border-r md:border-white/10'>
                 <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-white/5'>
                     <Robot className='h-5 w-5 text-gray-500' weight='duotone' />
                 </div>
@@ -34,7 +45,7 @@ const ChatSidebar: FC<ChatSidebarProps> = ({
     }
 
     return (
-        <div className='flex h-full w-[280px] shrink-0 flex-col border-r border-white/10'>
+        <div className='flex h-full w-full shrink-0 flex-col md:w-[280px] md:border-r md:border-white/10'>
             <div className='flex-1 overflow-y-auto p-3'>
                 {clawsWithAgents.map(({ claw, agents, isLoading, isReachable }) => {
                     const status = statusConfigs[claw.status] || statusConfigs.unknown
@@ -46,7 +57,7 @@ const ChatSidebar: FC<ChatSidebarProps> = ({
                                 isReachable={isReachable}
                                 isSelected={selectedClawId === claw.id && !selectedAgent}
                                 statusConfig={status}
-                                onOpenClawSettings={onOpenClawSettings}
+                                onOpenClawSettings={handleClawSettings}
                                 onCreateAgent={onCreateAgent}
                             />
                             {!isReachable ? (
@@ -79,12 +90,7 @@ const ChatSidebar: FC<ChatSidebarProps> = ({
                                                 selectedAgent?.agentId === agent.id &&
                                                 selectedAgent?.clawId === claw.id
                                             }
-                                            onClick={() =>
-                                                onAgentSelect({
-                                                    agentId: agent.id,
-                                                    clawId: claw.id
-                                                })
-                                            }
+                                            onClick={() => handleAgentClick(agent.id, claw.id)}
                                             onConfigure={() => onConfigureAgent(agent.id, claw.id)}
                                         />
                                     ))}

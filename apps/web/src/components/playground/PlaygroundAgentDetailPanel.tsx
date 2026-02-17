@@ -370,9 +370,9 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'tween', duration: 0.2 }}
-            className={isExpanded ? 'fixed inset-0 z-50 overflow-hidden' : 'h-full w-[90vw] shrink-0 overflow-hidden md:w-[380px]'}
+            className={isExpanded ? 'fixed inset-0 z-50 overflow-hidden' : 'fixed inset-0 z-40 overflow-hidden md:relative md:inset-auto md:z-auto md:h-full md:w-[380px] md:shrink-0'}
         >
-            <div className='flex h-full w-full flex-col border-l border-white/10 bg-[#0a0a0f] md:bg-[#0a0a0f]/95 md:backdrop-blur-xl'>
+            <div className='flex h-full w-full flex-col bg-[#0a0a0f] md:border-l md:border-white/10 md:bg-[#0a0a0f]/95 md:backdrop-blur-xl'>
                 <div className='flex items-center justify-between border-b border-white/10 px-5 py-2.5'>
                     <div className='flex items-center gap-2.5'>
                         <ClawAvatar />

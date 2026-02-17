@@ -878,9 +878,9 @@ export interface ChannelConfig {
     allowFrom?: string[]
     botToken?: string
     token?: string
-    applicationId?: string
     appToken?: string
     signingSecret?: string
+    account?: string
 }
 
 export interface ClawChannelsResponse {
@@ -1033,6 +1033,7 @@ export interface ChatSidebarProps {
     onConfigureAgent: (agentId: string, clawId: string) => void
     onCreateAgent: (clawId: string, clawName: string) => void
     onOpenClawSettings: (clawId: string) => void
+    onClose?: () => void
 }
 
 export interface ChatSidebarClawHeaderProps {

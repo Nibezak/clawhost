@@ -58,11 +58,6 @@ const CHANNEL_DEFINITIONS: ChannelDefinition[] = [
                 placeholder: 'playground.channelsTokenPlaceholder',
                 required: true,
                 secret: true
-            },
-            {
-                key: 'applicationId',
-                label: 'playground.channelsApplicationId',
-                placeholder: 'playground.channelsApplicationIdPlaceholder'
             }
         ]
     },
@@ -97,13 +92,14 @@ const CHANNEL_DEFINITIONS: ChannelDefinition[] = [
         key: 'signal',
         label: 'playground.channelsSignal',
         icon: ChatCircle,
-        fields: []
-    },
-    {
-        key: 'imessage',
-        label: 'playground.channelsIMessage',
-        icon: ChatCircle,
-        fields: []
+        fields: [
+            {
+                key: 'account',
+                label: 'playground.channelsAccount',
+                placeholder: 'playground.channelsAccountPlaceholder',
+                required: true
+            }
+        ]
     }
 ]
 
@@ -128,7 +124,12 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
 
     useEffect(() => {
         if (data) {
-            setChannels(data.channels || {})
+            const cleaned: Record<string, ChannelConfig> = {}
+            for (const [key, config] of Object.entries(data.channels || {})) {
+                const { applicationId: _, ...rest } = config as ChannelConfig & { applicationId?: string }
+                cleaned[key] = rest
+            }
+            setChannels(cleaned)
             setHasChanges(false)
         }
     }, [data])

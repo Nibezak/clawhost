@@ -100,7 +100,7 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
         if (initialNodes.length !== prevNodeCountRef.current && isFitView) {
             skipViewportRef.current = true
             setTimeout(() => {
-                fitView({ padding: 0.3, duration: 300 })
+                fitView({ padding: 0.3, duration: 300, minZoom: isMobile ? 0.75 : undefined })
                 onFitViewChange(true)
                 setTimeout(() => {
                     skipViewportRef.current = false
@@ -158,7 +158,7 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
             clearTimeout(timeout)
             timeout = setTimeout(() => {
                 skipViewportRef.current = true
-                fitView({ padding: 0.3, duration: 300 })
+                fitView({ padding: 0.3, duration: 300, minZoom: isMobile ? 0.75 : undefined })
                 onFitViewChange(true)
                 setTimeout(() => {
                     skipViewportRef.current = false
@@ -251,10 +251,9 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
                 const pointX = (mouseX - viewport.x) / viewport.zoom
                 const pointY = (mouseY - viewport.y) / viewport.zoom
                 const zoomFactor = 1 + e.deltaY * 0.01
-                const minZoomVal = isMobile ? 0.3 : 0.5
                 const newZoom = Math.min(
                     1.5,
-                    Math.max(minZoomVal, viewport.zoom * zoomFactor)
+                    Math.max(0.5, viewport.zoom * zoomFactor)
                 )
                 setViewport({
                     x: mouseX - pointX * newZoom,
@@ -363,7 +362,7 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
 
         const gw = maxX - minX
         const gh = maxY - minY
-        const minZoomVal = isMobile ? 0.3 : 0.5
+        const minZoomVal = isMobile ? 0.75 : 0.5
         const targetZoom = Math.max(
             minZoomVal,
             Math.min(
@@ -415,13 +414,13 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
                     padding: 0.3,
                     ...(initialZoom
                         ? { maxZoom: initialZoom, minZoom: initialZoom }
-                        : {})
+                        : { minZoom: isMobile ? 0.75 : undefined })
                 }}
                 proOptions={{ hideAttribution: true }}
                 elementsSelectable={false}
                 nodesConnectable={false}
                 minZoom={
-                    allowPageScroll && initialZoom ? 0.9 : isMobile ? 0.3 : 0.5
+                    allowPageScroll && initialZoom ? 0.9 : 0.5
                 }
                 maxZoom={allowPageScroll && initialZoom ? initialZoom : 1.5}
                 zoomOnScroll={false}

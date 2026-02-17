@@ -34,8 +34,7 @@ export default function generateCloudInit(
             telegram: { dmPolicy: 'open', allowFrom: ['*'] },
             discord: {},
             slack: {},
-            signal: { dmPolicy: 'open', allowFrom: ['*'] },
-            imessage: { dmPolicy: 'open', allowFrom: ['*'] }
+            signal: { dmPolicy: 'open', allowFrom: ['*'] }
         }
     }
 

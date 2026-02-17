@@ -43,8 +43,7 @@ const reinstallClaw = async (c: AuthenticatedContext) => {
                 telegram: { dmPolicy: 'open', allowFrom: ['*'] },
                 discord: {},
                 slack: {},
-                signal: { dmPolicy: 'open', allowFrom: ['*'] },
-                imessage: { dmPolicy: 'open', allowFrom: ['*'] }
+                signal: { dmPolicy: 'open', allowFrom: ['*'] }
             },
             agents: {
                 defaults: {

@@ -101,12 +101,12 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
             animate: { x: 0 },
             exit: { x: '100%' },
             transition: { type: 'tween', duration: 0.2 },
-            className: 'h-full w-[90vw] shrink-0 overflow-hidden md:w-[380px]'
+            className: 'fixed inset-0 z-40 overflow-hidden md:relative md:inset-auto md:z-auto md:h-full md:w-[380px] md:shrink-0'
         }
 
     return (
         <Wrapper {...wrapperProps as Record<string, unknown>}>
-            <div className={`flex h-full w-full flex-col ${fullScreen ? 'bg-[#0a0a0f]' : 'border-l border-white/10 bg-[#0a0a0f] md:bg-[#0a0a0f]/95 md:backdrop-blur-xl'}`}>
+            <div className={`flex h-full w-full flex-col ${fullScreen ? 'bg-[#0a0a0f]' : 'bg-[#0a0a0f] md:border-l md:border-white/10 md:bg-[#0a0a0f]/95 md:backdrop-blur-xl'}`}>
                 <div className='flex items-center justify-between border-b border-white/10 px-5 py-2.5'>
                     <div className='flex items-center gap-2.5'>
                         <ClawAvatar />
@@ -127,14 +127,12 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                             )}
                         </div>
                     </div>
-                    {!fullScreen && (
-                        <button
-                            onClick={onClose}
-                            className='rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white'
-                        >
-                            <X className='h-4 w-4' weight='bold' />
-                        </button>
-                    )}
+                    <button
+                        onClick={onClose}
+                        className={`rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white ${fullScreen ? 'md:hidden' : ''}`}
+                    >
+                        <X className='h-4 w-4' weight='bold' />
+                    </button>
                 </div>
 
                 <div className='flex border-b border-white/10'>
@@ -178,7 +176,7 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                 )}
 
                                 {showVersion && versionLoading && (
-                                    <div className='bg-background rounded-lg px-3 py-2'>
+                                    <div className='rounded-lg bg-white/5 px-3 py-2'>
                                         <span className='text-muted-foreground block text-xs'>
                                             {t('dashboard.version')}
                                         </span>

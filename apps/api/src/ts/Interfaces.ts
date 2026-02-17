@@ -788,9 +788,9 @@ export interface ChannelConfig {
     allowFrom?: string[]
     botToken?: string
     token?: string
-    applicationId?: string
     appToken?: string
     signingSecret?: string
+    account?: string
 }
 
 export interface ClawChannelsResponse {
