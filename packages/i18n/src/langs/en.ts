@@ -251,7 +251,13 @@ export const en = {
         clawHubUpdated: 'Skill updated.',
         clawHubUpdateFailed: 'Could not update ClawHub skill.',
         clawHubUpdatesFetched: 'Update check completed.',
-        clawHubUpdatesFailed: 'Could not check for updates.'
+        clawHubUpdatesFailed: 'Could not check for updates.',
+        invalidAuthMethod: 'Invalid auth method!',
+        authMethodNotConnected: 'This auth method is not connected!',
+        authMethodConnected: 'Auth method connected successfully.',
+        authMethodDisconnected: 'Auth method disconnected successfully.',
+        failedToConnectAuthMethod: 'Failed to connect auth method!',
+        failedToDisconnectAuthMethod: 'Failed to disconnect auth method!'
     },
     emails: {
         otpSubject: 'Your ClawHost sign-in code',
@@ -291,13 +297,15 @@ export const en = {
         accountSettings: 'Account',
         manageYourAccount: 'Manage your profile and account settings.',
         profileInformation: 'Profile Information',
-        profileDescription: 'Your personal information and display name',
+        profileDescription: 'Your personal information and display name.',
         noNameSet: 'No name set',
         joined: 'Joined',
         claws: 'claws',
         sshKeys: 'keys',
         displayName: 'Display Name',
         enterYourName: 'Enter your name',
+        emailAddress: 'Email Address',
+        emailNotEditable: 'Email is not editable. Contact support.',
         profileUpdatedSuccessfully: 'Profile updated successfully.',
         billingHistory: 'Billing History',
         billingDescription: 'Your payment history and invoices',
@@ -321,7 +329,21 @@ export const en = {
         failedToLoadInvoice: 'Failed to load invoice!',
         couponApplied: 'Coupon: {{name}}',
         manageBilling: 'Manage Billing',
-        failedToLoadPortal: 'Failed to open billing portal!'
+        failedToLoadPortal: 'Failed to open billing portal!',
+        connectedAccounts: 'Connected Accounts',
+        connectedAccountsDescription: 'Manage the sign-in methods linked to your account.',
+        authEmail: 'Email',
+        authGoogle: 'Google',
+        authGithub: 'GitHub',
+        authConnected: 'Connected',
+        authConnect: 'Connect',
+        authDisconnect: 'Disconnect',
+        emailCannotBeDisconnected: 'Email is always connected as your primary sign-in method.',
+        providerConnected: '{{provider}} connected successfully.',
+        providerDisconnected: '{{provider}} disconnected successfully.',
+        settings: 'Settings',
+        settingsDescription: 'Manage your dashboard preferences.',
+        showAllClaws: 'Show all claws from all users'
     },
     billing: {
         title: 'Billing',
@@ -466,6 +488,8 @@ export const en = {
         configuringTooltip:
             'This might take some time. It depends on OpenClaw, the server location, and Cloudflare DNS.',
         paymentSuccess: 'Your claw is being created and configured.',
+        chatTab: 'Chat',
+        playgroundTab: 'Playground',
         userTab: 'User',
         adminTab: 'Admin',
         adminTitle: 'Admin',
@@ -491,6 +515,14 @@ export const en = {
             awaitingPayment: 'Awaiting Payment',
             unknown: 'Unknown'
         }
+    },
+    chat: {
+        selectAgent: 'Select an agent',
+        selectAgentDescription: 'Choose an agent from the sidebar to start chatting',
+        noAgents: 'No agents available',
+        noAgentsDescription: 'Deploy a claw to start chatting with agents',
+        clawNotReady: 'Claw is not ready yet',
+        notConfigured: 'Not configured'
     },
     createClaw: {
         title: 'Deploy OpenClaw',
@@ -681,8 +713,7 @@ export const en = {
         testimonial4Role: 'AI Enthusiast',
         pricing: 'Pricing',
         simpleTransparentPricing: 'Simple, Transparent Pricing',
-        pricingDescription:
-            'Choose from 45+ servers across three providers and pay only for what you need.',
+        pricingDescription: 'Choose from 45+ servers across our providers based on your needs.',
         planColumn: 'Server',
         vCpuColumn: 'vCPU',
         ramColumn: 'RAM',
@@ -1010,6 +1041,7 @@ export const en = {
         chatNotConfigured: 'Agent not configured.',
         chatNotConfiguredDescription:
             'Select a model and set an API key in the Configuration tab to start chatting.',
+        chatConfigureButton: 'Configure Agent',
         chatToday: 'Today',
         chatYesterday: 'Yesterday',
         chatExpandFullscreen: 'Expand chat',
@@ -1075,7 +1107,7 @@ export const en = {
         skillsLoadFailedDescription:
             'Could not retrieve skills configuration. Please try again.',
         agentSkillsDescription: 'Skills installed in this agent workspace.',
-        agentSkillsInstall: 'Install Skill',
+        agentSkillsInstall: 'Install',
         agentSkillsInstalling: 'Installing...',
         agentSkillsInstalled: 'Skill installed successfully.',
         agentSkillsInstallFailed: 'Failed to install skill.',

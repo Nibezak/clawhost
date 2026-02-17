@@ -152,9 +152,9 @@ const ChatBubble: FC<ChatBubbleProps> = ({ message }): ReactNode => {
     return (
         <>
             <div className='flex flex-col items-start gap-1'>
-                <div className='max-w-[85%] rounded-2xl rounded-bl-md bg-white/5 px-3.5 py-2.5'>
+                <div className='min-w-0 max-w-[85%] rounded-2xl rounded-bl-md bg-white/5 px-3.5 py-2.5'>
                     {hasAttachments && renderAttachments(message.images!)}
-                    <div className='text-sm text-gray-300'>
+                    <div className='min-w-0 text-sm text-gray-300'>
                         <ChatMarkdown content={message.content} />
                         {message.status === 'streaming' && (
                             <span className='ml-0.5 inline-block h-4 w-1.5 animate-pulse rounded-sm bg-gray-400' />

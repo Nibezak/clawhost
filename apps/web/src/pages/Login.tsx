@@ -11,8 +11,9 @@ import { ROUTES } from '@/lib'
 import { Button, Input, Label } from '@/components/ui'
 import { Logo, PageBackground, PageTitle } from '@/components'
 import { Envelope, CircleNotch, ArrowLeft } from '@phosphor-icons/react'
+import { STORAGE_KEYS } from '@/lib/storageKeys'
 
-const COOLDOWN_KEY = 'otpSentAt'
+const COOLDOWN_KEY = STORAGE_KEYS.OTP_SENT_AT
 const COOLDOWN_DURATION = 60
 const CODE_LENGTH = 6
 

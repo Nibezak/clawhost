@@ -16,9 +16,10 @@
         "noUnusedParameters": true,
         "noFallthroughCasesInSwitch": true,
         "paths": {
-            "@/*": ["./src/renderer/*"]
+            "@/*": ["../web/src/*"],
+            "@electron/*": ["./src/renderer/*"]
         },
         "types": ["vite/client"]
     },
-    "include": ["src/renderer"]
+    "include": ["src/renderer", "../web/src"]
 }

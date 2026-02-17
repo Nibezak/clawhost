@@ -211,6 +211,10 @@ const api = {
     getProfile: () => client.get<UserProfile>('/users/me'),
     updateProfile: (data: UpdateProfileData) =>
         client.put<UserProfile>('/users/me', data),
+    connectAuthMethod: (method: string) =>
+        client.post<void>(`/users/me/auth/${method}`),
+    disconnectAuthMethod: (method: string) =>
+        client.delete<void>(`/users/me/auth/${method}`),
     getUserStats: () => client.get<UserStats>('/users/me/stats'),
     getBillingHistory: (page: number = 1, limit: number = 10) =>
         client.get<BillingHistoryResponse>(

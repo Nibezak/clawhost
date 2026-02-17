@@ -1,9 +1,8 @@
-import type { AuthMethod, HonoEnv } from '@/ts/Types'
+import type { HonoEnv } from '@/ts/Types'
 
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { bodyLimit } from 'hono/body-limit'
-import { sql } from 'drizzle-orm'
 import { verifyToken } from '@/services/firebase'
 import { db } from '@/db'
 import { users } from '@/db/schema'
@@ -68,30 +67,17 @@ app.use('/*', async (c, next) => {
             return fail(c, t('api.invalidToken'), 401)
         }
 
-        const provider = decoded.firebase?.sign_in_provider
-        const authMethod: AuthMethod =
-            provider === 'google.com'
-                ? 'google'
-                : provider === 'github.com'
-                  ? 'github'
-                  : 'email'
-
         await db
             .insert(users)
             .values({
                 id: decoded.uid,
                 email: decoded.email || '',
-                authMethods: [authMethod]
+                authMethods: ['email']
             })
             .onConflictDoUpdate({
                 target: users.id,
                 set: {
-                    email: decoded.email || '',
-                    authMethods: sql`CASE
-                        WHEN ${authMethod} = ANY(COALESCE(${users.authMethods}, '{}'))
-                        THEN COALESCE(${users.authMethods}, '{}')
-                        ELSE array_append(COALESCE(${users.authMethods}, '{}'), ${authMethod})
-                    END`
+                    email: decoded.email || ''
                 }
             })
 

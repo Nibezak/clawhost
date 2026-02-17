@@ -1,13 +1,18 @@
 import type { FC, ReactNode } from 'react'
-import type { Claw } from '@/ts/Interfaces'
-import type { ProviderType } from '@/ts/Types'
+import type { Claw, ChatSelectedAgent } from '@/ts/Interfaces'
+import type {
+    DashboardTab,
+    PlaygroundAgentDetailTab,
+    PlaygroundDetailTab,
+    ProviderType
+} from '@/ts/Types'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
-import { ROUTES } from '@/lib'
+import { ROUTES, DASHBOARD_TABS, AGENT_DETAIL_TABS, CLAW_DETAIL_TABS } from '@/lib'
 import {
     useClaws,
     useAdminClaws,
@@ -26,14 +31,16 @@ import {
     ClawMascot,
     Logo
 } from '@/components'
-import { Lightning } from '@phosphor-icons/react'
+import { ChatCircleDots, Graph, Lightning } from '@phosphor-icons/react'
 import { CreateClawModal } from '@/components/dashboard'
 import {
     PlaygroundCanvas,
     PlaygroundDetailPanel,
     PlaygroundAgentDetailPanel,
-    PlaygroundLoadingState
+    PlaygroundLoadingState,
+    CreateAgentModal
 } from '@/components/playground'
+import { ChatView } from '@/components/chat'
 import { useAuth } from '@/lib/auth'
 import { useProfile } from '@/hooks'
 import { UserDropdown } from '@/components'
@@ -55,9 +62,30 @@ const Dashboard: FC = (): ReactNode => {
     const [selectedAgentClawId, setSelectedAgentClawId] = useState<
         string | null
     >(null)
-    const [isModeSwitching, setIsModeSwitching] = useState(false)
+    const [chatSelectedAgent, setChatSelectedAgent] =
+        useState<ChatSelectedAgent | null>(null)
+    const [chatSettingsClawId, setChatSettingsClawId] = useState<
+        string | null
+    >(null)
+    const [chatAgentTab, setChatAgentTab] =
+        useState<PlaygroundAgentDetailTab | null>(null)
+    const [playgroundAgentTab, setPlaygroundAgentTab] =
+        useState<PlaygroundAgentDetailTab | null>(null)
+    const [playgroundClawTab, setPlaygroundClawTab] =
+        useState<PlaygroundDetailTab | null>(null)
+    const [chatClawTab, setChatClawTab] =
+        useState<PlaygroundDetailTab | null>(null)
+    const [createAgentClawId, setCreateAgentClawId] = useState<string | null>(
+        null
+    )
+    const [createAgentClawName, setCreateAgentClawName] = useState('')
+    const isRestoringFromUrl = useRef(false)
     const { showToast } = useUIStore()
-    const { adminMode: adminModeRaw, setAdminMode } = usePreferencesStore()
+    const {
+        adminMode: adminModeRaw,
+        dashboardTab,
+        setDashboardTab
+    } = usePreferencesStore()
 
     const [minLoadingMet, setMinLoadingMet] = useState(false)
 
@@ -101,9 +129,175 @@ const Dashboard: FC = (): ReactNode => {
             setShowCreate(true)
         }
         if (planParam || deployParam || searchParams.get('payment')) {
-            setSearchParams({}, { replace: true })
+            const preserved: Record<string, string> = {}
+            const tab = searchParams.get('tab')
+            const agent = searchParams.get('agent')
+            const claw = searchParams.get('claw')
+            const agentTab = searchParams.get('agentTab')
+            const clawTab = searchParams.get('clawTab')
+            const settingsClaw = searchParams.get('settingsClaw')
+            if (tab) preserved.tab = tab
+            if (agent) preserved.agent = agent
+            if (claw) preserved.claw = claw
+            if (agentTab) preserved.agentTab = agentTab
+            if (clawTab) preserved.clawTab = clawTab
+            if (settingsClaw) preserved.settingsClaw = settingsClaw
+            setSearchParams(preserved, { replace: true })
         }
     }, [searchParams, setSearchParams])
+
+    useEffect(() => {
+        const tabParam = searchParams.get('tab') as DashboardTab | null
+        const agentParam = searchParams.get('agent')
+        const clawParam = searchParams.get('claw')
+        const agentTabParam = searchParams.get(
+            'agentTab'
+        ) as PlaygroundAgentDetailTab | null
+        const clawTabParam = searchParams.get(
+            'clawTab'
+        ) as PlaygroundDetailTab | null
+
+        if (!tabParam && !agentParam && !clawParam) return
+
+        isRestoringFromUrl.current = true
+
+        if (tabParam === DASHBOARD_TABS.CHAT || tabParam === DASHBOARD_TABS.PLAYGROUND) {
+            setDashboardTab(tabParam)
+        }
+
+        const effectiveTab = tabParam || dashboardTab
+        const settingsClawParam = searchParams.get('settingsClaw')
+
+        const validAgentTabs: PlaygroundAgentDetailTab[] = [
+            AGENT_DETAIL_TABS.CHAT,
+            AGENT_DETAIL_TABS.CHANNELS,
+            AGENT_DETAIL_TABS.SKILLS,
+            AGENT_DETAIL_TABS.CONFIGURATION
+        ]
+        const validChatAgentTabs: PlaygroundAgentDetailTab[] = [
+            AGENT_DETAIL_TABS.CONFIGURATION,
+            AGENT_DETAIL_TABS.CHANNELS,
+            AGENT_DETAIL_TABS.SKILLS
+        ]
+        const validClawTabs: PlaygroundDetailTab[] = [
+            CLAW_DETAIL_TABS.INFO,
+            CLAW_DETAIL_TABS.VARIABLES,
+            CLAW_DETAIL_TABS.LOGS,
+            CLAW_DETAIL_TABS.DIAGNOSTICS,
+            CLAW_DETAIL_TABS.SKILLS
+        ]
+
+        if (agentParam && clawParam) {
+            if (effectiveTab === DASHBOARD_TABS.CHAT) {
+                setChatSelectedAgent({
+                    agentId: agentParam,
+                    clawId: clawParam
+                })
+                if (agentTabParam) {
+                    setChatAgentTab(
+                        validChatAgentTabs.includes(agentTabParam)
+                            ? agentTabParam
+                            : AGENT_DETAIL_TABS.CONFIGURATION
+                    )
+                }
+            } else {
+                setSelectedAgentId(agentParam)
+                setSelectedAgentClawId(clawParam)
+                setSelectedClawId(null)
+                if (agentTabParam) {
+                    setPlaygroundAgentTab(
+                        validAgentTabs.includes(agentTabParam)
+                            ? agentTabParam
+                            : AGENT_DETAIL_TABS.CHAT
+                    )
+                }
+            }
+        } else if (clawParam && effectiveTab === DASHBOARD_TABS.PLAYGROUND) {
+            setSelectedClawId(clawParam)
+            setSelectedAgentId(null)
+            setSelectedAgentClawId(null)
+            if (clawTabParam) {
+                setPlaygroundClawTab(
+                    validClawTabs.includes(clawTabParam)
+                        ? clawTabParam
+                        : CLAW_DETAIL_TABS.INFO
+                )
+            }
+        }
+
+        if (effectiveTab === DASHBOARD_TABS.CHAT && settingsClawParam) {
+            setChatSettingsClawId(settingsClawParam)
+            if (clawTabParam) {
+                setChatClawTab(
+                    validClawTabs.includes(clawTabParam)
+                        ? clawTabParam
+                        : CLAW_DETAIL_TABS.INFO
+                )
+            }
+        }
+
+        requestAnimationFrame(() => {
+            isRestoringFromUrl.current = false
+        })
+    }, [])
+
+    useEffect(() => {
+        if (isRestoringFromUrl.current) return
+        const params: Record<string, string> = {}
+        params.tab = dashboardTab
+        if (dashboardTab === DASHBOARD_TABS.CHAT) {
+            if (chatSelectedAgent) {
+                params.agent = chatSelectedAgent.agentId
+                params.claw = chatSelectedAgent.clawId
+            }
+            if (chatAgentTab) {
+                params.agentTab = chatAgentTab
+            } else if (chatSettingsClawId) {
+                params.settingsClaw = chatSettingsClawId
+                if (chatClawTab) params.clawTab = chatClawTab
+            }
+        } else if (dashboardTab === DASHBOARD_TABS.PLAYGROUND) {
+            if (selectedAgentId && selectedAgentClawId) {
+                params.agent = selectedAgentId
+                params.claw = selectedAgentClawId
+                if (playgroundAgentTab) params.agentTab = playgroundAgentTab
+            } else if (selectedClawId) {
+                params.claw = selectedClawId
+                if (playgroundClawTab) params.clawTab = playgroundClawTab
+            }
+        }
+        setSearchParams(params, { replace: true })
+    }, [
+        dashboardTab,
+        chatSelectedAgent,
+        chatAgentTab,
+        chatSettingsClawId,
+        chatClawTab,
+        selectedAgentId,
+        selectedAgentClawId,
+        selectedClawId,
+        playgroundAgentTab,
+        playgroundClawTab
+    ])
+
+    const handleConfigureAgent = useCallback(
+        (agentId: string, clawId: string) => {
+            setDashboardTab(DASHBOARD_TABS.PLAYGROUND)
+            setSelectedAgentId(agentId)
+            setSelectedAgentClawId(clawId)
+            setSelectedClawId(null)
+            setPlaygroundAgentTab(AGENT_DETAIL_TABS.CONFIGURATION)
+        },
+        [setDashboardTab]
+    )
+
+    const handleCreateAgent = useCallback(
+        (clawId: string, clawName: string) => {
+            setCreateAgentClawId(clawId)
+            setCreateAgentClawName(clawName)
+        },
+        []
+    )
 
     const {
         data: claws,
@@ -142,15 +336,7 @@ const Dashboard: FC = (): ReactNode => {
     const activeRefetch = adminMode ? refetchAdmin : refetch
     const isLoading =
         authLoading ||
-        isModeSwitching ||
         (!awaitingClaw && (activeClawsLoading || !minLoadingMet))
-
-    useEffect(() => {
-        if (isModeSwitching && !activeClawsLoading) {
-            const timer = setTimeout(() => setIsModeSwitching(false), 1800)
-            return () => clearTimeout(timer)
-        }
-    }, [isModeSwitching, activeClawsLoading])
 
     const graphClaws = displayedClaws
     const agentQueries = useAllClawAgents(graphClaws)
@@ -186,43 +372,16 @@ const Dashboard: FC = (): ReactNode => {
     const selectedAgent = selectedAgentResult?.agent || null
     const isSelectedAgentOnly = selectedAgentResult?.isOnly || false
 
-    const clawFilter = isAdmin ? (
-        <div className='flex items-center rounded-lg border border-white/10 p-0.5'>
-            <button
-                onClick={() => {
-                    if (adminMode) setIsModeSwitching(true)
-                    setAdminMode(false)
-                    setSelectedClawId(null)
-                    setSelectedAgentId(null)
-                    setSelectedAgentClawId(null)
-                }}
-                className={`rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${!adminMode ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white'}`}
-            >
-                {t('dashboard.userTab')}
-            </button>
-            <button
-                onClick={() => {
-                    if (!adminMode) setIsModeSwitching(true)
-                    setAdminMode(true)
-                    setSelectedClawId(null)
-                    setSelectedAgentId(null)
-                    setSelectedAgentClawId(null)
-                }}
-                className={`rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${adminMode ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white'}`}
-            >
-                {t('dashboard.adminTab')}
-            </button>
-        </div>
-    ) : null
-
     return (
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
-            className='playground-grid fixed inset-0 flex flex-col bg-[#0a0a0f] text-white'
+            className={`fixed inset-0 flex flex-col bg-[#0a0a0f] text-white ${dashboardTab === DASHBOARD_TABS.PLAYGROUND ? 'playground-grid' : ''}`}
         >
-            <div className='playground-gradient pointer-events-none fixed inset-0' />
+            <div
+                className={`playground-gradient pointer-events-none fixed inset-0 ${dashboardTab === DASHBOARD_TABS.CHAT ? 'opacity-30' : ''}`}
+            />
             <PageTitle
                 title={
                     adminMode ? t('dashboard.adminTitle') : t('dashboard.title')
@@ -237,23 +396,39 @@ const Dashboard: FC = (): ReactNode => {
             <div className='relative z-10 flex items-center justify-between border-b border-white/10 bg-[#0a0a0f]/80 px-6 py-3 backdrop-blur-xl'>
                 <div className='flex items-center gap-3'>
                     <Logo />
-                    {!isLoading &&
-                        displayedClaws &&
-                        displayedClaws.length > 0 && (
-                            <span className='rounded-md bg-white/5 px-2 py-1 text-xs text-gray-400'>
-                                {displayedClaws.length === 1
-                                    ? t('dashboard.clawCountLabelSingular', {
-                                          count: String(displayedClaws.length)
-                                      })
-                                    : t('dashboard.clawCountLabel', {
-                                          count: String(displayedClaws.length)
-                                      })}
-                            </span>
-                        )}
+                    <div className='flex items-center rounded-lg border border-white/10 p-0.5'>
+                        <button
+                            onClick={() => setDashboardTab(DASHBOARD_TABS.CHAT)}
+                            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${dashboardTab === DASHBOARD_TABS.CHAT ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white'}`}
+                        >
+                            <ChatCircleDots
+                                className='h-3.5 w-3.5'
+                                weight={
+                                    dashboardTab === DASHBOARD_TABS.CHAT
+                                        ? 'fill'
+                                        : 'regular'
+                                }
+                            />
+                            {t('dashboard.chatTab')}
+                        </button>
+                        <button
+                            onClick={() => setDashboardTab(DASHBOARD_TABS.PLAYGROUND)}
+                            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${dashboardTab === DASHBOARD_TABS.PLAYGROUND ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white'}`}
+                        >
+                            <Graph
+                                className='h-3.5 w-3.5'
+                                weight={
+                                    dashboardTab === DASHBOARD_TABS.PLAYGROUND
+                                        ? 'fill'
+                                        : 'regular'
+                                }
+                            />
+                            {t('dashboard.playgroundTab')}
+                        </button>
+                    </div>
                 </div>
 
                 <div className='flex items-center gap-3'>
-                    {clawFilter}
                     {!adminMode &&
                         !isLoading &&
                         displayedClaws &&
@@ -277,9 +452,9 @@ const Dashboard: FC = (): ReactNode => {
             </div>
 
             <div className='flex flex-1 overflow-hidden'>
-                <div className='relative h-full min-w-0 flex-1'>
-                    {activeIsError ? (
-                        <div className='-mt-20 flex h-full items-center justify-center'>
+                {activeIsError ? (
+                    <div className='flex h-full min-w-0 flex-1 items-center justify-center'>
+                        <div className='-mt-20'>
                             <ErrorState
                                 title={t('errors.failedToLoadClaws')}
                                 description={t(
@@ -288,101 +463,170 @@ const Dashboard: FC = (): ReactNode => {
                                 onRetry={() => activeRefetch()}
                             />
                         </div>
-                    ) : isLoading ? (
+                    </div>
+                ) : isLoading ? (
+                    <div className='flex h-full min-w-0 flex-1 items-center justify-center'>
                         <PlaygroundLoadingState />
-                    ) : (
-                        <PlaygroundCanvas
-                            key={adminMode ? 'admin' : 'user'}
-                            initialNodes={nodes}
-                            initialEdges={edges}
-                            onNodeClick={(clawId) => {
-                                setSelectedClawId(clawId)
-                                setSelectedAgentId(null)
-                                setSelectedAgentClawId(null)
-                            }}
-                            onAgentClick={(agentId, clawId) => {
-                                setSelectedAgentId(agentId)
-                                setSelectedAgentClawId(clawId)
-                                setSelectedClawId(null)
-                            }}
-                            onPaneClick={() => {
-                                setSelectedClawId(null)
-                                setSelectedAgentId(null)
-                                setSelectedAgentClawId(null)
-                            }}
-                            panelOpen={!!selectedClaw || !!selectedAgent}
-                            selectedClawId={selectedClawId}
-                            selectedAgentId={selectedAgentId}
-                            selectedAgentClawId={selectedAgentClawId}
-                        />
-                    )}
-
-                    {!isLoading &&
-                        !activeIsError &&
-                        (!displayedClaws || displayedClaws.length === 0) && (
-                            <div className='pointer-events-none absolute inset-0 z-10 flex items-center justify-center'>
-                                <div className='pointer-events-auto -mt-20'>
-                                    <EmptyState
-                                        icon={
-                                            <ClawMascot className='h-10 w-10' />
-                                        }
-                                        title={
-                                            adminMode
-                                                ? t('dashboard.adminNoClaws')
-                                                : t('playground.noClawsYet')
-                                        }
-                                        description={
-                                            adminMode
-                                                ? t(
-                                                      'dashboard.adminDescription'
-                                                  )
-                                                : t(
-                                                      'playground.noClawsDescription'
-                                                  )
-                                        }
-                                        actionLabel={
-                                            adminMode
-                                                ? undefined
-                                                : t('nav.deployOpenClaw')
-                                        }
-                                        onAction={
-                                            adminMode
-                                                ? undefined
-                                                : () => setShowCreate(true)
-                                        }
-                                    />
-                                </div>
+                    </div>
+                ) : dashboardTab === DASHBOARD_TABS.CHAT ? (
+                    displayedClaws.length === 0 ? (
+                        <div className='flex h-full min-w-0 flex-1 items-center justify-center'>
+                            <div className='-mt-20'>
+                                <EmptyState
+                                    icon={<ClawMascot className='h-10 w-10' />}
+                                    title={
+                                        adminMode
+                                            ? t('dashboard.adminNoClaws')
+                                            : t('playground.noClawsYet')
+                                    }
+                                    description={
+                                        adminMode
+                                            ? t('dashboard.adminDescription')
+                                            : t('playground.noClawsDescription')
+                                    }
+                                    actionLabel={
+                                        adminMode
+                                            ? undefined
+                                            : t('nav.deployOpenClaw')
+                                    }
+                                    onAction={
+                                        adminMode
+                                            ? undefined
+                                            : () => setShowCreate(true)
+                                    }
+                                />
                             </div>
-                        )}
-                </div>
-
-                <AnimatePresence mode='wait'>
-                    {selectedClaw && (
-                        <PlaygroundDetailPanel
-                            key='detail-panel'
-                            claw={selectedClaw}
+                        </div>
+                    ) : (
+                        <ChatView
+                            claws={displayedClaws}
+                            agentQueries={agentQueries}
                             plans={plans}
                             sshKeys={sshKeys || []}
-                            onClose={() => setSelectedClawId(null)}
+                            selectedAgent={chatSelectedAgent}
+                            onAgentSelect={setChatSelectedAgent}
+                            onConfigureAgent={handleConfigureAgent}
+                            onCreateAgent={handleCreateAgent}
+                            initialSettingsClawId={chatSettingsClawId}
+                            onSettingsClawChange={setChatSettingsClawId}
+                            initialAgentTab={chatAgentTab || undefined}
+                            onAgentTabChange={setChatAgentTab}
+                            initialClawTab={chatClawTab || undefined}
+                            onClawTabChange={setChatClawTab}
                         />
-                    )}
+                    )
+                ) : (
+                    <>
+                        <div className='relative h-full min-w-0 flex-1'>
+                            <PlaygroundCanvas
+                                key={adminMode ? 'admin' : 'user'}
+                                initialNodes={nodes}
+                                initialEdges={edges}
+                                onNodeClick={(clawId) => {
+                                    setSelectedClawId(clawId)
+                                    setSelectedAgentId(null)
+                                    setSelectedAgentClawId(null)
+                                }}
+                                onAgentClick={(agentId, clawId) => {
+                                    setSelectedAgentId(agentId)
+                                    setSelectedAgentClawId(clawId)
+                                    setSelectedClawId(null)
+                                }}
+                                onPaneClick={() => {
+                                    setSelectedClawId(null)
+                                    setSelectedAgentId(null)
+                                    setSelectedAgentClawId(null)
+                                }}
+                                panelOpen={!!selectedClaw || !!selectedAgent}
+                                selectedClawId={selectedClawId}
+                                selectedAgentId={selectedAgentId}
+                                selectedAgentClawId={selectedAgentClawId}
+                            />
 
-                    {selectedAgent && selectedAgentClaw && (
-                        <PlaygroundAgentDetailPanel
-                            key='agent-panel'
-                            agent={selectedAgent}
-                            clawId={selectedAgentClaw.id}
-                            clawName={selectedAgentClaw.name}
-                            isOnlyAgent={isSelectedAgentOnly}
-                            gatewayToken={selectedAgentClaw.gatewayToken}
-                            subdomain={selectedAgentClaw.subdomain}
-                            onClose={() => {
-                                setSelectedAgentId(null)
-                                setSelectedAgentClawId(null)
-                            }}
-                        />
-                    )}
-                </AnimatePresence>
+                            {!isLoading &&
+                                !activeIsError &&
+                                (!displayedClaws ||
+                                    displayedClaws.length === 0) && (
+                                    <div className='pointer-events-none absolute inset-0 z-10 flex items-center justify-center'>
+                                        <div className='pointer-events-auto -mt-20'>
+                                            <EmptyState
+                                                icon={
+                                                    <ClawMascot className='h-10 w-10' />
+                                                }
+                                                title={
+                                                    adminMode
+                                                        ? t(
+                                                              'dashboard.adminNoClaws'
+                                                          )
+                                                        : t(
+                                                              'playground.noClawsYet'
+                                                          )
+                                                }
+                                                description={
+                                                    adminMode
+                                                        ? t(
+                                                              'dashboard.adminDescription'
+                                                          )
+                                                        : t(
+                                                              'playground.noClawsDescription'
+                                                          )
+                                                }
+                                                actionLabel={
+                                                    adminMode
+                                                        ? undefined
+                                                        : t(
+                                                              'nav.deployOpenClaw'
+                                                          )
+                                                }
+                                                onAction={
+                                                    adminMode
+                                                        ? undefined
+                                                        : () =>
+                                                              setShowCreate(
+                                                                  true
+                                                              )
+                                                }
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                        </div>
+
+                        <AnimatePresence mode='wait'>
+                            {selectedClaw && (
+                                <PlaygroundDetailPanel
+                                    key='detail-panel'
+                                    claw={selectedClaw}
+                                    plans={plans}
+                                    sshKeys={sshKeys || []}
+                                    onClose={() => setSelectedClawId(null)}
+                                    initialTab={playgroundClawTab || undefined}
+                                    onTabChange={setPlaygroundClawTab}
+                                />
+                            )}
+
+                            {selectedAgent && selectedAgentClaw && (
+                                <PlaygroundAgentDetailPanel
+                                    key='agent-panel'
+                                    agent={selectedAgent}
+                                    clawId={selectedAgentClaw.id}
+                                    clawName={selectedAgentClaw.name}
+                                    isOnlyAgent={isSelectedAgentOnly}
+                                    gatewayToken={
+                                        selectedAgentClaw.gatewayToken
+                                    }
+                                    subdomain={selectedAgentClaw.subdomain}
+                                    initialTab={playgroundAgentTab || undefined}
+                                    onTabChange={setPlaygroundAgentTab}
+                                    onClose={() => {
+                                        setSelectedAgentId(null)
+                                        setSelectedAgentClawId(null)
+                                    }}
+                                />
+                            )}
+                        </AnimatePresence>
+                    </>
+                )}
             </div>
 
             {showCreate && plans.length > 0 && locations && (
@@ -404,6 +648,20 @@ const Dashboard: FC = (): ReactNode => {
                         setPreselectedPlanId(null)
                         setPreselectedProvider(null)
                         navigate(ROUTES.SSH_KEYS)
+                    }}
+                />
+            )}
+
+            {createAgentClawId && (
+                <CreateAgentModal
+                    clawId={createAgentClawId}
+                    clawName={createAgentClawName}
+                    open={!!createAgentClawId}
+                    onOpenChange={(open) => {
+                        if (!open) {
+                            setCreateAgentClawId(null)
+                            setCreateAgentClawName('')
+                        }
                     }}
                 />
             )}

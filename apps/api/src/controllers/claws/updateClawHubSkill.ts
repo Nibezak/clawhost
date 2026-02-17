@@ -2,13 +2,11 @@ import type { ClawHubUpdateBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import executeSSH from '@/services/ssh'
-import { findUserClaw } from '@/controllers/claws/helpers'
+import { findUserClaw, ensureClawHub, BASE_DIR } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
 const SLUG_REGEX = /^[a-zA-Z0-9_-]+(?:\/[a-zA-Z0-9_-]+)?$/
-const BASE_DIR = '/home/openclaw/.openclaw'
-const ENSURE_CLAWHUB = 'command -v clawhub >/dev/null 2>&1 || npm install -g clawhub >/dev/null 2>&1;'
 
 const updateClawHubSkill = async (c: AuthenticatedContext) => {
     try {
@@ -35,6 +33,8 @@ const updateClawHubSkill = async (c: AuthenticatedContext) => {
         }
 
         try {
+            await ensureClawHub(claw.ip, claw.rootPassword)
+
             let cmd = body.all ? 'clawhub update --all' : `clawhub update ${body.slug}`
 
             if (body.agentId) {
@@ -42,7 +42,7 @@ const updateClawHubSkill = async (c: AuthenticatedContext) => {
                 cmd = `${cmd} --workdir ${agentDir}`
             }
 
-            cmd = `${ENSURE_CLAWHUB} ${cmd} && systemctl restart openclaw-gateway`
+            cmd = `${cmd} && systemctl restart openclaw-gateway`
 
             await executeSSH(
                 claw.ip,

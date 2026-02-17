@@ -1,4 +1,5 @@
 export type {
+    AuthMethod,
     ChatMessageRole,
     ChatMessageStatus,
     ClawAvatarSize,
@@ -11,7 +12,6 @@ export type {
     PlaygroundNodeType,
     SSHKeyModalMode,
     ToastType,
-    SkillsViewTab,
     UserRole
 } from '@/ts/Types'
 
@@ -92,6 +92,5 @@ export type {
     ClawHubUpdatesResponse,
     SearchClawHubData,
     ClawHubSkillActionData,
-    ClawHubUpdateData,
-    PlaygroundClawHubContentProps
+    ClawHubUpdateData
 } from '@/ts/Interfaces'
