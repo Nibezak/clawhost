@@ -68,8 +68,8 @@ const updateClawEnvVars = async (c: AuthenticatedContext) => {
             await executeSSH(
                 claw.ip,
                 claw.rootPassword,
-                `echo '${envB64}' | base64 -d > ${BASE_DIR}/.env && systemctl restart openclaw-gateway`,
-                15000
+                `echo '${envB64}' | base64 -d > ${BASE_DIR}/.env && (openclaw doctor --fix || true) && systemctl restart openclaw-gateway`,
+                20000
             )
 
             return ok(c, null, t('api.fileSaveSuccess'))

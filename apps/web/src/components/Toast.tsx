@@ -2,15 +2,15 @@ import type { FC, ReactNode } from 'react'
 
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Check, Warning, X, Info } from '@phosphor-icons/react'
+import { CheckIcon, WarningIcon, XIcon, InfoIcon } from '@phosphor-icons/react'
 import { t } from '@openclaw/i18n'
 import { useUIStore } from '@/lib/store'
 
 const icons = {
-    success: Check,
-    error: Warning,
-    warning: Warning,
-    info: Info
+    success: CheckIcon,
+    error: WarningIcon,
+    warning: WarningIcon,
+    info: InfoIcon
 }
 
 const colors = {
@@ -68,7 +68,7 @@ const Toast: FC = (): ReactNode => {
                             aria-label={t('common.closeNotification')}
                             className='ml-2 text-gray-400 transition hover:text-white'
                         >
-                            <X className='h-4 w-4' />
+                            <XIcon className='h-4 w-4' />
                         </button>
                     </div>
                 </motion.div>

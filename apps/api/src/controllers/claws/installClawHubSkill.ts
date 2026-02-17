@@ -38,13 +38,13 @@ const installClawHubSkill = async (c: AuthenticatedContext) => {
                 cmd = `${cmd} --workdir ${agentDir}`
             }
 
-            cmd = `${cmd} && systemctl restart openclaw-gateway`
+            cmd = `${cmd} && (openclaw doctor --fix || true) && systemctl restart openclaw-gateway`
 
             await executeSSH(
                 claw.ip,
                 claw.rootPassword,
                 cmd,
-                45000
+                50000
             )
 
             return ok(c, null, t('api.clawHubInstalled'))

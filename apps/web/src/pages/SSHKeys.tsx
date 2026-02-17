@@ -42,15 +42,15 @@ import {
     ActionButton
 } from '@/components'
 import {
-    PlusCircle,
-    Key,
-    Trash,
-    CircleNotch,
-    Copy,
-    Check,
-    Download,
-    Warning,
-    CaretDown
+    PlusCircleIcon,
+    KeyIcon,
+    TrashIcon,
+    CircleNotchIcon,
+    CopyIcon,
+    CheckIcon,
+    DownloadIcon,
+    WarningIcon,
+    CaretDownIcon
 } from '@phosphor-icons/react'
 
 const SSHKeySkeleton: FC = (): ReactNode => {
@@ -83,7 +83,7 @@ const SSHKeyCard: FC<SSHKeyCardProps> = ({ sshKey }): ReactNode => {
                     <div className='flex items-center justify-between'>
                         <div className='flex items-center gap-4'>
                             <div className='bg-muted flex h-10 w-10 items-center justify-center rounded-full'>
-                                <Key className='text-muted-foreground h-5 w-5' />
+                                <KeyIcon className='text-muted-foreground h-5 w-5' />
                             </div>
                             <div>
                                 <h3 className='font-semibold'>{sshKey.name}</h3>
@@ -100,9 +100,9 @@ const SSHKeyCard: FC<SSHKeyCardProps> = ({ sshKey }): ReactNode => {
                             disabled={deleteMutation.isPending}
                         >
                             {deleteMutation.isPending ? (
-                                <CircleNotch className='h-5 w-5 animate-spin' />
+                                <CircleNotchIcon className='h-5 w-5 animate-spin' />
                             ) : (
-                                <Trash className='text-destructive h-5 w-5' />
+                                <TrashIcon className='text-destructive h-5 w-5' />
                             )}
                         </Button>
                     </div>
@@ -134,7 +134,7 @@ const SSHKeyCard: FC<SSHKeyCardProps> = ({ sshKey }): ReactNode => {
                             disabled={deleteMutation.isPending}
                         >
                             {deleteMutation.isPending && (
-                                <CircleNotch className='h-4 w-4 animate-spin' />
+                                <CircleNotchIcon className='h-4 w-4 animate-spin' />
                             )}
                             {t('common.confirm')}
                         </Button>
@@ -381,9 +381,9 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                                         }
                                     >
                                         {copied === 'command' ? (
-                                            <Check className='h-4 w-4' />
+                                            <CheckIcon className='h-4 w-4' />
                                         ) : (
-                                            <Copy className='h-4 w-4' />
+                                            <CopyIcon className='h-4 w-4' />
                                         )}
                                     </Button>
                                 </div>
@@ -405,7 +405,7 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                                 disabled={createMutation.isPending}
                             >
                                 {createMutation.isPending && (
-                                    <CircleNotch className='mr-2 h-4 w-4 animate-spin' />
+                                    <CircleNotchIcon className='mr-2 h-4 w-4 animate-spin' />
                                 )}
                                 {t('common.addKey')}
                             </Button>
@@ -427,7 +427,7 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                         {!generatedKeys ? (
                             <>
                                 <Alert>
-                                    <Warning className='h-4 w-4' />
+                                    <WarningIcon className='h-4 w-4' />
                                     <AlertDescription>
                                         <strong>
                                             {t('sshKeys.important')}
@@ -441,7 +441,7 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                                     className='w-full'
                                     disabled={!name}
                                 >
-                                    <Key className='mr-2 h-4 w-4' />
+                                    <KeyIcon className='mr-2 h-4 w-4' />
                                     {t('sshKeys.generateKeyPair')}
                                 </Button>
 
@@ -479,9 +479,9 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                                                 }
                                             >
                                                 {copied === 'command' ? (
-                                                    <Check className='h-4 w-4' />
+                                                    <CheckIcon className='h-4 w-4' />
                                                 ) : (
-                                                    <Copy className='h-4 w-4' />
+                                                    <CopyIcon className='h-4 w-4' />
                                                 )}
                                             </Button>
                                         </div>
@@ -494,7 +494,7 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                         ) : (
                             <>
                                 <Alert variant='destructive'>
-                                    <Warning className='h-4 w-4' />
+                                    <WarningIcon className='h-4 w-4' />
                                     <AlertDescription>
                                         {t('sshKeys.savePrivateKeyNow')}
                                     </AlertDescription>
@@ -517,7 +517,7 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                                             size='sm'
                                             onClick={downloadPrivateKey}
                                         >
-                                            <Download className='mr-2 h-4 w-4' />
+                                            <DownloadIcon className='mr-2 h-4 w-4' />
                                             {t('sshKeys.downloadPrivateKey')}
                                         </Button>
                                         <Button
@@ -531,9 +531,9 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                                             }
                                         >
                                             {copied === 'private' ? (
-                                                <Check className='mr-2 h-4 w-4' />
+                                                <CheckIcon className='mr-2 h-4 w-4' />
                                             ) : (
-                                                <Copy className='mr-2 h-4 w-4' />
+                                                <CopyIcon className='mr-2 h-4 w-4' />
                                             )}
                                             {t('common.copy')}
                                         </Button>
@@ -566,7 +566,7 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                                         disabled={createMutation.isPending}
                                     >
                                         {createMutation.isPending && (
-                                            <CircleNotch className='mr-2 h-4 w-4 animate-spin' />
+                                            <CircleNotchIcon className='mr-2 h-4 w-4 animate-spin' />
                                         )}
                                         {t('sshKeys.savePublicKey')}
                                     </Button>
@@ -613,7 +613,7 @@ const SSHKeys: FC = (): ReactNode => {
                             <ActionButton
                                 onClick={() => setShowCreate(true)}
                                 icon={
-                                    <PlusCircle
+                                    <PlusCircleIcon
                                         className='h-5 w-5'
                                         weight='bold'
                                     />
@@ -634,7 +634,7 @@ const SSHKeys: FC = (): ReactNode => {
                             <h3 className='font-semibold'>
                                 {t('sshKeys.howSshKeysWork')}
                             </h3>
-                            <CaretDown
+                            <CaretDownIcon
                                 className={`h-4 w-4 text-gray-400 transition-transform ${howItWorksOpen ? 'rotate-180' : ''}`}
                                 weight='bold'
                             />
@@ -673,12 +673,12 @@ const SSHKeys: FC = (): ReactNode => {
                         />
                     ) : isLoading && knowsCount && skeletonCount === 0 ? (
                         <EmptyState
-                            icon={<Key className='text-primary h-10 w-10' />}
+                            icon={<KeyIcon className='text-primary h-10 w-10' />}
                             title={t('sshKeys.noSshKeysYet')}
                             description={t('sshKeys.noSshKeysDescription')}
                             actionLabel={t('sshKeys.addSshKey')}
                             actionIcon={
-                                <PlusCircle className='h-5 w-5' weight='bold' />
+                                <PlusCircleIcon className='h-5 w-5' weight='bold' />
                             }
                             onAction={() => setShowCreate(true)}
                         />
@@ -692,12 +692,12 @@ const SSHKeys: FC = (): ReactNode => {
                         </div>
                     ) : sshKeys?.length === 0 ? (
                         <EmptyState
-                            icon={<Key className='text-primary h-10 w-10' />}
+                            icon={<KeyIcon className='text-primary h-10 w-10' />}
                             title={t('sshKeys.noSshKeysYet')}
                             description={t('sshKeys.noSshKeysDescription')}
                             actionLabel={t('sshKeys.addSshKey')}
                             actionIcon={
-                                <PlusCircle className='h-5 w-5' weight='bold' />
+                                <PlusCircleIcon className='h-5 w-5' weight='bold' />
                             }
                             onAction={() => setShowCreate(true)}
                         />

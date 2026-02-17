@@ -13,13 +13,13 @@ import {
     Skeleton
 } from '@/components/ui'
 import {
-    CircleNotch,
-    FloppyDisk,
-    Warning,
-    File,
-    FileJs,
-    FolderOpen,
-    X
+    CircleNotchIcon,
+    FloppyDiskIcon,
+    WarningIcon,
+    FileIcon,
+    FileJsIcon,
+    FolderOpenIcon,
+    XIcon
 } from '@phosphor-icons/react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useClawFiles, useClawFile, useUpdateClawFile } from '@/hooks'
@@ -191,7 +191,7 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                 </DialogHeader>
 
                 <div className='mt-2 flex max-w-lg items-start gap-2 rounded-md bg-yellow-950/50 p-3 text-xs text-yellow-400'>
-                    <Warning className='mt-0.5 h-3.5 w-3.5 shrink-0' />
+                    <WarningIcon className='mt-0.5 h-3.5 w-3.5 shrink-0' />
                     {t('dashboard.fileExplorerWarning')}
                 </div>
 
@@ -301,7 +301,7 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                         {groupedFiles && (
                             <>
                                 <div className='flex items-center gap-1.5 px-3 pb-1 pt-2 text-xs font-medium text-zinc-400'>
-                                    <FolderOpen className='h-3.5 w-3.5 shrink-0' />
+                                    <FolderOpenIcon className='h-3.5 w-3.5 shrink-0' />
                                     {t('dashboard.fileExplorerRoot')}
                                 </div>
                                 <div className='ml-[19px]'>
@@ -318,7 +318,7 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                                                             : "before:absolute before:left-0 before:top-0 before:h-full before:w-px before:bg-zinc-700/50 before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:bg-zinc-700/50 after:content-['']"
                                                     }`}
                                                 >
-                                                    <FolderOpen className='h-3.5 w-3.5 shrink-0' />
+                                                    <FolderOpenIcon className='h-3.5 w-3.5 shrink-0' />
                                                     {dir}
                                                 </div>
                                                 <div
@@ -354,9 +354,9 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                                                                     }`}
                                                                 >
                                                                     {file.isJson ? (
-                                                                        <FileJs className='h-3.5 w-3.5 shrink-0 text-yellow-500' />
+                                                                        <FileJsIcon className='h-3.5 w-3.5 shrink-0 text-yellow-500' />
                                                                     ) : (
-                                                                        <File className='h-3.5 w-3.5 shrink-0' />
+                                                                        <FileIcon className='h-3.5 w-3.5 shrink-0' />
                                                                     )}
                                                                     <span className='truncate'>
                                                                         {
@@ -388,9 +388,9 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                                             }`}
                                         >
                                             {file.isJson ? (
-                                                <FileJs className='h-3.5 w-3.5 shrink-0 text-yellow-500' />
+                                                <FileJsIcon className='h-3.5 w-3.5 shrink-0 text-yellow-500' />
                                             ) : (
-                                                <File className='h-3.5 w-3.5 shrink-0' />
+                                                <FileIcon className='h-3.5 w-3.5 shrink-0' />
                                             )}
                                             <span className='truncate'>
                                                 {file.name}
@@ -405,7 +405,7 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                     <div className='flex min-w-0 flex-1 flex-col gap-2'>
                         {!selectedPath && (
                             <div className='flex flex-1 flex-col items-center justify-center gap-2 rounded-md border border-zinc-800 bg-black text-sm text-zinc-500'>
-                                <File className='h-8 w-8 text-zinc-600' />
+                                <FileIcon className='h-8 w-8 text-zinc-600' />
                                 {t('dashboard.fileExplorerSelectFile')}
                             </div>
                         )}
@@ -426,9 +426,9 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                                 <div className='flex items-center'>
                                     <div className='flex items-center gap-1.5 rounded-t-md border border-b-0 border-zinc-800 bg-black px-3 py-1.5 text-xs text-zinc-300'>
                                         {isJson ? (
-                                            <FileJs className='h-3.5 w-3.5 shrink-0 text-yellow-500' />
+                                            <FileJsIcon className='h-3.5 w-3.5 shrink-0 text-yellow-500' />
                                         ) : (
-                                            <File className='h-3.5 w-3.5 shrink-0' />
+                                            <FileIcon className='h-3.5 w-3.5 shrink-0' />
                                         )}
                                         {selectedFile?.name}
                                         {!isJson && (
@@ -442,7 +442,7 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                                             onClick={() => handleSelectFile('')}
                                             className='ml-0.5 rounded p-0.5 text-zinc-500 transition-colors hover:bg-zinc-700 hover:text-zinc-300'
                                         >
-                                            <X className='h-3 w-3' />
+                                            <XIcon className='h-3 w-3' />
                                         </button>
                                     </div>
                                 </div>
@@ -500,9 +500,9 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                         size='sm'
                     >
                         {updateFile.isPending ? (
-                            <CircleNotch className='mr-2 h-4 w-4 animate-spin' />
+                            <CircleNotchIcon className='mr-2 h-4 w-4 animate-spin' />
                         ) : (
-                            <FloppyDisk className='mr-2 h-4 w-4' />
+                            <FloppyDiskIcon className='mr-2 h-4 w-4' />
                         )}
                         {t('dashboard.fileExplorerSave')}
                     </Button>

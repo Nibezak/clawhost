@@ -10,7 +10,7 @@ import { useProfile } from '@/hooks'
 import { Button, Skeleton } from '@/components/ui'
 import { Logo, UserDropdown } from '@/components'
 import { ROUTES } from '@/lib'
-import { Lightning, List, X } from '@phosphor-icons/react'
+import { LightningIcon, ListIcon, XIcon } from '@phosphor-icons/react'
 
 const Header: FC<HeaderProps> = ({
     showNavLinks = false,
@@ -119,7 +119,7 @@ const Header: FC<HeaderProps> = ({
                                     asChild
                                 >
                                     <Link to={ROUTES.LOGIN}>
-                                        <Lightning
+                                        <LightningIcon
                                             className='h-4 w-4'
                                             weight='fill'
                                         />
@@ -136,9 +136,9 @@ const Header: FC<HeaderProps> = ({
                                 className='rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white md:hidden'
                             >
                                 {mobileMenuOpen ? (
-                                    <X className='h-5 w-5' weight='bold' />
+                                    <XIcon className='h-5 w-5' weight='bold' />
                                 ) : (
-                                    <List className='h-5 w-5' weight='bold' />
+                                    <ListIcon className='h-5 w-5' weight='bold' />
                                 )}
                             </button>
                         )}

@@ -47,16 +47,16 @@ const updateAgentSkills = async (c: AuthenticatedContext) => {
                 await executeSSH(
                     claw.ip,
                     claw.rootPassword,
-                    `mkdir -p ${skillDir} && echo -e '${skillMd}' > ${skillDir}/SKILL.md && chown -R openclaw:openclaw ${skillsDir} && systemctl restart openclaw-gateway`,
-                    15000
+                    `mkdir -p ${skillDir} && echo -e '${skillMd}' > ${skillDir}/SKILL.md && chown -R openclaw:openclaw ${skillsDir} && (openclaw doctor --fix || true) && systemctl restart openclaw-gateway`,
+                    20000
                 )
             } else if (body.action === 'remove') {
                 const skillDir = `${skillsDir}/${body.skillName}`
                 await executeSSH(
                     claw.ip,
                     claw.rootPassword,
-                    `rm -rf ${skillDir} && systemctl restart openclaw-gateway`,
-                    15000
+                    `rm -rf ${skillDir} && (openclaw doctor --fix || true) && systemctl restart openclaw-gateway`,
+                    20000
                 )
             } else {
                 return fail(c, t('api.missingRequiredFields'), 400)

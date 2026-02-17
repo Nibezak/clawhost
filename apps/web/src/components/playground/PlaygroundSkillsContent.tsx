@@ -13,11 +13,11 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { t } from '@openclaw/i18n'
 import {
-    CircleNotch,
-    Cube,
-    Lightning,
-    MagnifyingGlass,
-    Storefront
+    CircleNotchIcon,
+    CubeIcon,
+    LightningIcon,
+    MagnifyingGlassIcon,
+    StorefrontIcon
 } from '@phosphor-icons/react'
 import { PanelPlaceholder } from '@/components'
 import { Skeleton } from '@/components/ui'
@@ -421,7 +421,7 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
         <div className='flex h-full flex-col overflow-y-auto px-5 pb-5'>
             <div className='sticky top-0 z-10 bg-[#0a0a0f] pb-3 pt-5'>
                 <div className='relative'>
-                    <MagnifyingGlass className='absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-500' />
+                    <MagnifyingGlassIcon className='absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-500' />
                     <input
                         type='text'
                         value={search}
@@ -455,7 +455,7 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                                     >
                                         <div className='min-w-0 flex-1'>
                                             <div className='flex items-center gap-2'>
-                                                <Cube className='h-3 w-3 shrink-0 text-gray-600' weight='duotone' />
+                                                <CubeIcon className='h-3 w-3 shrink-0 text-gray-600' weight='duotone' />
                                                 <span className='text-xs font-medium text-white'>
                                                     {skill.name}
                                                 </span>
@@ -474,7 +474,7 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                                             className='ml-3 flex shrink-0 items-center gap-1.5 rounded-md bg-white/5 px-2.5 py-1 text-[11px] font-medium text-gray-300 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50'
                                         >
                                             {isPending ? (
-                                                <CircleNotch className='h-3 w-3 animate-spin' />
+                                                <CircleNotchIcon className='h-3 w-3 animate-spin' />
                                             ) : active ? (
                                                 t('playground.clawHubRemove')
                                             ) : (
@@ -509,7 +509,7 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                                     >
                                         <div className='min-w-0 flex-1'>
                                             <div className='flex items-center gap-2'>
-                                                <Storefront className='h-3 w-3 shrink-0 text-[#ef5350]/40' weight='duotone' />
+                                                <StorefrontIcon className='h-3 w-3 shrink-0 text-[#ef5350]/40' weight='duotone' />
                                                 <span className='text-xs font-medium text-white'>
                                                     {skill.name}
                                                 </span>
@@ -572,7 +572,7 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                                             className='ml-3 flex shrink-0 items-center gap-1.5 rounded-md bg-white/5 px-2.5 py-1 text-[11px] font-medium text-gray-300 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50'
                                         >
                                             {isPending ? (
-                                                <CircleNotch className='h-3 w-3 animate-spin' />
+                                                <CircleNotchIcon className='h-3 w-3 animate-spin' />
                                             ) : isInstalled && hasUpdate ? (
                                                 t('playground.clawHubUpdate')
                                             ) : isInstalled ? (
@@ -589,7 +589,7 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                             <div className='flex flex-1 items-center justify-center'>
                                 <PanelPlaceholder
                                     icon={
-                                        <Storefront
+                                        <StorefrontIcon
                                             className='h-6 w-6 text-gray-500'
                                             weight='duotone'
                                         />
@@ -618,7 +618,7 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                     <div className='flex flex-1 items-center justify-center'>
                         <PanelPlaceholder
                             icon={
-                                <Lightning
+                                <LightningIcon
                                     className='h-6 w-6 text-gray-500'
                                     weight='duotone'
                                 />

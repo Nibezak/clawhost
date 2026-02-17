@@ -149,8 +149,8 @@ const updateClawAgentConfig = async (c: AuthenticatedContext) => {
             await executeSSH(
                 claw.ip,
                 claw.rootPassword,
-                `${writeCommand} && systemctl restart openclaw-gateway`,
-                15000
+                `${writeCommand} && (openclaw doctor --fix || true) && systemctl restart openclaw-gateway`,
+                20000
             )
 
             return ok(c, null, t('api.agentConfigUpdated'))

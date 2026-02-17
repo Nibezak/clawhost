@@ -3,7 +3,7 @@ import type { Faq, Testimonial } from '@/ts/Interfaces'
 import type { ProviderType } from '@/ts/Types'
 
 import { Link } from 'react-router-dom'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { Button, Badge } from '@/components/ui'
@@ -26,21 +26,21 @@ import { ROUTES } from '@/lib'
 import { usePlans } from '@/hooks'
 import { getBaseDomain } from '@/lib'
 import {
-    ShieldCheck,
-    Globe,
-    Clock,
-    Terminal,
-    Lock,
-    Gauge,
-    HardDrives,
-    Check,
-    Sparkle,
-    CaretDown,
-    Quotes,
-    CreditCard,
-    Link as LinkIcon,
-    ArrowsClockwise,
-    X
+    ShieldCheckIcon,
+    GlobeIcon,
+    ClockIcon,
+    TerminalIcon,
+    LockIcon,
+    GaugeIcon,
+    HardDrivesIcon,
+    CheckIcon,
+    SparkleIcon,
+    CaretDownIcon,
+    QuotesIcon,
+    CreditCardIcon,
+    LinkIcon,
+    ArrowsClockwiseIcon,
+    XIcon
 } from '@phosphor-icons/react'
 
 function getTestimonials(): Testimonial[] {
@@ -129,20 +129,57 @@ const Landing: FC = (): ReactNode => {
         [0.92, 1.02, 1.02, 0.92]
     )
 
+    const [isMobile, setIsMobile] = useState(
+        typeof window !== 'undefined' && window.innerWidth < 768
+    )
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768)
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
+    }, [])
+
+    const mobileDemoData = useMemo(() => {
+        if (!isMobile) return demoPlaygroundData
+        const keepAgentId = 'agent-1a'
+        const nodes = demoPlaygroundData.nodes
+            .filter((n) => {
+                if (n.type !== 'agentNode') return true
+                const data = n.data as Record<string, unknown>
+                const agent = data.agent as Record<string, unknown>
+                return agent?.id === keepAgentId
+            })
+            .map((n) => {
+                if (n.type === 'clawNode') {
+                    return { ...n, data: { ...n.data, agentCount: 1 }, position: { x: 0, y: 0 } }
+                }
+                return { ...n, position: { x: 20, y: 170 } }
+            })
+        const nodeIds = new Set(nodes.map((n) => n.id))
+        const edges = demoPlaygroundData.edges.filter(
+            (e) => nodeIds.has(e.source) && nodeIds.has(e.target)
+        )
+        const agentsByClawId: Record<string, typeof demoPlaygroundData.agentsByClawId[string]> = {}
+        for (const [clawId, agents] of Object.entries(demoPlaygroundData.agentsByClawId)) {
+            agentsByClawId[clawId] = agents.filter((a) => a.id === keepAgentId)
+        }
+        return { ...demoPlaygroundData, nodes, edges, agentsByClawId }
+    }, [isMobile])
+
     const [demoClawId, setDemoClawId] = useState<string | null>(null)
     const [demoAgentId, setDemoAgentId] = useState<string | null>(null)
     const [demoAgentClawId, setDemoAgentClawId] = useState<string | null>(null)
 
     const demoClaw = demoClawId
-        ? demoPlaygroundData.claws.find((c) => c.id === demoClawId) || null
+        ? mobileDemoData.claws.find((c) => c.id === demoClawId) || null
         : null
 
     const demoAgentClaw = demoAgentClawId
-        ? demoPlaygroundData.claws.find((c) => c.id === demoAgentClawId) || null
+        ? mobileDemoData.claws.find((c) => c.id === demoAgentClawId) || null
         : null
 
     const demoAgentList = demoAgentClaw
-        ? demoPlaygroundData.agentsByClawId[demoAgentClaw.id] || []
+        ? mobileDemoData.agentsByClawId[demoAgentClaw.id] || []
         : []
 
     const demoAgent = demoAgentId
@@ -224,7 +261,7 @@ const Landing: FC = (): ReactNode => {
                             transition={{ delay: 0.1 }}
                             className='glow-border mb-8 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2'
                         >
-                            <Sparkle
+                            <SparkleIcon
                                 className='h-4 w-4 text-[#ef5350]'
                                 weight='fill'
                             />
@@ -333,7 +370,7 @@ const Landing: FC = (): ReactNode => {
                         </div>
                         <div className='flex flex-1 justify-center'>
                             <div className='flex items-center gap-2 rounded-lg bg-black/30 px-4 py-1.5 text-xs text-gray-500'>
-                                <Lock
+                                <LockIcon
                                     className='h-3 w-3 text-green-500/70'
                                     weight='fill'
                                 />
@@ -348,8 +385,8 @@ const Landing: FC = (): ReactNode => {
                             <div className='relative min-w-0 flex-1'>
                                 <div className='playground-grid h-full'>
                                     <PlaygroundCanvas
-                                        initialNodes={demoPlaygroundData.nodes}
-                                        initialEdges={demoPlaygroundData.edges}
+                                        initialNodes={mobileDemoData.nodes}
+                                        initialEdges={mobileDemoData.edges}
                                         initialZoom={1.25}
                                         allowPageScroll
                                         onNodeClick={(clawId) => {
@@ -438,19 +475,19 @@ const Landing: FC = (): ReactNode => {
                         {[
                             {
                                 step: '01',
-                                icon: HardDrives,
+                                icon: HardDrivesIcon,
                                 title: t('landing.step1Title'),
                                 description: t('landing.step1Description')
                             },
                             {
                                 step: '02',
-                                icon: ShieldCheck,
+                                icon: ShieldCheckIcon,
                                 title: t('landing.step2Title'),
                                 description: t('landing.step2Description')
                             },
                             {
                                 step: '03',
-                                icon: Terminal,
+                                icon: TerminalIcon,
                                 title: t('landing.step3Title'),
                                 description: t('landing.step3Description')
                             }
@@ -502,36 +539,36 @@ const Landing: FC = (): ReactNode => {
                     <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
                         {[
                             {
-                                icon: Clock,
+                                icon: ClockIcon,
                                 title: t('landing.zeroConfig'),
                                 description: t('landing.zeroConfigDescription')
                             },
                             {
-                                icon: Lock,
+                                icon: LockIcon,
                                 title: t('landing.ownedData'),
                                 description: t('landing.ownedDataDescription')
                             },
                             {
-                                icon: Gauge,
+                                icon: GaugeIcon,
                                 title: t('landing.fullSpeed'),
                                 description: t('landing.fullSpeedDescription')
                             },
                             {
-                                icon: Globe,
+                                icon: GlobeIcon,
                                 title: t('landing.globalLocations'),
                                 description: t(
                                     'landing.globalLocationsDescription'
                                 )
                             },
                             {
-                                icon: Terminal,
+                                icon: TerminalIcon,
                                 title: t('landing.fullSshAccess'),
                                 description: t(
                                     'landing.fullSshAccessDescription'
                                 )
                             },
                             {
-                                icon: CreditCard,
+                                icon: CreditCardIcon,
                                 title: t('landing.payAsYouGo'),
                                 description: t('landing.payAsYouGoDescription')
                             },
@@ -543,12 +580,12 @@ const Landing: FC = (): ReactNode => {
                                 )
                             },
                             {
-                                icon: ShieldCheck,
+                                icon: ShieldCheckIcon,
                                 title: t('landing.secure'),
                                 description: t('landing.secureDescription')
                             },
                             {
-                                icon: ArrowsClockwise,
+                                icon: ArrowsClockwiseIcon,
                                 title: t('landing.autoUpdates'),
                                 description: t('landing.autoUpdatesDescription')
                             }
@@ -596,7 +633,7 @@ const Landing: FC = (): ReactNode => {
                                 key={i}
                                 className='rounded-xl border border-white/10 bg-white/[0.02] p-6'
                             >
-                                <Quotes
+                                <QuotesIcon
                                     className='mb-4 h-8 w-8 text-[#ef5350]/40'
                                     weight='fill'
                                 />
@@ -866,29 +903,29 @@ const Landing: FC = (): ReactNode => {
                             <div className='mt-8 rounded-xl border border-white/10 bg-white/[0.02] p-4'>
                                 <div className='flex flex-wrap items-center justify-center gap-6 text-sm text-gray-400'>
                                     <div className='flex items-center gap-2'>
-                                        <Check className='h-4 w-4 text-green-400' />
+                                        <CheckIcon className='h-4 w-4 text-green-400' />
                                         <span>
                                             {t('landing.openClawPreinstalled')}
                                         </span>
                                     </div>
                                     <div className='flex items-center gap-2'>
-                                        <Check className='h-4 w-4 text-green-400' />
+                                        <CheckIcon className='h-4 w-4 text-green-400' />
                                         <span>
                                             {t('landing.unlimitedBandwidth')}
                                         </span>
                                     </div>
                                     <div className='flex items-center gap-2'>
-                                        <Check className='h-4 w-4 text-green-400' />
+                                        <CheckIcon className='h-4 w-4 text-green-400' />
                                         <span>
                                             {t('landing.rootSshAccess')}
                                         </span>
                                     </div>
                                     <div className='flex items-center gap-2'>
-                                        <Check className='h-4 w-4 text-green-400' />
+                                        <CheckIcon className='h-4 w-4 text-green-400' />
                                         <span>{t('landing.onlineAllDay')}</span>
                                     </div>
                                     <div className='flex items-center gap-2'>
-                                        <Check className='h-4 w-4 text-green-400' />
+                                        <CheckIcon className='h-4 w-4 text-green-400' />
                                         <span>
                                             {t('landing.highQualityInternet')}
                                         </span>
@@ -948,7 +985,7 @@ const Landing: FC = (): ReactNode => {
                                 <tr>
                                     <td className='px-6 py-4'>
                                         <div className='flex items-center gap-3'>
-                                            <Check className='h-5 w-5 flex-shrink-0 text-green-400' />
+                                            <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-400' />
                                             <span className='text-white'>
                                                 {t(
                                                     'landing.comparisonOpenClawUs'
@@ -958,7 +995,7 @@ const Landing: FC = (): ReactNode => {
                                     </td>
                                     <td className='px-6 py-4'>
                                         <div className='flex items-center gap-3'>
-                                            <X className='h-5 w-5 flex-shrink-0 text-red-400' />
+                                            <XIcon className='h-5 w-5 flex-shrink-0 text-red-400' />
                                             <span className='text-gray-400'>
                                                 {t(
                                                     'landing.comparisonOpenClawOthers'
@@ -970,7 +1007,7 @@ const Landing: FC = (): ReactNode => {
                                 <tr className='bg-white/[0.01]'>
                                     <td className='px-6 py-4'>
                                         <div className='flex items-center gap-3'>
-                                            <Check className='h-5 w-5 flex-shrink-0 text-green-400' />
+                                            <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-400' />
                                             <span className='text-white'>
                                                 {t(
                                                     'landing.comparisonPricingUs'
@@ -980,7 +1017,7 @@ const Landing: FC = (): ReactNode => {
                                     </td>
                                     <td className='px-6 py-4'>
                                         <div className='flex items-center gap-3'>
-                                            <X className='h-5 w-5 flex-shrink-0 text-red-400' />
+                                            <XIcon className='h-5 w-5 flex-shrink-0 text-red-400' />
                                             <span className='text-gray-400'>
                                                 {t(
                                                     'landing.comparisonPricingOthers'
@@ -992,7 +1029,7 @@ const Landing: FC = (): ReactNode => {
                                 <tr>
                                     <td className='px-6 py-4'>
                                         <div className='flex items-center gap-3'>
-                                            <Check className='h-5 w-5 flex-shrink-0 text-green-400' />
+                                            <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-400' />
                                             <span className='text-white'>
                                                 {t(
                                                     'landing.comparisonOwnershipUs'
@@ -1002,7 +1039,7 @@ const Landing: FC = (): ReactNode => {
                                     </td>
                                     <td className='px-6 py-4'>
                                         <div className='flex items-center gap-3'>
-                                            <X className='h-5 w-5 flex-shrink-0 text-red-400' />
+                                            <XIcon className='h-5 w-5 flex-shrink-0 text-red-400' />
                                             <span className='text-gray-400'>
                                                 {t(
                                                     'landing.comparisonOwnershipOthers'
@@ -1014,7 +1051,7 @@ const Landing: FC = (): ReactNode => {
                                 <tr className='bg-white/[0.01]'>
                                     <td className='px-6 py-4'>
                                         <div className='flex items-center gap-3'>
-                                            <Check className='h-5 w-5 flex-shrink-0 text-green-400' />
+                                            <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-400' />
                                             <span className='text-white'>
                                                 {t(
                                                     'landing.comparisonSubdomainUs'
@@ -1024,7 +1061,7 @@ const Landing: FC = (): ReactNode => {
                                     </td>
                                     <td className='px-6 py-4'>
                                         <div className='flex items-center gap-3'>
-                                            <X className='h-5 w-5 flex-shrink-0 text-red-400' />
+                                            <XIcon className='h-5 w-5 flex-shrink-0 text-red-400' />
                                             <span className='text-gray-400'>
                                                 {t(
                                                     'landing.comparisonSubdomainOthers'
@@ -1036,7 +1073,7 @@ const Landing: FC = (): ReactNode => {
                                 <tr>
                                     <td className='px-6 py-4'>
                                         <div className='flex items-center gap-3'>
-                                            <Check className='h-5 w-5 flex-shrink-0 text-green-400' />
+                                            <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-400' />
                                             <span className='text-white'>
                                                 {t('landing.comparisonInfraUs')}
                                             </span>
@@ -1044,7 +1081,7 @@ const Landing: FC = (): ReactNode => {
                                     </td>
                                     <td className='px-6 py-4'>
                                         <div className='flex items-center gap-3'>
-                                            <X className='h-5 w-5 flex-shrink-0 text-red-400' />
+                                            <XIcon className='h-5 w-5 flex-shrink-0 text-red-400' />
                                             <span className='text-gray-400'>
                                                 {t(
                                                     'landing.comparisonInfraOthers'
@@ -1056,7 +1093,7 @@ const Landing: FC = (): ReactNode => {
                                 <tr className='bg-white/[0.01]'>
                                     <td className='px-6 py-4'>
                                         <div className='flex items-center gap-3'>
-                                            <Check className='h-5 w-5 flex-shrink-0 text-green-400' />
+                                            <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-400' />
                                             <span className='text-white'>
                                                 {t('landing.comparisonDataUs')}
                                             </span>
@@ -1064,7 +1101,7 @@ const Landing: FC = (): ReactNode => {
                                     </td>
                                     <td className='px-6 py-4'>
                                         <div className='flex items-center gap-3'>
-                                            <X className='h-5 w-5 flex-shrink-0 text-red-400' />
+                                            <XIcon className='h-5 w-5 flex-shrink-0 text-red-400' />
                                             <span className='text-gray-400'>
                                                 {t(
                                                     'landing.comparisonDataOthers'
@@ -1076,7 +1113,7 @@ const Landing: FC = (): ReactNode => {
                                 <tr>
                                     <td className='px-6 py-4'>
                                         <div className='flex items-center gap-3'>
-                                            <Check className='h-5 w-5 flex-shrink-0 text-green-400' />
+                                            <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-400' />
                                             <span className='text-white'>
                                                 {t(
                                                     'landing.comparisonMultipleUs'
@@ -1086,7 +1123,7 @@ const Landing: FC = (): ReactNode => {
                                     </td>
                                     <td className='px-6 py-4'>
                                         <div className='flex items-center gap-3'>
-                                            <X className='h-5 w-5 flex-shrink-0 text-red-400' />
+                                            <XIcon className='h-5 w-5 flex-shrink-0 text-red-400' />
                                             <span className='text-gray-400'>
                                                 {t(
                                                     'landing.comparisonMultipleOthers'
@@ -1098,7 +1135,7 @@ const Landing: FC = (): ReactNode => {
                                 <tr className='bg-white/[0.01]'>
                                     <td className='px-6 py-4'>
                                         <div className='flex items-center gap-3'>
-                                            <Check className='h-5 w-5 flex-shrink-0 text-green-400' />
+                                            <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-400' />
                                             <span className='text-white'>
                                                 {t(
                                                     'landing.comparisonOpenSourceUs'
@@ -1108,7 +1145,7 @@ const Landing: FC = (): ReactNode => {
                                     </td>
                                     <td className='px-6 py-4'>
                                         <div className='flex items-center gap-3'>
-                                            <X className='h-5 w-5 flex-shrink-0 text-red-400' />
+                                            <XIcon className='h-5 w-5 flex-shrink-0 text-red-400' />
                                             <span className='text-gray-400'>
                                                 {t(
                                                     'landing.comparisonOpenSourceOthers'
@@ -1120,7 +1157,7 @@ const Landing: FC = (): ReactNode => {
                                 <tr>
                                     <td className='px-6 py-4'>
                                         <div className='flex items-center gap-3'>
-                                            <Check className='h-5 w-5 flex-shrink-0 text-green-400' />
+                                            <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-400' />
                                             <span className='text-white'>
                                                 {t(
                                                     'landing.comparisonExportUs'
@@ -1130,7 +1167,7 @@ const Landing: FC = (): ReactNode => {
                                     </td>
                                     <td className='px-6 py-4'>
                                         <div className='flex items-center gap-3'>
-                                            <X className='h-5 w-5 flex-shrink-0 text-red-400' />
+                                            <XIcon className='h-5 w-5 flex-shrink-0 text-red-400' />
                                             <span className='text-gray-400'>
                                                 {t(
                                                     'landing.comparisonExportOthers'
@@ -1142,7 +1179,7 @@ const Landing: FC = (): ReactNode => {
                                 <tr className='bg-white/[0.01]'>
                                     <td className='px-6 py-4'>
                                         <div className='flex items-center gap-3'>
-                                            <Check className='h-5 w-5 flex-shrink-0 text-green-400' />
+                                            <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-400' />
                                             <span className='text-white'>
                                                 {t(
                                                     'landing.comparisonProvidersUs'
@@ -1152,7 +1189,7 @@ const Landing: FC = (): ReactNode => {
                                     </td>
                                     <td className='px-6 py-4'>
                                         <div className='flex items-center gap-3'>
-                                            <X className='h-5 w-5 flex-shrink-0 text-red-400' />
+                                            <XIcon className='h-5 w-5 flex-shrink-0 text-red-400' />
                                             <span className='text-gray-400'>
                                                 {t(
                                                     'landing.comparisonProvidersOthers'
@@ -1202,7 +1239,7 @@ const Landing: FC = (): ReactNode => {
                                     <span className='pr-4 font-medium text-white'>
                                         {faq.question}
                                     </span>
-                                    <CaretDown
+                                    <CaretDownIcon
                                         className={`h-5 w-5 flex-shrink-0 text-gray-400 transition-transform duration-200 ${
                                             openFaq === i ? 'rotate-180' : ''
                                         }`}

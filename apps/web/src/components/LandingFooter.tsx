@@ -15,13 +15,13 @@ import {
     SUPPORT_EMAIL
 } from '@/lib/links'
 import {
-    FacebookLogo,
-    GithubLogo,
-    InstagramLogo,
-    ThreadsLogo,
-    TiktokLogo,
-    XLogo,
-    YoutubeLogo
+    FacebookLogoIcon,
+    GithubLogoIcon,
+    InstagramLogoIcon,
+    ThreadsLogoIcon,
+    TiktokLogoIcon,
+    XLogoIcon,
+    YoutubeLogoIcon
 } from '@phosphor-icons/react'
 
 const LandingFooter: FC = (): ReactNode => {
@@ -41,7 +41,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 rel='noopener noreferrer'
                                 className='rounded-lg bg-white/5 p-2 text-gray-400 transition hover:bg-white/10 hover:text-white'
                             >
-                                <GithubLogo className='h-5 w-5' weight='fill' />
+                                <GithubLogoIcon className='h-5 w-5' weight='fill' />
                             </a>
                             <a
                                 href={TWITTER_URL}
@@ -49,7 +49,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 rel='noopener noreferrer'
                                 className='rounded-lg bg-white/5 p-2 text-gray-400 transition hover:bg-white/10 hover:text-white'
                             >
-                                <XLogo className='h-5 w-5' weight='fill' />
+                                <XLogoIcon className='h-5 w-5' weight='fill' />
                             </a>
                             <a
                                 href={FACEBOOK_URL}
@@ -57,7 +57,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 rel='noopener noreferrer'
                                 className='rounded-lg bg-white/5 p-2 text-gray-400 transition hover:bg-white/10 hover:text-white'
                             >
-                                <FacebookLogo
+                                <FacebookLogoIcon
                                     className='h-5 w-5'
                                     weight='fill'
                                 />
@@ -68,7 +68,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 rel='noopener noreferrer'
                                 className='rounded-lg bg-white/5 p-2 text-gray-400 transition hover:bg-white/10 hover:text-white'
                             >
-                                <InstagramLogo
+                                <InstagramLogoIcon
                                     className='h-5 w-5'
                                     weight='fill'
                                 />
@@ -79,7 +79,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 rel='noopener noreferrer'
                                 className='rounded-lg bg-white/5 p-2 text-gray-400 transition hover:bg-white/10 hover:text-white'
                             >
-                                <ThreadsLogo
+                                <ThreadsLogoIcon
                                     className='h-5 w-5'
                                     weight='fill'
                                 />
@@ -90,7 +90,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 rel='noopener noreferrer'
                                 className='rounded-lg bg-white/5 p-2 text-gray-400 transition hover:bg-white/10 hover:text-white'
                             >
-                                <YoutubeLogo
+                                <YoutubeLogoIcon
                                     className='h-5 w-5'
                                     weight='fill'
                                 />
@@ -101,7 +101,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 rel='noopener noreferrer'
                                 className='rounded-lg bg-white/5 p-2 text-gray-400 transition hover:bg-white/10 hover:text-white'
                             >
-                                <TiktokLogo className='h-5 w-5' weight='fill' />
+                                <TiktokLogoIcon className='h-5 w-5' weight='fill' />
                             </a>
                         </div>
                         <p className='mt-4 text-sm text-gray-500'>

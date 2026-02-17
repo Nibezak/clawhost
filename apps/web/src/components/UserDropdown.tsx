@@ -15,7 +15,7 @@ import {
     DropdownMenuTrigger
 } from '@/components/ui'
 import { ClawMascotOutline } from '@/components'
-import { Key, User, SignOut, Receipt } from '@phosphor-icons/react'
+import { KeyIcon, UserIcon, SignOutIcon, ReceiptIcon } from '@phosphor-icons/react'
 
 const UserDropdown: FC<UserDropdownProps> = ({
     displayName,
@@ -73,21 +73,21 @@ const UserDropdown: FC<UserDropdownProps> = ({
                     onClick={() => navigate(ROUTES.SSH_KEYS)}
                     className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.SSH_KEYS ? 'bg-white/10' : ''}`}
                 >
-                    <Key className='h-4 w-4' />
+                    <KeyIcon className='h-4 w-4' />
                     {t('nav.sshKeys')}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                     onClick={() => navigate(ROUTES.ACCOUNT)}
                     className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.ACCOUNT ? 'bg-white/10' : ''}`}
                 >
-                    <User className='h-4 w-4' />
+                    <UserIcon className='h-4 w-4' />
                     {t('nav.account')}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                     onClick={() => navigate(ROUTES.BILLING)}
                     className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.BILLING ? 'bg-white/10' : ''}`}
                 >
-                    <Receipt className='h-4 w-4' />
+                    <ReceiptIcon className='h-4 w-4' />
                     {t('nav.billing')}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className='bg-white/10' />
@@ -95,7 +95,7 @@ const UserDropdown: FC<UserDropdownProps> = ({
                     onClick={onSignOut}
                     className='text-red-400 focus:bg-white/10 focus:text-red-400'
                 >
-                    <SignOut className='h-4 w-4' />
+                    <SignOutIcon className='h-4 w-4' />
                     {t('nav.signOut')}
                 </DropdownMenuItem>
             </DropdownMenuContent>

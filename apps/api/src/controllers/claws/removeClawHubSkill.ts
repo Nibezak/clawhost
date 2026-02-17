@@ -38,13 +38,13 @@ const removeClawHubSkill = async (c: AuthenticatedContext) => {
                 cmd = `${cmd} --workdir ${agentDir}`
             }
 
-            cmd = `${cmd} && systemctl restart openclaw-gateway`
+            cmd = `${cmd} && (openclaw doctor --fix || true) && systemctl restart openclaw-gateway`
 
             await executeSSH(
                 claw.ip,
                 claw.rootPassword,
                 cmd,
-                30000
+                35000
             )
 
             return ok(c, null, t('api.clawHubRemoved'))

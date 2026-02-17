@@ -4,7 +4,7 @@ import type { CopyableFieldProps } from '@/ts/Interfaces'
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
 import { useUIStore } from '@/lib/store'
-import { Check, Copy } from '@phosphor-icons/react'
+import { CheckIcon, CopyIcon } from '@phosphor-icons/react'
 
 const CopyableField: FC<CopyableFieldProps> = ({
     label,
@@ -37,9 +37,9 @@ const CopyableField: FC<CopyableFieldProps> = ({
             </div>
             <div className='shrink-0'>
                 {isCopied ? (
-                    <Check className='h-4 w-4 text-green-500' />
+                    <CheckIcon className='h-4 w-4 text-green-500' />
                 ) : (
-                    <Copy className='text-muted-foreground h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100' />
+                    <CopyIcon className='text-muted-foreground h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100' />
                 )}
             </div>
         </div>

@@ -14,19 +14,19 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { t } from '@openclaw/i18n'
 import {
-    X,
-    ChatCircle,
-    GearSix,
-    CircleNotch,
-    Eye,
-    EyeSlash,
-    Copy,
-    Check,
-    Trash,
-    ChatsCircle,
-    Lightning,
-    ArrowsOut,
-    ArrowsIn
+    XIcon,
+    ChatCircleIcon,
+    GearSixIcon,
+    CircleNotchIcon,
+    EyeIcon,
+    EyeSlashIcon,
+    CopyIcon,
+    CheckIcon,
+    TrashIcon,
+    ChatsCircleIcon,
+    LightningIcon,
+    ArrowsOutIcon,
+    ArrowsInIcon
 } from '@phosphor-icons/react'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import {
@@ -59,10 +59,10 @@ const deletingAgentIds = new Set<string>()
 let skipAgentDeleteConfirmation = false
 
 const tabs: PlaygroundTabConfig<PlaygroundAgentDetailTab>[] = [
-    { id: AGENT_DETAIL_TABS.CHAT, label: 'playground.tabChat', icon: ChatCircle },
-    { id: AGENT_DETAIL_TABS.CHANNELS, label: 'playground.tabChannels', icon: ChatsCircle },
-    { id: AGENT_DETAIL_TABS.SKILLS, label: 'playground.tabSkills', icon: Lightning },
-    { id: AGENT_DETAIL_TABS.CONFIGURATION, label: 'playground.tabSettings', icon: GearSix }
+    { id: AGENT_DETAIL_TABS.CHAT, label: 'playground.tabChat', icon: ChatCircleIcon },
+    { id: AGENT_DETAIL_TABS.CHANNELS, label: 'playground.tabChannels', icon: ChatsCircleIcon },
+    { id: AGENT_DETAIL_TABS.SKILLS, label: 'playground.tabSkills', icon: LightningIcon },
+    { id: AGENT_DETAIL_TABS.CONFIGURATION, label: 'playground.tabSettings', icon: GearSixIcon }
 ]
 
 const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
@@ -392,9 +392,9 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                                 className='rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white'
                             >
                                 {isExpanded ? (
-                                    <ArrowsIn className='h-4 w-4' weight='bold' />
+                                    <ArrowsInIcon className='h-4 w-4' weight='bold' />
                                 ) : (
-                                    <ArrowsOut className='h-4 w-4' weight='bold' />
+                                    <ArrowsOutIcon className='h-4 w-4' weight='bold' />
                                 )}
                             </button>
                         )}
@@ -407,7 +407,7 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                                                 disabled
                                                 className='cursor-not-allowed rounded-lg p-1.5 text-gray-500 opacity-50 transition-colors'
                                             >
-                                                <Trash className='h-4 w-4' weight='bold' />
+                                                <TrashIcon className='h-4 w-4' weight='bold' />
                                             </button>
                                         </span>
                                     </TooltipTrigger>
@@ -424,9 +424,9 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                                     className='rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed'
                                 >
                                     {isDeleting ? (
-                                        <CircleNotch className='h-4 w-4 animate-spin text-white' />
+                                        <CircleNotchIcon className='h-4 w-4 animate-spin text-white' />
                                     ) : (
-                                        <Trash className='h-4 w-4' weight='bold' />
+                                        <TrashIcon className='h-4 w-4' weight='bold' />
                                     )}
                                 </button>
                             )
@@ -435,7 +435,7 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                             onClick={onClose}
                             className='rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white'
                         >
-                            <X className='h-4 w-4' weight='bold' />
+                            <XIcon className='h-4 w-4' weight='bold' />
                         </button>
                     </div>
                 </div>
@@ -517,7 +517,7 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                             ) : isConfigError ? (
                                 <PanelPlaceholder
                                     icon={
-                                        <GearSix
+                                        <GearSixIcon
                                             className='h-6 w-6 text-gray-500'
                                             weight='duotone'
                                         />
@@ -637,9 +637,9 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                                                         className='rounded p-1 text-gray-500 transition-colors hover:text-gray-300'
                                                     >
                                                         {showApiKey ? (
-                                                            <EyeSlash className='h-3.5 w-3.5' />
+                                                            <EyeSlashIcon className='h-3.5 w-3.5' />
                                                         ) : (
-                                                            <Eye className='h-3.5 w-3.5' />
+                                                            <EyeIcon className='h-3.5 w-3.5' />
                                                         )}
                                                     </button>
                                                     {apiKeyValue && (
@@ -651,9 +651,9 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                                                             className='rounded p-1 text-gray-500 transition-colors hover:text-gray-300'
                                                         >
                                                             {copied ? (
-                                                                <Check className='h-3.5 w-3.5 text-green-400' />
+                                                                <CheckIcon className='h-3.5 w-3.5 text-green-400' />
                                                             ) : (
-                                                                <Copy className='h-3.5 w-3.5' />
+                                                                <CopyIcon className='h-3.5 w-3.5' />
                                                             )}
                                                         </button>
                                                     )}
@@ -705,7 +705,7 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                                     >
                                         {saveMutation.isPending ? (
                                             <>
-                                                <CircleNotch className='h-4 w-4 animate-spin' />
+                                                <CircleNotchIcon className='h-4 w-4 animate-spin' />
                                                 {t(
                                                     'playground.configurationSaving'
                                                 )}

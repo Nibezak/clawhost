@@ -5,7 +5,7 @@ import type { TranslationKey } from '@openclaw/i18n'
 import { useState, useMemo, useCallback } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { t } from '@openclaw/i18n'
-import { CircleNotch, Eye, EyeSlash } from '@phosphor-icons/react'
+import { CircleNotchIcon, EyeIcon, EyeSlashIcon } from '@phosphor-icons/react'
 import {
     Dialog,
     DialogContent,
@@ -233,9 +233,9 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                                     className='rounded p-1 text-gray-500 transition-colors hover:text-gray-300'
                                 >
                                     {showApiKey ? (
-                                        <EyeSlash className='h-3.5 w-3.5' />
+                                        <EyeSlashIcon className='h-3.5 w-3.5' />
                                     ) : (
-                                        <Eye className='h-3.5 w-3.5' />
+                                        <EyeIcon className='h-3.5 w-3.5' />
                                     )}
                                 </button>
                             </div>
@@ -274,7 +274,7 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                         className='flex items-center gap-2 rounded-lg bg-[#ef5350] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
                     >
                         {createMutation.isPending && (
-                            <CircleNotch className='h-4 w-4 animate-spin' />
+                            <CircleNotchIcon className='h-4 w-4 animate-spin' />
                         )}
                         {t('playground.addAgentSubmit')}
                     </button>

@@ -35,13 +35,13 @@ import {
     Skeleton
 } from '@/components/ui'
 import {
-    CircleNotch,
-    Eye,
-    EyeSlash,
-    Key,
-    Copy,
-    ArrowClockwise,
-    CaretDown
+    CircleNotchIcon,
+    EyeIcon,
+    EyeSlashIcon,
+    KeyIcon,
+    CopyIcon,
+    ArrowClockwiseIcon,
+    CaretDownIcon
 } from '@phosphor-icons/react'
 import { ClawMascot } from '@/components'
 
@@ -634,7 +634,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                         onClick={() => setShowAdvanced(!showAdvanced)}
                         className='text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm transition-colors'
                     >
-                        <CaretDown
+                        <CaretDownIcon
                             className={`h-4 w-4 transition-transform ${showAdvanced ? 'rotate-180' : ''}`}
                         />
                         {t('createClaw.advancedOptions')}
@@ -669,9 +669,9 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                             className='text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2'
                                         >
                                             {showPassword ? (
-                                                <EyeSlash className='h-4 w-4' />
+                                                <EyeSlashIcon className='h-4 w-4' />
                                             ) : (
-                                                <Eye className='h-4 w-4' />
+                                                <EyeIcon className='h-4 w-4' />
                                             )}
                                         </button>
                                     </div>
@@ -689,7 +689,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                             )
                                         }}
                                     >
-                                        <Copy className='h-4 w-4' />
+                                        <CopyIcon className='h-4 w-4' />
                                     </Button>
                                     <Button
                                         type='button'
@@ -699,7 +699,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                             setPassword(generatePassword())
                                         }
                                     >
-                                        <ArrowClockwise className='h-4 w-4' />
+                                        <ArrowClockwiseIcon className='h-4 w-4' />
                                     </Button>
                                 </div>
                                 <p className='text-muted-foreground text-xs'>
@@ -760,7 +760,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                     }
                                                     className='sr-only'
                                                 />
-                                                <Key className='text-muted-foreground mr-3 h-4 w-4' />
+                                                <KeyIcon className='text-muted-foreground mr-3 h-4 w-4' />
                                                 <div>
                                                     <p className='text-sm font-medium'>
                                                         {key.name}
@@ -775,7 +775,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                 ) : (
                                     <div className='bg-muted flex items-center gap-3 rounded-lg p-3'>
                                         <div className='bg-background flex h-10 w-10 items-center justify-center rounded-full'>
-                                            <Key className='text-muted-foreground h-5 w-5' />
+                                            <KeyIcon className='text-muted-foreground h-5 w-5' />
                                         </div>
                                         <div className='flex-1'>
                                             <p className='text-sm font-medium'>
@@ -961,7 +961,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                             }
                         >
                             {purchaseMutation.isPending && (
-                                <CircleNotch className='h-4 w-4 animate-spin' />
+                                <CircleNotchIcon className='h-4 w-4 animate-spin' />
                             )}
                             {!selectedPlan ? (
                                 t('createClaw.selectServerToContinue')

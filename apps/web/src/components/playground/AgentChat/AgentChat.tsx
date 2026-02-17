@@ -9,7 +9,7 @@ import type {
 
 import { useRef, useState, useEffect, useCallback } from 'react'
 import { t } from '@openclaw/i18n'
-import { GearSix, ArrowDown } from '@phosphor-icons/react'
+import { GearSixIcon, ArrowDownIcon } from '@phosphor-icons/react'
 import { useAgentChat } from '@/hooks/useAgentChat'
 import ChatBubble from '@/components/playground/AgentChat/ChatBubble'
 import ChatInput from '@/components/playground/AgentChat/ChatInput'
@@ -156,7 +156,7 @@ const AgentChat: FC<AgentChatProps> = ({
         return (
             <div className='flex h-full flex-col items-center justify-center gap-3 px-14 pb-16'>
                 <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-white/5'>
-                    <GearSix
+                    <GearSixIcon
                         className='h-6 w-6 text-gray-500'
                         weight='duotone'
                     />
@@ -175,7 +175,7 @@ const AgentChat: FC<AgentChatProps> = ({
                         disabled={configureDisabled}
                         className='mt-2 flex items-center gap-1.5 rounded-lg bg-white/10 px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40'
                     >
-                        <GearSix className='h-3.5 w-3.5' weight='bold' />
+                        <GearSixIcon className='h-3.5 w-3.5' weight='bold' />
                         {t('playground.chatConfigureButton')}
                     </button>
                 )}
@@ -267,7 +267,7 @@ const AgentChat: FC<AgentChatProps> = ({
                         onClick={scrollToBottom}
                         className='absolute bottom-[4.25rem] z-10 flex items-center gap-1.5 rounded-full border border-white/10 bg-[#0a0a0f] px-3 py-1.5 text-xs text-gray-400 shadow-lg transition-colors hover:border-white/20 hover:text-white'
                     >
-                        <ArrowDown className='h-3 w-3' weight='bold' />
+                        <ArrowDownIcon className='h-3 w-3' weight='bold' />
                         {t('playground.chatScrollToBottom')}
                     </button>
                 </div>

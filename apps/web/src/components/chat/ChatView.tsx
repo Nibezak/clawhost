@@ -9,7 +9,7 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { clawStatus } from '@openclaw/shared'
 import { t } from '@openclaw/i18n'
-import { List, X, GearSix } from '@phosphor-icons/react'
+import { ListIcon, XIcon, GearSixIcon } from '@phosphor-icons/react'
 import AGENT_DETAIL_TABS from '@/lib/agentDetailTabs'
 import ChatSidebar from '@/components/chat/ChatSidebar'
 import ChatEmptyState from '@/components/chat/ChatEmptyState'
@@ -175,9 +175,9 @@ const ChatView: FC<ChatViewProps> = ({
                         aria-label={t('chat.openSidebar')}
                     >
                         {mobileSidebarOpen ? (
-                            <X className='h-5 w-5' weight='bold' />
+                            <XIcon className='h-5 w-5' weight='bold' />
                         ) : (
-                            <List className='h-5 w-5' weight='bold' />
+                            <ListIcon className='h-5 w-5' weight='bold' />
                         )}
                     </button>
                     <span className='min-w-0 flex-1 truncate text-sm font-medium text-gray-300'>
@@ -188,7 +188,7 @@ const ChatView: FC<ChatViewProps> = ({
                             onClick={() => handleOpenConfig(activeAgent.id, activeClaw.id)}
                             className='shrink-0 rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white'
                         >
-                            <GearSix className='h-4 w-4' weight='bold' />
+                            <GearSixIcon className='h-4 w-4' weight='bold' />
                         </button>
                     )}
                 </div>}

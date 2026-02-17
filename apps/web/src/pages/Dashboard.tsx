@@ -31,7 +31,7 @@ import {
     ClawMascot,
     Logo
 } from '@/components'
-import { ChatCircleDots, Graph, Lightning } from '@phosphor-icons/react'
+import { ChatCircleDotsIcon, GraphIcon, LightningIcon } from '@phosphor-icons/react'
 import { CreateClawModal } from '@/components/dashboard'
 import {
     PlaygroundCanvas,
@@ -401,7 +401,7 @@ const Dashboard: FC = (): ReactNode => {
                             onClick={() => setDashboardTab(DASHBOARD_TABS.CHAT)}
                             className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${dashboardTab === DASHBOARD_TABS.CHAT ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white'}`}
                         >
-                            <ChatCircleDots
+                            <ChatCircleDotsIcon
                                 className='h-3.5 w-3.5'
                                 weight={
                                     dashboardTab === DASHBOARD_TABS.CHAT
@@ -417,7 +417,7 @@ const Dashboard: FC = (): ReactNode => {
                             onClick={() => setDashboardTab(DASHBOARD_TABS.PLAYGROUND)}
                             className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${dashboardTab === DASHBOARD_TABS.PLAYGROUND ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white'}`}
                         >
-                            <Graph
+                            <GraphIcon
                                 className='h-3.5 w-3.5'
                                 weight={
                                     dashboardTab === DASHBOARD_TABS.PLAYGROUND
@@ -440,7 +440,7 @@ const Dashboard: FC = (): ReactNode => {
                             <ActionButton
                                 onClick={() => setShowCreate(true)}
                                 icon={
-                                    <Lightning
+                                    <LightningIcon
                                         className='h-5 w-5'
                                         weight='fill'
                                     />

@@ -11,7 +11,7 @@ import CLAW_DETAIL_TABS from '@/lib/clawDetailTabs'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { clawStatus } from '@openclaw/shared'
-import { X, Info, Scroll, Pulse, Key, Lightning } from '@phosphor-icons/react'
+import { XIcon, InfoIcon, ScrollIcon, PulseIcon, KeyIcon, LightningIcon } from '@phosphor-icons/react'
 import { ClawAvatar, ProviderIcon } from '@/components'
 import { Skeleton } from '@/components/ui'
 import { getBaseDomain } from '@/lib'
@@ -35,11 +35,11 @@ import {
 const tabStateMap: Record<string, PlaygroundDetailTab> = {}
 
 const tabs: PlaygroundTabConfig<PlaygroundDetailTab>[] = [
-    { id: CLAW_DETAIL_TABS.INFO, label: 'playground.tabInfo', icon: Info },
-    { id: CLAW_DETAIL_TABS.VARIABLES, label: 'playground.tabEnvs', icon: Key },
-    { id: CLAW_DETAIL_TABS.SKILLS, label: 'playground.tabSkills', icon: Lightning },
-    { id: CLAW_DETAIL_TABS.LOGS, label: 'playground.tabLogs', icon: Scroll },
-    { id: CLAW_DETAIL_TABS.DIAGNOSTICS, label: 'playground.tabDiagnostics', icon: Pulse }
+    { id: CLAW_DETAIL_TABS.INFO, label: 'playground.tabInfo', icon: InfoIcon },
+    { id: CLAW_DETAIL_TABS.VARIABLES, label: 'playground.tabEnvs', icon: KeyIcon },
+    { id: CLAW_DETAIL_TABS.SKILLS, label: 'playground.tabSkills', icon: LightningIcon },
+    { id: CLAW_DETAIL_TABS.LOGS, label: 'playground.tabLogs', icon: ScrollIcon },
+    { id: CLAW_DETAIL_TABS.DIAGNOSTICS, label: 'playground.tabDiagnostics', icon: PulseIcon }
 ]
 
 const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
@@ -131,7 +131,7 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                         onClick={onClose}
                         className={`rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white ${fullScreen ? 'md:hidden' : ''}`}
                     >
-                        <X className='h-4 w-4' weight='bold' />
+                        <XIcon className='h-4 w-4' weight='bold' />
                     </button>
                 </div>
 

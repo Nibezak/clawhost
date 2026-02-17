@@ -1,6 +1,6 @@
 import * as React from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
-import { X } from '@phosphor-icons/react'
+import { XIcon } from '@phosphor-icons/react'
 
 import cn from '@/lib/utils'
 
@@ -43,7 +43,7 @@ const DialogContent = React.forwardRef<
         >
             {children}
             <DialogPrimitive.Close className='bg-muted hover:bg-muted/80 absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-lg outline-none transition-colors disabled:pointer-events-none'>
-                <X className='h-4 w-4' />
+                <XIcon className='h-4 w-4' />
                 <span className='sr-only'>Close</span>
             </DialogPrimitive.Close>
         </DialogPrimitive.Content>

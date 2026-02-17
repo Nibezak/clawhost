@@ -12,22 +12,22 @@ import {
     DropdownMenuTrigger
 } from '@/components/ui'
 import {
-    Play,
-    Square,
-    ArrowClockwise,
-    Trash,
-    DotsThreeOutline,
-    Terminal,
-    Check,
-    CircleNotch,
-    Copy,
-    ClockCountdown,
-    Pulse,
-    Scroll,
-    FolderSimple,
-    ArrowsClockwise,
-    ArrowCounterClockwise,
-    Export
+    PlayIcon,
+    SquareIcon,
+    ArrowClockwiseIcon,
+    TrashIcon,
+    DotsThreeOutlineIcon,
+    TerminalIcon,
+    CheckIcon,
+    CircleNotchIcon,
+    CopyIcon,
+    ClockCountdownIcon,
+    PulseIcon,
+    ScrollIcon,
+    FolderSimpleIcon,
+    ArrowsClockwiseIcon,
+    ArrowCounterClockwiseIcon,
+    ExportIcon
 } from '@phosphor-icons/react'
 
 const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
@@ -45,11 +45,11 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
     if (isLoading) {
         return compact ? (
             <button className='shrink-0 rounded-md p-1 text-gray-500' disabled>
-                <CircleNotch className='h-3.5 w-3.5 animate-spin' />
+                <CircleNotchIcon className='h-3.5 w-3.5 animate-spin' />
             </button>
         ) : (
             <Button variant='ghost' size='icon' disabled>
-                <CircleNotch className='h-5 w-5 animate-spin' />
+                <CircleNotchIcon className='h-5 w-5 animate-spin' />
             </Button>
         )
     }
@@ -59,14 +59,14 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
             <DropdownMenuTrigger asChild>
                 {compact ? (
                     <button className='shrink-0 rounded-md p-1 text-gray-500 transition-colors hover:bg-white/10 hover:text-white'>
-                        <DotsThreeOutline
+                        <DotsThreeOutlineIcon
                             className='h-3.5 w-3.5'
                             weight='bold'
                         />
                     </button>
                 ) : (
                     <Button variant='ghost' size='icon'>
-                        <DotsThreeOutline className='h-5 w-5' />
+                        <DotsThreeOutlineIcon className='h-5 w-5' />
                     </Button>
                 )}
             </DropdownMenuTrigger>
@@ -76,7 +76,7 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                         onClick={actions.onStart}
                         disabled={isLoading}
                     >
-                        <Play className='mr-2 h-4 w-4' />
+                        <PlayIcon className='mr-2 h-4 w-4' />
                         {t('dashboard.start')}
                     </DropdownMenuItem>
                 )}
@@ -86,14 +86,14 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                             onClick={actions.onShowStopModal}
                             disabled={isLoading}
                         >
-                            <Square className='mr-2 h-4 w-4' />
+                            <SquareIcon className='mr-2 h-4 w-4' />
                             {t('dashboard.stop')}
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={actions.onShowRestartModal}
                             disabled={isLoading}
                         >
-                            <ArrowClockwise className='mr-2 h-4 w-4' />
+                            <ArrowClockwiseIcon className='mr-2 h-4 w-4' />
                             {t('dashboard.restart')}
                         </DropdownMenuItem>
                     </>
@@ -105,12 +105,12 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                             <DropdownMenuItem onClick={actions.onCopySSH}>
                                 {copied ? (
                                     <>
-                                        <Check className='mr-2 h-4 w-4' />
+                                        <CheckIcon className='mr-2 h-4 w-4' />
                                         {t('common.copied')}
                                     </>
                                 ) : (
                                     <>
-                                        <Terminal className='mr-2 h-4 w-4' />
+                                        <TerminalIcon className='mr-2 h-4 w-4' />
                                         {t('dashboard.connect')}
                                     </>
                                 )}
@@ -120,12 +120,12 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                             <DropdownMenuItem onClick={actions.onCopyPassword}>
                                 {passwordCopied ? (
                                     <>
-                                        <Check className='mr-2 h-4 w-4' />
+                                        <CheckIcon className='mr-2 h-4 w-4' />
                                         {t('common.copied')}
                                     </>
                                 ) : (
                                     <>
-                                        <Copy className='mr-2 h-4 w-4' />
+                                        <CopyIcon className='mr-2 h-4 w-4' />
                                         {t('dashboard.copyPassword')}
                                     </>
                                 )}
@@ -141,21 +141,21 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                                 <DropdownMenuItem
                                     onClick={actions.onShowDiagnostics}
                                 >
-                                    <Pulse className='mr-2 h-4 w-4' />
+                                    <PulseIcon className='mr-2 h-4 w-4' />
                                     {t('dashboard.diagnostics')}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={actions.onShowLogs}>
-                                    <Scroll className='mr-2 h-4 w-4' />
+                                    <ScrollIcon className='mr-2 h-4 w-4' />
                                     {t('dashboard.diagnosticsLogs')}
                                 </DropdownMenuItem>
                             </>
                         )}
                         <DropdownMenuItem onClick={actions.onShowConfig}>
-                            <FolderSimple className='mr-2 h-4 w-4' />
+                            <FolderSimpleIcon className='mr-2 h-4 w-4' />
                             {t('dashboard.fileExplorer')}
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={actions.onExport}>
-                            <Export className='mr-2 h-4 w-4' />
+                            <ExportIcon className='mr-2 h-4 w-4' />
                             {t('dashboard.exportData')}
                         </DropdownMenuItem>
                         {isAdmin && (
@@ -164,14 +164,14 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                                     onClick={actions.onUpdateInstance}
                                     disabled={isLoading}
                                 >
-                                    <ArrowsClockwise className='mr-2 h-4 w-4' />
+                                    <ArrowsClockwiseIcon className='mr-2 h-4 w-4' />
                                     {t('dashboard.updateInstance')}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                     onClick={actions.onShowReinstallModal}
                                     disabled={isLoading}
                                 >
-                                    <ArrowCounterClockwise className='mr-2 h-4 w-4' />
+                                    <ArrowCounterClockwiseIcon className='mr-2 h-4 w-4' />
                                     {t('dashboard.reinstallInstance')}
                                 </DropdownMenuItem>
                             </>
@@ -187,7 +187,7 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                             onClick={actions.onCancelDeletion}
                             className='text-orange-400 focus:text-orange-400'
                         >
-                            <ClockCountdown className='mr-2 h-4 w-4' />
+                            <ClockCountdownIcon className='mr-2 h-4 w-4' />
                             {t('dashboard.cancelDeletion')}
                         </DropdownMenuItem>
                         {isAdmin && (
@@ -196,7 +196,7 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                                 disabled={isLoading}
                                 className='text-red-400 focus:text-red-400'
                             >
-                                <Trash className='mr-2 h-4 w-4' />
+                                <TrashIcon className='mr-2 h-4 w-4' />
                                 {t('dashboard.hardDelete')}
                             </DropdownMenuItem>
                         )}
@@ -207,7 +207,7 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                         disabled={isLoading}
                         className='text-red-400 focus:text-red-400'
                     >
-                        <Trash className='mr-2 h-4 w-4' />
+                        <TrashIcon className='mr-2 h-4 w-4' />
                         {t('dashboard.scheduleDeletion')}
                     </DropdownMenuItem>
                 )}

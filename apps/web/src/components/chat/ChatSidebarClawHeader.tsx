@@ -4,7 +4,7 @@ import type { ChatSidebarClawHeaderProps, ClawCardActions, ExportRateLimitError 
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
 import { clawStatus } from '@openclaw/shared'
-import { GearSix, Plus } from '@phosphor-icons/react'
+import { GearSixIcon, PlusIcon } from '@phosphor-icons/react'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import { useUIStore } from '@/lib/store'
 import {
@@ -202,14 +202,14 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                         onClick={() => onOpenClawSettings(claw.id)}
                         className='shrink-0 rounded-md p-1 text-gray-500 opacity-0 transition-all hover:bg-white/10 hover:text-white group-hover/header:opacity-100'
                     >
-                        <GearSix className='h-3.5 w-3.5' weight='bold' />
+                        <GearSixIcon className='h-3.5 w-3.5' weight='bold' />
                     </button>
                     {isReachable && (
                         <button
                             onClick={() => onCreateAgent(claw.id, claw.name)}
                             className='shrink-0 rounded-md p-1 text-gray-500 opacity-0 transition-all hover:bg-white/10 hover:text-white group-hover/header:opacity-100'
                         >
-                            <Plus className='h-3.5 w-3.5' weight='bold' />
+                            <PlusIcon className='h-3.5 w-3.5' weight='bold' />
                         </button>
                     )}
                     <div className='opacity-0 transition-all group-hover/header:opacity-100'>

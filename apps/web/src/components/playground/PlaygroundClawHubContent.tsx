@@ -9,14 +9,14 @@ import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { t } from '@openclaw/i18n'
 import {
-    ArrowsClockwise,
-    CaretLeft,
-    CaretRight,
-    CircleNotch,
-    DownloadSimple,
-    MagnifyingGlass,
-    Storefront,
-    Trash
+    ArrowsClockwiseIcon,
+    CaretLeftIcon,
+    CaretRightIcon,
+    CircleNotchIcon,
+    DownloadSimpleIcon,
+    MagnifyingGlassIcon,
+    StorefrontIcon,
+    TrashIcon
 } from '@phosphor-icons/react'
 import { PanelPlaceholder } from '@/components'
 import { Skeleton } from '@/components/ui'
@@ -174,7 +174,7 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
         <div className='flex h-full flex-col'>
             <div className='px-5 pt-5'>
                 <div className='relative'>
-                    <MagnifyingGlass className='absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-500' />
+                    <MagnifyingGlassIcon className='absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-500' />
                     <input
                         type='text'
                         value={search}
@@ -183,7 +183,7 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
                         className='w-full rounded-md border border-white/10 bg-white/5 py-2 pl-8 pr-8 text-xs text-white outline-none transition-colors placeholder:text-gray-600 focus:border-[#ef5350]/50'
                     />
                     {isBrowseFetching && !isFirstLoad && (
-                        <CircleNotch className='absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 animate-spin text-gray-500' />
+                        <CircleNotchIcon className='absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 animate-spin text-gray-500' />
                     )}
                 </div>
             </div>
@@ -198,7 +198,7 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
                 <div className='flex flex-1 items-center justify-center pb-16'>
                     <PanelPlaceholder
                         icon={
-                            <Storefront
+                            <StorefrontIcon
                                 className='h-6 w-6 text-gray-500'
                                 weight='duotone'
                             />
@@ -211,7 +211,7 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
                 <div className='flex flex-1 items-center justify-center pb-16'>
                     <PanelPlaceholder
                         icon={
-                            <Storefront
+                            <StorefrontIcon
                                 className='h-6 w-6 text-gray-500'
                                 weight='duotone'
                             />
@@ -282,20 +282,20 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
                                         }`}
                                     >
                                         {isPending ? (
-                                            <CircleNotch className='h-3 w-3 animate-spin' />
+                                            <CircleNotchIcon className='h-3 w-3 animate-spin' />
                                         ) : isInstalled && hasUpdate ? (
                                             <>
-                                                <ArrowsClockwise className='h-3 w-3' />
+                                                <ArrowsClockwiseIcon className='h-3 w-3' />
                                                 {t('playground.clawHubUpdate')}
                                             </>
                                         ) : isInstalled ? (
                                             <>
-                                                <Trash className='h-3 w-3' />
+                                                <TrashIcon className='h-3 w-3' />
                                                 {t('playground.clawHubRemove')}
                                             </>
                                         ) : (
                                             <>
-                                                <DownloadSimple className='h-3 w-3' />
+                                                <DownloadSimpleIcon className='h-3 w-3' />
                                                 {t('playground.clawHubInstall')}
                                             </>
                                         )}
@@ -312,7 +312,7 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
                                 disabled={page <= 1}
                                 className='flex items-center gap-1 rounded-md bg-white/5 px-2.5 py-1 text-[11px] font-medium text-gray-400 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30'
                             >
-                                <CaretLeft className='h-3 w-3' />
+                                <CaretLeftIcon className='h-3 w-3' />
                             </button>
                             <span className='text-[11px] text-gray-500'>
                                 {page}
@@ -322,7 +322,7 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
                                 disabled={!hasNextPage}
                                 className='flex items-center gap-1 rounded-md bg-white/5 px-2.5 py-1 text-[11px] font-medium text-gray-400 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30'
                             >
-                                <CaretRight className='h-3 w-3' />
+                                <CaretRightIcon className='h-3 w-3' />
                             </button>
                         </div>
                     )}

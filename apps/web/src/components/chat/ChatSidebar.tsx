@@ -3,7 +3,7 @@ import type { ChatSidebarProps } from '@/ts/Interfaces'
 
 import { useMemo, useCallback } from 'react'
 import { t } from '@openclaw/i18n'
-import { Robot } from '@phosphor-icons/react'
+import { RobotIcon } from '@phosphor-icons/react'
 import { Skeleton } from '@/components/ui'
 import { getStatusConfig } from '@/lib/claw-utils'
 import ChatSidebarItem from '@/components/chat/ChatSidebarItem'
@@ -35,7 +35,7 @@ const ChatSidebar: FC<ChatSidebarProps> = ({
         return (
             <div className='flex h-full w-full shrink-0 flex-col items-center justify-center px-6 md:w-[280px] md:border-r md:border-white/10'>
                 <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-white/5'>
-                    <Robot className='h-5 w-5 text-gray-500' weight='duotone' />
+                    <RobotIcon className='h-5 w-5 text-gray-500' weight='duotone' />
                 </div>
                 <p className='mt-3 text-center text-xs text-gray-500'>
                     {t('chat.noAgentsDescription')}

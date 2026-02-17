@@ -10,16 +10,16 @@ import { useState, useEffect, useCallback } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { t } from '@openclaw/i18n'
 import {
-    CircleNotch,
-    Copy,
-    Eye,
-    EyeSlash,
-    WhatsappLogo,
-    TelegramLogo,
-    DiscordLogo,
-    SlackLogo,
-    ChatCircle,
-    Check
+    CircleNotchIcon,
+    CopyIcon,
+    EyeIcon,
+    EyeSlashIcon,
+    WhatsappLogoIcon,
+    TelegramLogoIcon,
+    DiscordLogoIcon,
+    SlackLogoIcon,
+    ChatCircleIcon,
+    CheckIcon
 } from '@phosphor-icons/react'
 import { PanelPlaceholder } from '@/components'
 import { Skeleton } from '@/components/ui'
@@ -30,13 +30,13 @@ const CHANNEL_DEFINITIONS: ChannelDefinition[] = [
     {
         key: 'whatsapp',
         label: 'playground.channelsWhatsApp',
-        icon: WhatsappLogo,
+        icon: WhatsappLogoIcon,
         fields: []
     },
     {
         key: 'telegram',
         label: 'playground.channelsTelegram',
-        icon: TelegramLogo,
+        icon: TelegramLogoIcon,
         fields: [
             {
                 key: 'botToken',
@@ -50,7 +50,7 @@ const CHANNEL_DEFINITIONS: ChannelDefinition[] = [
     {
         key: 'discord',
         label: 'playground.channelsDiscord',
-        icon: DiscordLogo,
+        icon: DiscordLogoIcon,
         fields: [
             {
                 key: 'token',
@@ -64,7 +64,7 @@ const CHANNEL_DEFINITIONS: ChannelDefinition[] = [
     {
         key: 'slack',
         label: 'playground.channelsSlack',
-        icon: SlackLogo,
+        icon: SlackLogoIcon,
         fields: [
             {
                 key: 'botToken',
@@ -91,7 +91,7 @@ const CHANNEL_DEFINITIONS: ChannelDefinition[] = [
     {
         key: 'signal',
         label: 'playground.channelsSignal',
-        icon: ChatCircle,
+        icon: ChatCircleIcon,
         fields: [
             {
                 key: 'account',
@@ -201,7 +201,7 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
             <div className='flex h-full items-center justify-center p-5'>
                 <PanelPlaceholder
                     icon={
-                        <ChatCircle
+                        <ChatCircleIcon
                             className='h-6 w-6 text-gray-500'
                             weight='duotone'
                         />
@@ -247,7 +247,7 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                                         }`}
                                     >
                                         {config.enabled && (
-                                            <Check
+                                            <CheckIcon
                                                 className='h-3 w-3 text-white'
                                                 weight='bold'
                                             />
@@ -291,7 +291,7 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                                                                 }
                                                                 className='rounded p-0.5 text-gray-500 transition-colors hover:text-gray-300 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:text-gray-500'
                                                             >
-                                                                <Copy className='h-3 w-3' />
+                                                                <CopyIcon className='h-3 w-3' />
                                                             </button>
                                                             {field.secret && (
                                                                 <button
@@ -304,9 +304,9 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                                                                     className='rounded p-0.5 text-gray-500 transition-colors hover:text-gray-300'
                                                                 >
                                                                     {isVisible ? (
-                                                                        <EyeSlash className='h-3 w-3' />
+                                                                        <EyeSlashIcon className='h-3 w-3' />
                                                                     ) : (
-                                                                        <Eye className='h-3 w-3' />
+                                                                        <EyeIcon className='h-3 w-3' />
                                                                     )}
                                                                 </button>
                                                             )}
@@ -352,7 +352,7 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                     className='flex w-full items-center justify-center gap-2 rounded-lg bg-[#ef5350] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
                 >
                     {saveMutation.isPending && (
-                        <CircleNotch className='h-4 w-4 animate-spin' />
+                        <CircleNotchIcon className='h-4 w-4 animate-spin' />
                     )}
                     {t('playground.channelsSave')}
                 </button>

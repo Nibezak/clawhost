@@ -18,7 +18,7 @@ import {
     ClawMascotOutline,
     PageHeader
 } from '@/components'
-import { CircleNotch, Calendar, Key, Envelope } from '@phosphor-icons/react'
+import { CircleNotchIcon, CalendarIcon, KeyIcon, EnvelopeIcon } from '@phosphor-icons/react'
 
 const Account: FC = (): ReactNode => {
     const { user, loading: authLoading, updateCachedProfile, linkGoogle, linkGithub, unlinkGoogle, unlinkGithub } = useAuth()
@@ -164,7 +164,7 @@ const Account: FC = (): ReactNode => {
             >
                 {authLoading || !profile ? (
                     <div className='flex min-h-[60vh] items-center justify-center'>
-                        <CircleNotch className='text-primary h-8 w-8 animate-spin' />
+                        <CircleNotchIcon className='text-primary h-8 w-8 animate-spin' />
                     </div>
                 ) : (
                     <>
@@ -197,7 +197,7 @@ const Account: FC = (): ReactNode => {
                                     </p>
                                     <div className='text-muted-foreground mt-1 flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:gap-6'>
                                         <div className='flex items-center gap-1.5'>
-                                            <Calendar className='h-4 w-4' />
+                                            <CalendarIcon className='h-4 w-4' />
                                             <span>
                                                 {t('account.joined')}{' '}
                                                 {formatDate(joinedDate)}
@@ -211,7 +211,7 @@ const Account: FC = (): ReactNode => {
                                             </span>
                                         </div>
                                         <div className='flex items-center gap-1.5'>
-                                            <Key className='h-4 w-4' />
+                                            <KeyIcon className='h-4 w-4' />
                                             <span>
                                                 {userStats?.sshKeyCount ?? 0}{' '}
                                                 {t('account.sshKeys')}
@@ -267,7 +267,7 @@ const Account: FC = (): ReactNode => {
                                         }
                                     >
                                         {updateMutation.isPending && (
-                                            <CircleNotch className='h-4 w-4 animate-spin' />
+                                            <CircleNotchIcon className='h-4 w-4 animate-spin' />
                                         )}
                                         {t('common.save')}
                                     </Button>
@@ -288,7 +288,7 @@ const Account: FC = (): ReactNode => {
                             <div className='space-y-3'>
                                 <div className='flex items-center justify-between rounded-lg border border-white/10 bg-white/[0.02] px-4 py-3'>
                                     <div className='flex items-center gap-3'>
-                                        <Envelope className='h-5 w-5 text-white/70' />
+                                        <EnvelopeIcon className='h-5 w-5 text-white/70' />
                                         <span className='text-sm font-medium'>
                                             {t('account.authEmail')}
                                         </span>
@@ -327,7 +327,7 @@ const Account: FC = (): ReactNode => {
                                             className='flex items-center gap-1.5 rounded-md border border-white/10 px-3 py-1 text-xs text-white/50 transition-colors hover:border-red-500/50 hover:text-red-400 disabled:opacity-50'
                                         >
                                             {unlinkingProvider === 'google' && (
-                                                <CircleNotch className='h-3 w-3 animate-spin' />
+                                                <CircleNotchIcon className='h-3 w-3 animate-spin' />
                                             )}
                                             {t('account.authDisconnect')}
                                         </button>
@@ -338,7 +338,7 @@ const Account: FC = (): ReactNode => {
                                             className='flex items-center gap-1.5 rounded-md bg-white px-3 py-1 text-xs font-medium text-black transition-opacity hover:opacity-80 disabled:opacity-50'
                                         >
                                             {linkingProvider === 'google' && (
-                                                <CircleNotch className='h-3 w-3 animate-spin' />
+                                                <CircleNotchIcon className='h-3 w-3 animate-spin' />
                                             )}
                                             {t('account.authConnect')}
                                         </button>
@@ -361,7 +361,7 @@ const Account: FC = (): ReactNode => {
                                             className='flex items-center gap-1.5 rounded-md border border-white/10 px-3 py-1 text-xs text-white/50 transition-colors hover:border-red-500/50 hover:text-red-400 disabled:opacity-50'
                                         >
                                             {unlinkingProvider === 'github' && (
-                                                <CircleNotch className='h-3 w-3 animate-spin' />
+                                                <CircleNotchIcon className='h-3 w-3 animate-spin' />
                                             )}
                                             {t('account.authDisconnect')}
                                         </button>
@@ -372,7 +372,7 @@ const Account: FC = (): ReactNode => {
                                             className='flex items-center gap-1.5 rounded-md bg-white px-3 py-1 text-xs font-medium text-black transition-opacity hover:opacity-80 disabled:opacity-50'
                                         >
                                             {linkingProvider === 'github' && (
-                                                <CircleNotch className='h-3 w-3 animate-spin' />
+                                                <CircleNotchIcon className='h-3 w-3 animate-spin' />
                                             )}
                                             {t('account.authConnect')}
                                         </button>

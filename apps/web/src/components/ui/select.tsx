@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { CaretDown, Check } from '@phosphor-icons/react'
+import { CaretDownIcon, CheckIcon } from '@phosphor-icons/react'
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -110,7 +110,7 @@ const SelectTrigger = ({
                 )}
             >
                 <span className='truncate'>{displayText || placeholder}</span>
-                <CaretDown className='h-4 w-4 shrink-0 opacity-50' />
+                <CaretDownIcon className='h-4 w-4 shrink-0 opacity-50' />
             </button>
         </DropdownMenuTrigger>
     )
@@ -164,7 +164,7 @@ const SelectItem = ({ value, children, className }: SelectItemProps) => {
             >
                 {children}
             </span>
-            {isSelected && <Check className='h-4 w-4 shrink-0' />}
+            {isSelected && <CheckIcon className='h-4 w-4 shrink-0' />}
         </DropdownMenuItem>
     )
 }

@@ -3,7 +3,7 @@ import type { FC, ReactNode } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { ArrowLeft, CalendarBlank, Clock } from '@phosphor-icons/react'
+import { ArrowLeftIcon, CalendarBlankIcon, ClockIcon } from '@phosphor-icons/react'
 import {
     Header,
     LandingFooter,
@@ -89,7 +89,7 @@ const BlogPost: FC = (): ReactNode => {
                     to={ROUTES.POSTS}
                     className='mb-8 inline-flex items-center gap-1.5 text-sm text-gray-400 transition hover:text-white'
                 >
-                    <ArrowLeft className='h-4 w-4' />
+                    <ArrowLeftIcon className='h-4 w-4' />
                     {t('blog.backToBlog')}
                 </Link>
 
@@ -110,11 +110,11 @@ const BlogPost: FC = (): ReactNode => {
 
                 <div className='mb-8 flex items-center gap-4 text-sm text-gray-400'>
                     <span className='flex items-center gap-1.5'>
-                        <CalendarBlank className='h-4 w-4' />
+                        <CalendarBlankIcon className='h-4 w-4' />
                         {formattedDate}
                     </span>
                     <span className='flex items-center gap-1.5'>
-                        <Clock className='h-4 w-4' />
+                        <ClockIcon className='h-4 w-4' />
                         {t('blog.readingTime', {
                             minutes: String(meta.readingTime)
                         })}

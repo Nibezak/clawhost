@@ -2,14 +2,14 @@ import type { FC, ReactNode } from 'react'
 import type { ChatEmptyStateProps } from '@/ts/Interfaces'
 
 import { t } from '@openclaw/i18n'
-import { ChatTeardropText, WifiSlash } from '@phosphor-icons/react'
+import { ChatTeardropTextIcon, WifiSlashIcon } from '@phosphor-icons/react'
 
 const ChatEmptyState: FC<ChatEmptyStateProps> = ({ isError }): ReactNode => {
     if (isError) {
         return (
             <div className='flex h-full flex-col items-center justify-center gap-3 px-14 pb-16'>
                 <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-white/5'>
-                    <WifiSlash
+                    <WifiSlashIcon
                         className='h-6 w-6 text-gray-500'
                         weight='duotone'
                     />
@@ -29,7 +29,7 @@ const ChatEmptyState: FC<ChatEmptyStateProps> = ({ isError }): ReactNode => {
     return (
         <div className='flex h-full flex-col items-center justify-center gap-3 px-14 pb-16'>
             <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-white/5'>
-                <ChatTeardropText
+                <ChatTeardropTextIcon
                     className='h-6 w-6 text-gray-500'
                     weight='duotone'
                 />
