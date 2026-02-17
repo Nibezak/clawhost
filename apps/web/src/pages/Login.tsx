@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react'
 import type { LoginLoadingMethod } from '@/ts/Types'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
@@ -10,7 +10,7 @@ import { useUIStore } from '@/lib/store'
 import { ROUTES } from '@/lib'
 import { Button, Input, Label } from '@/components/ui'
 import { Logo, PageBackground, PageTitle } from '@/components'
-import { Envelope, CircleNotch, ArrowLeft } from '@phosphor-icons/react'
+import { EnvelopeIcon, CircleNotchIcon, ArrowLeftIcon } from '@phosphor-icons/react'
 import { STORAGE_KEYS } from '@/lib/storageKeys'
 
 const COOLDOWN_KEY = STORAGE_KEYS.OTP_SENT_AT
@@ -223,7 +223,7 @@ const Login: FC = (): ReactNode => {
         return (
             <div className='relative flex min-h-screen items-center justify-center bg-[#0a0a0f] px-4 text-white'>
                 <PageBackground />
-                <CircleNotch className='h-8 w-8 animate-spin text-white/50' />
+                <CircleNotchIcon className='h-8 w-8 animate-spin text-white/50' />
             </div>
         )
     }
@@ -283,7 +283,7 @@ const Login: FC = (): ReactNode => {
                                 disabled={!!loadingMethod || cooldown > 0}
                             >
                                 {loadingMethod === 'email' && (
-                                    <CircleNotch className='h-4 w-4 animate-spin' />
+                                    <CircleNotchIcon className='h-4 w-4 animate-spin' />
                                 )}
                                 {cooldown > 0
                                     ? t('auth.resendIn', {
@@ -312,7 +312,7 @@ const Login: FC = (): ReactNode => {
                                 className='flex h-11 w-full items-center justify-center gap-3 rounded-lg border border-white/10 bg-white/5 text-sm font-medium text-white transition-colors hover:bg-white/10 disabled:opacity-50'
                             >
                                 {loadingMethod === 'google' ? (
-                                    <CircleNotch className='h-[18px] w-[18px] animate-spin' />
+                                    <CircleNotchIcon className='h-[18px] w-[18px] animate-spin' />
                                 ) : (
                                     <svg
                                         width='18'
@@ -345,7 +345,7 @@ const Login: FC = (): ReactNode => {
                                 className='flex h-11 w-full items-center justify-center gap-3 rounded-lg border border-white/10 bg-white/5 text-sm font-medium text-white transition-colors hover:bg-white/10 disabled:opacity-50'
                             >
                                 {loadingMethod === 'github' ? (
-                                    <CircleNotch className='h-[18px] w-[18px] animate-spin' />
+                                    <CircleNotchIcon className='h-[18px] w-[18px] animate-spin' />
                                 ) : (
                                     <svg
                                         width='18'
@@ -359,6 +359,23 @@ const Login: FC = (): ReactNode => {
                                 {t('auth.continueWithGithub')}
                             </button>
                         </div>
+
+                        <p className='mt-6 text-center text-xs text-gray-500'>
+                            {t('auth.agreementNotice')}{' '}
+                            <Link
+                                to={ROUTES.TERMS}
+                                className='text-gray-400 underline hover:text-white'
+                            >
+                                {t('auth.termsOfService')}
+                            </Link>{' '}
+                            {t('auth.andWord')}{' '}
+                            <Link
+                                to={ROUTES.PRIVACY}
+                                className='text-gray-400 underline hover:text-white'
+                            >
+                                {t('auth.privacyPolicy')}
+                            </Link>
+                        </p>
                     </div>
                 ) : (
                     <div className='rounded-xl border border-white/10 bg-white/[0.02] p-8 backdrop-blur-sm'>
@@ -367,12 +384,12 @@ const Login: FC = (): ReactNode => {
                             disabled={!!loadingMethod}
                             className='mb-4 flex items-center gap-1 text-sm text-gray-400 transition-colors hover:text-white disabled:opacity-50'
                         >
-                            <ArrowLeft className='h-4 w-4' />
+                            <ArrowLeftIcon className='h-4 w-4' />
                         </button>
 
                         <div className='text-center'>
                             <div className='mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-white/5'>
-                                <Envelope className='h-8 w-8 text-[#ef5350]' />
+                                <EnvelopeIcon className='h-8 w-8 text-[#ef5350]' />
                             </div>
                             <h1 className='font-clash mb-2 text-2xl font-bold'>
                                 {t('auth.checkYourEmailHeading')}
@@ -423,7 +440,7 @@ const Login: FC = (): ReactNode => {
                             }
                         >
                             {loadingMethod === 'email' && (
-                                <CircleNotch className='h-4 w-4 animate-spin' />
+                                <CircleNotchIcon className='h-4 w-4 animate-spin' />
                             )}
                             {t('auth.verifyCode')}
                         </Button>
@@ -434,7 +451,7 @@ const Login: FC = (): ReactNode => {
                             className='mt-4 flex w-full items-center justify-center gap-2 text-sm text-gray-500 transition-colors hover:text-gray-300 disabled:opacity-50'
                         >
                             {loadingMethod === 'resend' ? (
-                                <CircleNotch className='h-3.5 w-3.5 animate-spin' />
+                                <CircleNotchIcon className='h-3.5 w-3.5 animate-spin' />
                             ) : null}
                             {cooldown > 0
                                 ? t('auth.resendIn', {

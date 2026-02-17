@@ -3,7 +3,7 @@ import type { ChatBubbleProps, ChatImageSource } from '@/ts/Interfaces'
 
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
-import { Stop, Warning, FileText, DownloadSimple } from '@phosphor-icons/react'
+import { StopIcon, WarningIcon, FileTextIcon, DownloadSimpleIcon } from '@phosphor-icons/react'
 import ChatMarkdown from '@/components/playground/AgentChat/ChatMarkdown'
 import ChatLightbox from '@/components/playground/AgentChat/ChatLightbox'
 
@@ -55,7 +55,7 @@ const ChatBubble: FC<ChatBubbleProps> = ({ message }): ReactNode => {
                 className='flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 transition-colors hover:bg-white/10'
             >
                 <div className='flex h-8 w-8 items-center justify-center rounded-lg bg-white/10'>
-                    <FileText className='h-4 w-4 text-gray-400' weight='duotone' />
+                    <FileTextIcon className='h-4 w-4 text-gray-400' weight='duotone' />
                 </div>
                 <div className='flex flex-col items-start'>
                     <span className='text-xs font-medium text-gray-200'>
@@ -65,7 +65,7 @@ const ChatBubble: FC<ChatBubbleProps> = ({ message }): ReactNode => {
                         {ext.toUpperCase()}
                     </span>
                 </div>
-                <DownloadSimple className='h-3.5 w-3.5 text-gray-500' weight='bold' />
+                <DownloadSimpleIcon className='h-3.5 w-3.5 text-gray-500' weight='bold' />
             </button>
         )
     }
@@ -83,7 +83,7 @@ const ChatBubble: FC<ChatBubbleProps> = ({ message }): ReactNode => {
                             className='flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 transition-colors hover:bg-white/10'
                         >
                             <div className='flex h-8 w-8 items-center justify-center rounded-lg bg-white/10'>
-                                <FileText className='h-4 w-4 text-gray-400' weight='duotone' />
+                                <FileTextIcon className='h-4 w-4 text-gray-400' weight='duotone' />
                             </div>
                             <div className='flex flex-col items-start'>
                                 <span className='text-xs font-medium text-gray-200'>
@@ -93,7 +93,7 @@ const ChatBubble: FC<ChatBubbleProps> = ({ message }): ReactNode => {
                                     {ext}
                                 </span>
                             </div>
-                            <DownloadSimple className='h-3.5 w-3.5 text-gray-500' weight='bold' />
+                            <DownloadSimpleIcon className='h-3.5 w-3.5 text-gray-500' weight='bold' />
                         </button>
                     )
                 }
@@ -162,7 +162,7 @@ const ChatBubble: FC<ChatBubbleProps> = ({ message }): ReactNode => {
                     </div>
                     {message.status === 'error' && (
                         <div className='mt-2 flex items-center gap-1.5'>
-                            <Warning className='h-3 w-3 text-red-400' />
+                            <WarningIcon className='h-3 w-3 text-red-400' />
                             <span className='text-[11px] text-red-400'>
                                 {t('playground.chatErrorMessage')}
                             </span>
@@ -170,7 +170,7 @@ const ChatBubble: FC<ChatBubbleProps> = ({ message }): ReactNode => {
                     )}
                     {message.status === 'aborted' && (
                         <div className='mt-2 flex items-center gap-1.5'>
-                            <Stop className='h-3 w-3 text-yellow-500' />
+                            <StopIcon className='h-3 w-3 text-yellow-500' />
                             <span className='text-[11px] text-yellow-500'>
                                 {t('playground.chatAbortedMessage')}
                             </span>

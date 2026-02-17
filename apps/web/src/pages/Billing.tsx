@@ -19,10 +19,10 @@ import {
     PageHeader
 } from '@/components'
 import {
-    CircleNotch,
-    Receipt,
-    DownloadSimple,
-    ArrowSquareOut
+    CircleNotchIcon,
+    ReceiptIcon,
+    DownloadSimpleIcon,
+    ArrowSquareOutIcon
 } from '@phosphor-icons/react'
 import { api } from '@/lib'
 
@@ -208,7 +208,7 @@ const Billing: FC = (): ReactNode => {
             >
                 {authLoading ? (
                     <div className='flex min-h-[60vh] items-center justify-center'>
-                        <CircleNotch className='text-primary h-8 w-8 animate-spin' />
+                        <CircleNotchIcon className='text-primary h-8 w-8 animate-spin' />
                     </div>
                 ) : (
                     <>
@@ -222,9 +222,9 @@ const Billing: FC = (): ReactNode => {
                                         label={t('billing.manageBilling')}
                                         icon={
                                             isPortalLoading ? (
-                                                <CircleNotch className='h-5 w-5 animate-spin' />
+                                                <CircleNotchIcon className='h-5 w-5 animate-spin' />
                                             ) : (
-                                                <ArrowSquareOut
+                                                <ArrowSquareOutIcon
                                                     className='h-5 w-5'
                                                     weight='bold'
                                                 />
@@ -249,7 +249,7 @@ const Billing: FC = (): ReactNode => {
                               billingTotal === 0 ? (
                                 <EmptyState
                                     icon={
-                                        <Receipt className='text-primary h-10 w-10' />
+                                        <ReceiptIcon className='text-primary h-10 w-10' />
                                     }
                                     title={t('billing.noBillingHistory')}
                                     description={t(
@@ -276,7 +276,7 @@ const Billing: FC = (): ReactNode => {
                             ) : !allBillingItems.length ? (
                                 <EmptyState
                                     icon={
-                                        <Receipt className='text-primary h-10 w-10' />
+                                        <ReceiptIcon className='text-primary h-10 w-10' />
                                     }
                                     title={t('billing.noBillingHistory')}
                                     description={t(
@@ -354,9 +354,9 @@ const Billing: FC = (): ReactNode => {
                                                                 {loadingInvoiceIds.has(
                                                                     order.id
                                                                 ) ? (
-                                                                    <CircleNotch className='h-5 w-5 animate-spin' />
+                                                                    <CircleNotchIcon className='h-5 w-5 animate-spin' />
                                                                 ) : (
-                                                                    <DownloadSimple className='h-5 w-5' />
+                                                                    <DownloadSimpleIcon className='h-5 w-5' />
                                                                 )}
                                                             </Button>
                                                         </div>
@@ -428,9 +428,9 @@ const Billing: FC = (): ReactNode => {
                                                                 {loadingInvoiceIds.has(
                                                                     order.id
                                                                 ) ? (
-                                                                    <CircleNotch className='h-5 w-5 animate-spin' />
+                                                                    <CircleNotchIcon className='h-5 w-5 animate-spin' />
                                                                 ) : (
-                                                                    <DownloadSimple className='h-5 w-5' />
+                                                                    <DownloadSimpleIcon className='h-5 w-5' />
                                                                 )}
                                                             </Button>
                                                         </div>

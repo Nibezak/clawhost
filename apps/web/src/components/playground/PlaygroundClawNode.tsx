@@ -23,7 +23,7 @@ import {
 import { api } from '@/lib'
 import { ProviderIcon } from '@/components'
 import { getStatusConfig } from '@/lib/claw-utils'
-import { Plus, Clock, CircleNotch } from '@phosphor-icons/react'
+import { PlusIcon, ClockIcon, CircleNotchIcon } from '@phosphor-icons/react'
 import { ClawMascot } from '@/components'
 import {
     ClawCardDropdownMenu,
@@ -227,7 +227,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                             className={`inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium ${status.bgColor}`}
                         >
                             {status.pulse ? (
-                                <CircleNotch
+                                <CircleNotchIcon
                                     className={`h-3 w-3 animate-spin ${status.color.replace('bg-', 'text-')}`}
                                     weight='bold'
                                 />
@@ -281,7 +281,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                                                 : 'text-gray-500 hover:bg-white/10 hover:text-white'
                                         }`}
                                     >
-                                        <Plus
+                                        <PlusIcon
                                             className='h-3.5 w-3.5'
                                             weight='bold'
                                         />
@@ -340,7 +340,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <div className='flex items-center gap-1.5 rounded-md bg-gray-500/10 px-2 py-1'>
-                                        <Clock
+                                        <ClockIcon
                                             className='h-3 w-3 text-gray-400'
                                             weight='fill'
                                         />

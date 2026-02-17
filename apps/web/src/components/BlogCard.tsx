@@ -3,7 +3,7 @@ import type { BlogCardProps } from '@/ts/Interfaces'
 
 import { Link } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
-import { CalendarBlank, Clock } from '@phosphor-icons/react'
+import { CalendarBlankIcon, ClockIcon } from '@phosphor-icons/react'
 
 const BlogCard: FC<BlogCardProps> = ({ post }): ReactNode => {
     const formattedDate = new Date(post.publishedAt).toLocaleDateString(
@@ -59,11 +59,11 @@ const BlogCard: FC<BlogCardProps> = ({ post }): ReactNode => {
                 <div className='flex items-center justify-between'>
                     <div className='flex items-center gap-3 text-xs text-gray-500'>
                         <span className='flex items-center gap-1.5'>
-                            <CalendarBlank className='h-3.5 w-3.5' />
+                            <CalendarBlankIcon className='h-3.5 w-3.5' />
                             {formattedDate}
                         </span>
                         <span className='flex items-center gap-1.5'>
-                            <Clock className='h-3.5 w-3.5' />
+                            <ClockIcon className='h-3.5 w-3.5' />
                             {t('blog.readingTime', {
                                 minutes: String(post.readingTime)
                             })}

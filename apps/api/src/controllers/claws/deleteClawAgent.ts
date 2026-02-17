@@ -80,8 +80,8 @@ const deleteClawAgent = async (c: AuthenticatedContext) => {
             await executeSSH(
                 claw.ip,
                 claw.rootPassword,
-                `echo '${configB64}' | base64 -d > ${BASE_DIR}/openclaw.json && systemctl restart openclaw-gateway`,
-                15000
+                `echo '${configB64}' | base64 -d > ${BASE_DIR}/openclaw.json && (openclaw doctor --fix || true) && systemctl restart openclaw-gateway`,
+                20000
             )
 
             return ok(c, null, t('api.agentDeleted'))

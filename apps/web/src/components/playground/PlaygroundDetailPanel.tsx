@@ -11,7 +11,7 @@ import CLAW_DETAIL_TABS from '@/lib/clawDetailTabs'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { clawStatus } from '@openclaw/shared'
-import { X, Info, Scroll, Pulse, Key, Lightning } from '@phosphor-icons/react'
+import { XIcon, InfoIcon, ScrollIcon, PulseIcon, KeyIcon, LightningIcon } from '@phosphor-icons/react'
 import { ClawAvatar, ProviderIcon } from '@/components'
 import { Skeleton } from '@/components/ui'
 import { getBaseDomain } from '@/lib'
@@ -35,11 +35,11 @@ import {
 const tabStateMap: Record<string, PlaygroundDetailTab> = {}
 
 const tabs: PlaygroundTabConfig<PlaygroundDetailTab>[] = [
-    { id: CLAW_DETAIL_TABS.INFO, label: 'playground.tabInfo', icon: Info },
-    { id: CLAW_DETAIL_TABS.VARIABLES, label: 'playground.tabEnvs', icon: Key },
-    { id: CLAW_DETAIL_TABS.SKILLS, label: 'playground.tabSkills', icon: Lightning },
-    { id: CLAW_DETAIL_TABS.LOGS, label: 'playground.tabLogs', icon: Scroll },
-    { id: CLAW_DETAIL_TABS.DIAGNOSTICS, label: 'playground.tabDiagnostics', icon: Pulse }
+    { id: CLAW_DETAIL_TABS.INFO, label: 'playground.tabInfo', icon: InfoIcon },
+    { id: CLAW_DETAIL_TABS.VARIABLES, label: 'playground.tabEnvs', icon: KeyIcon },
+    { id: CLAW_DETAIL_TABS.SKILLS, label: 'playground.tabSkills', icon: LightningIcon },
+    { id: CLAW_DETAIL_TABS.LOGS, label: 'playground.tabLogs', icon: ScrollIcon },
+    { id: CLAW_DETAIL_TABS.DIAGNOSTICS, label: 'playground.tabDiagnostics', icon: PulseIcon }
 ]
 
 const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
@@ -49,7 +49,8 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
     onClose,
     readOnly,
     initialTab,
-    onTabChange
+    onTabChange,
+    fullScreen
 }): ReactNode => {
     const activeTab = tabStateMap[claw.id] || CLAW_DETAIL_TABS.INFO
     const setActiveTab = useCallback(
@@ -92,15 +93,20 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
         return versionQuery.data.version
     }, [readOnly, versionQuery.isPending, versionQuery.isError, versionQuery.data])
 
+    const Wrapper = fullScreen ? 'div' : motion.div
+    const wrapperProps = fullScreen
+        ? { className: 'flex h-full w-full flex-col overflow-hidden' }
+        : {
+            initial: { x: '100%' },
+            animate: { x: 0 },
+            exit: { x: '100%' },
+            transition: { type: 'tween', duration: 0.2 },
+            className: 'fixed inset-0 z-40 overflow-hidden md:relative md:inset-auto md:z-auto md:h-full md:w-[380px] md:shrink-0'
+        }
+
     return (
-        <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'tween', duration: 0.2 }}
-            className='h-full w-[90vw] shrink-0 overflow-hidden md:w-[380px]'
-        >
-            <div className='flex h-full w-full flex-col border-l border-white/10 bg-[#0a0a0f] md:bg-[#0a0a0f]/95 md:backdrop-blur-xl'>
+        <Wrapper {...wrapperProps as Record<string, unknown>}>
+            <div className={`flex h-full w-full flex-col ${fullScreen ? 'bg-[#0a0a0f]' : 'bg-[#0a0a0f] md:border-l md:border-white/10 md:bg-[#0a0a0f]/95 md:backdrop-blur-xl'}`}>
                 <div className='flex items-center justify-between border-b border-white/10 px-5 py-2.5'>
                     <div className='flex items-center gap-2.5'>
                         <ClawAvatar />
@@ -123,9 +129,9 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                     </div>
                     <button
                         onClick={onClose}
-                        className='rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white'
+                        className={`rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white ${fullScreen ? 'md:hidden' : ''}`}
                     >
-                        <X className='h-4 w-4' weight='bold' />
+                        <XIcon className='h-4 w-4' weight='bold' />
                     </button>
                 </div>
 
@@ -154,7 +160,7 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                 <div className='flex min-h-0 flex-1 flex-col overflow-hidden'>
                     {activeTab === 'info' && (
                         <div className='h-full overflow-y-auto p-5'>
-                            <div className='grid grid-cols-2 gap-2'>
+                            <div className={`grid gap-2 ${fullScreen ? 'grid-cols-3' : 'grid-cols-2'}`}>
                                 {claw.ownerEmail && (
                                     <CopyableField
                                         label={t('dashboard.owner')}
@@ -170,7 +176,7 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                 )}
 
                                 {showVersion && versionLoading && (
-                                    <div className='bg-background rounded-lg px-3 py-2'>
+                                    <div className='rounded-lg bg-white/5 px-3 py-2'>
                                         <span className='text-muted-foreground block text-xs'>
                                             {t('dashboard.version')}
                                         </span>
@@ -358,7 +364,7 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                     )}
                 </div>
             </div>
-        </motion.div>
+        </Wrapper>
     )
 }
 

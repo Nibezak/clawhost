@@ -49,6 +49,15 @@ const Terms: FC = (): ReactNode => {
 
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
+                            {t('terms.authTitle')}
+                        </h2>
+                        <p className='text-muted-foreground leading-relaxed'>
+                            {t('terms.authText')}
+                        </p>
+                    </section>
+
+                    <section>
+                        <h2 className='mb-3 text-xl font-semibold'>
                             {t('terms.responsibilitiesTitle')}
                         </h2>
                         <p className='text-muted-foreground leading-relaxed'>

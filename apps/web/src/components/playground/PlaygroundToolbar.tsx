@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react'
 import type { PlaygroundToolbarProps } from '@/ts/Interfaces'
 
 import { t } from '@openclaw/i18n'
-import { CornersIn, ArrowCounterClockwise } from '@phosphor-icons/react'
+import { CornersInIcon, ArrowCounterClockwiseIcon } from '@phosphor-icons/react'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 
 const PlaygroundToolbar: FC<PlaygroundToolbarProps> = ({
@@ -26,7 +26,7 @@ const PlaygroundToolbar: FC<PlaygroundToolbarProps> = ({
                     onClick={onFitView}
                     className='playground-reset-enter flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-red-400 backdrop-blur-sm transition-colors hover:bg-red-500/20 hover:text-red-300'
                 >
-                    <ArrowCounterClockwise className='h-4 w-4' weight='bold' />
+                    <ArrowCounterClockwiseIcon className='h-4 w-4' weight='bold' />
                     <span className='text-xs font-medium'>
                         {clawCount === 1
                             ? t('playground.nodeOutOfView')
@@ -38,7 +38,7 @@ const PlaygroundToolbar: FC<PlaygroundToolbarProps> = ({
                     disabled
                     className='flex cursor-default items-center gap-1.5 rounded-lg border border-white/10 bg-[#151518]/90 px-2.5 py-1.5 text-gray-600 backdrop-blur-sm'
                 >
-                    <CornersIn className='h-4 w-4' weight='bold' />
+                    <CornersInIcon className='h-4 w-4' weight='bold' />
                 </button>
             ) : (
                 <Tooltip>
@@ -47,7 +47,7 @@ const PlaygroundToolbar: FC<PlaygroundToolbarProps> = ({
                             onClick={onFitView}
                             className='flex items-center gap-1.5 rounded-lg border border-white/10 bg-[#151518]/90 px-2.5 py-1.5 text-gray-400 backdrop-blur-sm transition-colors hover:bg-white/10 hover:text-white'
                         >
-                            <CornersIn className='h-4 w-4' weight='bold' />
+                            <CornersInIcon className='h-4 w-4' weight='bold' />
                         </button>
                     </TooltipTrigger>
                     <TooltipContent side='top'>

@@ -631,6 +631,7 @@ export interface PlaygroundDetailPanelProps {
     readOnly?: boolean
     initialTab?: PlaygroundDetailTab
     onTabChange?: (tab: PlaygroundDetailTab) => void
+    fullScreen?: boolean
 }
 
 export interface PlaygroundToolbarProps {
@@ -877,9 +878,9 @@ export interface ChannelConfig {
     allowFrom?: string[]
     botToken?: string
     token?: string
-    applicationId?: string
     appToken?: string
     signingSecret?: string
+    account?: string
 }
 
 export interface ClawChannelsResponse {
@@ -1027,15 +1028,18 @@ export interface ClawWithAgents {
 export interface ChatSidebarProps {
     clawsWithAgents: ClawWithAgents[]
     selectedAgent: ChatSelectedAgent | null
+    selectedClawId: string | null
     onAgentSelect: (selection: ChatSelectedAgent) => void
     onConfigureAgent: (agentId: string, clawId: string) => void
     onCreateAgent: (clawId: string, clawName: string) => void
     onOpenClawSettings: (clawId: string) => void
+    onClose?: () => void
 }
 
 export interface ChatSidebarClawHeaderProps {
     claw: Claw
     isReachable: boolean
+    isSelected: boolean
     statusConfig: StatusConfig
     onOpenClawSettings: (clawId: string) => void
     onCreateAgent: (clawId: string, clawName: string) => void
@@ -1047,7 +1051,7 @@ export interface ChatViewProps {
     plans: Plan[]
     sshKeys: SSHKey[]
     selectedAgent: ChatSelectedAgent | null
-    onAgentSelect: (selection: ChatSelectedAgent) => void
+    onAgentSelect: (selection: ChatSelectedAgent | null) => void
     onConfigureAgent: (agentId: string, clawId: string) => void
     onCreateAgent: (clawId: string, clawName: string) => void
     initialSettingsClawId?: string | null

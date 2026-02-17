@@ -4,7 +4,7 @@ import type { ClawLogsContentProps } from '@/ts/Interfaces'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { t } from '@openclaw/i18n'
 import { Button, Skeleton } from '@/components/ui'
-import { ArrowDown, Scroll } from '@phosphor-icons/react'
+import { ArrowDownIcon, ScrollIcon } from '@phosphor-icons/react'
 import { useClawLogs } from '@/hooks'
 import { PanelPlaceholder } from '@/components'
 
@@ -105,7 +105,7 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
                 {logs.isError && (
                     <PanelPlaceholder
                         icon={
-                            <Scroll
+                            <ScrollIcon
                                 className='h-6 w-6 text-gray-500'
                                 weight='duotone'
                             />
@@ -120,11 +120,18 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
                     </pre>
                 )}
                 {logs.data && embedded && (
-                    <div className='flex flex-col gap-1 bg-black/50 p-4'>
+                    <div className={`flex flex-col gap-1 bg-black/50 p-4 ${parsedLines.length === 0 ? 'h-full items-center justify-center' : ''}`}>
                         {parsedLines.length === 0 && (
-                            <span className='text-xs text-zinc-500'>
-                                {t('dashboard.diagnosticsNoLogs')}
-                            </span>
+                            <PanelPlaceholder
+                                icon={
+                                    <ScrollIcon
+                                        className='h-6 w-6 text-gray-500'
+                                        weight='duotone'
+                                    />
+                                }
+                                title={t('dashboard.diagnosticsNoLogs')}
+                                description=''
+                            />
                         )}
                         {parsedLines.map((line, i) => (
                             <div key={i} className='flex gap-2'>
@@ -149,7 +156,7 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
                         className='shadow-lg'
                         onClick={scrollToBottom}
                     >
-                        <ArrowDown className='mr-2 h-3.5 w-3.5' />
+                        <ArrowDownIcon className='mr-2 h-3.5 w-3.5' />
                         {t('dashboard.scrollToBottom')}
                     </Button>
                 </div>

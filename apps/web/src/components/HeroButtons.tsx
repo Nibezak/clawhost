@@ -6,7 +6,7 @@ import { Button } from '@/components/ui'
 import { useAuth } from '@/lib/auth'
 import { ROUTES } from '@/lib'
 import { useGitHubStars, GITHUB_REPO_URL } from '@/hooks'
-import { Lightning, GithubLogo } from '@phosphor-icons/react'
+import { LightningIcon, GithubLogoIcon } from '@phosphor-icons/react'
 
 const HeroButtons: FC<HeroButtonsProps> = ({
     deployLabel,
@@ -31,7 +31,7 @@ const HeroButtons: FC<HeroButtonsProps> = ({
                             : `${ROUTES.LOGIN}?deploy=true`
                     }
                 >
-                    <Lightning className='h-5 w-5' weight='fill' />
+                    <LightningIcon className='h-5 w-5' weight='fill' />
                     {deployLabel}
                 </Link>
             </Button>
@@ -46,7 +46,7 @@ const HeroButtons: FC<HeroButtonsProps> = ({
                     target='_blank'
                     rel='noopener noreferrer'
                 >
-                    <GithubLogo className='h-5 w-5' weight='fill' />
+                    <GithubLogoIcon className='h-5 w-5' weight='fill' />
                     {githubLabel}
 
                     {showStars && gitHubStars && (

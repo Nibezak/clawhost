@@ -1,4 +1,4 @@
-import type { UpdateClawChannelsBody } from '@/ts/Interfaces'
+import type { ChannelConfig, UpdateClawChannelsBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import executeSSH from '@/services/ssh'
@@ -11,7 +11,29 @@ const BASE_DIR = '/home/openclaw/.openclaw'
 const CHANNEL_REQUIRED_FIELDS: Record<string, string[]> = {
     telegram: ['botToken'],
     discord: ['token'],
-    slack: ['botToken', 'appToken']
+    slack: ['botToken', 'appToken'],
+    signal: ['account']
+}
+
+const DEPRECATED_CHANNEL_KEYS = ['applicationId']
+
+const SUPPORTED_CHANNELS = new Set(['whatsapp', 'telegram', 'discord', 'slack', 'signal'])
+
+const sanitizeChannels = (
+    channels: Record<string, ChannelConfig>
+): Record<string, ChannelConfig> => {
+    const cleaned: Record<string, ChannelConfig> = {}
+
+    for (const [channelKey, channelConfig] of Object.entries(channels)) {
+        if (!SUPPORTED_CHANNELS.has(channelKey)) continue
+        const sanitized = { ...channelConfig } as unknown as Record<string, unknown>
+        for (const key of DEPRECATED_CHANNEL_KEYS) {
+            delete sanitized[key]
+        }
+        cleaned[channelKey] = sanitized as unknown as ChannelConfig
+    }
+
+    return cleaned
 }
 
 const updateClawChannels = async (c: AuthenticatedContext) => {
@@ -63,7 +85,7 @@ const updateClawChannels = async (c: AuthenticatedContext) => {
                 config = {}
             }
 
-            config.channels = body.channels
+            config.channels = sanitizeChannels(body.channels)
 
             const configJson = JSON.stringify(config, null, 4)
             const configB64 = Buffer.from(configJson).toString('base64')
@@ -71,8 +93,8 @@ const updateClawChannels = async (c: AuthenticatedContext) => {
             await executeSSH(
                 claw.ip,
                 claw.rootPassword,
-                `echo '${configB64}' | base64 -d > ${BASE_DIR}/openclaw.json && systemctl restart openclaw-gateway`,
-                15000
+                `echo '${configB64}' | base64 -d > ${BASE_DIR}/openclaw.json && (openclaw doctor --fix || true) && systemctl restart openclaw-gateway`,
+                20000
             )
 
             return ok(c, null, t('api.channelsUpdated'))

@@ -3,7 +3,7 @@ import type { ChatAttachment, ChatImageSource, ChatInputAttachment, ChatInputHan
 
 import { useState, useRef, useCallback, useEffect, forwardRef, useImperativeHandle } from 'react'
 import { t } from '@openclaw/i18n'
-import { PaperPlaneRight, Stop, Paperclip, X, Microphone } from '@phosphor-icons/react'
+import { PaperPlaneRightIcon, StopIcon, PaperclipIcon, XIcon, MicrophoneIcon } from '@phosphor-icons/react'
 import { useSpeechRecognition } from '@/hooks'
 
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
@@ -192,7 +192,7 @@ const ChatInputInner: ForwardRefRenderFunction<ChatInputHandle, ChatInputProps> 
                                 onClick={() => handleRemoveAttachment(idx)}
                                 className='absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#0a0a0f] text-gray-400 ring-1 ring-white/20 transition-colors hover:text-white'
                             >
-                                <X className='h-2.5 w-2.5' weight='bold' />
+                                <XIcon className='h-2.5 w-2.5' weight='bold' />
                             </button>
                         </div>
                     ))}
@@ -204,7 +204,7 @@ const ChatInputInner: ForwardRefRenderFunction<ChatInputHandle, ChatInputProps> 
                     disabled={!isConnected || !allowAttach}
                     className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50'
                 >
-                    <Paperclip className='h-4 w-4' weight='bold' />
+                    <PaperclipIcon className='h-4 w-4' weight='bold' />
                 </button>
                 <input
                     ref={fileInputRef}
@@ -229,7 +229,7 @@ const ChatInputInner: ForwardRefRenderFunction<ChatInputHandle, ChatInputProps> 
                     {isTranscribing ? (
                         <div className='h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white' />
                     ) : (
-                        <Microphone className='h-4 w-4' weight='bold' />
+                        <MicrophoneIcon className='h-4 w-4' weight='bold' />
                     )}
                 </button>
                 <textarea
@@ -247,7 +247,7 @@ const ChatInputInner: ForwardRefRenderFunction<ChatInputHandle, ChatInputProps> 
                         onClick={onAbort}
                         className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-yellow-600 text-white transition-colors hover:bg-yellow-700'
                     >
-                        <Stop className='h-4 w-4' weight='bold' />
+                        <StopIcon className='h-4 w-4' weight='bold' />
                     </button>
                 ) : (
                     <button
@@ -255,7 +255,7 @@ const ChatInputInner: ForwardRefRenderFunction<ChatInputHandle, ChatInputProps> 
                         disabled={!isConnected || !allowAttach || (!input.trim() && attachments.length === 0)}
                         className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#ef5350] text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
                     >
-                        <PaperPlaneRight className='h-4 w-4' weight='bold' />
+                        <PaperPlaneRightIcon className='h-4 w-4' weight='bold' />
                     </button>
                 )}
             </div>

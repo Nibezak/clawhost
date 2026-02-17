@@ -4,11 +4,11 @@ import type { ClawDiagnosticsContentProps } from '@/ts/Interfaces'
 import { t } from '@openclaw/i18n'
 import { Button, Skeleton } from '@/components/ui'
 import {
-    CircleNotch,
-    Wrench,
-    CheckCircle,
-    Warning,
-    Pulse
+    CircleNotchIcon,
+    WrenchIcon,
+    CheckCircleIcon,
+    WarningIcon,
+    PulseIcon
 } from '@phosphor-icons/react'
 import { useClawDiagnostics, useRepairClaw } from '@/hooks'
 import { PanelPlaceholder } from '@/components'
@@ -47,7 +47,7 @@ const ClawDiagnosticsContent: FC<ClawDiagnosticsContentProps> = ({
             {diagnostics.isError && (
                 <PanelPlaceholder
                     icon={
-                        <Pulse
+                        <PulseIcon
                             className='h-6 w-6 text-gray-500'
                             weight='duotone'
                         />
@@ -64,7 +64,7 @@ const ClawDiagnosticsContent: FC<ClawDiagnosticsContentProps> = ({
                     {diagnostics.data && hasIssue && (
                         <div className='flex items-center justify-between rounded-md bg-yellow-950/50 p-3 text-sm text-yellow-400'>
                             <div className='flex items-center gap-2'>
-                                <Warning className='h-4 w-4 shrink-0' />
+                                <WarningIcon className='h-4 w-4 shrink-0' />
                                 {t('dashboard.diagnosticsIssueDetected')}
                             </div>
                             <Button
@@ -76,13 +76,13 @@ const ClawDiagnosticsContent: FC<ClawDiagnosticsContentProps> = ({
                             >
                                 {repair.isPending ? (
                                     <>
-                                        <CircleNotch className='mr-2 h-3.5 w-3.5 animate-spin' />
+                                        <CircleNotchIcon className='mr-2 h-3.5 w-3.5 animate-spin' />
                                         {t('dashboard.diagnosticsRepair')}
                                         ...
                                     </>
                                 ) : (
                                     <>
-                                        <Wrench className='mr-2 h-3.5 w-3.5' />
+                                        <WrenchIcon className='mr-2 h-3.5 w-3.5' />
                                         {t('dashboard.diagnosticsRepair')}
                                     </>
                                 )}
@@ -91,7 +91,7 @@ const ClawDiagnosticsContent: FC<ClawDiagnosticsContentProps> = ({
                     )}
                     {diagnostics.data && !hasIssue && (
                         <div className='flex items-center gap-2 rounded-md bg-green-950/50 p-3 text-sm text-green-400'>
-                            <CheckCircle className='h-4 w-4 shrink-0' />
+                            <CheckCircleIcon className='h-4 w-4 shrink-0' />
                             {t('dashboard.diagnosticsHealthy')}
                         </div>
                     )}

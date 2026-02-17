@@ -86,6 +86,34 @@ import { RequestClient } from '@openclaw/shared'
 import { t } from '@openclaw/i18n'
 ```
 
+### Phosphor Icons Import Rule
+
+**CRITICAL: Always import Phosphor icons with the `Icon` suffix from `@phosphor-icons/react`. The non-suffixed names (e.g., `Check`, `Copy`, `Eye`) are deprecated. Every icon import must end with `Icon`.**
+
+```typescript
+// CORRECT - Always use the Icon suffix
+import { CheckIcon, CopyIcon, EyeIcon, EyeSlashIcon } from '@phosphor-icons/react'
+import { CircleNotchIcon, WarningIcon, LightningIcon } from '@phosphor-icons/react'
+import { GithubLogoIcon, DiscordLogoIcon, SlackLogoIcon } from '@phosphor-icons/react'
+
+// INCORRECT - Non-suffixed names are deprecated
+import { Check, Copy, Eye, EyeSlash } from '@phosphor-icons/react' // DO NOT USE
+import { CircleNotch, Warning, Lightning } from '@phosphor-icons/react' // DO NOT USE
+import { GithubLogo, DiscordLogo, SlackLogo } from '@phosphor-icons/react' // DO NOT USE
+```
+
+**In JSX, use the suffixed names:**
+
+```tsx
+// CORRECT
+<CheckIcon size={16} />
+<CircleNotchIcon className='animate-spin' />
+
+// INCORRECT
+<Check size={16} />  // DO NOT USE
+<CircleNotch className='animate-spin' />  // DO NOT USE
+```
+
 ### One Export Per File Rule
 
 **CRITICAL: Every `.ts` and `.tsx` file must export exactly ONE function, component, constant, or class via `export default`. No file should have multiple exports.**

@@ -4,7 +4,7 @@ import type { ChatLightboxProps } from '@/ts/Interfaces'
 import { useEffect, useCallback, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { t } from '@openclaw/i18n'
-import { CircleNotch, DownloadSimple, X, FileText } from '@phosphor-icons/react'
+import { CircleNotchIcon, DownloadSimpleIcon, XIcon, FileTextIcon } from '@phosphor-icons/react'
 
 const IMAGE_MIMES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml']
 
@@ -84,16 +84,16 @@ const ChatLightbox: FC<ChatLightboxProps> = ({ image, fileName: fileNameProp, on
                             className='rounded-md p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50'
                         >
                             {isDownloading ? (
-                                <CircleNotch className='h-4 w-4 animate-spin' />
+                                <CircleNotchIcon className='h-4 w-4 animate-spin' />
                             ) : (
-                                <DownloadSimple className='h-4 w-4' weight='bold' />
+                                <DownloadSimpleIcon className='h-4 w-4' weight='bold' />
                             )}
                         </button>
                         <button
                             onClick={onClose}
                             className='rounded-md p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white'
                         >
-                            <X className='h-4 w-4' weight='bold' />
+                            <XIcon className='h-4 w-4' weight='bold' />
                         </button>
                     </div>
                 </div>
@@ -107,7 +107,7 @@ const ChatLightbox: FC<ChatLightboxProps> = ({ image, fileName: fileNameProp, on
                     </div>
                 ) : (
                     <div className='flex min-w-[320px] flex-col items-center gap-1.5 px-16 py-14'>
-                        <FileText className='h-10 w-10 text-gray-500' weight='duotone' />
+                        <FileTextIcon className='h-10 w-10 text-gray-500' weight='duotone' />
                         <p className='text-sm text-gray-400'>
                             {t('playground.chatNoPreview')}
                         </p>
