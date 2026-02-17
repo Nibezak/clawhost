@@ -1,15 +1,16 @@
 import type { FC, ReactNode } from 'react'
 import type {
     BundledSkillInfo,
+    ClawHubInstalledResponse,
+    ClawHubSearchResult,
     ClawSkillsResponse,
     GetAgentSkillsResponse,
     PlaygroundSkillsContentProps,
     SkillEntryConfig
 } from '@/ts/Interfaces'
-import type { SkillsViewTab } from '@/ts/Types'
 
-import { useState, useEffect, useCallback, useMemo } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
+import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { t } from '@openclaw/i18n'
 import {
     CircleNotch,
@@ -22,29 +23,43 @@ import { PanelPlaceholder } from '@/components'
 import { Skeleton } from '@/components/ui'
 import { api } from '@/lib'
 import { useUIStore } from '@/lib/store'
-import PlaygroundClawHubContent from '@/components/playground/PlaygroundClawHubContent'
+
+const PAGE_SIZE = 20
+const STALE_TIME = 60 * 60 * 1000
 
 const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
     clawId,
     agentId
 }): ReactNode => {
     const isAgentMode = !!agentId
-    const [viewTab, setViewTab] = useState<SkillsViewTab>('bundled')
     const [skills, setSkills] = useState<BundledSkillInfo[]>([])
     const [entries, setEntries] = useState<Record<string, SkillEntryConfig>>({})
     const [search, setSearch] = useState('')
+    const [debouncedSearch, setDebouncedSearch] = useState('')
     const [pendingSkill, setPendingSkill] = useState<string | null>(null)
+    const [pendingSlug, setPendingSlug] = useState<string | null>(null)
     const { showToast } = useUIStore()
     const queryClient = useQueryClient()
+    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const sentinelRef = useRef<HTMLDivElement | null>(null)
+
+    useEffect(() => {
+        if (debounceRef.current) clearTimeout(debounceRef.current)
+        debounceRef.current = setTimeout(() => {
+            setDebouncedSearch(search.trim())
+        }, 400)
+        return () => {
+            if (debounceRef.current) clearTimeout(debounceRef.current)
+        }
+    }, [search])
 
     const clawQueryKey = ['claw-skills', clawId]
     const agentQueryKey = ['agent-skills', clawId, agentId]
+    const browseKey = ['clawhub-browse', clawId, debouncedSearch]
+    const installedKey = ['clawhub-installed', clawId, agentId]
+    const updatesKey = ['clawhub-updates', clawId, agentId]
 
-    const {
-        data: clawSkillsData,
-        isLoading: isClawSkillsLoading,
-        isError: isClawSkillsError
-    } = useQuery({
+    const { data: clawSkillsData, isLoading: isClawSkillsLoading } = useQuery({
         queryKey: clawQueryKey,
         queryFn: () => api.getClawSkills(clawId),
         staleTime: 0,
@@ -52,18 +67,19 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
         retry: 1
     })
 
-    const {
-        data: agentSkillsData,
-        isLoading: isAgentSkillsLoading,
-        isError: isAgentSkillsError
-    } = useQuery({
-        queryKey: agentQueryKey,
-        queryFn: () => api.getAgentSkills(clawId, agentId!),
-        enabled: isAgentMode,
-        staleTime: 0,
-        gcTime: 0,
-        retry: 1
-    })
+    const { data: agentSkillsData, isLoading: isAgentSkillsLoading } = useQuery(
+        {
+            queryKey: agentQueryKey,
+            queryFn: () => api.getAgentSkills(clawId, agentId!),
+            enabled: isAgentMode,
+            staleTime: 0,
+            gcTime: 0,
+            retry: 1
+        }
+    )
+
+    const isBundledLoading =
+        isClawSkillsLoading || (isAgentMode && isAgentSkillsLoading)
 
     useEffect(() => {
         if (clawSkillsData && !isAgentMode) {
@@ -85,7 +101,7 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
 
     const displaySkills = isAgentMode ? skillsList : skills
 
-    const filteredSkills = useMemo(() => {
+    const filteredBundledSkills = useMemo(() => {
         if (!search.trim()) return displaySkills
         const q = search.toLowerCase()
         return displaySkills.filter(
@@ -95,8 +111,88 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
         )
     }, [displaySkills, search])
 
-    const isLoading = isClawSkillsLoading || (isAgentMode && isAgentSkillsLoading)
-    const isError = isClawSkillsError || (isAgentMode && isAgentSkillsError)
+    const {
+        data: browseData,
+        isLoading: isBrowseLoading,
+        isFetchingNextPage,
+        isError: isBrowseError,
+        hasNextPage: browseHasNextPage,
+        fetchNextPage
+    } = useInfiniteQuery({
+        queryKey: browseKey,
+        queryFn: ({ pageParam }) =>
+            api.searchClawHubSkills(clawId, {
+                query: debouncedSearch || undefined,
+                limit: PAGE_SIZE,
+                cursor: pageParam || undefined,
+                agentId
+            }),
+        enabled: !isBundledLoading,
+        initialPageParam: null as string | null,
+        getNextPageParam: (lastPage) =>
+            lastPage.hasMore ? (lastPage.nextCursor ?? undefined) : undefined,
+        staleTime: STALE_TIME,
+        retry: 1
+    })
+
+    const { data: installedData } = useQuery({
+        queryKey: installedKey,
+        queryFn: () => api.getClawHubInstalled(clawId, agentId),
+        staleTime: STALE_TIME,
+        retry: 1
+    })
+
+    const { data: updatesData } = useQuery({
+        queryKey: updatesKey,
+        queryFn: () => api.checkClawHubUpdates(clawId, agentId),
+        staleTime: STALE_TIME,
+        retry: 1
+    })
+
+    useEffect(() => {
+        if (!sentinelRef.current) return
+        const observer = new IntersectionObserver(
+            (observerEntries) => {
+                if (observerEntries[0]?.isIntersecting && browseHasNextPage && !isFetchingNextPage) {
+                    fetchNextPage()
+                }
+            },
+            { threshold: 0.1 }
+        )
+        observer.observe(sentinelRef.current)
+        return () => observer.disconnect()
+    }, [browseHasNextPage, isFetchingNextPage, fetchNextPage])
+
+    const clawHubSkills = useMemo(
+        () => browseData?.pages.flatMap((page) => page.skills) || [],
+        [browseData]
+    )
+
+    const installedSlugs = useMemo(() => {
+        const set = new Set<string>()
+        installedData?.skills?.forEach((s) => {
+            const slug = s.slug.toLowerCase()
+            set.add(slug)
+            if (slug.includes('/')) {
+                set.add(slug.split('/').pop()!)
+            }
+        })
+        return set
+    }, [installedData])
+
+    const updatesMap = useMemo(() => {
+        const map = new Map<string, string>()
+        updatesData?.updates?.forEach((u) => {
+            if (u.hasUpdate && u.latestVersion) {
+                const slug = u.slug.toLowerCase()
+                map.set(slug, u.latestVersion)
+                if (slug.includes('/')) {
+                    map.set(slug.split('/').pop()!, u.latestVersion)
+                }
+            }
+        })
+        return map
+    }, [updatesData])
 
     const clawToggleMutation = useMutation({
         mutationFn: (name: string) => {
@@ -129,10 +225,10 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
         },
         onSuccess: () => {
             setPendingSkill(null)
-            queryClient.setQueryData<ClawSkillsResponse>(
-                clawQueryKey,
-                { skills, entries }
-            )
+            queryClient.setQueryData<ClawSkillsResponse>(clawQueryKey, {
+                skills,
+                entries
+            })
         },
         onError: (_: unknown, name: string) => {
             showToast(t('playground.skillsSaveFailed'), 'error')
@@ -198,7 +294,66 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
         }
     })
 
-    const handleAction = useCallback(
+    const clawHubInstallMutation = useMutation({
+        mutationFn: (slug: string) =>
+            api.installClawHubSkill(clawId, { slug, agentId }),
+        onSuccess: (_: void, slug: string) => {
+            showToast(t('playground.clawHubInstalled'), 'success')
+            setPendingSlug(null)
+            const normalized = slug.toLowerCase()
+            queryClient.setQueryData<ClawHubInstalledResponse>(
+                installedKey,
+                (old) => {
+                    if (!old) return { skills: [{ slug: normalized, name: normalized, version: '', hasUpdate: false }] }
+                    if (old.skills.some((s) => s.slug.toLowerCase() === normalized)) return old
+                    return { skills: [...old.skills, { slug: normalized, name: normalized, version: '', hasUpdate: false }] }
+                }
+            )
+            queryClient.invalidateQueries({ queryKey: installedKey })
+        },
+        onError: () => {
+            showToast(t('playground.clawHubInstallFailed'), 'error')
+            setPendingSlug(null)
+        }
+    })
+
+    const clawHubRemoveMutation = useMutation({
+        mutationFn: (slug: string) =>
+            api.removeClawHubSkill(clawId, { slug, agentId }),
+        onSuccess: (_: void, slug: string) => {
+            showToast(t('playground.clawHubRemoved'), 'success')
+            setPendingSlug(null)
+            const normalized = slug.toLowerCase()
+            queryClient.setQueryData<ClawHubInstalledResponse>(
+                installedKey,
+                (old) => {
+                    if (!old) return { skills: [] }
+                    return { skills: old.skills.filter((s) => s.slug.toLowerCase() !== normalized) }
+                }
+            )
+        },
+        onError: () => {
+            showToast(t('playground.clawHubRemoveFailed'), 'error')
+            setPendingSlug(null)
+        }
+    })
+
+    const clawHubUpdateMutation = useMutation({
+        mutationFn: (slug: string) =>
+            api.updateClawHubSkill(clawId, { slug, agentId }),
+        onSuccess: () => {
+            showToast(t('playground.clawHubUpdated'), 'success')
+            setPendingSlug(null)
+            queryClient.invalidateQueries({ queryKey: installedKey })
+            queryClient.invalidateQueries({ queryKey: updatesKey })
+        },
+        onError: () => {
+            showToast(t('playground.clawHubUpdateFailed'), 'error')
+            setPendingSlug(null)
+        }
+    })
+
+    const handleBundledAction = useCallback(
         (name: string) => {
             if (pendingSkill) return
             if (isAgentMode) {
@@ -212,10 +367,42 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                 clawToggleMutation.mutate(name)
             }
         },
-        [isAgentMode, pendingSkill, installedSet, removeMutation, installMutation, clawToggleMutation]
+        [
+            isAgentMode,
+            pendingSkill,
+            installedSet,
+            removeMutation,
+            installMutation,
+            clawToggleMutation
+        ]
     )
 
-    const isActive = useCallback(
+    const handleClawHubAction = useCallback(
+        (slug: string) => {
+            if (pendingSlug) return
+            setPendingSlug(slug)
+            const normalized = slug.toLowerCase()
+            if (installedSlugs.has(normalized)) {
+                if (updatesMap.has(normalized)) {
+                    clawHubUpdateMutation.mutate(slug)
+                } else {
+                    clawHubRemoveMutation.mutate(slug)
+                }
+            } else {
+                clawHubInstallMutation.mutate(slug)
+            }
+        },
+        [
+            pendingSlug,
+            installedSlugs,
+            updatesMap,
+            clawHubInstallMutation,
+            clawHubRemoveMutation,
+            clawHubUpdateMutation
+        ]
+    )
+
+    const isBundledActive = useCallback(
         (skill: BundledSkillInfo) => {
             if (isAgentMode) return installedSet.has(skill.name)
             return skill.enabled
@@ -223,84 +410,17 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
         [isAgentMode, installedSet]
     )
 
-    if (viewTab === 'clawhub') {
-        return (
-            <div className='flex h-full flex-col'>
-                <div className='px-5 pt-5'>
-                    <div className='mb-3 flex gap-1.5'>
-                        <button
-                            onClick={() => setViewTab('bundled')}
-                            className='flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2 text-xs font-medium text-gray-500 transition-all hover:border-white/10 hover:bg-white/5 hover:text-gray-300'
-                        >
-                            <Cube className='h-3.5 w-3.5' />
-                            {t('playground.skillsBundledTab')}
-                        </button>
-                        <button
-                            onClick={() => setViewTab('clawhub')}
-                            className='flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-[#ef5350]/30 bg-[#ef5350]/10 px-3 py-2 text-xs font-medium text-[#ef5350] shadow-[0_0_12px_rgba(239,83,80,0.1)] transition-all'
-                        >
-                            <Storefront className='h-3.5 w-3.5' weight='duotone' />
-                            {t('playground.skillsClawHubTab')}
-                        </button>
-                    </div>
-                </div>
-                <div className='flex-1 overflow-hidden'>
-                    <PlaygroundClawHubContent clawId={clawId} agentId={agentId} />
-                </div>
-            </div>
-        )
-    }
-
-    if (isLoading) {
-        return (
-            <div className='space-y-3 p-5'>
-                <Skeleton className='h-8 w-full rounded-lg' />
-                <Skeleton className='h-9 w-full rounded-md' />
-                {Array.from({ length: 6 }).map((_, i) => (
-                    <Skeleton key={i} className='h-14 w-full rounded-lg' />
-                ))}
-            </div>
-        )
-    }
-
-    if (isError) {
-        return (
-            <div className='flex h-full items-center justify-center p-5'>
-                <PanelPlaceholder
-                    icon={
-                        <Lightning
-                            className='h-6 w-6 text-gray-500'
-                            weight='duotone'
-                        />
-                    }
-                    title={t('playground.skillsLoadFailed')}
-                    description={t('playground.skillsLoadFailedDescription')}
-                />
-            </div>
-        )
-    }
+    const isClawHubFirstLoad = isBrowseLoading && !browseData
+    const hasBundledItems = filteredBundledSkills.length > 0
+    const hasClawHubItems =
+        !isClawHubFirstLoad && !isBrowseError && clawHubSkills.length > 0
+    const isStillLoading = isBundledLoading || isClawHubFirstLoad
+    const hasAnyItems = hasBundledItems || hasClawHubItems || isStillLoading
 
     return (
-        <div className='flex h-full flex-col'>
-            <div className='px-5 pt-5'>
-                <div className='mb-3 flex gap-1.5'>
-                    <button
-                        onClick={() => setViewTab('bundled')}
-                        className='flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-[#ef5350]/30 bg-[#ef5350]/10 px-3 py-2 text-xs font-medium text-[#ef5350] shadow-[0_0_12px_rgba(239,83,80,0.1)] transition-all'
-                    >
-                        <Cube className='h-3.5 w-3.5' weight='duotone' />
-                        {t('playground.skillsBundledTab')}
-                    </button>
-                    <button
-                        onClick={() => setViewTab('clawhub')}
-                        className='flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2 text-xs font-medium text-gray-500 transition-all hover:border-white/10 hover:bg-white/5 hover:text-gray-300'
-                    >
-                        <Storefront className='h-3.5 w-3.5' />
-                        {t('playground.skillsClawHubTab')}
-                    </button>
-                </div>
-
-                <div className='relative mb-3'>
+        <div className='flex h-full flex-col overflow-y-auto px-5 pb-5'>
+            <div className='sticky top-0 z-10 bg-[#0a0a0f] pb-3 pt-5'>
+                <div className='relative'>
                     <MagnifyingGlass className='absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-500' />
                     <input
                         type='text'
@@ -312,76 +432,225 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                 </div>
             </div>
 
-            {filteredSkills.length === 0 ? (
-                <div className='flex flex-1 items-center justify-center pb-16'>
-                    <PanelPlaceholder
-                        icon={
-                            <Lightning
-                                className='h-6 w-6 text-gray-500'
-                                weight='duotone'
-                            />
-                        }
-                        title={displaySkills.length === 0
-                            ? t('playground.skillsEmpty')
-                            : t('playground.skillsNoResults')}
-                        description={isAgentMode
-                            ? t('playground.agentSkillsEmptyDescription')
-                            : t('playground.skillsLoadFailedDescription')}
-                    />
-                </div>
-            ) : (
-                <div className='flex-1 overflow-y-auto px-5 pb-5'>
+            <div className='flex min-h-0 flex-1 flex-col'>
+                {hasAnyItems ? (
                     <div className='space-y-1.5'>
-                        {filteredSkills.map((skill) => {
-                            const active = isActive(skill)
-                            const isPending = pendingSkill === skill.name
+                        {isBundledLoading &&
+                            Array.from({ length: 4 }).map((_, i) => (
+                                <Skeleton
+                                    key={`bndl-skel-${i}`}
+                                    className='h-14 w-full rounded-lg'
+                                />
+                            ))}
 
-                            return (
-                                <div
-                                    key={skill.name}
-                                    className={`flex items-center justify-between rounded-lg border px-3 py-2.5 transition-colors ${
-                                        active
-                                            ? 'border-[#ef5350]/20 bg-[#ef5350]/5'
-                                            : 'border-white/5 bg-white/[0.02]'
-                                    }`}
-                                >
-                                    <div className='min-w-0 flex-1'>
-                                        <span className='block text-xs font-medium text-white'>
-                                            {skill.name}
-                                        </span>
-                                        {skill.description && (
-                                            <span className='mt-0.5 block truncate text-[11px] text-gray-500'>
-                                                {skill.description}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <button
-                                        onClick={() => handleAction(skill.name)}
-                                        disabled={!!pendingSkill}
-                                        className={`ml-3 flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
-                                            active
-                                                ? 'bg-white/5 text-gray-400 hover:bg-red-500/10 hover:text-red-400'
-                                                : 'bg-[#ef5350]/10 text-[#ef5350] hover:bg-[#ef5350]/20'
-                                        }`}
+                        {!isBundledLoading &&
+                            filteredBundledSkills.map((skill) => {
+                                const active = isBundledActive(skill)
+                                const isPending = pendingSkill === skill.name
+
+                                return (
+                                    <div
+                                        key={`bundled-${skill.name}`}
+                                        className='flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2.5 transition-colors'
                                     >
-                                        {isPending ? (
-                                            <CircleNotch className='h-3 w-3 animate-spin' />
-                                        ) : active ? (
-                                            isAgentMode
-                                                ? t('playground.agentSkillsRemove')
-                                                : t('playground.skillsDisable')
-                                        ) : (
-                                            isAgentMode
-                                                ? t('playground.agentSkillsInstall')
-                                                : t('playground.skillsEnable')
-                                        )}
-                                    </button>
-                                </div>
-                            )
-                        })}
+                                        <div className='min-w-0 flex-1'>
+                                            <div className='flex items-center gap-2'>
+                                                <Cube className='h-3 w-3 shrink-0 text-gray-600' weight='duotone' />
+                                                <span className='text-xs font-medium text-white'>
+                                                    {skill.name}
+                                                </span>
+                                            </div>
+                                            {skill.description && (
+                                                <span className='mt-0.5 block truncate text-[11px] text-gray-500'>
+                                                    {skill.description}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <button
+                                            onClick={() =>
+                                                handleBundledAction(skill.name)
+                                            }
+                                            disabled={!!pendingSkill}
+                                            className='ml-3 flex shrink-0 items-center gap-1.5 rounded-md bg-white/5 px-2.5 py-1 text-[11px] font-medium text-gray-300 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50'
+                                        >
+                                            {isPending ? (
+                                                <CircleNotch className='h-3 w-3 animate-spin' />
+                                            ) : active ? (
+                                                isAgentMode ? (
+                                                    t(
+                                                        'playground.agentSkillsRemove'
+                                                    )
+                                                ) : (
+                                                    t(
+                                                        'playground.skillsDisable'
+                                                    )
+                                                )
+                                            ) : isAgentMode ? (
+                                                t(
+                                                    'playground.agentSkillsInstall'
+                                                )
+                                            ) : (
+                                                t('playground.skillsEnable')
+                                            )}
+                                        </button>
+                                    </div>
+                                )
+                            })}
+
+                        {isClawHubFirstLoad &&
+                            Array.from({ length: 4 }).map((_, i) => (
+                                <Skeleton
+                                    key={`ch-skel-${i}`}
+                                    className='h-16 w-full rounded-lg'
+                                />
+                            ))}
+
+                        {!isClawHubFirstLoad &&
+                            !isBrowseError &&
+                            clawHubSkills.map((skill: ClawHubSearchResult) => {
+                                const normalizedSlug = skill.slug.toLowerCase()
+                                const isInstalled = installedSlugs.has(normalizedSlug)
+                                const hasUpdate = updatesMap.has(normalizedSlug)
+                                const latestVersion = updatesMap.get(normalizedSlug)
+                                const isPending = pendingSlug === skill.slug
+
+                                return (
+                                    <div
+                                        key={`clawhub-${skill.slug}`}
+                                        className='flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2.5 transition-colors'
+                                    >
+                                        <div className='min-w-0 flex-1'>
+                                            <div className='flex items-center gap-2'>
+                                                <Storefront className='h-3 w-3 shrink-0 text-[#ef5350]/40' weight='duotone' />
+                                                <span className='text-xs font-medium text-white'>
+                                                    {skill.name}
+                                                </span>
+                                            </div>
+                                            {skill.description && (
+                                                <span className='mt-0.5 block truncate text-[11px] text-gray-500'>
+                                                    {skill.description}
+                                                </span>
+                                            )}
+                                            <div className='mt-1 flex items-center gap-2'>
+                                                {skill.author && (
+                                                    <span className='text-[10px] text-gray-600'>
+                                                        {t(
+                                                            'playground.clawHubBy',
+                                                            {
+                                                                author: skill.author
+                                                            }
+                                                        )}
+                                                    </span>
+                                                )}
+                                                {skill.version && (
+                                                    <span className='text-[10px] text-gray-600'>
+                                                        {t(
+                                                            'playground.clawHubVersion',
+                                                            {
+                                                                version:
+                                                                    skill.version
+                                                            }
+                                                        )}
+                                                    </span>
+                                                )}
+                                                {skill.downloads > 0 && (
+                                                    <span className='text-[10px] text-gray-600'>
+                                                        {t(
+                                                            'playground.clawHubDownloads',
+                                                            {
+                                                                count: skill.downloads.toLocaleString()
+                                                            }
+                                                        )}
+                                                    </span>
+                                                )}
+                                                {hasUpdate && latestVersion && (
+                                                    <span className='text-[10px] text-amber-400'>
+                                                        {t(
+                                                            'playground.clawHubUpdateAvailable',
+                                                            {
+                                                                version:
+                                                                    latestVersion
+                                                            }
+                                                        )}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() =>
+                                                handleClawHubAction(skill.slug)
+                                            }
+                                            disabled={!!pendingSlug}
+                                            className='ml-3 flex shrink-0 items-center gap-1.5 rounded-md bg-white/5 px-2.5 py-1 text-[11px] font-medium text-gray-300 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50'
+                                        >
+                                            {isPending ? (
+                                                <CircleNotch className='h-3 w-3 animate-spin' />
+                                            ) : isInstalled && hasUpdate ? (
+                                                t('playground.clawHubUpdate')
+                                            ) : isInstalled ? (
+                                                t('playground.clawHubRemove')
+                                            ) : (
+                                                t('playground.clawHubInstall')
+                                            )}
+                                        </button>
+                                    </div>
+                                )
+                            })}
+
+                        {isBrowseError && (
+                            <div className='flex items-center justify-center py-8'>
+                                <PanelPlaceholder
+                                    icon={
+                                        <Storefront
+                                            className='h-6 w-6 text-gray-500'
+                                            weight='duotone'
+                                        />
+                                    }
+                                    title={t('playground.clawHubLoadFailed')}
+                                    description={t(
+                                        'playground.clawHubLoadFailedDescription'
+                                    )}
+                                />
+                            </div>
+                        )}
+
+                        {isFetchingNextPage &&
+                            Array.from({ length: 3 }).map((_, i) => (
+                                <Skeleton
+                                    key={`ch-more-${i}`}
+                                    className='h-16 w-full rounded-lg'
+                                />
+                            ))}
+
+                        {browseHasNextPage && !isFetchingNextPage && (
+                            <div ref={sentinelRef} className='h-1' />
+                        )}
                     </div>
-                </div>
-            )}
+                ) : (
+                    <div className='flex flex-1 items-center justify-center'>
+                        <PanelPlaceholder
+                            icon={
+                                <Lightning
+                                    className='h-6 w-6 text-gray-500'
+                                    weight='duotone'
+                                />
+                            }
+                            title={
+                                search.trim()
+                                    ? t('playground.skillsNoResults')
+                                    : t('playground.skillsEmpty')
+                            }
+                            description={
+                                isAgentMode
+                                    ? t(
+                                        'playground.agentSkillsEmptyDescription'
+                                    )
+                                    : t('playground.clawHubEmptyDescription')
+                            }
+                        />
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

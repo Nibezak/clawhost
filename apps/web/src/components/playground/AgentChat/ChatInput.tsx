@@ -21,7 +21,29 @@ const ChatInputInner: ForwardRefRenderFunction<ChatInputHandle, ChatInputProps> 
     const [attachments, setAttachments] = useState<ChatInputAttachment[]>([])
     const textareaRef = useRef<HTMLTextAreaElement>(null)
     const fileInputRef = useRef<HTMLInputElement>(null)
-    const { isRecording, isTranscribing, toggle: toggleVoice } = useSpeechRecognition(setInput)
+    const typewriterRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+    const appendTranscript = useCallback((text: string) => {
+        if (typewriterRef.current) clearTimeout(typewriterRef.current)
+        const chars = [...(text)]
+        let i = 0
+        setInput((prev) => prev ? `${prev} ` : prev)
+        const typeNext = () => {
+            if (i < chars.length) {
+                setInput((prev) => prev + chars[i])
+                i++
+                typewriterRef.current = setTimeout(typeNext, 30)
+            } else {
+                typewriterRef.current = null
+            }
+        }
+        typeNext()
+    }, [])
+    useEffect(() => {
+        return () => {
+            if (typewriterRef.current) clearTimeout(typewriterRef.current)
+        }
+    }, [])
+    const { isRecording, isTranscribing, toggle: toggleVoice } = useSpeechRecognition(appendTranscript)
 
     const resizeTextarea = useCallback(() => {
         const el = textareaRef.current

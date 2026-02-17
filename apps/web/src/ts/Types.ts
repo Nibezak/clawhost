@@ -4,7 +4,7 @@ export type ToastType = 'success' | 'error' | 'warning' | 'info'
 
 import type { clawStatus } from '@openclaw/shared'
 
-export type ClawStatus = typeof clawStatus[keyof typeof clawStatus]
+export type ClawStatus = (typeof clawStatus)[keyof typeof clawStatus]
 
 export type CopiedFieldType = 'command' | 'private' | null
 
@@ -12,11 +12,16 @@ export type SSHKeyModalMode = 'upload' | 'generate'
 
 export type UserRole = 'user' | 'admin'
 
+export type AuthMethod = 'email' | 'google' | 'github'
+
 export type PlaygroundNodeType = 'claw' | 'agent'
 
-export type PlaygroundDetailTab = 'info' | 'variables' | 'logs' | 'diagnostics' | 'skills'
+import type AGENT_DETAIL_TABS from '@/lib/agentDetailTabs'
+import type CLAW_DETAIL_TABS from '@/lib/clawDetailTabs'
 
-export type PlaygroundAgentDetailTab = 'chat' | 'configuration' | 'channels' | 'skills'
+export type PlaygroundDetailTab = (typeof CLAW_DETAIL_TABS)[keyof typeof CLAW_DETAIL_TABS]
+
+export type PlaygroundAgentDetailTab = (typeof AGENT_DETAIL_TABS)[keyof typeof AGENT_DETAIL_TABS]
 
 export type ClawAvatarSize = 'sm' | 'md' | 'lg'
 
@@ -52,4 +57,6 @@ export type Route =
     | '/posts'
     | '/posts/:slug'
 
-export type SkillsViewTab = 'bundled' | 'clawhub'
+import type DASHBOARD_TABS from '@/lib/dashboardTabs'
+
+export type DashboardTab = (typeof DASHBOARD_TABS)[keyof typeof DASHBOARD_TABS]

@@ -862,6 +862,7 @@ export interface SearchClawHubSkillsBody {
     query?: string
     limit?: number
     page?: number
+    cursor?: string
     agentId?: string
 }
 
@@ -891,6 +892,39 @@ export interface ClawHubInstalledResponse {
 
 export interface ClawHubUpdatesResponse {
     updates: ClawHubInstalledSkill[]
+}
+
+export interface ClawHubAPISearchHit {
+    score: number
+    slug: string
+    displayName: string
+    summary: string
+    version: string
+    updatedAt: string
+}
+
+export interface ClawHubAPISkillItem {
+    slug: string
+    displayName: string
+    summary: string
+    version: string
+    updatedAt: string
+    downloads?: number
+    author?: string
+    tags?: string[]
+}
+
+export interface SearchClawHubSkillsParams {
+    query?: string
+    limit?: number
+    page?: number
+    cursor?: string
+}
+
+export interface ClawHubSearchResultPage {
+    skills: ClawHubSearchResult[]
+    nextCursor: string | null
+    hasMore: boolean
 }
 
 export interface RootLayoutProps {

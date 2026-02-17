@@ -1,13 +1,18 @@
 import type { ElementType, ReactNode } from 'react'
 import type { User } from 'firebase/auth'
 import type { Node, Edge } from '@xyflow/react'
+import type { UseQueryResult } from '@tanstack/react-query'
 import type { TranslationKey } from '@openclaw/i18n'
 import type {
+    AuthMethod,
     ChatMessageRole,
     ChatMessageStatus,
     ClawAvatarSize,
     ClawStatus,
+    DashboardTab,
     GatewayConnectionState,
+    PlaygroundAgentDetailTab,
+    PlaygroundDetailTab,
     ProviderType,
     ToastType,
     UserRole
@@ -94,6 +99,7 @@ export interface UserProfile {
     email: string
     name: string | null
     role: UserRole
+    authMethods: AuthMethod[]
     createdAt: string
 }
 
@@ -147,6 +153,8 @@ export interface UIState {
 export interface PreferencesState {
     adminMode: boolean
     setAdminMode: (mode: boolean) => void
+    dashboardTab: DashboardTab
+    setDashboardTab: (tab: DashboardTab) => void
 }
 
 export interface CachedProfile {
@@ -167,6 +175,10 @@ export interface AuthContextType {
     verifyOtp: (email: string, code: string) => Promise<void>
     signInWithGoogle: () => Promise<void>
     signInWithGithub: () => Promise<void>
+    linkGoogle: () => Promise<void>
+    linkGithub: () => Promise<void>
+    unlinkGoogle: () => Promise<void>
+    unlinkGithub: () => Promise<void>
     signOut: () => Promise<void>
 }
 
@@ -617,6 +629,8 @@ export interface PlaygroundDetailPanelProps {
     sshKeys: SSHKey[]
     onClose: () => void
     readOnly?: boolean
+    initialTab?: PlaygroundDetailTab
+    onTabChange?: (tab: PlaygroundDetailTab) => void
 }
 
 export interface PlaygroundToolbarProps {
@@ -674,6 +688,9 @@ export interface PlaygroundAgentDetailPanelProps {
     readOnly?: boolean
     gatewayToken?: string | null
     subdomain?: string | null
+    initialTab?: PlaygroundAgentDetailTab
+    onTabChange?: (tab: PlaygroundAgentDetailTab) => void
+    hideChatTab?: boolean
 }
 
 export interface ClawEnvVarsResponse {
@@ -781,7 +798,11 @@ export interface UseAgentChatReturn {
     connectionState: GatewayConnectionState
     isLoading: boolean
     isStreaming: boolean
-    sendMessage: (text: string, attachments?: ChatAttachment[], previews?: ChatImageSource[]) => void
+    sendMessage: (
+        text: string,
+        attachments?: ChatAttachment[],
+        previews?: ChatImageSource[]
+    ) => void
     abortResponse: () => void
 }
 
@@ -799,6 +820,8 @@ export interface AgentChatProps {
     gatewayToken: string | null | undefined
     agentModel: string | null
     readOnly?: boolean
+    onConfigure?: () => void
+    configureDisabled?: boolean
 }
 
 export interface ChatBubbleProps {
@@ -817,7 +840,11 @@ export interface ChatInputHandle {
 export interface ChatInputProps {
     isConnected: boolean
     isStreaming: boolean
-    onSend: (text: string, attachments?: ChatAttachment[], previews?: ChatImageSource[]) => void
+    onSend: (
+        text: string,
+        attachments?: ChatAttachment[],
+        previews?: ChatImageSource[]
+    ) => void
     onAbort: () => void
     allowAttach?: boolean
 }
@@ -942,6 +969,8 @@ export interface ClawHubInstalledSkill {
 
 export interface ClawHubSearchResponse {
     skills: ClawHubSearchResult[]
+    nextCursor: string | null
+    hasMore: boolean
 }
 
 export interface ClawHubInstalledResponse {
@@ -956,6 +985,7 @@ export interface SearchClawHubData {
     query?: string
     limit?: number
     page?: number
+    cursor?: string
     agentId?: string
 }
 
@@ -973,4 +1003,57 @@ export interface ClawHubUpdateData {
 export interface PlaygroundClawHubContentProps {
     clawId: string
     agentId?: string
+}
+
+export interface ChatSidebarItemProps {
+    agent: ClawAgent
+    isActive: boolean
+    onClick: () => void
+    onConfigure: () => void
+}
+
+export interface ChatSelectedAgent {
+    agentId: string
+    clawId: string
+}
+
+export interface ClawWithAgents {
+    claw: Claw
+    agents: ClawAgent[]
+    isLoading: boolean
+    isReachable: boolean
+}
+
+export interface ChatSidebarProps {
+    clawsWithAgents: ClawWithAgents[]
+    selectedAgent: ChatSelectedAgent | null
+    onAgentSelect: (selection: ChatSelectedAgent) => void
+    onConfigureAgent: (agentId: string, clawId: string) => void
+    onCreateAgent: (clawId: string, clawName: string) => void
+    onOpenClawSettings: (clawId: string) => void
+}
+
+export interface ChatSidebarClawHeaderProps {
+    claw: Claw
+    isReachable: boolean
+    statusConfig: StatusConfig
+    onOpenClawSettings: (clawId: string) => void
+    onCreateAgent: (clawId: string, clawName: string) => void
+}
+
+export interface ChatViewProps {
+    claws: Claw[]
+    agentQueries: UseQueryResult<ClawAgentsResponse>[]
+    plans: Plan[]
+    sshKeys: SSHKey[]
+    selectedAgent: ChatSelectedAgent | null
+    onAgentSelect: (selection: ChatSelectedAgent) => void
+    onConfigureAgent: (agentId: string, clawId: string) => void
+    onCreateAgent: (clawId: string, clawName: string) => void
+    initialSettingsClawId?: string | null
+    onSettingsClawChange?: (clawId: string | null) => void
+    initialAgentTab?: PlaygroundAgentDetailTab
+    onAgentTabChange?: (tab: PlaygroundAgentDetailTab | null) => void
+    initialClawTab?: PlaygroundDetailTab
+    onClawTabChange?: (tab: PlaygroundDetailTab | null) => void
 }

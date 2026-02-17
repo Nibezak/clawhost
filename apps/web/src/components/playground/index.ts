@@ -10,7 +10,6 @@ import PlaygroundVariablesContent from '@/components/playground/PlaygroundVariab
 import CreateAgentModal from '@/components/playground/CreateAgentModal'
 import PlaygroundChannelsContent from '@/components/playground/PlaygroundChannelsContent'
 import PlaygroundSkillsContent from '@/components/playground/PlaygroundSkillsContent'
-import PlaygroundClawHubContent from '@/components/playground/PlaygroundClawHubContent'
 
 export {
     AgentChat,
@@ -24,6 +23,5 @@ export {
     PlaygroundVariablesContent,
     CreateAgentModal,
     PlaygroundChannelsContent,
-    PlaygroundSkillsContent,
-    PlaygroundClawHubContent
+    PlaygroundSkillsContent
 }

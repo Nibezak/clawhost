@@ -1,12 +1,27 @@
+import type { ClawHubInstalledSkill } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import executeSSH from '@/services/ssh'
-import { findUserClaw } from '@/controllers/claws/helpers'
+import { findUserClaw, ensureClawHub, BASE_DIR } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
-const BASE_DIR = '/home/openclaw/.openclaw'
-const ENSURE_CLAWHUB = 'command -v clawhub >/dev/null 2>&1 || npm install -g clawhub >/dev/null 2>&1;'
+const normalizeSlug = (raw: string): string => {
+    const trimmed = raw.trim().toLowerCase()
+    return trimmed.includes('/') ? trimmed.split('/').pop()! : trimmed
+}
+
+const normalizeSkill = (item: Record<string, unknown>): ClawHubInstalledSkill => {
+    const rawSlug = String(item.slug || item.name || item.package || item.id || '')
+    const slug = normalizeSlug(rawSlug)
+    return {
+        slug,
+        name: String(item.displayName || item.name || slug),
+        version: String(item.version || item.currentVersion || ''),
+        hasUpdate: !!(item.hasUpdate || item.updateAvailable),
+        latestVersion: item.latestVersion ? String(item.latestVersion) : undefined
+    }
+}
 
 const getClawHubInstalled = async (c: AuthenticatedContext) => {
     try {
@@ -31,6 +46,8 @@ const getClawHubInstalled = async (c: AuthenticatedContext) => {
                 agentId = undefined
             }
 
+            await ensureClawHub(claw.ip, claw.rootPassword)
+
             let cmd = 'clawhub list --json'
 
             if (agentId) {
@@ -38,7 +55,7 @@ const getClawHubInstalled = async (c: AuthenticatedContext) => {
                 cmd = `${cmd} --workdir ${agentDir}`
             }
 
-            cmd = `${ENSURE_CLAWHUB} ${cmd} 2>/dev/null || echo '[]'`
+            cmd = `${cmd} 2>/dev/null || echo '[]'`
 
             const output = await executeSSH(
                 claw.ip,
@@ -47,10 +64,13 @@ const getClawHubInstalled = async (c: AuthenticatedContext) => {
                 30000
             )
 
-            let skills = []
+            let skills: ClawHubInstalledSkill[] = []
             try {
                 const parsed = JSON.parse(output.trim())
-                skills = Array.isArray(parsed) ? parsed : parsed.skills || []
+                const rawItems: Record<string, unknown>[] = Array.isArray(parsed)
+                    ? parsed
+                    : parsed.skills || []
+                skills = rawItems.map(normalizeSkill)
             } catch {
                 skills = []
             }

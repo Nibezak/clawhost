@@ -9,6 +9,7 @@ import type { PlaygroundAgentDetailTab } from '@/ts/Types'
 import type { TranslationKey } from '@openclaw/i18n'
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
+import AGENT_DETAIL_TABS from '@/lib/agentDetailTabs'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { t } from '@openclaw/i18n'
@@ -57,10 +58,10 @@ const deletingAgentIds = new Set<string>()
 let skipAgentDeleteConfirmation = false
 
 const tabs: PlaygroundTabConfig<PlaygroundAgentDetailTab>[] = [
-    { id: 'chat', label: 'playground.tabChat', icon: ChatCircle },
-    { id: 'channels', label: 'playground.tabChannels', icon: ChatsCircle },
-    { id: 'skills', label: 'playground.tabSkills', icon: Lightning },
-    { id: 'configuration', label: 'playground.tabSettings', icon: GearSix }
+    { id: AGENT_DETAIL_TABS.CHAT, label: 'playground.tabChat', icon: ChatCircle },
+    { id: AGENT_DETAIL_TABS.CHANNELS, label: 'playground.tabChannels', icon: ChatsCircle },
+    { id: AGENT_DETAIL_TABS.SKILLS, label: 'playground.tabSkills', icon: Lightning },
+    { id: AGENT_DETAIL_TABS.CONFIGURATION, label: 'playground.tabSettings', icon: GearSix }
 ]
 
 const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
@@ -71,16 +72,33 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
     onClose,
     readOnly,
     gatewayToken,
-    subdomain
+    subdomain,
+    initialTab,
+    onTabChange,
+    hideChatTab
 }): ReactNode => {
-    const activeTab = agentTabStateMap[agent.id] || 'chat'
+    const visibleTabs = useMemo(
+        () => (hideChatTab ? tabs.filter((tab) => tab.id !== AGENT_DETAIL_TABS.CHAT) : tabs),
+        [hideChatTab]
+    )
+    const defaultTab = hideChatTab ? AGENT_DETAIL_TABS.CHANNELS : AGENT_DETAIL_TABS.CHAT
+    const rawActiveTab = agentTabStateMap[agent.id] || defaultTab
+    const activeTab = hideChatTab && rawActiveTab === AGENT_DETAIL_TABS.CHAT ? AGENT_DETAIL_TABS.CHANNELS : rawActiveTab
     const setActiveTab = useCallback(
         (tab: PlaygroundAgentDetailTab) => {
             agentTabStateMap[agent.id] = tab
             setRenderKey((k) => k + 1)
+            if (onTabChange) onTabChange(tab)
         },
-        [agent.id]
+        [agent.id, onTabChange]
     )
+
+    useEffect(() => {
+        if (initialTab && initialTab !== agentTabStateMap[agent.id]) {
+            agentTabStateMap[agent.id] = initialTab
+            setRenderKey((k) => k + 1)
+        }
+    }, [initialTab, agent.id])
     const [, setRenderKey] = useState(0)
     const [agentName, setAgentName] = useState('')
     const [nameError, setNameError] = useState<TranslationKey | null>(null)
@@ -150,7 +168,7 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
     } = useQuery({
         queryKey: ['agent-config', clawId, agent.id],
         queryFn: () => api.getClawAgentConfig(clawId, agent.id),
-        enabled: activeTab === 'configuration' && !readOnly,
+        enabled: activeTab === AGENT_DETAIL_TABS.CONFIGURATION && !readOnly,
         staleTime: 0,
         gcTime: 0,
         retry: 1
@@ -159,7 +177,7 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
     const configData = readOnly ? mockConfigData : queryConfigData
 
     useEffect(() => {
-        if (activeTab !== 'configuration') {
+        if (activeTab !== AGENT_DETAIL_TABS.CONFIGURATION) {
             queryClient.removeQueries({
                 queryKey: ['agent-config', clawId, agent.id]
             })
@@ -367,7 +385,7 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                         </div>
                     </div>
                     <div className='flex items-center gap-1'>
-                        {(activeTab === 'chat' || isExpanded) && (
+                        {!hideChatTab && (activeTab === AGENT_DETAIL_TABS.CHAT || isExpanded) && (
                             <button
                                 onClick={() => setIsExpanded(!isExpanded)}
                                 className='rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white'
@@ -431,7 +449,7 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                             className='overflow-hidden'
                         >
                             <div className='flex border-b border-white/10'>
-                                {tabs.map((tab) => (
+                                {visibleTabs.map((tab) => (
                                     <button
                                         key={tab.id}
                                         onClick={() => setActiveTab(tab.id)}
@@ -456,7 +474,7 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                 </AnimatePresence>
 
                 <div className='flex min-h-0 flex-1 flex-col overflow-hidden'>
-                    {(isExpanded || activeTab === 'chat') && (
+                    {(isExpanded || activeTab === AGENT_DETAIL_TABS.CHAT) && (
                         <AgentChat
                             agentId={agent.id}
                             agentName={agent.name}
@@ -468,18 +486,18 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                         />
                     )}
 
-                    {!isExpanded && activeTab === 'channels' && (
+                    {!isExpanded && activeTab === AGENT_DETAIL_TABS.CHANNELS && (
                         <PlaygroundChannelsContent clawId={clawId} />
                     )}
 
-                    {!isExpanded && activeTab === 'skills' && (
+                    {!isExpanded && activeTab === AGENT_DETAIL_TABS.SKILLS && (
                         <PlaygroundSkillsContent
                             clawId={clawId}
                             agentId={agent.id}
                         />
                     )}
 
-                    {!isExpanded && activeTab === 'configuration' && (
+                    {!isExpanded && activeTab === AGENT_DETAIL_TABS.CONFIGURATION && (
                         <div className='h-full overflow-y-auto p-5'>
                             {isConfigLoading ? (
                                 <div className='space-y-5'>

@@ -16,6 +16,7 @@ const getCurrentUser = async (c: AuthenticatedContext) => {
                 email: users.email,
                 name: users.name,
                 role: users.role,
+                authMethods: users.authMethods,
                 createdAt: users.createdAt
             })
             .from(users)

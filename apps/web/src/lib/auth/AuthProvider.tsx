@@ -10,6 +10,8 @@ import {
     onAuthStateChanged,
     signInWithCustomToken,
     signInWithPopup,
+    linkWithPopup,
+    unlink,
     signOut as firebaseSignOut
 } from 'firebase/auth'
 import { auth, AUTH_STORAGE_KEY, PROFILE_CACHE_KEY } from '@/lib/firebase'
@@ -100,6 +102,26 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
         await signInWithPopup(auth, new GithubAuthProvider())
     }, [])
 
+    const linkGoogle = useCallback(async () => {
+        if (!user) return
+        await linkWithPopup(user, new GoogleAuthProvider())
+    }, [user])
+
+    const linkGithub = useCallback(async () => {
+        if (!user) return
+        await linkWithPopup(user, new GithubAuthProvider())
+    }, [user])
+
+    const unlinkGoogle = useCallback(async () => {
+        if (!user) return
+        await unlink(user, 'google.com')
+    }, [user])
+
+    const unlinkGithub = useCallback(async () => {
+        if (!user) return
+        await unlink(user, 'github.com')
+    }, [user])
+
     const signOut = useCallback(async () => {
         await firebaseSignOut(auth)
     }, [])
@@ -115,6 +137,10 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
                 verifyOtp,
                 signInWithGoogle,
                 signInWithGithub,
+                linkGoogle,
+                linkGithub,
+                unlinkGoogle,
+                unlinkGithub,
                 signOut
             }}
         >

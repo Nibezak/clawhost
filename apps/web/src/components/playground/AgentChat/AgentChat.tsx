@@ -34,7 +34,9 @@ const AgentChat: FC<AgentChatProps> = ({
     subdomain,
     gatewayToken,
     agentModel,
-    readOnly
+    readOnly,
+    onConfigure,
+    configureDisabled
 }): ReactNode => {
     const scrollRef = useRef<HTMLDivElement>(null)
     const chatInputRef = useRef<ChatInputHandle>(null)
@@ -167,6 +169,16 @@ const AgentChat: FC<AgentChatProps> = ({
                         {t('playground.chatNotConfiguredDescription')}
                     </p>
                 </div>
+                {onConfigure && (
+                    <button
+                        onClick={onConfigure}
+                        disabled={configureDisabled}
+                        className='mt-2 flex items-center gap-1.5 rounded-lg bg-white/10 px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40'
+                    >
+                        <GearSix className='h-3.5 w-3.5' weight='bold' />
+                        {t('playground.chatConfigureButton')}
+                    </button>
+                )}
             </div>
         )
     }

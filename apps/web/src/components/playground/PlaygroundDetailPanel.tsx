@@ -6,7 +6,8 @@ import type {
 import type { PlaygroundDetailTab } from '@/ts/Types'
 import type { TranslationKey } from '@openclaw/i18n'
 
-import { useCallback, useState, useMemo } from 'react'
+import { useCallback, useState, useMemo, useEffect } from 'react'
+import CLAW_DETAIL_TABS from '@/lib/clawDetailTabs'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { clawStatus } from '@openclaw/shared'
@@ -34,11 +35,11 @@ import {
 const tabStateMap: Record<string, PlaygroundDetailTab> = {}
 
 const tabs: PlaygroundTabConfig<PlaygroundDetailTab>[] = [
-    { id: 'info', label: 'playground.tabInfo', icon: Info },
-    { id: 'variables', label: 'playground.tabEnvs', icon: Key },
-    { id: 'skills', label: 'playground.tabSkills', icon: Lightning },
-    { id: 'logs', label: 'playground.tabLogs', icon: Scroll },
-    { id: 'diagnostics', label: 'playground.tabDiagnostics', icon: Pulse }
+    { id: CLAW_DETAIL_TABS.INFO, label: 'playground.tabInfo', icon: Info },
+    { id: CLAW_DETAIL_TABS.VARIABLES, label: 'playground.tabEnvs', icon: Key },
+    { id: CLAW_DETAIL_TABS.SKILLS, label: 'playground.tabSkills', icon: Lightning },
+    { id: CLAW_DETAIL_TABS.LOGS, label: 'playground.tabLogs', icon: Scroll },
+    { id: CLAW_DETAIL_TABS.DIAGNOSTICS, label: 'playground.tabDiagnostics', icon: Pulse }
 ]
 
 const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
@@ -46,16 +47,25 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
     plans,
     sshKeys,
     onClose,
-    readOnly
+    readOnly,
+    initialTab,
+    onTabChange
 }): ReactNode => {
-    const activeTab = tabStateMap[claw.id] || 'info'
+    const activeTab = tabStateMap[claw.id] || CLAW_DETAIL_TABS.INFO
     const setActiveTab = useCallback(
         (tab: PlaygroundDetailTab) => {
             tabStateMap[claw.id] = tab
             setRenderKey((k) => k + 1)
+            if (onTabChange) onTabChange(tab)
         },
-        [claw.id]
+        [claw.id, onTabChange]
     )
+    useEffect(() => {
+        if (initialTab && initialTab !== tabStateMap[claw.id]) {
+            tabStateMap[claw.id] = initialTab
+            setRenderKey((k) => k + 1)
+        }
+    }, [initialTab, claw.id])
     const [, setRenderKey] = useState(0)
 
     const plan = plans.find((p) => p.id === claw.planId)
