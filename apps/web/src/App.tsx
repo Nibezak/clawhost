@@ -6,6 +6,7 @@ import { AuthProvider } from '@/lib/auth'
 import { ScrollToTop, Toast, ProtectedRoute } from '@/components'
 import { TooltipProvider } from '@/components/ui'
 import { ROUTES } from '@/lib'
+import { useThemeEffect } from '@/hooks'
 
 const Landing = lazy(() => import('@/pages/Landing'))
 const Login = lazy(() => import('@/pages/Login'))
@@ -21,6 +22,8 @@ const BlogPost = lazy(() => import('@/pages/BlogPost'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
 
 const App: FC = (): ReactNode => {
+    useThemeEffect()
+
     return (
         <TooltipProvider delayDuration={300}>
             <AuthProvider>

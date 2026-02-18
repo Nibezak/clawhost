@@ -22,10 +22,10 @@ const PlaygroundAgentNode: FC<PlaygroundAgentNodeProps> = ({
 
     return (
         <div
-            className={`playground-node-enter relative w-[240px] cursor-pointer rounded-lg border border-l-2 bg-[#111114] transition-all ${
+            className={`playground-node-enter relative w-[240px] cursor-pointer rounded-lg border border-l-2 bg-popover transition-all ${
                 isSelected
                     ? 'border-b-[#ef5350]/50 border-l-[#ef5350] border-r-[#ef5350]/50 border-t-[#ef5350]/50 shadow-[0_0_20px_rgba(239,83,80,0.15)]'
-                    : 'border-b-white/[0.08] border-l-[#ef5350] border-r-white/[0.08] border-t-white/[0.08]'
+                    : 'border-b-border border-r-border border-t-border border-l-[#ef5350]'
             }`}
         >
             <Handle
@@ -38,14 +38,14 @@ const PlaygroundAgentNode: FC<PlaygroundAgentNodeProps> = ({
             <div className='px-3.5 py-3'>
                 <div className='flex items-center gap-2'>
                     <ClawMascot className='h-4 w-4' />
-                    <span className='flex-1 truncate text-sm font-medium text-white'>
+                    <span className='text-foreground flex-1 truncate text-sm font-medium'>
                         {agent.name}
                     </span>
                 </div>
 
                 {agent.model && (
-                    <div className='mt-2 inline-flex rounded-md bg-white/5 px-2 py-0.5'>
-                        <span className='truncate text-[11px] text-gray-400'>
+                    <div className='bg-foreground/5 mt-2 inline-flex rounded-md px-2 py-0.5'>
+                        <span className='text-muted-foreground truncate text-[11px]'>
                             {agent.model}
                         </span>
                     </div>

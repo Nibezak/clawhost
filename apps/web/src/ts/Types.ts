@@ -19,9 +19,11 @@ export type PlaygroundNodeType = 'claw' | 'agent'
 import type AGENT_DETAIL_TABS from '@/lib/agentDetailTabs'
 import type CLAW_DETAIL_TABS from '@/lib/clawDetailTabs'
 
-export type PlaygroundDetailTab = (typeof CLAW_DETAIL_TABS)[keyof typeof CLAW_DETAIL_TABS]
+export type PlaygroundDetailTab =
+    (typeof CLAW_DETAIL_TABS)[keyof typeof CLAW_DETAIL_TABS]
 
-export type PlaygroundAgentDetailTab = (typeof AGENT_DETAIL_TABS)[keyof typeof AGENT_DETAIL_TABS]
+export type PlaygroundAgentDetailTab =
+    (typeof AGENT_DETAIL_TABS)[keyof typeof AGENT_DETAIL_TABS]
 
 export type ClawAvatarSize = 'sm' | 'md' | 'lg'
 
@@ -60,3 +62,5 @@ export type Route =
 import type DASHBOARD_TABS from '@/lib/dashboardTabs'
 
 export type DashboardTab = (typeof DASHBOARD_TABS)[keyof typeof DASHBOARD_TABS]
+
+export type ThemeMode = 'light' | 'dark' | 'system'

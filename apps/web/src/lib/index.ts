@@ -6,4 +6,12 @@ import AGENT_DETAIL_TABS from '@/lib/agentDetailTabs'
 import CLAW_DETAIL_TABS from '@/lib/clawDetailTabs'
 import getBaseDomain from '@/lib/getBaseDomain'
 
-export { api, cn, ROUTES, DASHBOARD_TABS, AGENT_DETAIL_TABS, CLAW_DETAIL_TABS, getBaseDomain }
+export {
+    api,
+    cn,
+    ROUTES,
+    DASHBOARD_TABS,
+    AGENT_DETAIL_TABS,
+    CLAW_DETAIL_TABS,
+    getBaseDomain
+}

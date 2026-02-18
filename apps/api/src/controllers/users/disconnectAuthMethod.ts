@@ -13,7 +13,7 @@ const disconnectAuthMethod = async (c: AuthenticatedContext) => {
         const userId = c.get('userId')
         const method = c.req.param('method')
 
-        if (!VALID_METHODS.includes(method as typeof VALID_METHODS[number])) {
+        if (!VALID_METHODS.includes(method as (typeof VALID_METHODS)[number])) {
             return fail(c, t('api.invalidAuthMethod'), 400)
         }
 
@@ -45,7 +45,9 @@ const disconnectAuthMethod = async (c: AuthenticatedContext) => {
         console.error('Disconnect auth method error:', err)
         return fail(
             c,
-            err instanceof Error ? err.message : t('api.failedToDisconnectAuthMethod'),
+            err instanceof Error
+                ? err.message
+                : t('api.failedToDisconnectAuthMethod'),
             500
         )
     }

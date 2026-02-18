@@ -12,7 +12,12 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
-import { ROUTES, DASHBOARD_TABS, AGENT_DETAIL_TABS, CLAW_DETAIL_TABS } from '@/lib'
+import {
+    ROUTES,
+    DASHBOARD_TABS,
+    AGENT_DETAIL_TABS,
+    CLAW_DETAIL_TABS
+} from '@/lib'
 import {
     useClaws,
     useAdminClaws,
@@ -29,9 +34,14 @@ import {
     PageTitle,
     ActionButton,
     ClawMascot,
-    Logo
+    Logo,
+    ThemeToggle
 } from '@/components'
-import { ChatCircleDotsIcon, GraphIcon, LightningIcon } from '@phosphor-icons/react'
+import {
+    ChatCircleDotsIcon,
+    GraphIcon,
+    LightningIcon
+} from '@phosphor-icons/react'
 import { CreateClawModal } from '@/components/dashboard'
 import {
     PlaygroundCanvas,
@@ -64,17 +74,18 @@ const Dashboard: FC = (): ReactNode => {
     >(null)
     const [chatSelectedAgent, setChatSelectedAgent] =
         useState<ChatSelectedAgent | null>(null)
-    const [chatSettingsClawId, setChatSettingsClawId] = useState<
-        string | null
-    >(null)
+    const [chatSettingsClawId, setChatSettingsClawId] = useState<string | null>(
+        null
+    )
     const [chatAgentTab, setChatAgentTab] =
         useState<PlaygroundAgentDetailTab | null>(null)
     const [playgroundAgentTab, setPlaygroundAgentTab] =
         useState<PlaygroundAgentDetailTab | null>(null)
     const [playgroundClawTab, setPlaygroundClawTab] =
         useState<PlaygroundDetailTab | null>(null)
-    const [chatClawTab, setChatClawTab] =
-        useState<PlaygroundDetailTab | null>(null)
+    const [chatClawTab, setChatClawTab] = useState<PlaygroundDetailTab | null>(
+        null
+    )
     const [createAgentClawId, setCreateAgentClawId] = useState<string | null>(
         null
     )
@@ -161,7 +172,10 @@ const Dashboard: FC = (): ReactNode => {
 
         isRestoringFromUrl.current = true
 
-        if (tabParam === DASHBOARD_TABS.CHAT || tabParam === DASHBOARD_TABS.PLAYGROUND) {
+        if (
+            tabParam === DASHBOARD_TABS.CHAT ||
+            tabParam === DASHBOARD_TABS.PLAYGROUND
+        ) {
             setDashboardTab(tabParam)
         }
 
@@ -335,8 +349,7 @@ const Dashboard: FC = (): ReactNode => {
     const activeIsError = adminMode ? isAdminClawsError : isError
     const activeRefetch = adminMode ? refetchAdmin : refetch
     const isLoading =
-        authLoading ||
-        (!awaitingClaw && (activeClawsLoading || !minLoadingMet))
+        authLoading || (!awaitingClaw && (activeClawsLoading || !minLoadingMet))
 
     const graphClaws = displayedClaws
     const agentQueries = useAllClawAgents(graphClaws)
@@ -377,7 +390,7 @@ const Dashboard: FC = (): ReactNode => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
-            className={`fixed inset-0 flex flex-col bg-[#0a0a0f] text-white ${dashboardTab === DASHBOARD_TABS.PLAYGROUND ? 'playground-grid' : ''}`}
+            className={`bg-background text-foreground fixed inset-0 flex flex-col ${dashboardTab === DASHBOARD_TABS.PLAYGROUND ? 'playground-grid' : ''}`}
         >
             <div
                 className={`playground-gradient pointer-events-none fixed inset-0 ${dashboardTab === DASHBOARD_TABS.CHAT ? 'opacity-30' : ''}`}
@@ -393,13 +406,13 @@ const Dashboard: FC = (): ReactNode => {
                 }
             />
 
-            <div className='relative z-10 flex items-center justify-between border-b border-white/10 bg-[#0a0a0f]/80 px-6 py-3 backdrop-blur-xl'>
+            <div className='border-border bg-background/80 relative z-10 flex items-center justify-between border-b px-6 py-3 backdrop-blur-xl'>
                 <div className='flex items-center gap-3'>
                     <Logo />
-                    <div className='flex items-center rounded-lg border border-white/10 p-0.5'>
+                    <div className='border-border flex items-center rounded-lg border p-0.5'>
                         <button
                             onClick={() => setDashboardTab(DASHBOARD_TABS.CHAT)}
-                            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${dashboardTab === DASHBOARD_TABS.CHAT ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white'}`}
+                            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${dashboardTab === DASHBOARD_TABS.CHAT ? 'bg-foreground/10 text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                         >
                             <ChatCircleDotsIcon
                                 className='h-3.5 w-3.5'
@@ -409,13 +422,21 @@ const Dashboard: FC = (): ReactNode => {
                                         : 'regular'
                                 }
                             />
-                            <span className={dashboardTab === DASHBOARD_TABS.CHAT ? '' : 'hidden md:inline'}>
+                            <span
+                                className={
+                                    dashboardTab === DASHBOARD_TABS.CHAT
+                                        ? ''
+                                        : 'hidden md:inline'
+                                }
+                            >
                                 {t('dashboard.chatTab')}
                             </span>
                         </button>
                         <button
-                            onClick={() => setDashboardTab(DASHBOARD_TABS.PLAYGROUND)}
-                            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${dashboardTab === DASHBOARD_TABS.PLAYGROUND ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white'}`}
+                            onClick={() =>
+                                setDashboardTab(DASHBOARD_TABS.PLAYGROUND)
+                            }
+                            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${dashboardTab === DASHBOARD_TABS.PLAYGROUND ? 'bg-foreground/10 text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                         >
                             <GraphIcon
                                 className='h-3.5 w-3.5'
@@ -425,7 +446,13 @@ const Dashboard: FC = (): ReactNode => {
                                         : 'regular'
                                 }
                             />
-                            <span className={dashboardTab === DASHBOARD_TABS.PLAYGROUND ? '' : 'hidden md:inline'}>
+                            <span
+                                className={
+                                    dashboardTab === DASHBOARD_TABS.PLAYGROUND
+                                        ? ''
+                                        : 'hidden md:inline'
+                                }
+                            >
                                 {t('dashboard.playgroundTab')}
                             </span>
                         </button>
@@ -448,6 +475,7 @@ const Dashboard: FC = (): ReactNode => {
                                 label={t('createClaw.title')}
                             />
                         )}
+                    <ThemeToggle />
                     <UserDropdown
                         displayName={displayName}
                         onSignOut={signOut}

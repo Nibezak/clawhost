@@ -59,11 +59,12 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
         isError: isBrowseError
     } = useQuery({
         queryKey: browseKey,
-        queryFn: () => api.browseClawHubSkills(clawId, {
-            query: debouncedSearch || undefined,
-            limit: PAGE_SIZE,
-            agentId
-        }),
+        queryFn: () =>
+            api.browseClawHubSkills(clawId, {
+                query: debouncedSearch || undefined,
+                limit: PAGE_SIZE,
+                agentId
+            }),
         staleTime: 30000,
         retry: 1,
         placeholderData: (prev) => prev
@@ -162,7 +163,14 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
                 installMutation.mutate(slug)
             }
         },
-        [pendingSlug, installedSlugs, updatesMap, installMutation, removeMutation, updateMutation]
+        [
+            pendingSlug,
+            installedSlugs,
+            updatesMap,
+            installMutation,
+            removeMutation,
+            updateMutation
+        ]
     )
 
     const skills = browseData?.skills || []
@@ -173,16 +181,16 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
         <div className='flex h-full flex-col'>
             <div className='px-5 pt-5'>
                 <div className='relative'>
-                    <MagnifyingGlassIcon className='absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-500' />
+                    <MagnifyingGlassIcon className='text-muted-foreground absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2' />
                     <input
                         type='text'
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder={t('playground.clawHubSearch')}
-                        className='w-full rounded-md border border-white/10 bg-white/5 py-2 pl-8 pr-8 text-xs text-white outline-none transition-colors placeholder:text-gray-600 focus:border-[#ef5350]/50'
+                        className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border py-2 pl-8 pr-8 text-xs outline-none transition-colors focus:border-[#ef5350]/50'
                     />
                     {isBrowseFetching && !isFirstLoad && (
-                        <CircleNotchIcon className='absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 animate-spin text-gray-500' />
+                        <CircleNotchIcon className='text-muted-foreground absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 animate-spin' />
                     )}
                 </div>
             </div>
@@ -198,12 +206,14 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
                     <PanelPlaceholder
                         icon={
                             <StorefrontIcon
-                                className='h-6 w-6 text-gray-500'
+                                className='text-muted-foreground h-6 w-6'
                                 weight='duotone'
                             />
                         }
                         title={t('playground.clawHubLoadFailed')}
-                        description={t('playground.clawHubLoadFailedDescription')}
+                        description={t(
+                            'playground.clawHubLoadFailedDescription'
+                        )}
                     />
                 </div>
             ) : skills.length === 0 ? (
@@ -211,7 +221,7 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
                     <PanelPlaceholder
                         icon={
                             <StorefrontIcon
-                                className='h-6 w-6 text-gray-500'
+                                className='text-muted-foreground h-6 w-6'
                                 weight='duotone'
                             />
                         }
@@ -220,7 +230,7 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
                     />
                 </div>
             ) : (
-                <div className='flex-1 overflow-y-auto px-5 pt-3 pb-5'>
+                <div className='flex-1 overflow-y-auto px-5 pb-5 pt-3'>
                     <div className='space-y-1.5'>
                         {skills.map((skill: ClawHubSearchResult) => {
                             const isInstalled = installedSlugs.has(skill.slug)
@@ -234,41 +244,62 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
                                     className={`flex items-center justify-between rounded-lg border px-3 py-2.5 transition-colors ${
                                         isInstalled
                                             ? 'border-[#ef5350]/20 bg-[#ef5350]/5'
-                                            : 'border-white/5 bg-white/[0.02]'
+                                            : 'border-border bg-foreground/[0.02]'
                                     }`}
                                 >
                                     <div className='min-w-0 flex-1'>
                                         <TruncateTooltip content={skill.name}>
-                                            <span className='block truncate text-xs font-medium text-white'>
+                                            <span className='text-foreground block truncate text-xs font-medium'>
                                                 {skill.name}
                                             </span>
                                         </TruncateTooltip>
                                         {skill.description && (
-                                            <TruncateTooltip content={skill.description}>
-                                                <span className='mt-0.5 block truncate text-[11px] text-gray-500'>
+                                            <TruncateTooltip
+                                                content={skill.description}
+                                            >
+                                                <span className='text-muted-foreground mt-0.5 block truncate text-[11px]'>
                                                     {skill.description}
                                                 </span>
                                             </TruncateTooltip>
                                         )}
                                         <div className='mt-1 flex items-center gap-2'>
                                             {skill.author && (
-                                                <span className='text-[10px] text-gray-600'>
-                                                    {t('playground.clawHubBy', { author: skill.author })}
+                                                <span className='text-muted-foreground text-[10px]'>
+                                                    {t('playground.clawHubBy', {
+                                                        author: skill.author
+                                                    })}
                                                 </span>
                                             )}
                                             {skill.version && (
-                                                <span className='text-[10px] text-gray-600'>
-                                                    {t('playground.clawHubVersion', { version: skill.version })}
+                                                <span className='text-muted-foreground text-[10px]'>
+                                                    {t(
+                                                        'playground.clawHubVersion',
+                                                        {
+                                                            version:
+                                                                skill.version
+                                                        }
+                                                    )}
                                                 </span>
                                             )}
                                             {skill.downloads > 0 && (
-                                                <span className='text-[10px] text-gray-600'>
-                                                    {t('playground.clawHubDownloads', { count: skill.downloads.toLocaleString() })}
+                                                <span className='text-muted-foreground text-[10px]'>
+                                                    {t(
+                                                        'playground.clawHubDownloads',
+                                                        {
+                                                            count: skill.downloads.toLocaleString()
+                                                        }
+                                                    )}
                                                 </span>
                                             )}
                                             {hasUpdate && latestVersion && (
-                                                <span className='text-[10px] text-amber-400'>
-                                                    {t('playground.clawHubUpdateAvailable', { version: latestVersion })}
+                                                <span className='text-[10px] text-amber-600 dark:text-amber-400'>
+                                                    {t(
+                                                        'playground.clawHubUpdateAvailable',
+                                                        {
+                                                            version:
+                                                                latestVersion
+                                                        }
+                                                    )}
                                                 </span>
                                             )}
                                         </div>
@@ -278,10 +309,10 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
                                         disabled={!!pendingSlug}
                                         className={`ml-3 flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
                                             isInstalled && hasUpdate
-                                                ? 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20'
+                                                ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20'
                                                 : isInstalled
-                                                    ? 'bg-white/5 text-gray-400 hover:bg-red-500/10 hover:text-red-400'
-                                                    : 'bg-[#ef5350]/10 text-[#ef5350] hover:bg-[#ef5350]/20'
+                                                  ? 'bg-foreground/5 text-muted-foreground hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400'
+                                                  : 'bg-[#ef5350]/10 text-[#ef5350] hover:bg-[#ef5350]/20'
                                         }`}
                                     >
                                         {isPending ? (
@@ -311,19 +342,21 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
                     {(page > 1 || hasNextPage) && (
                         <div className='mt-3 flex items-center justify-center gap-3'>
                             <button
-                                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                                onClick={() =>
+                                    setPage((p) => Math.max(1, p - 1))
+                                }
                                 disabled={page <= 1}
-                                className='flex items-center gap-1 rounded-md bg-white/5 px-2.5 py-1 text-[11px] font-medium text-gray-400 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30'
+                                className='bg-foreground/5 text-muted-foreground hover:bg-foreground/10 flex items-center gap-1 rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-30'
                             >
                                 <CaretLeftIcon className='h-3 w-3' />
                             </button>
-                            <span className='text-[11px] text-gray-500'>
+                            <span className='text-muted-foreground text-[11px]'>
                                 {page}
                             </span>
                             <button
                                 onClick={() => setPage((p) => p + 1)}
                                 disabled={!hasNextPage}
-                                className='flex items-center gap-1 rounded-md bg-white/5 px-2.5 py-1 text-[11px] font-medium text-gray-400 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-30'
+                                className='bg-foreground/5 text-muted-foreground hover:bg-foreground/10 flex items-center gap-1 rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-30'
                             >
                                 <CaretRightIcon className='h-3 w-3' />
                             </button>

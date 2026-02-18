@@ -100,7 +100,11 @@ const getAdminClaws = async (c: AuthenticatedContext) => {
                             .update(claws)
                             .set({ status: clawStatus.running, ip: live.ip })
                             .where(eq(claws.id, claw.id))
-                        return { ...claw, status: clawStatus.running, ip: live.ip }
+                        return {
+                            ...claw,
+                            status: clawStatus.running,
+                            ip: live.ip
+                        }
                     }
                 }
                 return { ...claw, ip: live.ip }

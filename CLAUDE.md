@@ -92,9 +92,22 @@ import { t } from '@openclaw/i18n'
 
 ```typescript
 // CORRECT - Always use the Icon suffix
-import { CheckIcon, CopyIcon, EyeIcon, EyeSlashIcon } from '@phosphor-icons/react'
-import { CircleNotchIcon, WarningIcon, LightningIcon } from '@phosphor-icons/react'
-import { GithubLogoIcon, DiscordLogoIcon, SlackLogoIcon } from '@phosphor-icons/react'
+import {
+    CheckIcon,
+    CopyIcon,
+    EyeIcon,
+    EyeSlashIcon
+} from '@phosphor-icons/react'
+import {
+    CircleNotchIcon,
+    WarningIcon,
+    LightningIcon
+} from '@phosphor-icons/react'
+import {
+    GithubLogoIcon,
+    DiscordLogoIcon,
+    SlackLogoIcon
+} from '@phosphor-icons/react'
 
 // INCORRECT - Non-suffixed names are deprecated
 import { Check, Copy, Eye, EyeSlash } from '@phosphor-icons/react' // DO NOT USE

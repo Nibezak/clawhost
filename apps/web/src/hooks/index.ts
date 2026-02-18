@@ -66,3 +66,5 @@ export {
 export { useAgentChat } from '@/hooks/useAgentChat'
 
 export { default as useSpeechRecognition } from '@/hooks/useSpeechRecognition'
+
+export { default as useThemeEffect } from '@/hooks/useThemeEffect'

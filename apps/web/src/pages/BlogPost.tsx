@@ -3,7 +3,11 @@ import type { FC, ReactNode } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { ArrowLeftIcon, CalendarBlankIcon, ClockIcon } from '@phosphor-icons/react'
+import {
+    ArrowLeftIcon,
+    CalendarBlankIcon,
+    ClockIcon
+} from '@phosphor-icons/react'
 import {
     Header,
     LandingFooter,
@@ -42,7 +46,7 @@ const BlogPost: FC = (): ReactNode => {
         : `${SITE_URL}/og-image.webp`
 
     return (
-        <div className='relative flex min-h-screen flex-col bg-[#0a0a0f] text-white'>
+        <div className='bg-background text-foreground relative flex min-h-screen flex-col'>
             <PageTitle
                 title={meta.title}
                 description={meta.description}
@@ -87,7 +91,7 @@ const BlogPost: FC = (): ReactNode => {
             >
                 <Link
                     to={ROUTES.POSTS}
-                    className='mb-8 inline-flex items-center gap-1.5 text-sm text-gray-400 transition hover:text-white'
+                    className='text-muted-foreground hover:text-foreground mb-8 inline-flex items-center gap-1.5 text-sm transition'
                 >
                     <ArrowLeftIcon className='h-4 w-4' />
                     {t('blog.backToBlog')}
@@ -97,7 +101,7 @@ const BlogPost: FC = (): ReactNode => {
                     {meta.tags.map((tag) => (
                         <span
                             key={tag}
-                            className='rounded-full bg-white/5 px-2.5 py-0.5 text-xs text-gray-400'
+                            className='bg-foreground/5 text-muted-foreground rounded-full px-2.5 py-0.5 text-xs'
                         >
                             {tag}
                         </span>
@@ -108,7 +112,7 @@ const BlogPost: FC = (): ReactNode => {
                     {meta.title}
                 </h1>
 
-                <div className='mb-8 flex items-center gap-4 text-sm text-gray-400'>
+                <div className='text-muted-foreground mb-8 flex items-center gap-4 text-sm'>
                     <span className='flex items-center gap-1.5'>
                         <CalendarBlankIcon className='h-4 w-4' />
                         {formattedDate}
@@ -122,7 +126,7 @@ const BlogPost: FC = (): ReactNode => {
                 </div>
 
                 {meta.coverImage && (
-                    <div className='mb-12 overflow-hidden rounded-xl border border-white/10'>
+                    <div className='border-border mb-12 overflow-hidden rounded-xl border'>
                         <img
                             src={meta.coverImage}
                             alt={meta.title}

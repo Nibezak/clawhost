@@ -114,7 +114,7 @@ const buildDemoGraph = (): DemoPlaygroundData => {
                 target: agentNodeId,
                 type: 'straight',
                 style: {
-                    stroke: 'rgba(255, 255, 255, 0.08)',
+                    stroke: 'hsl(var(--muted-foreground) / 0.3)',
                     strokeWidth: 1.5
                 }
             })

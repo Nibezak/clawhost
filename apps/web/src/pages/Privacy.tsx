@@ -7,7 +7,7 @@ import { Header, LandingFooter, PageBackground, PageTitle } from '@/components'
 
 const Privacy: FC = (): ReactNode => {
     return (
-        <div className='relative flex min-h-screen flex-col bg-[#0a0a0f] text-white'>
+        <div className='bg-background text-foreground relative flex min-h-screen flex-col'>
             <PageTitle
                 title={t('privacy.title')}
                 description={t('privacy.description')}

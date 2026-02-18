@@ -11,7 +11,14 @@ import CLAW_DETAIL_TABS from '@/lib/clawDetailTabs'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { clawStatus } from '@openclaw/shared'
-import { XIcon, InfoIcon, ScrollIcon, PulseIcon, KeyIcon, LightningIcon } from '@phosphor-icons/react'
+import {
+    XIcon,
+    InfoIcon,
+    ScrollIcon,
+    PulseIcon,
+    KeyIcon,
+    LightningIcon
+} from '@phosphor-icons/react'
 import { ClawAvatar, ProviderIcon } from '@/components'
 import { Skeleton } from '@/components/ui'
 import { getBaseDomain } from '@/lib'
@@ -25,20 +32,32 @@ import {
     PlaygroundSkillsContent
 } from '@/components/playground'
 import { useClawVersion } from '@/hooks'
-import {
-    locationFlags,
-    locationNames,
-    generateSlug
-} from '@/lib/claw-utils'
+import { locationFlags, locationNames, generateSlug } from '@/lib/claw-utils'
 
 const tabStateMap: Record<string, PlaygroundDetailTab> = {}
 
 const tabs: PlaygroundTabConfig<PlaygroundDetailTab>[] = [
     { id: CLAW_DETAIL_TABS.INFO, label: 'playground.tabInfo', icon: InfoIcon },
-    { id: CLAW_DETAIL_TABS.VARIABLES, label: 'playground.tabEnvs', icon: KeyIcon },
-    { id: CLAW_DETAIL_TABS.SKILLS, label: 'playground.tabSkills', icon: LightningIcon },
-    { id: CLAW_DETAIL_TABS.LOGS, label: 'playground.tabLogs', icon: ScrollIcon },
-    { id: CLAW_DETAIL_TABS.DIAGNOSTICS, label: 'playground.tabDiagnostics', icon: PulseIcon }
+    {
+        id: CLAW_DETAIL_TABS.VARIABLES,
+        label: 'playground.tabEnvs',
+        icon: KeyIcon
+    },
+    {
+        id: CLAW_DETAIL_TABS.SKILLS,
+        label: 'playground.tabSkills',
+        icon: LightningIcon
+    },
+    {
+        id: CLAW_DETAIL_TABS.LOGS,
+        label: 'playground.tabLogs',
+        icon: ScrollIcon
+    },
+    {
+        id: CLAW_DETAIL_TABS.DIAGNOSTICS,
+        label: 'playground.tabDiagnostics',
+        icon: PulseIcon
+    }
 ]
 
 const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
@@ -90,27 +109,35 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
         if (versionQuery.isPending) return null
         if (versionQuery.isError || !versionQuery.data) return null
         return versionQuery.data.version
-    }, [readOnly, versionQuery.isPending, versionQuery.isError, versionQuery.data])
+    }, [
+        readOnly,
+        versionQuery.isPending,
+        versionQuery.isError,
+        versionQuery.data
+    ])
 
     const Wrapper = fullScreen ? 'div' : motion.div
     const wrapperProps = fullScreen
         ? { className: 'flex h-full w-full flex-col overflow-hidden' }
         : {
-            initial: { x: '100%' },
-            animate: { x: 0 },
-            exit: { x: '100%' },
-            transition: { type: 'tween', duration: 0.2 },
-            className: 'fixed inset-0 z-40 overflow-hidden md:relative md:inset-auto md:z-auto md:h-full md:w-[380px] md:shrink-0'
-        }
+              initial: { x: '100%' },
+              animate: { x: 0 },
+              exit: { x: '100%' },
+              transition: { type: 'tween', duration: 0.2 },
+              className:
+                  'fixed inset-0 z-40 overflow-hidden md:relative md:inset-auto md:z-auto md:h-full md:w-[380px] md:shrink-0'
+          }
 
     return (
-        <Wrapper {...wrapperProps as Record<string, unknown>}>
-            <div className={`flex h-full w-full flex-col ${fullScreen ? 'bg-[#0a0a0f]' : 'bg-[#0a0a0f] md:border-l md:border-white/10 md:bg-[#0a0a0f]/95 md:backdrop-blur-xl'}`}>
-                <div className='flex items-center justify-between border-b border-white/10 px-5 py-2.5'>
+        <Wrapper {...(wrapperProps as Record<string, unknown>)}>
+            <div
+                className={`flex h-full w-full flex-col ${fullScreen ? 'bg-background' : 'bg-background md:border-border md:bg-background/95 md:border-l md:backdrop-blur-xl'}`}
+            >
+                <div className='border-border flex items-center justify-between border-b px-5 py-2.5'>
                     <div className='flex items-center gap-2.5'>
                         <ClawAvatar />
                         <div className='space-y-0'>
-                            <h3 className='text-sm font-semibold leading-tight text-white'>
+                            <h3 className='text-foreground text-sm font-semibold leading-tight'>
                                 {claw.name}
                             </h3>
                             {claw.status !== clawStatus.configuring && (
@@ -118,7 +145,7 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                     href={`https://${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
                                     target='_blank'
                                     rel='noopener noreferrer'
-                                    className='block text-xs leading-tight text-gray-500 transition-colors hover:text-gray-300'
+                                    className='text-muted-foreground hover:text-foreground/80 block text-xs leading-tight transition-colors'
                                 >
                                     {claw.subdomain || generateSlug(claw.id)}.
                                     {getBaseDomain()}
@@ -128,21 +155,21 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                     </div>
                     <button
                         onClick={onClose}
-                        className={`rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white ${fullScreen ? 'md:hidden' : ''}`}
+                        className={`text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-lg p-1.5 transition-colors ${fullScreen ? 'md:hidden' : ''}`}
                     >
                         <XIcon className='h-4 w-4' weight='bold' />
                     </button>
                 </div>
 
-                <div className='flex border-b border-white/10'>
+                <div className='border-border flex border-b'>
                     {tabs.map((tab) => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`flex flex-1 items-center justify-center gap-1.5 border-b-2 px-3 py-2 text-xs font-medium transition-colors ${
                                 activeTab === tab.id
-                                    ? 'border-[#ef5350] text-white'
-                                    : 'border-transparent text-gray-500 hover:text-gray-300'
+                                    ? 'text-foreground border-[#ef5350]'
+                                    : 'text-muted-foreground hover:text-foreground/80 border-transparent'
                             }`}
                         >
                             <tab.icon
@@ -159,7 +186,9 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                 <div className='flex min-h-0 flex-1 flex-col overflow-hidden'>
                     {activeTab === 'info' && (
                         <div className='h-full overflow-y-auto p-5'>
-                            <div className={`grid gap-2 ${fullScreen ? 'grid-cols-3' : 'grid-cols-2'}`}>
+                            <div
+                                className={`grid gap-2 ${fullScreen ? 'grid-cols-3' : 'grid-cols-2'}`}
+                            >
                                 {claw.ownerEmail && (
                                     <CopyableField
                                         label={t('dashboard.owner')}
@@ -175,7 +204,7 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                 )}
 
                                 {showVersion && versionLoading && (
-                                    <div className='rounded-lg bg-white/5 px-3 py-2'>
+                                    <div className='bg-foreground/5 rounded-lg px-3 py-2'>
                                         <span className='text-muted-foreground block text-xs'>
                                             {t('dashboard.version')}
                                         </span>

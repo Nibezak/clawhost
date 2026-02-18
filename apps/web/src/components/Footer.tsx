@@ -6,7 +6,7 @@ import { SUPPORT_EMAIL } from '@/lib/links'
 
 const Footer: FC = (): ReactNode => {
     return (
-        <footer className='relative mt-auto border-t border-white/10'>
+        <footer className='border-border relative mt-auto border-t'>
             <div className='mx-auto max-w-6xl px-6 py-6'>
                 <div className='flex flex-col items-center justify-between gap-4 sm:flex-row'>
                     <p className='text-muted-foreground text-sm'>

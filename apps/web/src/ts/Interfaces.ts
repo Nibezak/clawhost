@@ -14,6 +14,7 @@ import type {
     PlaygroundAgentDetailTab,
     PlaygroundDetailTab,
     ProviderType,
+    ThemeMode,
     ToastType,
     UserRole
 } from '@/ts/Types'
@@ -154,6 +155,8 @@ export interface PreferencesState {
     setAdminMode: (mode: boolean) => void
     dashboardTab: DashboardTab
     setDashboardTab: (tab: DashboardTab) => void
+    theme: ThemeMode
+    setTheme: (theme: ThemeMode) => void
 }
 
 export interface CachedProfile {

@@ -70,28 +70,28 @@ clawhost/
 
 ### Tech Stack
 
-| Layer                   | Technology                                                                                                      |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------- |
-| **API Framework**       | [Hono](https://hono.dev) on Node.js                                                                             |
-| **Database**            | PostgreSQL ([Neon](https://neon.tech)) with [Drizzle ORM](https://orm.drizzle.team)                              |
-| **Authentication**      | [Firebase](https://firebase.google.com) (OTP email, Google, GitHub)                                             |
+| Layer                   | Technology                                                                                                                      |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| **API Framework**       | [Hono](https://hono.dev) on Node.js                                                                                             |
+| **Database**            | PostgreSQL ([Neon](https://neon.tech)) with [Drizzle ORM](https://orm.drizzle.team)                                             |
+| **Authentication**      | [Firebase](https://firebase.google.com) (OTP email, Google, GitHub)                                                             |
 | **Server Provisioning** | [Hetzner Cloud](https://docs.hetzner.cloud), [DigitalOcean](https://docs.digitalocean.com), [Vultr](https://www.vultr.com/api/) |
-| **Remote Management**   | SSH2 for remote command execution, file management, and diagnostics                                              |
-| **DNS**                 | [Cloudflare API](https://developers.cloudflare.com/api)                                                         |
-| **Billing**             | [Polar.sh](https://polar.sh)                                                                                    |
-| **Email**               | [Resend](https://resend.com) with React Email                                                                   |
-| **Frontend**            | [React 18](https://react.dev) + [Vite](https://vitejs.dev)                                                      |
-| **UI Components**       | [shadcn/ui](https://ui.shadcn.com) + [Radix UI](https://radix-ui.com) + [Tailwind CSS](https://tailwindcss.com) |
-| **Visual Canvas**       | [React Flow](https://reactflow.dev) with [Dagre](https://github.com/dagrejs/dagre) layout                       |
-| **Code Editor**         | [CodeMirror](https://codemirror.net) via @uiw/react-codemirror                                                   |
-| **State Management**    | [Zustand](https://zustand-demo.pmnd.rs)                                                                         |
-| **Data Fetching**       | [TanStack React Query](https://tanstack.com/query)                                                              |
-| **Icons**               | [Phosphor Icons](https://phosphoricons.com)                                                                     |
-| **Animations**          | [Framer Motion](https://www.framer.com/motion)                                                                  |
-| **Blog**                | MDX with frontmatter                                                                                            |
-| **Mobile**              | [React Native](https://reactnative.dev) + [Expo](https://expo.dev)                                              |
-| **Desktop**             | [Electron](https://www.electronjs.org) with Electron Forge                                                       |
-| **Monorepo**            | [Turborepo](https://turbo.build) + [pnpm](https://pnpm.io)                                                      |
+| **Remote Management**   | SSH2 for remote command execution, file management, and diagnostics                                                             |
+| **DNS**                 | [Cloudflare API](https://developers.cloudflare.com/api)                                                                         |
+| **Billing**             | [Polar.sh](https://polar.sh)                                                                                                    |
+| **Email**               | [Resend](https://resend.com) with React Email                                                                                   |
+| **Frontend**            | [React 18](https://react.dev) + [Vite](https://vitejs.dev)                                                                      |
+| **UI Components**       | [shadcn/ui](https://ui.shadcn.com) + [Radix UI](https://radix-ui.com) + [Tailwind CSS](https://tailwindcss.com)                 |
+| **Visual Canvas**       | [React Flow](https://reactflow.dev) with [Dagre](https://github.com/dagrejs/dagre) layout                                       |
+| **Code Editor**         | [CodeMirror](https://codemirror.net) via @uiw/react-codemirror                                                                  |
+| **State Management**    | [Zustand](https://zustand-demo.pmnd.rs)                                                                                         |
+| **Data Fetching**       | [TanStack React Query](https://tanstack.com/query)                                                                              |
+| **Icons**               | [Phosphor Icons](https://phosphoricons.com)                                                                                     |
+| **Animations**          | [Framer Motion](https://www.framer.com/motion)                                                                                  |
+| **Blog**                | MDX with frontmatter                                                                                                            |
+| **Mobile**              | [React Native](https://reactnative.dev) + [Expo](https://expo.dev)                                                              |
+| **Desktop**             | [Electron](https://www.electronjs.org) with Electron Forge                                                                      |
+| **Monorepo**            | [Turborepo](https://turbo.build) + [pnpm](https://pnpm.io)                                                                      |
 
 ### Database Schema
 
@@ -116,15 +116,15 @@ clawhost/
 
 ### External Services
 
-| Service                                                | Purpose                 | What You Need                         |
-| ------------------------------------------------------ | ----------------------- | ------------------------------------- |
-| [Hetzner Cloud](https://console.hetzner.cloud)         | Server provisioning     | API Token (Read & Write)              |
-| [DigitalOcean](https://cloud.digitalocean.com)         | Server provisioning     | API Token                             |
-| [Vultr](https://my.vultr.com)                          | Server provisioning     | API Key                               |
-| [Firebase](https://console.firebase.google.com)        | Authentication          | Project credentials + Service account |
-| [Cloudflare](https://dash.cloudflare.com)              | DNS management          | API Token + Zone ID                   |
-| [Polar.sh](https://polar.sh)                           | Billing & subscriptions | API credentials + Webhook secret      |
-| [Resend](https://resend.com)                           | Transactional email     | API Key                               |
+| Service                                         | Purpose                 | What You Need                         |
+| ----------------------------------------------- | ----------------------- | ------------------------------------- |
+| [Hetzner Cloud](https://console.hetzner.cloud)  | Server provisioning     | API Token (Read & Write)              |
+| [DigitalOcean](https://cloud.digitalocean.com)  | Server provisioning     | API Token                             |
+| [Vultr](https://my.vultr.com)                   | Server provisioning     | API Key                               |
+| [Firebase](https://console.firebase.google.com) | Authentication          | Project credentials + Service account |
+| [Cloudflare](https://dash.cloudflare.com)       | DNS management          | API Token + Zone ID                   |
+| [Polar.sh](https://polar.sh)                    | Billing & subscriptions | API credentials + Webhook secret      |
+| [Resend](https://resend.com)                    | Transactional email     | API Key                               |
 
 At least one cloud provider is required. You can configure one, two, or all three.
 
@@ -293,19 +293,19 @@ The web dev server proxies `/api` requests to the API server automatically.
 
 ### Root Commands
 
-| Command             | Description                                      |
-| ------------------- | ------------------------------------------------ |
-| `pnpm dev`          | Start all apps in development mode               |
-| `pnpm dev:web`      | Start web app only                               |
-| `pnpm dev:api`      | Start API only                                   |
-| `pnpm dev:mobile`   | Start mobile app (Expo)                          |
-| `pnpm dev:desktop`  | Start desktop app (Electron)                     |
-| `pnpm build`        | Build all apps for production                    |
-| `pnpm lint`         | Run ESLint across the monorepo                   |
-| `pnpm lint:fix`     | Auto-fix ESLint issues                           |
-| `pnpm format`       | Format all files with Prettier                   |
-| `pnpm format:check` | Check formatting without writing                 |
-| `pnpm check`        | Run TypeScript type-check + ESLint for all apps  |
+| Command             | Description                                     |
+| ------------------- | ----------------------------------------------- |
+| `pnpm dev`          | Start all apps in development mode              |
+| `pnpm dev:web`      | Start web app only                              |
+| `pnpm dev:api`      | Start API only                                  |
+| `pnpm dev:mobile`   | Start mobile app (Expo)                         |
+| `pnpm dev:desktop`  | Start desktop app (Electron)                    |
+| `pnpm build`        | Build all apps for production                   |
+| `pnpm lint`         | Run ESLint across the monorepo                  |
+| `pnpm lint:fix`     | Auto-fix ESLint issues                          |
+| `pnpm format`       | Format all files with Prettier                  |
+| `pnpm format:check` | Check formatting without writing                |
+| `pnpm check`        | Run TypeScript type-check + ESLint for all apps |
 
 ### Database Commands
 
@@ -325,96 +325,96 @@ pnpm --filter api email:dev    # Preview email templates at localhost:3333
 
 ### Public Endpoints
 
-| Method | Endpoint                    | Description                      |
-| ------ | --------------------------- | -------------------------------- |
-| `POST` | `/api/auth/send-otp`        | Send OTP code via email          |
-| `POST` | `/api/auth/verify-otp`      | Verify OTP and get Firebase token|
-| `GET`  | `/api/plans`                | List available server plans      |
-| `GET`  | `/api/plans/locations`      | List available regions           |
-| `GET`  | `/api/plans/volume-pricing` | Get volume pricing               |
-| `GET`  | `/api/plans/availability`   | Check plan availability          |
+| Method | Endpoint                    | Description                       |
+| ------ | --------------------------- | --------------------------------- |
+| `POST` | `/api/auth/send-otp`        | Send OTP code via email           |
+| `POST` | `/api/auth/verify-otp`      | Verify OTP and get Firebase token |
+| `GET`  | `/api/plans`                | List available server plans       |
+| `GET`  | `/api/plans/locations`      | List available regions            |
+| `GET`  | `/api/plans/volume-pricing` | Get volume pricing                |
+| `GET`  | `/api/plans/availability`   | Check plan availability           |
 
 ### Protected Endpoints (Bearer token required)
 
 **Claws (Server Instances)**
 
-| Method   | Endpoint                              | Description                     |
-| -------- | ------------------------------------- | ------------------------------- |
-| `GET`    | `/api/claws`                          | List user's claws               |
-| `GET`    | `/api/claws/:id`                      | Get a specific claw             |
-| `POST`   | `/api/claws`                          | Create a claw (direct)          |
-| `POST`   | `/api/claws/purchase`                 | Initiate paid claw purchase     |
-| `POST`   | `/api/claws/:id/sync`                 | Sync claw with cloud provider   |
-| `POST`   | `/api/claws/:id/start`                | Start a claw                    |
-| `POST`   | `/api/claws/:id/stop`                 | Stop a claw                     |
-| `POST`   | `/api/claws/:id/restart`              | Restart a claw                  |
-| `POST`   | `/api/claws/:id/cancel-deletion`      | Cancel scheduled deletion       |
-| `DELETE` | `/api/claws/:id`                      | Delete a claw                   |
-| `GET`    | `/api/claws/:id/export`               | Export claw configuration       |
-| `POST`   | `/api/claws/:id/version`              | Get OpenClaw version            |
+| Method   | Endpoint                         | Description                   |
+| -------- | -------------------------------- | ----------------------------- |
+| `GET`    | `/api/claws`                     | List user's claws             |
+| `GET`    | `/api/claws/:id`                 | Get a specific claw           |
+| `POST`   | `/api/claws`                     | Create a claw (direct)        |
+| `POST`   | `/api/claws/purchase`            | Initiate paid claw purchase   |
+| `POST`   | `/api/claws/:id/sync`            | Sync claw with cloud provider |
+| `POST`   | `/api/claws/:id/start`           | Start a claw                  |
+| `POST`   | `/api/claws/:id/stop`            | Stop a claw                   |
+| `POST`   | `/api/claws/:id/restart`         | Restart a claw                |
+| `POST`   | `/api/claws/:id/cancel-deletion` | Cancel scheduled deletion     |
+| `DELETE` | `/api/claws/:id`                 | Delete a claw                 |
+| `GET`    | `/api/claws/:id/export`          | Export claw configuration     |
+| `POST`   | `/api/claws/:id/version`         | Get OpenClaw version          |
 
 **Claw Diagnostics**
 
-| Method | Endpoint                              | Description                     |
-| ------ | ------------------------------------- | ------------------------------- |
-| `POST` | `/api/claws/:id/diagnostics/status`   | Get server diagnostics          |
-| `POST` | `/api/claws/:id/diagnostics/logs`     | Get server logs                 |
+| Method | Endpoint                            | Description            |
+| ------ | ----------------------------------- | ---------------------- |
+| `POST` | `/api/claws/:id/diagnostics/status` | Get server diagnostics |
+| `POST` | `/api/claws/:id/diagnostics/logs`   | Get server logs        |
 
 **Claw Agents**
 
-| Method | Endpoint                              | Description                     |
-| ------ | ------------------------------------- | ------------------------------- |
-| `POST` | `/api/claws/:id/agents`               | List agents                     |
-| `POST` | `/api/claws/:id/agents/create`        | Create a new agent              |
-| `POST` | `/api/claws/:id/agents/delete`        | Delete an agent                 |
-| `POST` | `/api/claws/:id/agent-config`         | Get agent configuration         |
-| `PUT`  | `/api/claws/:id/agent-config`         | Update agent configuration      |
+| Method | Endpoint                       | Description                |
+| ------ | ------------------------------ | -------------------------- |
+| `POST` | `/api/claws/:id/agents`        | List agents                |
+| `POST` | `/api/claws/:id/agents/create` | Create a new agent         |
+| `POST` | `/api/claws/:id/agents/delete` | Delete an agent            |
+| `POST` | `/api/claws/:id/agent-config`  | Get agent configuration    |
+| `PUT`  | `/api/claws/:id/agent-config`  | Update agent configuration |
 
 **Claw Channels**
 
-| Method | Endpoint                              | Description                     |
-| ------ | ------------------------------------- | ------------------------------- |
-| `POST` | `/api/claws/:id/channels`             | Get configured channels         |
-| `PUT`  | `/api/claws/:id/channels`             | Update channel configuration    |
+| Method | Endpoint                  | Description                  |
+| ------ | ------------------------- | ---------------------------- |
+| `POST` | `/api/claws/:id/channels` | Get configured channels      |
+| `PUT`  | `/api/claws/:id/channels` | Update channel configuration |
 
 **Claw Skills**
 
-| Method | Endpoint                                    | Description                     |
-| ------ | ------------------------------------------- | ------------------------------- |
-| `POST` | `/api/claws/:id/skills`                     | Get claw skills                 |
-| `PUT`  | `/api/claws/:id/skills`                     | Update claw skills              |
-| `POST` | `/api/claws/:id/agents/:agentId/skills`     | Get agent-specific skills       |
-| `PUT`  | `/api/claws/:id/agents/:agentId/skills`     | Update agent-specific skills    |
+| Method | Endpoint                                | Description                  |
+| ------ | --------------------------------------- | ---------------------------- |
+| `POST` | `/api/claws/:id/skills`                 | Get claw skills              |
+| `PUT`  | `/api/claws/:id/skills`                 | Update claw skills           |
+| `POST` | `/api/claws/:id/agents/:agentId/skills` | Get agent-specific skills    |
+| `PUT`  | `/api/claws/:id/agents/:agentId/skills` | Update agent-specific skills |
 
 **ClawHub (Skills Marketplace)**
 
-| Method | Endpoint                              | Description                     |
-| ------ | ------------------------------------- | ------------------------------- |
-| `POST` | `/api/claws/:id/clawhub/search`       | Search ClawHub skills           |
-| `POST` | `/api/claws/:id/clawhub/installed`    | List installed skills           |
-| `POST` | `/api/claws/:id/clawhub/install`      | Install a skill                 |
-| `POST` | `/api/claws/:id/clawhub/remove`       | Remove a skill                  |
-| `POST` | `/api/claws/:id/clawhub/update`       | Update a skill                  |
-| `POST` | `/api/claws/:id/clawhub/updates`      | Check for available updates     |
+| Method | Endpoint                           | Description                 |
+| ------ | ---------------------------------- | --------------------------- |
+| `POST` | `/api/claws/:id/clawhub/search`    | Search ClawHub skills       |
+| `POST` | `/api/claws/:id/clawhub/installed` | List installed skills       |
+| `POST` | `/api/claws/:id/clawhub/install`   | Install a skill             |
+| `POST` | `/api/claws/:id/clawhub/remove`    | Remove a skill              |
+| `POST` | `/api/claws/:id/clawhub/update`    | Update a skill              |
+| `POST` | `/api/claws/:id/clawhub/updates`   | Check for available updates |
 
 **Claw Files & Environment**
 
-| Method | Endpoint                              | Description                     |
-| ------ | ------------------------------------- | ------------------------------- |
-| `POST` | `/api/claws/:id/files`                | List files on instance          |
-| `POST` | `/api/claws/:id/files/read`           | Read a file                     |
-| `PUT`  | `/api/claws/:id/files`                | Update a file                   |
-| `GET`  | `/api/claws/:id/env`                  | Get environment variables       |
-| `PUT`  | `/api/claws/:id/env`                  | Update environment variables    |
+| Method | Endpoint                    | Description                  |
+| ------ | --------------------------- | ---------------------------- |
+| `POST` | `/api/claws/:id/files`      | List files on instance       |
+| `POST` | `/api/claws/:id/files/read` | Read a file                  |
+| `PUT`  | `/api/claws/:id/files`      | Update a file                |
+| `GET`  | `/api/claws/:id/env`        | Get environment variables    |
+| `PUT`  | `/api/claws/:id/env`        | Update environment variables |
 
 **Admin Endpoints**
 
-| Method | Endpoint                              | Description                     |
-| ------ | ------------------------------------- | ------------------------------- |
-| `GET`  | `/api/claws/admin`                    | List all claws (admin only)     |
-| `POST` | `/api/claws/:id/hard-delete`          | Permanently delete (admin only) |
-| `POST` | `/api/claws/:id/diagnostics/repair`   | Repair instance (admin only)    |
-| `POST` | `/api/claws/:id/reinstall`            | Reinstall OS (admin only)       |
+| Method | Endpoint                            | Description                     |
+| ------ | ----------------------------------- | ------------------------------- |
+| `GET`  | `/api/claws/admin`                  | List all claws (admin only)     |
+| `POST` | `/api/claws/:id/hard-delete`        | Permanently delete (admin only) |
+| `POST` | `/api/claws/:id/diagnostics/repair` | Repair instance (admin only)    |
+| `POST` | `/api/claws/:id/reinstall`          | Reinstall OS (admin only)       |
 
 **SSH Keys**
 
@@ -426,16 +426,16 @@ pnpm --filter api email:dev    # Preview email templates at localhost:3333
 
 **Users**
 
-| Method   | Endpoint                                 | Description                  |
-| -------- | ---------------------------------------- | ---------------------------- |
-| `GET`    | `/api/users/me`                          | Get current user profile     |
-| `PUT`    | `/api/users/me`                          | Update profile               |
-| `GET`    | `/api/users/me/stats`                    | Get user stats               |
-| `GET`    | `/api/users/me/billing`                  | Get billing history          |
-| `GET`    | `/api/users/me/billing/:orderId/invoice` | Get invoice for an order     |
-| `POST`   | `/api/users/me/billing/portal`           | Open Polar billing portal    |
+| Method   | Endpoint                                 | Description                         |
+| -------- | ---------------------------------------- | ----------------------------------- |
+| `GET`    | `/api/users/me`                          | Get current user profile            |
+| `PUT`    | `/api/users/me`                          | Update profile                      |
+| `GET`    | `/api/users/me/stats`                    | Get user stats                      |
+| `GET`    | `/api/users/me/billing`                  | Get billing history                 |
+| `GET`    | `/api/users/me/billing/:orderId/invoice` | Get invoice for an order            |
+| `POST`   | `/api/users/me/billing/portal`           | Open Polar billing portal           |
 | `POST`   | `/api/users/me/auth/:method`             | Connect auth method (Google/GitHub) |
-| `DELETE` | `/api/users/me/auth/:method`             | Disconnect auth method       |
+| `DELETE` | `/api/users/me/auth/:method`             | Disconnect auth method              |
 
 ### Webhooks
 

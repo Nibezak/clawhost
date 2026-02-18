@@ -35,10 +35,9 @@ const ChatView: FC<ChatViewProps> = ({
     initialClawTab,
     onClawTabChange
 }): ReactNode => {
-    const [configAgent, setConfigAgent] =
-        useState<ChatSelectedAgent | null>(() =>
-            initialAgentTab && selectedAgent ? selectedAgent : null
-        )
+    const [configAgent, setConfigAgent] = useState<ChatSelectedAgent | null>(
+        () => (initialAgentTab && selectedAgent ? selectedAgent : null)
+    )
     const [settingsClawId, setSettingsClawId] = useState<string | null>(
         initialSettingsClawId || null
     )
@@ -112,30 +111,39 @@ const ChatView: FC<ChatViewProps> = ({
         setMobileSidebarOpen(false)
     }, [])
 
-    const handleAgentSelect = useCallback((selection: ChatSelectedAgent) => {
-        setSettingsClawId(null)
-        onAgentSelect(selection)
-        setMobileSidebarOpen(false)
-    }, [onAgentSelect])
+    const handleAgentSelect = useCallback(
+        (selection: ChatSelectedAgent) => {
+            setSettingsClawId(null)
+            onAgentSelect(selection)
+            setMobileSidebarOpen(false)
+        },
+        [onAgentSelect]
+    )
 
-    const handleOpenConfig = useCallback((agentId: string, clawId: string) => {
-        setConfigAgent({ agentId, clawId })
-        setSettingsClawId(null)
-        onAgentSelect({ agentId, clawId })
-        onAgentTabChange?.(AGENT_DETAIL_TABS.CONFIGURATION)
-        setMobileSidebarOpen(false)
-    }, [onAgentSelect, onAgentTabChange])
+    const handleOpenConfig = useCallback(
+        (agentId: string, clawId: string) => {
+            setConfigAgent({ agentId, clawId })
+            setSettingsClawId(null)
+            onAgentSelect({ agentId, clawId })
+            onAgentTabChange?.(AGENT_DETAIL_TABS.CONFIGURATION)
+            setMobileSidebarOpen(false)
+        },
+        [onAgentSelect, onAgentTabChange]
+    )
 
     const handleCloseConfig = useCallback(() => {
         setConfigAgent(null)
     }, [])
 
-    const handleOpenClawSettings = useCallback((clawId: string) => {
-        setSettingsClawId(clawId)
-        setConfigAgent(null)
-        onAgentSelect(null)
-        setMobileSidebarOpen(false)
-    }, [onAgentSelect])
+    const handleOpenClawSettings = useCallback(
+        (clawId: string) => {
+            setSettingsClawId(clawId)
+            setConfigAgent(null)
+            onAgentSelect(null)
+            setMobileSidebarOpen(false)
+        },
+        [onAgentSelect]
+    )
 
     const handleCloseClawSettings = useCallback(() => {
         setSettingsClawId(null)
@@ -168,31 +176,48 @@ const ChatView: FC<ChatViewProps> = ({
                 />
             </div>
             <div className='flex min-w-0 flex-1 flex-col'>
-                {!configAgent && !(settingsClaw && !selectedAgent) && <div className={`flex items-center gap-2 px-4 py-2.5 md:hidden ${mobileSidebarOpen ? 'bg-[#0a0a0f]' : ''}`}>
-                    <button
-                        onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-                        className='rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white'
-                        aria-label={t('chat.openSidebar')}
+                {!configAgent && !(settingsClaw && !selectedAgent) && (
+                    <div
+                        className={`flex items-center gap-2 px-4 py-2.5 md:hidden ${mobileSidebarOpen ? 'bg-background' : ''}`}
                     >
-                        {mobileSidebarOpen ? (
-                            <XIcon className='h-5 w-5' weight='bold' />
-                        ) : (
-                            <ListIcon className='h-5 w-5' weight='bold' />
-                        )}
-                    </button>
-                    <span className='min-w-0 flex-1 truncate text-sm font-medium text-gray-300'>
-                        {mobileLabel}
-                    </span>
-                    {activeAgent && activeClaw && !mobileSidebarOpen && (
                         <button
-                            onClick={() => handleOpenConfig(activeAgent.id, activeClaw.id)}
-                            className='shrink-0 rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white'
+                            onClick={() =>
+                                setMobileSidebarOpen(!mobileSidebarOpen)
+                            }
+                            className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-lg p-1.5 transition-colors'
+                            aria-label={t('chat.openSidebar')}
                         >
-                            <GearSixIcon className='h-4 w-4' weight='bold' />
+                            {mobileSidebarOpen ? (
+                                <XIcon className='h-5 w-5' weight='bold' />
+                            ) : (
+                                <ListIcon className='h-5 w-5' weight='bold' />
+                            )}
                         </button>
-                    )}
-                </div>}
-                <div className='relative flex min-h-0 flex-1 flex-col' onClick={panelOpen ? handleClosePanels : undefined}>
+                        <span className='text-foreground/80 min-w-0 flex-1 truncate text-sm font-medium'>
+                            {mobileLabel}
+                        </span>
+                        {activeAgent && activeClaw && !mobileSidebarOpen && (
+                            <button
+                                onClick={() =>
+                                    handleOpenConfig(
+                                        activeAgent.id,
+                                        activeClaw.id
+                                    )
+                                }
+                                className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground shrink-0 rounded-lg p-1.5 transition-colors'
+                            >
+                                <GearSixIcon
+                                    className='h-4 w-4'
+                                    weight='bold'
+                                />
+                            </button>
+                        )}
+                    </div>
+                )}
+                <div
+                    className='relative flex min-h-0 flex-1 flex-col'
+                    onClick={panelOpen ? handleClosePanels : undefined}
+                >
                     <AnimatePresence>
                         {mobileSidebarOpen && (
                             <>
@@ -209,7 +234,7 @@ const ChatView: FC<ChatViewProps> = ({
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -10 }}
                                     transition={{ duration: 0.15 }}
-                                    className='absolute inset-0 z-30 overflow-y-auto bg-[#0a0a0f] md:hidden'
+                                    className='bg-background absolute inset-0 z-30 overflow-y-auto md:hidden'
                                 >
                                     <ChatSidebar
                                         clawsWithAgents={clawsWithAgents}
@@ -218,7 +243,9 @@ const ChatView: FC<ChatViewProps> = ({
                                         onAgentSelect={handleAgentSelect}
                                         onConfigureAgent={handleOpenConfig}
                                         onCreateAgent={onCreateAgent}
-                                        onOpenClawSettings={handleOpenClawSettings}
+                                        onOpenClawSettings={
+                                            handleOpenClawSettings
+                                        }
                                         onClose={closeMobileSidebar}
                                     />
                                 </motion.div>
@@ -245,7 +272,9 @@ const ChatView: FC<ChatViewProps> = ({
                             subdomain={activeClaw.subdomain}
                             gatewayToken={activeClaw.gatewayToken}
                             agentModel={activeAgent.model}
-                            onConfigure={() => handleOpenConfig(activeAgent.id, activeClaw.id)}
+                            onConfigure={() =>
+                                handleOpenConfig(activeAgent.id, activeClaw.id)
+                            }
                             configureDisabled={!!configAgent}
                         />
                     ) : (
@@ -263,7 +292,9 @@ const ChatView: FC<ChatViewProps> = ({
                         isOnlyAgent={configIsOnlyAgent}
                         gatewayToken={configClaw.gatewayToken}
                         subdomain={configClaw.subdomain}
-                        initialTab={initialAgentTab || AGENT_DETAIL_TABS.CONFIGURATION}
+                        initialTab={
+                            initialAgentTab || AGENT_DETAIL_TABS.CONFIGURATION
+                        }
                         onTabChange={onAgentTabChange}
                         onClose={handleCloseConfig}
                         hideChatTab

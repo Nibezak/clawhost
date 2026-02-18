@@ -28,11 +28,11 @@ const ChatDateSeparator: FC<ChatDateSeparatorProps> = ({ date }): ReactNode => {
 
     return (
         <div className='flex items-center gap-3 py-2'>
-            <div className='h-px flex-1 bg-white/10' />
-            <span className='text-[11px] font-medium text-gray-500'>
+            <div className='bg-border h-px flex-1' />
+            <span className='text-muted-foreground text-[11px] font-medium'>
                 {label}
             </span>
-            <div className='h-px flex-1 bg-white/10' />
+            <div className='bg-border h-px flex-1' />
         </div>
     )
 }

@@ -8,7 +8,7 @@ import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
 import { useProfile } from '@/hooks'
 import { Button, Skeleton } from '@/components/ui'
-import { Logo, UserDropdown } from '@/components'
+import { Logo, ThemeToggle, UserDropdown } from '@/components'
 import { ROUTES } from '@/lib'
 import { LightningIcon, ListIcon, XIcon } from '@phosphor-icons/react'
 
@@ -60,9 +60,9 @@ const Header: FC<HeaderProps> = ({
             <header
                 className={`${isLandingPage ? 'fixed' : 'relative'} left-0 right-0 top-0 z-50 transition-all duration-300 ${
                     mobileMenuOpen
-                        ? 'border-b border-transparent bg-[#0a0a0f] backdrop-blur-xl'
+                        ? 'bg-background border-b border-transparent backdrop-blur-xl'
                         : scrolled
-                          ? 'border-b border-white/10 bg-[#0a0a0f]/80 backdrop-blur-xl'
+                          ? 'border-border bg-background/80 border-b backdrop-blur-xl'
                           : 'border-b border-transparent bg-transparent'
                 }`}
             >
@@ -77,8 +77,8 @@ const Header: FC<HeaderProps> = ({
                                     href={link.href}
                                     className={`text-sm font-medium transition ${
                                         activeSection === link.id
-                                            ? 'text-white'
-                                            : 'text-gray-400 hover:text-white'
+                                            ? 'text-foreground'
+                                            : 'text-muted-foreground hover:text-foreground'
                                     }`}
                                 >
                                     {link.label}
@@ -90,14 +90,15 @@ const Header: FC<HeaderProps> = ({
                     )}
 
                     <div className='flex items-center gap-3'>
+                        <ThemeToggle />
                         {authLoading && !cachedProfile ? (
                             <Button
                                 variant='ghost'
                                 size='sm'
                                 className='pointer-events-none ml-auto flex w-auto items-center gap-2 px-1.5 py-5'
                             >
-                                <Skeleton className='h-7 w-7 shrink-0 rounded-full bg-white/10' />
-                                <Skeleton className='hidden h-4 w-16 rounded bg-white/10 sm:block' />
+                                <Skeleton className='bg-foreground/10 h-7 w-7 shrink-0 rounded-full' />
+                                <Skeleton className='bg-foreground/10 hidden h-4 w-16 rounded sm:block' />
                             </Button>
                         ) : user || cachedProfile ? (
                             <UserDropdown
@@ -109,7 +110,7 @@ const Header: FC<HeaderProps> = ({
                             <div className='flex items-center gap-2'>
                                 <Link
                                     to={ROUTES.LOGIN}
-                                    className='hidden px-3 py-1.5 text-sm text-gray-400 transition hover:text-white sm:block'
+                                    className='text-muted-foreground hover:text-foreground hidden px-3 py-1.5 text-sm transition sm:block'
                                 >
                                     {t('nav.login')}
                                 </Link>
@@ -133,12 +134,15 @@ const Header: FC<HeaderProps> = ({
                                 onClick={() =>
                                     setMobileMenuOpen(!mobileMenuOpen)
                                 }
-                                className='rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white md:hidden'
+                                className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-lg p-1.5 transition-colors md:hidden'
                             >
                                 {mobileMenuOpen ? (
                                     <XIcon className='h-5 w-5' weight='bold' />
                                 ) : (
-                                    <ListIcon className='h-5 w-5' weight='bold' />
+                                    <ListIcon
+                                        className='h-5 w-5'
+                                        weight='bold'
+                                    />
                                 )}
                             </button>
                         )}
@@ -153,7 +157,7 @@ const Header: FC<HeaderProps> = ({
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -10 }}
                                 transition={{ duration: 0.2 }}
-                                className='border-b border-white/10 bg-[#0a0a0f] px-6 pb-6 pt-2 md:hidden'
+                                className='border-border bg-background border-b px-6 pb-6 pt-2 md:hidden'
                             >
                                 <nav className='flex flex-col gap-1'>
                                     {navLinks.map((link) => (
@@ -163,8 +167,8 @@ const Header: FC<HeaderProps> = ({
                                             onClick={closeMobileMenu}
                                             className={`rounded-lg px-3 py-2.5 text-sm font-medium transition ${
                                                 activeSection === link.id
-                                                    ? 'bg-white/10 text-white'
-                                                    : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                                                    ? 'bg-foreground/10 text-foreground'
+                                                    : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'
                                             }`}
                                         >
                                             {link.label}

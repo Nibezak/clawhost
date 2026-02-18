@@ -1,22 +1,46 @@
-import type { ReactNode, KeyboardEvent, ChangeEvent, ForwardRefRenderFunction } from 'react'
-import type { ChatAttachment, ChatImageSource, ChatInputAttachment, ChatInputHandle, ChatInputProps } from '@/ts/Interfaces'
+import type {
+    ReactNode,
+    KeyboardEvent,
+    ChangeEvent,
+    ForwardRefRenderFunction
+} from 'react'
+import type {
+    ChatAttachment,
+    ChatImageSource,
+    ChatInputAttachment,
+    ChatInputHandle,
+    ChatInputProps
+} from '@/ts/Interfaces'
 
-import { useState, useRef, useCallback, useEffect, forwardRef, useImperativeHandle } from 'react'
+import {
+    useState,
+    useRef,
+    useCallback,
+    useEffect,
+    forwardRef,
+    useImperativeHandle
+} from 'react'
 import { t } from '@openclaw/i18n'
-import { PaperPlaneRightIcon, StopIcon, PaperclipIcon, XIcon, MicrophoneIcon } from '@phosphor-icons/react'
+import {
+    PaperPlaneRightIcon,
+    StopIcon,
+    PaperclipIcon,
+    XIcon,
+    MicrophoneIcon
+} from '@phosphor-icons/react'
 import { useSpeechRecognition } from '@/hooks'
 
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
 const DOCUMENT_TYPES = ['application/pdf', 'text/plain']
 const SUPPORTED_TYPES = [...IMAGE_TYPES, ...DOCUMENT_TYPES]
 
-const ChatInputInner: ForwardRefRenderFunction<ChatInputHandle, ChatInputProps> = ({
-    isConnected,
-    isStreaming,
-    onSend,
-    onAbort,
-    allowAttach
-}, ref): ReactNode => {
+const ChatInputInner: ForwardRefRenderFunction<
+    ChatInputHandle,
+    ChatInputProps
+> = (
+    { isConnected, isStreaming, onSend, onAbort, allowAttach },
+    ref
+): ReactNode => {
     const [input, setInput] = useState('')
     const [attachments, setAttachments] = useState<ChatInputAttachment[]>([])
     const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -24,9 +48,9 @@ const ChatInputInner: ForwardRefRenderFunction<ChatInputHandle, ChatInputProps> 
     const typewriterRef = useRef<ReturnType<typeof setTimeout> | null>(null)
     const appendTranscript = useCallback((text: string) => {
         if (typewriterRef.current) clearTimeout(typewriterRef.current)
-        const chars = [...(text)]
+        const chars = [...text]
         let i = 0
-        setInput((prev) => prev ? `${prev} ` : prev)
+        setInput((prev) => (prev ? `${prev} ` : prev))
         const typeNext = () => {
             if (i < chars.length) {
                 setInput((prev) => prev + chars[i])
@@ -43,7 +67,11 @@ const ChatInputInner: ForwardRefRenderFunction<ChatInputHandle, ChatInputProps> 
             if (typewriterRef.current) clearTimeout(typewriterRef.current)
         }
     }, [])
-    const { isRecording, isTranscribing, toggle: toggleVoice } = useSpeechRecognition(appendTranscript)
+    const {
+        isRecording,
+        isTranscribing,
+        toggle: toggleVoice
+    } = useSpeechRecognition(appendTranscript)
 
     const resizeTextarea = useCallback(() => {
         const el = textareaRef.current
@@ -82,39 +110,43 @@ const ChatInputInner: ForwardRefRenderFunction<ChatInputHandle, ChatInputProps> 
         const chatAttachments: ChatAttachment[] = []
         const previews: ChatImageSource[] = []
 
-        const pending = attachments.map((att) =>
-            new Promise<void>((resolve) => {
-                const isImage = IMAGE_TYPES.includes(att.file.type)
-                const reader = new FileReader()
-                reader.onload = () => {
-                    const base64 = (reader.result as string).split(',')[1]
-                    if (base64) {
-                        chatAttachments.push({
-                            type: isImage ? 'image' : 'document',
-                            source: {
+        const pending = attachments.map(
+            (att) =>
+                new Promise<void>((resolve) => {
+                    const isImage = IMAGE_TYPES.includes(att.file.type)
+                    const reader = new FileReader()
+                    reader.onload = () => {
+                        const base64 = (reader.result as string).split(',')[1]
+                        if (base64) {
+                            chatAttachments.push({
+                                type: isImage ? 'image' : 'document',
+                                source: {
+                                    type: 'base64',
+                                    mediaType: att.file.type,
+                                    data: base64,
+                                    filename: att.file.name
+                                }
+                            })
+                            previews.push({
                                 type: 'base64',
                                 mediaType: att.file.type,
-                                data: base64,
+                                data: isImage ? base64 : '',
                                 filename: att.file.name
-                            }
-                        })
-                        previews.push({
-                            type: 'base64',
-                            mediaType: att.file.type,
-                            data: isImage ? base64 : '',
-                            filename: att.file.name
-                        })
+                            })
+                        }
+                        resolve()
                     }
-                    resolve()
-                }
-                reader.onerror = () => resolve()
-                reader.readAsDataURL(att.file)
-            })
+                    reader.onerror = () => resolve()
+                    reader.readAsDataURL(att.file)
+                })
         )
 
         Promise.all(pending).then(() => {
             onSend(
-                input.trim() || (attachments.length > 0 ? attachments.map((a) => a.file.name).join(', ') : ''),
+                input.trim() ||
+                    (attachments.length > 0
+                        ? attachments.map((a) => a.file.name).join(', ')
+                        : ''),
                 chatAttachments.length > 0 ? chatAttachments : undefined,
                 previews.length > 0 ? previews : undefined
             )
@@ -170,7 +202,7 @@ const ChatInputInner: ForwardRefRenderFunction<ChatInputHandle, ChatInputProps> 
     }, [])
 
     return (
-        <div className='border-t border-white/10 p-3'>
+        <div className='border-border border-t p-3'>
             {attachments.length > 0 && (
                 <div className='mb-2 flex flex-wrap gap-2'>
                     {attachments.map((att, idx) => (
@@ -182,15 +214,18 @@ const ChatInputInner: ForwardRefRenderFunction<ChatInputHandle, ChatInputProps> 
                                     className='h-10 w-10 rounded object-cover'
                                 />
                             ) : (
-                                <div className='flex h-10 w-10 items-center justify-center rounded bg-white/10'>
-                                    <span className='text-[9px] text-gray-400'>
-                                        {att.file.name.split('.').pop()?.toUpperCase()}
+                                <div className='bg-foreground/10 flex h-10 w-10 items-center justify-center rounded'>
+                                    <span className='text-muted-foreground text-[9px]'>
+                                        {att.file.name
+                                            .split('.')
+                                            .pop()
+                                            ?.toUpperCase()}
                                     </span>
                                 </div>
                             )}
                             <button
                                 onClick={() => handleRemoveAttachment(idx)}
-                                className='absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#0a0a0f] text-gray-400 ring-1 ring-white/20 transition-colors hover:text-white'
+                                className='bg-background text-muted-foreground ring-border hover:text-foreground absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full ring-1 transition-colors'
                             >
                                 <XIcon className='h-2.5 w-2.5' weight='bold' />
                             </button>
@@ -202,7 +237,7 @@ const ChatInputInner: ForwardRefRenderFunction<ChatInputHandle, ChatInputProps> 
                 <button
                     onClick={handleAttachClick}
                     disabled={!isConnected || !allowAttach}
-                    className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50'
+                    className='border-border bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors disabled:cursor-not-allowed disabled:opacity-50'
                 >
                     <PaperclipIcon className='h-4 w-4' weight='bold' />
                 </button>
@@ -218,16 +253,16 @@ const ChatInputInner: ForwardRefRenderFunction<ChatInputHandle, ChatInputProps> 
                     onClick={toggleVoice}
                     disabled={!isConnected || !allowAttach || isTranscribing}
                     title={t('playground.chatVoiceInput')}
-                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+                    className={`border-border flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
                         isRecording
                             ? 'animate-pulse bg-[#ef5350] text-white'
                             : isTranscribing
-                                ? 'bg-white/10 text-white'
-                                : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                              ? 'bg-foreground/10 text-foreground'
+                              : 'bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground'
                     }`}
                 >
                     {isTranscribing ? (
-                        <div className='h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white' />
+                        <div className='border-foreground/30 border-t-foreground h-4 w-4 animate-spin rounded-full border-2' />
                     ) : (
                         <MicrophoneIcon className='h-4 w-4' weight='bold' />
                     )}
@@ -240,7 +275,7 @@ const ChatInputInner: ForwardRefRenderFunction<ChatInputHandle, ChatInputProps> 
                     rows={1}
                     placeholder={t('playground.chatInputPlaceholder')}
                     disabled={!isConnected || !allowAttach}
-                    className='flex-1 resize-none rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none transition-colors placeholder:text-gray-600 focus:border-[#ef5350]/50 disabled:cursor-not-allowed disabled:opacity-50'
+                    className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground flex-1 resize-none rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-[#ef5350]/50 disabled:cursor-not-allowed disabled:opacity-50'
                 />
                 {isStreaming ? (
                     <button
@@ -252,10 +287,17 @@ const ChatInputInner: ForwardRefRenderFunction<ChatInputHandle, ChatInputProps> 
                 ) : (
                     <button
                         onClick={handleSend}
-                        disabled={!isConnected || !allowAttach || (!input.trim() && attachments.length === 0)}
+                        disabled={
+                            !isConnected ||
+                            !allowAttach ||
+                            (!input.trim() && attachments.length === 0)
+                        }
                         className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#ef5350] text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
                     >
-                        <PaperPlaneRightIcon className='h-4 w-4' weight='bold' />
+                        <PaperPlaneRightIcon
+                            className='h-4 w-4'
+                            weight='bold'
+                        />
                     </button>
                 )}
             </div>

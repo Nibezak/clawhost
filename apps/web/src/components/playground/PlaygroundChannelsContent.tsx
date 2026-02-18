@@ -22,7 +22,12 @@ import {
     CheckIcon
 } from '@phosphor-icons/react'
 import { PanelPlaceholder } from '@/components'
-import { Skeleton, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
+import {
+    Skeleton,
+    Tooltip,
+    TooltipTrigger,
+    TooltipContent
+} from '@/components/ui'
 import { api } from '@/lib'
 import { useUIStore } from '@/lib/store'
 
@@ -126,7 +131,8 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
         if (data) {
             const cleaned: Record<string, ChannelConfig> = {}
             for (const [key, config] of Object.entries(data.channels || {})) {
-                const { applicationId: _, ...rest } = config as ChannelConfig & { applicationId?: string }
+                const { applicationId: _, ...rest } =
+                    config as ChannelConfig & { applicationId?: string }
                 cleaned[key] = rest
             }
             setChannels(cleaned)
@@ -163,10 +169,13 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
         setVisibleSecrets((prev) => ({ ...prev, [fieldId]: !prev[fieldId] }))
     }, [])
 
-    const copyField = useCallback((value: string) => {
-        navigator.clipboard.writeText(value)
-        showToast(t('common.copied'), 'success')
-    }, [showToast])
+    const copyField = useCallback(
+        (value: string) => {
+            navigator.clipboard.writeText(value)
+            showToast(t('common.copied'), 'success')
+        },
+        [showToast]
+    )
 
     const saveMutation = useMutation({
         mutationFn: () => api.updateClawChannels(clawId, { channels }),
@@ -202,7 +211,7 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                 <PanelPlaceholder
                     icon={
                         <ChatCircleIcon
-                            className='h-6 w-6 text-gray-500'
+                            className='text-muted-foreground h-6 w-6'
                             weight='duotone'
                         />
                     }
@@ -216,7 +225,7 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
     return (
         <div className='flex h-full flex-col'>
             <div className='flex-1 overflow-y-auto p-5'>
-                <p className='mb-4 text-[11px] text-gray-500'>
+                <p className='text-muted-foreground mb-4 text-[11px]'>
                     {t('playground.channelsDescription')}
                 </p>
 
@@ -231,7 +240,7 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                                 className={`rounded-lg border transition-colors ${
                                     config.enabled
                                         ? 'border-[#ef5350]/30 bg-[#ef5350]/5'
-                                        : 'border-white/10 bg-white/[0.02]'
+                                        : 'border-border bg-foreground/[0.02]'
                                 }`}
                             >
                                 <button
@@ -243,7 +252,7 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                                         className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
                                             config.enabled
                                                 ? 'border-[#ef5350] bg-[#ef5350]'
-                                                : 'border-white/20 bg-white/5'
+                                                : 'border-border bg-foreground/5'
                                         }`}
                                     >
                                         {config.enabled && (
@@ -253,14 +262,14 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                                             />
                                         )}
                                     </div>
-                                    <Icon className='h-4 w-4 text-gray-400' />
-                                    <span className='text-sm font-medium text-white'>
+                                    <Icon className='text-muted-foreground h-4 w-4' />
+                                    <span className='text-foreground text-sm font-medium'>
                                         {t(def.label)}
                                     </span>
                                 </button>
 
                                 {config.enabled && def.fields.length > 0 && (
-                                    <div className='space-y-3 border-t border-white/5 px-3.5 pb-3.5 pt-3'>
+                                    <div className='border-border space-y-3 border-t px-3.5 pb-3.5 pt-3'>
                                         {def.fields.map((field) => {
                                             const fieldId = `${def.key}-${String(field.key)}`
                                             const isVisible =
@@ -272,37 +281,45 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                                             return (
                                                 <div key={fieldId}>
                                                     <div className='mb-1.5 flex items-center justify-between'>
-                                                        <label className='text-[11px] font-medium text-gray-400'>
+                                                        <label className='text-muted-foreground text-[11px] font-medium'>
                                                             {t(field.label)}
                                                             {field.required && (
-                                                                <span className='ml-0.5 text-red-400'>
+                                                                <span className='ml-0.5 text-red-600 dark:text-red-400'>
                                                                     *
                                                                 </span>
                                                             )}
                                                         </label>
                                                         <div className='flex items-center gap-1'>
                                                             <Tooltip>
-                                                                <TooltipTrigger asChild>
+                                                                <TooltipTrigger
+                                                                    asChild
+                                                                >
                                                                     <button
                                                                         type='button'
-                                                                        disabled={!value}
+                                                                        disabled={
+                                                                            !value
+                                                                        }
                                                                         onClick={() =>
                                                                             copyField(
                                                                                 value
                                                                             )
                                                                         }
-                                                                        className='rounded p-0.5 text-gray-500 transition-colors hover:text-gray-300 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:text-gray-500'
+                                                                        className='text-muted-foreground hover:text-foreground/80 disabled:hover:text-muted-foreground rounded p-0.5 transition-colors disabled:cursor-not-allowed disabled:opacity-30'
                                                                     >
                                                                         <CopyIcon className='h-3 w-3' />
                                                                     </button>
                                                                 </TooltipTrigger>
                                                                 <TooltipContent>
-                                                                    {t('common.copy')}
+                                                                    {t(
+                                                                        'common.copy'
+                                                                    )}
                                                                 </TooltipContent>
                                                             </Tooltip>
                                                             {field.secret && (
                                                                 <Tooltip>
-                                                                    <TooltipTrigger asChild>
+                                                                    <TooltipTrigger
+                                                                        asChild
+                                                                    >
                                                                         <button
                                                                             type='button'
                                                                             onClick={() =>
@@ -310,7 +327,7 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                                                                                     fieldId
                                                                                 )
                                                                             }
-                                                                            className='rounded p-0.5 text-gray-500 transition-colors hover:text-gray-300'
+                                                                            className='text-muted-foreground hover:text-foreground/80 rounded p-0.5 transition-colors'
                                                                         >
                                                                             {isVisible ? (
                                                                                 <EyeSlashIcon className='h-3 w-3' />
@@ -320,7 +337,13 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                                                                         </button>
                                                                     </TooltipTrigger>
                                                                     <TooltipContent>
-                                                                        {isVisible ? t('common.hide') : t('common.show')}
+                                                                        {isVisible
+                                                                            ? t(
+                                                                                  'common.hide'
+                                                                              )
+                                                                            : t(
+                                                                                  'common.show'
+                                                                              )}
                                                                     </TooltipContent>
                                                                 </Tooltip>
                                                             )}
@@ -346,7 +369,7 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                                                         placeholder={t(
                                                             field.placeholder
                                                         )}
-                                                        className='w-full rounded-md border border-white/10 bg-white/5 px-2.5 py-1.5 font-mono text-[11px] text-white outline-none transition-colors placeholder:text-gray-600 focus:border-[#ef5350]/50'
+                                                        className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-2.5 py-1.5 font-mono text-[11px] outline-none transition-colors focus:border-[#ef5350]/50'
                                                     />
                                                 </div>
                                             )
@@ -359,7 +382,7 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                 </div>
             </div>
 
-            <div className='border-t border-white/10 p-4'>
+            <div className='border-border border-t p-4'>
                 <button
                     onClick={() => saveMutation.mutate()}
                     disabled={saveMutation.isPending || !hasChanges}

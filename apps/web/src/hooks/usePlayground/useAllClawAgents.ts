@@ -10,7 +10,10 @@ const useAllClawAgents = (claws: Claw[]) => {
         queries: claws.map((claw) => ({
             queryKey: [PLAYGROUND_AGENTS_QUERY_KEY, claw.id],
             queryFn: () => api.getClawAgents(claw.id),
-            enabled: (claw.status === clawStatus.running || claw.status === clawStatus.unreachable) && !!claw.ip,
+            enabled:
+                (claw.status === clawStatus.running ||
+                    claw.status === clawStatus.unreachable) &&
+                !!claw.ip,
             staleTime: 30000,
             gcTime: 60000,
             refetchInterval: 30000,

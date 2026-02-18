@@ -48,7 +48,7 @@ const ClawDiagnosticsContent: FC<ClawDiagnosticsContentProps> = ({
                 <PanelPlaceholder
                     icon={
                         <PulseIcon
-                            className='h-6 w-6 text-gray-500'
+                            className='text-muted-foreground h-6 w-6'
                             weight='duotone'
                         />
                     }
@@ -62,7 +62,7 @@ const ClawDiagnosticsContent: FC<ClawDiagnosticsContentProps> = ({
                         <Skeleton className='h-[42px] w-full rounded-md' />
                     )}
                     {diagnostics.data && hasIssue && (
-                        <div className='flex items-center justify-between rounded-md bg-yellow-950/50 p-3 text-sm text-yellow-400'>
+                        <div className='flex items-center justify-between rounded-md bg-yellow-500/10 p-3 text-sm text-yellow-700 dark:text-yellow-400'>
                             <div className='flex items-center gap-2'>
                                 <WarningIcon className='h-4 w-4 shrink-0' />
                                 {t('dashboard.diagnosticsIssueDetected')}
@@ -70,7 +70,7 @@ const ClawDiagnosticsContent: FC<ClawDiagnosticsContentProps> = ({
                             <Button
                                 size='sm'
                                 variant='outline'
-                                className='shrink-0 border-yellow-400/30 text-yellow-400 hover:bg-yellow-950 hover:text-yellow-300'
+                                className='shrink-0 border-yellow-500/30 text-yellow-700 hover:bg-yellow-500/20 hover:text-yellow-800 dark:text-yellow-400 dark:hover:bg-yellow-500/20 dark:hover:text-yellow-300'
                                 onClick={handleRepair}
                                 disabled={repair.isPending}
                             >
@@ -90,7 +90,7 @@ const ClawDiagnosticsContent: FC<ClawDiagnosticsContentProps> = ({
                         </div>
                     )}
                     {diagnostics.data && !hasIssue && (
-                        <div className='flex items-center gap-2 rounded-md bg-green-950/50 p-3 text-sm text-green-400'>
+                        <div className='flex items-center gap-2 rounded-md bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-400'>
                             <CheckCircleIcon className='h-4 w-4 shrink-0' />
                             {t('dashboard.diagnosticsHealthy')}
                         </div>
@@ -100,9 +100,9 @@ const ClawDiagnosticsContent: FC<ClawDiagnosticsContentProps> = ({
                             {t('dashboard.diagnosticsStatus')}
                         </p>
                         {diagnostics.isPending ? (
-                            <Skeleton className='h-[250px] w-full rounded-md border border-zinc-800' />
+                            <Skeleton className='h-[250px] w-full rounded-md border border-border' />
                         ) : (
-                            <pre className='h-[250px] overflow-auto rounded-md border border-zinc-800 bg-black p-3 text-xs leading-snug text-zinc-300'>
+                            <pre className='h-[250px] overflow-auto rounded-md border border-border bg-muted p-3 text-xs leading-snug text-muted-foreground'>
                                 {diagnostics.data?.service}
                             </pre>
                         )}
@@ -112,9 +112,9 @@ const ClawDiagnosticsContent: FC<ClawDiagnosticsContentProps> = ({
                             {t('dashboard.diagnosticsPort')}
                         </p>
                         {diagnostics.isPending ? (
-                            <Skeleton className='h-[70px] w-full rounded-md border border-zinc-800' />
+                            <Skeleton className='h-[70px] w-full rounded-md border border-border' />
                         ) : (
-                            <pre className='h-[70px] overflow-auto rounded-md border border-zinc-800 bg-black p-3 text-xs leading-snug text-zinc-300'>
+                            <pre className='h-[70px] overflow-auto rounded-md border border-border bg-muted p-3 text-xs leading-snug text-muted-foreground'>
                                 {diagnostics.data?.port}
                             </pre>
                         )}
@@ -124,9 +124,9 @@ const ClawDiagnosticsContent: FC<ClawDiagnosticsContentProps> = ({
                             {t('dashboard.diagnosticsMemory')}
                         </p>
                         {diagnostics.isPending ? (
-                            <Skeleton className='h-[80px] w-full rounded-md border border-zinc-800' />
+                            <Skeleton className='h-[80px] w-full rounded-md border border-border' />
                         ) : (
-                            <pre className='h-[80px] overflow-auto rounded-md border border-zinc-800 bg-black p-3 text-xs leading-snug text-zinc-300'>
+                            <pre className='h-[80px] overflow-auto rounded-md border border-border bg-muted p-3 text-xs leading-snug text-muted-foreground'>
                                 {diagnostics.data?.memory}
                             </pre>
                         )}

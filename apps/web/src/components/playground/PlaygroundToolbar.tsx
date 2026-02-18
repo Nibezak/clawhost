@@ -16,17 +16,20 @@ const PlaygroundToolbar: FC<PlaygroundToolbarProps> = ({
 
     return (
         <div className='absolute bottom-4 left-4 z-10 flex items-center gap-2'>
-            <div className='flex items-center gap-1.5 rounded-lg border border-white/10 bg-[#151518]/90 px-3 py-1.5 backdrop-blur-sm'>
-                <span className='font-mono text-xs text-gray-400'>
+            <div className='border-border bg-popover/90 flex items-center gap-1.5 rounded-lg border px-3 py-1.5 backdrop-blur-sm'>
+                <span className='text-muted-foreground font-mono text-xs'>
                     {t('playground.zoomLabel', { percent: String(percent) })}
                 </span>
             </div>
             {nodesOutOfView ? (
                 <button
                     onClick={onFitView}
-                    className='playground-reset-enter flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-red-400 backdrop-blur-sm transition-colors hover:bg-red-500/20 hover:text-red-300'
+                    className='playground-reset-enter flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-red-600 dark:text-red-400 backdrop-blur-sm transition-colors hover:bg-red-500/20 hover:text-red-500 dark:hover:text-red-300'
                 >
-                    <ArrowCounterClockwiseIcon className='h-4 w-4' weight='bold' />
+                    <ArrowCounterClockwiseIcon
+                        className='h-4 w-4'
+                        weight='bold'
+                    />
                     <span className='text-xs font-medium'>
                         {clawCount === 1
                             ? t('playground.nodeOutOfView')
@@ -36,7 +39,7 @@ const PlaygroundToolbar: FC<PlaygroundToolbarProps> = ({
             ) : isFitView ? (
                 <button
                     disabled
-                    className='flex cursor-default items-center gap-1.5 rounded-lg border border-white/10 bg-[#151518]/90 px-2.5 py-1.5 text-gray-600 backdrop-blur-sm'
+                    className='border-border bg-popover/90 text-muted-foreground flex cursor-default items-center gap-1.5 rounded-lg border px-2.5 py-1.5 backdrop-blur-sm'
                 >
                     <CornersInIcon className='h-4 w-4' weight='bold' />
                 </button>
@@ -45,7 +48,7 @@ const PlaygroundToolbar: FC<PlaygroundToolbarProps> = ({
                     <TooltipTrigger asChild>
                         <button
                             onClick={onFitView}
-                            className='flex items-center gap-1.5 rounded-lg border border-white/10 bg-[#151518]/90 px-2.5 py-1.5 text-gray-400 backdrop-blur-sm transition-colors hover:bg-white/10 hover:text-white'
+                            className='border-border bg-popover/90 text-muted-foreground hover:bg-foreground/10 hover:text-foreground flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 backdrop-blur-sm transition-colors'
                         >
                             <CornersInIcon className='h-4 w-4' weight='bold' />
                         </button>

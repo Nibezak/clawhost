@@ -149,8 +149,11 @@ const api = {
             `/claws/${clawId}/agents/${agentId}/skills`,
             { agentId }
         ),
-    updateAgentSkills: (clawId: string, agentId: string, data: UpdateAgentSkillsData) =>
-        client.put<void>(`/claws/${clawId}/agents/${agentId}/skills`, data),
+    updateAgentSkills: (
+        clawId: string,
+        agentId: string,
+        data: UpdateAgentSkillsData
+    ) => client.put<void>(`/claws/${clawId}/agents/${agentId}/skills`, data),
     browseClawHubSkills: (clawId: string, params: BrowseClawHubData) => {
         const qs = new URLSearchParams()
         if (params.query) qs.set('query', params.query)
@@ -158,7 +161,9 @@ const api = {
         if (params.cursor) qs.set('cursor', params.cursor)
         if (params.agentId) qs.set('agentId', params.agentId)
         const str = qs.toString()
-        return client.get<ClawHubBrowseResponse>(`/claws/${clawId}/clawhub/skills${str ? `?${str}` : ''}`)
+        return client.get<ClawHubBrowseResponse>(
+            `/claws/${clawId}/clawhub/skills${str ? `?${str}` : ''}`
+        )
     },
     getClawHubInstalled: (clawId: string, agentId?: string) =>
         client.post<ClawHubInstalledResponse>(

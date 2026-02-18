@@ -11,6 +11,7 @@ export type {
     PlaygroundDetailTab,
     PlaygroundNodeType,
     SSHKeyModalMode,
+    ThemeMode,
     ToastType,
     UserRole
 } from '@/ts/Types'

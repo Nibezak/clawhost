@@ -17,7 +17,13 @@ const CHANNEL_REQUIRED_FIELDS: Record<string, string[]> = {
 
 const DEPRECATED_CHANNEL_KEYS = ['applicationId']
 
-const SUPPORTED_CHANNELS = new Set(['whatsapp', 'telegram', 'discord', 'slack', 'signal'])
+const SUPPORTED_CHANNELS = new Set([
+    'whatsapp',
+    'telegram',
+    'discord',
+    'slack',
+    'signal'
+])
 
 const sanitizeChannels = (
     channels: Record<string, ChannelConfig>
@@ -26,7 +32,10 @@ const sanitizeChannels = (
 
     for (const [channelKey, channelConfig] of Object.entries(channels)) {
         if (!SUPPORTED_CHANNELS.has(channelKey)) continue
-        const sanitized = { ...channelConfig } as unknown as Record<string, unknown>
+        const sanitized = { ...channelConfig } as unknown as Record<
+            string,
+            unknown
+        >
         for (const key of DEPRECATED_CHANNEL_KEYS) {
             delete sanitized[key]
         }

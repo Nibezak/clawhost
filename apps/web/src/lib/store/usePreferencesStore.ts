@@ -13,18 +13,23 @@ const usePreferencesStore = create<PreferencesState>()(
             adminMode: false,
             setAdminMode: (mode) => set({ adminMode: mode }),
             dashboardTab: DASHBOARD_TABS.CHAT,
-            setDashboardTab: (tab) => set({ dashboardTab: tab })
+            setDashboardTab: (tab) => set({ dashboardTab: tab }),
+            theme: 'dark',
+            setTheme: (theme) => set({ theme })
         }),
         {
             name: STORAGE_KEYS.PREFERENCES,
-            migrate: (persisted) => {
+            migrate: (persisted, version) => {
                 const state = persisted as PreferencesState
                 if (!VALID_TABS.has(state.dashboardTab)) {
                     state.dashboardTab = DASHBOARD_TABS.CHAT
                 }
+                if (version < 2) {
+                    state.theme = state.theme || 'dark'
+                }
                 return state
             },
-            version: 1
+            version: 2
         }
     )
 )

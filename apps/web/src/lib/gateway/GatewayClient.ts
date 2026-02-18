@@ -1,4 +1,8 @@
-import type { GatewayConnectionState, GatewayEventHandler, GatewayStateListener } from '@/ts/Types'
+import type {
+    GatewayConnectionState,
+    GatewayEventHandler,
+    GatewayStateListener
+} from '@/ts/Types'
 import type { GatewayPendingRequest } from '@/ts/Interfaces'
 
 import { getBaseDomain } from '@/lib'

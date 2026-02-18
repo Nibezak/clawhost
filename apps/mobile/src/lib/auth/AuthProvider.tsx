@@ -2,11 +2,7 @@ import type { FC, ReactNode } from 'react'
 import type { AuthProviderProps, FirebaseUser } from '@/ts/Interfaces'
 import type { User } from 'firebase/auth'
 
-import {
-    useState,
-    useEffect,
-    useCallback
-} from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
     onAuthStateChanged,
     signInWithCustomToken,

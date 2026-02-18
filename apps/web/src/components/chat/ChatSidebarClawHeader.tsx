@@ -1,5 +1,9 @@
 import type { FC, ReactNode } from 'react'
-import type { ChatSidebarClawHeaderProps, ClawCardActions, ExportRateLimitError } from '@/ts/Interfaces'
+import type {
+    ChatSidebarClawHeaderProps,
+    ClawCardActions,
+    ExportRateLimitError
+} from '@/ts/Interfaces'
 
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
@@ -180,9 +184,13 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div className='relative flex h-2 w-2 items-center justify-center'>
-                                <div className={`h-1.5 w-1.5 rounded-full ${statusConfig.color}`} />
+                                <div
+                                    className={`h-1.5 w-1.5 rounded-full ${statusConfig.color}`}
+                                />
                                 {statusConfig.pulse && (
-                                    <div className={`absolute h-2 w-2 animate-ping rounded-full ${statusConfig.color} opacity-40`} />
+                                    <div
+                                        className={`absolute h-2 w-2 animate-ping rounded-full ${statusConfig.color} opacity-40`}
+                                    />
                                 )}
                             </div>
                         </TooltipTrigger>
@@ -192,7 +200,7 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                     </Tooltip>
                     <button
                         onClick={() => onOpenClawSettings(claw.id)}
-                        className={`text-[11px] font-medium uppercase tracking-wider transition-colors hover:text-white ${isSelected ? 'text-white' : 'text-gray-500'}`}
+                        className={`hover:text-foreground text-[11px] font-medium uppercase tracking-wider transition-colors ${isSelected ? 'text-foreground' : 'text-muted-foreground'}`}
                     >
                         {claw.name}
                     </button>
@@ -200,14 +208,14 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                 <div className='flex items-center gap-0.5'>
                     <button
                         onClick={() => onOpenClawSettings(claw.id)}
-                        className='shrink-0 rounded-md p-1 text-gray-500 opacity-0 transition-all hover:bg-white/10 hover:text-white group-hover/header:opacity-100'
+                        className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground shrink-0 rounded-md p-1 opacity-0 transition-all group-hover/header:opacity-100'
                     >
                         <GearSixIcon className='h-3.5 w-3.5' weight='bold' />
                     </button>
                     {isReachable && (
                         <button
                             onClick={() => onCreateAgent(claw.id, claw.name)}
-                            className='shrink-0 rounded-md p-1 text-gray-500 opacity-0 transition-all hover:bg-white/10 hover:text-white group-hover/header:opacity-100'
+                            className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground shrink-0 rounded-md p-1 opacity-0 transition-all group-hover/header:opacity-100'
                         >
                             <PlusIcon className='h-3.5 w-3.5' weight='bold' />
                         </button>

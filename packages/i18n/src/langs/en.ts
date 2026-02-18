@@ -23,6 +23,12 @@ export const en = {
         closeNotification: 'Close notification',
         beta: 'Beta'
     },
+    theme: {
+        light: 'Light',
+        dark: 'Dark',
+        system: 'System',
+        toggleTheme: 'Toggle theme'
+    },
     nav: {
         claws: 'Claws',
         playground: 'Playground',
@@ -337,14 +343,16 @@ export const en = {
         manageBilling: 'Manage Billing',
         failedToLoadPortal: 'Failed to open billing portal!',
         connectedAccounts: 'Connected Accounts',
-        connectedAccountsDescription: 'Manage the sign-in methods linked to your account.',
+        connectedAccountsDescription:
+            'Manage the sign-in methods linked to your account.',
         authEmail: 'Email',
         authGoogle: 'Google',
         authGithub: 'GitHub',
         authConnected: 'Connected',
         authConnect: 'Connect',
         authDisconnect: 'Disconnect',
-        emailCannotBeDisconnected: 'Email is always connected as your primary sign-in method.',
+        emailCannotBeDisconnected:
+            'Email is always connected as your primary sign-in method.',
         providerConnected: '{{provider}} connected successfully.',
         providerDisconnected: '{{provider}} disconnected successfully.',
         settings: 'Settings',
@@ -523,7 +531,8 @@ export const en = {
     },
     chat: {
         selectAgent: 'Select an agent',
-        selectAgentDescription: 'Choose an agent from the sidebar to start chatting',
+        selectAgentDescription:
+            'Choose an agent from the sidebar to start chatting',
         noAgents: 'No agents available',
         noAgentsDescription: 'Deploy a claw to start chatting with agents',
         openSidebar: 'Open sidebar',
@@ -712,7 +721,8 @@ export const en = {
         testimonial4Role: 'AI Enthusiast',
         pricing: 'Pricing',
         simpleTransparentPricing: 'Simple, Transparent Pricing',
-        pricingDescription: 'Choose from 45+ servers across our providers based on your needs.',
+        pricingDescription:
+            'Choose from 45+ servers across our providers based on your needs.',
         planColumn: 'Server',
         vCpuColumn: 'vCPU',
         ramColumn: 'RAM',
@@ -824,6 +834,22 @@ export const en = {
             'Native mobile app to monitor and manage your OpenClaw instances on the go',
         upcomingReleaseFeature2:
             'Desktop app for a seamless local experience on macOS, Windows, and Linux',
+        upcomingReleaseFeature3:
+            'Light theme support for mobile and desktop',
+        upcomingReleaseFeature4:
+            'Performance and experience improvements',
+        upcomingReleaseFeature5:
+            'Stability and responsiveness enhancements',
+        release8Date: 'February 18, 2026',
+        release8Title: 'Light Theme, Performance & Stability',
+        release8Description:
+            'Light theme support, performance and experience improvements, and stability and responsiveness enhancements.',
+        release8Feature1:
+            'Light, dark, and system theme modes',
+        release8Feature2:
+            'Performance and experience improvements',
+        release8Feature3:
+            'Stability and responsiveness enhancements',
         release7Date: 'February 16, 2026',
         release7Title: 'Chat Refactoring & Voice Input',
         release7Description:

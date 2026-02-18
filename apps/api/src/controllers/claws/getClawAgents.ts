@@ -21,7 +21,10 @@ const getClawAgents = async (c: AuthenticatedContext) => {
         }
 
         if (!claw.ip || !claw.rootPassword) {
-            await db.update(claws).set({ status: clawStatus.unreachable }).where(eq(claws.id, id))
+            await db
+                .update(claws)
+                .set({ status: clawStatus.unreachable })
+                .where(eq(claws.id, id))
             return ok(
                 c,
                 { agents: [], reachable: false },
@@ -91,12 +94,18 @@ const getClawAgents = async (c: AuthenticatedContext) => {
             }
 
             if (claw.status === clawStatus.unreachable) {
-                await db.update(claws).set({ status: clawStatus.running }).where(eq(claws.id, id))
+                await db
+                    .update(claws)
+                    .set({ status: clawStatus.running })
+                    .where(eq(claws.id, id))
             }
             return ok(c, { agents, reachable: true }, t('api.agentsFetched'))
         } catch {
             if (claw.status === clawStatus.running) {
-                await db.update(claws).set({ status: clawStatus.unreachable }).where(eq(claws.id, id))
+                await db
+                    .update(claws)
+                    .set({ status: clawStatus.unreachable })
+                    .where(eq(claws.id, id))
             }
             return ok(
                 c,

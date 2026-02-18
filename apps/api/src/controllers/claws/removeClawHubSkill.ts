@@ -2,7 +2,11 @@ import type { ClawHubRemoveBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import executeSSH from '@/services/ssh'
-import { findUserClaw, ensureClawHub, BASE_DIR } from '@/controllers/claws/helpers'
+import {
+    findUserClaw,
+    ensureClawHub,
+    BASE_DIR
+} from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
@@ -40,12 +44,7 @@ const removeClawHubSkill = async (c: AuthenticatedContext) => {
 
             cmd = `${cmd} && (openclaw doctor --fix || true) && systemctl restart openclaw-gateway`
 
-            await executeSSH(
-                claw.ip,
-                claw.rootPassword,
-                cmd,
-                35000
-            )
+            await executeSSH(claw.ip, claw.rootPassword, cmd, 35000)
 
             return ok(c, null, t('api.clawHubRemoved'))
         } catch {

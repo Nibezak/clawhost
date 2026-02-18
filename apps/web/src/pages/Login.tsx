@@ -10,7 +10,11 @@ import { useUIStore } from '@/lib/store'
 import { ROUTES } from '@/lib'
 import { Button, Input, Label } from '@/components/ui'
 import { Logo, PageBackground, PageTitle } from '@/components'
-import { EnvelopeIcon, CircleNotchIcon, ArrowLeftIcon } from '@phosphor-icons/react'
+import {
+    EnvelopeIcon,
+    CircleNotchIcon,
+    ArrowLeftIcon
+} from '@phosphor-icons/react'
 import { STORAGE_KEYS } from '@/lib/storageKeys'
 
 const COOLDOWN_KEY = STORAGE_KEYS.OTP_SENT_AT
@@ -221,15 +225,15 @@ const Login: FC = (): ReactNode => {
 
     if (authLoading) {
         return (
-            <div className='relative flex min-h-screen items-center justify-center bg-[#0a0a0f] px-4 text-white'>
+            <div className='bg-background text-foreground relative flex min-h-screen items-center justify-center px-4'>
                 <PageBackground />
-                <CircleNotchIcon className='h-8 w-8 animate-spin text-white/50' />
+                <CircleNotchIcon className='text-foreground/50 h-8 w-8 animate-spin' />
             </div>
         )
     }
 
     return (
-        <div className='relative flex min-h-screen items-center justify-center bg-[#0a0a0f] px-4 pb-24 text-white'>
+        <div className='bg-background text-foreground relative flex min-h-screen items-center justify-center px-4 pb-24'>
             <PageTitle
                 title={
                     step === 'email'
@@ -249,18 +253,18 @@ const Login: FC = (): ReactNode => {
                     <div className='mb-6'>
                         <Logo />
                     </div>
-                    <p className='text-gray-400'>
+                    <p className='text-muted-foreground'>
                         {t('auth.signInToDeployOpenClaw')}
                     </p>
                 </div>
 
                 {step === 'email' ? (
-                    <div className='rounded-xl border border-white/10 bg-white/[0.02] p-8 backdrop-blur-sm'>
+                    <div className='border-border bg-foreground/[0.02] rounded-xl border p-8 backdrop-blur-sm'>
                         <form onSubmit={handleSubmit} className='space-y-5'>
                             <div className='space-y-2'>
                                 <Label
                                     htmlFor='email'
-                                    className='text-gray-300'
+                                    className='text-foreground/80'
                                 >
                                     {t('auth.emailAddress')}
                                 </Label>
@@ -272,7 +276,7 @@ const Login: FC = (): ReactNode => {
                                     placeholder={t('auth.emailPlaceholder')}
                                     required
                                     disabled={!!loadingMethod}
-                                    className='h-11 border-white/10 bg-white/5 text-white placeholder:text-gray-500 focus:border-[#ef5350]/50 focus:ring-[#ef5350]/20'
+                                    className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground h-11 focus:border-[#ef5350]/50 focus:ring-[#ef5350]/20'
                                 />
                             </div>
 
@@ -292,24 +296,24 @@ const Login: FC = (): ReactNode => {
                                     : t('auth.continueWithEmail')}
                             </Button>
 
-                            <p className='text-center text-sm text-gray-500'>
+                            <p className='text-muted-foreground text-center text-sm'>
                                 {t('auth.otpDescription')}
                             </p>
                         </form>
 
                         <div className='mt-6 flex items-center gap-3'>
-                            <div className='h-px flex-1 bg-white/10' />
-                            <span className='text-sm text-gray-500'>
+                            <div className='bg-foreground/10 h-px flex-1' />
+                            <span className='text-muted-foreground text-sm'>
                                 {t('auth.or')}
                             </span>
-                            <div className='h-px flex-1 bg-white/10' />
+                            <div className='bg-foreground/10 h-px flex-1' />
                         </div>
 
                         <div className='mt-6 space-y-3'>
                             <button
                                 onClick={() => handleOAuth('google')}
                                 disabled={!!loadingMethod}
-                                className='flex h-11 w-full items-center justify-center gap-3 rounded-lg border border-white/10 bg-white/5 text-sm font-medium text-white transition-colors hover:bg-white/10 disabled:opacity-50'
+                                className='border-border bg-foreground/5 text-foreground hover:bg-foreground/10 flex h-11 w-full items-center justify-center gap-3 rounded-lg border text-sm font-medium transition-colors disabled:opacity-50'
                             >
                                 {loadingMethod === 'google' ? (
                                     <CircleNotchIcon className='h-[18px] w-[18px] animate-spin' />
@@ -342,7 +346,7 @@ const Login: FC = (): ReactNode => {
                             <button
                                 onClick={() => handleOAuth('github')}
                                 disabled={!!loadingMethod}
-                                className='flex h-11 w-full items-center justify-center gap-3 rounded-lg border border-white/10 bg-white/5 text-sm font-medium text-white transition-colors hover:bg-white/10 disabled:opacity-50'
+                                className='border-border bg-foreground/5 text-foreground hover:bg-foreground/10 flex h-11 w-full items-center justify-center gap-3 rounded-lg border text-sm font-medium transition-colors disabled:opacity-50'
                             >
                                 {loadingMethod === 'github' ? (
                                     <CircleNotchIcon className='h-[18px] w-[18px] animate-spin' />
@@ -351,7 +355,7 @@ const Login: FC = (): ReactNode => {
                                         width='18'
                                         height='18'
                                         viewBox='0 0 24 24'
-                                        fill='white'
+                                        fill='currentColor'
                                     >
                                         <path d='M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z' />
                                     </svg>
@@ -360,43 +364,43 @@ const Login: FC = (): ReactNode => {
                             </button>
                         </div>
 
-                        <p className='mt-6 text-center text-xs text-gray-500'>
+                        <p className='text-muted-foreground mt-6 text-center text-xs'>
                             {t('auth.agreementNotice')}{' '}
                             <Link
                                 to={ROUTES.TERMS}
-                                className='text-gray-400 underline hover:text-white'
+                                className='text-muted-foreground hover:text-foreground underline'
                             >
                                 {t('auth.termsOfService')}
                             </Link>{' '}
                             {t('auth.andWord')}{' '}
                             <Link
                                 to={ROUTES.PRIVACY}
-                                className='text-gray-400 underline hover:text-white'
+                                className='text-muted-foreground hover:text-foreground underline'
                             >
                                 {t('auth.privacyPolicy')}
                             </Link>
                         </p>
                     </div>
                 ) : (
-                    <div className='rounded-xl border border-white/10 bg-white/[0.02] p-8 backdrop-blur-sm'>
+                    <div className='border-border bg-foreground/[0.02] rounded-xl border p-8 backdrop-blur-sm'>
                         <button
                             onClick={handleChangeEmail}
                             disabled={!!loadingMethod}
-                            className='mb-4 flex items-center gap-1 text-sm text-gray-400 transition-colors hover:text-white disabled:opacity-50'
+                            className='text-muted-foreground hover:text-foreground mb-4 flex items-center gap-1 text-sm transition-colors disabled:opacity-50'
                         >
                             <ArrowLeftIcon className='h-4 w-4' />
                         </button>
 
                         <div className='text-center'>
-                            <div className='mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-white/5'>
+                            <div className='bg-foreground/5 mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full'>
                                 <EnvelopeIcon className='h-8 w-8 text-[#ef5350]' />
                             </div>
                             <h1 className='font-clash mb-2 text-2xl font-bold'>
                                 {t('auth.checkYourEmailHeading')}
                             </h1>
-                            <p className='mb-6 text-sm text-gray-400'>
+                            <p className='text-muted-foreground mb-6 text-sm'>
                                 {t('auth.codeSentTo')}{' '}
-                                <span className='font-medium text-white'>
+                                <span className='text-foreground font-medium'>
                                     {email}
                                 </span>
                             </p>
@@ -420,12 +424,12 @@ const Login: FC = (): ReactNode => {
                                         handleCodeKeyDown(e.key, index)
                                     }
                                     disabled={!!loadingMethod}
-                                    className={`font-clash h-12 w-11 rounded-lg border bg-white/5 text-center text-lg font-bold text-white focus:outline-none focus:ring-1 ${
+                                    className={`font-clash bg-foreground/5 text-foreground h-12 w-11 rounded-lg border text-center text-lg font-bold focus:outline-none focus:ring-1 ${
                                         codeError
                                             ? 'border-red-500 focus:ring-red-500/20'
                                             : digit
                                               ? 'border-[#ef5350] focus:ring-[#ef5350]/20'
-                                              : 'border-white/10 focus:border-[#ef5350]/50 focus:ring-[#ef5350]/20'
+                                              : 'border-border focus:border-[#ef5350]/50 focus:ring-[#ef5350]/20'
                                     }`}
                                 />
                             ))}
@@ -448,7 +452,7 @@ const Login: FC = (): ReactNode => {
                         <button
                             onClick={handleResend}
                             disabled={cooldown > 0 || !!loadingMethod}
-                            className='mt-4 flex w-full items-center justify-center gap-2 text-sm text-gray-500 transition-colors hover:text-gray-300 disabled:opacity-50'
+                            className='text-muted-foreground hover:text-foreground/80 mt-4 flex w-full items-center justify-center gap-2 text-sm transition-colors disabled:opacity-50'
                         >
                             {loadingMethod === 'resend' ? (
                                 <CircleNotchIcon className='h-3.5 w-3.5 animate-spin' />

@@ -160,7 +160,7 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
 
                 <div className='flex-1 space-y-5 overflow-y-auto px-6 pb-6'>
                     <div>
-                        <label className='mb-2 block text-xs font-medium text-gray-400'>
+                        <label className='text-muted-foreground mb-2 block text-xs font-medium'>
                             {t('playground.addAgentName')}
                         </label>
                         <input
@@ -170,22 +170,22 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                             placeholder={t(
                                 'playground.addAgentNamePlaceholder'
                             )}
-                            className={`w-full rounded-md border bg-white/5 px-3 py-2 text-sm text-white outline-none transition-colors placeholder:text-gray-600 focus:border-[#ef5350]/50 ${
+                            className={`bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors focus:border-[#ef5350]/50 ${
                                 nameError
                                     ? 'border-red-500/50'
-                                    : 'border-white/10'
+                                    : 'border-border'
                             }`}
                             autoFocus
                         />
                         {nameError && (
-                            <p className='mt-1.5 text-[11px] text-red-400'>
+                            <p className='mt-1.5 text-[11px] text-red-600 dark:text-red-400'>
                                 {t(nameError)}
                             </p>
                         )}
                     </div>
 
                     <div>
-                        <label className='mb-2 block text-xs font-medium text-gray-400'>
+                        <label className='text-muted-foreground mb-2 block text-xs font-medium'>
                             {t('playground.addAgentModel')}
                         </label>
                         <Select
@@ -197,7 +197,7 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                                 placeholder={t(
                                     'playground.addAgentModelPlaceholder'
                                 )}
-                                className='h-9 border-white/10 bg-white/5 text-sm text-white'
+                                className='border-border bg-foreground/5 text-foreground h-9 text-sm'
                             />
                             <SelectContent className='max-h-[300px] overflow-y-auto'>
                                 {providerKeys.map((provider, index) => (
@@ -227,15 +227,17 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                     {selectedModelOption && (
                         <div>
                             <div className='mb-2 flex items-center justify-between'>
-                                <label className='text-xs font-medium text-gray-400'>
+                                <label className='text-muted-foreground text-xs font-medium'>
                                     {t('playground.addAgentApiKey')}
                                 </label>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
                                         <button
                                             type='button'
-                                            onClick={() => setShowApiKey(!showApiKey)}
-                                            className='rounded p-1 text-gray-500 transition-colors hover:text-gray-300'
+                                            onClick={() =>
+                                                setShowApiKey(!showApiKey)
+                                            }
+                                            className='text-muted-foreground hover:text-foreground/80 rounded p-1 transition-colors'
                                         >
                                             {showApiKey ? (
                                                 <EyeSlashIcon className='h-3.5 w-3.5' />
@@ -245,7 +247,9 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                                         </button>
                                     </TooltipTrigger>
                                     <TooltipContent>
-                                        {showApiKey ? t('common.hide') : t('common.show')}
+                                        {showApiKey
+                                            ? t('common.hide')
+                                            : t('common.show')}
                                     </TooltipContent>
                                 </Tooltip>
                             </div>
@@ -256,10 +260,10 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                                 placeholder={t(
                                     'playground.addAgentApiKeyPlaceholder'
                                 )}
-                                className='w-full rounded-md border border-white/10 bg-white/5 px-3 py-2 font-mono text-[11px] text-white outline-none transition-colors placeholder:text-gray-600 focus:border-[#ef5350]/50'
+                                className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 font-mono text-[11px] outline-none transition-colors focus:border-[#ef5350]/50'
                             />
-                            <p className='mt-1.5 text-[11px] text-gray-600'>
-                                <span className='font-mono text-gray-500'>
+                            <p className='text-muted-foreground mt-1.5 text-[11px]'>
+                                <span className='text-muted-foreground font-mono'>
                                     {selectedModelOption.envVar}
                                 </span>
                             </p>
@@ -267,10 +271,10 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                     )}
                 </div>
 
-                <div className='flex justify-end gap-3 border-t border-white/10 px-6 py-4'>
+                <div className='border-border flex justify-end gap-3 border-t px-6 py-4'>
                     <button
                         onClick={() => handleOpenChange(false)}
-                        className='rounded-lg px-4 py-2 text-sm font-medium text-gray-400 transition-colors hover:text-white'
+                        className='text-muted-foreground hover:text-foreground rounded-lg px-4 py-2 text-sm font-medium transition-colors'
                     >
                         {t('common.cancel')}
                     </button>

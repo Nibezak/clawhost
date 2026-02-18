@@ -59,10 +59,26 @@ const deletingAgentIds = new Set<string>()
 let skipAgentDeleteConfirmation = false
 
 const tabs: PlaygroundTabConfig<PlaygroundAgentDetailTab>[] = [
-    { id: AGENT_DETAIL_TABS.CHAT, label: 'playground.tabChat', icon: ChatCircleIcon },
-    { id: AGENT_DETAIL_TABS.CHANNELS, label: 'playground.tabChannels', icon: ChatsCircleIcon },
-    { id: AGENT_DETAIL_TABS.SKILLS, label: 'playground.tabSkills', icon: LightningIcon },
-    { id: AGENT_DETAIL_TABS.CONFIGURATION, label: 'playground.tabSettings', icon: GearSixIcon }
+    {
+        id: AGENT_DETAIL_TABS.CHAT,
+        label: 'playground.tabChat',
+        icon: ChatCircleIcon
+    },
+    {
+        id: AGENT_DETAIL_TABS.CHANNELS,
+        label: 'playground.tabChannels',
+        icon: ChatsCircleIcon
+    },
+    {
+        id: AGENT_DETAIL_TABS.SKILLS,
+        label: 'playground.tabSkills',
+        icon: LightningIcon
+    },
+    {
+        id: AGENT_DETAIL_TABS.CONFIGURATION,
+        label: 'playground.tabSettings',
+        icon: GearSixIcon
+    }
 ]
 
 const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
@@ -79,12 +95,20 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
     hideChatTab
 }): ReactNode => {
     const visibleTabs = useMemo(
-        () => (hideChatTab ? tabs.filter((tab) => tab.id !== AGENT_DETAIL_TABS.CHAT) : tabs),
+        () =>
+            hideChatTab
+                ? tabs.filter((tab) => tab.id !== AGENT_DETAIL_TABS.CHAT)
+                : tabs,
         [hideChatTab]
     )
-    const defaultTab = hideChatTab ? AGENT_DETAIL_TABS.CHANNELS : AGENT_DETAIL_TABS.CHAT
+    const defaultTab = hideChatTab
+        ? AGENT_DETAIL_TABS.CHANNELS
+        : AGENT_DETAIL_TABS.CHAT
     const rawActiveTab = agentTabStateMap[agent.id] || defaultTab
-    const activeTab = hideChatTab && rawActiveTab === AGENT_DETAIL_TABS.CHAT ? AGENT_DETAIL_TABS.CHANNELS : rawActiveTab
+    const activeTab =
+        hideChatTab && rawActiveTab === AGENT_DETAIL_TABS.CHAT
+            ? AGENT_DETAIL_TABS.CHANNELS
+            : rawActiveTab
     const setActiveTab = useCallback(
         (tab: PlaygroundAgentDetailTab) => {
             agentTabStateMap[agent.id] = tab
@@ -370,49 +394,68 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'tween', duration: 0.2 }}
-            className={isExpanded ? 'fixed inset-0 z-50 overflow-hidden' : 'fixed inset-0 z-40 overflow-hidden md:relative md:inset-auto md:z-auto md:h-full md:w-[380px] md:shrink-0'}
+            className={
+                isExpanded
+                    ? 'fixed inset-0 z-50 overflow-hidden'
+                    : 'fixed inset-0 z-40 overflow-hidden md:relative md:inset-auto md:z-auto md:h-full md:w-[380px] md:shrink-0'
+            }
         >
-            <div className='flex h-full w-full flex-col bg-[#0a0a0f] md:border-l md:border-white/10 md:bg-[#0a0a0f]/95 md:backdrop-blur-xl'>
-                <div className='flex items-center justify-between border-b border-white/10 px-5 py-2.5'>
+            <div className='bg-background md:border-border md:bg-background/95 flex h-full w-full flex-col md:border-l md:backdrop-blur-xl'>
+                <div className='border-border flex items-center justify-between border-b px-5 py-2.5'>
                     <div className='flex items-center gap-2.5'>
                         <ClawAvatar />
                         <div className='space-y-0'>
-                            <h3 className='text-sm font-semibold leading-tight text-white'>
+                            <h3 className='text-foreground text-sm font-semibold leading-tight'>
                                 {agent.name}
                             </h3>
-                            <span className='block text-xs leading-tight text-gray-500'>
+                            <span className='text-muted-foreground block text-xs leading-tight'>
                                 {t('playground.agentOnClaw', { clawName })}
                             </span>
                         </div>
                     </div>
                     <div className='flex items-center gap-1'>
-                        {!hideChatTab && (activeTab === AGENT_DETAIL_TABS.CHAT || isExpanded) && (
-                            <button
-                                onClick={() => setIsExpanded(!isExpanded)}
-                                className='rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white'
-                            >
-                                {isExpanded ? (
-                                    <ArrowsInIcon className='h-4 w-4' weight='bold' />
-                                ) : (
-                                    <ArrowsOutIcon className='h-4 w-4' weight='bold' />
-                                )}
-                            </button>
-                        )}
-                        {!readOnly && (
-                            agent.id === 'main' || isOnlyAgent ? (
+                        {!hideChatTab &&
+                            (activeTab === AGENT_DETAIL_TABS.CHAT ||
+                                isExpanded) && (
+                                <button
+                                    onClick={() => setIsExpanded(!isExpanded)}
+                                    className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-lg p-1.5 transition-colors'
+                                >
+                                    {isExpanded ? (
+                                        <ArrowsInIcon
+                                            className='h-4 w-4'
+                                            weight='bold'
+                                        />
+                                    ) : (
+                                        <ArrowsOutIcon
+                                            className='h-4 w-4'
+                                            weight='bold'
+                                        />
+                                    )}
+                                </button>
+                            )}
+                        {!readOnly &&
+                            (agent.id === 'main' || isOnlyAgent ? (
                                 <Tooltip>
                                     <TooltipTrigger asChild>
                                         <span className='inline-flex'>
                                             <button
                                                 disabled
-                                                className='cursor-not-allowed rounded-lg p-1.5 text-gray-500 opacity-50 transition-colors'
+                                                className='text-muted-foreground cursor-not-allowed rounded-lg p-1.5 opacity-50 transition-colors'
                                             >
-                                                <TrashIcon className='h-4 w-4' weight='bold' />
+                                                <TrashIcon
+                                                    className='h-4 w-4'
+                                                    weight='bold'
+                                                />
                                             </button>
                                         </span>
                                     </TooltipTrigger>
                                     <TooltipContent side='bottom'>
-                                        <p>{t('playground.cannotDeleteDefaultAgent')}</p>
+                                        <p>
+                                            {t(
+                                                'playground.cannotDeleteDefaultAgent'
+                                            )}
+                                        </p>
                                     </TooltipContent>
                                 </Tooltip>
                             ) : (
@@ -421,19 +464,21 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                                         !isDeleting && handleDeleteClick()
                                     }
                                     disabled={isDeleting}
-                                    className='rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed'
+                                    className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-lg p-1.5 transition-colors disabled:cursor-not-allowed'
                                 >
                                     {isDeleting ? (
-                                        <CircleNotchIcon className='h-4 w-4 animate-spin text-white' />
+                                        <CircleNotchIcon className='text-foreground h-4 w-4 animate-spin' />
                                     ) : (
-                                        <TrashIcon className='h-4 w-4' weight='bold' />
+                                        <TrashIcon
+                                            className='h-4 w-4'
+                                            weight='bold'
+                                        />
                                     )}
                                 </button>
-                            )
-                        )}
+                            ))}
                         <button
                             onClick={onClose}
-                            className='rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white'
+                            className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-lg p-1.5 transition-colors'
                         >
                             <XIcon className='h-4 w-4' weight='bold' />
                         </button>
@@ -449,21 +494,23 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                             transition={{ duration: 0.2, ease: 'easeInOut' }}
                             className='overflow-hidden'
                         >
-                            <div className='flex border-b border-white/10'>
+                            <div className='border-border flex border-b'>
                                 {visibleTabs.map((tab) => (
                                     <button
                                         key={tab.id}
                                         onClick={() => setActiveTab(tab.id)}
                                         className={`flex flex-1 items-center justify-center gap-1.5 border-b-2 px-3 py-2 text-xs font-medium transition-colors ${
                                             activeTab === tab.id
-                                                ? 'border-[#ef5350] text-white'
-                                                : 'border-transparent text-gray-500 hover:text-gray-300'
+                                                ? 'text-foreground border-[#ef5350]'
+                                                : 'text-muted-foreground hover:text-foreground/80 border-transparent'
                                         }`}
                                     >
                                         <tab.icon
                                             className='h-3.5 w-3.5'
                                             weight={
-                                                activeTab === tab.id ? 'fill' : 'regular'
+                                                activeTab === tab.id
+                                                    ? 'fill'
+                                                    : 'regular'
                                             }
                                         />
                                         {t(tab.label as TranslationKey)}
@@ -487,9 +534,10 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                         />
                     )}
 
-                    {!isExpanded && activeTab === AGENT_DETAIL_TABS.CHANNELS && (
-                        <PlaygroundChannelsContent clawId={clawId} />
-                    )}
+                    {!isExpanded &&
+                        activeTab === AGENT_DETAIL_TABS.CHANNELS && (
+                            <PlaygroundChannelsContent clawId={clawId} />
+                        )}
 
                     {!isExpanded && activeTab === AGENT_DETAIL_TABS.SKILLS && (
                         <PlaygroundSkillsContent
@@ -498,240 +546,269 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                         />
                     )}
 
-                    {!isExpanded && activeTab === AGENT_DETAIL_TABS.CONFIGURATION && (
-                        <div className='h-full overflow-y-auto p-5'>
-                            {isConfigLoading ? (
-                                <div className='space-y-5'>
-                                    <div>
-                                        <Skeleton className='mb-2 h-4 w-16' />
-                                        <Skeleton className='h-9 w-full rounded-md' />
-                                        <Skeleton className='mt-1.5 h-3 w-48' />
-                                    </div>
-                                    <div>
-                                        <Skeleton className='mb-2 h-4 w-14' />
-                                        <Skeleton className='h-9 w-full rounded-md' />
-                                        <Skeleton className='mt-1.5 h-3 w-56' />
-                                    </div>
-                                    <Skeleton className='h-10 w-full rounded-lg' />
-                                </div>
-                            ) : isConfigError ? (
-                                <PanelPlaceholder
-                                    icon={
-                                        <GearSixIcon
-                                            className='h-6 w-6 text-gray-500'
-                                            weight='duotone'
-                                        />
-                                    }
-                                    title={t(
-                                        'playground.configurationLoadFailed'
-                                    )}
-                                    description={t(
-                                        'playground.configurationLoadFailedDescription'
-                                    )}
-                                />
-                            ) : (
-                                <div className='space-y-5'>
-                                    <div>
-                                        <label className='mb-2 block text-xs font-medium text-gray-400'>
-                                            {t('playground.configurationName')}
-                                        </label>
-                                        <input
-                                            type='text'
-                                            value={agentName}
-                                            onChange={(e) =>
-                                                handleNameChange(e.target.value)
-                                            }
-                                            placeholder={t(
-                                                'playground.configurationNamePlaceholder'
-                                            )}
-                                            className={`w-full rounded-md border bg-white/5 px-3 py-2 text-sm text-white outline-none transition-colors placeholder:text-gray-600 focus:border-[#ef5350]/50 ${
-                                                nameError
-                                                    ? 'border-red-500/50'
-                                                    : 'border-white/10'
-                                            }`}
-                                        />
-                                        {nameError ? (
-                                            <p className='mt-1.5 text-[11px] text-red-400'>
-                                                {t(nameError)}
-                                            </p>
-                                        ) : (
-                                            <p className='mt-1.5 text-[11px] text-gray-600'>
-                                                {t(
-                                                    'playground.configurationNameDescription'
-                                                )}
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    <div>
-                                        <label className='mb-2 block text-xs font-medium text-gray-400'>
-                                            {t('playground.configurationModel')}
-                                        </label>
-                                        <Select
-                                            value={selectedModel}
-                                            onValueChange={handleModelChange}
-                                            displayValue={
-                                                selectedModelOption?.name
-                                            }
-                                        >
-                                            <SelectTrigger
-                                                placeholder={t(
-                                                    'playground.configurationModelPlaceholder'
-                                                )}
-                                                className='h-9 border-white/10 bg-white/5 text-sm text-white'
-                                            />
-                                            <SelectContent className='max-h-[300px] overflow-y-auto'>
-                                                {providerKeys.map(
-                                                    (provider, index) => (
-                                                        <SelectGroup
-                                                            key={provider}
-                                                            label={provider}
-                                                            isLast={
-                                                                index ===
-                                                                providerKeys.length -
-                                                                    1
-                                                            }
-                                                        >
-                                                            {modelsByProvider[
-                                                                provider
-                                                            ].map((model) => (
-                                                                <SelectItem
-                                                                    key={
-                                                                        model.id
-                                                                    }
-                                                                    value={
-                                                                        model.id
-                                                                    }
-                                                                >
-                                                                    {model.name}
-                                                                </SelectItem>
-                                                            ))}
-                                                        </SelectGroup>
-                                                    )
-                                                )}
-                                            </SelectContent>
-                                        </Select>
-                                        <p className='mt-1.5 text-[11px] text-gray-600'>
-                                            {t(
-                                                'playground.configurationModelDescription'
-                                            )}
-                                        </p>
-                                    </div>
-
-                                    {selectedModelOption && (
+                    {!isExpanded &&
+                        activeTab === AGENT_DETAIL_TABS.CONFIGURATION && (
+                            <div className='h-full overflow-y-auto p-5'>
+                                {isConfigLoading ? (
+                                    <div className='space-y-5'>
                                         <div>
-                                            <div className='mb-2 flex items-center justify-between'>
-                                                <label className='text-xs font-medium text-gray-400'>
+                                            <Skeleton className='mb-2 h-4 w-16' />
+                                            <Skeleton className='h-9 w-full rounded-md' />
+                                            <Skeleton className='mt-1.5 h-3 w-48' />
+                                        </div>
+                                        <div>
+                                            <Skeleton className='mb-2 h-4 w-14' />
+                                            <Skeleton className='h-9 w-full rounded-md' />
+                                            <Skeleton className='mt-1.5 h-3 w-56' />
+                                        </div>
+                                        <Skeleton className='h-10 w-full rounded-lg' />
+                                    </div>
+                                ) : isConfigError ? (
+                                    <PanelPlaceholder
+                                        icon={
+                                            <GearSixIcon
+                                                className='text-muted-foreground h-6 w-6'
+                                                weight='duotone'
+                                            />
+                                        }
+                                        title={t(
+                                            'playground.configurationLoadFailed'
+                                        )}
+                                        description={t(
+                                            'playground.configurationLoadFailedDescription'
+                                        )}
+                                    />
+                                ) : (
+                                    <div className='space-y-5'>
+                                        <div>
+                                            <label className='text-muted-foreground mb-2 block text-xs font-medium'>
+                                                {t(
+                                                    'playground.configurationName'
+                                                )}
+                                            </label>
+                                            <input
+                                                type='text'
+                                                value={agentName}
+                                                onChange={(e) =>
+                                                    handleNameChange(
+                                                        e.target.value
+                                                    )
+                                                }
+                                                placeholder={t(
+                                                    'playground.configurationNamePlaceholder'
+                                                )}
+                                                className={`bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors focus:border-[#ef5350]/50 ${
+                                                    nameError
+                                                        ? 'border-red-500/50'
+                                                        : 'border-border'
+                                                }`}
+                                            />
+                                            {nameError ? (
+                                                <p className='mt-1.5 text-[11px] text-red-600 dark:text-red-400'>
+                                                    {t(nameError)}
+                                                </p>
+                                            ) : (
+                                                <p className='text-muted-foreground mt-1.5 text-[11px]'>
                                                     {t(
-                                                        'playground.configurationApiKey'
+                                                        'playground.configurationNameDescription'
                                                     )}
-                                                </label>
-                                                <div className='flex items-center gap-1'>
-                                                    <Tooltip>
-                                                        <TooltipTrigger asChild>
-                                                            <button
-                                                                type='button'
-                                                                onClick={() =>
-                                                                    setShowApiKey(
-                                                                        !showApiKey
-                                                                    )
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        <div>
+                                            <label className='text-muted-foreground mb-2 block text-xs font-medium'>
+                                                {t(
+                                                    'playground.configurationModel'
+                                                )}
+                                            </label>
+                                            <Select
+                                                value={selectedModel}
+                                                onValueChange={
+                                                    handleModelChange
+                                                }
+                                                displayValue={
+                                                    selectedModelOption?.name
+                                                }
+                                            >
+                                                <SelectTrigger
+                                                    placeholder={t(
+                                                        'playground.configurationModelPlaceholder'
+                                                    )}
+                                                    className='border-border bg-foreground/5 text-foreground h-9 text-sm'
+                                                />
+                                                <SelectContent className='max-h-[300px] overflow-y-auto'>
+                                                    {providerKeys.map(
+                                                        (provider, index) => (
+                                                            <SelectGroup
+                                                                key={provider}
+                                                                label={provider}
+                                                                isLast={
+                                                                    index ===
+                                                                    providerKeys.length -
+                                                                        1
                                                                 }
-                                                                className='rounded p-1 text-gray-500 transition-colors hover:text-gray-300'
                                                             >
-                                                                {showApiKey ? (
-                                                                    <EyeSlashIcon className='h-3.5 w-3.5' />
-                                                                ) : (
-                                                                    <EyeIcon className='h-3.5 w-3.5' />
+                                                                {modelsByProvider[
+                                                                    provider
+                                                                ].map(
+                                                                    (model) => (
+                                                                        <SelectItem
+                                                                            key={
+                                                                                model.id
+                                                                            }
+                                                                            value={
+                                                                                model.id
+                                                                            }
+                                                                        >
+                                                                            {
+                                                                                model.name
+                                                                            }
+                                                                        </SelectItem>
+                                                                    )
                                                                 )}
-                                                            </button>
-                                                        </TooltipTrigger>
-                                                        <TooltipContent>
-                                                            {showApiKey ? t('common.hide') : t('common.show')}
-                                                        </TooltipContent>
-                                                    </Tooltip>
-                                                    {apiKeyValue && (
+                                                            </SelectGroup>
+                                                        )
+                                                    )}
+                                                </SelectContent>
+                                            </Select>
+                                            <p className='text-muted-foreground mt-1.5 text-[11px]'>
+                                                {t(
+                                                    'playground.configurationModelDescription'
+                                                )}
+                                            </p>
+                                        </div>
+
+                                        {selectedModelOption && (
+                                            <div>
+                                                <div className='mb-2 flex items-center justify-between'>
+                                                    <label className='text-muted-foreground text-xs font-medium'>
+                                                        {t(
+                                                            'playground.configurationApiKey'
+                                                        )}
+                                                    </label>
+                                                    <div className='flex items-center gap-1'>
                                                         <Tooltip>
-                                                            <TooltipTrigger asChild>
+                                                            <TooltipTrigger
+                                                                asChild
+                                                            >
                                                                 <button
                                                                     type='button'
-                                                                    onClick={
-                                                                        handleCopyApiKey
+                                                                    onClick={() =>
+                                                                        setShowApiKey(
+                                                                            !showApiKey
+                                                                        )
                                                                     }
-                                                                    className='rounded p-1 text-gray-500 transition-colors hover:text-gray-300'
+                                                                    className='text-muted-foreground hover:text-foreground/80 rounded p-1 transition-colors'
                                                                 >
-                                                                    {copied ? (
-                                                                        <CheckIcon className='h-3.5 w-3.5 text-green-400' />
+                                                                    {showApiKey ? (
+                                                                        <EyeSlashIcon className='h-3.5 w-3.5' />
                                                                     ) : (
-                                                                        <CopyIcon className='h-3.5 w-3.5' />
+                                                                        <EyeIcon className='h-3.5 w-3.5' />
                                                                     )}
                                                                 </button>
                                                             </TooltipTrigger>
                                                             <TooltipContent>
-                                                                {t('common.copy')}
+                                                                {showApiKey
+                                                                    ? t(
+                                                                          'common.hide'
+                                                                      )
+                                                                    : t(
+                                                                          'common.show'
+                                                                      )}
                                                             </TooltipContent>
                                                         </Tooltip>
-                                                    )}
+                                                        {apiKeyValue && (
+                                                            <Tooltip>
+                                                                <TooltipTrigger
+                                                                    asChild
+                                                                >
+                                                                    <button
+                                                                        type='button'
+                                                                        onClick={
+                                                                            handleCopyApiKey
+                                                                        }
+                                                                        className='text-muted-foreground hover:text-foreground/80 rounded p-1 transition-colors'
+                                                                    >
+                                                                        {copied ? (
+                                                                            <CheckIcon className='h-3.5 w-3.5 text-green-600 dark:text-green-400' />
+                                                                        ) : (
+                                                                            <CopyIcon className='h-3.5 w-3.5' />
+                                                                        )}
+                                                                    </button>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent>
+                                                                    {t(
+                                                                        'common.copy'
+                                                                    )}
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <input
-                                                type={
-                                                    showApiKey
-                                                        ? 'text'
-                                                        : 'password'
-                                                }
-                                                value={apiKeyValue}
-                                                onChange={(e) => {
-                                                    setApiKeyValue(
-                                                        e.target.value
-                                                    )
-                                                    setHasChanges(true)
-                                                }}
-                                                placeholder={t(
-                                                    'playground.configurationApiKeyPlaceholder'
-                                                )}
-                                                className='w-full rounded-md border border-white/10 bg-white/5 px-3 py-2 font-mono text-[11px] text-white outline-none transition-colors placeholder:text-gray-600 focus:border-[#ef5350]/50'
-                                            />
-                                            <p className='mt-1.5 text-[11px] text-gray-600'>
-                                                <span className='font-mono text-gray-500'>
-                                                    {selectedModelOption.envVar}
-                                                </span>
-                                                {' — '}
-                                                {t(
-                                                    'playground.configurationApiKeyDescription',
-                                                    {
-                                                        modelName:
-                                                            selectedModelOption.name
+                                                <input
+                                                    type={
+                                                        showApiKey
+                                                            ? 'text'
+                                                            : 'password'
                                                     }
-                                                )}
-                                            </p>
-                                        </div>
-                                    )}
-
-                                    <button
-                                        onClick={handleSave}
-                                        disabled={
-                                            readOnly ||
-                                            saveMutation.isPending ||
-                                            !hasChanges ||
-                                            !!nameError
-                                        }
-                                        className='flex w-full items-center justify-center gap-2 rounded-lg bg-[#ef5350] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
-                                    >
-                                        {saveMutation.isPending ? (
-                                            <>
-                                                <CircleNotchIcon className='h-4 w-4 animate-spin' />
-                                                {t(
-                                                    'playground.configurationSaving'
-                                                )}
-                                            </>
-                                        ) : (
-                                            t('playground.configurationSave')
+                                                    value={apiKeyValue}
+                                                    onChange={(e) => {
+                                                        setApiKeyValue(
+                                                            e.target.value
+                                                        )
+                                                        setHasChanges(true)
+                                                    }}
+                                                    placeholder={t(
+                                                        'playground.configurationApiKeyPlaceholder'
+                                                    )}
+                                                    className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 font-mono text-[11px] outline-none transition-colors focus:border-[#ef5350]/50'
+                                                />
+                                                <p className='text-muted-foreground mt-1.5 text-[11px]'>
+                                                    <span className='text-muted-foreground font-mono'>
+                                                        {
+                                                            selectedModelOption.envVar
+                                                        }
+                                                    </span>
+                                                    {' — '}
+                                                    {t(
+                                                        'playground.configurationApiKeyDescription',
+                                                        {
+                                                            modelName:
+                                                                selectedModelOption.name
+                                                        }
+                                                    )}
+                                                </p>
+                                            </div>
                                         )}
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    )}
+
+                                        <button
+                                            onClick={handleSave}
+                                            disabled={
+                                                readOnly ||
+                                                saveMutation.isPending ||
+                                                !hasChanges ||
+                                                !!nameError
+                                            }
+                                            className='flex w-full items-center justify-center gap-2 rounded-lg bg-[#ef5350] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
+                                        >
+                                            {saveMutation.isPending ? (
+                                                <>
+                                                    <CircleNotchIcon className='h-4 w-4 animate-spin' />
+                                                    {t(
+                                                        'playground.configurationSaving'
+                                                    )}
+                                                </>
+                                            ) : (
+                                                t(
+                                                    'playground.configurationSave'
+                                                )
+                                            )}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                 </div>
             </div>
 
@@ -753,16 +830,18 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                     <label className='mt-3 flex cursor-pointer items-center gap-2.5'>
                         <Checkbox
                             checked={dontAskAgain}
-                            onCheckedChange={(checked) => setDontAskAgain(!!checked)}
+                            onCheckedChange={(checked) =>
+                                setDontAskAgain(!!checked)
+                            }
                         />
-                        <span className='text-xs text-gray-400'>
+                        <span className='text-muted-foreground text-xs'>
                             {t('playground.variablesDontAskAgain')}
                         </span>
                     </label>
                     <div className='mt-4 flex justify-end gap-3'>
                         <button
                             onClick={() => setShowDeleteConfirm(false)}
-                            className='rounded-lg px-4 py-2 text-sm font-medium text-gray-400 transition-colors hover:text-white'
+                            className='text-muted-foreground hover:text-foreground rounded-lg px-4 py-2 text-sm font-medium transition-colors'
                         >
                             {t('common.cancel')}
                         </button>

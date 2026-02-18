@@ -15,7 +15,7 @@ import { getBaseDomain } from '@/lib'
 
 const Blog: FC = (): ReactNode => {
     return (
-        <div className='relative flex min-h-screen flex-col bg-[#0a0a0f] text-white'>
+        <div className='bg-background text-foreground relative flex min-h-screen flex-col'>
             <PageTitle
                 title={t('blog.title')}
                 description={t('blog.description')}

@@ -10,15 +10,21 @@ let transcriberPromise: ReturnType<typeof pipeline> | null = null
 
 const getTranscriber = () => {
     if (!transcriberPromise) {
-        transcriberPromise = pipeline('automatic-speech-recognition', WHISPER_MODEL, {
-            dtype: 'q8',
-            device: 'wasm'
-        })
+        transcriberPromise = pipeline(
+            'automatic-speech-recognition',
+            WHISPER_MODEL,
+            {
+                dtype: 'q8',
+                device: 'wasm'
+            }
+        )
     }
     return transcriberPromise
 }
 
-const useSpeechRecognition = (onTranscript: (text: string) => void): UseSpeechRecognitionReturn => {
+const useSpeechRecognition = (
+    onTranscript: (text: string) => void
+): UseSpeechRecognitionReturn => {
     const [isRecording, setIsRecording] = useState(false)
     const [isTranscribing, setIsTranscribing] = useState(false)
     const mediaRecorderRef = useRef<MediaRecorder | null>(null)
@@ -38,7 +44,9 @@ const useSpeechRecognition = (onTranscript: (text: string) => void): UseSpeechRe
                 mediaRecorderRef.current = null
                 setIsRecording(false)
 
-                const blob = new Blob(chunksRef.current, { type: mediaRecorder.mimeType })
+                const blob = new Blob(chunksRef.current, {
+                    type: mediaRecorder.mimeType
+                })
                 chunksRef.current = []
 
                 if (blob.size === 0) {
@@ -51,7 +59,8 @@ const useSpeechRecognition = (onTranscript: (text: string) => void): UseSpeechRe
                 try {
                     const audioContext = new AudioContext({ sampleRate: 16000 })
                     const arrayBuffer = await blob.arrayBuffer()
-                    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
+                    const audioBuffer =
+                        await audioContext.decodeAudioData(arrayBuffer)
                     const float32Data = audioBuffer.getChannelData(0)
                     await audioContext.close()
 
@@ -78,7 +87,9 @@ const useSpeechRecognition = (onTranscript: (text: string) => void): UseSpeechRe
 
     const startRecording = useCallback(async () => {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: true
+            })
             const mediaRecorder = new MediaRecorder(stream)
             chunksRef.current = []
 
@@ -108,9 +119,14 @@ const useSpeechRecognition = (onTranscript: (text: string) => void): UseSpeechRe
 
     useEffect(() => {
         return () => {
-            if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+            if (
+                mediaRecorderRef.current &&
+                mediaRecorderRef.current.state !== 'inactive'
+            ) {
                 mediaRecorderRef.current.stop()
-                mediaRecorderRef.current.stream.getTracks().forEach((track) => track.stop())
+                mediaRecorderRef.current.stream
+                    .getTracks()
+                    .forEach((track) => track.stop())
             }
         }
     }, [])

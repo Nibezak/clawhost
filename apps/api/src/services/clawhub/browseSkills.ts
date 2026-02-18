@@ -1,4 +1,11 @@
-import type { ClawHubAPISkillItem, ClawHubAPISkillsPage, ClawHubSearchResult, ClawHubBrowseResultPage, BrowseClawHubSkillsParams, SkillsCacheEntry } from '@/ts/Interfaces'
+import type {
+    ClawHubAPISkillItem,
+    ClawHubAPISkillsPage,
+    ClawHubSearchResult,
+    ClawHubBrowseResultPage,
+    BrowseClawHubSkillsParams,
+    SkillsCacheEntry
+} from '@/ts/Interfaces'
 
 import { RequestClient } from '@openclaw/shared'
 
@@ -33,7 +40,8 @@ const fetchAllSkills = async (): Promise<ClawHubSearchResult[]> => {
             ? `/skills?limit=200&cursor=${encodeURIComponent(cursor)}`
             : '/skills?limit=200'
 
-        const response: ClawHubAPISkillsPage = await client.get<ClawHubAPISkillsPage>(url)
+        const response: ClawHubAPISkillsPage =
+            await client.get<ClawHubAPISkillsPage>(url)
         const items = response.items || []
         allItems.push(...items)
 
@@ -49,7 +57,9 @@ const fetchAllSkills = async (): Promise<ClawHubSearchResult[]> => {
     return skills
 }
 
-const browseSkills = async (params: BrowseClawHubSkillsParams): Promise<ClawHubBrowseResultPage> => {
+const browseSkills = async (
+    params: BrowseClawHubSkillsParams
+): Promise<ClawHubBrowseResultPage> => {
     const limit = params.limit || 50
     const offset = params.cursor ? Number(params.cursor) : 0
     const query = (params.query || '').trim()
@@ -59,10 +69,11 @@ const browseSkills = async (params: BrowseClawHubSkillsParams): Promise<ClawHubB
     let filtered = allSkills
     if (query) {
         const q = query.toLowerCase()
-        filtered = allSkills.filter((s) =>
-            s.name.toLowerCase().includes(q) ||
-            s.description.toLowerCase().includes(q) ||
-            s.slug.toLowerCase().includes(q)
+        filtered = allSkills.filter(
+            (s) =>
+                s.name.toLowerCase().includes(q) ||
+                s.description.toLowerCase().includes(q) ||
+                s.slug.toLowerCase().includes(q)
         )
     }
 

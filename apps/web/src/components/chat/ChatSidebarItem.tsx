@@ -21,19 +21,21 @@ const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
             onClick={onClick}
             className={`group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${
                 isActive
-                    ? 'bg-white/10 text-white'
-                    : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                    ? 'bg-foreground/10 text-foreground'
+                    : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'
             }`}
         >
-            <div className='flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/5'>
+            <div className='bg-foreground/5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg'>
                 <ClawMascot className='h-4 w-4' />
             </div>
             <div className='min-w-0 flex-1'>
                 <p className='truncate text-sm font-medium'>{agent.name}</p>
                 {modelName ? (
-                    <p className='truncate text-xs text-gray-500'>{modelName}</p>
+                    <p className='text-muted-foreground truncate text-xs'>
+                        {modelName}
+                    </p>
                 ) : (
-                    <p className='truncate text-xs italic text-gray-600'>
+                    <p className='text-muted-foreground truncate text-xs italic'>
                         {t('chat.notConfigured')}
                     </p>
                 )}
@@ -45,7 +47,7 @@ const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
                     e.stopPropagation()
                     onConfigure()
                 }}
-                className='hidden h-6 w-6 shrink-0 items-center justify-center rounded-md text-gray-500 opacity-0 transition-all hover:bg-white/10 hover:text-white group-hover:opacity-100 md:flex'
+                className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground hidden h-6 w-6 shrink-0 items-center justify-center rounded-md opacity-0 transition-all group-hover:opacity-100 md:flex'
             >
                 <GearSixIcon className='h-3.5 w-3.5' weight='bold' />
             </div>

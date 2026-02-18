@@ -50,18 +50,13 @@ const handleStyle = {
 const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
     data
 }): ReactNode => {
-    const {
-        claw,
-        agentCount,
-        isLoadingAgents,
-        isSelected,
-        readOnly
-    } = data
+    const { claw, agentCount, isLoadingAgents, isSelected, readOnly } = data
     const statusConfigs = getStatusConfig()
     const status = statusConfigs[claw.status] || statusConfigs.unknown
 
     const isRunning = claw.status === clawStatus.running
-    const isOffline = claw.status === clawStatus.stopped || claw.status === clawStatus.off
+    const isOffline =
+        claw.status === clawStatus.stopped || claw.status === clawStatus.off
     const isUnreachable = claw.status === clawStatus.unreachable
 
     const { showToast } = useUIStore()
@@ -206,21 +201,21 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
     return (
         <>
             <div
-                className={`playground-node-enter relative w-[280px] cursor-pointer rounded-xl border bg-[#151518] ${
+                className={`playground-node-enter bg-popover relative w-[280px] cursor-pointer rounded-xl border ${
                     isSelected
                         ? 'border-[#ef5350]/50 shadow-[0_0_20px_rgba(239,83,80,0.15)]'
                         : isOffline || isUnreachable
-                          ? 'border-white/5 opacity-50'
-                          : 'border-white/10'
+                          ? 'border-border opacity-50'
+                          : 'border-border'
                 } ${isRunning && !isSelected ? 'shadow-[0_0_30px_rgba(239,83,80,0.08)]' : ''}`}
             >
-                <div className='flex items-center gap-2 border-b border-white/5 px-4 py-3'>
+                <div className='border-border flex items-center gap-2 border-b px-4 py-3'>
                     <ProviderIcon
                         provider={claw.provider}
                         className='h-5 w-5'
                     />
                     <div className='flex flex-1 items-center gap-2 overflow-hidden'>
-                        <span className='truncate text-sm font-semibold text-white'>
+                        <span className='text-foreground truncate text-sm font-semibold'>
                             {claw.name}
                         </span>
                         <span
@@ -277,8 +272,8 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                                         disabled={isLoadingAgents}
                                         className={`shrink-0 rounded-md p-1 transition-colors ${
                                             isLoadingAgents
-                                                ? 'cursor-not-allowed text-gray-700'
-                                                : 'text-gray-500 hover:bg-white/10 hover:text-white'
+                                                ? 'text-muted-foreground/50 cursor-not-allowed'
+                                                : 'text-muted-foreground hover:bg-foreground/10 hover:text-foreground'
                                         }`}
                                     >
                                         <PlusIcon
@@ -297,28 +292,28 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
 
                 <div className='px-4 py-3'>
                     {claw.ip && (
-                        <p className='mb-2 font-mono text-xs text-gray-500'>
+                        <p className='text-muted-foreground mb-2 font-mono text-xs'>
                             {claw.ip}
                         </p>
                     )}
 
                     <div className='flex items-center gap-2'>
                         {isLoadingAgents ? (
-                            <div className='flex items-center gap-1.5 rounded-md bg-white/5 px-2 py-1'>
-                                <div className='h-3 w-3 animate-spin rounded-full border border-white/10 border-t-white/40' />
-                                <span className='text-xs text-gray-500'>
+                            <div className='bg-foreground/5 flex items-center gap-1.5 rounded-md px-2 py-1'>
+                                <div className='border-border border-t-foreground/40 h-3 w-3 animate-spin rounded-full border' />
+                                <span className='text-muted-foreground text-xs'>
                                     {t('playground.loadingAgents')}
                                 </span>
                             </div>
                         ) : isOffline || isUnreachable ? (
-                            <div className='flex items-center gap-1.5 rounded-md bg-gray-500/10 px-2 py-1'>
-                                <span className='text-xs text-gray-400'>
+                            <div className='bg-muted-foreground/10 flex items-center gap-1.5 rounded-md px-2 py-1'>
+                                <span className='text-muted-foreground text-xs'>
                                     {t('playground.offline')}
                                 </span>
                             </div>
                         ) : agentCount === 0 ? (
-                            <div className='flex items-center gap-1.5 rounded-md bg-white/5 px-2 py-1'>
-                                <span className='text-xs text-gray-400'>
+                            <div className='bg-foreground/5 flex items-center gap-1.5 rounded-md px-2 py-1'>
+                                <span className='text-muted-foreground text-xs'>
                                     {t('playground.noAgents')}
                                 </span>
                             </div>
@@ -339,12 +334,12 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                         {isScheduledForDeletion && (
                             <Tooltip>
                                 <TooltipTrigger asChild>
-                                    <div className='flex items-center gap-1.5 rounded-md bg-gray-500/10 px-2 py-1'>
+                                    <div className='bg-muted-foreground/10 flex items-center gap-1.5 rounded-md px-2 py-1'>
                                         <ClockIcon
-                                            className='h-3 w-3 text-gray-400'
+                                            className='text-muted-foreground h-3 w-3'
                                             weight='fill'
                                         />
-                                        <span className='text-xs text-gray-400'>
+                                        <span className='text-muted-foreground text-xs'>
                                             {t(
                                                 'dashboard.scheduledDeletionShort',
                                                 {

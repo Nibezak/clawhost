@@ -10,7 +10,7 @@ import { HouseIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
 
 const NotFound: FC = (): ReactNode => {
     return (
-        <div className='relative flex min-h-screen flex-col bg-[#0a0a0f] text-white'>
+        <div className='bg-background text-foreground relative flex min-h-screen flex-col'>
             <PageTitle
                 title={t('common.pageNotFound')}
                 description={t('errors.pageNotFoundDescription')}
