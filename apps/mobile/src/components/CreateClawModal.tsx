@@ -37,7 +37,7 @@ import {
     useSSHKeys,
     usePurchaseClaw
 } from '@/hooks'
-import { generatePassword, locationFlags, aiModels } from '@/lib/claw-utils'
+import { generatePassword, locationFlags } from '@/lib/claw-utils'
 import { COLORS, SPACING, TYPOGRAPHY } from '@/lib/theme'
 import ProviderIcon from '@/components/ProviderIcon'
 
@@ -76,10 +76,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     const [showPassword, setShowPassword] = useState(false)
     const [selectedSshKeyId, setSelectedSshKeyId] = useState('')
     const [volumeSize, setVolumeSize] = useState(0)
-    const [model, setModel] = useState('')
-    const [apiToken, setApiToken] = useState('')
     const [showAdvanced, setShowAdvanced] = useState(false)
-    const [showModelPicker, setShowModelPicker] = useState(false)
 
     const {
         data: plansData,
@@ -189,8 +186,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                 password: password || undefined,
                 sshKeyId: selectedSshKeyId || undefined,
                 volumeSize: volumeSize > 0 ? volumeSize : undefined,
-                model: model || undefined,
-                apiToken: apiToken || undefined,
                 priceMonthly: totalPrice
             },
             {
@@ -213,20 +208,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
               ? volumeSize * volumePricing.pricePerGbMonthly
               : 0)
         : 0
-
-    const selectedModelName = model
-        ? aiModels.find((m) => m.id === model)?.name || model
-        : t('createClaw.modelNone')
-
-    const modelGroups = aiModels.reduce<Record<string, typeof aiModels>>(
-        (groups, m) => {
-            const group = groups[m.provider] || []
-            group.push(m)
-            groups[m.provider] = group
-            return groups
-        },
-        {}
-    )
 
     return (
         <Modal
@@ -479,98 +460,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                             </View>
                         )}
                     </View>
-
-                    <View style={styles.section}>
-                        <Text style={styles.label}>
-                            {t('createClaw.model')}
-                        </Text>
-                        <Pressable
-                            onPress={() => setShowModelPicker(!showModelPicker)}
-                            style={styles.pickerButton}
-                        >
-                            <Text style={styles.pickerText}>
-                                {selectedModelName}
-                            </Text>
-                            <CaretDown size={16} color={COLORS.textMuted} />
-                        </Pressable>
-                        {showModelPicker && (
-                            <View style={styles.modelList}>
-                                <Pressable
-                                    onPress={() => {
-                                        setModel('')
-                                        setShowModelPicker(false)
-                                    }}
-                                    style={[
-                                        styles.modelItem,
-                                        !model && styles.modelItemSelected
-                                    ]}
-                                >
-                                    <Text style={styles.modelItemText}>
-                                        {t('createClaw.modelNone')}
-                                    </Text>
-                                </Pressable>
-                                {Object.entries(modelGroups).map(
-                                    ([groupProvider, models]) => (
-                                        <View key={groupProvider}>
-                                            <Text
-                                                style={styles.modelGroupLabel}
-                                            >
-                                                {groupProvider}
-                                            </Text>
-                                            {models.map((m) => (
-                                                <Pressable
-                                                    key={m.id}
-                                                    onPress={() => {
-                                                        setModel(m.id)
-                                                        setShowModelPicker(
-                                                            false
-                                                        )
-                                                    }}
-                                                    style={[
-                                                        styles.modelItem,
-                                                        model === m.id &&
-                                                            styles.modelItemSelected
-                                                    ]}
-                                                >
-                                                    <Text
-                                                        style={
-                                                            styles.modelItemText
-                                                        }
-                                                    >
-                                                        {m.name}
-                                                    </Text>
-                                                </Pressable>
-                                            ))}
-                                        </View>
-                                    )
-                                )}
-                            </View>
-                        )}
-                        <Text style={styles.hint}>
-                            {t('createClaw.modelDescription')}
-                        </Text>
-                    </View>
-
-                    {model ? (
-                        <View style={styles.section}>
-                            <Text style={styles.label}>
-                                {t('createClaw.apiToken')}
-                            </Text>
-                            <TextInput
-                                style={[styles.input, styles.monoInput]}
-                                value={apiToken}
-                                onChangeText={setApiToken}
-                                placeholder={t(
-                                    'createClaw.apiTokenPlaceholder'
-                                )}
-                                placeholderTextColor={COLORS.textDim}
-                                secureTextEntry
-                            />
-                            <Text style={styles.hint}>
-                                {t('createClaw.apiTokenDescription')}
-                            </Text>
-                        </View>
-                    ) : null}
 
                     <Pressable
                         onPress={() => setShowAdvanced(!showAdvanced)}
@@ -1155,51 +1044,6 @@ const styles = StyleSheet.create({
         height: 56,
         borderRadius: 8,
         backgroundColor: 'rgba(255,255,255,0.05)'
-    },
-    pickerButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: 'rgba(255,255,255,0.05)',
-        borderWidth: 1,
-        borderColor: COLORS.border,
-        borderRadius: 8,
-        paddingHorizontal: SPACING.md,
-        paddingVertical: SPACING.sm
-    },
-    pickerText: {
-        fontSize: 14,
-        fontFamily: 'Satoshi-Regular',
-        color: COLORS.text
-    },
-    modelList: {
-        backgroundColor: COLORS.containerBackground,
-        borderWidth: 1,
-        borderColor: COLORS.containerBorder,
-        borderRadius: 8,
-        overflow: 'hidden'
-    },
-    modelItem: {
-        paddingHorizontal: SPACING.md,
-        paddingVertical: SPACING.sm
-    },
-    modelItemSelected: {
-        backgroundColor: 'rgba(239,83,80,0.15)'
-    },
-    modelItemText: {
-        fontSize: 14,
-        fontFamily: 'Satoshi-Regular',
-        color: COLORS.text
-    },
-    modelGroupLabel: {
-        fontSize: 11,
-        fontFamily: 'Satoshi-Bold',
-        color: COLORS.textMuted,
-        textTransform: 'uppercase',
-        letterSpacing: 1,
-        paddingHorizontal: SPACING.md,
-        paddingTop: SPACING.sm,
-        paddingBottom: SPACING.xs
     },
     hint: {
         fontSize: 12,

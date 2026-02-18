@@ -191,7 +191,6 @@ const getClaws = async (c: AuthenticatedContext) => {
             providerServerId: null,
             subdomain: null,
             gatewayToken: null,
-            model: p.model,
             subscriptionStatus: null,
             currentPeriodStart: null,
             currentPeriodEnd: null,

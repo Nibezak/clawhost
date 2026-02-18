@@ -741,16 +741,16 @@ const Landing: FC = (): ReactNode => {
                                             <th className='font-clash px-4 py-4 text-left font-semibold text-white'>
                                                 {t('landing.planColumn')}
                                             </th>
-                                            <th className='font-clash px-4 py-4 text-center font-semibold text-white'>
+                                            <th className='font-clash whitespace-nowrap px-4 py-4 text-center font-semibold text-white'>
                                                 {t('landing.vCpuColumn')}
                                             </th>
-                                            <th className='font-clash px-4 py-4 text-center font-semibold text-white'>
+                                            <th className='font-clash whitespace-nowrap px-4 py-4 text-center font-semibold text-white'>
                                                 {t('landing.ramColumn')}
                                             </th>
-                                            <th className='font-clash px-4 py-4 text-center font-semibold text-white'>
+                                            <th className='font-clash whitespace-nowrap px-4 py-4 text-center font-semibold text-white'>
                                                 {t('landing.storageColumn')}
                                             </th>
-                                            <th className='font-clash px-4 py-4 text-center font-semibold text-white'>
+                                            <th className='font-clash whitespace-nowrap px-4 py-4 text-center font-semibold text-white'>
                                                 {t('landing.monthlyColumn')}
                                             </th>
                                             <th className='px-4 py-4 text-right'></th>
@@ -851,13 +851,13 @@ const Landing: FC = (): ReactNode => {
                                                         <td className='px-4 py-4 text-center text-gray-300'>
                                                             {plan.cpu}
                                                         </td>
-                                                        <td className='px-4 py-4 text-center text-gray-300'>
+                                                        <td className='whitespace-nowrap px-4 py-4 text-center text-gray-300'>
                                                             {plan.memory} GB
                                                         </td>
-                                                        <td className='px-4 py-4 text-center text-gray-300'>
+                                                        <td className='whitespace-nowrap px-4 py-4 text-center text-gray-300'>
                                                             {plan.disk} GB
                                                         </td>
-                                                        <td className='px-4 py-4 text-center'>
+                                                        <td className='whitespace-nowrap px-4 py-4 text-center'>
                                                             <span className='font-clash font-bold text-white'>
                                                                 ${totalMonthly}
                                                             </span>

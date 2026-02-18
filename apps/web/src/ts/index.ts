@@ -87,10 +87,10 @@ export type {
     UseAgentChatReturn,
     ClawHubSearchResult,
     ClawHubInstalledSkill,
-    ClawHubSearchResponse,
+    ClawHubBrowseResponse,
     ClawHubInstalledResponse,
     ClawHubUpdatesResponse,
-    SearchClawHubData,
+    BrowseClawHubData,
     ClawHubSkillActionData,
     ClawHubUpdateData
 } from '@/ts/Interfaces'

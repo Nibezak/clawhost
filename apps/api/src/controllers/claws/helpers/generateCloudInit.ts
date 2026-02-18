@@ -1,19 +1,10 @@
 import OPENCLAW_VERSION from '@/controllers/claws/helpers/openclawVersion'
 
-function getProviderEnvVar(model: string): string | null {
-    if (model.startsWith('anthropic/')) return 'ANTHROPIC_API_KEY'
-    if (model.startsWith('openai/')) return 'OPENAI_API_KEY'
-    if (model.startsWith('google/')) return 'GEMINI_API_KEY'
-    return null
-}
-
 export default function generateCloudInit(
     rootPassword: string,
     subdomain: string,
     domain: string,
-    gatewayToken: string,
-    model?: string,
-    apiToken?: string
+    gatewayToken: string
 ): string {
     const fullDomain = `${subdomain}.${domain}`
 
@@ -38,22 +29,7 @@ export default function generateCloudInit(
         }
     }
 
-    const agentDefaults: Record<string, unknown> = {
-        sandbox: { mode: 'off' }
-    }
-
-    if (model) {
-        agentDefaults.model = { primary: model }
-
-        const envVarName = getProviderEnvVar(model)
-        if (envVarName && apiToken) {
-            config.env = {
-                [envVarName]: apiToken
-            }
-        }
-    }
-
-    config.agents = { defaults: agentDefaults }
+    config.agents = { defaults: { sandbox: { mode: 'off' } } }
 
     const configJson = JSON.stringify(config, null, 2).replace(/\n/g, '\n    ')
 

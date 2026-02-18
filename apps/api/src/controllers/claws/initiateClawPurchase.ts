@@ -133,8 +133,6 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
             password,
             sshKeyId,
             volumeSize,
-            model,
-            apiToken,
             priceMonthly
         } = await c.req.json<InitiateClawPurchaseBody>()
 
@@ -271,8 +269,6 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
             rootPassword: finalPassword,
             sshKeyId: sshKeyId || null,
             volumeSize: volumeSize || null,
-            model: model || null,
-            apiToken: apiToken || null,
             priceMonthly: Math.round(priceMonthly * 100),
             expiresAt
         })

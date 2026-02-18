@@ -1,10 +1,10 @@
-import type { CheckoutSession, CreateCheckoutParams } from '@/ts/Interfaces'
+import type { CacheEntry, CheckoutSession, CreateCheckoutParams } from '@/ts/Interfaces'
 
 import getPolarClient from '@/lib/polar/getPolarClient'
 import getPolarConfig from '@/lib/polar/getPolarConfig'
 
 const CHECKOUT_CACHE_TTL = 30_000
-const checkoutCache = new Map<string, { data: CheckoutSession; expiry: number }>()
+const checkoutCache = new Map<string, CacheEntry<CheckoutSession>>()
 
 const checkouts = {
     async create(params: CreateCheckoutParams): Promise<CheckoutSession> {

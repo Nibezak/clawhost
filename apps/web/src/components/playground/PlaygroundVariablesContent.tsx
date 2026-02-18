@@ -23,7 +23,10 @@ import {
     DialogDescription,
     Button,
     Skeleton,
-    Checkbox
+    Checkbox,
+    Tooltip,
+    TooltipTrigger,
+    TooltipContent
 } from '@/components/ui'
 import { api } from '@/lib'
 import { useUIStore } from '@/lib/store'
@@ -294,41 +297,55 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
                                         }`}
                                     />
                                     <div className='flex items-center gap-1'>
-                                        <button
-                                            type='button'
-                                            onClick={() =>
-                                                handleToggleVisibility(
-                                                    `${index}-${envVar.key}`
-                                                )
-                                            }
-                                            className='rounded p-1 text-gray-500 transition-colors hover:text-gray-300'
-                                        >
-                                            {showValues[
-                                                `${index}-${envVar.key}`
-                                            ] ? (
-                                                <EyeSlashIcon className='h-3.5 w-3.5' />
-                                            ) : (
-                                                <EyeIcon className='h-3.5 w-3.5' />
-                                            )}
-                                        </button>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <button
+                                                    type='button'
+                                                    onClick={() =>
+                                                        handleToggleVisibility(
+                                                            `${index}-${envVar.key}`
+                                                        )
+                                                    }
+                                                    className='rounded p-1 text-gray-500 transition-colors hover:text-gray-300'
+                                                >
+                                                    {showValues[
+                                                        `${index}-${envVar.key}`
+                                                    ] ? (
+                                                        <EyeSlashIcon className='h-3.5 w-3.5' />
+                                                    ) : (
+                                                        <EyeIcon className='h-3.5 w-3.5' />
+                                                    )}
+                                                </button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                {showValues[`${index}-${envVar.key}`] ? t('common.hide') : t('common.show')}
+                                            </TooltipContent>
+                                        </Tooltip>
                                         {envVar.value && (
-                                            <button
-                                                type='button'
-                                                onClick={() =>
-                                                    handleCopyValue(
-                                                        `${index}-${envVar.key}`,
-                                                        envVar.value
-                                                    )
-                                                }
-                                                className='rounded p-1 text-gray-500 transition-colors hover:text-gray-300'
-                                            >
-                                                {copiedKey ===
-                                                `${index}-${envVar.key}` ? (
-                                                    <CheckIcon className='h-3.5 w-3.5 text-green-400' />
-                                                ) : (
-                                                    <CopyIcon className='h-3.5 w-3.5' />
-                                                )}
-                                            </button>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <button
+                                                        type='button'
+                                                        onClick={() =>
+                                                            handleCopyValue(
+                                                                `${index}-${envVar.key}`,
+                                                                envVar.value
+                                                            )
+                                                        }
+                                                        className='rounded p-1 text-gray-500 transition-colors hover:text-gray-300'
+                                                    >
+                                                        {copiedKey ===
+                                                        `${index}-${envVar.key}` ? (
+                                                            <CheckIcon className='h-3.5 w-3.5 text-green-400' />
+                                                        ) : (
+                                                            <CopyIcon className='h-3.5 w-3.5' />
+                                                        )}
+                                                    </button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    {t('common.copy')}
+                                                </TooltipContent>
+                                            </Tooltip>
                                         )}
                                         <button
                                             type='button'

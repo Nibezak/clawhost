@@ -47,10 +47,7 @@ const reinstallClaw = async (c: AuthenticatedContext) => {
             },
             agents: {
                 defaults: {
-                    sandbox: { mode: 'off' },
-                    ...(claw[0].model
-                        ? { model: { primary: claw[0].model } }
-                        : {})
+                    sandbox: { mode: 'off' }
                 }
             }
         }

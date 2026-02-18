@@ -1,16 +1,14 @@
-import type { SearchClawHubSkillsBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import { findUserClaw } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
-import { searchSkills } from '@/services/clawhub'
+import { browseSkills } from '@/services/clawhub'
 
-const searchClawHubSkills = async (c: AuthenticatedContext) => {
+const browseClawHubSkills = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')
-        const body = await c.req.json<SearchClawHubSkillsBody>()
 
         const claw = await findUserClaw(userId, id)
 
@@ -18,11 +16,10 @@ const searchClawHubSkills = async (c: AuthenticatedContext) => {
             return fail(c, t('api.clawNotFound'), 404)
         }
 
-        const result = await searchSkills({
-            query: body.query,
-            limit: body.limit,
-            page: body.page,
-            cursor: body.cursor
+        const result = await browseSkills({
+            query: c.req.query('query') || undefined,
+            limit: c.req.query('limit') ? Number(c.req.query('limit')) : undefined,
+            cursor: c.req.query('cursor') || undefined
         })
 
         return ok(c, {
@@ -35,4 +32,4 @@ const searchClawHubSkills = async (c: AuthenticatedContext) => {
     }
 }
 
-export default searchClawHubSkills
+export default browseClawHubSkills

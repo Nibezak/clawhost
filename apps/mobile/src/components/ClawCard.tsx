@@ -166,14 +166,6 @@ const ClawCard: FC<ClawCardProps> = ({ claw, plan }): ReactNode => {
                             />
                         )}
 
-                        {claw.model && (
-                            <CopyableField
-                                label={t('dashboard.aiModel')}
-                                value={claw.model}
-                                width={fieldWidth || undefined}
-                            />
-                        )}
-
                         {claw.currentPeriodStart && (
                             <CopyableField
                                 label={t('dashboard.lastBilling')}

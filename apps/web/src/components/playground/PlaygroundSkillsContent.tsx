@@ -10,7 +10,7 @@ import type {
 } from '@/ts/Interfaces'
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
-import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useInfiniteQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import { t } from '@openclaw/i18n'
 import {
     CircleNotchIcon,
@@ -19,13 +19,12 @@ import {
     MagnifyingGlassIcon,
     StorefrontIcon
 } from '@phosphor-icons/react'
-import { PanelPlaceholder } from '@/components'
+import { PanelPlaceholder, TruncateTooltip } from '@/components'
 import { Skeleton } from '@/components/ui'
 import { api } from '@/lib'
 import { useUIStore } from '@/lib/store'
 
-const PAGE_SIZE = 20
-const STALE_TIME = 60 * 60 * 1000
+const PAGE_SIZE = 50
 
 const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
     clawId,
@@ -42,6 +41,7 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
     const queryClient = useQueryClient()
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
     const sentinelRef = useRef<HTMLDivElement | null>(null)
+    const scrollRef = useRef<HTMLDivElement | null>(null)
 
     useEffect(() => {
         if (debounceRef.current) clearTimeout(debounceRef.current)
@@ -113,7 +113,7 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
 
     const {
         data: browseData,
-        isLoading: isBrowseLoading,
+        isLoading: _isBrowseLoading,
         isFetchingNextPage,
         isError: isBrowseError,
         hasNextPage: browseHasNextPage,
@@ -121,7 +121,7 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
     } = useInfiniteQuery({
         queryKey: browseKey,
         queryFn: ({ pageParam }) =>
-            api.searchClawHubSkills(clawId, {
+            api.browseClawHubSkills(clawId, {
                 query: debouncedSearch || undefined,
                 limit: PAGE_SIZE,
                 cursor: pageParam || undefined,
@@ -131,33 +131,37 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
         initialPageParam: null as string | null,
         getNextPageParam: (lastPage) =>
             lastPage.hasMore ? (lastPage.nextCursor ?? undefined) : undefined,
-        staleTime: STALE_TIME,
+        placeholderData: keepPreviousData,
+        staleTime: 0,
+        gcTime: 0,
         retry: 1
     })
 
     const { data: installedData } = useQuery({
         queryKey: installedKey,
         queryFn: () => api.getClawHubInstalled(clawId, agentId),
-        staleTime: STALE_TIME,
+        staleTime: 0,
+        gcTime: 0,
         retry: 1
     })
 
     const { data: updatesData } = useQuery({
         queryKey: updatesKey,
         queryFn: () => api.checkClawHubUpdates(clawId, agentId),
-        staleTime: STALE_TIME,
+        staleTime: 0,
+        gcTime: 0,
         retry: 1
     })
 
     useEffect(() => {
-        if (!sentinelRef.current) return
+        if (!sentinelRef.current || !scrollRef.current) return
         const observer = new IntersectionObserver(
             (observerEntries) => {
                 if (observerEntries[0]?.isIntersecting && browseHasNextPage && !isFetchingNextPage) {
                     fetchNextPage()
                 }
             },
-            { threshold: 0.1 }
+            { root: scrollRef.current, threshold: 0.1 }
         )
         observer.observe(sentinelRef.current)
         return () => observer.disconnect()
@@ -410,7 +414,7 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
         [isAgentMode, installedSet]
     )
 
-    const isClawHubFirstLoad = isBrowseLoading && !browseData
+    const isClawHubFirstLoad = !browseData && !isBrowseError
     const hasBundledItems = filteredBundledSkills.length > 0
     const hasClawHubItems =
         !isClawHubFirstLoad && !isBrowseError && clawHubSkills.length > 0
@@ -418,7 +422,7 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
     const hasAnyItems = hasBundledItems || hasClawHubItems || isStillLoading
 
     return (
-        <div className='flex h-full flex-col overflow-y-auto px-5 pb-5'>
+        <div ref={scrollRef} className='flex h-full flex-col overflow-y-auto px-5 pb-5'>
             <div className='sticky top-0 z-10 bg-[#0a0a0f] pb-3 pt-5'>
                 <div className='relative'>
                     <MagnifyingGlassIcon className='absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-500' />
@@ -434,9 +438,9 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
 
             <div className='flex min-h-0 flex-1 flex-col'>
                 {hasAnyItems ? (
-                    <div className='space-y-1.5'>
+                    <div className='space-y-1.5 pb-3'>
                         {isBundledLoading &&
-                            Array.from({ length: 4 }).map((_, i) => (
+                            Array.from({ length: 12 }).map((_, i) => (
                                 <Skeleton
                                     key={`bndl-skel-${i}`}
                                     className='h-14 w-full rounded-lg'
@@ -456,14 +460,18 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                                         <div className='min-w-0 flex-1'>
                                             <div className='flex items-center gap-2'>
                                                 <CubeIcon className='h-3 w-3 shrink-0 text-gray-600' weight='duotone' />
-                                                <span className='text-xs font-medium text-white'>
-                                                    {skill.name}
-                                                </span>
+                                                <TruncateTooltip content={skill.name}>
+                                                    <span className='block truncate text-xs font-medium text-white'>
+                                                        {skill.name}
+                                                    </span>
+                                                </TruncateTooltip>
                                             </div>
                                             {skill.description && (
-                                                <span className='mt-0.5 block truncate text-[11px] text-gray-500'>
-                                                    {skill.description}
-                                                </span>
+                                                <TruncateTooltip content={skill.description}>
+                                                    <span className='mt-0.5 block truncate text-[11px] text-gray-500'>
+                                                        {skill.description}
+                                                    </span>
+                                                </TruncateTooltip>
                                             )}
                                         </div>
                                         <button
@@ -485,11 +493,11 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                                 )
                             })}
 
-                        {isClawHubFirstLoad &&
-                            Array.from({ length: 4 }).map((_, i) => (
+                        {!isBundledLoading && isClawHubFirstLoad &&
+                            Array.from({ length: 12 }).map((_, i) => (
                                 <Skeleton
                                     key={`ch-skel-${i}`}
-                                    className='h-16 w-full rounded-lg'
+                                    className='h-14 w-full rounded-lg'
                                 />
                             ))}
 
@@ -510,14 +518,18 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                                         <div className='min-w-0 flex-1'>
                                             <div className='flex items-center gap-2'>
                                                 <StorefrontIcon className='h-3 w-3 shrink-0 text-[#ef5350]/40' weight='duotone' />
-                                                <span className='text-xs font-medium text-white'>
-                                                    {skill.name}
-                                                </span>
+                                                <TruncateTooltip content={skill.name}>
+                                                    <span className='block truncate text-xs font-medium text-white'>
+                                                        {skill.name}
+                                                    </span>
+                                                </TruncateTooltip>
                                             </div>
                                             {skill.description && (
-                                                <span className='mt-0.5 block truncate text-[11px] text-gray-500'>
-                                                    {skill.description}
-                                                </span>
+                                                <TruncateTooltip content={skill.description}>
+                                                    <span className='mt-0.5 block truncate text-[11px] text-gray-500'>
+                                                        {skill.description}
+                                                    </span>
+                                                </TruncateTooltip>
                                             )}
                                             <div className='mt-1 flex items-center gap-2'>
                                                 {skill.author && (
@@ -603,10 +615,10 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                         )}
 
                         {isFetchingNextPage &&
-                            Array.from({ length: 3 }).map((_, i) => (
+                            Array.from({ length: 6 }).map((_, i) => (
                                 <Skeleton
                                     key={`ch-more-${i}`}
-                                    className='h-16 w-full rounded-lg'
+                                    className='h-14 w-full rounded-lg'
                                 />
                             ))}
 

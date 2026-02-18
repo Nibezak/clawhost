@@ -28,8 +28,7 @@ import { useClawVersion } from '@/hooks'
 import {
     locationFlags,
     locationNames,
-    generateSlug,
-    aiModels
+    generateSlug
 } from '@/lib/claw-utils'
 
 const tabStateMap: Record<string, PlaygroundDetailTab> = {}
@@ -255,17 +254,6 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                     <CopyableField
                                         label={t('dashboard.sshKey')}
                                         value={attachedSshKey.name}
-                                    />
-                                )}
-
-                                {claw.model && (
-                                    <CopyableField
-                                        label={t('dashboard.aiModel')}
-                                        value={
-                                            aiModels.find(
-                                                (m) => m.id === claw.model
-                                            )?.name || claw.model
-                                        }
                                     />
                                 )}
 

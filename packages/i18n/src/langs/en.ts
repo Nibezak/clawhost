@@ -11,6 +11,8 @@ export const en = {
         copy: 'Copy',
         copied: 'Copied.',
         copiedWithLabel: '{{label}} copied.',
+        show: 'Show',
+        hide: 'Hide',
         tryAgain: 'Try again',
         addKey: 'Add Key',
         close: 'Close',
@@ -423,7 +425,6 @@ export const en = {
         sshKey: 'SSH Key',
         storage: 'Storage',
         provider: 'Provider',
-        aiModel: 'AI Model',
         nextBilling: 'Next Billing',
         lastBilling: 'Last Billing',
         version: 'Version',
@@ -547,16 +548,17 @@ export const en = {
         planUnavailable: 'Unavailable',
         providerAtCapacity:
             'Due to high demand, we have temporarily run out of servers from this provider. We are actively working to resolve this.',
-        advancedOptions: 'Advanced Options',
+        advancedOptions: 'Advanced Optional Options',
         rootPassword: 'Root Password',
         rootPasswordPlaceholder: 'Enter password or generate one',
         autoGeneratePasswordHint:
-            'Leave empty to auto-generate a secure password',
-        sshKeyOptional: 'SSH Key (Optional)',
+            'Leave empty to auto-generate a secure password.',
+        regeneratePassword: 'Regenerate password',
+        sshKeyOptional: 'SSH Key',
         noSshKeyPasswordOnly: 'No SSH key (password only)',
         noSshKeysConfigured: 'No SSH keys configured',
         addSshKeyForPasswordlessLogin: 'Add an SSH key for passwordless login',
-        additionalStorageOptional: 'Additional Storage (Optional)',
+        additionalStorageOptional: 'Additional Storage',
         volumeStorage: 'Volume Storage',
         vpsServer: 'VPS Server',
         openClawPreinstalled: 'OpenClaw Pre-installed',
@@ -571,15 +573,7 @@ export const en = {
         rootPasswordSaveThis: 'Root Password (save this!)',
         sshCommandUsingKey: 'SSH Command (using your key)',
         sshCommandWithPassword: 'SSH Command (with password)',
-        passwordCopied: 'Password copied.',
-        model: 'AI Model',
-        modelNone: 'No model pre-configured',
-        modelDescription:
-            'Pre-configure the default AI model. You can change this later in the dashboard.',
-        apiToken: 'API Token',
-        apiTokenPlaceholder: 'Enter your provider API key',
-        apiTokenDescription:
-            'Required for the selected model to work. Get it from your provider dashboard.'
+        passwordCopied: 'Password copied.'
     },
     sshKeys: {
         title: 'SSH Keys',

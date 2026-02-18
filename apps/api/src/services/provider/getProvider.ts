@@ -1,4 +1,4 @@
-import type { CloudProvider } from '@/ts/Interfaces'
+import type { CacheEntry, CloudProvider } from '@/ts/Interfaces'
 import type { ProviderType } from '@/ts/Types'
 
 import hetzner from '@/services/hetzner'
@@ -7,7 +7,7 @@ import vultr from '@/services/vultr'
 
 const CACHE_TTL = 5 * 60 * 1000
 
-const cache = new Map<string, { data: unknown; expiry: number }>()
+const cache = new Map<string, CacheEntry<unknown>>()
 
 function cached<T>(key: string, fn: () => Promise<T>): Promise<T> {
     const entry = cache.get(key)

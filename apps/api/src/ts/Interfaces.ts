@@ -605,8 +605,6 @@ export interface CreateClawBody {
     password?: string
     sshKeyId?: string
     volumeSize?: number
-    model?: string
-    apiToken?: string
 }
 
 export interface InitiateClawPurchaseBody {
@@ -617,8 +615,6 @@ export interface InitiateClawPurchaseBody {
     password?: string
     sshKeyId?: string
     volumeSize?: number
-    model?: string
-    apiToken?: string
     priceMonthly: number
 }
 
@@ -858,10 +854,9 @@ export interface ClawHubInstalledSkill {
     latestVersion?: string
 }
 
-export interface SearchClawHubSkillsBody {
+export interface BrowseClawHubSkillsQuery {
     query?: string
     limit?: number
-    page?: number
     cursor?: string
     agentId?: string
 }
@@ -882,7 +877,7 @@ export interface ClawHubUpdateBody {
     agentId?: string
 }
 
-export interface ClawHubSearchResponse {
+export interface ClawHubBrowseResponse {
     skills: ClawHubSearchResult[]
 }
 
@@ -914,17 +909,35 @@ export interface ClawHubAPISkillItem {
     tags?: string[]
 }
 
-export interface SearchClawHubSkillsParams {
+export interface BrowseClawHubSkillsParams {
     query?: string
     limit?: number
-    page?: number
     cursor?: string
 }
 
-export interface ClawHubSearchResultPage {
+export interface ClawHubBrowseResultPage {
     skills: ClawHubSearchResult[]
     nextCursor: string | null
     hasMore: boolean
+}
+
+export interface CacheEntry<T> {
+    data: T
+    expiry: number
+}
+
+export interface SkillsCacheEntry {
+    data: ClawHubSearchResult[]
+    expires: number
+}
+
+export interface ClawHubAPISkillsPage {
+    items: ClawHubAPISkillItem[]
+    nextCursor?: string | null
+}
+
+export interface AgentIdBody {
+    agentId?: string
 }
 
 export interface RootLayoutProps {

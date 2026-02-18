@@ -39,7 +39,6 @@ export const claws = pgTable(
         }),
         subdomain: text('subdomain').unique(),
         gatewayToken: text('gateway_token'),
-        model: text('model'),
         polarSubscriptionId: text('polar_subscription_id').unique(),
         polarProductId: text('polar_product_id'),
         polarCustomerId: text('polar_customer_id'),
@@ -75,8 +74,6 @@ export const pendingClaws = pgTable(
             onDelete: 'set null'
         }),
         volumeSize: integer('volume_size'),
-        model: text('model'),
-        apiToken: text('api_token'),
         priceMonthly: integer('price_monthly').notNull(),
         createdAt: timestamp('created_at', { withTimezone: true })
             .defaultNow()
