@@ -18,7 +18,7 @@ import NotFound from '@/pages/NotFound'
 const SITE_URL = `https://${getBaseDomain()}`
 
 const BlogPost: FC = (): ReactNode => {
-    const { slug } = useParams<{ slug: string }>()
+    const { slug } = useParams<Record<string, string>>()
 
     const meta = slug ? getPostMeta(slug) : null
     const Content = slug ? getPostComponent(slug) : null

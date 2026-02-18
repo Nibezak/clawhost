@@ -1,4 +1,4 @@
-import type { ClawHubInstalledSkill } from '@/ts/Interfaces'
+import type { AgentIdBody, ClawHubInstalledSkill } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import executeSSH from '@/services/ssh'
@@ -40,7 +40,7 @@ const getClawHubInstalled = async (c: AuthenticatedContext) => {
         try {
             let agentId: string | undefined
             try {
-                const body = await c.req.json<{ agentId?: string }>()
+                const body = await c.req.json<AgentIdBody>()
                 agentId = body.agentId
             } catch {
                 agentId = undefined

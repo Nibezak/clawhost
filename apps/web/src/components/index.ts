@@ -20,6 +20,7 @@ import ProtectedRoute from '@/components/ProtectedRoute'
 import ProviderIcon from '@/components/ProviderIcon'
 import ScrollToTop from '@/components/ScrollToTop'
 import Toast from '@/components/Toast'
+import TruncateTooltip from '@/components/TruncateTooltip'
 import UserDropdown from '@/components/UserDropdown'
 
 export {
@@ -45,5 +46,6 @@ export {
     ProviderIcon,
     ScrollToTop,
     Toast,
+    TruncateTooltip,
     UserDropdown
 }

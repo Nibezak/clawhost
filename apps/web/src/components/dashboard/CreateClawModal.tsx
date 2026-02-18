@@ -12,17 +12,12 @@ import {
     useVolumePricing,
     usePlanAvailability
 } from '@/hooks'
-import { generatePassword, locationFlags, aiModels } from '@/lib/claw-utils'
+import { generatePassword, locationFlags } from '@/lib/claw-utils'
 import {
     Button,
     Input,
     Slider,
     Label,
-    Select,
-    SelectTrigger,
-    SelectContent,
-    SelectItem,
-    SelectGroup,
     Dialog,
     DialogContent,
     DialogDescription,
@@ -77,9 +72,18 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     const volumePricing = providerVolumePricing || initialVolumePricing
     const planAvailability = providerPlanAvailability || initialPlanAvailability
 
+    const isPlanAvailable = (id: string): boolean => {
+        if (!planAvailability) return true
+        const available = planAvailability[id]
+        if (!available) return true
+        return available.length > 0
+    }
+
     const getFirstEnabledPlan = (planList: typeof plans): string => {
-        const enabled = planList.find((p) => !p.disabled)
-        return enabled?.id || ''
+        const enabled = planList.find(
+            (p) => !p.disabled && isPlanAvailable(p.id)
+        )
+        return enabled?.id || planList.find((p) => !p.disabled)?.id || ''
     }
 
     const initialPlanId =
@@ -114,8 +118,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     const [showPassword, setShowPassword] = useState(false)
     const [selectedSshKeyId, setSelectedSshKeyId] = useState<string>('')
     const [volumeSize, setVolumeSize] = useState<number>(0)
-    const [model, setModel] = useState('')
-    const [apiToken, setApiToken] = useState('')
     const [showAdvanced, setShowAdvanced] = useState(false)
     const { showToast } = useUIStore()
 
@@ -137,7 +139,15 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     }, [plans, locations])
 
     useEffect(() => {
-        if (planId && planAvailability) {
+        if (planAvailability && planId) {
+            if (!isPlanAvailable(planId)) {
+                const betterPlan = getFirstEnabledPlan(plans)
+                if (betterPlan) {
+                    setPlanId(betterPlan)
+                    setLocation(getFirstAvailableLocation(betterPlan))
+                    return
+                }
+            }
             const currentAvailable = isLocationAvailableForPlan(
                 location,
                 planId
@@ -179,8 +189,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                 password: password || undefined,
                 sshKeyId: selectedSshKeyId || undefined,
                 volumeSize: volumeSize > 0 ? volumeSize : undefined,
-                model: model || undefined,
-                apiToken: apiToken || undefined,
                 priceMonthly: totalPrice
             },
             {
@@ -440,7 +448,9 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                 <div className='space-y-2'>
                                     {plans.map((plan, index) => {
                                         const isSelected = planId === plan.id
-                                        const isDisabled = plan.disabled
+                                        const isDisabled =
+                                            plan.disabled ||
+                                            !isPlanAvailable(plan.id)
 
                                         const tierStarts: Record<
                                             string,
@@ -572,76 +582,20 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                         )}
                     </div>
 
-                    <div className='space-y-2'>
-                        <Label>{t('createClaw.model')}</Label>
-                        <Select value={model} onValueChange={setModel}>
-                            <SelectTrigger
-                                placeholder={t('createClaw.modelNone')}
+                    <div className='bg-muted/50 border-border rounded-lg border'>
+                        <button
+                            type='button'
+                            onClick={() => setShowAdvanced(!showAdvanced)}
+                            className='text-muted-foreground hover:text-foreground flex w-full items-center gap-2 p-4 text-sm transition-colors'
+                        >
+                            <CaretDownIcon
+                                className={`h-4 w-4 transition-transform ${showAdvanced ? 'rotate-180' : ''}`}
                             />
-                            <SelectContent>
-                                <SelectItem value=''>
-                                    {t('createClaw.modelNone')}
-                                </SelectItem>
-                                {Object.entries(
-                                    aiModels.reduce<
-                                        Record<string, typeof aiModels>
-                                    >((groups, m) => {
-                                        const group = groups[m.provider] || []
-                                        group.push(m)
-                                        groups[m.provider] = group
-                                        return groups
-                                    }, {})
-                                ).map(([provider, models], idx, arr) => (
-                                    <SelectGroup
-                                        key={provider}
-                                        label={provider}
-                                        isLast={idx === arr.length - 1}
-                                    >
-                                        {models.map((m) => (
-                                            <SelectItem key={m.id} value={m.id}>
-                                                {m.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                        <p className='text-muted-foreground text-xs'>
-                            {t('createClaw.modelDescription')}
-                        </p>
-                    </div>
+                            {t('createClaw.advancedOptions')}
+                        </button>
 
-                    {model && (
-                        <div className='space-y-2'>
-                            <Label>{t('createClaw.apiToken')}</Label>
-                            <Input
-                                type='password'
-                                value={apiToken}
-                                onChange={(e) => setApiToken(e.target.value)}
-                                placeholder={t(
-                                    'createClaw.apiTokenPlaceholder'
-                                )}
-                                className='h-11 font-mono text-sm'
-                            />
-                            <p className='text-muted-foreground text-xs'>
-                                {t('createClaw.apiTokenDescription')}
-                            </p>
-                        </div>
-                    )}
-
-                    <button
-                        type='button'
-                        onClick={() => setShowAdvanced(!showAdvanced)}
-                        className='text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm transition-colors'
-                    >
-                        <CaretDownIcon
-                            className={`h-4 w-4 transition-transform ${showAdvanced ? 'rotate-180' : ''}`}
-                        />
-                        {t('createClaw.advancedOptions')}
-                    </button>
-
-                    {showAdvanced && (
-                        <div className='space-y-5 pt-2'>
+                        {showAdvanced && (
+                            <div className='space-y-5 border-t border-border/50 p-4'>
                             <div className='space-y-2'>
                                 <Label>{t('createClaw.rootPassword')}</Label>
                                 <div className='flex items-center gap-2'>
@@ -659,48 +613,71 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                             placeholder={t(
                                                 'createClaw.rootPasswordPlaceholder'
                                             )}
-                                            className='pr-10 font-mono text-sm'
+                                            className='bg-muted pr-10 font-mono text-sm'
                                         />
-                                        <button
-                                            type='button'
-                                            onClick={() =>
-                                                setShowPassword(!showPassword)
-                                            }
-                                            className='text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2'
-                                        >
-                                            {showPassword ? (
-                                                <EyeSlashIcon className='h-4 w-4' />
-                                            ) : (
-                                                <EyeIcon className='h-4 w-4' />
-                                            )}
-                                        </button>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <button
+                                                    type='button'
+                                                    onClick={() =>
+                                                        setShowPassword(!showPassword)
+                                                    }
+                                                    className='text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2'
+                                                >
+                                                    {showPassword ? (
+                                                        <EyeSlashIcon className='h-4 w-4' />
+                                                    ) : (
+                                                        <EyeIcon className='h-4 w-4' />
+                                                    )}
+                                                </button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                {showPassword ? t('common.hide') : t('common.show')}
+                                            </TooltipContent>
+                                        </Tooltip>
                                     </div>
-                                    <Button
-                                        type='button'
-                                        variant='ghost'
-                                        size='icon'
-                                        onClick={() => {
-                                            navigator.clipboard.writeText(
-                                                password
-                                            )
-                                            showToast(
-                                                t('createClaw.passwordCopied'),
-                                                'success'
-                                            )
-                                        }}
-                                    >
-                                        <CopyIcon className='h-4 w-4' />
-                                    </Button>
-                                    <Button
-                                        type='button'
-                                        variant='ghost'
-                                        size='icon'
-                                        onClick={() =>
-                                            setPassword(generatePassword())
-                                        }
-                                    >
-                                        <ArrowClockwiseIcon className='h-4 w-4' />
-                                    </Button>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button
+                                                type='button'
+                                                variant='ghost'
+                                                size='icon'
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(
+                                                        password
+                                                    )
+                                                    showToast(
+                                                        t('createClaw.passwordCopied'),
+                                                        'success'
+                                                    )
+                                                }}
+                                            >
+                                                <CopyIcon className='h-4 w-4' />
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            {t('common.copy')}
+                                        </TooltipContent>
+                                    </Tooltip>
+                                    <TooltipProvider delayDuration={200}>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button
+                                                    type='button'
+                                                    variant='ghost'
+                                                    size='icon'
+                                                    onClick={() =>
+                                                        setPassword(generatePassword())
+                                                    }
+                                                >
+                                                    <ArrowClockwiseIcon className='h-4 w-4' />
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                {t('createClaw.regeneratePassword')}
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
                                 </div>
                                 <p className='text-muted-foreground text-xs'>
                                     {t('createClaw.autoGeneratePasswordHint')}
@@ -877,8 +854,9 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                     </div>
                                 </div>
                             )}
-                        </div>
-                    )}
+                            </div>
+                        )}
+                    </div>
 
                     {selectedPlan && (
                         <div className='bg-muted space-y-2 rounded-lg p-4'>

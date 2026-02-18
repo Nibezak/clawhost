@@ -27,9 +27,7 @@ const createClaw = async (c: AuthenticatedContext) => {
             location,
             password,
             sshKeyId,
-            volumeSize,
-            model,
-            apiToken
+            volumeSize
         } = await c.req.json<CreateClawBody>()
 
         if (!name || !planId || !location) {
@@ -103,9 +101,7 @@ const createClaw = async (c: AuthenticatedContext) => {
             finalPassword,
             subdomain,
             DOMAIN,
-            gatewayToken,
-            model || undefined,
-            apiToken || undefined
+            gatewayToken
         )
 
         const { serverId, ip } = await provider.createServer(
@@ -137,8 +133,7 @@ const createClaw = async (c: AuthenticatedContext) => {
                 rootPassword: finalPassword,
                 sshKeyId: sshKeyId || null,
                 subdomain,
-                gatewayToken,
-                model: model || null
+                gatewayToken
             })
         ])
 

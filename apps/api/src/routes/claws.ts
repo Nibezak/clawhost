@@ -36,7 +36,7 @@ import {
     getAgentSkills,
     updateAgentSkills,
     getClawVersion,
-    searchClawHubSkills,
+    browseClawHubSkills,
     getClawHubInstalled,
     installClawHubSkill,
     removeClawHubSkill,
@@ -80,7 +80,7 @@ app.post('/:id/files', listClawFiles)
 app.post('/:id/files/read', readClawFile)
 app.put('/:id/files', updateClawFile)
 app.post('/:id/version', getClawVersion)
-app.post('/:id/clawhub/search', searchClawHubSkills)
+app.get('/:id/clawhub/skills', browseClawHubSkills)
 app.post('/:id/clawhub/installed', getClawHubInstalled)
 app.post('/:id/clawhub/install', installClawHubSkill)
 app.post('/:id/clawhub/remove', removeClawHubSkill)

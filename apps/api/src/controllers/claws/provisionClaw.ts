@@ -88,9 +88,7 @@ export async function provisionClaw(
             pending.rootPassword || '',
             subdomain,
             DOMAIN,
-            gatewayToken,
-            pending.model || undefined,
-            pending.apiToken || undefined
+            gatewayToken
         )
 
         await db.insert(claws).values({
@@ -105,7 +103,6 @@ export async function provisionClaw(
             sshKeyId: pending.sshKeyId,
             subdomain,
             gatewayToken,
-            model: pending.model,
             polarSubscriptionId: params.subscriptionId,
             polarProductId: params.productId,
             polarCustomerId: params.customerId,

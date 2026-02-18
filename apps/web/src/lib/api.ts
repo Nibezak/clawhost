@@ -29,10 +29,10 @@ import type {
     UpdateAgentConfigData,
     UpdateAgentSkillsData,
     UpdateClawChannelsData,
-    SearchClawHubData,
+    BrowseClawHubData,
     ClawHubSkillActionData,
     ClawHubUpdateData,
-    ClawHubSearchResponse,
+    ClawHubBrowseResponse,
     ClawHubInstalledResponse,
     ClawHubUpdatesResponse,
     UpdateClawEnvVarsData,
@@ -151,8 +151,15 @@ const api = {
         ),
     updateAgentSkills: (clawId: string, agentId: string, data: UpdateAgentSkillsData) =>
         client.put<void>(`/claws/${clawId}/agents/${agentId}/skills`, data),
-    searchClawHubSkills: (clawId: string, data: SearchClawHubData) =>
-        client.post<ClawHubSearchResponse>(`/claws/${clawId}/clawhub/search`, data),
+    browseClawHubSkills: (clawId: string, params: BrowseClawHubData) => {
+        const qs = new URLSearchParams()
+        if (params.query) qs.set('query', params.query)
+        if (params.limit) qs.set('limit', String(params.limit))
+        if (params.cursor) qs.set('cursor', params.cursor)
+        if (params.agentId) qs.set('agentId', params.agentId)
+        const str = qs.toString()
+        return client.get<ClawHubBrowseResponse>(`/claws/${clawId}/clawhub/skills${str ? `?${str}` : ''}`)
+    },
     getClawHubInstalled: (clawId: string, agentId?: string) =>
         client.post<ClawHubInstalledResponse>(
             `/claws/${clawId}/clawhub/installed`,

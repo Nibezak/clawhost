@@ -18,12 +18,12 @@ import {
     StorefrontIcon,
     TrashIcon
 } from '@phosphor-icons/react'
-import { PanelPlaceholder } from '@/components'
+import { PanelPlaceholder, TruncateTooltip } from '@/components'
 import { Skeleton } from '@/components/ui'
 import { api } from '@/lib'
 import { useUIStore } from '@/lib/store'
 
-const PAGE_SIZE = 20
+const PAGE_SIZE = 50
 
 const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
     clawId,
@@ -59,10 +59,9 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
         isError: isBrowseError
     } = useQuery({
         queryKey: browseKey,
-        queryFn: () => api.searchClawHubSkills(clawId, {
+        queryFn: () => api.browseClawHubSkills(clawId, {
             query: debouncedSearch || undefined,
             limit: PAGE_SIZE,
-            page,
             agentId
         }),
         staleTime: 30000,
@@ -239,13 +238,17 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
                                     }`}
                                 >
                                     <div className='min-w-0 flex-1'>
-                                        <span className='block text-xs font-medium text-white'>
-                                            {skill.name}
-                                        </span>
-                                        {skill.description && (
-                                            <span className='mt-0.5 block truncate text-[11px] text-gray-500'>
-                                                {skill.description}
+                                        <TruncateTooltip content={skill.name}>
+                                            <span className='block truncate text-xs font-medium text-white'>
+                                                {skill.name}
                                             </span>
+                                        </TruncateTooltip>
+                                        {skill.description && (
+                                            <TruncateTooltip content={skill.description}>
+                                                <span className='mt-0.5 block truncate text-[11px] text-gray-500'>
+                                                    {skill.description}
+                                                </span>
+                                            </TruncateTooltip>
                                         )}
                                         <div className='mt-1 flex items-center gap-2'>
                                             {skill.author && (

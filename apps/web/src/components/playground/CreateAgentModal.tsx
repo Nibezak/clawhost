@@ -16,7 +16,10 @@ import {
     SelectTrigger,
     SelectContent,
     SelectItem,
-    SelectGroup
+    SelectGroup,
+    Tooltip,
+    TooltipTrigger,
+    TooltipContent
 } from '@/components/ui'
 import { api } from '@/lib'
 import { useUIStore } from '@/lib/store'
@@ -227,17 +230,24 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                                 <label className='text-xs font-medium text-gray-400'>
                                     {t('playground.addAgentApiKey')}
                                 </label>
-                                <button
-                                    type='button'
-                                    onClick={() => setShowApiKey(!showApiKey)}
-                                    className='rounded p-1 text-gray-500 transition-colors hover:text-gray-300'
-                                >
-                                    {showApiKey ? (
-                                        <EyeSlashIcon className='h-3.5 w-3.5' />
-                                    ) : (
-                                        <EyeIcon className='h-3.5 w-3.5' />
-                                    )}
-                                </button>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <button
+                                            type='button'
+                                            onClick={() => setShowApiKey(!showApiKey)}
+                                            className='rounded p-1 text-gray-500 transition-colors hover:text-gray-300'
+                                        >
+                                            {showApiKey ? (
+                                                <EyeSlashIcon className='h-3.5 w-3.5' />
+                                            ) : (
+                                                <EyeIcon className='h-3.5 w-3.5' />
+                                            )}
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        {showApiKey ? t('common.hide') : t('common.show')}
+                                    </TooltipContent>
+                                </Tooltip>
                             </div>
                             <input
                                 type={showApiKey ? 'text' : 'password'}

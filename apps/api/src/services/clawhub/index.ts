@@ -1,3 +1,3 @@
-import searchSkills from '@/services/clawhub/searchSkills'
+import browseSkills from '@/services/clawhub/browseSkills'
 
-export { searchSkills }
+export { browseSkills }

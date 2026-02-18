@@ -22,7 +22,7 @@ import {
     CheckIcon
 } from '@phosphor-icons/react'
 import { PanelPlaceholder } from '@/components'
-import { Skeleton } from '@/components/ui'
+import { Skeleton, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import { api } from '@/lib'
 import { useUIStore } from '@/lib/store'
 
@@ -281,34 +281,48 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                                                             )}
                                                         </label>
                                                         <div className='flex items-center gap-1'>
-                                                            <button
-                                                                type='button'
-                                                                disabled={!value}
-                                                                onClick={() =>
-                                                                    copyField(
-                                                                        value
-                                                                    )
-                                                                }
-                                                                className='rounded p-0.5 text-gray-500 transition-colors hover:text-gray-300 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:text-gray-500'
-                                                            >
-                                                                <CopyIcon className='h-3 w-3' />
-                                                            </button>
+                                                            <Tooltip>
+                                                                <TooltipTrigger asChild>
+                                                                    <button
+                                                                        type='button'
+                                                                        disabled={!value}
+                                                                        onClick={() =>
+                                                                            copyField(
+                                                                                value
+                                                                            )
+                                                                        }
+                                                                        className='rounded p-0.5 text-gray-500 transition-colors hover:text-gray-300 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:text-gray-500'
+                                                                    >
+                                                                        <CopyIcon className='h-3 w-3' />
+                                                                    </button>
+                                                                </TooltipTrigger>
+                                                                <TooltipContent>
+                                                                    {t('common.copy')}
+                                                                </TooltipContent>
+                                                            </Tooltip>
                                                             {field.secret && (
-                                                                <button
-                                                                    type='button'
-                                                                    onClick={() =>
-                                                                        toggleSecret(
-                                                                            fieldId
-                                                                        )
-                                                                    }
-                                                                    className='rounded p-0.5 text-gray-500 transition-colors hover:text-gray-300'
-                                                                >
-                                                                    {isVisible ? (
-                                                                        <EyeSlashIcon className='h-3 w-3' />
-                                                                    ) : (
-                                                                        <EyeIcon className='h-3 w-3' />
-                                                                    )}
-                                                                </button>
+                                                                <Tooltip>
+                                                                    <TooltipTrigger asChild>
+                                                                        <button
+                                                                            type='button'
+                                                                            onClick={() =>
+                                                                                toggleSecret(
+                                                                                    fieldId
+                                                                                )
+                                                                            }
+                                                                            className='rounded p-0.5 text-gray-500 transition-colors hover:text-gray-300'
+                                                                        >
+                                                                            {isVisible ? (
+                                                                                <EyeSlashIcon className='h-3 w-3' />
+                                                                            ) : (
+                                                                                <EyeIcon className='h-3 w-3' />
+                                                                            )}
+                                                                        </button>
+                                                                    </TooltipTrigger>
+                                                                    <TooltipContent>
+                                                                        {isVisible ? t('common.hide') : t('common.show')}
+                                                                    </TooltipContent>
+                                                                </Tooltip>
                                                             )}
                                                         </div>
                                                     </div>

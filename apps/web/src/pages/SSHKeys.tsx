@@ -29,7 +29,10 @@ import {
     DialogContent,
     DialogDescription,
     DialogHeader,
-    DialogTitle
+    DialogTitle,
+    Tooltip,
+    TooltipTrigger,
+    TooltipContent
 } from '@/components/ui'
 import {
     EmptyState,
@@ -369,23 +372,30 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                                     <code className='bg-background flex-1 overflow-x-auto rounded-lg p-2 font-mono text-xs'>
                                         {sshKeygenCommand}
                                     </code>
-                                    <Button
-                                        type='button'
-                                        variant='ghost'
-                                        size='icon'
-                                        onClick={() =>
-                                            copyToClipboard(
-                                                sshKeygenCommand,
-                                                'command'
-                                            )
-                                        }
-                                    >
-                                        {copied === 'command' ? (
-                                            <CheckIcon className='h-4 w-4' />
-                                        ) : (
-                                            <CopyIcon className='h-4 w-4' />
-                                        )}
-                                    </Button>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button
+                                                type='button'
+                                                variant='ghost'
+                                                size='icon'
+                                                onClick={() =>
+                                                    copyToClipboard(
+                                                        sshKeygenCommand,
+                                                        'command'
+                                                    )
+                                                }
+                                            >
+                                                {copied === 'command' ? (
+                                                    <CheckIcon className='h-4 w-4' />
+                                                ) : (
+                                                    <CopyIcon className='h-4 w-4' />
+                                                )}
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            {t('common.copy')}
+                                        </TooltipContent>
+                                    </Tooltip>
                                 </div>
                             </CardContent>
                         </Card>
@@ -467,23 +477,30 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                                             <code className='bg-background flex-1 overflow-x-auto rounded-lg p-2 font-mono text-xs'>
                                                 {sshKeygenCommand}
                                             </code>
-                                            <Button
-                                                type='button'
-                                                variant='ghost'
-                                                size='icon'
-                                                onClick={() =>
-                                                    copyToClipboard(
-                                                        sshKeygenCommand,
-                                                        'command'
-                                                    )
-                                                }
-                                            >
-                                                {copied === 'command' ? (
-                                                    <CheckIcon className='h-4 w-4' />
-                                                ) : (
-                                                    <CopyIcon className='h-4 w-4' />
-                                                )}
-                                            </Button>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Button
+                                                        type='button'
+                                                        variant='ghost'
+                                                        size='icon'
+                                                        onClick={() =>
+                                                            copyToClipboard(
+                                                                sshKeygenCommand,
+                                                                'command'
+                                                            )
+                                                        }
+                                                    >
+                                                        {copied === 'command' ? (
+                                                            <CheckIcon className='h-4 w-4' />
+                                                        ) : (
+                                                            <CopyIcon className='h-4 w-4' />
+                                                        )}
+                                                    </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    {t('common.copy')}
+                                                </TooltipContent>
+                                            </Tooltip>
                                         </div>
                                         <p className='text-muted-foreground mt-2 text-xs'>
                                             {t('sshKeys.thenSwitchToIHave')}

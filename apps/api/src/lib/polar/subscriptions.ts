@@ -1,4 +1,5 @@
 import type {
+    CacheEntry,
     PolarSubscription,
     PolarSubscriptionRaw,
     PolarItemsResult
@@ -8,7 +9,7 @@ import type { SubscriptionStatus } from '@/ts/Types'
 import getPolarClient from '@/lib/polar/getPolarClient'
 
 const SUB_CACHE_TTL = 60_000
-const subCache = new Map<string, { data: PolarSubscription; expiry: number }>()
+const subCache = new Map<string, CacheEntry<PolarSubscription>>()
 
 const subscriptions = {
     async get(subscriptionId: string): Promise<PolarSubscription | null> {

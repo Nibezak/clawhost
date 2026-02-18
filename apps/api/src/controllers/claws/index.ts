@@ -32,7 +32,7 @@ import updateClawSkills from '@/controllers/claws/updateClawSkills'
 import getAgentSkills from '@/controllers/claws/getAgentSkills'
 import updateAgentSkills from '@/controllers/claws/updateAgentSkills'
 import getClawVersion from '@/controllers/claws/getClawVersion'
-import searchClawHubSkills from '@/controllers/claws/searchClawHubSkills'
+import browseClawHubSkills from '@/controllers/claws/browseClawHubSkills'
 import getClawHubInstalled from '@/controllers/claws/getClawHubInstalled'
 import installClawHubSkill from '@/controllers/claws/installClawHubSkill'
 import removeClawHubSkill from '@/controllers/claws/removeClawHubSkill'
@@ -74,7 +74,7 @@ export {
     getAgentSkills,
     updateAgentSkills,
     getClawVersion,
-    searchClawHubSkills,
+    browseClawHubSkills,
     getClawHubInstalled,
     installClawHubSkill,
     removeClawHubSkill,

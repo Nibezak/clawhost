@@ -22,7 +22,6 @@ const demoClaws: Claw[] = [
         providerServerId: '48291053',
         subdomain: 'personal-claw',
         gatewayToken: null,
-        model: 'claude-sonnet-4-5-20250929',
         subscriptionStatus: 'active',
         currentPeriodStart: null,
         currentPeriodEnd: null,

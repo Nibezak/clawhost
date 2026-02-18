@@ -46,7 +46,6 @@ export interface Claw {
     providerServerId: string | null
     subdomain: string | null
     gatewayToken: string | null
-    model: string | null
     subscriptionStatus: string | null
     currentPeriodStart: string | null
     currentPeriodEnd: string | null
@@ -382,8 +381,6 @@ export interface CreateClawData {
     password?: string
     sshKeyId?: string
     volumeSize?: number
-    model?: string
-    apiToken?: string
 }
 
 export interface PurchaseClawData {
@@ -394,8 +391,6 @@ export interface PurchaseClawData {
     password?: string
     sshKeyId?: string
     volumeSize?: number
-    model?: string
-    apiToken?: string
     priceMonthly: number
 }
 
@@ -968,7 +963,7 @@ export interface ClawHubInstalledSkill {
     latestVersion?: string
 }
 
-export interface ClawHubSearchResponse {
+export interface ClawHubBrowseResponse {
     skills: ClawHubSearchResult[]
     nextCursor: string | null
     hasMore: boolean
@@ -982,10 +977,9 @@ export interface ClawHubUpdatesResponse {
     updates: ClawHubInstalledSkill[]
 }
 
-export interface SearchClawHubData {
+export interface BrowseClawHubData {
     query?: string
     limit?: number
-    page?: number
     cursor?: string
     agentId?: string
 }
@@ -1060,4 +1054,9 @@ export interface ChatViewProps {
     onAgentTabChange?: (tab: PlaygroundAgentDetailTab | null) => void
     initialClawTab?: PlaygroundDetailTab
     onClawTabChange?: (tab: PlaygroundDetailTab | null) => void
+}
+
+export interface TruncateTooltipProps {
+    content: string
+    children: ReactNode
 }
