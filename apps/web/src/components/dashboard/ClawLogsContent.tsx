@@ -3,6 +3,7 @@ import type { ClawLogsContentProps } from '@/ts/Interfaces'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { t } from '@openclaw/i18n'
+import { getLocale } from '@/lib'
 import { Button, Skeleton } from '@/components/ui'
 import { ArrowDownIcon, ScrollIcon } from '@phosphor-icons/react'
 import { useClawLogs } from '@/hooks'
@@ -35,7 +36,7 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
                 if (match) {
                     const raw = match[1]
                     const date = new Date(raw)
-                    const time = date.toLocaleTimeString('en-US', {
+                    const time = date.toLocaleTimeString(getLocale(), {
                         hour: '2-digit',
                         minute: '2-digit',
                         second: '2-digit',

@@ -1,12 +1,14 @@
 export type {
     AuthMethod,
     ChatMessageRole,
+    OAuthProvider,
     ChatMessageStatus,
     ClawAvatarSize,
     ClawStatus,
     CopiedFieldType,
     GatewayConnectionState,
     GatewayEventHandler,
+    Language,
     PlaygroundAgentDetailTab,
     PlaygroundDetailTab,
     PlaygroundNodeType,
@@ -18,6 +20,8 @@ export type {
 
 export type {
     AgentConfigResponse,
+    AgentConfigSummary,
+    LanguageOption,
     AIModelOption,
     Claw,
     ClawEnvVarsResponse,

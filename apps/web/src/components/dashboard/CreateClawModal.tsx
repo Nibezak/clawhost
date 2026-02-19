@@ -524,9 +524,11 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                             )}
                                                         </p>
                                                         <p className='text-muted-foreground text-xs'>
-                                                            {plan.cpu} vCPU /{' '}
-                                                            {plan.memory} GB RAM
-                                                            / {plan.disk} GB SSD
+                                                            {t('createClaw.planSpec', {
+                                                                cpu: String(plan.cpu),
+                                                                memory: String(plan.memory),
+                                                                disk: String(plan.disk)
+                                                            })}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -535,7 +537,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                     {plan.priceMonthly.toFixed(
                                                         2
                                                     )}
-                                                    /mo
+                                                    {t('landing.perMonth')}
                                                 </span>
                                             </label>
                                         )
@@ -816,7 +818,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                 </div>
                                                 <span className='text-sm font-semibold'>
                                                     {volumeSize > 0
-                                                        ? `+$${(volumeSize * volumePricing.pricePerGbMonthly).toFixed(2)}/mo`
+                                                        ? `+$${(volumeSize * volumePricing.pricePerGbMonthly).toFixed(2)}${t('landing.perMonth')}`
                                                         : t('common.none')}
                                                 </span>
                                             </div>
@@ -832,7 +834,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                 />
                                                 <div className='flex items-center justify-between'>
                                                     <span className='text-muted-foreground text-xs'>
-                                                        0 GB
+                                                        {t('createClaw.volumeMin')}
                                                     </span>
                                                     <div className='flex items-center gap-2'>
                                                         <Input
@@ -862,11 +864,11 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                             className='h-8 w-20 text-center text-sm'
                                                         />
                                                         <span className='text-muted-foreground text-sm'>
-                                                            GB
+                                                            {t('createClaw.volumeUnit')}
                                                         </span>
                                                     </div>
                                                     <span className='text-muted-foreground text-xs'>
-                                                        500 GB
+                                                        {t('createClaw.volumeMax')}
                                                     </span>
                                                 </div>
                                             </div>
@@ -907,7 +909,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                     )}
                                 </span>
                                 <span>
-                                    ${selectedPlan.priceMonthly.toFixed(2)}/mo
+                                    ${selectedPlan.priceMonthly.toFixed(2)}{t('landing.perMonth')}
                                 </span>
                             </div>
                             {volumeSize > 0 && volumePricing && (
@@ -922,7 +924,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                             volumeSize *
                                             volumePricing.pricePerGbMonthly
                                         ).toFixed(2)}
-                                        /mo
+                                        {t('landing.perMonth')}
                                     </span>
                                 </div>
                             )}
@@ -939,7 +941,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                               volumePricing.pricePerGbMonthly
                                             : 0)
                                     ).toFixed(2)}
-                                    /mo
+                                    {t('landing.perMonth')}
                                 </span>
                             </div>
                         </div>

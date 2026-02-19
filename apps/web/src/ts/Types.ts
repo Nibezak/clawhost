@@ -1,8 +1,13 @@
+import type { clawStatus } from '@openclaw/shared'
+import type AGENT_DETAIL_TABS from '@/lib/agentDetailTabs'
+import type CLAW_DETAIL_TABS from '@/lib/clawDetailTabs'
+import type DASHBOARD_TABS from '@/lib/dashboardTabs'
+import type THEMES from '@/lib/themes'
+import type LANGUAGES from '@/lib/languages'
+
 export type ProviderType = 'hetzner' | 'digitalocean' | 'vultr'
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info'
-
-import type { clawStatus } from '@openclaw/shared'
 
 export type ClawStatus = (typeof clawStatus)[keyof typeof clawStatus]
 
@@ -14,10 +19,9 @@ export type UserRole = 'user' | 'admin'
 
 export type AuthMethod = 'email' | 'google' | 'github'
 
-export type PlaygroundNodeType = 'claw' | 'agent'
+export type OAuthProvider = 'google' | 'github'
 
-import type AGENT_DETAIL_TABS from '@/lib/agentDetailTabs'
-import type CLAW_DETAIL_TABS from '@/lib/clawDetailTabs'
+export type PlaygroundNodeType = 'claw' | 'agent'
 
 export type PlaygroundDetailTab =
     (typeof CLAW_DETAIL_TABS)[keyof typeof CLAW_DETAIL_TABS]
@@ -59,8 +63,8 @@ export type Route =
     | '/posts'
     | '/posts/:slug'
 
-import type DASHBOARD_TABS from '@/lib/dashboardTabs'
-
 export type DashboardTab = (typeof DASHBOARD_TABS)[keyof typeof DASHBOARD_TABS]
 
-export type ThemeMode = 'light' | 'dark' | 'system'
+export type ThemeMode = (typeof THEMES)[keyof typeof THEMES]
+
+export type Language = (typeof LANGUAGES)[keyof typeof LANGUAGES]

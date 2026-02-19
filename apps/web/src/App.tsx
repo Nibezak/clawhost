@@ -6,7 +6,7 @@ import { AuthProvider } from '@/lib/auth'
 import { ScrollToTop, Toast, ProtectedRoute } from '@/components'
 import { TooltipProvider } from '@/components/ui'
 import { ROUTES } from '@/lib'
-import { useThemeEffect } from '@/hooks'
+import { useThemeEffect, useLanguageEffect } from '@/hooks'
 
 const Landing = lazy(() => import('@/pages/Landing'))
 const Login = lazy(() => import('@/pages/Login'))
@@ -23,13 +23,14 @@ const NotFound = lazy(() => import('@/pages/NotFound'))
 
 const App: FC = (): ReactNode => {
     useThemeEffect()
+    const language = useLanguageEffect()
 
     return (
         <TooltipProvider delayDuration={300}>
             <AuthProvider>
                 <ScrollToTop />
                 <Toast />
-                <Suspense>
+                <Suspense key={language}>
                     <Routes>
                         <Route path={ROUTES.HOME} element={<Landing />} />
                         <Route path={ROUTES.LOGIN} element={<Login />} />

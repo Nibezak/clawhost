@@ -2,6 +2,7 @@ import type { FC, ReactNode } from 'react'
 import type { ChatDateSeparatorProps } from '@/ts/Interfaces'
 
 import { t } from '@openclaw/i18n'
+import { getLocale } from '@/lib'
 
 const ChatDateSeparator: FC<ChatDateSeparatorProps> = ({ date }): ReactNode => {
     const messageDate = new Date(date)
@@ -20,7 +21,7 @@ const ChatDateSeparator: FC<ChatDateSeparatorProps> = ({ date }): ReactNode => {
     } else if (isSameDay(messageDate, yesterday)) {
         label = t('playground.chatYesterday')
     } else {
-        label = messageDate.toLocaleDateString('en-US', {
+        label = messageDate.toLocaleDateString(getLocale(), {
             month: 'short',
             day: 'numeric'
         })

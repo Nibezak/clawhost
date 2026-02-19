@@ -574,8 +574,25 @@ import { t } from '@openclaw/i18n'
 **When adding new features:**
 
 1. First add all text strings to `packages/i18n/src/langs/en.ts`
-2. Use descriptive, hierarchical key names
-3. Then reference them in components using `t('category.keyName')`
+2. **Add the same keys with translated values to ALL language files:** `fr.ts`, `es.ts`, `de.ts`
+3. Use descriptive, hierarchical key names
+4. Then reference them in components using `t('category.keyName')`
+
+**CRITICAL: Every new translation key MUST be added to ALL four language files (en, fr, es, de) simultaneously. Never add a key to only one language file — this will cause missing translations in other languages.**
+
+**Date and number formatting must be locale-aware:**
+
+```typescript
+// CORRECT - Use getLocale() for locale-sensitive formatting
+import { getLocale } from '@/lib'
+
+new Date(dateString).toLocaleDateString(getLocale(), { year: 'numeric', month: 'long', day: 'numeric' })
+new Intl.NumberFormat(getLocale(), { style: 'currency', currency: 'USD' }).format(amount)
+
+// INCORRECT - Never hardcode locale strings
+new Date(dateString).toLocaleDateString('en-US', { ... })  // DO NOT USE
+new Intl.NumberFormat('en-US', { ... }).format(amount)  // DO NOT USE
+```
 
 ## Formatting & Linting Rules
 
@@ -681,7 +698,7 @@ pnpm check           # Run tsc + eslint for both api and web
 9. **Use RequestClient** - For API calls, use the shared HTTP client
 10. **Zustand for state** - Don't introduce additional state management
 11. **shadcn/ui components** - Prefer existing UI components over custom ones
-12. **Use translations for all text** - Never hardcode user-facing text; always use `t()` from `@openclaw/i18n`
+12. **Use translations for all text** - Never hardcode user-facing text; always use `t()` from `@openclaw/i18n`. When adding new translation keys, add them to ALL four language files (`en.ts`, `fr.ts`, `es.ts`, `de.ts`) simultaneously. Use `getLocale()` from `@/lib` for all date/number formatting — never hardcode `'en-US'`
 13. **Never write comments** - Do not add code comments, JSX comments, section markers, or doc comments. The code should be self-explanatory. The only exception is when logic is truly non-obvious (e.g., bitwise operations, crypto algorithms, or workarounds for framework bugs)
 14. **Never add console.log** - Do not add `console.log` statements. Use `console.error` only for actual error handling in catch blocks. No debug logging, no request logging, no data logging
 15. **No section markers** - Never write comments like `// Section Name`, `{/* Section */}`, `// ========`, or category headers in files

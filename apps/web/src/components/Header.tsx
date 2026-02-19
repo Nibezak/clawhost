@@ -8,7 +8,7 @@ import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
 import { useProfile } from '@/hooks'
 import { Button, Skeleton } from '@/components/ui'
-import { Logo, ThemeToggle, UserDropdown } from '@/components'
+import { LanguageSelector, Logo, ThemeToggle, UserDropdown } from '@/components'
 import { ROUTES } from '@/lib'
 import { LightningIcon, ListIcon, XIcon } from '@phosphor-icons/react'
 
@@ -90,7 +90,10 @@ const Header: FC<HeaderProps> = ({
                     )}
 
                     <div className='flex items-center gap-3'>
-                        <ThemeToggle />
+                        <div className='flex items-center gap-1.5'>
+                            <LanguageSelector />
+                            <ThemeToggle />
+                        </div>
                         {authLoading && !cachedProfile ? (
                             <Button
                                 variant='ghost'

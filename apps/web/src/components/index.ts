@@ -9,6 +9,7 @@ import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 import HeroButtons from '@/components/HeroButtons'
 import JsonLd from '@/components/JsonLd'
+import LanguageSelector from '@/components/LanguageSelector'
 import LandingFooter from '@/components/LandingFooter'
 import Logo from '@/components/Logo'
 import PageBackground from '@/components/PageBackground'
@@ -36,6 +37,7 @@ export {
     Header,
     HeroButtons,
     JsonLd,
+    LanguageSelector,
     LandingFooter,
     Logo,
     PageBackground,

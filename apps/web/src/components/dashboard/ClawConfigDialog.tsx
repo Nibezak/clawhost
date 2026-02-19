@@ -24,6 +24,7 @@ import {
 import { useQueryClient } from '@tanstack/react-query'
 import { useClawFiles, useClawFile, useUpdateClawFile } from '@/hooks'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
+import { THEMES } from '@/lib'
 import CodeMirror, { EditorView } from '@uiw/react-codemirror'
 import { createTheme } from '@uiw/codemirror-themes'
 import { tags } from '@lezer/highlight'
@@ -86,8 +87,8 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
 }): ReactNode => {
     const queryClient = useQueryClient()
     const storeTheme = usePreferencesStore((s) => s.theme)
-    const resolvedTheme = storeTheme === 'system'
-        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+    const resolvedTheme = storeTheme === THEMES.SYSTEM
+        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? THEMES.DARK : THEMES.LIGHT)
         : storeTheme
     const files = useClawFiles(clawId, open)
     const updateFile = useUpdateClawFile()
@@ -490,7 +491,7 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                                                 ? [json(), editorStyles]
                                                 : [editorStyles]
                                         }
-                                        theme={resolvedTheme === 'dark' ? darkEditorTheme : lightEditorTheme}
+                                        theme={resolvedTheme === THEMES.DARK ? darkEditorTheme : lightEditorTheme}
                                         height='500px'
                                         basicSetup={{
                                             lineNumbers: true,

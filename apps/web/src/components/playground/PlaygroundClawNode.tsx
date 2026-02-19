@@ -9,6 +9,7 @@ import { useState } from 'react'
 import { t } from '@openclaw/i18n'
 import { clawStatus } from '@openclaw/shared'
 import { useUIStore } from '@/lib/store'
+import { getLocale } from '@/lib'
 import {
     useStartClaw,
     useStopClaw,
@@ -21,10 +22,9 @@ import {
     useProfile
 } from '@/hooks'
 import { api } from '@/lib'
-import { ProviderIcon } from '@/components'
+import { ProviderIcon, ClawMascot } from '@/components'
 import { getStatusConfig } from '@/lib/claw-utils'
 import { PlusIcon, ClockIcon, CircleNotchIcon } from '@phosphor-icons/react'
-import { ClawMascot } from '@/components'
 import {
     ClawCardDropdownMenu,
     ClawCardDialogs,
@@ -346,7 +346,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                                                     date: new Date(
                                                         claw.deletionScheduledAt!
                                                     ).toLocaleDateString(
-                                                        'en-US',
+                                                        getLocale(),
                                                         {
                                                             month: 'short',
                                                             day: 'numeric'

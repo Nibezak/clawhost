@@ -43,8 +43,7 @@ import {
     XIcon
 } from '@phosphor-icons/react'
 
-function getTestimonials(): Testimonial[] {
-    return [
+const getTestimonials = (): Testimonial[] => [
         {
             quote: t('landing.testimonial1Quote'),
             author: t('landing.testimonial1Author'),
@@ -70,44 +69,41 @@ function getTestimonials(): Testimonial[] {
             avatar: 'SK'
         }
     ]
-}
 
-function getFaqs(): Faq[] {
-    return [
-        {
-            question: t('landing.faq1Question'),
-            answer: t('landing.faq1Answer')
-        },
-        {
-            question: t('landing.faq2Question'),
-            answer: t('landing.faq2Answer')
-        },
-        {
-            question: t('landing.faq3Question'),
-            answer: t('landing.faq3Answer')
-        },
-        {
-            question: t('landing.faq4Question'),
-            answer: t('landing.faq4Answer')
-        },
-        {
-            question: t('landing.faq5Question'),
-            answer: t('landing.faq5Answer')
-        },
-        {
-            question: t('landing.faq6Question'),
-            answer: t('landing.faq6Answer')
-        },
-        {
-            question: t('landing.faq7Question'),
-            answer: t('landing.faq7Answer')
-        },
-        {
-            question: t('landing.faq8Question'),
-            answer: t('landing.faq8Answer')
-        }
-    ]
-}
+const getFaqs = (): Faq[] => [
+    {
+        question: t('landing.faq1Question'),
+        answer: t('landing.faq1Answer')
+    },
+    {
+        question: t('landing.faq2Question'),
+        answer: t('landing.faq2Answer')
+    },
+    {
+        question: t('landing.faq3Question'),
+        answer: t('landing.faq3Answer')
+    },
+    {
+        question: t('landing.faq4Question'),
+        answer: t('landing.faq4Answer')
+    },
+    {
+        question: t('landing.faq5Question'),
+        answer: t('landing.faq5Answer')
+    },
+    {
+        question: t('landing.faq6Question'),
+        answer: t('landing.faq6Answer')
+    },
+    {
+        question: t('landing.faq7Question'),
+        answer: t('landing.faq7Answer')
+    },
+    {
+        question: t('landing.faq8Question'),
+        answer: t('landing.faq8Answer')
+    }
+]
 
 const Landing: FC = (): ReactNode => {
     const { user } = useAuth()
@@ -324,7 +320,7 @@ const Landing: FC = (): ReactNode => {
                         >
                             <div>
                                 <div className='font-clash text-foreground text-3xl font-bold md:text-4xl'>
-                                    $10/mo
+                                    $10{t('landing.perMonth')}
                                 </div>
                                 <div className='text-muted-foreground text-sm'>
                                     {t('landing.startingPrice')}
@@ -351,7 +347,7 @@ const Landing: FC = (): ReactNode => {
                             <div className='bg-foreground/10 hidden h-12 w-px md:block' />
                             <div>
                                 <div className='font-clash text-foreground text-3xl font-bold md:text-4xl'>
-                                    Zero
+                                    {t('landing.zeroCount')}
                                 </div>
                                 <div className='text-muted-foreground text-sm'>
                                     {t('landing.zeroConfig')}
@@ -871,7 +867,7 @@ const Landing: FC = (): ReactNode => {
                                                                 ${totalMonthly}
                                                             </span>
                                                             <span className='text-muted-foreground text-sm'>
-                                                                /mo
+                                                                {t('landing.perMonth')}
                                                             </span>
                                                         </td>
                                                         <td className='px-4 py-4 text-right'>
@@ -978,7 +974,7 @@ const Landing: FC = (): ReactNode => {
                                         <div className='flex items-center justify-center'>
                                             <img
                                                 src='https://cdn.clawhost.cloud/assets/clawhost-logo-light.png'
-                                                alt='ClawHost'
+                                                alt={t('common.brandName')}
                                                 className='h-6'
                                             />
                                         </div>
@@ -1142,6 +1138,28 @@ const Landing: FC = (): ReactNode => {
                                     </td>
                                 </tr>
                                 <tr className='bg-foreground/[0.01]'>
+                                    <td className='px-6 py-4'>
+                                        <div className='flex items-center gap-3'>
+                                            <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                            <span className='text-foreground'>
+                                                {t(
+                                                    'landing.comparisonAgentsUs'
+                                                )}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td className='px-6 py-4'>
+                                        <div className='flex items-center gap-3'>
+                                            <XIcon className='h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-400' />
+                                            <span className='text-muted-foreground'>
+                                                {t(
+                                                    'landing.comparisonAgentsOthers'
+                                                )}
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
                                     <td className='px-6 py-4'>
                                         <div className='flex items-center gap-3'>
                                             <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400' />

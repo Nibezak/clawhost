@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
 import { useUIStore } from '@/lib/store'
+import { api, getLocale } from '@/lib'
 import { useUserStats, useBillingHistory } from '@/hooks'
 import { Badge, Card, CardContent, Skeleton, Button } from '@/components/ui'
 import {
@@ -24,7 +25,6 @@ import {
     DownloadSimpleIcon,
     ArrowSquareOutIcon
 } from '@phosphor-icons/react'
-import { api } from '@/lib'
 
 const BillingSkeleton: FC = (): ReactNode => {
     return (
@@ -99,7 +99,7 @@ const Billing: FC = (): ReactNode => {
 
     const formatDate = (dateString: string | undefined) => {
         if (!dateString) return '...'
-        return new Date(dateString).toLocaleDateString('en-US', {
+        return new Date(dateString).toLocaleDateString(getLocale(), {
             year: 'numeric',
             month: 'long',
             day: 'numeric'
@@ -107,7 +107,7 @@ const Billing: FC = (): ReactNode => {
     }
 
     const formatCurrency = (amount: number, currency: string) => {
-        return new Intl.NumberFormat('en-US', {
+        return new Intl.NumberFormat(getLocale(), {
             style: 'currency',
             currency: currency.toUpperCase()
         }).format(amount / 100)

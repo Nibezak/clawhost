@@ -253,7 +253,7 @@ const Login: FC = (): ReactNode => {
                     <div className='mb-6'>
                         <Logo />
                     </div>
-                    <p className='text-muted-foreground'>
+                    <p className='text-muted-foreground text-center'>
                         {t('auth.signInToDeployOpenClaw')}
                     </p>
                 </div>

@@ -11,6 +11,7 @@ import type {
     ClawStatus,
     DashboardTab,
     GatewayConnectionState,
+    Language,
     PlaygroundAgentDetailTab,
     PlaygroundDetailTab,
     ProviderType,
@@ -157,6 +158,8 @@ export interface PreferencesState {
     setDashboardTab: (tab: DashboardTab) => void
     theme: ThemeMode
     setTheme: (theme: ThemeMode) => void
+    language: Language
+    setLanguage: (language: Language) => void
 }
 
 export interface CachedProfile {
@@ -640,12 +643,20 @@ export interface PlaygroundToolbarProps {
     clawCount: number
 }
 
+export interface LanguageOption {
+    value: Language
+    label: string
+    flag: string
+}
+
+export interface AgentConfigSummary {
+    id: string
+    name: string
+    model: string | null
+}
+
 export interface AgentConfigResponse {
-    agent: {
-        id: string
-        name: string
-        model: string | null
-    }
+    agent: AgentConfigSummary
     envVars: Record<string, string>
     defaultModel: string | null
 }

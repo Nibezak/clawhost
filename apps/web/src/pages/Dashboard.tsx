@@ -25,17 +25,21 @@ import {
     usePlans,
     useLocations,
     useVolumePricing,
-    usePlanAvailability
+    usePlanAvailability,
+    useAllClawAgents,
+    usePlaygroundGraph,
+    useProfile
 } from '@/hooks'
-import { useAllClawAgents, usePlaygroundGraph } from '@/hooks'
 import {
     EmptyState,
     ErrorState,
     PageTitle,
     ActionButton,
     ClawMascot,
+    LanguageSelector,
     Logo,
-    ThemeToggle
+    ThemeToggle,
+    UserDropdown
 } from '@/components'
 import {
     ChatCircleDotsIcon,
@@ -52,8 +56,6 @@ import {
 } from '@/components/playground'
 import { ChatView } from '@/components/chat'
 import { useAuth } from '@/lib/auth'
-import { useProfile } from '@/hooks'
-import { UserDropdown } from '@/components'
 
 const Dashboard: FC = (): ReactNode => {
     const navigate = useNavigate()
@@ -475,7 +477,10 @@ const Dashboard: FC = (): ReactNode => {
                                 label={t('createClaw.title')}
                             />
                         )}
-                    <ThemeToggle />
+                    <div className='flex items-center gap-1.5'>
+                        <LanguageSelector />
+                        <ThemeToggle />
+                    </div>
                     <UserDropdown
                         displayName={displayName}
                         onSignOut={signOut}

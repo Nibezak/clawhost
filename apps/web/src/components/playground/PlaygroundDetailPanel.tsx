@@ -11,6 +11,7 @@ import CLAW_DETAIL_TABS from '@/lib/clawDetailTabs'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { clawStatus } from '@openclaw/shared'
+import { getLocale } from '@/lib'
 import {
     XIcon,
     InfoIcon,
@@ -91,7 +92,7 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
     const monthlyPrice = plan ? plan.priceMonthly : null
     const locationName = claw.location
         ? locationNames[claw.location] || claw.location
-        : 'Unknown'
+        : t('common.unknown')
     const flag = claw.location ? locationFlags[claw.location] : null
     const attachedSshKey = claw.sshKeyId
         ? sshKeys.find((k) => k.id === claw.sshKeyId)
@@ -255,7 +256,7 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                 {monthlyPrice && (
                                     <CopyableField
                                         label={t('dashboard.monthlyCost')}
-                                        value={`$${monthlyPrice.toFixed(0)}/mo`}
+                                        value={`$${monthlyPrice.toFixed(0)}${t('landing.perMonth')}`}
                                     />
                                 )}
 
@@ -271,7 +272,7 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                         label={t('dashboard.created')}
                                         value={new Date(
                                             claw.createdAt
-                                        ).toLocaleDateString('en-US', {
+                                        ).toLocaleDateString(getLocale(), {
                                             year: 'numeric',
                                             month: 'short',
                                             day: 'numeric'
@@ -291,7 +292,7 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                         label={t('dashboard.lastBilling')}
                                         value={new Date(
                                             claw.currentPeriodStart
-                                        ).toLocaleDateString('en-US', {
+                                        ).toLocaleDateString(getLocale(), {
                                             year: 'numeric',
                                             month: 'short',
                                             day: 'numeric'
@@ -304,7 +305,7 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                         label={t('dashboard.nextBilling')}
                                         value={new Date(
                                             claw.currentPeriodEnd
-                                        ).toLocaleDateString('en-US', {
+                                        ).toLocaleDateString(getLocale(), {
                                             year: 'numeric',
                                             month: 'short',
                                             day: 'numeric'

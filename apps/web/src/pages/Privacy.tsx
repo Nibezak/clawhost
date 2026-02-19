@@ -28,7 +28,7 @@ const Privacy: FC = (): ReactNode => {
                     {t('privacy.lastUpdated')}
                 </p>
 
-                <div className='prose prose-invert prose-sm max-w-none space-y-8'>
+                <div className='prose dark:prose-invert prose-sm max-w-none space-y-8'>
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
                             {t('privacy.introTitle')}
@@ -186,7 +186,7 @@ const Privacy: FC = (): ReactNode => {
                                 href={LEGAL_EMAIL}
                                 className='text-primary hover:underline'
                             >
-                                legal@clawhost.cloud
+                                {t('common.legalEmail')}
                             </a>
                         </p>
                     </section>

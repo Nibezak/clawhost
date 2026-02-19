@@ -18,7 +18,7 @@ import { auth, AUTH_STORAGE_KEY, PROFILE_CACHE_KEY } from '@/lib/firebase'
 import { api } from '@/lib'
 import AuthContext from '@/lib/auth/AuthContext'
 
-function readCachedProfile(): CachedProfile | null {
+const readCachedProfile = (): CachedProfile | null => {
     try {
         const raw = localStorage.getItem(PROFILE_CACHE_KEY)
         return raw ? JSON.parse(raw) : null

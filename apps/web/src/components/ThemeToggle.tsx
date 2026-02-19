@@ -2,7 +2,8 @@ import type { FC, ReactNode } from 'react'
 
 import { t } from '@openclaw/i18n'
 import { usePreferencesStore } from '@/lib/store'
-import { SunIcon, MoonIcon, MonitorIcon } from '@phosphor-icons/react'
+import { THEMES } from '@/lib'
+import { SunIcon, MoonIcon, DesktopIcon } from '@phosphor-icons/react'
 import {
     Button,
     Tooltip,
@@ -15,15 +16,15 @@ const ThemeToggle: FC = (): ReactNode => {
     const setTheme = usePreferencesStore((s) => s.setTheme)
 
     const cycle = () => {
-        if (theme === 'dark') setTheme('light')
-        else if (theme === 'light') setTheme('system')
-        else setTheme('dark')
+        if (theme === THEMES.DARK) setTheme(THEMES.LIGHT)
+        else if (theme === THEMES.LIGHT) setTheme(THEMES.SYSTEM)
+        else setTheme(THEMES.DARK)
     }
 
     const label =
-        theme === 'dark'
+        theme === THEMES.DARK
             ? t('theme.dark')
-            : theme === 'light'
+            : theme === THEMES.LIGHT
               ? t('theme.light')
               : t('theme.system')
 
@@ -37,12 +38,12 @@ const ThemeToggle: FC = (): ReactNode => {
                     className='text-muted-foreground hover:text-foreground h-8 w-8'
                     aria-label={t('theme.toggleTheme')}
                 >
-                    {theme === 'dark' ? (
-                        <MoonIcon className='h-4 w-4' weight='fill' />
-                    ) : theme === 'light' ? (
-                        <SunIcon className='h-4 w-4' weight='fill' />
+                    {theme === THEMES.DARK ? (
+                        <MoonIcon className='h-4 w-4' />
+                    ) : theme === THEMES.LIGHT ? (
+                        <SunIcon className='h-4 w-4' />
                     ) : (
-                        <MonitorIcon className='h-4 w-4' weight='fill' />
+                        <DesktopIcon className='h-4 w-4' />
                     )}
                 </Button>
             </TooltipTrigger>

@@ -1,4 +1,4 @@
-export const en = {
+const en = {
     common: {
         loading: 'Loading...',
         save: 'Save',
@@ -21,7 +21,16 @@ export const en = {
         unknown: 'Unknown',
         pageNotFound: 'Page Not Found',
         closeNotification: 'Close notification',
-        beta: 'Beta'
+        beta: 'Beta',
+        brandName: 'ClawHost',
+        legalEmail: 'legal@clawhost.cloud'
+    },
+    language: {
+        en: 'English',
+        fr: 'Français',
+        es: 'Español',
+        de: 'Deutsch',
+        switchLanguage: 'Language'
     },
     theme: {
         light: 'Light',
@@ -582,7 +591,11 @@ export const en = {
         rootPasswordSaveThis: 'Root Password (save this!)',
         sshCommandUsingKey: 'SSH Command (using your key)',
         sshCommandWithPassword: 'SSH Command (with password)',
-        passwordCopied: 'Password copied.'
+        passwordCopied: 'Password copied.',
+        planSpec: '{{cpu}} vCPU / {{memory}} GB RAM / {{disk}} GB SSD',
+        volumeUnit: 'GB',
+        volumeMin: '0 GB',
+        volumeMax: '500 GB'
     },
     sshKeys: {
         title: 'SSH Keys',
@@ -651,6 +664,7 @@ export const en = {
         startingPrice: 'Starting',
         locations: 'Locations',
         servers: 'Servers',
+        zeroCount: 'Zero',
         zeroConfig: 'Zero Config',
         dashboardPreviewTitle: 'Claws',
         dashboardPreviewSubtitle: '5 added claws',
@@ -788,8 +802,10 @@ export const en = {
         comparisonInfraOthers: 'Limited servers',
         comparisonDataUs: 'Own your data',
         comparisonDataOthers: "Don't own your data",
-        comparisonMultipleUs: 'Manage multiple instances',
-        comparisonMultipleOthers: 'Single instance only',
+        comparisonMultipleUs: 'Multiple OpenClaw, one Claw',
+        comparisonMultipleOthers: 'Single OpenClaw only',
+        comparisonAgentsUs: 'Multiple agents per Claw',
+        comparisonAgentsOthers: 'One agent only',
         comparisonOpenSourceUs: 'Fully open source',
         comparisonOpenSourceOthers: 'Closed source',
         comparisonExportUs: 'Export your OpenClaw anywhere',
@@ -834,22 +850,16 @@ export const en = {
             'Native mobile app to monitor and manage your OpenClaw instances on the go',
         upcomingReleaseFeature2:
             'Desktop app for a seamless local experience on macOS, Windows, and Linux',
-        upcomingReleaseFeature3:
-            'Light theme support for mobile and desktop',
-        upcomingReleaseFeature4:
-            'Performance and experience improvements',
-        upcomingReleaseFeature5:
-            'Stability and responsiveness enhancements',
+        upcomingReleaseFeature3: 'Dark and light theme support',
+        upcomingReleaseFeature4: 'Performance, stability, and responsiveness enhancements',
+        upcomingReleaseFeature5: 'Multi-language support with English, French, Spanish, and German',
         release8Date: 'February 18, 2026',
         release8Title: 'Light Theme, Performance & Stability',
         release8Description:
             'Light theme support, performance and experience improvements, and stability and responsiveness enhancements.',
-        release8Feature1:
-            'Light, dark, and system theme modes',
-        release8Feature2:
-            'Performance and experience improvements',
-        release8Feature3:
-            'Stability and responsiveness enhancements',
+        release8Feature1: 'Light, dark, and system theme modes',
+        release8Feature2: 'Performance and experience improvements',
+        release8Feature3: 'Stability and responsiveness enhancements',
         release7Date: 'February 16, 2026',
         release7Title: 'Chat Refactoring & Voice Input',
         release7Description:
@@ -1326,4 +1336,4 @@ export const en = {
     }
 } as const
 
-export type Translations = typeof en
+export default en

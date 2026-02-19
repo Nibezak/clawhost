@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react'
-import type { AuthMethod } from '@/ts/Types'
+import type { AuthMethod, OAuthProvider } from '@/ts/Types'
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
@@ -7,7 +7,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
-import { api } from '@/lib'
+import { api, getLocale } from '@/lib'
 import { useProfile, useUpdateProfile, useUserStats } from '@/hooks'
 import {
     Input,
@@ -99,7 +99,7 @@ const Account: FC = (): ReactNode => {
     const providerBusy = !!linkingProvider || !!unlinkingProvider
 
     const handleLinkProvider = useCallback(
-        async (provider: 'google' | 'github') => {
+        async (provider: OAuthProvider) => {
             if (providerBusy) return
             setLinkingProvider(provider)
             try {
@@ -133,7 +133,7 @@ const Account: FC = (): ReactNode => {
     )
 
     const handleUnlinkProvider = useCallback(
-        async (provider: 'google' | 'github') => {
+        async (provider: OAuthProvider) => {
             if (providerBusy) return
             setUnlinkingProvider(provider)
             try {
@@ -182,7 +182,7 @@ const Account: FC = (): ReactNode => {
 
     const formatDate = (dateString: string | undefined) => {
         if (!dateString) return '...'
-        return new Date(dateString).toLocaleDateString('en-US', {
+        return new Date(dateString).toLocaleDateString(getLocale(), {
             year: 'numeric',
             month: 'short',
             day: 'numeric'

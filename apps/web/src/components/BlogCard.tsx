@@ -3,11 +3,12 @@ import type { BlogCardProps } from '@/ts/Interfaces'
 
 import { Link } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
+import { getLocale } from '@/lib'
 import { CalendarBlankIcon, ClockIcon } from '@phosphor-icons/react'
 
 const BlogCard: FC<BlogCardProps> = ({ post }): ReactNode => {
     const formattedDate = new Date(post.publishedAt).toLocaleDateString(
-        'en-US',
+        getLocale(),
         {
             year: 'numeric',
             month: 'long',
@@ -30,7 +31,7 @@ const BlogCard: FC<BlogCardProps> = ({ post }): ReactNode => {
                 ) : (
                     <div className='flex h-full items-center justify-center'>
                         <span className='font-clash text-foreground/10 text-2xl font-bold'>
-                            ClawHost
+                            {t('common.brandName')}
                         </span>
                     </div>
                 )}
