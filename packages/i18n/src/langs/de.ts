@@ -583,7 +583,8 @@ const de: Translations = {
             'Stelle einen Claw bereit, um mit Agenten zu chatten',
         openSidebar: 'Seitenleiste öffnen',
         clawNotReady: 'Claw ist noch nicht bereit',
-        notConfigured: 'Nicht konfiguriert'
+        notConfigured: 'Nicht konfiguriert',
+        addAgent: 'Agent hinzufügen'
     },
     createClaw: {
         title: 'OpenClaw bereitstellen',
@@ -695,6 +696,7 @@ const de: Translations = {
         description:
             'Stelle OpenClaw mit einem Klick auf deinem eigenen VPS bereit. Selbst-hostbares Cloud-Hosting mit vollem Root-Zugriff, globalen Standorten und transparenten Preisen.',
         badge: 'OpenClaw vereinfacht',
+        tutorialBadge: 'Anschauen. Deployen.',
         heroTitle1: 'OpenClaw bereitstellen.',
         heroTitle2: 'Ein Klick. Fertig.',
         heroDescription:
@@ -894,8 +896,10 @@ const de: Translations = {
         upcomingReleaseFeature2:
             'Desktop-App für ein nahtloses lokales Erlebnis auf macOS, Windows und Linux',
         upcomingReleaseFeature3: 'Unterstützung für dunkles und helles Design',
-        upcomingReleaseFeature4: 'Verbesserungen bei Leistung, Stabilität und Reaktionsfähigkeit',
-        upcomingReleaseFeature5: 'Mehrsprachige Unterstützung mit Englisch, Französisch, Spanisch und Deutsch',
+        upcomingReleaseFeature4:
+            'Verbesserungen bei Leistung, Stabilität und Reaktionsfähigkeit',
+        upcomingReleaseFeature5:
+            'Mehrsprachige Unterstützung mit Englisch, Französisch, Spanisch und Deutsch',
         release8Date: '18. Februar 2026',
         release8Title: 'Helles Design, Leistung & Stabilität',
         release8Description:
@@ -1394,6 +1398,14 @@ const de: Translations = {
         chatWithYourClaw: 'Chatte mit deinem Claw',
         deployClaw: 'Claw bereitstellen',
         deployYourFirstClaw: 'Stelle deinen ersten Claw bereit'
+    },
+    productHunt: {
+        liveOn: 'Live auf',
+        productHunt: 'Product Hunt',
+        celebrate: 'Unterstütze uns & genieße',
+        discount: '10% Rabatt',
+        yourFirstMonth: 'auf deinen ersten Monat',
+        upvoteNow: 'Stimme für uns'
     }
 } as const
 

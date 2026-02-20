@@ -25,6 +25,8 @@ import { useAuth } from '@/lib/auth'
 import { ROUTES } from '@/lib'
 import { usePlans } from '@/hooks'
 import { getBaseDomain } from '@/lib'
+import { useUIStore } from '@/lib/store'
+import { TUTORIAL_URL } from '@/lib/links'
 import {
     ShieldCheckIcon,
     GlobeIcon,
@@ -40,7 +42,8 @@ import {
     CreditCardIcon,
     LinkIcon,
     ArrowsClockwiseIcon,
-    XIcon
+    XIcon,
+    PlayCircleIcon
 } from '@phosphor-icons/react'
 
 const getTestimonials = (): Testimonial[] => [
@@ -107,6 +110,9 @@ const getFaqs = (): Faq[] => [
 
 const Landing: FC = (): ReactNode => {
     const { user } = useAuth()
+    const { phBannerVisible } = useUIStore()
+    const showTutorialBadge = true
+    const [videoOpen, setVideoOpen] = useState(false)
     const [pricingProvider, setPricingProvider] =
         useState<ProviderType>('hetzner')
     const { plans, isLoading: plansLoading } = usePlans(pricingProvider)
@@ -250,7 +256,7 @@ const Landing: FC = (): ReactNode => {
                 activeSection={activeSection}
             />
 
-            <section className='relative overflow-hidden px-6 pb-16 pt-32'>
+            <section className={`relative overflow-hidden px-6 pb-16 ${phBannerVisible ? 'pt-44' : 'pt-32'}`}>
                 <div className='landing-grid pointer-events-none' />
 
                 <motion.div
@@ -260,20 +266,47 @@ const Landing: FC = (): ReactNode => {
                     className='relative mx-auto max-w-6xl'
                 >
                     <div className='flex flex-col items-center text-center'>
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 }}
-                            className='glow-border border-border bg-foreground/5 mb-8 inline-flex items-center gap-2 rounded-full border px-4 py-2'
-                        >
-                            <SparkleIcon
-                                className='h-4 w-4 text-[#ef5350]'
-                                weight='fill'
-                            />
-                            <span className='text-foreground/80 text-sm'>
-                                {t('landing.badge')}
-                            </span>
-                        </motion.div>
+                        <div className='mb-8 flex flex-wrap items-center justify-center gap-3'>
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.1 }}
+                                className='glow-border border-border bg-foreground/5 inline-flex items-center gap-2 rounded-full border px-4 py-2'
+                            >
+                                <SparkleIcon
+                                    className='h-4 w-4 text-[#ef5350]'
+                                    weight='fill'
+                                />
+                                <span className='text-foreground/80 text-sm'>
+                                    {t('landing.badge')}
+                                </span>
+                            </motion.div>
+                            {showTutorialBadge && (
+                                <motion.button
+                                    onClick={() => setVideoOpen(true)}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.15 }}
+                                    className='glow-border border-border bg-foreground/5 hover:bg-foreground/10 hidden cursor-pointer items-center gap-2 rounded-full border py-1.5 pl-1.5 pr-4 transition-colors'
+                                >
+                                    <div className='relative h-7 w-10 flex-shrink-0 overflow-hidden rounded-full'>
+                                        <img
+                                            src='https://img.youtube.com/vi/clawhost-tutorial/mqdefault.jpg'
+                                            alt=''
+                                            className='h-full w-full object-cover'
+                                        />
+                                        <div className='absolute inset-0 flex items-center justify-center bg-black/30'>
+                                            <PlayCircleIcon
+                                                className='h-3.5 w-3.5 text-white'
+                                            />
+                                        </div>
+                                    </div>
+                                    <span className='text-foreground/80 text-sm'>
+                                        {t('landing.tutorialBadge')}
+                                    </span>
+                                </motion.button>
+                            )}
+                        </div>
 
                         <motion.h1
                             initial={{ opacity: 0, y: 20 }}
@@ -1328,6 +1361,43 @@ const Landing: FC = (): ReactNode => {
             </section>
 
             <LandingFooter />
+
+            <AnimatePresence>
+                {videoOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className='fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm'
+                        onClick={() => setVideoOpen(false)}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className='relative w-full max-w-4xl px-6'
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <button
+                                onClick={() => setVideoOpen(false)}
+                                className='absolute -top-10 right-6 cursor-pointer text-white/60 transition-colors hover:text-white'
+                            >
+                                <XIcon className='h-6 w-6' />
+                            </button>
+                            <div className='aspect-video w-full overflow-hidden rounded-xl'>
+                                <iframe
+                                    src={TUTORIAL_URL.replace('watch?v=', 'embed/') + '?autoplay=1&rel=0'}
+                                    className='h-full w-full'
+                                    allow='autoplay; encrypted-media'
+                                    allowFullScreen
+                                />
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     )
 }

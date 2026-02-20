@@ -149,6 +149,8 @@ export interface UIState {
     toast: ToastData | null
     showToast: (message: string, type?: ToastType, duration?: number) => void
     hideToast: () => void
+    phBannerVisible: boolean
+    dismissPhBanner: () => void
 }
 
 export interface PreferencesState {
@@ -1017,6 +1019,7 @@ export interface PlaygroundClawHubContentProps {
 export interface ChatSidebarItemProps {
     agent: ClawAgent
     isActive: boolean
+    isLast: boolean
     onClick: () => void
     onConfigure: () => void
 }

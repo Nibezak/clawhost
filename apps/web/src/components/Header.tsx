@@ -8,7 +8,13 @@ import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
 import { useProfile } from '@/hooks'
 import { Button, Skeleton } from '@/components/ui'
-import { LanguageSelector, Logo, ThemeToggle, UserDropdown } from '@/components'
+import {
+    LanguageSelector,
+    Logo,
+    ProductHuntBanner,
+    ThemeToggle,
+    UserDropdown
+} from '@/components'
 import { ROUTES } from '@/lib'
 import { LightningIcon, ListIcon, XIcon } from '@phosphor-icons/react'
 
@@ -66,6 +72,7 @@ const Header: FC<HeaderProps> = ({
                           : 'border-b border-transparent bg-transparent'
                 }`}
             >
+                <ProductHuntBanner />
                 <div className='mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4'>
                     <Logo />
 
@@ -90,7 +97,7 @@ const Header: FC<HeaderProps> = ({
                     )}
 
                     <div className='flex items-center gap-3'>
-                        <div className='flex items-center gap-1.5'>
+                        <div className='hidden items-center gap-1.5 sm:flex'>
                             <LanguageSelector />
                             <ThemeToggle />
                         </div>
@@ -178,6 +185,10 @@ const Header: FC<HeaderProps> = ({
                                         </a>
                                     ))}
                                 </nav>
+                                <div className='border-border flex items-center gap-1.5 border-t pt-4 sm:hidden'>
+                                    <LanguageSelector />
+                                    <ThemeToggle />
+                                </div>
                             </motion.div>
                         </>
                     )}

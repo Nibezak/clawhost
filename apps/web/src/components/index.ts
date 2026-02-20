@@ -17,6 +17,7 @@ import PageHeader from '@/components/PageHeader'
 import PageTitle from '@/components/PageTitle'
 import PanelPlaceholder from '@/components/PanelPlaceholder'
 import PlansSkeleton from '@/components/PlansSkeleton'
+import ProductHuntBanner from '@/components/ProductHuntBanner'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import ProviderIcon from '@/components/ProviderIcon'
 import ScrollToTop from '@/components/ScrollToTop'
@@ -45,6 +46,7 @@ export {
     PageTitle,
     PanelPlaceholder,
     PlansSkeleton,
+    ProductHuntBanner,
     ProtectedRoute,
     ProviderIcon,
     ScrollToTop,

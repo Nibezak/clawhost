@@ -541,12 +541,13 @@ const en = {
     chat: {
         selectAgent: 'Select an agent',
         selectAgentDescription:
-            'Choose an agent from the sidebar to start chatting',
+            'Choose an agent from the sidebar to start chatting.',
         noAgents: 'No agents available',
-        noAgentsDescription: 'Deploy a claw to start chatting with agents',
+        noAgentsDescription: 'Deploy a claw to start chatting with agents.',
         openSidebar: 'Open sidebar',
         clawNotReady: 'Claw is not ready yet',
-        notConfigured: 'Not configured'
+        notConfigured: 'Not configured',
+        addAgent: 'Add agent'
     },
     createClaw: {
         title: 'Deploy OpenClaw',
@@ -655,6 +656,7 @@ const en = {
         description:
             'Deploy OpenClaw on your own VPS with one click. Self-hostable cloud hosting with full root access, global locations, and transparent pricing.',
         badge: 'OpenClaw Simplified',
+        tutorialBadge: 'Watch. Deploy.',
         heroTitle1: 'Deploy OpenClaw.',
         heroTitle2: 'One click. Done.',
         heroDescription:
@@ -851,8 +853,10 @@ const en = {
         upcomingReleaseFeature2:
             'Desktop app for a seamless local experience on macOS, Windows, and Linux',
         upcomingReleaseFeature3: 'Dark and light theme support',
-        upcomingReleaseFeature4: 'Performance, stability, and responsiveness enhancements',
-        upcomingReleaseFeature5: 'Multi-language support with English, French, Spanish, and German',
+        upcomingReleaseFeature4:
+            'Performance, stability, and responsiveness enhancements',
+        upcomingReleaseFeature5:
+            'Multi-language support with English, French, Spanish, and German',
         release8Date: 'February 18, 2026',
         release8Title: 'Light Theme, Performance & Stability',
         release8Description:
@@ -1333,6 +1337,14 @@ const en = {
         chatWithYourClaw: 'Chat with your Claw',
         deployClaw: 'Deploy Claw',
         deployYourFirstClaw: 'Deploy your first Claw'
+    },
+    productHunt: {
+        liveOn: 'Live on',
+        productHunt: 'Product Hunt',
+        celebrate: 'Support us & enjoy',
+        discount: '10% off',
+        yourFirstMonth: 'your first month',
+        upvoteNow: 'Upvote Us'
     }
 } as const
 

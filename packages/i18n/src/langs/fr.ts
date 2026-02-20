@@ -593,7 +593,8 @@ const fr: Translations = {
             'Déployez un claw pour commencer à discuter avec les agents',
         openSidebar: 'Ouvrir la barre latérale',
         clawNotReady: "Le claw n'est pas encore prêt",
-        notConfigured: 'Non configuré'
+        notConfigured: 'Non configuré',
+        addAgent: 'Ajouter un agent'
     },
     createClaw: {
         title: 'Déployer OpenClaw',
@@ -705,6 +706,7 @@ const fr: Translations = {
         description:
             'Déployez OpenClaw sur votre propre VPS en un clic. Hébergement cloud auto-hébergeable avec accès root complet, emplacements mondiaux et tarifs transparents.',
         badge: 'OpenClaw simplifié',
+        tutorialBadge: 'Regarde. Déploie.',
         heroTitle1: 'Déployez OpenClaw.',
         heroTitle2: "Un clic. C'est fait.",
         heroDescription:
@@ -906,8 +908,10 @@ const fr: Translations = {
         upcomingReleaseFeature2:
             'Application bureau pour une expérience locale fluide sur macOS, Windows et Linux',
         upcomingReleaseFeature3: 'Support des thèmes sombre et clair',
-        upcomingReleaseFeature4: 'Améliorations de performance, stabilité et réactivité',
-        upcomingReleaseFeature5: 'Support multilingue avec anglais, français, espagnol et allemand',
+        upcomingReleaseFeature4:
+            'Améliorations de performance, stabilité et réactivité',
+        upcomingReleaseFeature5:
+            'Support multilingue avec anglais, français, espagnol et allemand',
         release8Date: '18 février 2026',
         release8Title: 'Thème clair, Performance & Stabilité',
         release8Description:
@@ -1411,6 +1415,14 @@ const fr: Translations = {
         chatWithYourClaw: 'Discutez avec votre Claw',
         deployClaw: 'Déployer un Claw',
         deployYourFirstClaw: 'Déployez votre premier Claw'
+    },
+    productHunt: {
+        liveOn: 'En direct sur',
+        productHunt: 'Product Hunt',
+        celebrate: 'Soutenez-nous & profitez de',
+        discount: '10% de réduction',
+        yourFirstMonth: 'sur votre premier mois',
+        upvoteNow: 'Votez pour nous'
     }
 } as const
 

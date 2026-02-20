@@ -164,6 +164,7 @@ const ChatView: FC<ChatViewProps> = ({
 
     return (
         <div className='relative flex h-full w-full overflow-hidden'>
+            <div className='playground-grid pointer-events-none absolute inset-0 opacity-50' />
             <div className='hidden md:block'>
                 <ChatSidebar
                     clawsWithAgents={clawsWithAgents}

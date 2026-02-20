@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react'
 import type { PlaygroundAgentNodeProps } from '@/ts/Interfaces'
 
 import { Handle, Position } from '@xyflow/react'
-import { ClawMascot } from '@/components'
+import { AndroidLogoIcon } from '@phosphor-icons/react'
 
 const handleStyle = {
     top: 0,
@@ -37,7 +37,7 @@ const PlaygroundAgentNode: FC<PlaygroundAgentNodeProps> = ({
 
             <div className='px-3.5 py-3'>
                 <div className='flex items-center gap-2'>
-                    <ClawMascot className='h-4 w-4' />
+                    <AndroidLogoIcon className='h-4 w-4' weight='fill' />
                     <span className='text-foreground flex-1 truncate text-sm font-medium'>
                         {agent.name}
                     </span>

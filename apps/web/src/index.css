@@ -152,6 +152,18 @@
         linear-gradient(90deg, rgba(239, 83, 80, 0.08) 1px, transparent 1px);
 }
 
+@property --glow-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+@keyframes glow-rotate {
+    to {
+        --glow-angle: 360deg;
+    }
+}
+
 .glow-border {
     position: relative;
 }
@@ -162,11 +174,14 @@
     inset: -1px;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(
-        135deg,
+    background: conic-gradient(
+        from var(--glow-angle),
         rgba(239, 83, 80, 0.6),
         rgba(198, 40, 40, 0.3),
-        transparent 50%
+        transparent 40%,
+        transparent 60%,
+        rgba(198, 40, 40, 0.3),
+        rgba(239, 83, 80, 0.6)
     );
     -webkit-mask:
         linear-gradient(#fff 0 0) content-box,
@@ -177,6 +192,7 @@
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     pointer-events: none;
+    animation: glow-rotate 4s linear infinite;
 }
 
 /* Animated gradient text */

@@ -579,7 +579,8 @@ const es: Translations = {
             'Despliega un claw para comenzar a chatear con agentes',
         openSidebar: 'Abrir barra lateral',
         clawNotReady: 'El claw aún no está listo',
-        notConfigured: 'No configurado'
+        notConfigured: 'No configurado',
+        addAgent: 'Agregar agente'
     },
     createClaw: {
         title: 'Desplegar OpenClaw',
@@ -690,6 +691,7 @@ const es: Translations = {
         description:
             'Despliega OpenClaw en tu propio VPS con un solo clic. Alojamiento en la nube auto-hospedable con acceso root completo, ubicaciones globales y precios transparentes.',
         badge: 'OpenClaw simplificado',
+        tutorialBadge: 'Mira. Despliega.',
         heroTitle1: 'Despliega OpenClaw.',
         heroTitle2: 'Un clic. Listo.',
         heroDescription:
@@ -890,8 +892,10 @@ const es: Translations = {
         upcomingReleaseFeature2:
             'App de escritorio para una experiencia local fluida en macOS, Windows y Linux',
         upcomingReleaseFeature3: 'Soporte de temas oscuro y claro',
-        upcomingReleaseFeature4: 'Mejoras de rendimiento, estabilidad y capacidad de respuesta',
-        upcomingReleaseFeature5: 'Soporte multilingüe con inglés, francés, español y alemán',
+        upcomingReleaseFeature4:
+            'Mejoras de rendimiento, estabilidad y capacidad de respuesta',
+        upcomingReleaseFeature5:
+            'Soporte multilingüe con inglés, francés, español y alemán',
         release8Date: '18 de febrero de 2026',
         release8Title: 'Tema claro, rendimiento y estabilidad',
         release8Description:
@@ -1390,6 +1394,14 @@ const es: Translations = {
         chatWithYourClaw: 'Chatea con tu Claw',
         deployClaw: 'Desplegar Claw',
         deployYourFirstClaw: 'Despliega tu primer Claw'
+    },
+    productHunt: {
+        liveOn: 'En vivo en',
+        productHunt: 'Product Hunt',
+        celebrate: 'Apóyanos y disfruta',
+        discount: '10% de descuento',
+        yourFirstMonth: 'en tu primer mes',
+        upvoteNow: 'Vótanos'
     }
 } as const
 
