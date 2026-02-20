@@ -182,7 +182,7 @@ const en = {
         failedToReadFile: 'Failed to read file!',
         failedToUpdateFile: 'Failed to save file!',
         invalidFilePath: 'Invalid file path!',
-        fileNotEditable: 'Only JSON files can be edited!',
+        fileNotEditable: 'This file type cannot be edited!',
         invalidJsonConfig: 'Invalid JSON!',
         fileSaveSuccess: 'File saved.',
         rateLimitExceeded: 'Please wait before requesting another code.',
@@ -486,7 +486,7 @@ const en = {
         fileExplorerDescription:
             'Browse and edit OpenClaw configuration files on your instance.',
         fileExplorerWarning:
-            'For advanced users only. Incorrect configuration can break your OpenClaw instance. Make sure you know what you are changing before saving.',
+            'Incorrect changes may break your instance. Edit with care.',
         fileExplorerSelectFile: 'Select a file to view its contents.',
         fileExplorerReadOnly: 'Read-only',
         fileExplorerSave: 'Save',

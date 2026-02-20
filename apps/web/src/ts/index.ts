@@ -15,6 +15,7 @@ export type {
     SSHKeyModalMode,
     ThemeMode,
     ToastType,
+    ClawFileType,
     UserRole
 } from '@/ts/Types'
 

@@ -194,7 +194,7 @@ const es: Translations = {
         failedToReadFile: 'Error al leer el archivo.',
         failedToUpdateFile: 'Error al guardar el archivo.',
         invalidFilePath: 'Ruta de archivo no válida.',
-        fileNotEditable: 'Solo los archivos JSON pueden ser editados.',
+        fileNotEditable: 'Este tipo de archivo no se puede editar.',
         invalidJsonConfig: 'JSON no válido.',
         fileSaveSuccess: 'Archivo guardado.',
         rateLimitExceeded: 'Por favor, espera antes de solicitar otro código.',
@@ -517,7 +517,7 @@ const es: Translations = {
         fileExplorerDescription:
             'Explora y edita archivos de configuración de OpenClaw en tu instancia.',
         fileExplorerWarning:
-            'Solo para usuarios avanzados. Una configuración incorrecta puede dañar tu instancia de OpenClaw. Asegúrate de saber lo que estás cambiando antes de guardar.',
+            'Los cambios incorrectos pueden dañar tu instancia. Edita con cuidado.',
         fileExplorerSelectFile: 'Selecciona un archivo para ver su contenido.',
         fileExplorerReadOnly: 'Solo lectura',
         fileExplorerSave: 'Guardar',

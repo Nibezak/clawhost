@@ -1,9 +1,18 @@
-import type { AuthenticatedContext } from '@/ts/Types'
+import type { ClawFileType, AuthenticatedContext } from '@/ts/Types'
 
 import executeSSH from '@/services/ssh'
 import { findUserClaw } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
+
+const getFileType = (name: string): ClawFileType => {
+    if (name.endsWith('.json') || name.endsWith('.jsonb')) return 'json'
+    if (name.endsWith('.md')) return 'markdown'
+    if (name.endsWith('.js')) return 'javascript'
+    if (name.endsWith('.yml') || name.endsWith('.yaml')) return 'yaml'
+    if (!name.includes('.')) return 'text'
+    return 'unknown'
+}
 
 const BASE_DIR = '/home/openclaw/.openclaw'
 
@@ -36,7 +45,7 @@ const listClawFiles = async (c: AuthenticatedContext) => {
                 return {
                     path: relativePath,
                     name,
-                    isJson: name.endsWith('.json')
+                    fileType: getFileType(name)
                 }
             })
 

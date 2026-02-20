@@ -1,4 +1,5 @@
 import type {
+    ClawFileType,
     ProviderType,
     SubscriptionStatus,
     WebhookEventType
@@ -663,7 +664,7 @@ export interface DiagnosticsRepairResponse {
 export interface ClawFileEntry {
     path: string
     name: string
-    isJson: boolean
+    fileType: ClawFileType
 }
 
 export interface ClawFilesResponse {

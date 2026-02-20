@@ -195,7 +195,7 @@ const de: Translations = {
         failedToReadFile: 'Datei konnte nicht gelesen werden!',
         failedToUpdateFile: 'Datei konnte nicht gespeichert werden!',
         invalidFilePath: 'Ungültiger Dateipfad!',
-        fileNotEditable: 'Nur JSON-Dateien können bearbeitet werden!',
+        fileNotEditable: 'Dieser Dateityp kann nicht bearbeitet werden!',
         invalidJsonConfig: 'Ungültiges JSON!',
         fileSaveSuccess: 'Datei gespeichert.',
         rateLimitExceeded: 'Bitte warte, bevor du einen neuen Code anforderst.',
@@ -518,7 +518,7 @@ const de: Translations = {
         fileExplorerDescription:
             'Durchsuche und bearbeite OpenClaw-Konfigurationsdateien auf deiner Instanz.',
         fileExplorerWarning:
-            'Nur für fortgeschrittene Benutzer. Falsche Konfiguration kann deine OpenClaw-Instanz beschädigen. Stelle sicher, dass du weißt, was du änderst, bevor du speicherst.',
+            'Falsche Änderungen können deine Instanz beschädigen. Bearbeite mit Vorsicht.',
         fileExplorerSelectFile:
             'Wähle eine Datei aus, um ihren Inhalt anzuzeigen.',
         fileExplorerReadOnly: 'Nur lesen',

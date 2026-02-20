@@ -198,7 +198,7 @@ const fr: Translations = {
         failedToReadFile: 'Échec de la lecture du fichier !',
         failedToUpdateFile: "Échec de l'enregistrement du fichier !",
         invalidFilePath: 'Chemin de fichier invalide !',
-        fileNotEditable: 'Seuls les fichiers JSON peuvent être modifiés !',
+        fileNotEditable: 'Ce type de fichier ne peut pas être modifié !',
         invalidJsonConfig: 'JSON invalide !',
         fileSaveSuccess: 'Fichier enregistré.',
         rateLimitExceeded:
@@ -527,7 +527,7 @@ const fr: Translations = {
         fileExplorerDescription:
             'Parcourez et modifiez les fichiers de configuration OpenClaw sur votre instance.',
         fileExplorerWarning:
-            "Réservé aux utilisateurs avancés. Une configuration incorrecte peut endommager votre instance OpenClaw. Assurez-vous de savoir ce que vous modifiez avant d'enregistrer.",
+            'Des modifications incorrectes peuvent endommager votre instance. Modifiez avec prudence.',
         fileExplorerSelectFile:
             'Sélectionnez un fichier pour afficher son contenu.',
         fileExplorerReadOnly: 'Lecture seule',

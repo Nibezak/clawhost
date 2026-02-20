@@ -16,6 +16,7 @@ import type {
     PlaygroundDetailTab,
     ProviderType,
     ThemeMode,
+    ClawFileType,
     ToastType,
     UserRole
 } from '@/ts/Types'
@@ -500,7 +501,7 @@ export interface DiagnosticsLogsResponse {
 export interface ClawFileEntry {
     path: string
     name: string
-    isJson: boolean
+    fileType: ClawFileType
 }
 
 export interface ClawFilesResponse {

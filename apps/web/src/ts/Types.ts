@@ -68,3 +68,5 @@ export type DashboardTab = (typeof DASHBOARD_TABS)[keyof typeof DASHBOARD_TABS]
 export type ThemeMode = (typeof THEMES)[keyof typeof THEMES]
 
 export type Language = (typeof LANGUAGES)[keyof typeof LANGUAGES]
+
+export type ClawFileType = 'json' | 'markdown' | 'javascript' | 'yaml' | 'text' | 'unknown'
