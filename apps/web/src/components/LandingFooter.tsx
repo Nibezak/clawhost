@@ -179,7 +179,7 @@ const LandingFooter: FC = (): ReactNode => {
                         <ul className='space-y-3 text-sm'>
                             <li>
                                 <Link
-                                    to={ROUTES.POSTS}
+                                    to={ROUTES.BLOG}
                                     className='text-muted-foreground hover:text-foreground transition'
                                 >
                                     {t('footer.blog')}

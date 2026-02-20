@@ -60,8 +60,8 @@ export type Route =
     | '/terms'
     | '/privacy'
     | '/changelog'
-    | '/posts'
-    | '/posts/:slug'
+    | '/blog'
+    | '/blog/:slug'
 
 export type DashboardTab = (typeof DASHBOARD_TABS)[keyof typeof DASHBOARD_TABS]
 

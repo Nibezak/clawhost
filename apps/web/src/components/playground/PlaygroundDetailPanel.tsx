@@ -324,6 +324,7 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                     <CopyableField
                                         label={t('dashboard.gatewayToken')}
                                         value={claw.gatewayToken}
+                                        secret
                                     />
                                 )}
                             </div>

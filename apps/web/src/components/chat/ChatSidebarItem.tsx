@@ -1,21 +1,58 @@
 import type { FC, ReactNode } from 'react'
 import type { ChatSidebarItemProps } from '@/ts/Interfaces'
 
+import { useMemo } from 'react'
 import { t } from '@openclaw/i18n'
-import { GearSixIcon } from '@phosphor-icons/react'
-import { AndroidLogoIcon } from '@phosphor-icons/react'
+import { GearSixIcon, AndroidLogoIcon } from '@phosphor-icons/react'
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import { aiModels } from '@/lib/claw-utils'
 
 const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
     agent,
     isActive,
     isLast,
+    connectionState,
     onClick,
     onConfigure
 }): ReactNode => {
     const modelName = agent.model
         ? aiModels.find((m) => m.id === agent.model)?.name || agent.model
         : null
+
+    const statusConfig = useMemo(() => {
+        if (connectionState) {
+            switch (connectionState) {
+            case 'connected':
+                return {
+                    color: 'bg-green-500',
+                    label: t('dashboard.status.running')
+                }
+            case 'connecting':
+            case 'authenticating':
+                return {
+                    color: 'bg-yellow-500',
+                    label: t('playground.chatConnecting'),
+                    pulse: true
+                }
+            case 'error':
+                return {
+                    color: 'bg-red-500',
+                    label: t('playground.chatError')
+                }
+            case 'disconnected':
+                return {
+                    color: 'bg-red-500',
+                    label: t('playground.chatDisconnected')
+                }
+            default:
+                break
+            }
+        }
+        return {
+            color: 'bg-gray-400',
+            label: t('dashboard.status.unknown')
+        }
+    }, [connectionState])
 
     return (
         <div className='relative flex py-0.5'>
@@ -33,8 +70,22 @@ const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
                         : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'
                 }`}
             >
-                <div className='bg-foreground/5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md'>
-                    <AndroidLogoIcon className='h-3.5 w-3.5' weight='fill' />
+                <div className='relative'>
+                    <div className='bg-foreground/5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md'>
+                        <AndroidLogoIcon className='h-3.5 w-3.5' weight='fill' />
+                    </div>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div className='absolute -bottom-0.5 -right-0.5 flex h-3 w-3 items-center justify-center rounded-full border-2 border-background'>
+                                <div
+                                    className={`h-1.5 w-1.5 rounded-full ${statusConfig.color} ${statusConfig.pulse ? 'animate-pulse' : ''}`}
+                                />
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent side='bottom'>
+                            <p>{statusConfig.label}</p>
+                        </TooltipContent>
+                    </Tooltip>
                 </div>
                 <div className='min-w-0 flex-1'>
                     <p className='text-foreground truncate text-[13px] font-medium'>{agent.name}</p>

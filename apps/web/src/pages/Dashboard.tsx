@@ -506,52 +506,65 @@ const Dashboard: FC = (): ReactNode => {
                         <PlaygroundLoadingState />
                     </div>
                 ) : dashboardTab === DASHBOARD_TABS.CHAT ? (
-                    displayedClaws.length === 0 ? (
-                        <div className='flex h-full min-w-0 flex-1 items-center justify-center'>
-                            <div className='-mt-20'>
-                                <EmptyState
-                                    icon={<ClawMascot className='h-10 w-10' />}
-                                    title={
-                                        adminMode
-                                            ? t('dashboard.adminNoClaws')
-                                            : t('playground.noClawsYet')
-                                    }
-                                    description={
-                                        adminMode
-                                            ? t('dashboard.adminDescription')
-                                            : t('playground.noClawsDescription')
-                                    }
-                                    actionLabel={
-                                        adminMode
-                                            ? undefined
-                                            : t('nav.deployOpenClaw')
-                                    }
-                                    onAction={
-                                        adminMode
-                                            ? undefined
-                                            : () => setShowCreate(true)
-                                    }
-                                />
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className='flex h-full min-w-0 flex-1'
+                    >
+                        {displayedClaws.length === 0 ? (
+                            <div className='flex h-full min-w-0 flex-1 items-center justify-center'>
+                                <div className='-mt-20'>
+                                    <EmptyState
+                                        icon={
+                                            <ClawMascot className='h-10 w-10' />
+                                        }
+                                        title={
+                                            adminMode
+                                                ? t('dashboard.adminNoClaws')
+                                                : t('playground.noClawsYet')
+                                        }
+                                        description={
+                                            adminMode
+                                                ? t(
+                                                      'dashboard.adminDescription'
+                                                  )
+                                                : t(
+                                                      'playground.noClawsDescription'
+                                                  )
+                                        }
+                                        actionLabel={
+                                            adminMode
+                                                ? undefined
+                                                : t('nav.deployOpenClaw')
+                                        }
+                                        onAction={
+                                            adminMode
+                                                ? undefined
+                                                : () => setShowCreate(true)
+                                        }
+                                    />
+                                </div>
                             </div>
-                        </div>
-                    ) : (
-                        <ChatView
-                            claws={displayedClaws}
-                            agentQueries={agentQueries}
-                            plans={plans}
-                            sshKeys={sshKeys || []}
-                            selectedAgent={chatSelectedAgent}
-                            onAgentSelect={setChatSelectedAgent}
-                            onConfigureAgent={handleConfigureAgent}
-                            onCreateAgent={handleCreateAgent}
-                            initialSettingsClawId={chatSettingsClawId}
-                            onSettingsClawChange={setChatSettingsClawId}
-                            initialAgentTab={chatAgentTab || undefined}
-                            onAgentTabChange={setChatAgentTab}
-                            initialClawTab={chatClawTab || undefined}
-                            onClawTabChange={setChatClawTab}
-                        />
-                    )
+                        ) : (
+                            <ChatView
+                                claws={displayedClaws}
+                                agentQueries={agentQueries}
+                                plans={plans}
+                                sshKeys={sshKeys || []}
+                                selectedAgent={chatSelectedAgent}
+                                onAgentSelect={setChatSelectedAgent}
+                                onConfigureAgent={handleConfigureAgent}
+                                onCreateAgent={handleCreateAgent}
+                                initialSettingsClawId={chatSettingsClawId}
+                                onSettingsClawChange={setChatSettingsClawId}
+                                initialAgentTab={chatAgentTab || undefined}
+                                onAgentTabChange={setChatAgentTab}
+                                initialClawTab={chatClawTab || undefined}
+                                onClawTabChange={setChatClawTab}
+                            />
+                        )}
+                    </motion.div>
                 ) : (
                     <>
                         <div className='relative h-full min-w-0 flex-1'>

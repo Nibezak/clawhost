@@ -4,6 +4,7 @@ import type {
     ChatSelectedAgent,
     ClawWithAgents
 } from '@/ts/Interfaces'
+import type { GatewayConnectionState } from '@/ts/Types'
 
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -42,6 +43,8 @@ const ChatView: FC<ChatViewProps> = ({
         initialSettingsClawId || null
     )
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
+    const [activeConnectionState, setActiveConnectionState] =
+        useState<GatewayConnectionState>('disconnected')
     const isInitialMount = useRef(true)
 
     useEffect(() => {
@@ -154,6 +157,13 @@ const ChatView: FC<ChatViewProps> = ({
         setSettingsClawId(null)
     }, [])
 
+    const handleConnectionStateChange = useCallback(
+        (state: GatewayConnectionState) => {
+            setActiveConnectionState(state)
+        },
+        []
+    )
+
     const panelOpen = !!configAgent
 
     const mobileLabel = useMemo(() => {
@@ -170,6 +180,7 @@ const ChatView: FC<ChatViewProps> = ({
                     clawsWithAgents={clawsWithAgents}
                     selectedAgent={selectedAgent}
                     selectedClawId={settingsClawId}
+                    activeConnectionState={activeConnectionState}
                     onAgentSelect={handleAgentSelect}
                     onConfigureAgent={handleOpenConfig}
                     onCreateAgent={onCreateAgent}
@@ -241,6 +252,7 @@ const ChatView: FC<ChatViewProps> = ({
                                         clawsWithAgents={clawsWithAgents}
                                         selectedAgent={selectedAgent}
                                         selectedClawId={settingsClawId}
+                                        activeConnectionState={activeConnectionState}
                                         onAgentSelect={handleAgentSelect}
                                         onConfigureAgent={handleOpenConfig}
                                         onCreateAgent={onCreateAgent}
@@ -277,6 +289,7 @@ const ChatView: FC<ChatViewProps> = ({
                                 handleOpenConfig(activeAgent.id, activeClaw.id)
                             }
                             configureDisabled={!!configAgent}
+                            onConnectionStateChange={handleConnectionStateChange}
                         />
                     ) : (
                         <ChatEmptyState />

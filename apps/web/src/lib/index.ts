@@ -1,5 +1,6 @@
 import api from '@/lib/api'
 import cn from '@/lib/utils'
+import PATHS from '@/lib/paths'
 import ROUTES from '@/lib/routes'
 import DASHBOARD_TABS from '@/lib/dashboardTabs'
 import AGENT_DETAIL_TABS from '@/lib/agentDetailTabs'
@@ -12,6 +13,7 @@ import getLocale from '@/lib/getLocale'
 export {
     api,
     cn,
+    PATHS,
     ROUTES,
     DASHBOARD_TABS,
     AGENT_DETAIL_TABS,

@@ -2,6 +2,7 @@ import type { FC, ReactNode } from 'react'
 
 import { Link } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
+import { ROUTES } from '@/lib'
 import { SUPPORT_EMAIL } from '@/lib/links'
 
 const Footer: FC = (): ReactNode => {
@@ -15,19 +16,19 @@ const Footer: FC = (): ReactNode => {
                     </p>
                     <div className='flex items-center gap-6'>
                         <Link
-                            to='/terms'
+                            to={ROUTES.TERMS}
                             className='text-muted-foreground hover:text-foreground text-sm transition-colors'
                         >
                             {t('footer.termsOfService')}
                         </Link>
                         <Link
-                            to='/privacy'
+                            to={ROUTES.PRIVACY}
                             className='text-muted-foreground hover:text-foreground text-sm transition-colors'
                         >
                             {t('footer.privacyPolicy')}
                         </Link>
                         <Link
-                            to='/changelog'
+                            to={ROUTES.CHANGELOG}
                             className='text-muted-foreground hover:text-foreground text-sm transition-colors'
                         >
                             {t('footer.changelog')}

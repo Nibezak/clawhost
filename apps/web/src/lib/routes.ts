@@ -1,15 +1,17 @@
+import PATHS from '@/lib/paths'
+
 const ROUTES = {
-    HOME: '/',
-    LOGIN: '/login',
-    CLAWS: '/claws',
-    SSH_KEYS: '/ssh-keys',
-    ACCOUNT: '/account',
-    BILLING: '/billing',
-    TERMS: '/terms',
-    PRIVACY: '/privacy',
-    CHANGELOG: '/changelog',
-    POSTS: '/posts',
-    POST: '/posts/:slug'
+    HOME: PATHS.HOME,
+    LOGIN: `/${PATHS.LOGIN}`,
+    CLAWS: `/${PATHS.CLAWS}`,
+    SSH_KEYS: `/${PATHS.SSH_KEYS}`,
+    ACCOUNT: `/${PATHS.ACCOUNT}`,
+    BILLING: `/${PATHS.BILLING}`,
+    TERMS: `/${PATHS.TERMS}`,
+    PRIVACY: `/${PATHS.PRIVACY}`,
+    CHANGELOG: `/${PATHS.CHANGELOG}`,
+    BLOG: `/${PATHS.BLOG}`,
+    BLOG_POST: `/${PATHS.BLOG}/:slug`
 } as const
 
 export default ROUTES

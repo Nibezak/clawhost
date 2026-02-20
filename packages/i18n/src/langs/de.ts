@@ -1039,7 +1039,7 @@ const de: Translations = {
         configurationAddEnvVar: 'Variable hinzufügen',
         configurationKeyPlaceholder: 'VARIABLEN_NAME',
         configurationValuePlaceholder: 'Wert',
-        configurationSave: 'Konfiguration speichern',
+        configurationSave: 'Speichern',
         configurationSaving: 'Wird gespeichert...',
         configurationSaved: 'Agentenkonfiguration gespeichert.',
         configurationSaveFailed:

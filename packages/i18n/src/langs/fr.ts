@@ -1056,7 +1056,7 @@ const fr: Translations = {
         configurationAddEnvVar: 'Ajouter une variable',
         configurationKeyPlaceholder: 'NOM_VARIABLE',
         configurationValuePlaceholder: 'valeur',
-        configurationSave: 'Enregistrer la configuration',
+        configurationSave: 'Enregistrer',
         configurationSaving: 'Enregistrement...',
         configurationSaved: "Configuration de l'agent enregistrée.",
         configurationSaveFailed:

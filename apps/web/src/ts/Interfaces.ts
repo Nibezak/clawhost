@@ -275,6 +275,7 @@ export interface CopyableFieldProps {
     label: string
     value: string
     icon?: ReactNode
+    secret?: boolean
 }
 
 export interface PlanAvailability {
@@ -834,6 +835,7 @@ export interface AgentChatProps {
     readOnly?: boolean
     onConfigure?: () => void
     configureDisabled?: boolean
+    onConnectionStateChange?: (state: GatewayConnectionState) => void
 }
 
 export interface ChatBubbleProps {
@@ -1020,6 +1022,7 @@ export interface ChatSidebarItemProps {
     agent: ClawAgent
     isActive: boolean
     isLast: boolean
+    connectionState?: GatewayConnectionState
     onClick: () => void
     onConfigure: () => void
 }
@@ -1040,6 +1043,7 @@ export interface ChatSidebarProps {
     clawsWithAgents: ClawWithAgents[]
     selectedAgent: ChatSelectedAgent | null
     selectedClawId: string | null
+    activeConnectionState?: GatewayConnectionState
     onAgentSelect: (selection: ChatSelectedAgent) => void
     onConfigureAgent: (agentId: string, clawId: string) => void
     onCreateAgent: (clawId: string, clawName: string) => void

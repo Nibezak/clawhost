@@ -1040,7 +1040,7 @@ const es: Translations = {
         configurationAddEnvVar: 'Agregar variable',
         configurationKeyPlaceholder: 'NOMBRE_VARIABLE',
         configurationValuePlaceholder: 'valor',
-        configurationSave: 'Guardar configuración',
+        configurationSave: 'Guardar',
         configurationSaving: 'Guardando...',
         configurationSaved: 'Configuración del agente guardada.',
         configurationSaveFailed:

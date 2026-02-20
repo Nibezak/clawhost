@@ -526,6 +526,8 @@ EXPO_PUBLIC_FIREBASE_APP_ID=...
 | Web Routes           | `apps/web/src/App.tsx`                          |
 | Auth Context         | `apps/web/src/lib/auth.tsx`                     |
 | API Client (Web)     | `apps/web/src/lib/api.ts`                       |
+| URL Paths            | `apps/web/src/lib/paths.ts`                     |
+| Web Routes           | `apps/web/src/lib/routes.ts`                    |
 | Stores               | `apps/web/src/lib/store.ts`                     |
 | Mobile Entry         | `apps/mobile/App.tsx`                           |
 | API Client (Mobile)  | `apps/mobile/src/lib/api.ts`                    |
@@ -706,3 +708,4 @@ pnpm check           # Run tsc + eslint for both api and web
 17. **Run checks after changes** - After writing or modifying code, verify with `pnpm lint` and `pnpm format:check` to ensure compliance
 18. **Use camelCase for SVG attributes in JSX** - React requires camelCase for SVG/HTML attributes. Use `stopColor` not `stop-color`, `stopOpacity` not `stop-opacity`, `fillRule` not `fill-rule`, `clipPath` not `clip-path`, `strokeWidth` not `stroke-width`, etc.
 19. **Full cleanup on feature removal** - When removing a feature, delete ALL related code: components, hooks, store properties, interfaces/types, translation keys, utility functions, data files, barrel exports, API routes/controllers, and constants. Never leave orphaned code behind
+20. **Use PATHS for all URL path segments** - Never hardcode URL path segments like `'/blog'` or `'claws'`. Always use `PATHS` from `@/lib/paths` (or `@/lib`) for path segments and `ROUTES` from `@/lib/routes` (or `@/lib`) for full route strings. When constructing URLs in scripts, components, or SEO metadata, use `PATHS.BLOG`, `PATHS.LOGIN`, etc. To change a URL, update it only in `paths.ts` — everything else derives from it

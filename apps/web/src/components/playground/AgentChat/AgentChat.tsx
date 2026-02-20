@@ -15,7 +15,6 @@ import ChatBubble from '@/components/playground/AgentChat/ChatBubble'
 import ChatInput from '@/components/playground/AgentChat/ChatInput'
 import ChatEmptyState from '@/components/playground/AgentChat/ChatEmptyState'
 import ChatSkeleton from '@/components/playground/AgentChat/ChatSkeleton'
-import ChatStatusBar from '@/components/playground/AgentChat/ChatStatusBar'
 import ChatDateSeparator from '@/components/playground/AgentChat/ChatDateSeparator'
 
 const isDifferentDay = (a: ChatMessage, b: ChatMessage): boolean => {
@@ -36,7 +35,8 @@ const AgentChat: FC<AgentChatProps> = ({
     agentModel,
     readOnly,
     onConfigure,
-    configureDisabled
+    configureDisabled,
+    onConnectionStateChange
 }): ReactNode => {
     const scrollRef = useRef<HTMLDivElement>(null)
     const chatInputRef = useRef<ChatInputHandle>(null)
@@ -58,6 +58,10 @@ const AgentChat: FC<AgentChatProps> = ({
         agentId,
         enabled: !readOnly && !!subdomain && !!gatewayToken
     })
+
+    useEffect(() => {
+        onConnectionStateChange?.(connectionState)
+    }, [connectionState, onConnectionStateChange])
 
     const handleScroll = useCallback(() => {
         const el = scrollRef.current
@@ -238,10 +242,6 @@ const AgentChat: FC<AgentChatProps> = ({
                         {t('playground.chatDropFilesDescription')}
                     </p>
                 </div>
-            )}
-
-            {!isLoading && !isConnected && (
-                <ChatStatusBar connectionState={connectionState} />
             )}
 
             <div

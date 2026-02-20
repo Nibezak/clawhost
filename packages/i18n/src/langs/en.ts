@@ -995,7 +995,7 @@ const en = {
         configurationAddEnvVar: 'Add Variable',
         configurationKeyPlaceholder: 'VARIABLE_NAME',
         configurationValuePlaceholder: 'value',
-        configurationSave: 'Save Configuration',
+        configurationSave: 'Save',
         configurationSaving: 'Saving...',
         configurationSaved: 'Agent configuration saved.',
         configurationSaveFailed: 'Failed to save agent configuration.',

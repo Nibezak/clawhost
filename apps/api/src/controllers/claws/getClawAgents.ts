@@ -73,7 +73,7 @@ const getClawAgents = async (c: AuthenticatedContext) => {
                                 `Agent ${index + 1}`,
                             model:
                                 (agent.model as string) || defaultModel || null,
-                            status: (agent.status as string) || 'unknown',
+                            status: (agent.status as string) || 'running',
                             directory:
                                 (agent.workspace as string) ||
                                 (agent.directory as string) ||

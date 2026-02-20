@@ -105,7 +105,7 @@ const ChatInputInner: ForwardRefRenderFunction<
     useImperativeHandle(ref, () => ({ addFiles }), [addFiles])
 
     const handleSend = useCallback(() => {
-        if ((!input.trim() && attachments.length === 0) || isStreaming) return
+        if (!isConnected || (!input.trim() && attachments.length === 0) || isStreaming) return
 
         const chatAttachments: ChatAttachment[] = []
         const previews: ChatImageSource[] = []
@@ -154,7 +154,7 @@ const ChatInputInner: ForwardRefRenderFunction<
             setAttachments([])
             textareaRef.current?.focus()
         })
-    }, [input, isStreaming, onSend, attachments])
+    }, [isConnected, input, isStreaming, onSend, attachments])
 
     const handleKeyDown = useCallback(
         (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -236,7 +236,7 @@ const ChatInputInner: ForwardRefRenderFunction<
             <div className='flex items-end gap-2'>
                 <button
                     onClick={handleAttachClick}
-                    disabled={!isConnected || !allowAttach}
+                    disabled={!allowAttach}
                     className='border-border bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors disabled:cursor-not-allowed disabled:opacity-50'
                 >
                     <PaperclipIcon className='h-4 w-4' weight='bold' />
@@ -251,7 +251,7 @@ const ChatInputInner: ForwardRefRenderFunction<
                 />
                 <button
                     onClick={toggleVoice}
-                    disabled={!isConnected || !allowAttach || isTranscribing}
+                    disabled={!allowAttach || isTranscribing}
                     title={t('playground.chatVoiceInput')}
                     className={`border-border flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
                         isRecording
@@ -274,8 +274,7 @@ const ChatInputInner: ForwardRefRenderFunction<
                     onKeyDown={handleKeyDown}
                     rows={1}
                     placeholder={t('playground.chatInputPlaceholder')}
-                    disabled={!isConnected || !allowAttach}
-                    className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground flex-1 resize-none rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-[#ef5350]/50 disabled:cursor-not-allowed disabled:opacity-50'
+                    className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground flex-1 resize-none rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-[#ef5350]/50'
                 />
                 {isStreaming ? (
                     <button
@@ -289,7 +288,6 @@ const ChatInputInner: ForwardRefRenderFunction<
                         onClick={handleSend}
                         disabled={
                             !isConnected ||
-                            !allowAttach ||
                             (!input.trim() && attachments.length === 0)
                         }
                         className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#ef5350] text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'

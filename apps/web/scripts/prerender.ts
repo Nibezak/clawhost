@@ -3,6 +3,7 @@ import type { BlogPostFrontmatter, PrerenderMeta } from '@/ts/Interfaces'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
+import PATHS from '@/lib/paths'
 
 const DIST = path.resolve(import.meta.dirname, '../dist')
 const CONTENT = path.resolve(import.meta.dirname, '../content/posts')
@@ -99,7 +100,7 @@ const listingHtml = injectMeta(template, {
     title: 'Blog',
     description:
         'Guides, tutorials, and news about OpenClaw and self-hosted infrastructure.',
-    url: `${SITE_URL}/posts`,
+    url: `${SITE_URL}/${PATHS.BLOG}`,
     type: 'website',
     image: `${SITE_URL}/og-image.webp`,
     jsonLd: {
@@ -108,7 +109,7 @@ const listingHtml = injectMeta(template, {
         name: 'ClawHost Blog',
         description:
             'Guides, tutorials, and news about OpenClaw and self-hosted infrastructure.',
-        url: `${SITE_URL}/posts`,
+        url: `${SITE_URL}/${PATHS.BLOG}`,
         publisher: {
             '@type': 'Organization',
             name: 'ClawHost',
@@ -117,8 +118,8 @@ const listingHtml = injectMeta(template, {
     }
 })
 
-fs.mkdirSync(path.join(DIST, 'posts'), { recursive: true })
-fs.writeFileSync(path.join(DIST, 'posts', 'index.html'), listingHtml)
+fs.mkdirSync(path.join(DIST, PATHS.BLOG), { recursive: true })
+fs.writeFileSync(path.join(DIST, PATHS.BLOG, 'index.html'), listingHtml)
 
 for (const post of posts) {
     const imageUrl = post.coverImage
@@ -128,7 +129,7 @@ for (const post of posts) {
     const postHtml = injectMeta(template, {
         title: post.title,
         description: post.description,
-        url: `${SITE_URL}/posts/${post.slug}`,
+        url: `${SITE_URL}/${PATHS.BLOG}/${post.slug}`,
         type: 'article',
         image: imageUrl,
         articleMeta: {
@@ -146,7 +147,7 @@ for (const post of posts) {
             author: { '@type': 'Organization', name: post.author },
             datePublished: post.publishedAt,
             ...(post.updatedAt && { dateModified: post.updatedAt }),
-            url: `${SITE_URL}/posts/${post.slug}`,
+            url: `${SITE_URL}/${PATHS.BLOG}/${post.slug}`,
             publisher: {
                 '@type': 'Organization',
                 name: 'ClawHost',
@@ -154,13 +155,13 @@ for (const post of posts) {
             },
             mainEntityOfPage: {
                 '@type': 'WebPage',
-                '@id': `${SITE_URL}/posts/${post.slug}`
+                '@id': `${SITE_URL}/${PATHS.BLOG}/${post.slug}`
             },
             keywords: post.tags.join(', ')
         }
     })
 
-    const dir = path.join(DIST, 'posts', post.slug)
+    const dir = path.join(DIST, PATHS.BLOG, post.slug)
     fs.mkdirSync(dir, { recursive: true })
     fs.writeFileSync(path.join(dir, 'index.html'), postHtml)
 }

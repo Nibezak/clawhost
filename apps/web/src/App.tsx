@@ -40,8 +40,8 @@ const App: FC = (): ReactNode => {
                             path={ROUTES.CHANGELOG}
                             element={<Changelog />}
                         />
-                        <Route path={ROUTES.POSTS} element={<Blog />} />
-                        <Route path={ROUTES.POST} element={<BlogPost />} />
+                        <Route path={ROUTES.BLOG} element={<Blog />} />
+                        <Route path={ROUTES.BLOG_POST} element={<BlogPost />} />
                         <Route
                             path={ROUTES.CLAWS}
                             element={

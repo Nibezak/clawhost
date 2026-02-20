@@ -1,22 +1,23 @@
 import type { FC, ReactNode } from 'react'
 
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { ROUTES } from '@/lib'
 
 const Logo: FC = (): ReactNode => {
     const { pathname, hash, search } = useLocation()
     const navigate = useNavigate()
 
     const handleClick = (e: React.MouseEvent) => {
-        if (pathname === '/') {
+        if (pathname === ROUTES.HOME) {
             e.preventDefault()
-            if (hash || search) navigate('/', { replace: true })
+            if (hash || search) navigate(ROUTES.HOME, { replace: true })
             window.scrollTo({ top: 0, behavior: 'smooth' })
         }
     }
 
     return (
         <Link
-            to='/'
+            to={ROUTES.HOME}
             onClick={handleClick}
             className='flex items-center gap-2 transition hover:opacity-80'
         >

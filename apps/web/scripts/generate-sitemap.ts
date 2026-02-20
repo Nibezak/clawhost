@@ -1,12 +1,19 @@
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
+import PATHS from '@/lib/paths'
 
 const DIST = path.resolve(import.meta.dirname, '../dist')
 const CONTENT = path.resolve(import.meta.dirname, '../content/posts')
 const SITE_URL = 'https://clawhost.cloud'
 
-const staticRoutes = ['/', '/login', '/terms', '/privacy', '/posts']
+const staticRoutes = [
+    PATHS.HOME,
+    `/${PATHS.LOGIN}`,
+    `/${PATHS.TERMS}`,
+    `/${PATHS.PRIVACY}`,
+    `/${PATHS.BLOG}`
+]
 
 const mdxFiles = fs.readdirSync(CONTENT).filter((f) => f.endsWith('.mdx'))
 
@@ -38,7 +45,7 @@ const urls = [
         )
         const { data } = matter(raw)
         return {
-            loc: `${SITE_URL}/posts/${slug}`,
+            loc: `${SITE_URL}/${PATHS.BLOG}/${slug}`,
             lastmod:
                 (data as { updatedAt?: string; publishedAt: string })
                     .updatedAt ?? (data as { publishedAt: string }).publishedAt

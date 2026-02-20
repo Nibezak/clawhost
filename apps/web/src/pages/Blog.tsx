@@ -11,7 +11,7 @@ import {
     BlogCard
 } from '@/components'
 import { allPosts } from '@/lib/blog'
-import { getBaseDomain } from '@/lib'
+import { PATHS, getBaseDomain } from '@/lib'
 
 const Blog: FC = (): ReactNode => {
     return (
@@ -26,7 +26,7 @@ const Blog: FC = (): ReactNode => {
                     '@type': 'Blog',
                     name: 'ClawHost Blog',
                     description: t('blog.description'),
-                    url: `https://${getBaseDomain()}/posts`
+                    url: `https://${getBaseDomain()}/${PATHS.BLOG}`
                 }}
             />
             <PageBackground />

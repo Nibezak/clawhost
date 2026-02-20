@@ -3,7 +3,7 @@ import type { BlogCardProps } from '@/ts/Interfaces'
 
 import { Link } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
-import { getLocale } from '@/lib'
+import { PATHS, getLocale } from '@/lib'
 import { CalendarBlankIcon, ClockIcon } from '@phosphor-icons/react'
 
 const BlogCard: FC<BlogCardProps> = ({ post }): ReactNode => {
@@ -18,7 +18,7 @@ const BlogCard: FC<BlogCardProps> = ({ post }): ReactNode => {
 
     return (
         <Link
-            to={`/posts/${post.slug}`}
+            to={`/${PATHS.BLOG}/${post.slug}`}
             className='border-border bg-foreground/[0.02] hover:border-border hover:bg-foreground/[0.04] group flex flex-col overflow-hidden rounded-xl border transition'
         >
             <div className='bg-foreground/5 aspect-[16/9] w-full overflow-hidden'>

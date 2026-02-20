@@ -16,7 +16,7 @@ import {
     JsonLd
 } from '@/components'
 import { getPostComponent, getPostMeta } from '@/lib/blog'
-import { ROUTES, getBaseDomain, getLocale } from '@/lib'
+import { PATHS, ROUTES, getBaseDomain, getLocale } from '@/lib'
 import NotFound from '@/pages/NotFound'
 
 const SITE_URL = `https://${getBaseDomain()}`
@@ -40,7 +40,7 @@ const BlogPost: FC = (): ReactNode => {
         }
     )
 
-    const postUrl = `${SITE_URL}/posts/${meta.slug}`
+    const postUrl = `${SITE_URL}/${PATHS.BLOG}/${meta.slug}`
     const imageUrl = meta.coverImage
         ? `${SITE_URL}${meta.coverImage}`
         : `${SITE_URL}/og-image.webp`
@@ -90,7 +90,7 @@ const BlogPost: FC = (): ReactNode => {
                 className='relative mx-auto w-full max-w-6xl flex-1 px-6 py-12'
             >
                 <Link
-                    to={ROUTES.POSTS}
+                    to={ROUTES.BLOG}
                     className='text-muted-foreground hover:text-foreground mb-8 inline-flex items-center gap-1.5 text-sm transition'
                 >
                     <ArrowLeftIcon className='h-4 w-4' />

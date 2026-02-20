@@ -17,7 +17,7 @@ const usePreferencesStore = create<PreferencesState>()(
             setAdminMode: (mode) => set({ adminMode: mode }),
             dashboardTab: DASHBOARD_TABS.CHAT,
             setDashboardTab: (tab) => set({ dashboardTab: tab }),
-            theme: THEMES.SYSTEM,
+            theme: THEMES.DARK,
             setTheme: (theme) => set({ theme }),
             language: LANGUAGES.EN,
             setLanguage: (language) => {
