@@ -102,6 +102,8 @@ const en = {
     api: {
         missingRequiredFields: 'Missing required fields!',
         clawNotFound: 'Claw not found!',
+        clawRenamed: 'Claw renamed successfully!',
+        invalidClawName: 'Claw name must be between 1 and 50 characters!',
         userNotFound: 'User not found!',
         sshKeyNotFound: 'SSH key not found!',
         pendingClawNotFound: 'Pending claw not found!',
@@ -495,6 +497,8 @@ const en = {
         updateInstance: 'Update Instance',
         updateInstanceSuccess: 'Instance updated successfully.',
         updateInstanceFailed: 'Failed to update instance.',
+        renameSuccess: 'Claw renamed successfully.',
+        renameFailed: 'Failed to rename claw.',
         reinstallInstance: 'Reinstall Instance',
         reinstallClaw: 'Reinstall Instance',
         reinstallClawConfirmation:

@@ -3,6 +3,7 @@ import type { PlaygroundAgentNodeProps } from '@/ts/Interfaces'
 
 import { Handle, Position } from '@xyflow/react'
 import { AndroidLogoIcon } from '@phosphor-icons/react'
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 
 const handleStyle = {
     top: 0,
@@ -38,9 +39,20 @@ const PlaygroundAgentNode: FC<PlaygroundAgentNodeProps> = ({
             <div className='px-3.5 py-3'>
                 <div className='flex items-center gap-2'>
                     <AndroidLogoIcon className='h-4 w-4' weight='fill' />
-                    <span className='text-foreground flex-1 truncate text-sm font-medium'>
-                        {agent.name}
-                    </span>
+                    {agent.name.length > 24 ? (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <span className='text-foreground flex-1 truncate text-sm font-medium'>
+                                    {agent.name.slice(0, 24)}...
+                                </span>
+                            </TooltipTrigger>
+                            <TooltipContent>{agent.name}</TooltipContent>
+                        </Tooltip>
+                    ) : (
+                        <span className='text-foreground flex-1 truncate text-sm font-medium'>
+                            {agent.name}
+                        </span>
+                    )}
                 </div>
 
                 {agent.model && (

@@ -88,7 +88,16 @@ const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
                     </Tooltip>
                 </div>
                 <div className='min-w-0 flex-1'>
-                    <p className='text-foreground truncate text-[13px] font-medium'>{agent.name}</p>
+                    {agent.name.length > 14 ? (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <p className='text-foreground text-[13px] font-medium'>{agent.name.slice(0, 14)}...</p>
+                            </TooltipTrigger>
+                            <TooltipContent>{agent.name}</TooltipContent>
+                        </Tooltip>
+                    ) : (
+                        <p className='text-foreground text-[13px] font-medium'>{agent.name}</p>
+                    )}
                     {modelName ? (
                         <p className='text-muted-foreground truncate text-[11px]'>
                             {modelName}

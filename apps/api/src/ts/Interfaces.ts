@@ -940,6 +940,10 @@ export interface AgentIdBody {
     agentId?: string
 }
 
+export interface RenameClawBody {
+    name: string
+}
+
 export interface RootLayoutProps {
     children: React.ReactNode
 }

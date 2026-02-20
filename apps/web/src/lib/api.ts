@@ -4,6 +4,7 @@ import type {
     ClawEnvVarsResponse,
     BillingInvoiceResponse,
     Claw,
+    RenameClawData,
     ClawAgentsResponse,
     ClawChannelsResponse,
     ClawFilesResponse,
@@ -109,6 +110,8 @@ const api = {
     restartClaw: (id: string) => client.post<Claw>(`/claws/${id}/restart`),
     deleteClaw: (id: string) =>
         client.delete<DeleteClawResponse>(`/claws/${id}`),
+    renameClaw: (id: string, data: RenameClawData) =>
+        client.patch<Claw>(`/claws/${id}`, data),
     cancelDeletion: (id: string) =>
         client.post<Claw>(`/claws/${id}/cancel-deletion`),
     hardDeleteClaw: (id: string) =>

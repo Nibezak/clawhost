@@ -6,7 +6,7 @@ import type {
 import type { PlaygroundDetailTab } from '@/ts/Types'
 import type { TranslationKey } from '@openclaw/i18n'
 
-import { useCallback, useState, useMemo, useEffect } from 'react'
+import { useCallback, useState, useMemo, useEffect, useRef } from 'react'
 import CLAW_DETAIL_TABS from '@/lib/clawDetailTabs'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
@@ -18,10 +18,13 @@ import {
     ScrollIcon,
     PulseIcon,
     KeyIcon,
-    LightningIcon
+    LightningIcon,
+    PencilSimpleIcon,
+    CheckIcon,
+    CircleNotchIcon
 } from '@phosphor-icons/react'
 import { ClawAvatar, ProviderIcon } from '@/components'
-import { Skeleton } from '@/components/ui'
+import { Skeleton, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import { getBaseDomain } from '@/lib'
 import {
     CopyableField,
@@ -32,7 +35,8 @@ import {
     PlaygroundVariablesContent,
     PlaygroundSkillsContent
 } from '@/components/playground'
-import { useClawVersion } from '@/hooks'
+import { useClawVersion, useRenameClaw } from '@/hooks'
+import { useUIStore } from '@/lib/store'
 import { locationFlags, locationNames, generateSlug } from '@/lib/claw-utils'
 
 const tabStateMap: Record<string, PlaygroundDetailTab> = {}
@@ -87,6 +91,44 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
         }
     }, [initialTab, claw.id])
     const [, setRenderKey] = useState(0)
+    const [isEditingName, setIsEditingName] = useState(false)
+    const [editName, setEditName] = useState(claw.name)
+    const nameInputRef = useRef<HTMLInputElement>(null)
+    const renameMutation = useRenameClaw()
+    const { showToast } = useUIStore()
+
+    const handleStartEditing = useCallback(() => {
+        if (readOnly) return
+        setEditName(claw.name)
+        setIsEditingName(true)
+        setTimeout(() => nameInputRef.current?.focus(), 0)
+    }, [claw.name, readOnly])
+
+    const handleCancelEditing = useCallback(() => {
+        setIsEditingName(false)
+        setEditName(claw.name)
+    }, [claw.name])
+
+    const handleSaveName = useCallback(() => {
+        const trimmed = editName.trim()
+        if (!trimmed || trimmed === claw.name) {
+            handleCancelEditing()
+            return
+        }
+        renameMutation.mutate(
+            { id: claw.id, name: trimmed },
+            {
+                onSuccess: () => {
+                    setIsEditingName(false)
+                    showToast(t('dashboard.renameSuccess'), 'success')
+                },
+                onError: () => {
+                    setIsEditingName(false)
+                    showToast(t('dashboard.renameFailed'), 'error')
+                }
+            }
+        )
+    }, [editName, claw.name, claw.id, renameMutation, handleCancelEditing, showToast])
 
     const plan = plans.find((p) => p.id === claw.planId)
     const monthlyPrice = plan ? plan.priceMonthly : null
@@ -138,15 +180,65 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                     <div className='flex items-center gap-2.5'>
                         <ClawAvatar />
                         <div className='space-y-0'>
-                            <h3 className='text-foreground text-sm font-semibold leading-tight'>
-                                {claw.name}
-                            </h3>
+                            {isEditingName ? (
+                                <div className='flex items-center gap-1.5'>
+                                    <input
+                                        ref={nameInputRef}
+                                        type='text'
+                                        value={editName}
+                                        onChange={(e) =>
+                                            setEditName(e.target.value)
+                                        }
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter')
+                                                handleSaveName()
+                                            if (e.key === 'Escape')
+                                                handleCancelEditing()
+                                        }}
+                                        maxLength={50}
+                                        className='bg-foreground/10 text-foreground rounded px-1.5 py-0.5 text-sm font-semibold leading-tight outline-none focus:ring-1 focus:ring-[#ef5350]'
+                                    />
+                                    <button
+                                        onMouseDown={(e) => e.preventDefault()}
+                                        onClick={handleSaveName}
+                                        disabled={renameMutation.isPending}
+                                        className='text-muted-foreground hover:text-foreground shrink-0 transition-colors'
+                                    >
+                                        {renameMutation.isPending ? (
+                                            <CircleNotchIcon className='h-3.5 w-3.5 animate-spin' />
+                                        ) : (
+                                            <CheckIcon className='h-3.5 w-3.5' />
+                                        )}
+                                    </button>
+                                </div>
+                            ) : (
+                                <h3 className='text-foreground flex items-center gap-1.5 text-sm font-semibold leading-tight'>
+                                        {claw.name.length > 32 ? (
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <span>{claw.name.slice(0, 32)}...</span>
+                                                </TooltipTrigger>
+                                                <TooltipContent>{claw.name}</TooltipContent>
+                                            </Tooltip>
+                                        ) : (
+                                            <span>{claw.name}</span>
+                                        )}
+                                        {!readOnly && (
+                                            <button
+                                                onClick={handleStartEditing}
+                                                className='text-muted-foreground hover:text-foreground shrink-0 transition-colors'
+                                            >
+                                                <PencilSimpleIcon className='h-3 w-3' />
+                                            </button>
+                                        )}
+                                    </h3>
+                            )}
                             {claw.status !== clawStatus.configuring && (
                                 <a
                                     href={`https://${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
                                     target='_blank'
                                     rel='noopener noreferrer'
-                                    className='text-muted-foreground hover:text-foreground/80 block text-xs leading-tight transition-colors'
+                                    className='text-muted-foreground hover:text-foreground/80 block truncate text-xs leading-tight transition-colors'
                                 >
                                     {claw.subdomain || generateSlug(claw.id)}.
                                     {getBaseDomain()}

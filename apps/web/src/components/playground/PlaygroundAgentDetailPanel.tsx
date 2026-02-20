@@ -406,10 +406,28 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                         <ClawAvatar />
                         <div className='space-y-0'>
                             <h3 className='text-foreground text-sm font-semibold leading-tight'>
-                                {agent.name}
+                                {agent.name.length > 32 ? (
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <span>{agent.name.slice(0, 32)}...</span>
+                                        </TooltipTrigger>
+                                        <TooltipContent>{agent.name}</TooltipContent>
+                                    </Tooltip>
+                                ) : (
+                                    agent.name
+                                )}
                             </h3>
                             <span className='text-muted-foreground block text-xs leading-tight'>
-                                {t('playground.agentOnClaw', { clawName })}
+                                {clawName.length > 24 ? (
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <span>{t('playground.agentOnClaw', { clawName: clawName.slice(0, 24) + '...' })}</span>
+                                        </TooltipTrigger>
+                                        <TooltipContent>{clawName}</TooltipContent>
+                                    </Tooltip>
+                                ) : (
+                                    t('playground.agentOnClaw', { clawName })
+                                )}
                             </span>
                         </div>
                     </div>

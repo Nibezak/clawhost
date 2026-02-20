@@ -416,6 +416,10 @@ export interface PurchaseClawResponse {
     expiresAt: string
 }
 
+export interface RenameClawData {
+    name: string
+}
+
 export interface CreateSSHKeyData {
     name: string
     publicKey: string

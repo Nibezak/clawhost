@@ -205,12 +205,26 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                     </Tooltip>
                 </div>
                 <div className='min-w-0 flex-1'>
-                    <button
-                        onClick={() => onOpenClawSettings(claw.id)}
-                        className='text-foreground hover:text-foreground/80 truncate text-sm font-medium transition-colors'
-                    >
-                        {claw.name}
-                    </button>
+                    {claw.name.length > 16 ? (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <button
+                                    onClick={() => onOpenClawSettings(claw.id)}
+                                    className='text-foreground hover:text-foreground/80 truncate text-sm font-medium transition-colors'
+                                >
+                                    {claw.name.slice(0, 16)}...
+                                </button>
+                            </TooltipTrigger>
+                            <TooltipContent>{claw.name}</TooltipContent>
+                        </Tooltip>
+                    ) : (
+                        <button
+                            onClick={() => onOpenClawSettings(claw.id)}
+                            className='text-foreground hover:text-foreground/80 truncate text-sm font-medium transition-colors'
+                        >
+                            {claw.name}
+                        </button>
+                    )}
                     {claw.status !== clawStatus.configuring ? (
                         <a
                             href={`https://${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}

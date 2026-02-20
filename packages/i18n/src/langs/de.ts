@@ -108,6 +108,8 @@ const de: Translations = {
     api: {
         missingRequiredFields: 'Pflichtfelder fehlen!',
         clawNotFound: 'Claw nicht gefunden!',
+        clawRenamed: 'Claw erfolgreich umbenannt!',
+        invalidClawName: 'Der Claw-Name muss zwischen 1 und 50 Zeichen lang sein!',
         userNotFound: 'Benutzer nicht gefunden!',
         sshKeyNotFound: 'SSH-Schlüssel nicht gefunden!',
         pendingClawNotFound: 'Ausstehender Claw nicht gefunden!',
@@ -528,6 +530,8 @@ const de: Translations = {
         updateInstance: 'Instanz aktualisieren',
         updateInstanceSuccess: 'Instanz erfolgreich aktualisiert.',
         updateInstanceFailed: 'Instanz konnte nicht aktualisiert werden.',
+        renameSuccess: 'Claw erfolgreich umbenannt.',
+        renameFailed: 'Claw konnte nicht umbenannt werden.',
         reinstallInstance: 'Instanz neu installieren',
         reinstallClaw: 'Instanz neu installieren',
         reinstallClawConfirmation:

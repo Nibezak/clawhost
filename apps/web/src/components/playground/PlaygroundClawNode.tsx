@@ -215,9 +215,20 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                         className='h-5 w-5'
                     />
                     <div className='flex flex-1 items-center gap-2 overflow-hidden'>
-                        <span className='text-foreground truncate text-sm font-semibold'>
-                            {claw.name}
-                        </span>
+                        {claw.name.length > 24 ? (
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <span className='text-foreground truncate text-sm font-semibold'>
+                                        {claw.name.slice(0, 24)}...
+                                    </span>
+                                </TooltipTrigger>
+                                <TooltipContent>{claw.name}</TooltipContent>
+                            </Tooltip>
+                        ) : (
+                            <span className='text-foreground truncate text-sm font-semibold'>
+                                {claw.name}
+                            </span>
+                        )}
                         <span
                             className={`inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium ${status.bgColor}`}
                         >

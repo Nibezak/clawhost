@@ -108,6 +108,8 @@ const es: Translations = {
     api: {
         missingRequiredFields: 'Faltan campos obligatorios.',
         clawNotFound: 'Claw no encontrado.',
+        clawRenamed: 'Claw renombrado con éxito.',
+        invalidClawName: 'El nombre del claw debe tener entre 1 y 50 caracteres.',
         userNotFound: 'Usuario no encontrado.',
         sshKeyNotFound: 'Clave SSH no encontrada.',
         pendingClawNotFound: 'Claw pendiente no encontrado.',
@@ -526,6 +528,8 @@ const es: Translations = {
         updateInstance: 'Actualizar instancia',
         updateInstanceSuccess: 'Instancia actualizada exitosamente.',
         updateInstanceFailed: 'Error al actualizar la instancia.',
+        renameSuccess: 'Claw renombrado exitosamente.',
+        renameFailed: 'Error al renombrar el claw.',
         reinstallInstance: 'Reinstalar instancia',
         reinstallClaw: 'Reinstalar instancia',
         reinstallClawConfirmation:

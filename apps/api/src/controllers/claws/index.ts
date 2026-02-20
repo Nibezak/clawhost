@@ -38,6 +38,7 @@ import installClawHubSkill from '@/controllers/claws/installClawHubSkill'
 import removeClawHubSkill from '@/controllers/claws/removeClawHubSkill'
 import updateClawHubSkill from '@/controllers/claws/updateClawHubSkill'
 import checkClawHubUpdates from '@/controllers/claws/checkClawHubUpdates'
+import renameClaw from '@/controllers/claws/renameClaw'
 
 export {
     getClaws,
@@ -79,5 +80,6 @@ export {
     installClawHubSkill,
     removeClawHubSkill,
     updateClawHubSkill,
-    checkClawHubUpdates
+    checkClawHubUpdates,
+    renameClaw
 }
