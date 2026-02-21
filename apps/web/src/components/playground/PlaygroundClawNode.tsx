@@ -9,7 +9,7 @@ import { useState } from 'react'
 import { t } from '@openclaw/i18n'
 import { clawStatus } from '@openclaw/shared'
 import { useUIStore } from '@/lib/store'
-import { getLocale } from '@/lib'
+import { getLocale, TRUNCATE_LENGTHS } from '@/lib'
 import {
     useStartClaw,
     useStopClaw,
@@ -22,9 +22,9 @@ import {
     useProfile
 } from '@/hooks'
 import { api } from '@/lib'
-import { ProviderIcon, ClawMascot } from '@/components'
+import { ProviderIcon } from '@/components'
 import { getStatusConfig } from '@/lib/claw-utils'
-import { PlusIcon, ClockIcon, CircleNotchIcon } from '@phosphor-icons/react'
+import { PlusIcon, ClockIcon, CircleNotchIcon, AndroidLogoIcon } from '@phosphor-icons/react'
 import {
     ClawCardDropdownMenu,
     ClawCardDialogs,
@@ -215,11 +215,11 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                         className='h-5 w-5'
                     />
                     <div className='flex flex-1 items-center gap-2 overflow-hidden'>
-                        {claw.name.length > 24 ? (
+                        {claw.name.length > TRUNCATE_LENGTHS.NODE_CLAW_NAME ? (
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <span className='text-foreground truncate text-sm font-semibold'>
-                                        {claw.name.slice(0, 24)}...
+                                        {claw.name.slice(0, TRUNCATE_LENGTHS.NODE_CLAW_NAME)}...
                                     </span>
                                 </TooltipTrigger>
                                 <TooltipContent>{claw.name}</TooltipContent>
@@ -264,7 +264,6 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                                         isScheduledForDeletion
                                     }
                                     isAdmin={profile?.role === 'admin'}
-                                    isPlayground
                                     compact
                                 />
                             </div>
@@ -330,7 +329,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                             </div>
                         ) : (
                             <div className='flex items-center gap-1.5 rounded-md bg-[#ef5350]/10 px-2 py-1'>
-                                <ClawMascot className='h-3 w-3 text-[#ef5350]' />
+                                <AndroidLogoIcon className='h-3 w-3 text-[#ef5350]' weight='fill' />
                                 <span className='text-xs text-[#ef5350]'>
                                     {agentCount === 1
                                         ? t('playground.agentCount', {

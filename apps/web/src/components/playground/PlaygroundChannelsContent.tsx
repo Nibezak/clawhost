@@ -3,7 +3,8 @@ import type {
     ChannelConfig,
     ChannelDefinition,
     ClawChannelsResponse,
-    PlaygroundChannelsContentProps
+    PlaygroundChannelsContentProps,
+    WhatsAppPairStatusResponse
 } from '@/ts/Interfaces'
 
 import { useState, useEffect, useCallback } from 'react'
@@ -19,7 +20,8 @@ import {
     DiscordLogoIcon,
     SlackLogoIcon,
     ChatCircleIcon,
-    CheckIcon
+    CheckIcon,
+    LinkSimpleIcon
 } from '@phosphor-icons/react'
 import { PanelPlaceholder } from '@/components'
 import {
@@ -36,7 +38,25 @@ const CHANNEL_DEFINITIONS: ChannelDefinition[] = [
         key: 'whatsapp',
         label: 'playground.channelsWhatsApp',
         icon: WhatsappLogoIcon,
-        fields: []
+        fields: [
+            {
+                key: 'dmPolicy',
+                label: 'playground.channelsDmPolicy',
+                placeholder: 'playground.channelsDmPolicyPairing',
+                type: 'select',
+                options: [
+                    { value: 'pairing', label: 'playground.channelsDmPolicyPairing' },
+                    { value: 'open', label: 'playground.channelsDmPolicyOpen' },
+                    { value: 'allowlist', label: 'playground.channelsDmPolicyAllowlist' },
+                    { value: 'disabled', label: 'playground.channelsDmPolicyDisabled' }
+                ]
+            },
+            {
+                key: 'allowFrom',
+                label: 'playground.channelsAllowFrom',
+                placeholder: 'playground.channelsAllowFromPlaceholder'
+            }
+        ]
     },
     {
         key: 'telegram',
@@ -116,6 +136,9 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
     const [visibleSecrets, setVisibleSecrets] = useState<
         Record<string, boolean>
     >({})
+    const [isPairing, setIsPairing] = useState(false)
+    const [pollEnabled, setPollEnabled] = useState(false)
+    const [pairUnsupported, setPairUnsupported] = useState(false)
     const { showToast } = useUIStore()
     const queryClient = useQueryClient()
 
@@ -126,6 +149,26 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
         gcTime: 0,
         retry: 1
     })
+
+    const { data: pairStatus } = useQuery<WhatsAppPairStatusResponse>({
+        queryKey: ['whatsapp-pair-status', clawId],
+        queryFn: () => api.pairWhatsAppStatus(clawId),
+        enabled: pollEnabled,
+        refetchInterval: 3000
+    })
+
+    useEffect(() => {
+        if (!pairStatus || !isPairing) return
+        if (pairStatus.status === 'paired') {
+            setIsPairing(false)
+            setPollEnabled(false)
+            showToast(t('playground.channelsWhatsAppPaired'), 'success')
+        }
+        if (pairStatus.status === 'failed') {
+            setIsPairing(false)
+            setPollEnabled(false)
+        }
+    }, [pairStatus, isPairing, showToast])
 
     useEffect(() => {
         if (data) {
@@ -177,8 +220,23 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
         [showToast]
     )
 
+    const prepareChannels = useCallback((): Record<string, ChannelConfig> => {
+        const prepared: Record<string, ChannelConfig> = {}
+        for (const [key, config] of Object.entries(channels)) {
+            const copy = { ...config }
+            if (typeof copy.allowFrom === 'string') {
+                const raw = copy.allowFrom as unknown as string
+                copy.allowFrom = raw
+                    ? raw.split(',').map((s) => s.trim()).filter(Boolean)
+                    : []
+            }
+            prepared[key] = copy
+        }
+        return prepared
+    }, [channels])
+
     const saveMutation = useMutation({
-        mutationFn: () => api.updateClawChannels(clawId, { channels }),
+        mutationFn: () => api.updateClawChannels(clawId, { channels: prepareChannels() }),
         onSuccess: () => {
             showToast(t('playground.channelsSaved'), 'success')
             setHasChanges(false)
@@ -189,6 +247,25 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
         },
         onError: () => {
             showToast(t('playground.channelsSaveFailed'), 'error')
+        }
+    })
+
+    const pairMutation = useMutation({
+        mutationFn: () => api.pairWhatsApp(clawId),
+        onSuccess: (res) => {
+            if (res.status === 'already_paired') {
+                showToast(t('playground.channelsWhatsAppAlreadyPaired'), 'success')
+                return
+            }
+            if (res.status === 'unsupported') {
+                setPairUnsupported(true)
+                return
+            }
+            setIsPairing(true)
+            setTimeout(() => setPollEnabled(true), 3000)
+        },
+        onError: () => {
+            showToast(t('playground.channelsWhatsAppPairFailed'), 'error')
         }
     })
 
@@ -246,7 +323,7 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                                 <button
                                     type='button'
                                     onClick={() => toggleChannel(def.key)}
-                                    className='flex w-full items-center gap-3 px-3.5 py-3'
+                                    className='flex w-full items-center gap-2 px-3.5 py-3'
                                 >
                                     <div
                                         className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors ${
@@ -268,7 +345,124 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                                     </span>
                                 </button>
 
-                                {config.enabled && def.fields.length > 0 && (
+                                {config.enabled && def.key === 'whatsapp' && (
+                                    <div className='border-border space-y-3 border-t px-3.5 pb-3.5 pt-3'>
+                                        {isPairing && pairStatus?.status === 'qr_ready' && pairStatus.qr ? (
+                                            <div className='space-y-2'>
+                                                <p className='text-muted-foreground text-[11px]'>
+                                                    {t('playground.channelsWhatsAppScanQr')}
+                                                </p>
+                                                <pre className='bg-background overflow-x-auto rounded-md border p-2 text-center font-mono text-[6px] leading-[6px]'>
+                                                    {pairStatus.qr}
+                                                </pre>
+                                                <p className='text-muted-foreground text-center text-[10px]'>
+                                                    {t('playground.channelsWhatsAppScanInstructions')}
+                                                </p>
+                                            </div>
+                                        ) : isPairing ? (
+                                            <div className='flex items-center gap-2 py-2'>
+                                                <CircleNotchIcon className='text-muted-foreground h-3.5 w-3.5 animate-spin' />
+                                                <span className='text-muted-foreground text-[11px]'>
+                                                    {t('playground.channelsWhatsAppPairing')}
+                                                </span>
+                                            </div>
+                                        ) : pairStatus?.status === 'failed' ? (
+                                            <div className='space-y-2'>
+                                                <p className='text-[11px] text-red-400'>
+                                                    {t('playground.channelsWhatsAppPairFailed')}
+                                                </p>
+                                                {pairStatus.log && (
+                                                    <pre className='bg-background max-h-24 overflow-auto rounded-md border p-2 font-mono text-[10px] text-red-400/70'>
+                                                        {pairStatus.log}
+                                                    </pre>
+                                                )}
+                                                <button
+                                                    type='button'
+                                                    onClick={() => pairMutation.mutate()}
+                                                    disabled={pairMutation.isPending}
+                                                    className='flex w-full items-center justify-center gap-2 rounded-md border border-[#25D366]/30 bg-[#25D366]/10 px-3 py-2 text-[11px] font-medium text-[#25D366] transition-colors hover:bg-[#25D366]/20 disabled:cursor-not-allowed disabled:opacity-50'
+                                                >
+                                                    {pairMutation.isPending ? (
+                                                        <CircleNotchIcon className='h-3.5 w-3.5 animate-spin' />
+                                                    ) : (
+                                                        <LinkSimpleIcon className='h-3.5 w-3.5' />
+                                                    )}
+                                                    {t('playground.channelsWhatsAppPairDevice')}
+                                                </button>
+                                            </div>
+                                        ) : pairUnsupported ? (
+                                            <p className='text-muted-foreground text-[11px]'>
+                                                {t('playground.channelsWhatsAppUnsupported')}
+                                            </p>
+                                        ) : (
+                                            <button
+                                                type='button'
+                                                onClick={() => pairMutation.mutate()}
+                                                disabled={pairMutation.isPending}
+                                                className='flex w-full items-center justify-center gap-2 rounded-md border border-[#25D366]/30 bg-[#25D366]/10 px-3 py-2 text-[11px] font-medium text-[#25D366] transition-colors hover:bg-[#25D366]/20 disabled:cursor-not-allowed disabled:opacity-50'
+                                            >
+                                                {pairMutation.isPending ? (
+                                                    <CircleNotchIcon className='h-3.5 w-3.5 animate-spin' />
+                                                ) : (
+                                                    <LinkSimpleIcon className='h-3.5 w-3.5' />
+                                                )}
+                                                {t('playground.channelsWhatsAppPairDevice')}
+                                            </button>
+                                        )}
+                                        {def.fields.map((field) => {
+                                            const fieldId = `${def.key}-${String(field.key)}`
+                                            const rawValue = config[field.key]
+                                            const value = Array.isArray(rawValue)
+                                                ? rawValue.join(', ')
+                                                : (rawValue as string) || ''
+
+                                            return (
+                                                <div key={fieldId}>
+                                                    <div className='mb-1.5 flex items-center justify-between'>
+                                                        <label className='text-muted-foreground text-[11px] font-medium'>
+                                                            {t(field.label)}
+                                                        </label>
+                                                    </div>
+                                                    {field.type === 'select' && field.options ? (
+                                                        <select
+                                                            value={value || field.options[0]?.value || ''}
+                                                            onChange={(e) =>
+                                                                updateField(
+                                                                    def.key,
+                                                                    String(field.key),
+                                                                    e.target.value
+                                                                )
+                                                            }
+                                                            className='border-border bg-foreground/5 text-foreground w-full rounded-md border px-2.5 py-1.5 text-[11px] outline-none transition-colors focus:border-[#ef5350]/50'
+                                                        >
+                                                            {field.options.map((opt) => (
+                                                                <option key={opt.value} value={opt.value}>
+                                                                    {t(opt.label)}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    ) : (
+                                                        <input
+                                                            type='text'
+                                                            value={value}
+                                                            onChange={(e) =>
+                                                                updateField(
+                                                                    def.key,
+                                                                    String(field.key),
+                                                                    e.target.value
+                                                                )
+                                                            }
+                                                            placeholder={t(field.placeholder)}
+                                                            className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-2.5 py-1.5 font-mono text-[11px] outline-none transition-colors focus:border-[#ef5350]/50'
+                                                        />
+                                                    )}
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                )}
+
+                                {config.enabled && def.key !== 'whatsapp' && def.fields.length > 0 && (
                                     <div className='border-border space-y-3 border-t px-3.5 pb-3.5 pt-3'>
                                         {def.fields.map((field) => {
                                             const fieldId = `${def.key}-${String(field.key)}`

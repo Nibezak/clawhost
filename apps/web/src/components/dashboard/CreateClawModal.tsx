@@ -52,6 +52,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     onNavigateToSSHKeys
 }): ReactNode => {
     const [name, setName] = useState('')
+    const [nameError, setNameError] = useState('')
     const [provider, setProvider] = useState<ProviderType>(
         preselectedProvider || 'hetzner'
     )
@@ -164,6 +165,10 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     const purchaseMutation = usePurchaseClaw()
 
     const handleCreate = () => {
+        if (name && !/^[a-zA-Z0-9-]+$/.test(name)) {
+            setNameError(t('createClaw.clawNameInvalidChars'))
+            return
+        }
         if (!location) {
             showToast(t('errors.invalidLocation'), 'error')
             return
@@ -236,16 +241,32 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                         <Input
                             type='text'
                             value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            onChange={(e) => {
+                                const val = e.target.value
+                                setName(val)
+                                if (val && !/^[a-zA-Z0-9-]+$/.test(val)) {
+                                    setNameError(t('createClaw.clawNameInvalidChars'))
+                                } else {
+                                    setNameError('')
+                                }
+                            }}
                             placeholder={t('createClaw.clawNamePlaceholder')}
-                            className='h-11'
+                            className={`h-11 ${nameError ? 'border-red-500/50' : ''}`}
                         />
+                        {nameError && (
+                            <p className='mt-1.5 text-[11px] text-red-600 dark:text-red-400'>
+                                {nameError}
+                            </p>
+                        )}
                     </div>
 
                     <div className='space-y-1'>
                         <Label>
                             {t('createClaw.provider')}
-                            <span className='text-red-600 dark:text-red-400'> *</span>
+                            <span className='text-red-600 dark:text-red-400'>
+                                {' '}
+                                *
+                            </span>
                         </Label>
                         <div className='bg-muted flex w-fit rounded-lg p-1'>
                             <button
@@ -336,7 +357,10 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                     <div className='space-y-2'>
                         <Label>
                             {t('createClaw.location')}
-                            <span className='text-red-600 dark:text-red-400'> *</span>
+                            <span className='text-red-600 dark:text-red-400'>
+                                {' '}
+                                *
+                            </span>
                         </Label>
                         {isProviderLoading ? (
                             <div className='grid grid-cols-2 gap-2'>
@@ -432,7 +456,10 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                     <div className='space-y-2'>
                         <Label>
                             {t('createClaw.plan')}
-                            <span className='text-red-600 dark:text-red-400'> *</span>
+                            <span className='text-red-600 dark:text-red-400'>
+                                {' '}
+                                *
+                            </span>
                         </Label>
                         {isProviderLoading ? (
                             <div className='space-y-2'>
@@ -524,11 +551,20 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                             )}
                                                         </p>
                                                         <p className='text-muted-foreground text-xs'>
-                                                            {t('createClaw.planSpec', {
-                                                                cpu: String(plan.cpu),
-                                                                memory: String(plan.memory),
-                                                                disk: String(plan.disk)
-                                                            })}
+                                                            {t(
+                                                                'createClaw.planSpec',
+                                                                {
+                                                                    cpu: String(
+                                                                        plan.cpu
+                                                                    ),
+                                                                    memory: String(
+                                                                        plan.memory
+                                                                    ),
+                                                                    disk: String(
+                                                                        plan.disk
+                                                                    )
+                                                                }
+                                                            )}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -834,7 +870,9 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                 />
                                                 <div className='flex items-center justify-between'>
                                                     <span className='text-muted-foreground text-xs'>
-                                                        {t('createClaw.volumeMin')}
+                                                        {t(
+                                                            'createClaw.volumeMin'
+                                                        )}
                                                     </span>
                                                     <div className='flex items-center gap-2'>
                                                         <Input
@@ -864,11 +902,15 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                             className='h-8 w-20 text-center text-sm'
                                                         />
                                                         <span className='text-muted-foreground text-sm'>
-                                                            {t('createClaw.volumeUnit')}
+                                                            {t(
+                                                                'createClaw.volumeUnit'
+                                                            )}
                                                         </span>
                                                     </div>
                                                     <span className='text-muted-foreground text-xs'>
-                                                        {t('createClaw.volumeMax')}
+                                                        {t(
+                                                            'createClaw.volumeMax'
+                                                        )}
                                                     </span>
                                                 </div>
                                             </div>
@@ -909,7 +951,8 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                     )}
                                 </span>
                                 <span>
-                                    ${selectedPlan.priceMonthly.toFixed(2)}{t('landing.perMonth')}
+                                    ${selectedPlan.priceMonthly.toFixed(2)}
+                                    {t('landing.perMonth')}
                                 </span>
                             </div>
                             {volumeSize > 0 && volumePricing && (
@@ -956,7 +999,8 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                             disabled={
                                 purchaseMutation.isPending ||
                                 !selectedPlan ||
-                                !location
+                                !location ||
+                                !!nameError
                             }
                         >
                             {purchaseMutation.isPending && (

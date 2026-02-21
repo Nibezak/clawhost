@@ -21,9 +21,11 @@ import { t } from '@openclaw/i18n'
 import {
     CircleNotchIcon,
     CubeIcon,
+    DownloadSimpleIcon,
     LightningIcon,
     MagnifyingGlassIcon,
-    StorefrontIcon
+    StorefrontIcon,
+    TrashIcon
 } from '@phosphor-icons/react'
 import { PanelPlaceholder, TruncateTooltip } from '@/components'
 import { Skeleton } from '@/components/ui'
@@ -533,9 +535,15 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                                             {isPending ? (
                                                 <CircleNotchIcon className='h-3 w-3 animate-spin' />
                                             ) : active ? (
-                                                t('playground.clawHubRemove')
+                                                <>
+                                                    <TrashIcon className='h-3 w-3' />
+                                                    {t('playground.clawHubRemove')}
+                                                </>
                                             ) : (
-                                                t('playground.clawHubInstall')
+                                                <>
+                                                    <DownloadSimpleIcon className='h-3 w-3' />
+                                                    {t('playground.clawHubInstall')}
+                                                </>
                                             )}
                                         </button>
                                     </div>
@@ -647,9 +655,15 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                                             ) : isInstalled && hasUpdate ? (
                                                 t('playground.clawHubUpdate')
                                             ) : isInstalled ? (
-                                                t('playground.clawHubRemove')
+                                                <>
+                                                    <TrashIcon className='h-3 w-3' />
+                                                    {t('playground.clawHubRemove')}
+                                                </>
                                             ) : (
-                                                t('playground.clawHubInstall')
+                                                <>
+                                                    <DownloadSimpleIcon className='h-3 w-3' />
+                                                    {t('playground.clawHubInstall')}
+                                                </>
                                             )}
                                         </button>
                                     </div>

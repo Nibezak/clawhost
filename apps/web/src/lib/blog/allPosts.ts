@@ -7,7 +7,10 @@ const estimateReadingTime = (content: string): number => {
     return Math.max(1, Math.round(words / 200))
 }
 
-const buildPostMeta = (mod: BlogPostModule, rawContent: string): BlogPostMeta => ({
+const buildPostMeta = (
+    mod: BlogPostModule,
+    rawContent: string
+): BlogPostMeta => ({
     ...mod.frontmatter,
     readingTime: estimateReadingTime(rawContent)
 })

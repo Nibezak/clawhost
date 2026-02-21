@@ -24,7 +24,7 @@ import {
     useReinstallClaw,
     useProfile
 } from '@/hooks'
-import { api } from '@/lib'
+import { api, TRUNCATE_LENGTHS } from '@/lib'
 import {
     ClawCardDropdownMenu,
     ClawCardDialogs,
@@ -184,16 +184,14 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
             <div
                 onClick={() => onOpenClawSettings(claw.id)}
                 className={`group/header relative mb-1 flex w-full cursor-pointer items-center gap-3 rounded-lg px-2.5 py-1.5 text-left transition-colors ${
-                    isSelected
-                        ? 'bg-foreground/10'
-                        : 'hover:bg-foreground/5'
+                    isSelected ? 'bg-foreground/10' : 'hover:bg-foreground/5'
                 }`}
             >
                 <div className='relative shrink-0'>
                     <ClawAvatar size='sm' />
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <div className='absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full border-2 border-background'>
+                            <div className='border-background absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full border-2'>
                                 <div
                                     className={`h-2 w-2 rounded-full ${statusConfig.color}`}
                                 />
@@ -205,42 +203,41 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                     </Tooltip>
                 </div>
                 <div className='min-w-0 flex-1'>
-                    {claw.name.length > 16 ? (
+                    {claw.name.length > TRUNCATE_LENGTHS.SIDEBAR_CLAW_NAME ? (
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <button
-                                    onClick={() => onOpenClawSettings(claw.id)}
-                                    className='text-foreground hover:text-foreground/80 truncate text-sm font-medium transition-colors'
-                                >
-                                    {claw.name.slice(0, 16)}...
-                                </button>
+                                <p className='text-foreground truncate text-[13px] font-medium'>
+                                    {claw.name.slice(0, TRUNCATE_LENGTHS.SIDEBAR_CLAW_NAME)}...
+                                </p>
                             </TooltipTrigger>
                             <TooltipContent>{claw.name}</TooltipContent>
                         </Tooltip>
                     ) : (
-                        <button
-                            onClick={() => onOpenClawSettings(claw.id)}
-                            className='text-foreground hover:text-foreground/80 truncate text-sm font-medium transition-colors'
-                        >
+                        <p className='text-foreground truncate text-[13px] font-medium'>
                             {claw.name}
-                        </button>
+                        </p>
                     )}
                     {claw.status !== clawStatus.configuring ? (
                         <a
                             href={`https://${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
                             target='_blank'
                             rel='noopener noreferrer'
-                            className='text-muted-foreground hover:text-foreground/80 block truncate text-xs transition-colors'
+                            onClick={(e) => e.stopPropagation()}
+                            className='text-muted-foreground hover:text-foreground/80 block truncate text-[11px] transition-colors'
                         >
-                            {claw.subdomain || generateSlug(claw.id)}.{getBaseDomain()}
+                            {claw.subdomain || generateSlug(claw.id)}.
+                            {getBaseDomain()}
                         </a>
                     ) : (
-                        <p className='text-muted-foreground truncate text-xs'>
+                        <p className='text-muted-foreground truncate text-[11px]'>
                             {statusConfig.label}
                         </p>
                     )}
                 </div>
-                <div className='flex shrink-0 items-center gap-1' onClick={(e) => e.stopPropagation()}>
+                <div
+                    className='flex shrink-0 items-center gap-1'
+                    onClick={(e) => e.stopPropagation()}
+                >
                     <div>
                         <ClawCardDropdownMenu
                             claw={claw}

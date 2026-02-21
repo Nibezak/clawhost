@@ -35,14 +35,14 @@ const installClawHubSkill = async (c: AuthenticatedContext) => {
         try {
             await ensureClawHub(claw.ip, claw.rootPassword)
 
-            let cmd = `clawhub install ${body.slug}`
+            let clawHubCmd = `clawhub install ${body.slug}`
 
             if (body.agentId) {
                 const agentDir = `${BASE_DIR}/agents/${body.agentId}/workspace/skills`
-                cmd = `${cmd} --workdir ${agentDir}`
+                clawHubCmd = `${clawHubCmd} --workdir ${agentDir}`
             }
 
-            cmd = `${cmd} && (openclaw doctor --fix || true) && systemctl restart openclaw-gateway`
+            const cmd = `su - openclaw -c "${clawHubCmd}" && (su - openclaw -c "openclaw doctor --fix" || true) && systemctl restart openclaw-gateway`
 
             await executeSSH(claw.ip, claw.rootPassword, cmd, 50000)
 

@@ -58,14 +58,14 @@ const getClawHubInstalled = async (c: AuthenticatedContext) => {
 
             await ensureClawHub(claw.ip, claw.rootPassword)
 
-            let cmd = 'clawhub list --json'
+            let clawHubCmd = 'clawhub list --json'
 
             if (agentId) {
                 const agentDir = `${BASE_DIR}/agents/${agentId}/workspace/skills`
-                cmd = `${cmd} --workdir ${agentDir}`
+                clawHubCmd = `${clawHubCmd} --workdir ${agentDir}`
             }
 
-            cmd = `${cmd} 2>/dev/null || echo '[]'`
+            const cmd = `su - openclaw -c "${clawHubCmd}" 2>/dev/null || echo '[]'`
 
             const output = await executeSSH(
                 claw.ip,

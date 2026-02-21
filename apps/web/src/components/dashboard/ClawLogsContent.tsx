@@ -101,7 +101,7 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
                     <div className='bg-foreground/5 h-full w-full animate-pulse' />
                 )}
                 {logs.isPending && !embedded && (
-                    <Skeleton className='h-full w-full rounded-md border border-border' />
+                    <Skeleton className='border-border h-full w-full rounded-md border' />
                 )}
                 {logs.isError && (
                     <PanelPlaceholder
@@ -116,13 +116,13 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
                     />
                 )}
                 {logs.data && !embedded && (
-                    <pre className='overflow-auto whitespace-pre-wrap break-words rounded-md border border-border bg-muted p-3 text-xs leading-snug text-muted-foreground'>
+                    <pre className='border-border bg-muted text-muted-foreground overflow-auto whitespace-pre-wrap break-words rounded-md border p-3 text-xs leading-snug'>
                         {logs.data.logs || t('dashboard.diagnosticsNoLogs')}
                     </pre>
                 )}
                 {logs.data && embedded && (
                     <div
-                        className={`flex flex-col gap-1 bg-muted/50 p-4 ${parsedLines.length === 0 ? 'h-full items-center justify-center' : ''}`}
+                        className={`bg-muted/50 flex flex-col gap-1 p-4 ${parsedLines.length === 0 ? 'h-full items-center justify-center' : ''}`}
                     >
                         {parsedLines.length === 0 && (
                             <PanelPlaceholder
@@ -139,11 +139,11 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
                         {parsedLines.map((line, i) => (
                             <div key={i} className='flex gap-2'>
                                 {line.time && (
-                                    <span className='shrink-0 font-mono text-[10px] leading-4 text-muted-foreground/60'>
+                                    <span className='text-muted-foreground/60 shrink-0 font-mono text-[10px] leading-4'>
                                         {line.time}
                                     </span>
                                 )}
-                                <span className='min-w-0 whitespace-pre-wrap break-words font-mono text-xs text-foreground/80'>
+                                <span className='text-foreground/80 min-w-0 whitespace-pre-wrap break-words font-mono text-xs'>
                                     {line.text}
                                 </span>
                             </div>

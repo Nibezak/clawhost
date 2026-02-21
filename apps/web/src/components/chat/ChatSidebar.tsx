@@ -55,7 +55,7 @@ const ChatSidebar: FC<ChatSidebarProps> = ({
     }
 
     return (
-        <div className='relative z-10 bg-background md:border-border flex h-full w-full shrink-0 flex-col md:w-[280px] md:border-r'>
+        <div className='bg-background md:border-border relative z-10 flex h-full w-full shrink-0 flex-col md:w-[280px] md:border-r'>
             <div className='flex-1 overflow-y-auto p-3'>
                 {clawsWithAgents.map(
                     ({ claw, agents, isLoading, isReachable }) => {
@@ -80,7 +80,7 @@ const ChatSidebar: FC<ChatSidebarProps> = ({
                                         <div className='relative flex py-0.5'>
                                             <div className='relative ml-[19px] flex w-7 shrink-0 justify-start'>
                                                 <div className='bg-border absolute -top-1 left-0 h-[calc(22px+4px)] w-px' />
-                                                <div className='bg-border absolute top-[22px] left-0 h-px w-[calc(100%-6px)]' />
+                                                <div className='bg-border absolute left-0 top-[22px] h-px w-[calc(100%-6px)]' />
                                             </div>
                                             <div className='flex min-w-0 flex-1 items-center gap-2.5 px-2 py-1'>
                                                 <Skeleton className='h-7 w-7 shrink-0 rounded-md' />
@@ -96,7 +96,7 @@ const ChatSidebar: FC<ChatSidebarProps> = ({
                                         <div className='relative flex py-0.5'>
                                             <div className='relative ml-[19px] flex w-7 shrink-0 justify-start'>
                                                 <div className='bg-border absolute -top-1 left-0 h-[calc(22px+4px)] w-px' />
-                                                <div className='bg-border absolute top-[22px] left-0 h-px w-[calc(100%-6px)]' />
+                                                <div className='bg-border absolute left-0 top-[22px] h-px w-[calc(100%-6px)]' />
                                             </div>
                                             <div className='flex min-w-0 flex-1 items-center gap-2.5 px-2 py-1'>
                                                 <Skeleton className='h-7 w-7 shrink-0 rounded-md' />
@@ -146,7 +146,7 @@ const ChatSidebar: FC<ChatSidebarProps> = ({
                                             <div className='relative flex py-0.5'>
                                                 <div className='relative ml-[19px] flex w-7 shrink-0 justify-start'>
                                                     <div className='bg-border absolute -top-1 left-0 h-[calc(18px+4px)] w-px' />
-                                                    <div className='bg-border absolute top-[18px] left-0 h-px w-[calc(100%-6px)]' />
+                                                    <div className='bg-border absolute left-0 top-[18px] h-px w-[calc(100%-6px)]' />
                                                 </div>
                                                 <button
                                                     onClick={() =>
@@ -158,7 +158,10 @@ const ChatSidebar: FC<ChatSidebarProps> = ({
                                                     className='text-muted-foreground hover:bg-foreground/5 hover:text-foreground flex min-w-0 flex-1 items-center gap-2.5 rounded-lg px-2 py-2 text-left transition-colors'
                                                 >
                                                     <div className='border-border flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-dashed'>
-                                                        <PlusIcon className='h-3 w-3' weight='bold' />
+                                                        <PlusIcon
+                                                            className='h-3 w-3'
+                                                            weight='bold'
+                                                        />
                                                     </div>
                                                     <span className='text-[13px]'>
                                                         {t('chat.addAgent')}

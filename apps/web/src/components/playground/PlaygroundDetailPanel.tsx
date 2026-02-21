@@ -6,12 +6,12 @@ import type {
 import type { PlaygroundDetailTab } from '@/ts/Types'
 import type { TranslationKey } from '@openclaw/i18n'
 
-import { useCallback, useState, useMemo, useEffect, useRef } from 'react'
+import { useCallback, useState, useMemo, useEffect } from 'react'
 import CLAW_DETAIL_TABS from '@/lib/clawDetailTabs'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { clawStatus } from '@openclaw/shared'
-import { getLocale } from '@/lib'
+import { getLocale, TRUNCATE_LENGTHS } from '@/lib'
 import {
     XIcon,
     InfoIcon,
@@ -19,12 +19,17 @@ import {
     PulseIcon,
     KeyIcon,
     LightningIcon,
-    PencilSimpleIcon,
-    CheckIcon,
-    CircleNotchIcon
+    GearSixIcon,
+    CircleNotchIcon,
+    ChatsCircleIcon
 } from '@phosphor-icons/react'
-import { ClawAvatar, ProviderIcon } from '@/components'
-import { Skeleton, Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
+import { ClawAvatar, ClawMascotOutline, ProviderIcon } from '@/components'
+import {
+    Skeleton,
+    Tooltip,
+    TooltipTrigger,
+    TooltipContent
+} from '@/components/ui'
 import { getBaseDomain } from '@/lib'
 import {
     CopyableField,
@@ -33,8 +38,11 @@ import {
 } from '@/components/dashboard'
 import {
     PlaygroundVariablesContent,
-    PlaygroundSkillsContent
+    PlaygroundSkillsContent,
+    PlaygroundVersionsContent,
+    PlaygroundChannelsContent
 } from '@/components/playground'
+import { useQueryClient } from '@tanstack/react-query'
 import { useClawVersion, useRenameClaw } from '@/hooks'
 import { useUIStore } from '@/lib/store'
 import { locationFlags, locationNames, generateSlug } from '@/lib/claw-utils'
@@ -43,6 +51,16 @@ const tabStateMap: Record<string, PlaygroundDetailTab> = {}
 
 const tabs: PlaygroundTabConfig<PlaygroundDetailTab>[] = [
     { id: CLAW_DETAIL_TABS.INFO, label: 'playground.tabInfo', icon: InfoIcon },
+    {
+        id: CLAW_DETAIL_TABS.CHANNELS,
+        label: 'playground.tabChannels',
+        icon: ChatsCircleIcon
+    },
+    {
+        id: CLAW_DETAIL_TABS.VERSIONS,
+        label: 'playground.tabVersions',
+        icon: ClawMascotOutline
+    },
     {
         id: CLAW_DETAIL_TABS.VARIABLES,
         label: 'playground.tabEnvs',
@@ -62,6 +80,11 @@ const tabs: PlaygroundTabConfig<PlaygroundDetailTab>[] = [
         id: CLAW_DETAIL_TABS.DIAGNOSTICS,
         label: 'playground.tabDiagnostics',
         icon: PulseIcon
+    },
+    {
+        id: CLAW_DETAIL_TABS.SETTINGS,
+        label: 'playground.tabSettings',
+        icon: GearSixIcon
     }
 ]
 
@@ -91,44 +114,46 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
         }
     }, [initialTab, claw.id])
     const [, setRenderKey] = useState(0)
-    const [isEditingName, setIsEditingName] = useState(false)
-    const [editName, setEditName] = useState(claw.name)
-    const nameInputRef = useRef<HTMLInputElement>(null)
+    const [settingsName, setSettingsName] = useState(claw.name)
+    const [settingsNameError, setSettingsNameError] = useState('')
     const renameMutation = useRenameClaw()
     const { showToast } = useUIStore()
 
-    const handleStartEditing = useCallback(() => {
-        if (readOnly) return
-        setEditName(claw.name)
-        setIsEditingName(true)
-        setTimeout(() => nameInputRef.current?.focus(), 0)
-    }, [claw.name, readOnly])
-
-    const handleCancelEditing = useCallback(() => {
-        setIsEditingName(false)
-        setEditName(claw.name)
+    useEffect(() => {
+        setSettingsName(claw.name)
+        setSettingsNameError('')
     }, [claw.name])
 
-    const handleSaveName = useCallback(() => {
-        const trimmed = editName.trim()
-        if (!trimmed || trimmed === claw.name) {
-            handleCancelEditing()
+    const handleSettingsNameChange = useCallback((value: string) => {
+        setSettingsName(value)
+        if (value.trim() && !/^[a-zA-Z0-9-]+$/.test(value)) {
+            setSettingsNameError(t('dashboard.renameInvalidChars'))
+        } else {
+            setSettingsNameError('')
+        }
+    }, [])
+
+    const settingsHasChanges = settingsName.trim() !== claw.name
+
+    const handleSettingsSave = useCallback(() => {
+        const trimmed = settingsName.trim()
+        if (!trimmed || trimmed === claw.name) return
+        if (!/^[a-zA-Z0-9-]+$/.test(trimmed)) {
+            setSettingsNameError(t('dashboard.renameInvalidChars'))
             return
         }
         renameMutation.mutate(
             { id: claw.id, name: trimmed },
             {
                 onSuccess: () => {
-                    setIsEditingName(false)
                     showToast(t('dashboard.renameSuccess'), 'success')
                 },
                 onError: () => {
-                    setIsEditingName(false)
                     showToast(t('dashboard.renameFailed'), 'error')
                 }
             }
         )
-    }, [editName, claw.name, claw.id, renameMutation, handleCancelEditing, showToast])
+    }, [settingsName, claw.name, claw.id, renameMutation, showToast])
 
     const plan = plans.find((p) => p.id === claw.planId)
     const monthlyPrice = plan ? plan.priceMonthly : null
@@ -141,10 +166,18 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
         : null
 
     const isInfoTab = activeTab === 'info'
+    const queryClient = useQueryClient()
     const versionQuery = useClawVersion(
         claw.id,
         isInfoTab && !readOnly && !!claw.ip
     )
+    useEffect(() => {
+        if (isInfoTab && !readOnly && claw.ip) {
+            queryClient.resetQueries({
+                queryKey: ['claw-version', claw.id]
+            })
+        }
+    }, [isInfoTab, readOnly, claw.ip, claw.id, queryClient])
     const showVersion = readOnly || !!claw.ip
     const versionLoading = !readOnly && versionQuery.isPending
     const versionDisplay = useMemo(() => {
@@ -180,59 +213,22 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                     <div className='flex items-center gap-2.5'>
                         <ClawAvatar />
                         <div className='space-y-0'>
-                            {isEditingName ? (
-                                <div className='flex items-center gap-1.5'>
-                                    <input
-                                        ref={nameInputRef}
-                                        type='text'
-                                        value={editName}
-                                        onChange={(e) =>
-                                            setEditName(e.target.value)
-                                        }
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter')
-                                                handleSaveName()
-                                            if (e.key === 'Escape')
-                                                handleCancelEditing()
-                                        }}
-                                        maxLength={50}
-                                        className='bg-foreground/10 text-foreground rounded px-1.5 py-0.5 text-sm font-semibold leading-tight outline-none focus:ring-1 focus:ring-[#ef5350]'
-                                    />
-                                    <button
-                                        onMouseDown={(e) => e.preventDefault()}
-                                        onClick={handleSaveName}
-                                        disabled={renameMutation.isPending}
-                                        className='text-muted-foreground hover:text-foreground shrink-0 transition-colors'
-                                    >
-                                        {renameMutation.isPending ? (
-                                            <CircleNotchIcon className='h-3.5 w-3.5 animate-spin' />
-                                        ) : (
-                                            <CheckIcon className='h-3.5 w-3.5' />
-                                        )}
-                                    </button>
-                                </div>
-                            ) : (
-                                <h3 className='text-foreground flex items-center gap-1.5 text-sm font-semibold leading-tight'>
-                                        {claw.name.length > 32 ? (
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <span>{claw.name.slice(0, 32)}...</span>
-                                                </TooltipTrigger>
-                                                <TooltipContent>{claw.name}</TooltipContent>
-                                            </Tooltip>
-                                        ) : (
-                                            <span>{claw.name}</span>
-                                        )}
-                                        {!readOnly && (
-                                            <button
-                                                onClick={handleStartEditing}
-                                                className='text-muted-foreground hover:text-foreground shrink-0 transition-colors'
-                                            >
-                                                <PencilSimpleIcon className='h-3 w-3' />
-                                            </button>
-                                        )}
-                                    </h3>
-                            )}
+                            <h3 className='text-foreground text-sm font-semibold leading-tight'>
+                                {claw.name.length > TRUNCATE_LENGTHS.PANEL_NAME ? (
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <span>
+                                                {claw.name.slice(0, TRUNCATE_LENGTHS.PANEL_NAME)}...
+                                            </span>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            {claw.name}
+                                        </TooltipContent>
+                                    </Tooltip>
+                                ) : (
+                                    <span>{claw.name}</span>
+                                )}
+                            </h3>
                             {claw.status !== clawStatus.configuring && (
                                 <a
                                     href={`https://${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
@@ -254,23 +250,18 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                     </button>
                 </div>
 
-                <div className='border-border flex border-b'>
+                <div className={`border-border flex border-b ${fullScreen ? '' : 'overflow-x-auto'}`}>
                     {tabs.map((tab) => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className={`flex flex-1 items-center justify-center gap-1.5 border-b-2 px-3 py-2 text-xs font-medium transition-colors ${
+                            className={`flex items-center justify-center gap-1.5 border-b-2 px-3 py-2 text-xs font-medium transition-colors ${fullScreen ? 'flex-1' : 'shrink-0'} ${
                                 activeTab === tab.id
                                     ? 'text-foreground border-[#ef5350]'
                                     : 'text-muted-foreground hover:text-foreground/80 border-transparent'
                             }`}
                         >
-                            <tab.icon
-                                className='h-3.5 w-3.5'
-                                weight={
-                                    activeTab === tab.id ? 'fill' : 'regular'
-                                }
-                            />
+                            <tab.icon className='h-3.5 w-3.5' />
                             {t(tab.label as TranslationKey)}
                         </button>
                     ))}
@@ -459,6 +450,14 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                         <PlaygroundSkillsContent clawId={claw.id} />
                     )}
 
+                    {activeTab === 'versions' && (
+                        <PlaygroundVersionsContent clawId={claw.id} />
+                    )}
+
+                    {activeTab === 'channels' && (
+                        <PlaygroundChannelsContent clawId={claw.id} />
+                    )}
+
                     {activeTab === 'variables' && (
                         <PlaygroundVariablesContent
                             clawId={claw.id}
@@ -472,6 +471,53 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                     : undefined
                             }
                         />
+                    )}
+
+                    {activeTab === 'settings' && (
+                        <div className='h-full overflow-y-auto p-5'>
+                            <div className='space-y-5'>
+                                <div>
+                                    <label className='text-muted-foreground mb-2 block text-xs font-medium'>
+                                        {t('playground.settingsName')}
+                                    </label>
+                                    <input
+                                        type='text'
+                                        value={settingsName}
+                                        onChange={(e) => handleSettingsNameChange(e.target.value)}
+                                        placeholder={t('playground.settingsNamePlaceholder')}
+                                        className={`bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors focus:border-[#ef5350]/50 ${
+                                            settingsNameError
+                                                ? 'border-red-500/50'
+                                                : 'border-border'
+                                        }`}
+                                    />
+                                    {settingsNameError ? (
+                                        <p className='mt-1.5 text-[11px] text-red-600 dark:text-red-400'>
+                                            {settingsNameError}
+                                        </p>
+                                    ) : (
+                                        <p className='text-muted-foreground mt-1.5 text-[11px]'>
+                                            {t('playground.settingsNameDescription')}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <button
+                                    onClick={handleSettingsSave}
+                                    disabled={!settingsHasChanges || !!settingsNameError || renameMutation.isPending}
+                                    className='flex w-full items-center justify-center gap-2 rounded-lg bg-[#ef5350] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
+                                >
+                                    {renameMutation.isPending ? (
+                                        <>
+                                            <CircleNotchIcon className='h-4 w-4 animate-spin' />
+                                            {t('playground.settingsSaving')}
+                                        </>
+                                    ) : (
+                                        t('playground.settingsSave')
+                                    )}
+                                </button>
+                            </div>
+                        </div>
                     )}
                 </div>
             </div>

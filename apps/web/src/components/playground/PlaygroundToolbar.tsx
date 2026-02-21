@@ -24,7 +24,7 @@ const PlaygroundToolbar: FC<PlaygroundToolbarProps> = ({
             {nodesOutOfView ? (
                 <button
                     onClick={onFitView}
-                    className='playground-reset-enter flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-red-600 dark:text-red-400 backdrop-blur-sm transition-colors hover:bg-red-500/20 hover:text-red-500 dark:hover:text-red-300'
+                    className='playground-reset-enter flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-red-600 backdrop-blur-sm transition-colors hover:bg-red-500/20 hover:text-red-500 dark:text-red-400 dark:hover:text-red-300'
                 >
                     <ArrowCounterClockwiseIcon
                         className='h-4 w-4'

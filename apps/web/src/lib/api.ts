@@ -10,6 +10,8 @@ import type {
     ClawFilesResponse,
     ClawSkillsResponse,
     ClawVersionResponse,
+    ClawVersionsResponse,
+    InstallClawVersionResponse,
     CreateClawData,
     CreateSSHKeyData,
     CustomerPortalResponse,
@@ -30,6 +32,8 @@ import type {
     UpdateAgentConfigData,
     UpdateAgentSkillsData,
     UpdateClawChannelsData,
+    WhatsAppPairResponse,
+    WhatsAppPairStatusResponse,
     BrowseClawHubData,
     ClawHubSkillActionData,
     ClawHubUpdateData,
@@ -127,6 +131,13 @@ const api = {
     reinstallClaw: (id: string) => client.post<void>(`/claws/${id}/reinstall`),
     getClawVersion: (id: string) =>
         client.post<ClawVersionResponse>(`/claws/${id}/version`),
+    getClawVersions: (id: string) =>
+        client.post<ClawVersionsResponse>(`/claws/${id}/versions`),
+    installClawVersion: (id: string, version: string) =>
+        client.post<InstallClawVersionResponse>(
+            `/claws/${id}/install-version`,
+            { version }
+        ),
     getClawAgents: (id: string) =>
         client.post<ClawAgentsResponse>(`/claws/${id}/agents`),
     getClawAgentConfig: (id: string, agentId: string) =>
@@ -143,6 +154,10 @@ const api = {
         client.post<ClawChannelsResponse>(`/claws/${id}/channels`),
     updateClawChannels: (id: string, data: UpdateClawChannelsData) =>
         client.put<void>(`/claws/${id}/channels`, data),
+    pairWhatsApp: (id: string) =>
+        client.post<WhatsAppPairResponse>(`/claws/${id}/channels/whatsapp/pair`),
+    pairWhatsAppStatus: (id: string) =>
+        client.post<WhatsAppPairStatusResponse>(`/claws/${id}/channels/whatsapp/pair-status`),
     getClawSkills: (id: string) =>
         client.post<ClawSkillsResponse>(`/claws/${id}/skills`),
     updateClawSkills: (id: string, data: UpdateClawSkillsData) =>

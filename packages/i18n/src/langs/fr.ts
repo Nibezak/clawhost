@@ -49,6 +49,7 @@ const fr: Translations = {
         signOut: 'Se déconnecter',
         admin: 'Admin',
         login: 'Connexion',
+        deploy: 'Déployer',
         deployOpenClaw: 'Déployer OpenClaw'
     },
     footer: {
@@ -109,7 +110,8 @@ const fr: Translations = {
         missingRequiredFields: 'Champs obligatoires manquants !',
         clawNotFound: 'Claw introuvable !',
         clawRenamed: 'Claw renommé avec succès !',
-        invalidClawName: 'Le nom du claw doit contenir entre 1 et 50 caractères !',
+        invalidClawName:
+            'Le nom du claw doit contenir entre 1 et 50 caractères !',
         userNotFound: 'Utilisateur introuvable !',
         sshKeyNotFound: 'Clé SSH introuvable !',
         pendingClawNotFound: 'Claw en attente introuvable !',
@@ -176,6 +178,11 @@ const fr: Translations = {
             'Échec de la récupération de la disponibilité des offres !',
         failedToSendEmail: "Échec de l'envoi de l'email !",
         failedToGetVersion: 'Échec de la récupération de la version.',
+        failedToGetVersions: 'Impossible de récupérer les versions.',
+        failedToInstallVersion: "Impossible d'installer la version.",
+        installVersionSuccess: 'Version installée avec succès.',
+        invalidVersion: 'Format de version invalide.',
+        outdatedVersion: 'Cette version est obsolète et ne peut pas être installée.',
         failedToGetDiagnostics: "Échec de la connexion à l'instance !",
         failedToGetDiagnosticsDescription:
             "Impossible de récupérer les diagnostics. L'instance est peut-être hors ligne ou en cours de démarrage.",
@@ -271,6 +278,10 @@ const fr: Translations = {
         channelsFetchFailed: 'Impossible de récupérer les canaux.',
         channelMissingRequired:
             'Champs obligatoires manquants pour le canal activé.',
+        whatsappPairStarted: 'Couplage WhatsApp démarré.',
+        whatsappPairFailed: 'Échec du couplage WhatsApp.',
+        whatsappAlreadyPaired: 'WhatsApp est déjà couplé.',
+        whatsappUnsupported: 'Cette instance ne prend pas encore en charge le couplage WhatsApp.',
         skillsFetched: 'Compétences récupérées avec succès.',
         skillsUpdated: 'Compétences mises à jour avec succès.',
         skillsUpdateFailed: 'Impossible de mettre à jour les compétences.',
@@ -290,12 +301,12 @@ const fr: Translations = {
         clawHubFetchFailed: 'Impossible de récupérer les compétences ClawHub.',
         clawHubInstalled: 'Compétence installée depuis ClawHub.',
         clawHubInstallFailed:
-            "Impossible d'installer la compétence depuis ClawHub.",
+            "Impossible d'installer la compétence depuis ClawHub !",
         clawHubRemoved: 'Compétence ClawHub supprimée.',
-        clawHubRemoveFailed: 'Impossible de supprimer la compétence ClawHub.',
+        clawHubRemoveFailed: 'Impossible de supprimer la compétence ClawHub !',
         clawHubUpdated: 'Compétence mise à jour.',
         clawHubUpdateFailed:
-            'Impossible de mettre à jour la compétence ClawHub.',
+            'Impossible de mettre à jour la compétence ClawHub !',
         clawHubUpdatesFetched: 'Vérification des mises à jour terminée.',
         clawHubUpdatesFailed: 'Impossible de vérifier les mises à jour.',
         invalidAuthMethod: "Méthode d'authentification invalide !",
@@ -509,7 +520,7 @@ const fr: Translations = {
         diagnosticsRepair: 'Réparer',
         diagnosticsRepairDescription:
             'Supprime les limites de mémoire, applique la dernière configuration de service et redémarre la passerelle. Cela corrige la plupart des problèmes courants.',
-        diagnosticsRepairSuccess: 'Instance réparée avec succès !',
+        diagnosticsRepairSuccess: 'Instance réparée avec succès.',
         diagnosticsRepairFailed:
             'Réparation appliquée mais la passerelle ne répond pas encore.',
         diagnosticsLoading: "Connexion à l'instance...",
@@ -538,15 +549,16 @@ const fr: Translations = {
         fileExplorerNoFiles: 'Aucun fichier trouvé',
         updateInstance: "Mettre à jour l'instance",
         updateInstanceSuccess: 'Instance mise à jour avec succès.',
-        updateInstanceFailed: "Échec de la mise à jour de l'instance.",
+        updateInstanceFailed: "Échec de la mise à jour de l'instance !",
         renameSuccess: 'Claw renommé avec succès.',
-        renameFailed: 'Échec du renommage du claw.',
+        renameFailed: 'Échec du renommage du claw !',
+        renameInvalidChars: 'Seuls les lettres, chiffres et tirets sont autorisés.',
         reinstallInstance: "Réinstaller l'instance",
         reinstallClaw: "Réinstaller l'instance",
         reinstallClawConfirmation:
             'Cela réinstallera OpenClaw et réinitialisera toutes les configurations de cette instance. Vos données et votre serveur seront préservés, mais tous les services seront redémarrés. Continuer ?',
         reinstallInstanceSuccess: 'Instance réinstallée avec succès.',
-        reinstallInstanceFailed: "Échec de la réinstallation de l'instance.",
+        reinstallInstanceFailed: "Échec de la réinstallation de l'instance !",
         exportData: 'Exporter le Claw (.zip)',
         exportStarted:
             "Préparation de l'exportation, cela peut prendre un moment...",
@@ -589,6 +601,7 @@ const fr: Translations = {
         }
     },
     chat: {
+        explorer: 'Explorateur',
         selectAgent: 'Sélectionnez un agent',
         selectAgentDescription:
             'Choisissez un agent dans la barre latérale pour commencer à discuter',
@@ -604,8 +617,9 @@ const fr: Translations = {
         title: 'Déployer OpenClaw',
         description:
             "Configurez votre serveur et commencez à construire avec l'IA.",
-        clawName: 'Nom du Claw',
+        clawName: 'Nom',
         clawNamePlaceholder: 'ex : cozy-panda',
+        clawNameInvalidChars: 'Seuls les lettres, chiffres et tirets sont autorisés.',
         provider: 'Fournisseur',
         providerHetzner: 'Hetzner',
         providerDigitalOcean: 'DigitalOcean',
@@ -1064,7 +1078,7 @@ const fr: Translations = {
         configurationSaving: 'Enregistrement...',
         configurationSaved: "Configuration de l'agent enregistrée.",
         configurationSaveFailed:
-            "Échec de l'enregistrement de la configuration de l'agent.",
+            "Échec de l'enregistrement de la configuration de l'agent !",
         configurationLoading: 'Chargement de la configuration...',
         configurationLoadFailed:
             "Échec du chargement de la configuration de l'agent.",
@@ -1084,7 +1098,7 @@ const fr: Translations = {
         variablesSaving: 'Enregistrement...',
         variablesSaved: "Variables d'environnement enregistrées.",
         variablesSaveFailed:
-            "Échec de l'enregistrement des variables d'environnement.",
+            "Échec de l'enregistrement des variables d'environnement !",
         variablesLoading: 'Chargement des variables...',
         variablesLoadFailed:
             "Échec du chargement des variables d'environnement.",
@@ -1107,9 +1121,10 @@ const fr: Translations = {
         addAgentModelPlaceholder: 'Sélectionnez un modèle (optionnel)',
         addAgentApiKey: 'Clé API',
         addAgentApiKeyPlaceholder: 'Entrez votre clé API (optionnel)',
+        addAgentApiKeyConfigured: '{{envVar}} déjà configuré. Modifiable dans l\'onglet Variables après ajout.',
         addAgentSubmit: "Ajouter l'agent",
         addAgentSuccess: 'Agent ajouté avec succès.',
-        addAgentFailed: "Échec de l'ajout de l'agent.",
+        addAgentFailed: "Échec de l'ajout de l'agent !",
         deleteAgent: "Supprimer l'agent",
         deleteAgentTitle: "Supprimer l'agent",
         deleteAgentDescription:
@@ -1117,7 +1132,7 @@ const fr: Translations = {
         deleteAgentConfirm: 'Supprimer',
         deleteAgentDeleting: 'Suppression...',
         deleteAgentSuccess: 'Agent supprimé avec succès.',
-        deleteAgentFailed: "Échec de la suppression de l'agent.",
+        deleteAgentFailed: "Échec de la suppression de l'agent !",
         configurationName: 'Nom',
         configurationNamePlaceholder: "Entrez le nom de l'agent",
         configurationNameDescription: 'Lettres, chiffres et tirets uniquement.',
@@ -1170,8 +1185,17 @@ const fr: Translations = {
         chatScrollToBottom: 'Défiler vers le bas',
         tabChannels: 'Canaux',
         channelsDescription:
-            'Configurez les canaux de messagerie pour cette instance. Les canaux sont partagés entre tous les agents.',
+            'Configurez les canaux de messagerie pour cette instance. Les messages sont acheminés vers les agents via des liaisons.',
         channelsWhatsApp: 'WhatsApp',
+        channelsWhatsAppPairDevice: 'Associer un appareil',
+        channelsWhatsAppPairing: 'En attente du code QR...',
+        channelsWhatsAppScanQr: 'Scannez ce code QR avec WhatsApp pour associer votre appareil.',
+        channelsWhatsAppScanInstructions: 'Ouvrez WhatsApp > Paramètres > Appareils connectés > Connecter un appareil',
+        channelsWhatsAppPaired: 'WhatsApp associé avec succès.',
+        channelsWhatsAppPairFailed: 'Échec du couplage. Veuillez réessayer.',
+        channelsWhatsAppAlreadyPaired: 'WhatsApp est déjà associé.',
+        channelsWhatsAppUnpair: 'Dissocier',
+        channelsWhatsAppUnsupported: 'Le couplage WhatsApp n\'est pas disponible sur cette instance. Mettez à jour OpenClaw pour l\'activer.',
         channelsTelegram: 'Telegram',
         channelsDiscord: 'Discord',
         channelsSlack: 'Slack',
@@ -1196,7 +1220,7 @@ const fr: Translations = {
         channelsAllowFromPlaceholder: 'IDs autorisés, séparés par des virgules',
         channelsSave: 'Enregistrer',
         channelsSaved: 'Canaux mis à jour avec succès.',
-        channelsSaveFailed: 'Échec de la mise à jour des canaux.',
+        channelsSaveFailed: 'Échec de la mise à jour des canaux !',
         channelsLoading: 'Chargement des canaux...',
         channelsLoadFailed: 'Échec du chargement des canaux.',
         channelsLoadFailedDescription:
@@ -1210,7 +1234,7 @@ const fr: Translations = {
         skillsEmpty: 'Aucune compétence intégrée trouvée sur cette instance.',
         skillsSave: 'Enregistrer les compétences',
         skillsSaved: 'Compétences mises à jour avec succès.',
-        skillsSaveFailed: 'Échec de la mise à jour des compétences.',
+        skillsSaveFailed: 'Échec de la mise à jour des compétences !',
         skillsLoading: 'Chargement des compétences...',
         skillsLoadFailed: 'Échec du chargement des compétences.',
         skillsLoadFailedDescription:
@@ -1219,10 +1243,10 @@ const fr: Translations = {
             "Compétences installées dans l'espace de travail de cet agent.",
         agentSkillsInstalling: 'Installation...',
         agentSkillsInstalled: 'Compétence installée avec succès.',
-        agentSkillsInstallFailed: "Échec de l'installation de la compétence.",
+        agentSkillsInstallFailed: "Échec de l'installation de la compétence !",
         agentSkillsRemoving: 'Suppression...',
         agentSkillsRemoved: 'Compétence supprimée avec succès.',
-        agentSkillsRemoveFailed: 'Échec de la suppression de la compétence.',
+        agentSkillsRemoveFailed: 'Échec de la suppression de la compétence !',
         agentSkillsEmpty: 'Aucune compétence installée.',
         agentSkillsEmptyDescription:
             'Installez une compétence pour étendre les capacités de cet agent.',
@@ -1240,22 +1264,43 @@ const fr: Translations = {
         clawHubInstall: 'Installer',
         clawHubInstalled: 'Compétence installée depuis ClawHub.',
         clawHubInstallFailed:
-            "Échec de l'installation de la compétence depuis ClawHub.",
+            "Échec de l'installation de la compétence depuis ClawHub !",
         clawHubRemove: 'Supprimer',
         clawHubRemoved: 'Compétence ClawHub supprimée.',
         clawHubRemoveFailed:
-            'Échec de la suppression de la compétence ClawHub.',
+            'Échec de la suppression de la compétence ClawHub !',
         clawHubUpdate: 'Mettre à jour',
         clawHubUpdated: 'Compétence mise à jour depuis ClawHub.',
         clawHubUpdateFailed:
-            'Échec de la mise à jour de la compétence ClawHub.',
+            'Échec de la mise à jour de la compétence ClawHub !',
         clawHubUpdateAvailable: 'v{{version}} disponible',
         clawHubBy: 'par {{author}}',
         clawHubDownloads: '{{count}} téléchargements',
         clawHubVersion: 'v{{version}}',
         clawHubLoadFailed: 'Échec du chargement de ClawHub.',
         clawHubLoadFailedDescription:
-            'Impossible de se connecter à la marketplace ClawHub. Veuillez réessayer.'
+            'Impossible de se connecter à la marketplace ClawHub. Veuillez réessayer.',
+        tabVersions: 'Versions',
+        versionsSearch: 'Rechercher des versions...',
+        versionsEmpty: 'Aucune version trouvée',
+        versionsEmptyDescription:
+            'Aucune version ne correspond à votre recherche.',
+        versionsErrorDescription: 'Impossible de charger les versions.',
+        versionsChangelog: 'Voir les changelogs sur npm',
+        versionCurrent: 'Actuelle',
+        versionLatest: 'Dernière',
+        versionInstall: 'Installer',
+        versionInstalling: 'Installation...',
+        versionInstallSuccess: 'Version {{version}} installée avec succès.',
+        versionInstallFailed: "Impossible d'installer la version !",
+        versionDownloads: '{{count}} téléchargements',
+        versionChangelog: 'Changelog',
+        versionOutdated: 'Obsolète',
+        settingsName: 'Nom',
+        settingsNamePlaceholder: 'Entrez le nom du claw',
+        settingsNameDescription: 'Lettres, chiffres et tirets uniquement.',
+        settingsSave: 'Enregistrer',
+        settingsSaving: 'Enregistrement...'
     },
     privacy: {
         title: 'Politique de confidentialité',

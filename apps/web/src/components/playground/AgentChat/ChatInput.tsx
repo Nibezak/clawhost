@@ -105,7 +105,12 @@ const ChatInputInner: ForwardRefRenderFunction<
     useImperativeHandle(ref, () => ({ addFiles }), [addFiles])
 
     const handleSend = useCallback(() => {
-        if (!isConnected || (!input.trim() && attachments.length === 0) || isStreaming) return
+        if (
+            !isConnected ||
+            (!input.trim() && attachments.length === 0) ||
+            isStreaming
+        )
+            return
 
         const chatAttachments: ChatAttachment[] = []
         const previews: ChatImageSource[] = []

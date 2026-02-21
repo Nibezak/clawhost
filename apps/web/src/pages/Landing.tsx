@@ -47,31 +47,31 @@ import {
 } from '@phosphor-icons/react'
 
 const getTestimonials = (): Testimonial[] => [
-        {
-            quote: t('landing.testimonial1Quote'),
-            author: t('landing.testimonial1Author'),
-            role: t('landing.testimonial1Role'),
-            avatar: 'AC'
-        },
-        {
-            quote: t('landing.testimonial2Quote'),
-            author: t('landing.testimonial2Author'),
-            role: t('landing.testimonial2Role'),
-            avatar: 'MS'
-        },
-        {
-            quote: t('landing.testimonial3Quote'),
-            author: t('landing.testimonial3Author'),
-            role: t('landing.testimonial3Role'),
-            avatar: 'JW'
-        },
-        {
-            quote: t('landing.testimonial4Quote'),
-            author: t('landing.testimonial4Author'),
-            role: t('landing.testimonial4Role'),
-            avatar: 'SK'
-        }
-    ]
+    {
+        quote: t('landing.testimonial1Quote'),
+        author: t('landing.testimonial1Author'),
+        role: t('landing.testimonial1Role'),
+        avatar: 'AC'
+    },
+    {
+        quote: t('landing.testimonial2Quote'),
+        author: t('landing.testimonial2Author'),
+        role: t('landing.testimonial2Role'),
+        avatar: 'MS'
+    },
+    {
+        quote: t('landing.testimonial3Quote'),
+        author: t('landing.testimonial3Author'),
+        role: t('landing.testimonial3Role'),
+        avatar: 'JW'
+    },
+    {
+        quote: t('landing.testimonial4Quote'),
+        author: t('landing.testimonial4Author'),
+        role: t('landing.testimonial4Role'),
+        avatar: 'SK'
+    }
+]
 
 const getFaqs = (): Faq[] => [
     {
@@ -256,7 +256,9 @@ const Landing: FC = (): ReactNode => {
                 activeSection={activeSection}
             />
 
-            <section className={`relative overflow-hidden px-6 pb-16 ${phBannerVisible ? 'pt-44' : 'pt-32'}`}>
+            <section
+                className={`relative overflow-hidden px-6 pb-16 ${phBannerVisible ? 'pt-44' : 'pt-32'}`}
+            >
                 <div className='landing-grid pointer-events-none' />
 
                 <motion.div
@@ -296,9 +298,7 @@ const Landing: FC = (): ReactNode => {
                                             className='h-full w-full object-cover'
                                         />
                                         <div className='absolute inset-0 flex items-center justify-center bg-black/30'>
-                                            <PlayCircleIcon
-                                                className='h-3.5 w-3.5 text-white'
-                                            />
+                                            <PlayCircleIcon className='h-3.5 w-3.5 text-white' />
                                         </div>
                                     </div>
                                     <span className='text-foreground/80 text-sm'>
@@ -400,14 +400,14 @@ const Landing: FC = (): ReactNode => {
                     style={{ scale: previewScale }}
                     className='border-border bg-background flex h-[80vh] flex-col overflow-hidden rounded-2xl border'
                 >
-                    <div className='border-border pointer-events-none flex items-center gap-3 border-b bg-gradient-to-b from-muted to-muted/80 px-5 py-3'>
+                    <div className='border-border from-muted to-muted/80 pointer-events-none flex items-center gap-3 border-b bg-gradient-to-b px-5 py-3'>
                         <div className='flex items-center gap-2'>
                             <div className='h-3 w-3 rounded-full bg-[#ff5f57] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
                             <div className='h-3 w-3 rounded-full bg-[#febc2e] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
                             <div className='h-3 w-3 rounded-full bg-[#28c840] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
                         </div>
                         <div className='flex flex-1 justify-center'>
-                            <div className='text-muted-foreground flex items-center gap-2 rounded-lg bg-foreground/10 px-4 py-1.5 text-xs'>
+                            <div className='text-muted-foreground bg-foreground/10 flex items-center gap-2 rounded-lg px-4 py-1.5 text-xs'>
                                 <LockIcon
                                     className='h-3 w-3 text-green-500/70'
                                     weight='fill'
@@ -900,7 +900,9 @@ const Landing: FC = (): ReactNode => {
                                                                 ${totalMonthly}
                                                             </span>
                                                             <span className='text-muted-foreground text-sm'>
-                                                                {t('landing.perMonth')}
+                                                                {t(
+                                                                    'landing.perMonth'
+                                                                )}
                                                             </span>
                                                         </td>
                                                         <td className='px-4 py-4 text-right'>
@@ -1388,7 +1390,12 @@ const Landing: FC = (): ReactNode => {
                             </button>
                             <div className='aspect-video w-full overflow-hidden rounded-xl'>
                                 <iframe
-                                    src={TUTORIAL_URL.replace('watch?v=', 'embed/') + '?autoplay=1&rel=0'}
+                                    src={
+                                        TUTORIAL_URL.replace(
+                                            'watch?v=',
+                                            'embed/'
+                                        ) + '?autoplay=1&rel=0'
+                                    }
                                     className='h-full w-full'
                                     allow='autoplay; encrypted-media'
                                     allowFullScreen

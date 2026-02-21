@@ -169,7 +169,7 @@ const ChatView: FC<ChatViewProps> = ({
     const mobileLabel = useMemo(() => {
         if (activeAgent) return activeAgent.name
         if (settingsClaw) return settingsClaw.name
-        return t('chat.selectAgent')
+        return t('chat.explorer')
     }, [activeAgent, settingsClaw])
 
     return (
@@ -187,10 +187,10 @@ const ChatView: FC<ChatViewProps> = ({
                     onOpenClawSettings={handleOpenClawSettings}
                 />
             </div>
-            <div className='flex min-w-0 flex-1 flex-col'>
+            <div className='flex min-w-0 flex-1 flex-col max-md:relative max-md:z-10 max-md:bg-background'>
                 {!configAgent && !(settingsClaw && !selectedAgent) && (
                     <div
-                        className={`flex items-center gap-2 px-4 py-2.5 md:hidden ${mobileSidebarOpen ? 'bg-background' : ''}`}
+                        className='bg-background flex items-center gap-2 px-4 py-2.5 md:hidden'
                     >
                         <button
                             onClick={() =>
@@ -252,7 +252,9 @@ const ChatView: FC<ChatViewProps> = ({
                                         clawsWithAgents={clawsWithAgents}
                                         selectedAgent={selectedAgent}
                                         selectedClawId={settingsClawId}
-                                        activeConnectionState={activeConnectionState}
+                                        activeConnectionState={
+                                            activeConnectionState
+                                        }
                                         onAgentSelect={handleAgentSelect}
                                         onConfigureAgent={handleOpenConfig}
                                         onCreateAgent={onCreateAgent}
@@ -289,7 +291,9 @@ const ChatView: FC<ChatViewProps> = ({
                                 handleOpenConfig(activeAgent.id, activeClaw.id)
                             }
                             configureDisabled={!!configAgent}
-                            onConnectionStateChange={handleConnectionStateChange}
+                            onConnectionStateChange={
+                                handleConnectionStateChange
+                            }
                         />
                     ) : (
                         <ChatEmptyState />

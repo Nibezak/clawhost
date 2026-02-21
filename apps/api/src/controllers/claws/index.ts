@@ -32,6 +32,8 @@ import updateClawSkills from '@/controllers/claws/updateClawSkills'
 import getAgentSkills from '@/controllers/claws/getAgentSkills'
 import updateAgentSkills from '@/controllers/claws/updateAgentSkills'
 import getClawVersion from '@/controllers/claws/getClawVersion'
+import getClawVersions from '@/controllers/claws/getClawVersions'
+import installClawVersion from '@/controllers/claws/installClawVersion'
 import browseClawHubSkills from '@/controllers/claws/browseClawHubSkills'
 import getClawHubInstalled from '@/controllers/claws/getClawHubInstalled'
 import installClawHubSkill from '@/controllers/claws/installClawHubSkill'
@@ -39,6 +41,8 @@ import removeClawHubSkill from '@/controllers/claws/removeClawHubSkill'
 import updateClawHubSkill from '@/controllers/claws/updateClawHubSkill'
 import checkClawHubUpdates from '@/controllers/claws/checkClawHubUpdates'
 import renameClaw from '@/controllers/claws/renameClaw'
+import pairWhatsApp from '@/controllers/claws/pairWhatsApp'
+import pairWhatsAppStatus from '@/controllers/claws/pairWhatsAppStatus'
 
 export {
     getClaws,
@@ -75,11 +79,15 @@ export {
     getAgentSkills,
     updateAgentSkills,
     getClawVersion,
+    getClawVersions,
+    installClawVersion,
     browseClawHubSkills,
     getClawHubInstalled,
     installClawHubSkill,
     removeClawHubSkill,
     updateClawHubSkill,
     checkClawHubUpdates,
-    renameClaw
+    renameClaw,
+    pairWhatsApp,
+    pairWhatsAppStatus
 }

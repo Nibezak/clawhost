@@ -98,7 +98,7 @@ const UserDropdown: FC<UserDropdownProps> = ({
                 <DropdownMenuSeparator className='bg-border' />
                 <DropdownMenuItem
                     onClick={onSignOut}
-                    className='focus:bg-foreground/10 text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400'
+                    className='focus:bg-foreground/10 text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400'
                 >
                     <SignOutIcon className='h-4 w-4' />
                     {t('nav.signOut')}

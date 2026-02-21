@@ -23,7 +23,6 @@ import {
     CopyIcon,
     CheckIcon,
     TrashIcon,
-    ChatsCircleIcon,
     LightningIcon,
     ArrowsOutIcon,
     ArrowsInIcon
@@ -31,7 +30,6 @@ import {
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import {
     AgentChat,
-    PlaygroundChannelsContent,
     PlaygroundSkillsContent
 } from '@/components/playground'
 import { ClawAvatar, PanelPlaceholder } from '@/components'
@@ -49,7 +47,7 @@ import {
     Skeleton,
     Checkbox
 } from '@/components/ui'
-import { api } from '@/lib'
+import { api, TRUNCATE_LENGTHS } from '@/lib'
 import { useUIStore } from '@/lib/store'
 import { aiModels, validateAgentName } from '@/lib/claw-utils'
 import { PLAYGROUND_AGENTS_QUERY_KEY } from '@/hooks'
@@ -63,11 +61,6 @@ const tabs: PlaygroundTabConfig<PlaygroundAgentDetailTab>[] = [
         id: AGENT_DETAIL_TABS.CHAT,
         label: 'playground.tabChat',
         icon: ChatCircleIcon
-    },
-    {
-        id: AGENT_DETAIL_TABS.CHANNELS,
-        label: 'playground.tabChannels',
-        icon: ChatsCircleIcon
     },
     {
         id: AGENT_DETAIL_TABS.SKILLS,
@@ -406,24 +399,36 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                         <ClawAvatar />
                         <div className='space-y-0'>
                             <h3 className='text-foreground text-sm font-semibold leading-tight'>
-                                {agent.name.length > 32 ? (
+                                {agent.name.length > TRUNCATE_LENGTHS.PANEL_NAME ? (
                                     <Tooltip>
                                         <TooltipTrigger asChild>
-                                            <span>{agent.name.slice(0, 32)}...</span>
+                                            <span>
+                                                {agent.name.slice(0, TRUNCATE_LENGTHS.PANEL_NAME)}...
+                                            </span>
                                         </TooltipTrigger>
-                                        <TooltipContent>{agent.name}</TooltipContent>
+                                        <TooltipContent>
+                                            {agent.name}
+                                        </TooltipContent>
                                     </Tooltip>
                                 ) : (
                                     agent.name
                                 )}
                             </h3>
                             <span className='text-muted-foreground block text-xs leading-tight'>
-                                {clawName.length > 24 ? (
+                                {clawName.length > TRUNCATE_LENGTHS.PANEL_CLAW_SUBTITLE ? (
                                     <Tooltip>
                                         <TooltipTrigger asChild>
-                                            <span>{t('playground.agentOnClaw', { clawName: clawName.slice(0, 24) + '...' })}</span>
+                                            <span>
+                                                {t('playground.agentOnClaw', {
+                                                    clawName:
+                                                        clawName.slice(0, TRUNCATE_LENGTHS.PANEL_CLAW_SUBTITLE) +
+                                                        '...'
+                                                })}
+                                            </span>
                                         </TooltipTrigger>
-                                        <TooltipContent>{clawName}</TooltipContent>
+                                        <TooltipContent>
+                                            {clawName}
+                                        </TooltipContent>
                                     </Tooltip>
                                 ) : (
                                     t('playground.agentOnClaw', { clawName })
@@ -525,11 +530,6 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                                     >
                                         <tab.icon
                                             className='h-3.5 w-3.5'
-                                            weight={
-                                                activeTab === tab.id
-                                                    ? 'fill'
-                                                    : 'regular'
-                                            }
                                         />
                                         {t(tab.label as TranslationKey)}
                                     </button>
@@ -551,11 +551,6 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                             readOnly={readOnly}
                         />
                     )}
-
-                    {!isExpanded &&
-                        activeTab === AGENT_DETAIL_TABS.CHANNELS && (
-                            <PlaygroundChannelsContent clawId={clawId} />
-                        )}
 
                     {!isExpanded && activeTab === AGENT_DETAIL_TABS.SKILLS && (
                         <PlaygroundSkillsContent

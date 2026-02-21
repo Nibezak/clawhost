@@ -328,7 +328,6 @@ export interface ClawCardDropdownMenuProps {
     isScheduledForDeletion: boolean
     isAdmin: boolean
     compact?: boolean
-    isPlayground?: boolean
 }
 
 export interface ClawCardDialogsProps {
@@ -486,6 +485,26 @@ export interface ArticleMeta {
 
 export interface ClawVersionResponse {
     version: string
+}
+
+export interface OpenClawVersionEntry {
+    version: string
+    publishedAt: string
+    downloads: number
+}
+
+export interface ClawVersionsResponse {
+    currentVersion: string
+    latestVersion: string
+    versions: OpenClawVersionEntry[]
+}
+
+export interface InstallClawVersionResponse {
+    version: string
+}
+
+export interface PlaygroundVersionsContentProps {
+    clawId: string
 }
 
 export interface DiagnosticsStatusResponse {
@@ -909,6 +928,16 @@ export interface UpdateClawChannelsData {
     channels: Record<string, ChannelConfig>
 }
 
+export interface WhatsAppPairResponse {
+    status: 'started' | 'already_paired' | 'unsupported'
+}
+
+export interface WhatsAppPairStatusResponse {
+    status: 'waiting' | 'qr_ready' | 'paired' | 'failed' | 'not_started'
+    qr?: string
+    log?: string
+}
+
 export interface SkillEntryConfig {
     enabled: boolean
     apiKey?: string
@@ -955,12 +984,19 @@ export interface ChannelDefinition {
     fields: ChannelFieldDefinition[]
 }
 
+export interface ChannelFieldOption {
+    value: string
+    label: TranslationKey
+}
+
 export interface ChannelFieldDefinition {
     key: keyof ChannelConfig
     label: TranslationKey
     placeholder: TranslationKey
     required?: boolean
     secret?: boolean
+    type?: 'text' | 'select'
+    options?: ChannelFieldOption[]
 }
 
 export interface PlaygroundSkillsContentProps {

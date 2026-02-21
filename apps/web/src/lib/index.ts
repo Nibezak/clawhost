@@ -9,6 +9,7 @@ import THEMES from '@/lib/themes'
 import LANGUAGES from '@/lib/languages'
 import getBaseDomain from '@/lib/getBaseDomain'
 import getLocale from '@/lib/getLocale'
+import TRUNCATE_LENGTHS from '@/lib/truncateLengths'
 
 export {
     api,
@@ -21,5 +22,6 @@ export {
     THEMES,
     LANGUAGES,
     getBaseDomain,
-    getLocale
+    getLocale,
+    TRUNCATE_LENGTHS
 }

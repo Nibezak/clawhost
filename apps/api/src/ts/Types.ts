@@ -35,4 +35,10 @@ export type UserRole = 'user' | 'admin'
 
 export type Environment = 'development' | 'production'
 
-export type ClawFileType = 'json' | 'markdown' | 'javascript' | 'yaml' | 'text' | 'unknown'
+export type ClawFileType =
+    | 'json'
+    | 'markdown'
+    | 'javascript'
+    | 'yaml'
+    | 'text'
+    | 'unknown'

@@ -392,7 +392,7 @@ const Account: FC = (): ReactNode => {
                                                 handleUnlinkProvider('google')
                                             }
                                             disabled={providerBusy}
-                                            className='border-border text-foreground/50 flex items-center gap-1.5 rounded-md border px-3 py-1 text-xs transition-colors hover:border-red-500/50 hover:text-red-600 dark:hover:text-red-400 disabled:opacity-50'
+                                            className='border-border text-foreground/50 flex items-center gap-1.5 rounded-md border px-3 py-1 text-xs transition-colors hover:border-red-500/50 hover:text-red-600 disabled:opacity-50 dark:hover:text-red-400'
                                         >
                                             {unlinkingProvider === 'google' && (
                                                 <CircleNotchIcon className='h-3 w-3 animate-spin' />
@@ -438,7 +438,7 @@ const Account: FC = (): ReactNode => {
                                                 handleUnlinkProvider('github')
                                             }
                                             disabled={providerBusy}
-                                            className='border-border text-foreground/50 flex items-center gap-1.5 rounded-md border px-3 py-1 text-xs transition-colors hover:border-red-500/50 hover:text-red-600 dark:hover:text-red-400 disabled:opacity-50'
+                                            className='border-border text-foreground/50 flex items-center gap-1.5 rounded-md border px-3 py-1 text-xs transition-colors hover:border-red-500/50 hover:text-red-600 disabled:opacity-50 dark:hover:text-red-400'
                                         >
                                             {unlinkingProvider === 'github' && (
                                                 <CircleNotchIcon className='h-3 w-3 animate-spin' />

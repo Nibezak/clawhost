@@ -309,7 +309,7 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
                                         disabled={!!pendingSlug}
                                         className={`ml-3 flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
                                             isInstalled && hasUpdate
-                                                ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20'
+                                                ? 'bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 dark:text-amber-400'
                                                 : isInstalled
                                                   ? 'bg-foreground/5 text-muted-foreground hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400'
                                                   : 'bg-[#ef5350]/10 text-[#ef5350] hover:bg-[#ef5350]/20'

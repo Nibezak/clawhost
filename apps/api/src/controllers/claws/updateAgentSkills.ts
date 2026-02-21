@@ -47,7 +47,7 @@ const updateAgentSkills = async (c: AuthenticatedContext) => {
                 await executeSSH(
                     claw.ip,
                     claw.rootPassword,
-                    `mkdir -p ${skillDir} && echo -e '${skillMd}' > ${skillDir}/SKILL.md && chown -R openclaw:openclaw ${skillsDir} && (openclaw doctor --fix || true) && systemctl restart openclaw-gateway`,
+                    `mkdir -p ${skillDir} && echo -e '${skillMd}' > ${skillDir}/SKILL.md && chown -R openclaw:openclaw ${skillsDir} && (su - openclaw -c "openclaw doctor --fix" || true) && systemctl restart openclaw-gateway`,
                     20000
                 )
             } else if (body.action === 'remove') {
@@ -55,7 +55,7 @@ const updateAgentSkills = async (c: AuthenticatedContext) => {
                 await executeSSH(
                     claw.ip,
                     claw.rootPassword,
-                    `rm -rf ${skillDir} && (openclaw doctor --fix || true) && systemctl restart openclaw-gateway`,
+                    `rm -rf ${skillDir} && (su - openclaw -c "openclaw doctor --fix" || true) && systemctl restart openclaw-gateway`,
                     20000
                 )
             } else {

@@ -46,6 +46,7 @@ import {
     GraphIcon,
     LightningIcon
 } from '@phosphor-icons/react'
+import { Button } from '@/components/ui'
 import { CreateClawModal } from '@/components/dashboard'
 import {
     PlaygroundCanvas,
@@ -408,7 +409,7 @@ const Dashboard: FC = (): ReactNode => {
                 }
             />
 
-            <div className='border-border bg-background/80 relative z-10 flex items-center justify-between border-b px-6 py-3 backdrop-blur-xl'>
+            <div className='border-border bg-background relative z-10 flex items-center justify-between border-b px-6 py-3 md:bg-background/80 md:backdrop-blur-xl'>
                 <div className='flex items-center gap-3'>
                     <Logo />
                     <div className='border-border flex items-center rounded-lg border p-0.5'>
@@ -427,7 +428,7 @@ const Dashboard: FC = (): ReactNode => {
                             <span
                                 className={
                                     dashboardTab === DASHBOARD_TABS.CHAT
-                                        ? ''
+                                        ? 'hidden sm:inline'
                                         : 'hidden md:inline'
                                 }
                             >
@@ -451,7 +452,7 @@ const Dashboard: FC = (): ReactNode => {
                             <span
                                 className={
                                     dashboardTab === DASHBOARD_TABS.PLAYGROUND
-                                        ? ''
+                                        ? 'hidden sm:inline'
                                         : 'hidden md:inline'
                                 }
                             >
@@ -461,21 +462,37 @@ const Dashboard: FC = (): ReactNode => {
                     </div>
                 </div>
 
-                <div className='flex items-center gap-3'>
+                <div className='flex items-center gap-1.5 sm:gap-3'>
                     {!adminMode &&
                         !isLoading &&
                         displayedClaws &&
                         displayedClaws.length > 0 && (
-                            <ActionButton
-                                onClick={() => setShowCreate(true)}
-                                icon={
-                                    <LightningIcon
-                                        className='h-5 w-5'
-                                        weight='fill'
+                            <>
+                                <div className='sm:hidden'>
+                                    <Button
+                                        onClick={() => setShowCreate(true)}
+                                        size='icon'
+                                        className='border-border bg-foreground text-background hover:bg-foreground/90 h-9 w-9 border'
+                                    >
+                                        <LightningIcon
+                                            className='h-5 w-5'
+                                            weight='fill'
+                                        />
+                                    </Button>
+                                </div>
+                                <div className='hidden sm:block'>
+                                    <ActionButton
+                                        onClick={() => setShowCreate(true)}
+                                        icon={
+                                            <LightningIcon
+                                                className='h-5 w-5'
+                                                weight='fill'
+                                            />
+                                        }
+                                        label={t('createClaw.title')}
                                     />
-                                }
-                                label={t('createClaw.title')}
-                            />
+                                </div>
+                            </>
                         )}
                     <div className='flex items-center gap-1.5'>
                         <LanguageSelector />

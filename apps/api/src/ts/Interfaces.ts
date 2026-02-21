@@ -798,6 +798,16 @@ export interface UpdateClawChannelsBody {
     channels: Record<string, ChannelConfig>
 }
 
+export interface WhatsAppPairResponse {
+    status: 'started' | 'already_paired' | 'unsupported'
+}
+
+export interface WhatsAppPairStatusResponse {
+    status: 'waiting' | 'qr_ready' | 'paired' | 'failed' | 'not_started'
+    qr?: string
+    log?: string
+}
+
 export interface SkillEntryConfig {
     enabled: boolean
     apiKey?: string

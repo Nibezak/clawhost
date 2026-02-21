@@ -5,6 +5,7 @@ import { useMemo } from 'react'
 import { t } from '@openclaw/i18n'
 import { GearSixIcon, AndroidLogoIcon } from '@phosphor-icons/react'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
+import { TRUNCATE_LENGTHS } from '@/lib'
 import { aiModels } from '@/lib/claw-utils'
 
 const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
@@ -22,30 +23,30 @@ const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
     const statusConfig = useMemo(() => {
         if (connectionState) {
             switch (connectionState) {
-            case 'connected':
-                return {
-                    color: 'bg-green-500',
-                    label: t('dashboard.status.running')
-                }
-            case 'connecting':
-            case 'authenticating':
-                return {
-                    color: 'bg-yellow-500',
-                    label: t('playground.chatConnecting'),
-                    pulse: true
-                }
-            case 'error':
-                return {
-                    color: 'bg-red-500',
-                    label: t('playground.chatError')
-                }
-            case 'disconnected':
-                return {
-                    color: 'bg-red-500',
-                    label: t('playground.chatDisconnected')
-                }
-            default:
-                break
+                case 'connected':
+                    return {
+                        color: 'bg-green-500',
+                        label: t('dashboard.status.running')
+                    }
+                case 'connecting':
+                case 'authenticating':
+                    return {
+                        color: 'bg-yellow-500',
+                        label: t('playground.chatConnecting'),
+                        pulse: true
+                    }
+                case 'error':
+                    return {
+                        color: 'bg-red-500',
+                        label: t('playground.chatError')
+                    }
+                case 'disconnected':
+                    return {
+                        color: 'bg-red-500',
+                        label: t('playground.chatDisconnected')
+                    }
+                default:
+                    break
             }
         }
         return {
@@ -58,9 +59,9 @@ const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
         <div className='relative flex py-0.5'>
             <div className='relative ml-[19px] flex w-7 shrink-0 justify-start'>
                 <div
-                    className={`bg-border absolute left-0 w-px ${isLast ? 'top-0 h-[22px]' : '-top-1 -bottom-1'}`}
+                    className={`bg-border absolute left-0 w-px ${isLast ? 'top-0 h-[22px]' : '-bottom-1 -top-1'}`}
                 />
-                <div className='bg-border absolute top-[22px] left-0 h-px w-[calc(100%-6px)]' />
+                <div className='bg-border absolute left-0 top-[22px] h-px w-[calc(100%-6px)]' />
             </div>
             <button
                 onClick={onClick}
@@ -72,11 +73,14 @@ const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
             >
                 <div className='relative'>
                     <div className='bg-foreground/5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md'>
-                        <AndroidLogoIcon className='h-3.5 w-3.5' weight='fill' />
+                        <AndroidLogoIcon
+                            className='h-3.5 w-3.5'
+                            weight='fill'
+                        />
                     </div>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <div className='absolute -bottom-0.5 -right-0.5 flex h-3 w-3 items-center justify-center rounded-full border-2 border-background'>
+                            <div className='border-background absolute -bottom-0.5 -right-0.5 flex h-3 w-3 items-center justify-center rounded-full border-2'>
                                 <div
                                     className={`h-1.5 w-1.5 rounded-full ${statusConfig.color} ${statusConfig.pulse ? 'animate-pulse' : ''}`}
                                 />
@@ -88,15 +92,19 @@ const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
                     </Tooltip>
                 </div>
                 <div className='min-w-0 flex-1'>
-                    {agent.name.length > 14 ? (
+                    {agent.name.length > TRUNCATE_LENGTHS.SIDEBAR_AGENT_NAME ? (
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <p className='text-foreground text-[13px] font-medium'>{agent.name.slice(0, 14)}...</p>
+                                <p className='text-foreground text-[13px] font-medium'>
+                                    {agent.name.slice(0, TRUNCATE_LENGTHS.SIDEBAR_AGENT_NAME)}...
+                                </p>
                             </TooltipTrigger>
                             <TooltipContent>{agent.name}</TooltipContent>
                         </Tooltip>
                     ) : (
-                        <p className='text-foreground text-[13px] font-medium'>{agent.name}</p>
+                        <p className='text-foreground text-[13px] font-medium'>
+                            {agent.name}
+                        </p>
                     )}
                     {modelName ? (
                         <p className='text-muted-foreground truncate text-[11px]'>

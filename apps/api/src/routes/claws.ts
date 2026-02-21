@@ -36,13 +36,17 @@ import {
     getAgentSkills,
     updateAgentSkills,
     getClawVersion,
+    getClawVersions,
+    installClawVersion,
     browseClawHubSkills,
     getClawHubInstalled,
     installClawHubSkill,
     removeClawHubSkill,
     updateClawHubSkill,
     checkClawHubUpdates,
-    renameClaw
+    renameClaw,
+    pairWhatsApp,
+    pairWhatsAppStatus
 } from '@/controllers/claws'
 import adminOnly from '@/middleware/adminOnly'
 
@@ -73,6 +77,8 @@ app.get('/:id/env', getClawEnvVars)
 app.put('/:id/env', updateClawEnvVars)
 app.post('/:id/channels', getClawChannels)
 app.put('/:id/channels', updateClawChannels)
+app.post('/:id/channels/whatsapp/pair', pairWhatsApp)
+app.post('/:id/channels/whatsapp/pair-status', pairWhatsAppStatus)
 app.post('/:id/skills', getClawSkills)
 app.put('/:id/skills', updateClawSkills)
 app.post('/:id/agents/:agentId/skills', getAgentSkills)
@@ -81,6 +87,8 @@ app.post('/:id/files', listClawFiles)
 app.post('/:id/files/read', readClawFile)
 app.put('/:id/files', updateClawFile)
 app.post('/:id/version', getClawVersion)
+app.post('/:id/versions', getClawVersions)
+app.post('/:id/install-version', adminOnly, installClawVersion)
 app.get('/:id/clawhub/skills', browseClawHubSkills)
 app.post('/:id/clawhub/installed', getClawHubInstalled)
 app.post('/:id/clawhub/install', installClawHubSkill)

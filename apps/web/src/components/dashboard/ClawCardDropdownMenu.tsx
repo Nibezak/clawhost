@@ -22,8 +22,6 @@ import {
     CircleNotchIcon,
     CopyIcon,
     ClockCountdownIcon,
-    PulseIcon,
-    ScrollIcon,
     FolderSimpleIcon,
     ArrowsClockwiseIcon,
     ArrowCounterClockwiseIcon,
@@ -39,8 +37,7 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
     hasActionItems,
     isScheduledForDeletion,
     isAdmin,
-    compact,
-    isPlayground
+    compact
 }): ReactNode => {
     if (isLoading) {
         return compact ? (
@@ -140,20 +137,6 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                 {claw.ip && (
                     <>
                         <DropdownMenuSeparator />
-                        {!isPlayground && (
-                            <>
-                                <DropdownMenuItem
-                                    onClick={actions.onShowDiagnostics}
-                                >
-                                    <PulseIcon className='mr-2 h-4 w-4' />
-                                    {t('dashboard.diagnostics')}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={actions.onShowLogs}>
-                                    <ScrollIcon className='mr-2 h-4 w-4' />
-                                    {t('dashboard.diagnosticsLogs')}
-                                </DropdownMenuItem>
-                            </>
-                        )}
                         <DropdownMenuItem onClick={actions.onShowConfig}>
                             <FolderSimpleIcon className='mr-2 h-4 w-4' />
                             {t('dashboard.fileExplorer')}
@@ -182,14 +165,12 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                         )}
                     </>
                 )}
-                {(hasActionItems || claw.ip) && (
-                    <DropdownMenuSeparator />
-                )}
+                {(hasActionItems || claw.ip) && <DropdownMenuSeparator />}
                 {isScheduledForDeletion ? (
                     <>
                         <DropdownMenuItem
                             onClick={actions.onCancelDeletion}
-                            className='text-orange-600 dark:text-orange-400 focus:text-orange-600 dark:focus:text-orange-400'
+                            className='text-orange-600 focus:text-orange-600 dark:text-orange-400 dark:focus:text-orange-400'
                         >
                             <ClockCountdownIcon className='mr-2 h-4 w-4' />
                             {t('dashboard.cancelDeletion')}
@@ -198,7 +179,7 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                             <DropdownMenuItem
                                 onClick={actions.onShowHardDeleteModal}
                                 disabled={isLoading}
-                                className='text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400'
+                                className='text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400'
                             >
                                 <TrashIcon className='mr-2 h-4 w-4' />
                                 {t('dashboard.hardDelete')}
@@ -209,7 +190,7 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                     <DropdownMenuItem
                         onClick={actions.onShowDeleteModal}
                         disabled={isLoading}
-                        className='text-red-600 dark:text-red-400 focus:text-red-600 dark:focus:text-red-400'
+                        className='text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400'
                     >
                         <TrashIcon className='mr-2 h-4 w-4' />
                         {t('dashboard.scheduleDeletion')}

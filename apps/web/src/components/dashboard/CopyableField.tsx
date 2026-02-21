@@ -4,7 +4,12 @@ import type { CopyableFieldProps } from '@/ts/Interfaces'
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
 import { useUIStore } from '@/lib/store'
-import { CheckIcon, CopyIcon, EyeIcon, EyeSlashIcon } from '@phosphor-icons/react'
+import {
+    CheckIcon,
+    CopyIcon,
+    EyeIcon,
+    EyeSlashIcon
+} from '@phosphor-icons/react'
 
 const CopyableField: FC<CopyableFieldProps> = ({
     label,

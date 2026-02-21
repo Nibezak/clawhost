@@ -76,13 +76,13 @@ const ClawDiagnosticsContent: FC<ClawDiagnosticsContentProps> = ({
                             >
                                 {repair.isPending ? (
                                     <>
-                                        <CircleNotchIcon className='mr-2 h-3.5 w-3.5 animate-spin' />
+                                        <CircleNotchIcon className='mr-1 h-3.5 w-3.5 animate-spin' />
                                         {t('dashboard.diagnosticsRepair')}
                                         ...
                                     </>
                                 ) : (
                                     <>
-                                        <WrenchIcon className='mr-2 h-3.5 w-3.5' />
+                                        <WrenchIcon className='mr-1 h-3.5 w-3.5' />
                                         {t('dashboard.diagnosticsRepair')}
                                     </>
                                 )}
@@ -100,9 +100,9 @@ const ClawDiagnosticsContent: FC<ClawDiagnosticsContentProps> = ({
                             {t('dashboard.diagnosticsStatus')}
                         </p>
                         {diagnostics.isPending ? (
-                            <Skeleton className='h-[250px] w-full rounded-md border border-border' />
+                            <Skeleton className='border-border h-[250px] w-full rounded-md border' />
                         ) : (
-                            <pre className='h-[250px] overflow-auto rounded-md border border-border bg-muted p-3 text-xs leading-snug text-muted-foreground'>
+                            <pre className='border-border bg-muted text-foreground/80 h-[250px] overflow-auto rounded-md border p-3 text-xs leading-snug'>
                                 {diagnostics.data?.service}
                             </pre>
                         )}
@@ -112,9 +112,9 @@ const ClawDiagnosticsContent: FC<ClawDiagnosticsContentProps> = ({
                             {t('dashboard.diagnosticsPort')}
                         </p>
                         {diagnostics.isPending ? (
-                            <Skeleton className='h-[70px] w-full rounded-md border border-border' />
+                            <Skeleton className='border-border h-[70px] w-full rounded-md border' />
                         ) : (
-                            <pre className='h-[70px] overflow-auto rounded-md border border-border bg-muted p-3 text-xs leading-snug text-muted-foreground'>
+                            <pre className='border-border bg-muted text-foreground/80 h-[70px] overflow-auto rounded-md border p-3 text-xs leading-snug'>
                                 {diagnostics.data?.port}
                             </pre>
                         )}
@@ -124,9 +124,9 @@ const ClawDiagnosticsContent: FC<ClawDiagnosticsContentProps> = ({
                             {t('dashboard.diagnosticsMemory')}
                         </p>
                         {diagnostics.isPending ? (
-                            <Skeleton className='h-[80px] w-full rounded-md border border-border' />
+                            <Skeleton className='border-border h-[80px] w-full rounded-md border' />
                         ) : (
-                            <pre className='h-[80px] overflow-auto rounded-md border border-border bg-muted p-3 text-xs leading-snug text-muted-foreground'>
+                            <pre className='border-border bg-muted text-foreground/80 h-[80px] overflow-auto rounded-md border p-3 text-xs leading-snug'>
                                 {diagnostics.data?.memory}
                             </pre>
                         )}

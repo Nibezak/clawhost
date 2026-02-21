@@ -22,7 +22,7 @@ const getClawVersion = async (c: AuthenticatedContext) => {
         const output = await executeSSH(
             claw.ip,
             claw.rootPassword,
-            'openclaw --version 2>/dev/null || echo "unknown"'
+            'su - openclaw -c "openclaw --version" 2>/dev/null || echo "unknown"'
         )
 
         return ok(c, {

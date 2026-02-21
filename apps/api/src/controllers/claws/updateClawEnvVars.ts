@@ -68,7 +68,7 @@ const updateClawEnvVars = async (c: AuthenticatedContext) => {
             await executeSSH(
                 claw.ip,
                 claw.rootPassword,
-                `echo '${envB64}' | base64 -d > ${BASE_DIR}/.env && (openclaw doctor --fix || true) && systemctl restart openclaw-gateway`,
+                `echo '${envB64}' | base64 -d > ${BASE_DIR}/.env && (su - openclaw -c "openclaw doctor --fix" || true) && systemctl restart openclaw-gateway`,
                 20000
             )
 
