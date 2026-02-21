@@ -14,16 +14,18 @@ export default defineConfig({
     plugins: [keepAlive(), react()],
     resolve: {
         alias: {
+            '@/lib/firebase': path.resolve(
+                __dirname,
+                './src/renderer/shims/firebase'
+            ),
+            '@/lib/auth': path.resolve(__dirname, './src/renderer/providers'),
+            '@/lib/api': path.resolve(__dirname, './src/renderer/shims/api'),
+            '@/components/dashboard/CreateClawModal': path.resolve(
+                __dirname,
+                './src/renderer/components/CreateClawModal'
+            ),
             '@/': path.resolve(__dirname, '../web/src') + '/',
             '@electron/': path.resolve(__dirname, './src/renderer') + '/'
-        }
-    },
-    server: {
-        proxy: {
-            '/api': {
-                target: 'http://localhost:2222',
-                changeOrigin: true
-            }
         }
     }
 })

@@ -10,6 +10,7 @@ import type {
     ClawAvatarSize,
     ClawStatus,
     DashboardTab,
+    FeatureRequestStatus,
     GatewayConnectionState,
     Language,
     PlaygroundAgentDetailTab,
@@ -17,6 +18,7 @@ import type {
     ProviderType,
     ThemeMode,
     ClawFileType,
+    CompareFeatureStatus,
     ToastType,
     UserRole
 } from '@/ts/Types'
@@ -56,6 +58,7 @@ export interface Claw {
     ownerEmail?: string | null
     deletionScheduledAt: string | null
     createdAt: string
+    port?: number
 }
 
 export interface VolumePricing {
@@ -172,6 +175,11 @@ export interface CachedProfile {
 
 export interface VerifyOtpResponse {
     customToken: string
+}
+
+export interface ResolveCredentialConflictData {
+    accessToken: string
+    providerId: string
 }
 
 export interface AuthContextType {
@@ -1121,4 +1129,92 @@ export interface ChatViewProps {
 export interface TruncateTooltipProps {
     content: string
     children: ReactNode
+}
+
+export interface BindingMatch {
+    channel: string
+}
+
+export interface Binding {
+    agentId: string
+    match: BindingMatch
+}
+
+export interface ClawBindingsResponse {
+    bindings: Binding[]
+    channels: Record<string, ChannelConfig>
+    agents: Array<{ id: string; name: string }>
+}
+
+export interface UpdateClawBindingsData {
+    bindings: Binding[]
+}
+
+export interface PlaygroundBindingsContentProps {
+    clawId: string
+    agentId: string
+}
+
+export interface CompareCompetitor {
+    id: string
+    nameKey: string
+    highlighted: boolean
+}
+
+export interface CompareFeatureValue {
+    status: CompareFeatureStatus
+    detailKey?: string
+}
+
+export interface CompareFeature {
+    nameKey: string
+    values: Record<string, CompareFeatureValue>
+}
+
+export interface CompareCategory {
+    id: string
+    nameKey: string
+    features: CompareFeature[]
+}
+
+export interface FeatureRequest {
+    id: string
+    title: string
+    description: string
+    status: FeatureRequestStatus
+    rejectionReason: string | null
+    upvoteCount: number
+    userId: string
+    userName: string | null
+    userEmail: string
+    hasUpvoted: boolean
+    createdAt: string
+}
+
+export interface FeatureRequestsListResponse {
+    items: FeatureRequest[]
+    total: number
+}
+
+export interface CreateFeatureRequestData {
+    title: string
+    description: string
+}
+
+export interface UpdateFeatureRequestStatusData {
+    status: FeatureRequestStatus
+    rejectionReason?: string
+}
+
+export interface FeatureRequestCardProps {
+    featureRequest: FeatureRequest
+    isAuthenticated: boolean
+    isAdmin: boolean
+    onUpvote: (id: string) => void
+    onStatusChange: (id: string, status: FeatureRequestStatus) => void
+    onDelete: (id: string) => void
+}
+
+export interface FeatureRequestStatusBadgeProps {
+    status: FeatureRequestStatus
 }

@@ -134,8 +134,12 @@ const Header: FC<HeaderProps> = ({
                                             className='h-4 w-4'
                                             weight='fill'
                                         />
-                                        <span className='sm:hidden'>{t('nav.deploy')}</span>
-                                        <span className='hidden sm:inline'>{t('nav.deployOpenClaw')}</span>
+                                        <span className='sm:hidden'>
+                                            {t('nav.deploy')}
+                                        </span>
+                                        <span className='hidden sm:inline'>
+                                            {t('nav.deployOpenClaw')}
+                                        </span>
                                     </Link>
                                 </Button>
                             </div>

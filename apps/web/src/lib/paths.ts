@@ -8,7 +8,9 @@ const PATHS = {
     TERMS: 'terms',
     PRIVACY: 'privacy',
     CHANGELOG: 'changelog',
-    BLOG: 'blog'
+    BLOG: 'blog',
+    COMPARE: 'full-comparison',
+    FEATURE_REQUESTS: 'feature-requests'
 } as const
 
 export default PATHS

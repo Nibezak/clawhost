@@ -5,7 +5,7 @@ import type DASHBOARD_TABS from '@/lib/dashboardTabs'
 import type THEMES from '@/lib/themes'
 import type LANGUAGES from '@/lib/languages'
 
-export type ProviderType = 'hetzner' | 'digitalocean' | 'vultr'
+export type ProviderType = 'hetzner' | 'digitalocean' | 'vultr' | 'local'
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info'
 
@@ -28,6 +28,8 @@ export type PlaygroundDetailTab =
 
 export type PlaygroundAgentDetailTab =
     (typeof AGENT_DETAIL_TABS)[keyof typeof AGENT_DETAIL_TABS]
+
+export type CompareFeatureStatus = 'yes' | 'no' | 'partial'
 
 export type ClawAvatarSize = 'sm' | 'md' | 'lg'
 
@@ -62,6 +64,8 @@ export type Route =
     | '/changelog'
     | '/blog'
     | '/blog/:slug'
+    | '/full-comparison'
+    | '/feature-requests'
 
 export type DashboardTab = (typeof DASHBOARD_TABS)[keyof typeof DASHBOARD_TABS]
 
@@ -76,3 +80,12 @@ export type ClawFileType =
     | 'yaml'
     | 'text'
     | 'unknown'
+
+export type FeatureRequestStatus =
+    | 'awaiting_approval'
+    | 'requested'
+    | 'marked_for_implementation'
+    | 'implemented'
+    | 'rejected'
+
+export type FeatureRequestSortBy = 'newest' | 'upvotes' | 'status'

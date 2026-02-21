@@ -19,6 +19,7 @@ const Blog: FC = (): ReactNode => {
             <PageTitle
                 title={t('blog.title')}
                 description={t('blog.description')}
+                url={`https://${getBaseDomain()}/${PATHS.BLOG}`}
             />
             <JsonLd
                 data={{

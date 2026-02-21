@@ -1,0 +1,32 @@
+html, body, #root {
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+#electron-drag-bar {
+    -webkit-app-region: drag;
+    app-region: drag;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 38px;
+    z-index: 9999;
+    background: #0a0a0f;
+}
+
+button, a, input, select, textarea,
+[role="button"], [role="menuitem"],
+[role="menu"], [role="dialog"] {
+    -webkit-app-region: no-drag;
+    app-region: no-drag;
+}
+
+#root .fixed.inset-0.flex.flex-col {
+    top: 38px !important;
+}

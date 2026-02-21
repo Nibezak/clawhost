@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { LEGAL_EMAIL } from '@/lib/links'
 import { Header, LandingFooter, PageBackground, PageTitle } from '@/components'
+import { PATHS, getBaseDomain } from '@/lib'
 
 const Terms: FC = (): ReactNode => {
     return (
@@ -11,6 +12,7 @@ const Terms: FC = (): ReactNode => {
             <PageTitle
                 title={t('terms.title')}
                 description={t('terms.description')}
+                url={`https://${getBaseDomain()}/${PATHS.TERMS}`}
             />
             <PageBackground />
             <Header />

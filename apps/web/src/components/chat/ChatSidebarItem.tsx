@@ -96,7 +96,11 @@ const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <p className='text-foreground text-[13px] font-medium'>
-                                    {agent.name.slice(0, TRUNCATE_LENGTHS.SIDEBAR_AGENT_NAME)}...
+                                    {agent.name.slice(
+                                        0,
+                                        TRUNCATE_LENGTHS.SIDEBAR_AGENT_NAME
+                                    )}
+                                    ...
                                 </p>
                             </TooltipTrigger>
                             <TooltipContent>{agent.name}</TooltipContent>

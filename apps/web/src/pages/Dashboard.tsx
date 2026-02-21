@@ -388,15 +388,18 @@ const Dashboard: FC = (): ReactNode => {
     const selectedAgent = selectedAgentResult?.agent || null
     const isSelectedAgentOnly = selectedAgentResult?.isOnly || false
 
+    const chatEmpty = dashboardTab === DASHBOARD_TABS.CHAT && !isLoading && !activeIsError && displayedClaws.length === 0
+    const showFullBackground = dashboardTab === DASHBOARD_TABS.PLAYGROUND || chatEmpty
+
     return (
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
-            className={`bg-background text-foreground fixed inset-0 flex flex-col ${dashboardTab === DASHBOARD_TABS.PLAYGROUND ? 'playground-grid' : ''}`}
+            className={`bg-background text-foreground fixed inset-0 flex flex-col ${showFullBackground ? 'playground-grid' : ''}`}
         >
             <div
-                className={`playground-gradient pointer-events-none fixed inset-0 ${dashboardTab === DASHBOARD_TABS.CHAT ? 'opacity-30' : ''}`}
+                className={`playground-gradient pointer-events-none fixed inset-0 ${dashboardTab === DASHBOARD_TABS.CHAT && !chatEmpty ? 'opacity-30' : ''}`}
             />
             <PageTitle
                 title={
@@ -409,7 +412,7 @@ const Dashboard: FC = (): ReactNode => {
                 }
             />
 
-            <div className='border-border bg-background relative z-10 flex items-center justify-between border-b px-6 py-3 md:bg-background/80 md:backdrop-blur-xl'>
+            <div className='border-border bg-background md:bg-background/80 relative z-10 flex items-center justify-between border-b px-6 py-3 md:backdrop-blur-xl'>
                 <div className='flex items-center gap-3'>
                     <Logo />
                     <div className='border-border flex items-center rounded-lg border p-0.5'>
@@ -583,7 +586,12 @@ const Dashboard: FC = (): ReactNode => {
                         )}
                     </motion.div>
                 ) : (
-                    <>
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className='flex h-full min-w-0 flex-1'
+                    >
                         <div className='relative h-full min-w-0 flex-1'>
                             <PlaygroundCanvas
                                 key={adminMode ? 'admin' : 'user'}
@@ -674,7 +682,7 @@ const Dashboard: FC = (): ReactNode => {
 
                             {selectedAgent && selectedAgentClaw && (
                                 <PlaygroundAgentDetailPanel
-                                    key='agent-panel'
+                                    key={`agent-panel-${selectedAgent.id}`}
                                     agent={selectedAgent}
                                     clawId={selectedAgentClaw.id}
                                     clawName={selectedAgentClaw.name}
@@ -692,7 +700,7 @@ const Dashboard: FC = (): ReactNode => {
                                 />
                             )}
                         </AnimatePresence>
-                    </>
+                    </motion.div>
                 )}
             </div>
 

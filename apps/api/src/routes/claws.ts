@@ -46,7 +46,9 @@ import {
     checkClawHubUpdates,
     renameClaw,
     pairWhatsApp,
-    pairWhatsAppStatus
+    pairWhatsAppStatus,
+    getClawBindings,
+    updateClawBindings
 } from '@/controllers/claws'
 import adminOnly from '@/middleware/adminOnly'
 
@@ -79,6 +81,8 @@ app.post('/:id/channels', getClawChannels)
 app.put('/:id/channels', updateClawChannels)
 app.post('/:id/channels/whatsapp/pair', pairWhatsApp)
 app.post('/:id/channels/whatsapp/pair-status', pairWhatsAppStatus)
+app.post('/:id/bindings', getClawBindings)
+app.put('/:id/bindings', updateClawBindings)
 app.post('/:id/skills', getClawSkills)
 app.put('/:id/skills', updateClawSkills)
 app.post('/:id/agents/:agentId/skills', getAgentSkills)

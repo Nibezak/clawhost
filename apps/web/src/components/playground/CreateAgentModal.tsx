@@ -5,7 +5,14 @@ import type { TranslationKey } from '@openclaw/i18n'
 import { useState, useMemo, useCallback } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { t } from '@openclaw/i18n'
-import { CheckCircleIcon, CheckIcon, CircleNotchIcon, CopyIcon, EyeIcon, EyeSlashIcon } from '@phosphor-icons/react'
+import {
+    CheckCircleIcon,
+    CheckIcon,
+    CircleNotchIcon,
+    CopyIcon,
+    EyeIcon,
+    EyeSlashIcon
+} from '@phosphor-icons/react'
 import {
     Dialog,
     DialogContent,
@@ -158,13 +165,51 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                 return
             }
         } else {
-            const adjectives = ['swift', 'brave', 'calm', 'clever', 'gentle', 'mighty', 'silent', 'golden', 'cosmic', 'nimble', 'jolly', 'witty', 'noble', 'vivid', 'crisp']
-            const nouns = ['falcon', 'lynx', 'raven', 'owl', 'fox', 'wolf', 'bear', 'crane', 'spark', 'frost', 'ember', 'cedar', 'brook', 'storm', 'drift']
-            const adj = adjectives[Math.floor(Math.random() * adjectives.length)]
+            const adjectives = [
+                'swift',
+                'brave',
+                'calm',
+                'clever',
+                'gentle',
+                'mighty',
+                'silent',
+                'golden',
+                'cosmic',
+                'nimble',
+                'jolly',
+                'witty',
+                'noble',
+                'vivid',
+                'crisp'
+            ]
+            const nouns = [
+                'falcon',
+                'lynx',
+                'raven',
+                'owl',
+                'fox',
+                'wolf',
+                'bear',
+                'crane',
+                'spark',
+                'frost',
+                'ember',
+                'cedar',
+                'brook',
+                'storm',
+                'drift'
+            ]
+            const adj =
+                adjectives[Math.floor(Math.random() * adjectives.length)]
             const noun = nouns[Math.floor(Math.random() * nouns.length)]
             finalName = `${adj}-${noun}`
-            while (existingAgentNames.some((n) => n.toLowerCase() === finalName.toLowerCase())) {
-                const adj2 = adjectives[Math.floor(Math.random() * adjectives.length)]
+            while (
+                existingAgentNames.some(
+                    (n) => n.toLowerCase() === finalName.toLowerCase()
+                )
+            ) {
+                const adj2 =
+                    adjectives[Math.floor(Math.random() * adjectives.length)]
                 const noun2 = nouns[Math.floor(Math.random() * nouns.length)]
                 finalName = `${adj2}-${noun2}`
             }
@@ -324,8 +369,16 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                                         className='border-border bg-foreground/5 text-muted-foreground w-full rounded-md border px-3 py-2 font-mono text-[11px] outline-none'
                                     />
                                     <p className='mt-1.5 flex items-center gap-1 text-[11px] text-green-600 dark:text-green-400'>
-                                        <CheckCircleIcon className='h-3 w-3' weight='fill' />
-                                        {t('playground.addAgentApiKeyConfigured', { envVar: selectedModelOption.envVar })}
+                                        <CheckCircleIcon
+                                            className='h-3 w-3'
+                                            weight='fill'
+                                        />
+                                        {t(
+                                            'playground.addAgentApiKeyConfigured',
+                                            {
+                                                envVar: selectedModelOption.envVar
+                                            }
+                                        )}
                                     </p>
                                 </>
                             ) : (
@@ -333,13 +386,15 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                                     <input
                                         type={showApiKey ? 'text' : 'password'}
                                         value={apiKeyValue}
-                                        onChange={(e) => setApiKeyValue(e.target.value)}
+                                        onChange={(e) =>
+                                            setApiKeyValue(e.target.value)
+                                        }
                                         placeholder={t(
                                             'playground.addAgentApiKeyPlaceholder'
                                         )}
                                         className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 font-mono text-[11px] outline-none transition-colors focus:border-[#ef5350]/50'
                                     />
-                                    <p className='text-muted-foreground mt-1.5 text-[11px] font-mono'>
+                                    <p className='text-muted-foreground mt-1.5 font-mono text-[11px]'>
                                         {selectedModelOption.envVar}
                                     </p>
                                 </>
@@ -357,10 +412,7 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                     </button>
                     <button
                         onClick={handleSubmit}
-                        disabled={
-                            !!nameError ||
-                            createMutation.isPending
-                        }
+                        disabled={!!nameError || createMutation.isPending}
                         className='flex items-center gap-2 rounded-lg bg-[#ef5350] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
                     >
                         {createMutation.isPending && (

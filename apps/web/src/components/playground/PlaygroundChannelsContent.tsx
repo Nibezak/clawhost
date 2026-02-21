@@ -45,10 +45,19 @@ const CHANNEL_DEFINITIONS: ChannelDefinition[] = [
                 placeholder: 'playground.channelsDmPolicyPairing',
                 type: 'select',
                 options: [
-                    { value: 'pairing', label: 'playground.channelsDmPolicyPairing' },
+                    {
+                        value: 'pairing',
+                        label: 'playground.channelsDmPolicyPairing'
+                    },
                     { value: 'open', label: 'playground.channelsDmPolicyOpen' },
-                    { value: 'allowlist', label: 'playground.channelsDmPolicyAllowlist' },
-                    { value: 'disabled', label: 'playground.channelsDmPolicyDisabled' }
+                    {
+                        value: 'allowlist',
+                        label: 'playground.channelsDmPolicyAllowlist'
+                    },
+                    {
+                        value: 'disabled',
+                        label: 'playground.channelsDmPolicyDisabled'
+                    }
                 ]
             },
             {
@@ -227,7 +236,10 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
             if (typeof copy.allowFrom === 'string') {
                 const raw = copy.allowFrom as unknown as string
                 copy.allowFrom = raw
-                    ? raw.split(',').map((s) => s.trim()).filter(Boolean)
+                    ? raw
+                          .split(',')
+                          .map((s) => s.trim())
+                          .filter(Boolean)
                     : []
             }
             prepared[key] = copy
@@ -236,7 +248,8 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
     }, [channels])
 
     const saveMutation = useMutation({
-        mutationFn: () => api.updateClawChannels(clawId, { channels: prepareChannels() }),
+        mutationFn: () =>
+            api.updateClawChannels(clawId, { channels: prepareChannels() }),
         onSuccess: () => {
             showToast(t('playground.channelsSaved'), 'success')
             setHasChanges(false)
@@ -254,7 +267,10 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
         mutationFn: () => api.pairWhatsApp(clawId),
         onSuccess: (res) => {
             if (res.status === 'already_paired') {
-                showToast(t('playground.channelsWhatsAppAlreadyPaired'), 'success')
+                showToast(
+                    t('playground.channelsWhatsAppAlreadyPaired'),
+                    'success'
+                )
                 return
             }
             if (res.status === 'unsupported') {
@@ -347,29 +363,39 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
 
                                 {config.enabled && def.key === 'whatsapp' && (
                                     <div className='border-border space-y-3 border-t px-3.5 pb-3.5 pt-3'>
-                                        {isPairing && pairStatus?.status === 'qr_ready' && pairStatus.qr ? (
+                                        {isPairing &&
+                                        pairStatus?.status === 'qr_ready' &&
+                                        pairStatus.qr ? (
                                             <div className='space-y-2'>
                                                 <p className='text-muted-foreground text-[11px]'>
-                                                    {t('playground.channelsWhatsAppScanQr')}
+                                                    {t(
+                                                        'playground.channelsWhatsAppScanQr'
+                                                    )}
                                                 </p>
                                                 <pre className='bg-background overflow-x-auto rounded-md border p-2 text-center font-mono text-[6px] leading-[6px]'>
                                                     {pairStatus.qr}
                                                 </pre>
                                                 <p className='text-muted-foreground text-center text-[10px]'>
-                                                    {t('playground.channelsWhatsAppScanInstructions')}
+                                                    {t(
+                                                        'playground.channelsWhatsAppScanInstructions'
+                                                    )}
                                                 </p>
                                             </div>
                                         ) : isPairing ? (
                                             <div className='flex items-center gap-2 py-2'>
                                                 <CircleNotchIcon className='text-muted-foreground h-3.5 w-3.5 animate-spin' />
                                                 <span className='text-muted-foreground text-[11px]'>
-                                                    {t('playground.channelsWhatsAppPairing')}
+                                                    {t(
+                                                        'playground.channelsWhatsAppPairing'
+                                                    )}
                                                 </span>
                                             </div>
                                         ) : pairStatus?.status === 'failed' ? (
                                             <div className='space-y-2'>
                                                 <p className='text-[11px] text-red-400'>
-                                                    {t('playground.channelsWhatsAppPairFailed')}
+                                                    {t(
+                                                        'playground.channelsWhatsAppPairFailed'
+                                                    )}
                                                 </p>
                                                 {pairStatus.log && (
                                                     <pre className='bg-background max-h-24 overflow-auto rounded-md border p-2 font-mono text-[10px] text-red-400/70'>
@@ -378,8 +404,12 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                                                 )}
                                                 <button
                                                     type='button'
-                                                    onClick={() => pairMutation.mutate()}
-                                                    disabled={pairMutation.isPending}
+                                                    onClick={() =>
+                                                        pairMutation.mutate()
+                                                    }
+                                                    disabled={
+                                                        pairMutation.isPending
+                                                    }
                                                     className='flex w-full items-center justify-center gap-2 rounded-md border border-[#25D366]/30 bg-[#25D366]/10 px-3 py-2 text-[11px] font-medium text-[#25D366] transition-colors hover:bg-[#25D366]/20 disabled:cursor-not-allowed disabled:opacity-50'
                                                 >
                                                     {pairMutation.isPending ? (
@@ -387,18 +417,26 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                                                     ) : (
                                                         <LinkSimpleIcon className='h-3.5 w-3.5' />
                                                     )}
-                                                    {t('playground.channelsWhatsAppPairDevice')}
+                                                    {t(
+                                                        'playground.channelsWhatsAppPairDevice'
+                                                    )}
                                                 </button>
                                             </div>
                                         ) : pairUnsupported ? (
                                             <p className='text-muted-foreground text-[11px]'>
-                                                {t('playground.channelsWhatsAppUnsupported')}
+                                                {t(
+                                                    'playground.channelsWhatsAppUnsupported'
+                                                )}
                                             </p>
                                         ) : (
                                             <button
                                                 type='button'
-                                                onClick={() => pairMutation.mutate()}
-                                                disabled={pairMutation.isPending}
+                                                onClick={() =>
+                                                    pairMutation.mutate()
+                                                }
+                                                disabled={
+                                                    pairMutation.isPending
+                                                }
                                                 className='flex w-full items-center justify-center gap-2 rounded-md border border-[#25D366]/30 bg-[#25D366]/10 px-3 py-2 text-[11px] font-medium text-[#25D366] transition-colors hover:bg-[#25D366]/20 disabled:cursor-not-allowed disabled:opacity-50'
                                             >
                                                 {pairMutation.isPending ? (
@@ -406,13 +444,17 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                                                 ) : (
                                                     <LinkSimpleIcon className='h-3.5 w-3.5' />
                                                 )}
-                                                {t('playground.channelsWhatsAppPairDevice')}
+                                                {t(
+                                                    'playground.channelsWhatsAppPairDevice'
+                                                )}
                                             </button>
                                         )}
                                         {def.fields.map((field) => {
                                             const fieldId = `${def.key}-${String(field.key)}`
                                             const rawValue = config[field.key]
-                                            const value = Array.isArray(rawValue)
+                                            const value = Array.isArray(
+                                                rawValue
+                                            )
                                                 ? rawValue.join(', ')
                                                 : (rawValue as string) || ''
 
@@ -423,23 +465,43 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                                                             {t(field.label)}
                                                         </label>
                                                     </div>
-                                                    {field.type === 'select' && field.options ? (
+                                                    {field.type === 'select' &&
+                                                    field.options ? (
                                                         <select
-                                                            value={value || field.options[0]?.value || ''}
+                                                            value={
+                                                                value ||
+                                                                field.options[0]
+                                                                    ?.value ||
+                                                                ''
+                                                            }
                                                             onChange={(e) =>
                                                                 updateField(
                                                                     def.key,
-                                                                    String(field.key),
-                                                                    e.target.value
+                                                                    String(
+                                                                        field.key
+                                                                    ),
+                                                                    e.target
+                                                                        .value
                                                                 )
                                                             }
                                                             className='border-border bg-foreground/5 text-foreground w-full rounded-md border px-2.5 py-1.5 text-[11px] outline-none transition-colors focus:border-[#ef5350]/50'
                                                         >
-                                                            {field.options.map((opt) => (
-                                                                <option key={opt.value} value={opt.value}>
-                                                                    {t(opt.label)}
-                                                                </option>
-                                                            ))}
+                                                            {field.options.map(
+                                                                (opt) => (
+                                                                    <option
+                                                                        key={
+                                                                            opt.value
+                                                                        }
+                                                                        value={
+                                                                            opt.value
+                                                                        }
+                                                                    >
+                                                                        {t(
+                                                                            opt.label
+                                                                        )}
+                                                                    </option>
+                                                                )
+                                                            )}
                                                         </select>
                                                     ) : (
                                                         <input
@@ -448,11 +510,16 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                                                             onChange={(e) =>
                                                                 updateField(
                                                                     def.key,
-                                                                    String(field.key),
-                                                                    e.target.value
+                                                                    String(
+                                                                        field.key
+                                                                    ),
+                                                                    e.target
+                                                                        .value
                                                                 )
                                                             }
-                                                            placeholder={t(field.placeholder)}
+                                                            placeholder={t(
+                                                                field.placeholder
+                                                            )}
                                                             className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-2.5 py-1.5 font-mono text-[11px] outline-none transition-colors focus:border-[#ef5350]/50'
                                                         />
                                                     )}
@@ -462,114 +529,118 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
                                     </div>
                                 )}
 
-                                {config.enabled && def.key !== 'whatsapp' && def.fields.length > 0 && (
-                                    <div className='border-border space-y-3 border-t px-3.5 pb-3.5 pt-3'>
-                                        {def.fields.map((field) => {
-                                            const fieldId = `${def.key}-${String(field.key)}`
-                                            const isVisible =
-                                                visibleSecrets[fieldId]
-                                            const value =
-                                                (config[field.key] as string) ||
-                                                ''
+                                {config.enabled &&
+                                    def.key !== 'whatsapp' &&
+                                    def.fields.length > 0 && (
+                                        <div className='border-border space-y-3 border-t px-3.5 pb-3.5 pt-3'>
+                                            {def.fields.map((field) => {
+                                                const fieldId = `${def.key}-${String(field.key)}`
+                                                const isVisible =
+                                                    visibleSecrets[fieldId]
+                                                const value =
+                                                    (config[
+                                                        field.key
+                                                    ] as string) || ''
 
-                                            return (
-                                                <div key={fieldId}>
-                                                    <div className='mb-1.5 flex items-center justify-between'>
-                                                        <label className='text-muted-foreground text-[11px] font-medium'>
-                                                            {t(field.label)}
-                                                            {field.required && (
-                                                                <span className='ml-0.5 text-red-600 dark:text-red-400'>
-                                                                    *
-                                                                </span>
-                                                            )}
-                                                        </label>
-                                                        <div className='flex items-center gap-1'>
-                                                            <Tooltip>
-                                                                <TooltipTrigger
-                                                                    asChild
-                                                                >
-                                                                    <button
-                                                                        type='button'
-                                                                        disabled={
-                                                                            !value
-                                                                        }
-                                                                        onClick={() =>
-                                                                            copyField(
-                                                                                value
-                                                                            )
-                                                                        }
-                                                                        className='text-muted-foreground hover:text-foreground/80 disabled:hover:text-muted-foreground rounded p-0.5 transition-colors disabled:cursor-not-allowed disabled:opacity-30'
-                                                                    >
-                                                                        <CopyIcon className='h-3 w-3' />
-                                                                    </button>
-                                                                </TooltipTrigger>
-                                                                <TooltipContent>
-                                                                    {t(
-                                                                        'common.copy'
-                                                                    )}
-                                                                </TooltipContent>
-                                                            </Tooltip>
-                                                            {field.secret && (
+                                                return (
+                                                    <div key={fieldId}>
+                                                        <div className='mb-1.5 flex items-center justify-between'>
+                                                            <label className='text-muted-foreground text-[11px] font-medium'>
+                                                                {t(field.label)}
+                                                                {field.required && (
+                                                                    <span className='ml-0.5 text-red-600 dark:text-red-400'>
+                                                                        *
+                                                                    </span>
+                                                                )}
+                                                            </label>
+                                                            <div className='flex items-center gap-1'>
                                                                 <Tooltip>
                                                                     <TooltipTrigger
                                                                         asChild
                                                                     >
                                                                         <button
                                                                             type='button'
+                                                                            disabled={
+                                                                                !value
+                                                                            }
                                                                             onClick={() =>
-                                                                                toggleSecret(
-                                                                                    fieldId
+                                                                                copyField(
+                                                                                    value
                                                                                 )
                                                                             }
-                                                                            className='text-muted-foreground hover:text-foreground/80 rounded p-0.5 transition-colors'
+                                                                            className='text-muted-foreground hover:text-foreground/80 disabled:hover:text-muted-foreground rounded p-0.5 transition-colors disabled:cursor-not-allowed disabled:opacity-30'
                                                                         >
-                                                                            {isVisible ? (
-                                                                                <EyeSlashIcon className='h-3 w-3' />
-                                                                            ) : (
-                                                                                <EyeIcon className='h-3 w-3' />
-                                                                            )}
+                                                                            <CopyIcon className='h-3 w-3' />
                                                                         </button>
                                                                     </TooltipTrigger>
                                                                     <TooltipContent>
-                                                                        {isVisible
-                                                                            ? t(
-                                                                                  'common.hide'
-                                                                              )
-                                                                            : t(
-                                                                                  'common.show'
-                                                                              )}
+                                                                        {t(
+                                                                            'common.copy'
+                                                                        )}
                                                                     </TooltipContent>
                                                                 </Tooltip>
-                                                            )}
+                                                                {field.secret && (
+                                                                    <Tooltip>
+                                                                        <TooltipTrigger
+                                                                            asChild
+                                                                        >
+                                                                            <button
+                                                                                type='button'
+                                                                                onClick={() =>
+                                                                                    toggleSecret(
+                                                                                        fieldId
+                                                                                    )
+                                                                                }
+                                                                                className='text-muted-foreground hover:text-foreground/80 rounded p-0.5 transition-colors'
+                                                                            >
+                                                                                {isVisible ? (
+                                                                                    <EyeSlashIcon className='h-3 w-3' />
+                                                                                ) : (
+                                                                                    <EyeIcon className='h-3 w-3' />
+                                                                                )}
+                                                                            </button>
+                                                                        </TooltipTrigger>
+                                                                        <TooltipContent>
+                                                                            {isVisible
+                                                                                ? t(
+                                                                                      'common.hide'
+                                                                                  )
+                                                                                : t(
+                                                                                      'common.show'
+                                                                                  )}
+                                                                        </TooltipContent>
+                                                                    </Tooltip>
+                                                                )}
+                                                            </div>
                                                         </div>
+                                                        <input
+                                                            type={
+                                                                field.secret &&
+                                                                !isVisible
+                                                                    ? 'password'
+                                                                    : 'text'
+                                                            }
+                                                            value={value}
+                                                            onChange={(e) =>
+                                                                updateField(
+                                                                    def.key,
+                                                                    String(
+                                                                        field.key
+                                                                    ),
+                                                                    e.target
+                                                                        .value
+                                                                )
+                                                            }
+                                                            placeholder={t(
+                                                                field.placeholder
+                                                            )}
+                                                            className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-2.5 py-1.5 font-mono text-[11px] outline-none transition-colors focus:border-[#ef5350]/50'
+                                                        />
                                                     </div>
-                                                    <input
-                                                        type={
-                                                            field.secret &&
-                                                            !isVisible
-                                                                ? 'password'
-                                                                : 'text'
-                                                        }
-                                                        value={value}
-                                                        onChange={(e) =>
-                                                            updateField(
-                                                                def.key,
-                                                                String(
-                                                                    field.key
-                                                                ),
-                                                                e.target.value
-                                                            )
-                                                        }
-                                                        placeholder={t(
-                                                            field.placeholder
-                                                        )}
-                                                        className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-2.5 py-1.5 font-mono text-[11px] outline-none transition-colors focus:border-[#ef5350]/50'
-                                                    />
-                                                </div>
-                                            )
-                                        })}
-                                    </div>
-                                )}
+                                                )
+                                            })}
+                                        </div>
+                                    )}
                             </div>
                         )
                     })}

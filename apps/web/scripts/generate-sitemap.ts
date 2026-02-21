@@ -12,7 +12,10 @@ const staticRoutes = [
     `/${PATHS.LOGIN}`,
     `/${PATHS.TERMS}`,
     `/${PATHS.PRIVACY}`,
-    `/${PATHS.BLOG}`
+    `/${PATHS.BLOG}`,
+    `/${PATHS.CHANGELOG}`,
+    `/${PATHS.COMPARE}`,
+    `/${PATHS.FEATURE_REQUESTS}`
 ]
 
 const mdxFiles = fs.readdirSync(CONTENT).filter((f) => f.endsWith('.mdx'))

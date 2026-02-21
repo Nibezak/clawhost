@@ -43,6 +43,8 @@ import checkClawHubUpdates from '@/controllers/claws/checkClawHubUpdates'
 import renameClaw from '@/controllers/claws/renameClaw'
 import pairWhatsApp from '@/controllers/claws/pairWhatsApp'
 import pairWhatsAppStatus from '@/controllers/claws/pairWhatsAppStatus'
+import getClawBindings from '@/controllers/claws/getClawBindings'
+import updateClawBindings from '@/controllers/claws/updateClawBindings'
 
 export {
     getClaws,
@@ -89,5 +91,7 @@ export {
     checkClawHubUpdates,
     renameClaw,
     pairWhatsApp,
-    pairWhatsAppStatus
+    pairWhatsAppStatus,
+    getClawBindings,
+    updateClawBindings
 }

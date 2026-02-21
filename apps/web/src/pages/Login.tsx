@@ -20,6 +20,7 @@ import { STORAGE_KEYS } from '@/lib/storageKeys'
 const COOLDOWN_KEY = STORAGE_KEYS.OTP_SENT_AT
 const COOLDOWN_DURATION = 60
 const CODE_LENGTH = 6
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const getRemainingCooldown = (): number => {
     const sentAt = localStorage.getItem(COOLDOWN_KEY)
@@ -35,7 +36,9 @@ const Login: FC = (): ReactNode => {
     const [loadingMethod, setLoadingMethod] = useState<LoginLoadingMethod>(null)
     const [cooldown, setCooldown] = useState(getRemainingCooldown)
     const [codeError, setCodeError] = useState(false)
+    const [emailError, setEmailError] = useState('')
     const inputRefs = useRef<(HTMLInputElement | null)[]>([])
+    const pastedRef = useRef(false)
     const {
         user,
         loading: authLoading,
@@ -82,7 +85,15 @@ const Login: FC = (): ReactNode => {
     }, [])
 
     const handleSendOtp = useCallback(async () => {
-        if (!email.trim() || loadingMethod || cooldown > 0) return
+        if (loadingMethod || cooldown > 0) return
+
+        const trimmed = email.trim()
+        if (!trimmed || !EMAIL_REGEX.test(trimmed) || trimmed.length > 320) {
+            setEmailError(t('auth.invalidEmailFormat'))
+            return
+        }
+
+        setEmailError('')
         setLoadingMethod('email')
         try {
             await sendOtp(email.trim())
@@ -123,6 +134,13 @@ const Login: FC = (): ReactNode => {
         [email, loadingMethod, verifyOtp, showToast]
     )
 
+    useEffect(() => {
+        if (pastedRef.current && code.every((d) => d !== '')) {
+            pastedRef.current = false
+            handleVerifyOtp(code.join(''))
+        }
+    }, [code, handleVerifyOtp])
+
     const handleCodeChange = useCallback(
         (value: string, index: number) => {
             if (!/^\d*$/.test(value)) return
@@ -136,6 +154,9 @@ const Login: FC = (): ReactNode => {
                         newCode[index + i] = digit
                     }
                 })
+                if (newCode.every((d) => d !== '')) {
+                    pastedRef.current = true
+                }
                 setCode(newCode)
                 setCodeError(false)
                 const nextIndex = Math.min(
@@ -223,7 +244,7 @@ const Login: FC = (): ReactNode => {
         }
     }, [cooldown, loadingMethod, email, sendOtp, startCooldown, showToast])
 
-    if (authLoading) {
+    if (authLoading || user) {
         return (
             <div className='bg-background text-foreground relative flex min-h-screen items-center justify-center px-4'>
                 <PageBackground />
@@ -241,6 +262,7 @@ const Login: FC = (): ReactNode => {
                         : t('auth.checkYourEmail')
                 }
                 description={t('auth.signInDescription')}
+                noIndex
             />
             <PageBackground />
             <motion.div
@@ -269,15 +291,23 @@ const Login: FC = (): ReactNode => {
                                     {t('auth.emailAddress')}
                                 </Label>
                                 <Input
-                                    type='email'
+                                    type='text'
                                     id='email'
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     placeholder={t('auth.emailPlaceholder')}
-                                    required
                                     disabled={!!loadingMethod}
-                                    className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground h-11 focus:border-[#ef5350]/50 focus:ring-[#ef5350]/20'
+                                    className={`bg-foreground/5 text-foreground placeholder:text-muted-foreground h-11 ${
+                                        emailError
+                                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
+                                            : 'border-border focus:border-[#ef5350]/50 focus:ring-[#ef5350]/20'
+                                    }`}
                                 />
+                                {emailError && (
+                                    <p className='text-sm text-red-500'>
+                                        {emailError}
+                                    </p>
+                                )}
                             </div>
 
                             <Button

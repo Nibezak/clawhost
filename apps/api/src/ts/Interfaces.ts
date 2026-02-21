@@ -1,5 +1,6 @@
 import type {
     ClawFileType,
+    FeatureRequestStatus,
     ProviderType,
     SubscriptionStatus,
     WebhookEventType
@@ -585,6 +586,11 @@ export interface VerifyOtpBody {
     code: string
 }
 
+export interface ResolveCredentialConflictBody {
+    accessToken: string
+    providerId: string
+}
+
 export interface OtpCodeEmailProps {
     code: string
 }
@@ -955,6 +961,54 @@ export interface RenameClawBody {
     name: string
 }
 
+export interface BindingMatch {
+    channel: string
+}
+
+export interface Binding {
+    agentId: string
+    match: BindingMatch
+}
+
+export interface ClawBindingsResponse {
+    bindings: Binding[]
+    channels: Record<string, ChannelConfig>
+    agents: Array<{ id: string; name: string }>
+}
+
+export interface UpdateClawBindingsBody {
+    bindings: Binding[]
+}
+
 export interface RootLayoutProps {
     children: React.ReactNode
+}
+
+export interface CreateFeatureRequestBody {
+    title: string
+    description: string
+}
+
+export interface UpdateFeatureRequestStatusBody {
+    status: FeatureRequestStatus
+    rejectionReason?: string
+}
+
+export interface FeatureRequestResponse {
+    id: string
+    title: string
+    description: string
+    status: FeatureRequestStatus
+    rejectionReason: string | null
+    upvoteCount: number
+    userId: string
+    userName: string | null
+    userEmail: string
+    hasUpvoted: boolean
+    createdAt: string
+}
+
+export interface FeatureRequestsListResponse {
+    items: FeatureRequestResponse[]
+    total: number
 }

@@ -19,6 +19,7 @@ const Privacy = lazy(() => import('@/pages/Privacy'))
 const Changelog = lazy(() => import('@/pages/Changelog'))
 const Blog = lazy(() => import('@/pages/Blog'))
 const BlogPost = lazy(() => import('@/pages/BlogPost'))
+const Compare = lazy(() => import('@/pages/Compare'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
 
 const App: FC = (): ReactNode => {
@@ -42,6 +43,7 @@ const App: FC = (): ReactNode => {
                         />
                         <Route path={ROUTES.BLOG} element={<Blog />} />
                         <Route path={ROUTES.BLOG_POST} element={<BlogPost />} />
+                        <Route path={ROUTES.COMPARE} element={<Compare />} />
                         <Route
                             path={ROUTES.CLAWS}
                             element={

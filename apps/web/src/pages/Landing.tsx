@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react'
 import type { Faq, Testimonial } from '@/ts/Interfaces'
 import type { ProviderType } from '@/ts/Types'
 
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { t } from '@openclaw/i18n'
@@ -22,7 +22,7 @@ import {
     PlaygroundAgentDetailPanel
 } from '@/components/playground'
 import { useAuth } from '@/lib/auth'
-import { ROUTES } from '@/lib'
+import { ROUTES, getBaseDomain } from '@/lib'
 import { usePlans } from '@/hooks'
 import { getBaseDomain } from '@/lib'
 import { useUIStore } from '@/lib/store'
@@ -43,7 +43,8 @@ import {
     LinkIcon,
     ArrowsClockwiseIcon,
     XIcon,
-    PlayCircleIcon
+    PlayCircleIcon,
+    ArrowRightIcon
 } from '@phosphor-icons/react'
 
 const getTestimonials = (): Testimonial[] => [
@@ -109,6 +110,7 @@ const getFaqs = (): Faq[] => [
 ]
 
 const Landing: FC = (): ReactNode => {
+    const { hash } = useLocation()
     const { user } = useAuth()
     const { phBannerVisible } = useUIStore()
     const showTutorialBadge = true
@@ -140,6 +142,15 @@ const Landing: FC = (): ReactNode => {
         window.addEventListener('resize', handleResize)
         return () => window.removeEventListener('resize', handleResize)
     }, [])
+
+    useEffect(() => {
+        if (!hash) return
+        const id = hash.replace('#', '')
+        const el = document.getElementById(id)
+        if (el) {
+            setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 100)
+        }
+    }, [hash])
 
     const mobileDemoData = useMemo(() => {
         if (!isMobile) return demoPlaygroundData
@@ -246,6 +257,7 @@ const Landing: FC = (): ReactNode => {
             <PageTitle
                 title={t('landing.title')}
                 description={t('landing.description')}
+                url={`https://${getBaseDomain()}`}
             />
 
             <div className='landing-gradient pointer-events-none fixed inset-0' />
@@ -1260,9 +1272,45 @@ const Landing: FC = (): ReactNode => {
                                         </div>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td className='px-6 py-4'>
+                                        <div className='flex items-center gap-3'>
+                                            <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                            <span className='text-foreground'>
+                                                {t(
+                                                    'landing.comparisonSocialsUs'
+                                                )}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td className='px-6 py-4'>
+                                        <div className='flex items-center gap-3'>
+                                            <XIcon className='h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-400' />
+                                            <span className='text-muted-foreground'>
+                                                {t(
+                                                    'landing.comparisonSocialsOthers'
+                                                )}
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
+                    <Link
+                        to={ROUTES.COMPARE}
+                        className='border-border hover:border-foreground/20 mt-6 flex items-center justify-between rounded-xl border bg-gradient-to-r from-[#ef5350]/10 to-transparent px-6 py-5 transition'
+                    >
+                        <div>
+                            <p className='text-foreground font-semibold'>
+                                {t('landing.seeFullComparison')}
+                            </p>
+                            <p className='text-muted-foreground mt-1 text-sm'>
+                                {t('landing.comparisonCtaText')}
+                            </p>
+                        </div>
+                        <ArrowRightIcon className='text-foreground h-5 w-5 flex-shrink-0' />
+                    </Link>
                 </div>
             </section>
 

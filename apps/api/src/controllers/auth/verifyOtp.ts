@@ -8,6 +8,10 @@ import { db } from '@/db'
 import { otpCodes, users } from '@/db/schema'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
+import {
+    getClientIp,
+    clearRateLimit
+} from '@/controllers/auth/rateLimit'
 
 const MAX_ATTEMPTS = 5
 
@@ -83,12 +87,21 @@ const verifyOtp = async (c: Context) => {
         if (existingUser) {
             uid = existingUser.id
         } else {
+            if (email.includes('+')) {
+                return fail(c, t('api.plusAddressingNotAllowed'), 400)
+            }
+
             uid = crypto.randomUUID()
             await db.insert(users).values({
                 id: uid,
                 email: normalizedEmail
             })
         }
+
+        const keysToClean = [`email:${normalizedEmail}`]
+        const ip = getClientIp(c)
+        if (ip) keysToClean.push(`ip:${ip}`)
+        await clearRateLimit(...keysToClean)
 
         const customToken = await auth().createCustomToken(uid)
         return ok(c, { customToken }, t('api.otpVerified'))

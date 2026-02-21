@@ -214,11 +214,16 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                         <ClawAvatar />
                         <div className='space-y-0'>
                             <h3 className='text-foreground text-sm font-semibold leading-tight'>
-                                {claw.name.length > TRUNCATE_LENGTHS.PANEL_NAME ? (
+                                {claw.name.length >
+                                TRUNCATE_LENGTHS.PANEL_NAME ? (
                                     <Tooltip>
                                         <TooltipTrigger asChild>
                                             <span>
-                                                {claw.name.slice(0, TRUNCATE_LENGTHS.PANEL_NAME)}...
+                                                {claw.name.slice(
+                                                    0,
+                                                    TRUNCATE_LENGTHS.PANEL_NAME
+                                                )}
+                                                ...
                                             </span>
                                         </TooltipTrigger>
                                         <TooltipContent>
@@ -229,16 +234,23 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                     <span>{claw.name}</span>
                                 )}
                             </h3>
-                            {claw.status !== clawStatus.configuring && (
-                                <a
-                                    href={`https://${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                    className='text-muted-foreground hover:text-foreground/80 block truncate text-xs leading-tight transition-colors'
-                                >
-                                    {claw.subdomain || generateSlug(claw.id)}.
-                                    {getBaseDomain()}
-                                </a>
+                            {claw.status !== clawStatus.configuring &&
+                                claw.provider !== 'local' && (
+                                    <a
+                                        href={`https://${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
+                                        target='_blank'
+                                        rel='noopener noreferrer'
+                                        className='text-muted-foreground hover:text-foreground/80 block truncate text-xs leading-tight transition-colors'
+                                    >
+                                        {claw.subdomain ||
+                                            generateSlug(claw.id)}
+                                        .{getBaseDomain()}
+                                    </a>
+                                )}
+                            {claw.provider === 'local' && claw.port && (
+                                <span className='text-muted-foreground block truncate text-xs leading-tight'>
+                                    localhost:{claw.port}
+                                </span>
                             )}
                         </div>
                     </div>
@@ -250,7 +262,9 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                     </button>
                 </div>
 
-                <div className={`border-border flex border-b ${fullScreen ? '' : 'overflow-x-auto'}`}>
+                <div
+                    className={`border-border flex border-b ${fullScreen ? '' : 'overflow-x-auto'}`}
+                >
                     {tabs.map((tab) => (
                         <button
                             key={tab.id}
@@ -310,9 +324,11 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                             ? t('createClaw.providerHetzner')
                                             : claw.provider === 'vultr'
                                               ? t('createClaw.providerVultr')
-                                              : t(
-                                                    'createClaw.providerDigitalOcean'
-                                                )
+                                              : claw.provider === 'local'
+                                                ? t('createClaw.providerLocal')
+                                                : t(
+                                                      'createClaw.providerDigitalOcean'
+                                                  )
                                     }
                                     icon={
                                         <ProviderIcon
@@ -483,8 +499,14 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                     <input
                                         type='text'
                                         value={settingsName}
-                                        onChange={(e) => handleSettingsNameChange(e.target.value)}
-                                        placeholder={t('playground.settingsNamePlaceholder')}
+                                        onChange={(e) =>
+                                            handleSettingsNameChange(
+                                                e.target.value
+                                            )
+                                        }
+                                        placeholder={t(
+                                            'playground.settingsNamePlaceholder'
+                                        )}
                                         className={`bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors focus:border-[#ef5350]/50 ${
                                             settingsNameError
                                                 ? 'border-red-500/50'
@@ -497,14 +519,20 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                         </p>
                                     ) : (
                                         <p className='text-muted-foreground mt-1.5 text-[11px]'>
-                                            {t('playground.settingsNameDescription')}
+                                            {t(
+                                                'playground.settingsNameDescription'
+                                            )}
                                         </p>
                                     )}
                                 </div>
 
                                 <button
                                     onClick={handleSettingsSave}
-                                    disabled={!settingsHasChanges || !!settingsNameError || renameMutation.isPending}
+                                    disabled={
+                                        !settingsHasChanges ||
+                                        !!settingsNameError ||
+                                        renameMutation.isPending
+                                    }
                                     className='flex w-full items-center justify-center gap-2 rounded-lg bg-[#ef5350] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
                                 >
                                     {renameMutation.isPending ? (

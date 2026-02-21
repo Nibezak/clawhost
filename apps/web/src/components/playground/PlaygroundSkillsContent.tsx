@@ -537,12 +537,16 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                                             ) : active ? (
                                                 <>
                                                     <TrashIcon className='h-3 w-3' />
-                                                    {t('playground.clawHubRemove')}
+                                                    {t(
+                                                        'playground.clawHubRemove'
+                                                    )}
                                                 </>
                                             ) : (
                                                 <>
                                                     <DownloadSimpleIcon className='h-3 w-3' />
-                                                    {t('playground.clawHubInstall')}
+                                                    {t(
+                                                        'playground.clawHubInstall'
+                                                    )}
                                                 </>
                                             )}
                                         </button>
@@ -657,12 +661,16 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                                             ) : isInstalled ? (
                                                 <>
                                                     <TrashIcon className='h-3 w-3' />
-                                                    {t('playground.clawHubRemove')}
+                                                    {t(
+                                                        'playground.clawHubRemove'
+                                                    )}
                                                 </>
                                             ) : (
                                                 <>
                                                     <DownloadSimpleIcon className='h-3 w-3' />
-                                                    {t('playground.clawHubInstall')}
+                                                    {t(
+                                                        'playground.clawHubInstall'
+                                                    )}
                                                 </>
                                             )}
                                         </button>

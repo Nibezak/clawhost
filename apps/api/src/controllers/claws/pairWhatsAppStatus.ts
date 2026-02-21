@@ -39,7 +39,9 @@ const pairWhatsAppStatus = async (c: AuthenticatedContext) => {
                 8000
             )
 
-            const sections = output.split('===SEPARATOR===').map((s) => s.trim())
+            const sections = output
+                .split('===SEPARATOR===')
+                .map((s) => s.trim())
             const credsSection = sections[0] || ''
             const logSection = sections[1] || ''
             const pidSection = sections[2] || ''
@@ -57,7 +59,8 @@ const pairWhatsAppStatus = async (c: AuthenticatedContext) => {
 
             const isRunning = pidSection.includes('STATUS:RUNNING')
             const logExists = logFileSection.includes('STATUS:LOG_EXISTS')
-            const hasLogContent = !logSection.includes('STATUS:NO_LOG') && logSection.length > 0
+            const hasLogContent =
+                !logSection.includes('STATUS:NO_LOG') && logSection.length > 0
 
             if (!logExists) {
                 return ok(c, { status: 'waiting' })
@@ -66,7 +69,9 @@ const pairWhatsAppStatus = async (c: AuthenticatedContext) => {
             if (hasLogContent) {
                 const logLines = logSection.split('\n')
                 const qrLines = logLines.filter((line) =>
-                    /[\u2580\u2584\u2588\u258C\u2590\u2591\u2592\u2593\u25A0\u25A1\u25AA\u25AB]/.test(line)
+                    /[\u2580\u2584\u2588\u258C\u2590\u2591\u2592\u2593\u25A0\u25A1\u25AA\u25AB]/.test(
+                        line
+                    )
                 )
 
                 if (qrLines.length > 5) {
@@ -75,7 +80,10 @@ const pairWhatsAppStatus = async (c: AuthenticatedContext) => {
             }
 
             if (!isRunning && hasLogContent) {
-                return ok(c, { status: 'failed', log: logSection.slice(0, 500) })
+                return ok(c, {
+                    status: 'failed',
+                    log: logSection.slice(0, 500)
+                })
             }
 
             return ok(c, { status: 'waiting' })

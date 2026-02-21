@@ -32,7 +32,11 @@ const pairWhatsApp = async (c: AuthenticatedContext) => {
             )
 
             if (credsCheck.includes('HAS_CREDS')) {
-                return ok(c, { status: 'already_paired' }, t('api.whatsappAlreadyPaired'))
+                return ok(
+                    c,
+                    { status: 'already_paired' },
+                    t('api.whatsappAlreadyPaired')
+                )
             }
 
             const helpCheck = await executeSSH(
@@ -42,10 +46,15 @@ const pairWhatsApp = async (c: AuthenticatedContext) => {
                 8000
             )
 
-            const supportsWhatsApp = helpCheck.includes('whatsapp') || helpCheck.includes('WhatsApp')
+            const supportsWhatsApp =
+                helpCheck.includes('whatsapp') || helpCheck.includes('WhatsApp')
 
             if (!supportsWhatsApp) {
-                return ok(c, { status: 'unsupported' }, t('api.whatsappUnsupported'))
+                return ok(
+                    c,
+                    { status: 'unsupported' },
+                    t('api.whatsappUnsupported')
+                )
             }
 
             await executeSSH(

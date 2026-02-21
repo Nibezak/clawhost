@@ -44,7 +44,11 @@ const PlaygroundAgentNode: FC<PlaygroundAgentNodeProps> = ({
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <span className='text-foreground flex-1 truncate text-sm font-medium'>
-                                    {agent.name.slice(0, TRUNCATE_LENGTHS.NODE_AGENT_NAME)}...
+                                    {agent.name.slice(
+                                        0,
+                                        TRUNCATE_LENGTHS.NODE_AGENT_NAME
+                                    )}
+                                    ...
                                 </span>
                             </TooltipTrigger>
                             <TooltipContent>{agent.name}</TooltipContent>

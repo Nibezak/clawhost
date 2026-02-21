@@ -4,6 +4,9 @@ import type {
     ClawEnvVarsResponse,
     BillingInvoiceResponse,
     Claw,
+    CreateFeatureRequestData,
+    FeatureRequest,
+    FeatureRequestsListResponse,
     RenameClawData,
     ClawAgentsResponse,
     ClawChannelsResponse,
@@ -25,6 +28,7 @@ import type {
     PurchaseClawData,
     PurchaseClawResponse,
     ReadClawFileResponse,
+    ResolveCredentialConflictData,
     SSHKey,
     CreateAgentData,
     CreateAgentResponse,
@@ -32,6 +36,7 @@ import type {
     UpdateAgentConfigData,
     UpdateAgentSkillsData,
     UpdateClawChannelsData,
+    UpdateFeatureRequestStatusData,
     WhatsAppPairResponse,
     WhatsAppPairStatusResponse,
     BrowseClawHubData,
@@ -40,6 +45,8 @@ import type {
     ClawHubBrowseResponse,
     ClawHubInstalledResponse,
     ClawHubUpdatesResponse,
+    ClawBindingsResponse,
+    UpdateClawBindingsData,
     UpdateClawEnvVarsData,
     UpdateClawFileData,
     UpdateClawSkillsData,
@@ -49,6 +56,7 @@ import type {
     VerifyOtpResponse,
     VolumePricing
 } from '@/ts/Interfaces'
+import type { FeatureRequestSortBy } from '@/ts/Types'
 
 import { RequestClient } from '@openclaw/shared'
 import { signOut } from 'firebase/auth'
@@ -83,6 +91,8 @@ const api = {
             email,
             code
         }),
+    resolveCredentialConflict: (data: ResolveCredentialConflictData) =>
+        publicClient.post<VerifyOtpResponse>('/auth/resolve-credential-conflict', data),
 
     getPlans: (provider?: string) =>
         client.get<PlansResponse>(
@@ -155,9 +165,17 @@ const api = {
     updateClawChannels: (id: string, data: UpdateClawChannelsData) =>
         client.put<void>(`/claws/${id}/channels`, data),
     pairWhatsApp: (id: string) =>
-        client.post<WhatsAppPairResponse>(`/claws/${id}/channels/whatsapp/pair`),
+        client.post<WhatsAppPairResponse>(
+            `/claws/${id}/channels/whatsapp/pair`
+        ),
     pairWhatsAppStatus: (id: string) =>
-        client.post<WhatsAppPairStatusResponse>(`/claws/${id}/channels/whatsapp/pair-status`),
+        client.post<WhatsAppPairStatusResponse>(
+            `/claws/${id}/channels/whatsapp/pair-status`
+        ),
+    getClawBindings: (id: string) =>
+        client.post<ClawBindingsResponse>(`/claws/${id}/bindings`),
+    updateClawBindings: (id: string, data: UpdateClawBindingsData) =>
+        client.put<void>(`/claws/${id}/bindings`, data),
     getClawSkills: (id: string) =>
         client.post<ClawSkillsResponse>(`/claws/${id}/skills`),
     updateClawSkills: (id: string, data: UpdateClawSkillsData) =>
@@ -255,7 +273,28 @@ const api = {
             `/users/me/billing/${orderId}/invoice`
         ),
     getCustomerPortal: () =>
-        client.post<CustomerPortalResponse>('/users/me/billing/portal')
+        client.post<CustomerPortalResponse>('/users/me/billing/portal'),
+
+    getFeatureRequests: (sort?: FeatureRequestSortBy) =>
+        client.get<FeatureRequestsListResponse>(
+            `/feature-requests${sort ? `?sort=${sort}` : ''}`
+        ),
+    getFeatureRequestsPublic: (sort?: FeatureRequestSortBy) =>
+        publicClient.get<FeatureRequestsListResponse>(
+            `/feature-requests${sort ? `?sort=${sort}` : ''}`
+        ),
+    createFeatureRequest: (data: CreateFeatureRequestData) =>
+        client.post<FeatureRequest>('/feature-requests', data),
+    upvoteFeatureRequest: (id: string) =>
+        client.post<{ upvoteCount: number; hasUpvoted: boolean }>(
+            `/feature-requests/${id}/upvote`
+        ),
+    updateFeatureRequestStatus: (
+        id: string,
+        data: UpdateFeatureRequestStatusData
+    ) => client.put<void>(`/feature-requests/${id}/status`, data),
+    deleteFeatureRequest: (id: string) =>
+        client.delete<void>(`/feature-requests/${id}`)
 }
 
 export default api

@@ -4,6 +4,7 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { bodyLimit } from 'hono/body-limit'
 import { verifyToken } from '@/services/firebase'
+import { eq, sql } from 'drizzle-orm'
 import { db } from '@/db'
 import { users } from '@/db/schema'
 import { ok, fail } from '@/lib/response'
@@ -11,6 +12,7 @@ import { t } from '@openclaw/i18n'
 import {
     authRoutes,
     clawsRoutes,
+    featureRequestsRoutes,
     plansRoutes,
     sshKeysRoutes,
     usersRoutes,
@@ -52,6 +54,7 @@ app.get('/', (c) => ok(c, null, t('api.healthOk')))
 app.route('/auth', authRoutes)
 app.route('/plans', plansRoutes)
 app.route('/webhooks', webhooksRoutes)
+app.route('/feature-requests', featureRequestsRoutes)
 
 app.use('/*', async (c, next) => {
     try {
@@ -67,19 +70,51 @@ app.use('/*', async (c, next) => {
             return fail(c, t('api.invalidToken'), 401)
         }
 
-        await db
-            .insert(users)
-            .values({
-                id: decoded.uid,
-                email: decoded.email || '',
-                authMethods: ['email']
-            })
-            .onConflictDoUpdate({
-                target: users.id,
-                set: {
-                    email: decoded.email || ''
-                }
-            })
+        const signInProvider = decoded.firebase?.sign_in_provider
+        const authMethod = signInProvider === 'google.com' ? 'google'
+            : signInProvider === 'github.com' ? 'github'
+            : 'email'
+
+        const existingUser = await db
+            .select({ id: users.id })
+            .from(users)
+            .where(eq(users.id, decoded.uid))
+            .then((rows) => rows[0])
+
+        if (existingUser) {
+            await db
+                .update(users)
+                .set({
+                    ...(decoded.email ? { email: decoded.email } : {}),
+                    authMethods: sql`CASE
+                        WHEN ${authMethod} = ANY(COALESCE(${users.authMethods}, '{}'))
+                        THEN COALESCE(${users.authMethods}, '{}')
+                        ELSE array_append(COALESCE(${users.authMethods}, '{}'), ${authMethod})
+                    END`
+                })
+                .where(eq(users.id, decoded.uid))
+        } else if (decoded.email) {
+            await db
+                .insert(users)
+                .values({
+                    id: decoded.uid,
+                    email: decoded.email,
+                    authMethods: [authMethod]
+                })
+                .onConflictDoUpdate({
+                    target: users.id,
+                    set: {
+                        email: decoded.email,
+                        authMethods: sql`CASE
+                            WHEN ${authMethod} = ANY(COALESCE(${users.authMethods}, '{}'))
+                            THEN COALESCE(${users.authMethods}, '{}')
+                            ELSE array_append(COALESCE(${users.authMethods}, '{}'), ${authMethod})
+                        END`
+                    }
+                })
+        } else {
+            return fail(c, t('api.unauthorized'), 401)
+        }
 
         c.set('userId', decoded.uid)
         return next()

@@ -207,7 +207,11 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <p className='text-foreground truncate text-[13px] font-medium'>
-                                    {claw.name.slice(0, TRUNCATE_LENGTHS.SIDEBAR_CLAW_NAME)}...
+                                    {claw.name.slice(
+                                        0,
+                                        TRUNCATE_LENGTHS.SIDEBAR_CLAW_NAME
+                                    )}
+                                    ...
                                 </p>
                             </TooltipTrigger>
                             <TooltipContent>{claw.name}</TooltipContent>
@@ -218,16 +222,25 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                         </p>
                     )}
                     {claw.status !== clawStatus.configuring ? (
-                        <a
-                            href={`https://${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
-                            target='_blank'
-                            rel='noopener noreferrer'
-                            onClick={(e) => e.stopPropagation()}
-                            className='text-muted-foreground hover:text-foreground/80 block truncate text-[11px] transition-colors'
-                        >
-                            {claw.subdomain || generateSlug(claw.id)}.
-                            {getBaseDomain()}
-                        </a>
+                        claw.provider === 'local' && claw.port ? (
+                            <span
+                                className='text-muted-foreground block truncate text-[11px]'
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                localhost:{claw.port}
+                            </span>
+                        ) : (
+                            <a
+                                href={`https://${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                onClick={(e) => e.stopPropagation()}
+                                className='text-muted-foreground hover:text-foreground/80 block truncate text-[11px] transition-colors'
+                            >
+                                {claw.subdomain || generateSlug(claw.id)}.
+                                {getBaseDomain()}
+                            </a>
+                        )
                     ) : (
                         <p className='text-muted-foreground truncate text-[11px]'>
                             {statusConfig.label}

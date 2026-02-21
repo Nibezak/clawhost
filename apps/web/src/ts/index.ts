@@ -1,6 +1,7 @@
 export type {
     AuthMethod,
     ChatMessageRole,
+    CompareFeatureStatus,
     OAuthProvider,
     ChatMessageStatus,
     ClawAvatarSize,
@@ -16,6 +17,8 @@ export type {
     ThemeMode,
     ToastType,
     ClawFileType,
+    FeatureRequestSortBy,
+    FeatureRequestStatus,
     UserRole
 } from '@/ts/Types'
 
@@ -74,6 +77,7 @@ export type {
     CreateAgentResponse,
     CreateClawData,
     CreateSSHKeyData,
+    ResolveCredentialConflictData,
     DeleteAgentData,
     DemoPlaygroundData,
     UpdateProfileData,
@@ -98,5 +102,15 @@ export type {
     ClawHubUpdatesResponse,
     BrowseClawHubData,
     ClawHubSkillActionData,
-    ClawHubUpdateData
+    ClawHubUpdateData,
+    CompareCompetitor,
+    CompareFeatureValue,
+    CompareFeature,
+    CompareCategory,
+    CreateFeatureRequestData,
+    FeatureRequest,
+    FeatureRequestCardProps,
+    FeatureRequestsListResponse,
+    FeatureRequestStatusBadgeProps,
+    UpdateFeatureRequestStatusData
 } from '@/ts/Interfaces'

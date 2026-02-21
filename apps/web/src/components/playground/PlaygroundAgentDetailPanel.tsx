@@ -24,13 +24,15 @@ import {
     CheckIcon,
     TrashIcon,
     LightningIcon,
+    ChatsCircleIcon,
     ArrowsOutIcon,
     ArrowsInIcon
 } from '@phosphor-icons/react'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import {
     AgentChat,
-    PlaygroundSkillsContent
+    PlaygroundSkillsContent,
+    PlaygroundBindingsContent
 } from '@/components/playground'
 import { ClawAvatar, PanelPlaceholder } from '@/components'
 import {
@@ -61,6 +63,11 @@ const tabs: PlaygroundTabConfig<PlaygroundAgentDetailTab>[] = [
         id: AGENT_DETAIL_TABS.CHAT,
         label: 'playground.tabChat',
         icon: ChatCircleIcon
+    },
+    {
+        id: AGENT_DETAIL_TABS.CHANNELS,
+        label: 'playground.tabChannels',
+        icon: ChatsCircleIcon
     },
     {
         id: AGENT_DETAIL_TABS.SKILLS,
@@ -399,11 +406,16 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                         <ClawAvatar />
                         <div className='space-y-0'>
                             <h3 className='text-foreground text-sm font-semibold leading-tight'>
-                                {agent.name.length > TRUNCATE_LENGTHS.PANEL_NAME ? (
+                                {agent.name.length >
+                                TRUNCATE_LENGTHS.PANEL_NAME ? (
                                     <Tooltip>
                                         <TooltipTrigger asChild>
                                             <span>
-                                                {agent.name.slice(0, TRUNCATE_LENGTHS.PANEL_NAME)}...
+                                                {agent.name.slice(
+                                                    0,
+                                                    TRUNCATE_LENGTHS.PANEL_NAME
+                                                )}
+                                                ...
                                             </span>
                                         </TooltipTrigger>
                                         <TooltipContent>
@@ -415,14 +427,17 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                                 )}
                             </h3>
                             <span className='text-muted-foreground block text-xs leading-tight'>
-                                {clawName.length > TRUNCATE_LENGTHS.PANEL_CLAW_SUBTITLE ? (
+                                {clawName.length >
+                                TRUNCATE_LENGTHS.PANEL_CLAW_SUBTITLE ? (
                                     <Tooltip>
                                         <TooltipTrigger asChild>
                                             <span>
                                                 {t('playground.agentOnClaw', {
                                                     clawName:
-                                                        clawName.slice(0, TRUNCATE_LENGTHS.PANEL_CLAW_SUBTITLE) +
-                                                        '...'
+                                                        clawName.slice(
+                                                            0,
+                                                            TRUNCATE_LENGTHS.PANEL_CLAW_SUBTITLE
+                                                        ) + '...'
                                                 })}
                                             </span>
                                         </TooltipTrigger>
@@ -528,9 +543,7 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                                                 : 'text-muted-foreground hover:text-foreground/80 border-transparent'
                                         }`}
                                     >
-                                        <tab.icon
-                                            className='h-3.5 w-3.5'
-                                        />
+                                        <tab.icon className='h-3.5 w-3.5' />
                                         {t(tab.label as TranslationKey)}
                                     </button>
                                 ))}
@@ -551,6 +564,14 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                             readOnly={readOnly}
                         />
                     )}
+
+                    {!isExpanded &&
+                        activeTab === AGENT_DETAIL_TABS.CHANNELS && (
+                            <PlaygroundBindingsContent
+                                clawId={clawId}
+                                agentId={agent.id}
+                            />
+                        )}
 
                     {!isExpanded && activeTab === AGENT_DETAIL_TABS.SKILLS && (
                         <PlaygroundSkillsContent

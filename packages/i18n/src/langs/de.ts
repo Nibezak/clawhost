@@ -68,7 +68,9 @@ const de: Translations = {
         faq: 'Fragen',
         blog: 'Blog',
         changelog: 'Änderungsprotokoll',
-        legalAndMore: 'Rechtliches & Mehr',
+        featureRequests: 'Funktionsanfragen',
+        compare: 'Vollständiger Vergleich',
+        legalAndMore: 'Sonstiges',
         documentation: 'Dokumentation',
         productDescription:
             'Produktionsreife Infrastruktur mit OpenClaw-Bereitstellung per Klick, vollständig verwaltet – bauen, liefern und schneller vorankommen mit KI.'
@@ -129,6 +131,7 @@ const de: Translations = {
         inputTooLong: 'Eingabe überschreitet die maximal zulässige Länge!',
         invalidEnvVars: 'Ungültige Umgebungsvariablennamen oder -werte!',
         invalidEmailFormat: 'Ungültiges E-Mail-Format!',
+        plusAddressingNotAllowed: 'Plus-Adressierung ist für die E-Mail-Anmeldung nicht erlaubt!',
         invalidRedirectUrl: 'Ungültige Weiterleitungs-URL!',
         fileTooLarge: 'Dateiinhalt überschreitet die maximal zulässige Größe!',
         nameAndKeyRequired:
@@ -179,7 +182,8 @@ const de: Translations = {
         failedToInstallVersion: 'Version konnte nicht installiert werden.',
         installVersionSuccess: 'Version erfolgreich installiert.',
         invalidVersion: 'Ungültiges Versionsformat.',
-        outdatedVersion: 'Diese Version ist veraltet und kann nicht installiert werden.',
+        outdatedVersion:
+            'Diese Version ist veraltet und kann nicht installiert werden.',
         failedToGetDiagnostics: 'Verbindung zur Instanz fehlgeschlagen!',
         failedToGetDiagnosticsDescription:
             'Diagnose konnte nicht abgerufen werden. Die Instanz ist möglicherweise offline oder wird gestartet.',
@@ -212,6 +216,8 @@ const de: Translations = {
             'Zu viele fehlgeschlagene Versuche. Bitte fordere einen neuen Code an.',
         otpInvalidCode: 'Ungültiger Code. Bitte versuche es erneut.',
         internalServerError: 'Ein interner Fehler ist aufgetreten.',
+        invalidCredentials: 'Ungültige Anmeldedaten!',
+        accountLinked: 'Konto erfolgreich verknüpft.',
         webhookProcessingFailed: 'Webhook-Verarbeitung fehlgeschlagen!',
         adminAccessDenied: 'Administratorzugang erforderlich!',
         clawsFetched: 'Claws erfolgreich abgerufen.',
@@ -276,7 +282,16 @@ const de: Translations = {
         whatsappPairStarted: 'WhatsApp-Kopplung gestartet.',
         whatsappPairFailed: 'WhatsApp-Kopplung fehlgeschlagen.',
         whatsappAlreadyPaired: 'WhatsApp ist bereits gekoppelt.',
-        whatsappUnsupported: 'Diese Instanz unterstützt die WhatsApp-Kopplung noch nicht.',
+        whatsappUnsupported:
+            'Diese Instanz unterstützt die WhatsApp-Kopplung noch nicht.',
+        bindingsFetched: 'Bindungen erfolgreich abgerufen.',
+        bindingsFetchFailed: 'Bindungen konnten nicht abgerufen werden.',
+        bindingsUpdated: 'Bindungen erfolgreich aktualisiert.',
+        bindingsUpdateFailed: 'Bindungen konnten nicht aktualisiert werden.',
+        bindingsInvalidFormat: 'Ungültiges Bindungsformat.',
+        bindingsInvalidChannel: 'Nicht unterstützter Kanal in der Bindung.',
+        bindingsDuplicateChannel:
+            'Ein Kanal kann nur einem Agenten zugewiesen werden.',
         skillsFetched: 'Skills erfolgreich abgerufen.',
         skillsUpdated: 'Skills erfolgreich aktualisiert.',
         skillsUpdateFailed: 'Skills konnten nicht aktualisiert werden.',
@@ -312,7 +327,32 @@ const de: Translations = {
         failedToConnectAuthMethod:
             'Authentifizierungsmethode konnte nicht verbunden werden!',
         failedToDisconnectAuthMethod:
-            'Authentifizierungsmethode konnte nicht getrennt werden!'
+            'Authentifizierungsmethode konnte nicht getrennt werden!',
+        featureRequestsFetched: 'Feature-Anfragen erfolgreich abgerufen.',
+        featureRequestCreated: 'Feature-Anfrage erfolgreich erstellt.',
+        featureRequestUpvoted: 'Abstimmung aktualisiert.',
+        featureRequestStatusUpdated: 'Status der Anfrage aktualisiert.',
+        featureRequestDeleted: 'Feature-Anfrage gelöscht.',
+        failedToCreateFeatureRequest:
+            'Feature-Anfrage konnte nicht erstellt werden!',
+        failedToUpvoteFeatureRequest:
+            'Abstimmung konnte nicht aktualisiert werden!',
+        failedToUpdateFeatureRequestStatus:
+            'Status konnte nicht aktualisiert werden!',
+        failedToDeleteFeatureRequest:
+            'Feature-Anfrage konnte nicht gelöscht werden!',
+        featureRequestNotFound: 'Feature-Anfrage nicht gefunden!',
+        featureRequestLimitReached:
+            'Du hast das Maximum von {{limit}} offenen Anfragen erreicht!',
+        featureRequestTitleRequired: 'Titel ist erforderlich!',
+        featureRequestDescriptionRequired: 'Beschreibung ist erforderlich!',
+        featureRequestTitleTooLong:
+            'Der Titel darf maximal 200 Zeichen lang sein!',
+        featureRequestDescriptionTooLong:
+            'Die Beschreibung darf maximal 2000 Zeichen lang sein!',
+        featureRequestInvalidStatus: 'Ungültiger Status!',
+        featureRequestRejectionReasonRequired:
+            'Ein Ablehnungsgrund ist erforderlich!'
     },
     emails: {
         otpSubject: 'Dein ClawHost-Anmeldecode',
@@ -342,6 +382,8 @@ const de: Translations = {
         resendCode: 'Code erneut senden',
         changeEmail: 'E-Mail ändern',
         invalidCode: 'Ungültiger Code',
+        invalidEmailFormat: 'Bitte geben Sie eine gültige E-Mail-Adresse ein!',
+        plusAddressingNotAllowed: 'Plus-Adressierung ist für die E-Mail-Anmeldung nicht erlaubt!',
         or: 'oder',
         continueWithGoogle: 'Weiter mit Google',
         continueWithGithub: 'Weiter mit GitHub',
@@ -404,6 +446,7 @@ const de: Translations = {
             'E-Mail ist immer als primäre Anmeldemethode verbunden.',
         providerConnected: '{{provider}} erfolgreich verbunden.',
         providerDisconnected: '{{provider}} erfolgreich getrennt.',
+        providerEmailMismatch: 'Du kannst nur Konten verknüpfen, die dieselbe E-Mail-Adresse verwenden!',
         settings: 'Einstellungen',
         settingsDescription: 'Verwalte deine Dashboard-Einstellungen.',
         showAllClaws: 'Alle Claws aller Benutzer anzeigen'
@@ -543,7 +586,8 @@ const de: Translations = {
         updateInstanceFailed: 'Instanz konnte nicht aktualisiert werden!',
         renameSuccess: 'Claw erfolgreich umbenannt.',
         renameFailed: 'Claw konnte nicht umbenannt werden!',
-        renameInvalidChars: 'Nur Buchstaben, Zahlen und Bindestriche sind erlaubt.',
+        renameInvalidChars:
+            'Nur Buchstaben, Zahlen und Bindestriche sind erlaubt.',
         reinstallInstance: 'Instanz neu installieren',
         reinstallClaw: 'Instanz neu installieren',
         reinstallClawConfirmation:
@@ -609,11 +653,13 @@ const de: Translations = {
             'Konfiguriere deinen Server und beginne mit KI zu arbeiten.',
         clawName: 'Name',
         clawNamePlaceholder: 'z. B. cozy-panda',
-        clawNameInvalidChars: 'Nur Buchstaben, Zahlen und Bindestriche sind erlaubt.',
+        clawNameInvalidChars:
+            'Nur Buchstaben, Zahlen und Bindestriche sind erlaubt.',
         provider: 'Anbieter',
         providerHetzner: 'Hetzner',
         providerDigitalOcean: 'DigitalOcean',
         providerVultr: 'Vultr',
+        providerLocal: 'Lokal',
         providerAws: 'AWS',
         comingSoon: 'Bald',
         location: 'Standort',
@@ -873,6 +919,10 @@ const de: Translations = {
         comparisonExportOthers: 'Anbieterabhängigkeit',
         comparisonProvidersUs: 'Mehrere Serveranbieter',
         comparisonProvidersOthers: 'Nur ein einzelner Anbieter',
+        comparisonSocialsUs: 'Präsenz in sozialen Medien',
+        comparisonSocialsOthers: 'Keine sozialen Medien',
+        seeFullComparison: 'Vollständigen Vergleich anzeigen',
+        comparisonCtaText: 'Wir vergleichen mit SimpleClaw, MyClaw.ai und mehr — Funktion für Funktion.',
         readyToOwnYourPrivacy: 'Bereit, OpenClaw bereitzustellen?',
         ctaDescription:
             'Erhalte einen dedizierten Server mit vorinstalliertem OpenClaw. Voller Root-Zugriff, globale Standorte und in Minuten bereit. Er gehört dir jederzeit.',
@@ -905,19 +955,40 @@ const de: Translations = {
             'Verfolge Updates, neue Funktionen und Verbesserungen an ClawHost.',
         subtitle:
             'Alle Updates, neue Funktionen und Verbesserungen an ClawHost.',
-        upcomingRelease: 'Bevorstehend',
-        upcomingReleaseTitle: 'Mobil, Desktop & Self-Hosting',
+        upcomingRelease: 'In Bearbeitung',
+        upcomingReleaseTitle: 'Mobil, Desktop & Mehr',
         upcomingReleaseDescription:
-            'Verwalte deine OpenClaw-Instanzen von überall. Native Mobil- und Desktop-Apps sowie Self-Hosting per Klick.',
+            'Verwalte deine OpenClaw-Instanzen von überall. Native Mobil- und Desktop-Apps sowie fortlaufende Plattformverbesserungen.',
         upcomingReleaseFeature1:
             'Native mobile App zur Überwachung und Verwaltung deiner OpenClaw-Instanzen unterwegs',
         upcomingReleaseFeature2:
-            'Desktop-App für ein nahtloses lokales Erlebnis auf macOS, Windows und Linux',
+            'Lokale Desktop-App zum Self-Hosting von OpenClaw auf macOS, Windows und Linux',
         upcomingReleaseFeature3: 'Unterstützung für dunkles und helles Design',
         upcomingReleaseFeature4:
             'Verbesserungen bei Leistung, Stabilität und Reaktionsfähigkeit',
         upcomingReleaseFeature5:
             'Mehrsprachige Unterstützung mit Englisch, Französisch, Spanisch und Deutsch',
+        upcomingReleaseFeature6:
+            'Vergleichsseiten mit vollständigen Analysen gegenüber Wettbewerbern',
+        upcomingReleaseFeature7:
+            'Refactoring der Playground-Funktionsstruktur und Vereinfachungen',
+        upcomingReleaseFeature8:
+            'Feature-Anfragen automatisch verwaltet und veröffentlicht durch OpenClaw-Agenten',
+        release9Date: '21. Februar 2026',
+        release9Title: 'Vergleiche, Playground-Refactoring & Mehr',
+        release9Description:
+            'Vergleichsseiten mit Wettbewerbern, Umstrukturierung der Playground-Funktionen, mehrsprachige Unterstützung und allgemeine Leistungsverbesserungen.',
+        release9Feature1: 'Unterstützung für dunkles und helles Design',
+        release9Feature2:
+            'Mehrsprachige Unterstützung mit Englisch, Französisch, Spanisch und Deutsch',
+        release9Feature3:
+            'Vergleichsseiten mit vollständigen Analysen gegenüber Wettbewerbern',
+        release9Feature4:
+            'OpenClaw-Versionen, mit einem Klick aktualisieren oder jede Version sofort installieren',
+        release9Feature5:
+            'Refactoring der Playground-Funktionsstruktur und Vereinfachungen',
+        release9Feature6:
+            'Verbesserungen bei Leistung, Stabilität und Reaktionsfähigkeit',
         release8Date: '18. Februar 2026',
         release8Title: 'Helles Design, Leistung & Stabilität',
         release8Description:
@@ -1017,9 +1088,9 @@ const de: Translations = {
         description:
             'Visualisiere deine Claws und deren Agenten in einem interaktiven Graphen.',
         subtitle: 'Agenten-Topologie über deine Infrastruktur',
-        noClawsYet: 'Keine Claws zum Anzeigen',
+        noClawsYet: 'Keine Claws',
         noClawsDescription:
-            'Stelle deinen ersten Claw bereit, um ihn im Playground zu sehen.',
+            'Stelle deinen ersten Claw bereit, um mit ihm zu interagieren.',
         loadingAgents: 'Agenten',
         unreachable: 'Nicht erreichbar',
         offline: 'Offline',
@@ -1104,7 +1175,8 @@ const de: Translations = {
         addAgentModelPlaceholder: 'Modell auswählen (optional)',
         addAgentApiKey: 'API-Schlüssel',
         addAgentApiKeyPlaceholder: 'API-Schlüssel eingeben (optional)',
-        addAgentApiKeyConfigured: '{{envVar}} bereits gesetzt. Änderbar im Tab Variablen nach dem Hinzufügen.',
+        addAgentApiKeyConfigured:
+            '{{envVar}} bereits gesetzt. Änderbar im Tab Variablen nach dem Hinzufügen.',
         addAgentSubmit: 'Agent hinzufügen',
         addAgentSuccess: 'Agent erfolgreich hinzugefügt.',
         addAgentFailed: 'Agent konnte nicht hinzugefügt werden!',
@@ -1173,13 +1245,17 @@ const de: Translations = {
         channelsWhatsApp: 'WhatsApp',
         channelsWhatsAppPairDevice: 'Gerät koppeln',
         channelsWhatsAppPairing: 'Warte auf QR-Code...',
-        channelsWhatsAppScanQr: 'Scanne diesen QR-Code mit WhatsApp, um dein Gerät zu koppeln.',
-        channelsWhatsAppScanInstructions: 'Öffne WhatsApp > Einstellungen > Verknüpfte Geräte > Gerät hinzufügen',
+        channelsWhatsAppScanQr:
+            'Scanne diesen QR-Code mit WhatsApp, um dein Gerät zu koppeln.',
+        channelsWhatsAppScanInstructions:
+            'Öffne WhatsApp > Einstellungen > Verknüpfte Geräte > Gerät hinzufügen',
         channelsWhatsAppPaired: 'WhatsApp erfolgreich gekoppelt.',
-        channelsWhatsAppPairFailed: 'Kopplung fehlgeschlagen. Bitte versuche es erneut.',
+        channelsWhatsAppPairFailed:
+            'Kopplung fehlgeschlagen. Bitte versuche es erneut.',
         channelsWhatsAppAlreadyPaired: 'WhatsApp ist bereits gekoppelt.',
         channelsWhatsAppUnpair: 'Entkoppeln',
-        channelsWhatsAppUnsupported: 'WhatsApp-Kopplung ist auf dieser Instanz nicht verfügbar. Aktualisiere OpenClaw auf eine neuere Version, um sie zu aktivieren.',
+        channelsWhatsAppUnsupported:
+            'WhatsApp-Kopplung ist auf dieser Instanz nicht verfügbar. Aktualisiere OpenClaw auf eine neuere Version, um sie zu aktivieren.',
         channelsTelegram: 'Telegram',
         channelsDiscord: 'Discord',
         channelsSlack: 'Slack',
@@ -1210,6 +1286,14 @@ const de: Translations = {
         channelsLoadFailedDescription:
             'Kanalkonfiguration konnte nicht abgerufen werden. Bitte versuche es erneut.',
         channelsNoChanges: 'Keine Änderungen zum Speichern.',
+        bindingsDescription:
+            'Weise diesem Agenten Messaging-Kanäle zu. Jeder Kanal kann nur einem Agenten gleichzeitig zugewiesen werden.',
+        bindingsNoChannels: 'Keine Kanäle aktiviert.',
+        bindingsNoChannelsDescription:
+            'Aktiviere zuerst Kanäle in den Instanz-Einstellungen und weise sie dann hier den Agenten zu.',
+        bindingsSaving: 'Wird gespeichert...',
+        bindingsSaved: 'Bindungen erfolgreich aktualisiert.',
+        bindingsSaveFailed: 'Fehler beim Aktualisieren der Bindungen!',
         tabSkills: 'Skills',
         skillsDescription:
             'Verwalte gemeinsame Skills, die allen Agenten auf dieser Instanz zur Verfügung stehen.',
@@ -1455,6 +1539,172 @@ const de: Translations = {
         discount: '10% Rabatt',
         yourFirstMonth: 'auf deinen ersten Monat',
         upvoteNow: 'Stimme für uns'
+    },
+    featureRequests: {
+        title: 'Feature-Anfragen',
+        description: 'Stimme für Features ab und schlage neue vor.',
+        subtitle:
+            'Hilf mit, die Zukunft von OpenClaw zu gestalten, indem du Features anforderst und abstimmst.',
+        submitRequest: 'Anfrage einreichen',
+        noRequestsYet: 'Noch keine Feature-Anfragen',
+        noRequestsDescription:
+            'Sei der Erste, der eine Feature-Anfrage einreicht und die Plattform mitgestaltet.',
+        statusAwaitingApproval: 'Wartet auf Genehmigung',
+        statusRequested: 'Angefragt',
+        statusMarkedForImplementation: 'Für Implementierung markiert',
+        statusImplemented: 'Implementiert',
+        statusRejected: 'Abgelehnt',
+        sortByUpvotes: 'Meiste Stimmen',
+        sortByNewest: 'Neueste',
+        sortByStatus: 'Nach Status',
+        upvote: 'Abstimmen',
+        upvoted: 'Abgestimmt',
+        signInToUpvote: 'Melde dich an, um abzustimmen.',
+        signInToSubmit: 'Melde dich an, um eine Anfrage einzureichen.',
+        requestedBy: 'Angefragt von',
+        rejectionReason: 'Ablehnungsgrund',
+        submitModalTitle: 'Feature-Anfrage einreichen',
+        submitModalDescription:
+            'Beschreibe das gewünschte Feature. Unsere KI-Agenten werden genehmigte Anfragen prüfen und umsetzen.',
+        featureTitle: 'Titel',
+        featureTitlePlaceholder:
+            'Ein kurzer, beschreibender Titel für dein Feature',
+        featureDescription: 'Beschreibung',
+        featureDescriptionPlaceholder:
+            'Beschreibe das Feature, das Problem das es löst, und wie du es dir vorstellst',
+        submitting: 'Wird eingereicht...',
+        submitted: 'Feature-Anfrage eingereicht.',
+        failedToSubmit: 'Feature-Anfrage konnte nicht eingereicht werden!',
+        requestLimitReached:
+            'Du hast das Maximum von {{limit}} offenen Anfragen erreicht.',
+        agentBannerTitle: 'Angetrieben von KI-Agenten',
+        agentBannerDescription:
+            'Feature-Anfragen werden von unseren KI-Agenten geprüft und umgesetzt. Stimme für die Features ab, die du am meisten möchtest, um die Priorisierung zu unterstützen.',
+        changeStatus: 'Status ändern',
+        deleteRequest: 'Anfrage löschen',
+        deleteConfirmation:
+            'Bist du sicher, dass du diese Feature-Anfrage löschen möchtest?',
+        rejectModalTitle: 'Feature-Anfrage ablehnen',
+        rejectModalDescription:
+            'Gib einen Grund für die Ablehnung dieser Anfrage an.',
+        rejectReasonPlaceholder: 'Erkläre, warum diese Anfrage abgelehnt wird',
+        rejectReasonRequired: 'Ein Ablehnungsgrund ist erforderlich.',
+        statusUpdated: 'Status der Anfrage aktualisiert.',
+        failedToUpdateStatus: 'Status konnte nicht aktualisiert werden!',
+        deleted: 'Feature-Anfrage gelöscht.',
+        failedToDelete: 'Löschen fehlgeschlagen!',
+        upvoteToggled: 'Abstimmung aktualisiert.',
+        failedToUpvote: 'Abstimmung konnte nicht aktualisiert werden!'
+    },
+    compare: {
+        title: 'Vollständiger Vergleich',
+        description:
+            'Erfahre, wie sich ClawHost von anderen OpenClaw-Hosting-Plattformen unterscheidet.',
+        badge: 'Vergleich',
+        feature: 'Plattform',
+        lastUpdated: 'Zuletzt aktualisiert: Februar 2026',
+        competitorClawHost: 'ClawHost',
+        competitorSimpleClaw: 'SimpleClaw',
+        competitorMyClawAi: 'MyClaw.ai',
+        categoryInfrastructure: 'Infrastruktur',
+        categoryPricing: 'Preise & Abrechnung',
+        categoryDeployment: 'Bereitstellung & Einrichtung',
+        categoryManagement: 'OpenClaw-Verwaltung',
+        categorySecurity: 'Daten & Sicherheit',
+        categoryMonitoring: 'Überwachung & Wartung',
+        categorySupport: 'Support & Plattform',
+        featureServerOwnership: 'Server-Eigentum',
+        featureProviderChoice: 'Cloud-Anbieter-Auswahl',
+        featureDedicatedResources: 'Dedizierte Ressourcen',
+        featureRootAccess: 'Voller Root-/SSH-Zugang',
+        featureServerLocations: 'Serverstandorte',
+        featureStartingPrice: 'Einstiegspreis',
+        featureTransparentPricing: 'Transparente Preise',
+        featurePowerfulServers: 'Leistungsstarke Server, günstiger Preis',
+        featureLocationSelection: 'Serverstandort auswählen',
+        featureSubdomainAccess: 'Zugang über Subdomain',
+        featureThemes: 'Helles und dunkles Theme',
+        featureSetupTime: 'Einrichtungszeit',
+        featureTechnicalSkill: 'Technische Kenntnisse erforderlich',
+        featureOneClickDeploy: 'Ein-Klick-Bereitstellung',
+        featureMultipleInstances: 'Mehrere Instanzen',
+        featureMultipleAgents: 'Mehrere Agenten pro Instanz',
+        featureSkillsMarketplace: 'Skills-Marktplatz',
+        featureChannelSupport: 'Kanal-Unterstützung',
+        featureAgentConfig: 'Agenten-Konfiguration',
+        featureDataOwnership: 'Vollständiges Dateneigentum',
+        featureDataExport: 'Datenexport',
+        featureBackups: 'Backups',
+        featureSecurityHardening: 'Sicherheitshärtung',
+        featureSslTls: 'SSL/TLS',
+        featureOpenSource: 'Open Source',
+        featureAutoUpdates: 'Automatische Updates',
+        featureDiagnostics: 'Echtzeit-Diagnose',
+        featureLogStreaming: 'Log-Streaming',
+        featureRepairTools: 'Reparatur-Tools',
+        featureSupportChannels: 'Support-Kanäle',
+        featureMultiLanguage: 'Mehrsprachige Oberfläche',
+        featureMobileApp: 'Mobile App',
+        featureDesktopApp: 'Desktop-App',
+        featureSocials: 'Soziale Medien',
+        dedicatedVps: 'Dedizierter VPS',
+        sharedContainers: 'Geteilte Container',
+        isolatedContainers: 'Isolierte Container',
+        threeProviders: 'Hetzner, DigitalOcean, Vultr',
+        singleProvider: 'Einzelner Anbieter',
+        fullyDedicated: 'Vollständig dediziert',
+        shared: 'Geteilt',
+        fullRootSsh: 'Vollständiger Root + SSH',
+        noAccess: 'Kein Zugang',
+        thirtyPlusLocations: '30+ Standorte',
+        limitedLocations: 'Begrenzt',
+        fromTenMonth: 'Ab 10 $/Monat',
+        aboutFortyFourMonth: '~44 $/Monat durchschnittlich',
+        fromNineteenMonth: '19–79 $/Monat',
+        clearSpecsPricing: 'Klare Spezifikationen & Preise',
+        unclearPricing: 'Unklare Preise',
+        fixedTiers: '3 feste Stufen',
+        minutes: 'Minuten',
+        underOneMinute: 'Unter 1 Minute',
+        thirtySeconds: '30 Sekunden',
+        noneRequired: 'Keine',
+        minimal: 'Minimal',
+        unlimited: 'Unbegrenzt',
+        singleInstance: 'Einzeln',
+        fiveThousandSkills: '5.000+ Skills (ClawHub)',
+        noMarketplace: 'Kein Marktplatz',
+        allChannels: 'WhatsApp, Telegram, Discord, Slack, Signal',
+        telegramDiscord: 'Telegram, Discord',
+        discordGithubSlack: 'Discord, GitHub, Slack',
+        fullConfig: 'Vollständige Konfiguration',
+        limitedConfig: 'Begrenzt',
+        zipExport: 'ZIP-Export',
+        noExport: 'Kein Export',
+        volumeStorage: 'Volume-Speicher',
+        noBackups: 'Keine Backups',
+        dailyBackups: 'Tägliche Backups',
+        included: 'Enthalten',
+        notIncluded: 'Nicht enthalten',
+        managed: 'Verwaltet',
+        manual: 'Manuell',
+        liveMonitoring: 'Live-Überwachung',
+        liveLogs: 'Live-Logs',
+        oneClickRepair: 'Ein-Klick-Reparatur',
+        emailGithub: 'E-Mail, GitHub',
+        communityOnly: 'Nur Community',
+        prioritySupport: '24/7-Support (Pro+)',
+        fourLanguages: '4 Sprachen',
+        englishOnly: 'Nur Englisch',
+        available: 'Verfügbar',
+        comingSoon: 'Demnächst verfügbar',
+        notAvailable: 'Nicht verfügbar',
+        disclaimer:
+            'Etwas geändert oder falsch? Schreib uns an',
+        disclaimerOr: 'oder öffne einen Pull Request auf',
+        github: 'GitHub',
+        ctaTitle: 'Bereit, den Unterschied zu sehen?',
+        ctaDescription:
+            'Stelle OpenClaw auf deinem eigenen dedizierten Server bereit. Vollständiges Eigentum, transparente Preise und in Minuten einsatzbereit.'
     }
 } as const
 

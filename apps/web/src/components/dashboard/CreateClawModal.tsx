@@ -245,7 +245,9 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                 const val = e.target.value
                                 setName(val)
                                 if (val && !/^[a-zA-Z0-9-]+$/.test(val)) {
-                                    setNameError(t('createClaw.clawNameInvalidChars'))
+                                    setNameError(
+                                        t('createClaw.clawNameInvalidChars')
+                                    )
                                 } else {
                                     setNameError('')
                                 }

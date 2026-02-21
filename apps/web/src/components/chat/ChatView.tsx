@@ -117,10 +117,14 @@ const ChatView: FC<ChatViewProps> = ({
     const handleAgentSelect = useCallback(
         (selection: ChatSelectedAgent) => {
             setSettingsClawId(null)
+            if (configAgent) {
+                setConfigAgent(selection)
+                onAgentTabChange?.(AGENT_DETAIL_TABS.CONFIGURATION)
+            }
             onAgentSelect(selection)
             setMobileSidebarOpen(false)
         },
-        [onAgentSelect]
+        [onAgentSelect, configAgent, onAgentTabChange]
     )
 
     const handleOpenConfig = useCallback(
@@ -187,11 +191,9 @@ const ChatView: FC<ChatViewProps> = ({
                     onOpenClawSettings={handleOpenClawSettings}
                 />
             </div>
-            <div className='flex min-w-0 flex-1 flex-col max-md:relative max-md:z-10 max-md:bg-background'>
+            <div className='max-md:bg-background flex min-w-0 flex-1 flex-col max-md:relative max-md:z-10'>
                 {!configAgent && !(settingsClaw && !selectedAgent) && (
-                    <div
-                        className='bg-background flex items-center gap-2 px-4 py-2.5 md:hidden'
-                    >
+                    <div className='bg-background flex items-center gap-2 px-4 py-2.5 md:hidden'>
                         <button
                             onClick={() =>
                                 setMobileSidebarOpen(!mobileSidebarOpen)

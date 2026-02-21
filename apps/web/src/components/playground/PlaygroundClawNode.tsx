@@ -24,7 +24,12 @@ import {
 import { api } from '@/lib'
 import { ProviderIcon } from '@/components'
 import { getStatusConfig } from '@/lib/claw-utils'
-import { PlusIcon, ClockIcon, CircleNotchIcon, AndroidLogoIcon } from '@phosphor-icons/react'
+import {
+    PlusIcon,
+    ClockIcon,
+    CircleNotchIcon,
+    AndroidLogoIcon
+} from '@phosphor-icons/react'
 import {
     ClawCardDropdownMenu,
     ClawCardDialogs,
@@ -219,7 +224,11 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <span className='text-foreground truncate text-sm font-semibold'>
-                                        {claw.name.slice(0, TRUNCATE_LENGTHS.NODE_CLAW_NAME)}...
+                                        {claw.name.slice(
+                                            0,
+                                            TRUNCATE_LENGTHS.NODE_CLAW_NAME
+                                        )}
+                                        ...
                                     </span>
                                 </TooltipTrigger>
                                 <TooltipContent>{claw.name}</TooltipContent>
@@ -329,7 +338,10 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                             </div>
                         ) : (
                             <div className='flex items-center gap-1.5 rounded-md bg-[#ef5350]/10 px-2 py-1'>
-                                <AndroidLogoIcon className='h-3 w-3 text-[#ef5350]' weight='fill' />
+                                <AndroidLogoIcon
+                                    className='h-3 w-3 text-[#ef5350]'
+                                    weight='fill'
+                                />
                                 <span className='text-xs text-[#ef5350]'>
                                     {agentCount === 1
                                         ? t('playground.agentCount', {

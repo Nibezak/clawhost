@@ -42,3 +42,12 @@ export type ClawFileType =
     | 'yaml'
     | 'text'
     | 'unknown'
+
+export type FeatureRequestStatus =
+    | 'awaiting_approval'
+    | 'requested'
+    | 'marked_for_implementation'
+    | 'implemented'
+    | 'rejected'
+
+export type FeatureRequestSortBy = 'newest' | 'upvotes' | 'status'
