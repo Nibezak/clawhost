@@ -1,14 +1,18 @@
 import type { FC, ReactNode } from 'react'
 import type { ChatSidebarItemProps } from '@/ts/Interfaces'
 
+import { useMemo } from 'react'
 import { t } from '@openclaw/i18n'
-import { GearSixIcon } from '@phosphor-icons/react'
-import { ClawMascot } from '@/components'
+import { GearSixIcon, AndroidLogoIcon } from '@phosphor-icons/react'
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
+import { TRUNCATE_LENGTHS } from '@/lib'
 import { aiModels } from '@/lib/claw-utils'
 
 const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
     agent,
     isActive,
+    isLast,
+    connectionState,
     onClick,
     onConfigure
 }): ReactNode => {
@@ -16,40 +20,119 @@ const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
         ? aiModels.find((m) => m.id === agent.model)?.name || agent.model
         : null
 
+    const statusConfig = useMemo(() => {
+        if (connectionState) {
+            switch (connectionState) {
+                case 'connected':
+                    return {
+                        color: 'bg-green-500',
+                        label: t('dashboard.status.running')
+                    }
+                case 'connecting':
+                case 'authenticating':
+                    return {
+                        color: 'bg-yellow-500',
+                        label: t('playground.chatConnecting'),
+                        pulse: true
+                    }
+                case 'error':
+                    return {
+                        color: 'bg-red-500',
+                        label: t('playground.chatError')
+                    }
+                case 'disconnected':
+                    return {
+                        color: 'bg-red-500',
+                        label: t('playground.chatDisconnected')
+                    }
+                default:
+                    break
+            }
+        }
+        return {
+            color: 'bg-gray-400',
+            label: t('dashboard.status.unknown')
+        }
+    }, [connectionState])
+
     return (
-        <button
-            onClick={onClick}
-            className={`group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${
-                isActive
-                    ? 'bg-white/10 text-white'
-                    : 'text-gray-400 hover:bg-white/5 hover:text-white'
-            }`}
-        >
-            <div className='flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white/5'>
-                <ClawMascot className='h-4 w-4' />
+        <div className='relative flex py-0.5'>
+            <div className='relative ml-[19px] flex w-7 shrink-0 justify-start'>
+                <div
+                    className={`bg-border absolute left-0 w-px ${isLast ? 'top-0 h-[22px]' : '-bottom-1 -top-1'}`}
+                />
+                <div className='bg-border absolute left-0 top-[22px] h-px w-[calc(100%-6px)]' />
             </div>
-            <div className='min-w-0 flex-1'>
-                <p className='truncate text-sm font-medium'>{agent.name}</p>
-                {modelName ? (
-                    <p className='truncate text-xs text-gray-500'>{modelName}</p>
-                ) : (
-                    <p className='truncate text-xs italic text-gray-600'>
-                        {t('chat.notConfigured')}
-                    </p>
-                )}
-            </div>
-            <div
-                role='button'
-                tabIndex={-1}
-                onClick={(e) => {
-                    e.stopPropagation()
-                    onConfigure()
-                }}
-                className='hidden h-6 w-6 shrink-0 items-center justify-center rounded-md text-gray-500 opacity-0 transition-all hover:bg-white/10 hover:text-white group-hover:opacity-100 md:flex'
+            <button
+                onClick={onClick}
+                className={`group flex min-w-0 flex-1 items-center gap-2.5 rounded-lg px-2 py-1 text-left transition-colors ${
+                    isActive
+                        ? 'bg-foreground/10 text-foreground'
+                        : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'
+                }`}
             >
-                <GearSixIcon className='h-3.5 w-3.5' weight='bold' />
-            </div>
-        </button>
+                <div className='relative'>
+                    <div className='bg-foreground/5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md'>
+                        <AndroidLogoIcon
+                            className='h-3.5 w-3.5'
+                            weight='fill'
+                        />
+                    </div>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div className='border-background absolute -bottom-0.5 -right-0.5 flex h-3 w-3 items-center justify-center rounded-full border-2'>
+                                <div
+                                    className={`h-1.5 w-1.5 rounded-full ${statusConfig.color} ${statusConfig.pulse ? 'animate-pulse' : ''}`}
+                                />
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent side='bottom'>
+                            <p>{statusConfig.label}</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </div>
+                <div className='min-w-0 flex-1'>
+                    {agent.name.length > TRUNCATE_LENGTHS.SIDEBAR_AGENT_NAME ? (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <p className='text-foreground text-[13px] font-medium'>
+                                    {agent.name.slice(
+                                        0,
+                                        TRUNCATE_LENGTHS.SIDEBAR_AGENT_NAME
+                                    )}
+                                    ...
+                                </p>
+                            </TooltipTrigger>
+                            <TooltipContent>{agent.name}</TooltipContent>
+                        </Tooltip>
+                    ) : (
+                        <p className='text-foreground text-[13px] font-medium'>
+                            {agent.name}
+                        </p>
+                    )}
+                    {modelName ? (
+                        <p className='text-muted-foreground truncate text-[11px]'>
+                            {modelName}
+                        </p>
+                    ) : (
+                        <p className='text-muted-foreground truncate text-[11px] italic'>
+                            {t('chat.notConfigured')}
+                        </p>
+                    )}
+                </div>
+                <div
+                    role='button'
+                    tabIndex={-1}
+                    onClick={(e) => {
+                        e.stopPropagation()
+                        onConfigure()
+                    }}
+                    className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-colors'
+                >
+                    <GearSixIcon className='h-3 w-3' weight='bold' />
+                </div>
+            </button>
+        </div>
     )
 }
 

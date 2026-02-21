@@ -1,4 +1,8 @@
-import type { CacheEntry, CheckoutSession, CreateCheckoutParams } from '@/ts/Interfaces'
+import type {
+    CacheEntry,
+    CheckoutSession,
+    CreateCheckoutParams
+} from '@/ts/Interfaces'
 
 import getPolarClient from '@/lib/polar/getPolarClient'
 import getPolarConfig from '@/lib/polar/getPolarConfig'

@@ -4,9 +4,20 @@ import type { ChatLightboxProps } from '@/ts/Interfaces'
 import { useEffect, useCallback, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { t } from '@openclaw/i18n'
-import { CircleNotchIcon, DownloadSimpleIcon, XIcon, FileTextIcon } from '@phosphor-icons/react'
+import {
+    CircleNotchIcon,
+    DownloadSimpleIcon,
+    XIcon,
+    FileTextIcon
+} from '@phosphor-icons/react'
 
-const IMAGE_MIMES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml']
+const IMAGE_MIMES = [
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+    'image/webp',
+    'image/svg+xml'
+]
 
 const getImageSrc = (image: ChatLightboxProps['image']): string => {
     if (image.type === 'url') return image.data
@@ -20,15 +31,22 @@ const deriveFileName = (image: ChatLightboxProps['image']): string => {
     return `file.${ext}`
 }
 
-const ChatLightbox: FC<ChatLightboxProps> = ({ image, fileName: fileNameProp, onClose }): ReactNode => {
+const ChatLightbox: FC<ChatLightboxProps> = ({
+    image,
+    fileName: fileNameProp,
+    onClose
+}): ReactNode => {
     const src = getImageSrc(image)
     const fileName = fileNameProp || deriveFileName(image)
     const isImage = IMAGE_MIMES.includes(image.mediaType)
     const [isDownloading, setIsDownloading] = useState(false)
 
-    const handleKeyDown = useCallback((e: KeyboardEvent) => {
-        if (e.key === 'Escape') onClose()
-    }, [onClose])
+    const handleKeyDown = useCallback(
+        (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose()
+        },
+        [onClose]
+    )
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyDown)
@@ -70,28 +88,31 @@ const ChatLightbox: FC<ChatLightboxProps> = ({ image, fileName: fileNameProp, on
             onClick={onClose}
         >
             <div
-                className='flex max-h-[80vh] max-w-[90vw] flex-col rounded-xl border border-white/10 bg-[#0a0a0f]'
+                className='border-border bg-background flex max-h-[80vh] max-w-[90vw] flex-col rounded-xl border'
                 onClick={(e) => e.stopPropagation()}
             >
-                <div className='flex items-center justify-between border-b border-white/10 px-4 py-2.5'>
-                    <span className='truncate text-sm text-gray-200'>
+                <div className='border-border flex items-center justify-between border-b px-4 py-2.5'>
+                    <span className='text-foreground/90 truncate text-sm'>
                         {fileName}
                     </span>
                     <div className='flex items-center gap-2'>
                         <button
                             onClick={handleDownload}
                             disabled={isDownloading}
-                            className='rounded-md p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-50'
+                            className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-md p-1.5 transition-colors disabled:cursor-not-allowed disabled:opacity-50'
                         >
                             {isDownloading ? (
                                 <CircleNotchIcon className='h-4 w-4 animate-spin' />
                             ) : (
-                                <DownloadSimpleIcon className='h-4 w-4' weight='bold' />
+                                <DownloadSimpleIcon
+                                    className='h-4 w-4'
+                                    weight='bold'
+                                />
                             )}
                         </button>
                         <button
                             onClick={onClose}
-                            className='rounded-md p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white'
+                            className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-md p-1.5 transition-colors'
                         >
                             <XIcon className='h-4 w-4' weight='bold' />
                         </button>
@@ -107,8 +128,11 @@ const ChatLightbox: FC<ChatLightboxProps> = ({ image, fileName: fileNameProp, on
                     </div>
                 ) : (
                     <div className='flex min-w-[320px] flex-col items-center gap-1.5 px-16 py-14'>
-                        <FileTextIcon className='h-10 w-10 text-gray-500' weight='duotone' />
-                        <p className='text-sm text-gray-400'>
+                        <FileTextIcon
+                            className='text-muted-foreground h-10 w-10'
+                            weight='duotone'
+                        />
+                        <p className='text-muted-foreground text-sm'>
                             {t('playground.chatNoPreview')}
                         </p>
                     </div>

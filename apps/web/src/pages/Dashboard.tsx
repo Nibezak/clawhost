@@ -12,7 +12,12 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
-import { ROUTES, DASHBOARD_TABS, AGENT_DETAIL_TABS, CLAW_DETAIL_TABS } from '@/lib'
+import {
+    ROUTES,
+    DASHBOARD_TABS,
+    AGENT_DETAIL_TABS,
+    CLAW_DETAIL_TABS
+} from '@/lib'
 import {
     useClaws,
     useAdminClaws,
@@ -20,18 +25,28 @@ import {
     usePlans,
     useLocations,
     useVolumePricing,
-    usePlanAvailability
+    usePlanAvailability,
+    useAllClawAgents,
+    usePlaygroundGraph,
+    useProfile
 } from '@/hooks'
-import { useAllClawAgents, usePlaygroundGraph } from '@/hooks'
 import {
     EmptyState,
     ErrorState,
     PageTitle,
     ActionButton,
     ClawMascot,
-    Logo
+    LanguageSelector,
+    Logo,
+    ThemeToggle,
+    UserDropdown
 } from '@/components'
-import { ChatCircleDotsIcon, GraphIcon, LightningIcon } from '@phosphor-icons/react'
+import {
+    ChatCircleDotsIcon,
+    GraphIcon,
+    LightningIcon
+} from '@phosphor-icons/react'
+import { Button } from '@/components/ui'
 import { CreateClawModal } from '@/components/dashboard'
 import {
     PlaygroundCanvas,
@@ -42,8 +57,6 @@ import {
 } from '@/components/playground'
 import { ChatView } from '@/components/chat'
 import { useAuth } from '@/lib/auth'
-import { useProfile } from '@/hooks'
-import { UserDropdown } from '@/components'
 
 const Dashboard: FC = (): ReactNode => {
     const navigate = useNavigate()
@@ -64,17 +77,18 @@ const Dashboard: FC = (): ReactNode => {
     >(null)
     const [chatSelectedAgent, setChatSelectedAgent] =
         useState<ChatSelectedAgent | null>(null)
-    const [chatSettingsClawId, setChatSettingsClawId] = useState<
-        string | null
-    >(null)
+    const [chatSettingsClawId, setChatSettingsClawId] = useState<string | null>(
+        null
+    )
     const [chatAgentTab, setChatAgentTab] =
         useState<PlaygroundAgentDetailTab | null>(null)
     const [playgroundAgentTab, setPlaygroundAgentTab] =
         useState<PlaygroundAgentDetailTab | null>(null)
     const [playgroundClawTab, setPlaygroundClawTab] =
         useState<PlaygroundDetailTab | null>(null)
-    const [chatClawTab, setChatClawTab] =
-        useState<PlaygroundDetailTab | null>(null)
+    const [chatClawTab, setChatClawTab] = useState<PlaygroundDetailTab | null>(
+        null
+    )
     const [createAgentClawId, setCreateAgentClawId] = useState<string | null>(
         null
     )
@@ -161,7 +175,10 @@ const Dashboard: FC = (): ReactNode => {
 
         isRestoringFromUrl.current = true
 
-        if (tabParam === DASHBOARD_TABS.CHAT || tabParam === DASHBOARD_TABS.PLAYGROUND) {
+        if (
+            tabParam === DASHBOARD_TABS.CHAT ||
+            tabParam === DASHBOARD_TABS.PLAYGROUND
+        ) {
             setDashboardTab(tabParam)
         }
 
@@ -335,8 +352,7 @@ const Dashboard: FC = (): ReactNode => {
     const activeIsError = adminMode ? isAdminClawsError : isError
     const activeRefetch = adminMode ? refetchAdmin : refetch
     const isLoading =
-        authLoading ||
-        (!awaitingClaw && (activeClawsLoading || !minLoadingMet))
+        authLoading || (!awaitingClaw && (activeClawsLoading || !minLoadingMet))
 
     const graphClaws = displayedClaws
     const agentQueries = useAllClawAgents(graphClaws)
@@ -372,15 +388,18 @@ const Dashboard: FC = (): ReactNode => {
     const selectedAgent = selectedAgentResult?.agent || null
     const isSelectedAgentOnly = selectedAgentResult?.isOnly || false
 
+    const chatEmpty = dashboardTab === DASHBOARD_TABS.CHAT && !isLoading && !activeIsError && displayedClaws.length === 0
+    const showFullBackground = dashboardTab === DASHBOARD_TABS.PLAYGROUND || chatEmpty
+
     return (
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
-            className={`fixed inset-0 flex flex-col bg-[#0a0a0f] text-white ${dashboardTab === DASHBOARD_TABS.PLAYGROUND ? 'playground-grid' : ''}`}
+            className={`bg-background text-foreground fixed inset-0 flex flex-col ${showFullBackground ? 'playground-grid' : ''}`}
         >
             <div
-                className={`playground-gradient pointer-events-none fixed inset-0 ${dashboardTab === DASHBOARD_TABS.CHAT ? 'opacity-30' : ''}`}
+                className={`playground-gradient pointer-events-none fixed inset-0 ${dashboardTab === DASHBOARD_TABS.CHAT && !chatEmpty ? 'opacity-30' : ''}`}
             />
             <PageTitle
                 title={
@@ -393,13 +412,13 @@ const Dashboard: FC = (): ReactNode => {
                 }
             />
 
-            <div className='relative z-10 flex items-center justify-between border-b border-white/10 bg-[#0a0a0f]/80 px-6 py-3 backdrop-blur-xl'>
+            <div className='border-border bg-background md:bg-background/80 relative z-10 flex items-center justify-between border-b px-6 py-3 md:backdrop-blur-xl'>
                 <div className='flex items-center gap-3'>
                     <Logo />
-                    <div className='flex items-center rounded-lg border border-white/10 p-0.5'>
+                    <div className='border-border flex items-center rounded-lg border p-0.5'>
                         <button
                             onClick={() => setDashboardTab(DASHBOARD_TABS.CHAT)}
-                            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${dashboardTab === DASHBOARD_TABS.CHAT ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white'}`}
+                            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${dashboardTab === DASHBOARD_TABS.CHAT ? 'bg-foreground/10 text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                         >
                             <ChatCircleDotsIcon
                                 className='h-3.5 w-3.5'
@@ -409,13 +428,21 @@ const Dashboard: FC = (): ReactNode => {
                                         : 'regular'
                                 }
                             />
-                            <span className={dashboardTab === DASHBOARD_TABS.CHAT ? '' : 'hidden md:inline'}>
+                            <span
+                                className={
+                                    dashboardTab === DASHBOARD_TABS.CHAT
+                                        ? 'hidden sm:inline'
+                                        : 'hidden md:inline'
+                                }
+                            >
                                 {t('dashboard.chatTab')}
                             </span>
                         </button>
                         <button
-                            onClick={() => setDashboardTab(DASHBOARD_TABS.PLAYGROUND)}
-                            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${dashboardTab === DASHBOARD_TABS.PLAYGROUND ? 'bg-white/10 text-white' : 'text-gray-400 hover:text-white'}`}
+                            onClick={() =>
+                                setDashboardTab(DASHBOARD_TABS.PLAYGROUND)
+                            }
+                            className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${dashboardTab === DASHBOARD_TABS.PLAYGROUND ? 'bg-foreground/10 text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                         >
                             <GraphIcon
                                 className='h-3.5 w-3.5'
@@ -425,29 +452,55 @@ const Dashboard: FC = (): ReactNode => {
                                         : 'regular'
                                 }
                             />
-                            <span className={dashboardTab === DASHBOARD_TABS.PLAYGROUND ? '' : 'hidden md:inline'}>
+                            <span
+                                className={
+                                    dashboardTab === DASHBOARD_TABS.PLAYGROUND
+                                        ? 'hidden sm:inline'
+                                        : 'hidden md:inline'
+                                }
+                            >
                                 {t('dashboard.playgroundTab')}
                             </span>
                         </button>
                     </div>
                 </div>
 
-                <div className='flex items-center gap-3'>
+                <div className='flex items-center gap-1.5 sm:gap-3'>
                     {!adminMode &&
                         !isLoading &&
                         displayedClaws &&
                         displayedClaws.length > 0 && (
-                            <ActionButton
-                                onClick={() => setShowCreate(true)}
-                                icon={
-                                    <LightningIcon
-                                        className='h-5 w-5'
-                                        weight='fill'
+                            <>
+                                <div className='sm:hidden'>
+                                    <Button
+                                        onClick={() => setShowCreate(true)}
+                                        size='icon'
+                                        className='border-border bg-foreground text-background hover:bg-foreground/90 h-9 w-9 border'
+                                    >
+                                        <LightningIcon
+                                            className='h-5 w-5'
+                                            weight='fill'
+                                        />
+                                    </Button>
+                                </div>
+                                <div className='hidden sm:block'>
+                                    <ActionButton
+                                        onClick={() => setShowCreate(true)}
+                                        icon={
+                                            <LightningIcon
+                                                className='h-5 w-5'
+                                                weight='fill'
+                                            />
+                                        }
+                                        label={t('createClaw.title')}
                                     />
-                                }
-                                label={t('createClaw.title')}
-                            />
+                                </div>
+                            </>
                         )}
+                    <div className='flex items-center gap-1.5'>
+                        <LanguageSelector />
+                        <ThemeToggle />
+                    </div>
                     <UserDropdown
                         displayName={displayName}
                         onSignOut={signOut}
@@ -473,54 +526,72 @@ const Dashboard: FC = (): ReactNode => {
                         <PlaygroundLoadingState />
                     </div>
                 ) : dashboardTab === DASHBOARD_TABS.CHAT ? (
-                    displayedClaws.length === 0 ? (
-                        <div className='flex h-full min-w-0 flex-1 items-center justify-center'>
-                            <div className='-mt-20'>
-                                <EmptyState
-                                    icon={<ClawMascot className='h-10 w-10' />}
-                                    title={
-                                        adminMode
-                                            ? t('dashboard.adminNoClaws')
-                                            : t('playground.noClawsYet')
-                                    }
-                                    description={
-                                        adminMode
-                                            ? t('dashboard.adminDescription')
-                                            : t('playground.noClawsDescription')
-                                    }
-                                    actionLabel={
-                                        adminMode
-                                            ? undefined
-                                            : t('nav.deployOpenClaw')
-                                    }
-                                    onAction={
-                                        adminMode
-                                            ? undefined
-                                            : () => setShowCreate(true)
-                                    }
-                                />
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className='flex h-full min-w-0 flex-1'
+                    >
+                        {displayedClaws.length === 0 ? (
+                            <div className='flex h-full min-w-0 flex-1 items-center justify-center'>
+                                <div className='-mt-20'>
+                                    <EmptyState
+                                        icon={
+                                            <ClawMascot className='h-10 w-10' />
+                                        }
+                                        title={
+                                            adminMode
+                                                ? t('dashboard.adminNoClaws')
+                                                : t('playground.noClawsYet')
+                                        }
+                                        description={
+                                            adminMode
+                                                ? t(
+                                                      'dashboard.adminDescription'
+                                                  )
+                                                : t(
+                                                      'playground.noClawsDescription'
+                                                  )
+                                        }
+                                        actionLabel={
+                                            adminMode
+                                                ? undefined
+                                                : t('nav.deployOpenClaw')
+                                        }
+                                        onAction={
+                                            adminMode
+                                                ? undefined
+                                                : () => setShowCreate(true)
+                                        }
+                                    />
+                                </div>
                             </div>
-                        </div>
-                    ) : (
-                        <ChatView
-                            claws={displayedClaws}
-                            agentQueries={agentQueries}
-                            plans={plans}
-                            sshKeys={sshKeys || []}
-                            selectedAgent={chatSelectedAgent}
-                            onAgentSelect={setChatSelectedAgent}
-                            onConfigureAgent={handleConfigureAgent}
-                            onCreateAgent={handleCreateAgent}
-                            initialSettingsClawId={chatSettingsClawId}
-                            onSettingsClawChange={setChatSettingsClawId}
-                            initialAgentTab={chatAgentTab || undefined}
-                            onAgentTabChange={setChatAgentTab}
-                            initialClawTab={chatClawTab || undefined}
-                            onClawTabChange={setChatClawTab}
-                        />
-                    )
+                        ) : (
+                            <ChatView
+                                claws={displayedClaws}
+                                agentQueries={agentQueries}
+                                plans={plans}
+                                sshKeys={sshKeys || []}
+                                selectedAgent={chatSelectedAgent}
+                                onAgentSelect={setChatSelectedAgent}
+                                onConfigureAgent={handleConfigureAgent}
+                                onCreateAgent={handleCreateAgent}
+                                initialSettingsClawId={chatSettingsClawId}
+                                onSettingsClawChange={setChatSettingsClawId}
+                                initialAgentTab={chatAgentTab || undefined}
+                                onAgentTabChange={setChatAgentTab}
+                                initialClawTab={chatClawTab || undefined}
+                                onClawTabChange={setChatClawTab}
+                            />
+                        )}
+                    </motion.div>
                 ) : (
-                    <>
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className='flex h-full min-w-0 flex-1'
+                    >
                         <div className='relative h-full min-w-0 flex-1'>
                             <PlaygroundCanvas
                                 key={adminMode ? 'admin' : 'user'}
@@ -611,7 +682,7 @@ const Dashboard: FC = (): ReactNode => {
 
                             {selectedAgent && selectedAgentClaw && (
                                 <PlaygroundAgentDetailPanel
-                                    key='agent-panel'
+                                    key={`agent-panel-${selectedAgent.id}`}
                                     agent={selectedAgent}
                                     clawId={selectedAgentClaw.id}
                                     clawName={selectedAgentClaw.name}
@@ -629,7 +700,7 @@ const Dashboard: FC = (): ReactNode => {
                                 />
                             )}
                         </AnimatePresence>
-                    </>
+                    </motion.div>
                 )}
             </div>
 

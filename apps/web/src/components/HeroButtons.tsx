@@ -38,7 +38,7 @@ const HeroButtons: FC<HeroButtonsProps> = ({
             <Button
                 size='lg'
                 variant='outline'
-                className={`gap-2 border-white/20 bg-white/5 text-white hover:bg-white/10 ${large ? 'px-8 py-6 text-lg' : 'px-6'}`}
+                className={`border-border bg-foreground/5 text-foreground hover:bg-foreground/10 gap-2 ${large ? 'px-8 py-6 text-lg' : 'px-6'}`}
                 asChild
             >
                 <a
@@ -50,7 +50,7 @@ const HeroButtons: FC<HeroButtonsProps> = ({
                     {githubLabel}
 
                     {showStars && gitHubStars && (
-                        <span className='flex items-center gap-1.5 rounded-full bg-white/10 px-2 py-0.5 text-xs'>
+                        <span className='bg-foreground/10 flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs'>
                             {gitHubStars.formatted}
                             <span className='text-[12px]'>★</span>
                         </span>

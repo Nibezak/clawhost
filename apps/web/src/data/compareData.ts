@@ -1,0 +1,501 @@
+import type { CompareCompetitor, CompareCategory } from '@/ts/Interfaces'
+
+const getCompareData = (): {
+    competitors: CompareCompetitor[]
+    categories: CompareCategory[]
+} => ({
+    competitors: [
+        {
+            id: 'clawhost',
+            nameKey: 'compare.competitorClawHost',
+            highlighted: true
+        },
+        {
+            id: 'simpleclaw',
+            nameKey: 'compare.competitorSimpleClaw',
+            highlighted: false
+        },
+        {
+            id: 'myclawai',
+            nameKey: 'compare.competitorMyClawAi',
+            highlighted: false
+        }
+    ],
+    categories: [
+        {
+            id: 'infrastructure',
+            nameKey: 'compare.categoryInfrastructure',
+            features: [
+                {
+                    nameKey: 'compare.featureServerOwnership',
+                    values: {
+                        clawhost: {
+                            status: 'yes',
+                            detailKey: 'compare.dedicatedVps'
+                        },
+                        simpleclaw: {
+                            status: 'partial',
+                            detailKey: 'compare.sharedContainers'
+                        },
+                        myclawai: {
+                            status: 'partial',
+                            detailKey: 'compare.isolatedContainers'
+                        }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureProviderChoice',
+                    values: {
+                        clawhost: {
+                            status: 'yes',
+                            detailKey: 'compare.threeProviders'
+                        },
+                        simpleclaw: {
+                            status: 'no',
+                            detailKey: 'compare.singleProvider'
+                        },
+                        myclawai: {
+                            status: 'no',
+                            detailKey: 'compare.singleProvider'
+                        }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureDedicatedResources',
+                    values: {
+                        clawhost: {
+                            status: 'yes',
+                            detailKey: 'compare.fullyDedicated'
+                        },
+                        simpleclaw: {
+                            status: 'no',
+                            detailKey: 'compare.shared'
+                        },
+                        myclawai: { status: 'no', detailKey: 'compare.shared' }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureRootAccess',
+                    values: {
+                        clawhost: {
+                            status: 'yes',
+                            detailKey: 'compare.fullRootSsh'
+                        },
+                        simpleclaw: { status: 'no' },
+                        myclawai: { status: 'no' }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureServerLocations',
+                    values: {
+                        clawhost: {
+                            status: 'yes',
+                            detailKey: 'compare.thirtyPlusLocations'
+                        },
+                        simpleclaw: {
+                            status: 'partial',
+                            detailKey: 'compare.limitedLocations'
+                        },
+                        myclawai: {
+                            status: 'partial',
+                            detailKey: 'compare.limitedLocations'
+                        }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureLocationSelection',
+                    values: {
+                        clawhost: { status: 'yes' },
+                        simpleclaw: { status: 'no' },
+                        myclawai: { status: 'no' }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureSubdomainAccess',
+                    values: {
+                        clawhost: { status: 'yes' },
+                        simpleclaw: { status: 'no' },
+                        myclawai: { status: 'no' }
+                    }
+                }
+            ]
+        },
+        {
+            id: 'pricing',
+            nameKey: 'compare.categoryPricing',
+            features: [
+                {
+                    nameKey: 'compare.featureStartingPrice',
+                    values: {
+                        clawhost: {
+                            status: 'yes',
+                            detailKey: 'compare.fromTenMonth'
+                        },
+                        simpleclaw: {
+                            status: 'partial',
+                            detailKey: 'compare.aboutFortyFourMonth'
+                        },
+                        myclawai: {
+                            status: 'partial',
+                            detailKey: 'compare.fromNineteenMonth'
+                        }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureTransparentPricing',
+                    values: {
+                        clawhost: {
+                            status: 'yes',
+                            detailKey: 'compare.clearSpecsPricing'
+                        },
+                        simpleclaw: {
+                            status: 'no',
+                            detailKey: 'compare.unclearPricing'
+                        },
+                        myclawai: {
+                            status: 'partial',
+                            detailKey: 'compare.fixedTiers'
+                        }
+                    }
+                },
+                {
+                    nameKey: 'compare.featurePowerfulServers',
+                    values: {
+                        clawhost: { status: 'yes' },
+                        simpleclaw: { status: 'no' },
+                        myclawai: { status: 'no' }
+                    }
+                }
+            ]
+        },
+        {
+            id: 'deployment',
+            nameKey: 'compare.categoryDeployment',
+            features: [
+                {
+                    nameKey: 'compare.featureSetupTime',
+                    values: {
+                        clawhost: {
+                            status: 'yes',
+                            detailKey: 'compare.minutes'
+                        },
+                        simpleclaw: {
+                            status: 'yes',
+                            detailKey: 'compare.underOneMinute'
+                        },
+                        myclawai: {
+                            status: 'yes',
+                            detailKey: 'compare.thirtySeconds'
+                        }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureTechnicalSkill',
+                    values: {
+                        clawhost: {
+                            status: 'yes',
+                            detailKey: 'compare.noneRequired'
+                        },
+                        simpleclaw: {
+                            status: 'yes',
+                            detailKey: 'compare.noneRequired'
+                        },
+                        myclawai: {
+                            status: 'yes',
+                            detailKey: 'compare.minimal'
+                        }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureOneClickDeploy',
+                    values: {
+                        clawhost: { status: 'yes' },
+                        simpleclaw: { status: 'yes' },
+                        myclawai: { status: 'yes' }
+                    }
+                }
+            ]
+        },
+        {
+            id: 'management',
+            nameKey: 'compare.categoryManagement',
+            features: [
+                {
+                    nameKey: 'compare.featureMultipleInstances',
+                    values: {
+                        clawhost: {
+                            status: 'yes',
+                            detailKey: 'compare.unlimited'
+                        },
+                        simpleclaw: {
+                            status: 'no',
+                            detailKey: 'compare.singleInstance'
+                        },
+                        myclawai: {
+                            status: 'no',
+                            detailKey: 'compare.singleInstance'
+                        }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureMultipleAgents',
+                    values: {
+                        clawhost: {
+                            status: 'yes',
+                            detailKey: 'compare.unlimited'
+                        },
+                        simpleclaw: {
+                            status: 'no',
+                            detailKey: 'compare.singleInstance'
+                        },
+                        myclawai: {
+                            status: 'no',
+                            detailKey: 'compare.singleInstance'
+                        }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureSkillsMarketplace',
+                    values: {
+                        clawhost: {
+                            status: 'yes',
+                            detailKey: 'compare.fiveThousandSkills'
+                        },
+                        simpleclaw: { status: 'no' },
+                        myclawai: { status: 'no' }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureChannelSupport',
+                    values: {
+                        clawhost: {
+                            status: 'yes',
+                            detailKey: 'compare.allChannels'
+                        },
+                        simpleclaw: {
+                            status: 'partial',
+                            detailKey: 'compare.telegramDiscord'
+                        },
+                        myclawai: {
+                            status: 'partial',
+                            detailKey: 'compare.discordGithubSlack'
+                        }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureAgentConfig',
+                    values: {
+                        clawhost: {
+                            status: 'yes',
+                            detailKey: 'compare.fullConfig'
+                        },
+                        simpleclaw: {
+                            status: 'partial',
+                            detailKey: 'compare.limitedConfig'
+                        },
+                        myclawai: {
+                            status: 'partial',
+                            detailKey: 'compare.limitedConfig'
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            id: 'security',
+            nameKey: 'compare.categorySecurity',
+            features: [
+                {
+                    nameKey: 'compare.featureDataOwnership',
+                    values: {
+                        clawhost: { status: 'yes' },
+                        simpleclaw: { status: 'no' },
+                        myclawai: { status: 'partial' }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureDataExport',
+                    values: {
+                        clawhost: {
+                            status: 'yes',
+                            detailKey: 'compare.zipExport'
+                        },
+                        simpleclaw: { status: 'no' },
+                        myclawai: { status: 'no' }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureBackups',
+                    values: {
+                        clawhost: { status: 'no' },
+                        simpleclaw: { status: 'no' },
+                        myclawai: {
+                            status: 'yes',
+                            detailKey: 'compare.dailyBackups'
+                        }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureSecurityHardening',
+                    values: {
+                        clawhost: { status: 'yes' },
+                        simpleclaw: { status: 'no' },
+                        myclawai: {
+                            status: 'yes',
+                            detailKey: 'compare.managed'
+                        }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureSslTls',
+                    values: {
+                        clawhost: { status: 'yes' },
+                        simpleclaw: { status: 'no' },
+                        myclawai: { status: 'yes' }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureOpenSource',
+                    values: {
+                        clawhost: { status: 'yes' },
+                        simpleclaw: { status: 'no' },
+                        myclawai: { status: 'no' }
+                    }
+                }
+            ]
+        },
+        {
+            id: 'monitoring',
+            nameKey: 'compare.categoryMonitoring',
+            features: [
+                {
+                    nameKey: 'compare.featureAutoUpdates',
+                    values: {
+                        clawhost: { status: 'yes' },
+                        simpleclaw: {
+                            status: 'no',
+                            detailKey: 'compare.manual'
+                        },
+                        myclawai: { status: 'yes' }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureDiagnostics',
+                    values: {
+                        clawhost: {
+                            status: 'yes',
+                            detailKey: 'compare.liveMonitoring'
+                        },
+                        simpleclaw: { status: 'no' },
+                        myclawai: { status: 'no' }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureLogStreaming',
+                    values: {
+                        clawhost: {
+                            status: 'yes',
+                            detailKey: 'compare.liveLogs'
+                        },
+                        simpleclaw: { status: 'no' },
+                        myclawai: { status: 'no' }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureRepairTools',
+                    values: {
+                        clawhost: {
+                            status: 'yes',
+                            detailKey: 'compare.oneClickRepair'
+                        },
+                        simpleclaw: { status: 'no' },
+                        myclawai: { status: 'no' }
+                    }
+                }
+            ]
+        },
+        {
+            id: 'support',
+            nameKey: 'compare.categorySupport',
+            features: [
+                {
+                    nameKey: 'compare.featureSupportChannels',
+                    values: {
+                        clawhost: {
+                            status: 'yes',
+                            detailKey: 'compare.emailGithub'
+                        },
+                        simpleclaw: {
+                            status: 'partial',
+                            detailKey: 'compare.communityOnly'
+                        },
+                        myclawai: {
+                            status: 'yes',
+                            detailKey: 'compare.prioritySupport'
+                        }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureMultiLanguage',
+                    values: {
+                        clawhost: {
+                            status: 'yes',
+                            detailKey: 'compare.fourLanguages'
+                        },
+                        simpleclaw: {
+                            status: 'no',
+                            detailKey: 'compare.englishOnly'
+                        },
+                        myclawai: {
+                            status: 'no',
+                            detailKey: 'compare.englishOnly'
+                        }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureThemes',
+                    values: {
+                        clawhost: { status: 'yes' },
+                        simpleclaw: { status: 'no' },
+                        myclawai: { status: 'no' }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureMobileApp',
+                    values: {
+                        clawhost: {
+                            status: 'partial',
+                            detailKey: 'compare.comingSoon'
+                        },
+                        simpleclaw: { status: 'no' },
+                        myclawai: { status: 'no' }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureDesktopApp',
+                    values: {
+                        clawhost: {
+                            status: 'partial',
+                            detailKey: 'compare.comingSoon'
+                        },
+                        simpleclaw: { status: 'no' },
+                        myclawai: { status: 'no' }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureSocials',
+                    values: {
+                        clawhost: {
+                            status: 'partial',
+                            detailKey: 'compare.comingSoon'
+                        },
+                        simpleclaw: { status: 'no' },
+                        myclawai: { status: 'no' }
+                    }
+                }
+            ]
+        }
+    ]
+})
+
+export default getCompareData

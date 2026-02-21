@@ -36,14 +36,26 @@ const updateClawFile = async (c: AuthenticatedContext) => {
             return fail(c, t('api.invalidFilePath'), 400)
         }
 
-        if (!normalized.endsWith('.json')) {
+        const fileName = normalized.split('/').pop() || normalized
+        const isEditable =
+            normalized.endsWith('.json') ||
+            normalized.endsWith('.jsonb') ||
+            normalized.endsWith('.md') ||
+            normalized.endsWith('.js') ||
+            normalized.endsWith('.yml') ||
+            normalized.endsWith('.yaml') ||
+            !fileName.includes('.')
+
+        if (!isEditable) {
             return fail(c, t('api.fileNotEditable'), 400)
         }
 
-        try {
-            JSON.parse(body.content)
-        } catch {
-            return fail(c, t('api.invalidJsonConfig'), 400)
+        if (normalized.endsWith('.json') || normalized.endsWith('.jsonb')) {
+            try {
+                JSON.parse(body.content)
+            } catch {
+                return fail(c, t('api.invalidJsonConfig'), 400)
+            }
         }
 
         const claw = await findUserClaw(userId, id)

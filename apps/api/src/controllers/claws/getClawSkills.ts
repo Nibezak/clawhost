@@ -26,8 +26,13 @@ const getClawSkills = async (c: AuthenticatedContext) => {
 
         try {
             const echoLine = 'echo "$n' + DESC_SEPARATOR + '$d"'
-            const forBody = 'n=$(basename "$s"); d=$(head -10 "$s/SKILL.md" 2>/dev/null | grep -v "^#" | grep -v "^$" | grep -v "^---" | head -1); ' + echoLine
-            const skillsCmd = 'sd=$(npm root -g 2>/dev/null)/openclaw/skills; if [ -d "$sd" ]; then for s in "$sd"/*/; do [ -d "$s" ] || continue; ' + forBody + '; done; fi'
+            const forBody =
+                'n=$(basename "$s"); d=$(head -10 "$s/SKILL.md" 2>/dev/null | grep -v "^#" | grep -v "^$" | grep -v "^---" | head -1); ' +
+                echoLine
+            const skillsCmd =
+                'sd=$(npm root -g 2>/dev/null)/openclaw/skills; if [ -d "$sd" ]; then for s in "$sd"/*/; do [ -d "$s" ] || continue; ' +
+                forBody +
+                '; done; fi'
             const output = await executeSSH(
                 claw.ip,
                 claw.rootPassword,
@@ -50,11 +55,15 @@ const getClawSkills = async (c: AuthenticatedContext) => {
             const skills: BundledSkillInfo[] = skillsOutput
                 .split('\n')
                 .map((line) => line.trim())
-                .filter((line) => line.length > 0 && line.includes(DESC_SEPARATOR))
+                .filter(
+                    (line) => line.length > 0 && line.includes(DESC_SEPARATOR)
+                )
                 .map((line) => {
                     const sepIndex = line.indexOf(DESC_SEPARATOR)
                     const name = line.substring(0, sepIndex).trim()
-                    const description = line.substring(sepIndex + DESC_SEPARATOR.length).trim()
+                    const description = line
+                        .substring(sepIndex + DESC_SEPARATOR.length)
+                        .trim()
                     return {
                         name,
                         enabled: entries[name]?.enabled !== false,

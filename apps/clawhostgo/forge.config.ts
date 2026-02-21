@@ -8,7 +8,8 @@ import { VitePlugin } from '@electron-forge/plugin-vite'
 const config: ForgeConfig = {
     packagerConfig: {
         asar: true,
-        name: 'ClawHostGo'
+        name: 'ClawHostGo',
+        extraResource: ['./resources/node']
     },
     makers: [new MakerDMG({}), new MakerZIP({}, ['darwin']), new MakerDeb({})],
     plugins: [

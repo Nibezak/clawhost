@@ -22,7 +22,7 @@ const getClawVersion = async (c: AuthenticatedContext) => {
         const output = await executeSSH(
             claw.ip,
             claw.rootPassword,
-            'openclaw --version 2>/dev/null || echo "unknown"'
+            'su - openclaw -c "openclaw --version" 2>/dev/null || echo "unknown"'
         )
 
         return ok(c, {
@@ -32,9 +32,7 @@ const getClawVersion = async (c: AuthenticatedContext) => {
         console.error('Get claw version error:', err)
         return fail(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToGetVersion'),
+            err instanceof Error ? err.message : t('api.failedToGetVersion'),
             500
         )
     }

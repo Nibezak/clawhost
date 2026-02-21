@@ -3,6 +3,7 @@ import type { BlogPostFrontmatter, PrerenderMeta } from '@/ts/Interfaces'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
+import PATHS from '@/lib/paths'
 
 const DIST = path.resolve(import.meta.dirname, '../dist')
 const CONTENT = path.resolve(import.meta.dirname, '../content/posts')
@@ -86,20 +87,107 @@ function injectMeta(html: string, meta: PrerenderMeta): string {
         }
     }
 
-    extraTags += `
-    <script type="application/ld+json">${JSON.stringify(meta.jsonLd)}</script>
-  `
+    if (meta.jsonLd) {
+        extraTags += `
+    <script type="application/ld+json">${JSON.stringify(meta.jsonLd)}</script>`
+    }
+
+    extraTags += '\n  '
 
     html = html.replace('</head>', `${extraTags}</head>`)
 
     return html
 }
 
+function writePrerenderedPage(routePath: string, html: string) {
+    if (routePath === '/') {
+        fs.writeFileSync(path.join(DIST, 'index.html'), html)
+        return
+    }
+    const dir = path.join(DIST, routePath)
+    fs.mkdirSync(dir, { recursive: true })
+    fs.writeFileSync(path.join(dir, 'index.html'), html)
+}
+
+const staticPages: { path: string; meta: PrerenderMeta }[] = [
+    {
+        path: '/',
+        meta: {
+            title: 'Deploy OpenClaw. One click. Done.',
+            description: 'Deploy OpenClaw on your own VPS with one click. Self-hostable cloud hosting with full root access, global locations, and transparent pricing.',
+            url: SITE_URL,
+            type: 'website',
+            image: `${SITE_URL}/og-image.webp`,
+            jsonLd: {
+                '@context': 'https://schema.org',
+                '@type': 'WebSite',
+                name: 'ClawHost',
+                url: SITE_URL
+            }
+        }
+    },
+    {
+        path: PATHS.CHANGELOG,
+        meta: {
+            title: 'Changelog',
+            description: 'Track updates, new features, and improvements to ClawHost.',
+            url: `${SITE_URL}/${PATHS.CHANGELOG}`,
+            type: 'website',
+            image: `${SITE_URL}/og-image.webp`
+        }
+    },
+    {
+        path: PATHS.COMPARE,
+        meta: {
+            title: 'Full Comparison',
+            description: 'See how ClawHost compares to other OpenClaw hosting platforms.',
+            url: `${SITE_URL}/${PATHS.COMPARE}`,
+            type: 'website',
+            image: `${SITE_URL}/og-image.webp`
+        }
+    },
+    {
+        path: PATHS.TERMS,
+        meta: {
+            title: 'Terms of Service',
+            description: 'Read the terms and conditions for using ClawHost services.',
+            url: `${SITE_URL}/${PATHS.TERMS}`,
+            type: 'website',
+            image: `${SITE_URL}/og-image.webp`
+        }
+    },
+    {
+        path: PATHS.PRIVACY,
+        meta: {
+            title: 'Privacy Policy',
+            description: 'Learn how ClawHost collects, uses, and protects your personal data.',
+            url: `${SITE_URL}/${PATHS.PRIVACY}`,
+            type: 'website',
+            image: `${SITE_URL}/og-image.webp`
+        }
+    },
+    {
+        path: PATHS.FEATURE_REQUESTS,
+        meta: {
+            title: 'Feature Requests',
+            description: 'Vote on features and suggest new ones.',
+            url: `${SITE_URL}/${PATHS.FEATURE_REQUESTS}`,
+            type: 'website',
+            image: `${SITE_URL}/og-image.webp`
+        }
+    }
+]
+
+for (const page of staticPages) {
+    const html = injectMeta(template, page.meta)
+    writePrerenderedPage(page.path, html)
+}
+
 const listingHtml = injectMeta(template, {
     title: 'Blog',
     description:
         'Guides, tutorials, and news about OpenClaw and self-hosted infrastructure.',
-    url: `${SITE_URL}/posts`,
+    url: `${SITE_URL}/${PATHS.BLOG}`,
     type: 'website',
     image: `${SITE_URL}/og-image.webp`,
     jsonLd: {
@@ -108,17 +196,17 @@ const listingHtml = injectMeta(template, {
         name: 'ClawHost Blog',
         description:
             'Guides, tutorials, and news about OpenClaw and self-hosted infrastructure.',
-        url: `${SITE_URL}/posts`,
+        url: `${SITE_URL}/${PATHS.BLOG}`,
         publisher: {
             '@type': 'Organization',
             name: 'ClawHost',
-            logo: { '@type': 'ImageObject', url: `${SITE_URL}/favicon.svg` }
+            logo: { '@type': 'ImageObject', url: `${SITE_URL}/favicon.ico` }
         }
     }
 })
 
-fs.mkdirSync(path.join(DIST, 'posts'), { recursive: true })
-fs.writeFileSync(path.join(DIST, 'posts', 'index.html'), listingHtml)
+fs.mkdirSync(path.join(DIST, PATHS.BLOG), { recursive: true })
+fs.writeFileSync(path.join(DIST, PATHS.BLOG, 'index.html'), listingHtml)
 
 for (const post of posts) {
     const imageUrl = post.coverImage
@@ -128,7 +216,7 @@ for (const post of posts) {
     const postHtml = injectMeta(template, {
         title: post.title,
         description: post.description,
-        url: `${SITE_URL}/posts/${post.slug}`,
+        url: `${SITE_URL}/${PATHS.BLOG}/${post.slug}`,
         type: 'article',
         image: imageUrl,
         articleMeta: {
@@ -146,23 +234,23 @@ for (const post of posts) {
             author: { '@type': 'Organization', name: post.author },
             datePublished: post.publishedAt,
             ...(post.updatedAt && { dateModified: post.updatedAt }),
-            url: `${SITE_URL}/posts/${post.slug}`,
+            url: `${SITE_URL}/${PATHS.BLOG}/${post.slug}`,
             publisher: {
                 '@type': 'Organization',
                 name: 'ClawHost',
-                logo: { '@type': 'ImageObject', url: `${SITE_URL}/favicon.svg` }
+                logo: { '@type': 'ImageObject', url: `${SITE_URL}/favicon.ico` }
             },
             mainEntityOfPage: {
                 '@type': 'WebPage',
-                '@id': `${SITE_URL}/posts/${post.slug}`
+                '@id': `${SITE_URL}/${PATHS.BLOG}/${post.slug}`
             },
             keywords: post.tags.join(', ')
         }
     })
 
-    const dir = path.join(DIST, 'posts', post.slug)
+    const dir = path.join(DIST, PATHS.BLOG, post.slug)
     fs.mkdirSync(dir, { recursive: true })
     fs.writeFileSync(path.join(dir, 'index.html'), postHtml)
 }
 
-console.log(`Pre-rendered ${posts.length} blog posts + listing page.`)
+console.log(`Pre-rendered ${staticPages.length} static pages, blog listing, and ${posts.length} blog posts.`)

@@ -46,12 +46,10 @@ const codeStyle = {
 
 const OtpCodeEmail = ({ code }: OtpCodeEmailProps) => {
     const formattedCode = code || '000000'
-    
+
     return (
         <Html>
-            <Preview>
-                {t('emails.otpPreview', { code: formattedCode })}
-            </Preview>
+            <Preview>{t('emails.otpPreview', { code: formattedCode })}</Preview>
 
             <Body style={main}>
                 <Container style={container}>
@@ -65,19 +63,15 @@ const OtpCodeEmail = ({ code }: OtpCodeEmailProps) => {
                     </Section>
 
                     <Section style={body}>
-                        <Text style={title}>
-                            {t('emails.otpHeading')}
-                        </Text>
+                        <Text style={title}>{t('emails.otpHeading')}</Text>
 
                         <div style={codeWrapper}>
                             <div style={codeBox}>
                                 <Text style={codeStyle}>{formattedCode}</Text>
                             </div>
                         </div>
-                        
-                        <Text style={paragraph}>
-                            {t('emails.otpExpiry')}
-                        </Text>
+
+                        <Text style={paragraph}>{t('emails.otpExpiry')}</Text>
                     </Section>
                 </Container>
             </Body>

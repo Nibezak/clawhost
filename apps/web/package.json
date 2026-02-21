@@ -1,6 +1,6 @@
 {
     "name": "web",
-    "version": "0.0.68",
+    "version": "0.0.77",
     "private": true,
     "type": "module",
     "scripts": {
@@ -13,7 +13,10 @@
         "check": "pnpm typecheck && pnpm lint"
     },
     "dependencies": {
+        "@codemirror/lang-javascript": "^6.2.4",
         "@codemirror/lang-json": "^6.0.2",
+        "@codemirror/lang-markdown": "^6.5.0",
+        "@codemirror/lang-yaml": "^6.1.2",
         "@huggingface/transformers": "^3.8.1",
         "@lezer/highlight": "^1.2.3",
         "@mdx-js/react": "^3.1.1",

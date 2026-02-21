@@ -16,7 +16,15 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': path.resolve(__dirname, './src')
-        }
+        },
+        dedupe: [
+            '@codemirror/state',
+            '@codemirror/view',
+            '@codemirror/language',
+            '@lezer/common',
+            '@lezer/highlight',
+            '@lezer/lr'
+        ]
     },
     server: {
         port: 1111,

@@ -3,14 +3,16 @@ import type { FC, ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { Header, LandingFooter, PageBackground, PageTitle } from '@/components'
+import { PATHS, getBaseDomain } from '@/lib'
 import { CheckIcon, CircleIcon } from '@phosphor-icons/react'
 
 const Changelog: FC = (): ReactNode => {
     return (
-        <div className='relative flex min-h-screen flex-col bg-[#0a0a0f] text-white'>
+        <div className='bg-background text-foreground relative flex min-h-screen flex-col'>
             <PageTitle
                 title={t('changelog.title')}
                 description={t('changelog.description')}
+                url={`https://${getBaseDomain()}/${PATHS.CHANGELOG}`}
             />
             <PageBackground />
             <Header />
@@ -29,7 +31,7 @@ const Changelog: FC = (): ReactNode => {
                 </p>
 
                 <div className='relative space-y-8 md:space-y-16'>
-                    <div className='absolute left-[19px] top-6 hidden h-[calc(100%-3rem)] w-px bg-gradient-to-b from-white/20 via-white/10 to-transparent md:block' />
+                    <div className='from-foreground/20 via-foreground/10 absolute left-[19px] top-6 hidden h-[calc(100%-3rem)] w-px bg-gradient-to-b to-transparent md:block' />
 
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -44,7 +46,7 @@ const Changelog: FC = (): ReactNode => {
                         </div>
 
                         <div className='rounded-2xl border border-amber-500/10 bg-amber-500/[0.02] p-8'>
-                            <span className='mb-4 block text-sm font-medium text-amber-400'>
+                            <span className='mb-4 block text-sm font-medium text-amber-600 dark:text-amber-400'>
                                 {t('changelog.upcomingRelease')}
                             </span>
 
@@ -59,20 +61,29 @@ const Changelog: FC = (): ReactNode => {
                             <ul className='space-y-3'>
                                 <li className='flex items-center gap-3'>
                                     <CircleIcon
-                                        className='h-2.5 w-2.5 flex-shrink-0 text-amber-400'
+                                        className='h-2.5 w-2.5 flex-shrink-0 text-amber-600 dark:text-amber-400'
                                         weight='fill'
                                     />
-                                    <span className='text-sm text-white'>
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.upcomingReleaseFeature1')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
                                     <CircleIcon
-                                        className='h-2.5 w-2.5 flex-shrink-0 text-amber-400'
+                                        className='h-2.5 w-2.5 flex-shrink-0 text-amber-600 dark:text-amber-400'
                                         weight='fill'
                                     />
-                                    <span className='text-sm text-white'>
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.upcomingReleaseFeature2')}
+                                    </span>
+                                </li>
+                                <li className='flex items-center gap-3'>
+                                    <CircleIcon
+                                        className='h-2.5 w-2.5 flex-shrink-0 text-amber-600 dark:text-amber-400'
+                                        weight='fill'
+                                    />
+                                    <span className='text-foreground text-sm'>
+                                        {t('changelog.upcomingReleaseFeature8')}
                                     </span>
                                 </li>
                             </ul>
@@ -86,15 +97,129 @@ const Changelog: FC = (): ReactNode => {
                         className='relative md:pl-14'
                     >
                         <div className='absolute left-0 top-1 hidden md:block'>
-                            <div className='flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03]'>
-                                <div className='h-2 w-2 rounded-full bg-white/60' />
+                            <div className='border-border bg-foreground/[0.04] flex h-10 w-10 items-center justify-center rounded-full border'>
+                                <div className='bg-foreground/60 h-2 w-2 rounded-full' />
                             </div>
                         </div>
 
-                        <div className='rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8'>
-                            <span className='text-muted-foreground mb-4 block text-sm'>
+                        <div className='border-border bg-foreground/[0.02] rounded-2xl border p-8'>
+                            <time className='text-muted-foreground mb-4 block text-sm'>
+                                {t('changelog.release9Date')}
+                            </time>
+
+                            <h2 className='font-clash mb-2 text-2xl font-bold'>
+                                {t('changelog.release9Title')}
+                            </h2>
+
+                            <p className='text-muted-foreground mb-6 leading-relaxed'>
+                                {t('changelog.release9Description')}
+                            </p>
+
+                            <ul className='space-y-3'>
+                                <li className='flex items-center gap-3'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
+                                        {t('changelog.release9Feature1')}
+                                    </span>
+                                </li>
+                                <li className='flex items-center gap-3'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
+                                        {t('changelog.release9Feature2')}
+                                    </span>
+                                </li>
+                                <li className='flex items-center gap-3'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
+                                        {t('changelog.release9Feature3')}
+                                    </span>
+                                </li>
+                                <li className='flex items-center gap-3'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
+                                        {t('changelog.release9Feature4')}
+                                    </span>
+                                </li>
+                                <li className='flex items-center gap-3'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
+                                        {t('changelog.release9Feature5')}
+                                    </span>
+                                </li>
+                                <li className='flex items-center gap-3'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
+                                        {t('changelog.release9Feature6')}
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.3 }}
+                        className='relative md:pl-14'
+                    >
+                        <div className='absolute left-0 top-1 hidden md:block'>
+                            <div className='border-border bg-foreground/[0.04] flex h-10 w-10 items-center justify-center rounded-full border'>
+                                <div className='bg-foreground/60 h-2 w-2 rounded-full' />
+                            </div>
+                        </div>
+
+                        <div className='border-border bg-foreground/[0.02] rounded-2xl border p-8'>
+                            <time className='text-muted-foreground mb-4 block text-sm'>
+                                {t('changelog.release8Date')}
+                            </time>
+
+                            <h2 className='font-clash mb-2 text-2xl font-bold'>
+                                {t('changelog.release8Title')}
+                            </h2>
+
+                            <p className='text-muted-foreground mb-6 leading-relaxed'>
+                                {t('changelog.release8Description')}
+                            </p>
+
+                            <ul className='space-y-3'>
+                                <li className='flex items-center gap-3'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
+                                        {t('changelog.release8Feature1')}
+                                    </span>
+                                </li>
+                                <li className='flex items-center gap-3'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
+                                        {t('changelog.release8Feature2')}
+                                    </span>
+                                </li>
+                                <li className='flex items-center gap-3'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
+                                        {t('changelog.release8Feature3')}
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.3 }}
+                        className='relative md:pl-14'
+                    >
+                        <div className='absolute left-0 top-1 hidden md:block'>
+                            <div className='border-border bg-foreground/[0.04] flex h-10 w-10 items-center justify-center rounded-full border'>
+                                <div className='bg-foreground/60 h-2 w-2 rounded-full' />
+                            </div>
+                        </div>
+
+                        <div className='border-border bg-foreground/[0.02] rounded-2xl border p-8'>
+                            <time className='text-muted-foreground mb-4 block text-sm'>
                                 {t('changelog.release7Date')}
-                            </span>
+                            </time>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>
                                 {t('changelog.release7Title')}
@@ -106,26 +231,26 @@ const Changelog: FC = (): ReactNode => {
 
                             <ul className='space-y-3'>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release7Feature1')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release7Feature2')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release7Feature3')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release7Feature4')}
                                     </span>
                                 </li>
@@ -140,15 +265,15 @@ const Changelog: FC = (): ReactNode => {
                         className='relative md:pl-14'
                     >
                         <div className='absolute left-0 top-1 hidden md:block'>
-                            <div className='flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03]'>
-                                <div className='h-2 w-2 rounded-full bg-white/60' />
+                            <div className='border-border bg-foreground/[0.04] flex h-10 w-10 items-center justify-center rounded-full border'>
+                                <div className='bg-foreground/60 h-2 w-2 rounded-full' />
                             </div>
                         </div>
 
-                        <div className='rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8'>
-                            <span className='text-muted-foreground mb-4 block text-sm'>
+                        <div className='border-border bg-foreground/[0.02] rounded-2xl border p-8'>
+                            <time className='text-muted-foreground mb-4 block text-sm'>
                                 {t('changelog.release6Date')}
-                            </span>
+                            </time>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>
                                 {t('changelog.release6Title')}
@@ -160,26 +285,26 @@ const Changelog: FC = (): ReactNode => {
 
                             <ul className='space-y-3'>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release6Feature1')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release6Feature2')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release6Feature3')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release6Feature4')}
                                     </span>
                                 </li>
@@ -194,15 +319,15 @@ const Changelog: FC = (): ReactNode => {
                         className='relative md:pl-14'
                     >
                         <div className='absolute left-0 top-1 hidden md:block'>
-                            <div className='flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03]'>
-                                <div className='h-2 w-2 rounded-full bg-white/60' />
+                            <div className='border-border bg-foreground/[0.04] flex h-10 w-10 items-center justify-center rounded-full border'>
+                                <div className='bg-foreground/60 h-2 w-2 rounded-full' />
                             </div>
                         </div>
 
-                        <div className='rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8'>
-                            <span className='text-muted-foreground mb-4 block text-sm'>
+                        <div className='border-border bg-foreground/[0.02] rounded-2xl border p-8'>
+                            <time className='text-muted-foreground mb-4 block text-sm'>
                                 {t('changelog.release5Date')}
-                            </span>
+                            </time>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>
                                 {t('changelog.release5Title')}
@@ -214,26 +339,26 @@ const Changelog: FC = (): ReactNode => {
 
                             <ul className='space-y-3'>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release5Feature1')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release5Feature2')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release5Feature3')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release5Feature4')}
                                     </span>
                                 </li>
@@ -248,15 +373,15 @@ const Changelog: FC = (): ReactNode => {
                         className='relative md:pl-14'
                     >
                         <div className='absolute left-0 top-1 hidden md:block'>
-                            <div className='flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03]'>
-                                <div className='h-2 w-2 rounded-full bg-white/60' />
+                            <div className='border-border bg-foreground/[0.04] flex h-10 w-10 items-center justify-center rounded-full border'>
+                                <div className='bg-foreground/60 h-2 w-2 rounded-full' />
                             </div>
                         </div>
 
-                        <div className='rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8'>
-                            <span className='text-muted-foreground mb-4 block text-sm'>
+                        <div className='border-border bg-foreground/[0.02] rounded-2xl border p-8'>
+                            <time className='text-muted-foreground mb-4 block text-sm'>
                                 {t('changelog.release4Date')}
-                            </span>
+                            </time>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>
                                 {t('changelog.release4Title')}
@@ -268,20 +393,20 @@ const Changelog: FC = (): ReactNode => {
 
                             <ul className='space-y-3'>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release4Feature1')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release4Feature2')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release4Feature3')}
                                     </span>
                                 </li>
@@ -296,15 +421,15 @@ const Changelog: FC = (): ReactNode => {
                         className='relative md:pl-14'
                     >
                         <div className='absolute left-0 top-1 hidden md:block'>
-                            <div className='flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03]'>
-                                <div className='h-2 w-2 rounded-full bg-white/60' />
+                            <div className='border-border bg-foreground/[0.04] flex h-10 w-10 items-center justify-center rounded-full border'>
+                                <div className='bg-foreground/60 h-2 w-2 rounded-full' />
                             </div>
                         </div>
 
-                        <div className='rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8'>
-                            <span className='text-muted-foreground mb-4 block text-sm'>
+                        <div className='border-border bg-foreground/[0.02] rounded-2xl border p-8'>
+                            <time className='text-muted-foreground mb-4 block text-sm'>
                                 {t('changelog.release3Date')}
-                            </span>
+                            </time>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>
                                 {t('changelog.release3Title')}
@@ -316,20 +441,20 @@ const Changelog: FC = (): ReactNode => {
 
                             <ul className='space-y-3'>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release3Feature1')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release3Feature2')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release3Feature3')}
                                     </span>
                                 </li>
@@ -344,15 +469,15 @@ const Changelog: FC = (): ReactNode => {
                         className='relative md:pl-14'
                     >
                         <div className='absolute left-0 top-1 hidden md:block'>
-                            <div className='flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03]'>
-                                <div className='h-2 w-2 rounded-full bg-white/60' />
+                            <div className='border-border bg-foreground/[0.04] flex h-10 w-10 items-center justify-center rounded-full border'>
+                                <div className='bg-foreground/60 h-2 w-2 rounded-full' />
                             </div>
                         </div>
 
-                        <div className='rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8'>
-                            <span className='text-muted-foreground mb-4 block text-sm'>
+                        <div className='border-border bg-foreground/[0.02] rounded-2xl border p-8'>
+                            <time className='text-muted-foreground mb-4 block text-sm'>
                                 {t('changelog.release2Date')}
-                            </span>
+                            </time>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>
                                 {t('changelog.release2Title')}
@@ -364,26 +489,26 @@ const Changelog: FC = (): ReactNode => {
 
                             <ul className='space-y-3'>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release2Feature1')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release2Feature2')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release2Feature3')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release2Feature4')}
                                     </span>
                                 </li>
@@ -398,15 +523,15 @@ const Changelog: FC = (): ReactNode => {
                         className='relative md:pl-14'
                     >
                         <div className='absolute left-0 top-1 hidden md:block'>
-                            <div className='flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/[0.03]'>
-                                <div className='h-2 w-2 rounded-full bg-white/60' />
+                            <div className='border-border bg-foreground/[0.04] flex h-10 w-10 items-center justify-center rounded-full border'>
+                                <div className='bg-foreground/60 h-2 w-2 rounded-full' />
                             </div>
                         </div>
 
-                        <div className='rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8'>
-                            <span className='text-muted-foreground mb-4 block text-sm'>
+                        <div className='border-border bg-foreground/[0.02] rounded-2xl border p-8'>
+                            <time className='text-muted-foreground mb-4 block text-sm'>
                                 {t('changelog.release1Date')}
-                            </span>
+                            </time>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>
                                 {t('changelog.release1Title')}
@@ -418,68 +543,68 @@ const Changelog: FC = (): ReactNode => {
 
                             <ul className='space-y-3'>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release1Feature1')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release1Feature2')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release1Feature3')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release1Feature4')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release1Feature5')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release1Feature6')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release1Feature7')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release1Feature8')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release1Feature9')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release1Feature10')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-400' />
-                                    <span className='text-sm text-white'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
                                         {t('changelog.release1Feature11')}
                                     </span>
                                 </li>

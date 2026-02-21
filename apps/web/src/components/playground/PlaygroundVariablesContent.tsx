@@ -224,7 +224,7 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
                 {[0, 1, 2].map((i) => (
                     <div
                         key={i}
-                        className='rounded-lg border border-white/10 bg-white/5 p-3'
+                        className='border-border bg-foreground/5 rounded-lg border p-3'
                     >
                         <div className='mb-2 flex items-center justify-between'>
                             <Skeleton className='h-4 w-32' />
@@ -245,7 +245,10 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
         return (
             <PanelPlaceholder
                 icon={
-                    <KeyIcon className='h-6 w-6 text-gray-500' weight='duotone' />
+                    <KeyIcon
+                        className='text-muted-foreground h-6 w-6'
+                        weight='duotone'
+                    />
                 }
                 title={t('playground.variablesLoadFailed')}
                 description={t('playground.variablesLoadFailedDescription')}
@@ -270,10 +273,10 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
                         return (
                             <div
                                 key={index}
-                                className={`rounded-lg border bg-white/5 p-3 ${
+                                className={`bg-foreground/5 rounded-lg border p-3 ${
                                     keyError || valueError
                                         ? 'border-red-500/40'
-                                        : 'border-white/10'
+                                        : 'border-border'
                                 }`}
                             >
                                 <div className='mb-2 flex items-center justify-between'>
@@ -290,10 +293,10 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
                                         placeholder={t(
                                             'playground.configurationKeyPlaceholder'
                                         )}
-                                        className={`bg-transparent font-mono text-xs font-medium outline-none placeholder:text-gray-600 ${
+                                        className={`placeholder:text-muted-foreground bg-transparent font-mono text-xs font-medium outline-none ${
                                             keyError
-                                                ? 'text-red-400'
-                                                : 'text-gray-200'
+                                                ? 'text-red-600 dark:text-red-400'
+                                                : 'text-foreground/90'
                                         }`}
                                     />
                                     <div className='flex items-center gap-1'>
@@ -306,7 +309,7 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
                                                             `${index}-${envVar.key}`
                                                         )
                                                     }
-                                                    className='rounded p-1 text-gray-500 transition-colors hover:text-gray-300'
+                                                    className='text-muted-foreground hover:text-foreground/80 rounded p-1 transition-colors'
                                                 >
                                                     {showValues[
                                                         `${index}-${envVar.key}`
@@ -318,7 +321,11 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
                                                 </button>
                                             </TooltipTrigger>
                                             <TooltipContent>
-                                                {showValues[`${index}-${envVar.key}`] ? t('common.hide') : t('common.show')}
+                                                {showValues[
+                                                    `${index}-${envVar.key}`
+                                                ]
+                                                    ? t('common.hide')
+                                                    : t('common.show')}
                                             </TooltipContent>
                                         </Tooltip>
                                         {envVar.value && (
@@ -332,11 +339,11 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
                                                                 envVar.value
                                                             )
                                                         }
-                                                        className='rounded p-1 text-gray-500 transition-colors hover:text-gray-300'
+                                                        className='text-muted-foreground hover:text-foreground/80 rounded p-1 transition-colors'
                                                     >
                                                         {copiedKey ===
                                                         `${index}-${envVar.key}` ? (
-                                                            <CheckIcon className='h-3.5 w-3.5 text-green-400' />
+                                                            <CheckIcon className='h-3.5 w-3.5 text-green-600 dark:text-green-400' />
                                                         ) : (
                                                             <CopyIcon className='h-3.5 w-3.5' />
                                                         )}
@@ -353,7 +360,7 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
                                                 handleRemoveVar(index)
                                             }
                                             disabled={saveMutation.isPending}
-                                            className='rounded p-1 text-gray-500 transition-colors disabled:cursor-default disabled:opacity-50 [&:not(:disabled)]:hover:text-red-400'
+                                            className='text-muted-foreground rounded p-1 transition-colors disabled:cursor-default disabled:opacity-50 [&:not(:disabled)]:hover:text-red-600 dark:[&:not(:disabled)]:hover:text-red-400'
                                         >
                                             <TrashIcon className='h-3.5 w-3.5' />
                                         </button>
@@ -376,14 +383,14 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
                                     placeholder={t(
                                         'playground.configurationValuePlaceholder'
                                     )}
-                                    className={`w-full rounded-md border bg-white/5 px-2.5 py-1.5 font-mono text-xs text-white outline-none transition-colors placeholder:text-gray-600 focus:border-[#ef5350]/50 ${
+                                    className={`bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border px-2.5 py-1.5 font-mono text-xs outline-none transition-colors focus:border-[#ef5350]/50 ${
                                         valueError
                                             ? 'border-red-500/40'
-                                            : 'border-white/10'
+                                            : 'border-border'
                                     }`}
                                 />
                                 {(keyError || valueError) && (
-                                    <p className='mt-1.5 text-[10px] text-red-400'>
+                                    <p className='mt-1.5 text-[10px] text-red-600 dark:text-red-400'>
                                         {keyError || valueError}
                                     </p>
                                 )}
@@ -394,18 +401,18 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
 
                 {envVars.length === 0 ? (
                     <div className='flex flex-1 flex-col items-center justify-center gap-3'>
-                        <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-white/5'>
+                        <div className='bg-foreground/5 flex h-10 w-10 items-center justify-center rounded-xl'>
                             <KeyIcon
-                                className='h-5 w-5 text-gray-500'
+                                className='text-muted-foreground h-5 w-5'
                                 weight='duotone'
                             />
                         </div>
-                        <p className='text-xs text-gray-500'>
+                        <p className='text-muted-foreground text-xs'>
                             {t('playground.variablesEmpty')}
                         </p>
                         <button
                             onClick={handleAddVar}
-                            className='rounded-lg border border-dashed border-white/10 px-4 py-2 text-[11px] text-gray-500 transition-colors hover:border-white/20 hover:text-gray-400'
+                            className='border-border text-muted-foreground hover:border-border hover:text-muted-foreground rounded-lg border border-dashed px-4 py-2 text-[11px] transition-colors'
                         >
                             {t('playground.variablesAddVariable')}
                         </button>
@@ -414,7 +421,7 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
                     <button
                         onClick={handleAddVar}
                         disabled={saveMutation.isPending}
-                        className='flex w-full items-center justify-center gap-1 rounded-lg border border-dashed border-white/10 py-2 text-[11px] text-gray-500 transition-colors hover:border-white/20 hover:text-gray-400 disabled:cursor-default disabled:opacity-50'
+                        className='border-border text-muted-foreground hover:border-border hover:text-muted-foreground flex w-full items-center justify-center gap-1 rounded-lg border border-dashed py-2 text-[11px] transition-colors disabled:cursor-default disabled:opacity-50'
                     >
                         <PlusIcon className='h-3 w-3' />
                         {t('playground.variablesAddVariable')}
@@ -445,8 +452,8 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
 
                 {envVars.length > 0 && (
                     <div className='flex items-start gap-2 pt-1'>
-                        <InfoIcon className='mt-0.5 h-3 w-3 shrink-0 text-gray-600' />
-                        <p className='text-[11px] text-gray-600'>
+                        <InfoIcon className='text-muted-foreground mt-0.5 h-3 w-3 shrink-0' />
+                        <p className='text-muted-foreground text-[11px]'>
                             {t('playground.variablesDescription')}
                         </p>
                     </div>
@@ -479,9 +486,11 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
                     <label className='mt-3 flex cursor-pointer items-center gap-2.5'>
                         <Checkbox
                             checked={dontAskAgain}
-                            onCheckedChange={(checked) => setDontAskAgain(!!checked)}
+                            onCheckedChange={(checked) =>
+                                setDontAskAgain(!!checked)
+                            }
                         />
-                        <span className='text-xs text-gray-400'>
+                        <span className='text-muted-foreground text-xs'>
                             {t('playground.variablesDontAskAgain')}
                         </span>
                     </label>

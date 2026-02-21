@@ -10,14 +10,22 @@ import type {
 } from '@/ts/Interfaces'
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
-import { useQuery, useInfiniteQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
+import {
+    useQuery,
+    useInfiniteQuery,
+    useMutation,
+    useQueryClient,
+    keepPreviousData
+} from '@tanstack/react-query'
 import { t } from '@openclaw/i18n'
 import {
     CircleNotchIcon,
     CubeIcon,
+    DownloadSimpleIcon,
     LightningIcon,
     MagnifyingGlassIcon,
-    StorefrontIcon
+    StorefrontIcon,
+    TrashIcon
 } from '@phosphor-icons/react'
 import { PanelPlaceholder, TruncateTooltip } from '@/components'
 import { Skeleton } from '@/components/ui'
@@ -157,7 +165,11 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
         if (!sentinelRef.current || !scrollRef.current) return
         const observer = new IntersectionObserver(
             (observerEntries) => {
-                if (observerEntries[0]?.isIntersecting && browseHasNextPage && !isFetchingNextPage) {
+                if (
+                    observerEntries[0]?.isIntersecting &&
+                    browseHasNextPage &&
+                    !isFetchingNextPage
+                ) {
                     fetchNextPage()
                 }
             },
@@ -308,9 +320,34 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
             queryClient.setQueryData<ClawHubInstalledResponse>(
                 installedKey,
                 (old) => {
-                    if (!old) return { skills: [{ slug: normalized, name: normalized, version: '', hasUpdate: false }] }
-                    if (old.skills.some((s) => s.slug.toLowerCase() === normalized)) return old
-                    return { skills: [...old.skills, { slug: normalized, name: normalized, version: '', hasUpdate: false }] }
+                    if (!old)
+                        return {
+                            skills: [
+                                {
+                                    slug: normalized,
+                                    name: normalized,
+                                    version: '',
+                                    hasUpdate: false
+                                }
+                            ]
+                        }
+                    if (
+                        old.skills.some(
+                            (s) => s.slug.toLowerCase() === normalized
+                        )
+                    )
+                        return old
+                    return {
+                        skills: [
+                            ...old.skills,
+                            {
+                                slug: normalized,
+                                name: normalized,
+                                version: '',
+                                hasUpdate: false
+                            }
+                        ]
+                    }
                 }
             )
             queryClient.invalidateQueries({ queryKey: installedKey })
@@ -332,7 +369,11 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                 installedKey,
                 (old) => {
                     if (!old) return { skills: [] }
-                    return { skills: old.skills.filter((s) => s.slug.toLowerCase() !== normalized) }
+                    return {
+                        skills: old.skills.filter(
+                            (s) => s.slug.toLowerCase() !== normalized
+                        )
+                    }
                 }
             )
         },
@@ -422,16 +463,19 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
     const hasAnyItems = hasBundledItems || hasClawHubItems || isStillLoading
 
     return (
-        <div ref={scrollRef} className='flex h-full flex-col overflow-y-auto px-5 pb-5'>
-            <div className='sticky top-0 z-10 bg-[#0a0a0f] pb-3 pt-5'>
+        <div
+            ref={scrollRef}
+            className='flex h-full flex-col overflow-y-auto px-5 pb-5'
+        >
+            <div className='bg-background sticky top-0 z-10 pb-3 pt-5'>
                 <div className='relative'>
-                    <MagnifyingGlassIcon className='absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-500' />
+                    <MagnifyingGlassIcon className='text-muted-foreground absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2' />
                     <input
                         type='text'
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder={t('playground.skillsSearch')}
-                        className='w-full rounded-md border border-white/10 bg-white/5 py-2 pl-8 pr-3 text-xs text-white outline-none transition-colors placeholder:text-gray-600 focus:border-[#ef5350]/50'
+                        className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border py-2 pl-8 pr-3 text-xs outline-none transition-colors focus:border-[#ef5350]/50'
                     />
                 </div>
             </div>
@@ -455,20 +499,27 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                                 return (
                                     <div
                                         key={`bundled-${skill.name}`}
-                                        className='flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2.5 transition-colors'
+                                        className='border-border bg-foreground/[0.02] flex items-center justify-between rounded-lg border px-3 py-2.5 transition-colors'
                                     >
                                         <div className='min-w-0 flex-1'>
                                             <div className='flex items-center gap-2'>
-                                                <CubeIcon className='h-3 w-3 shrink-0 text-gray-600' weight='duotone' />
-                                                <TruncateTooltip content={skill.name}>
-                                                    <span className='block truncate text-xs font-medium text-white'>
+                                                <CubeIcon
+                                                    className='text-muted-foreground h-3 w-3 shrink-0'
+                                                    weight='duotone'
+                                                />
+                                                <TruncateTooltip
+                                                    content={skill.name}
+                                                >
+                                                    <span className='text-foreground block truncate text-xs font-medium'>
                                                         {skill.name}
                                                     </span>
                                                 </TruncateTooltip>
                                             </div>
                                             {skill.description && (
-                                                <TruncateTooltip content={skill.description}>
-                                                    <span className='mt-0.5 block truncate text-[11px] text-gray-500'>
+                                                <TruncateTooltip
+                                                    content={skill.description}
+                                                >
+                                                    <span className='text-muted-foreground mt-0.5 block truncate text-[11px]'>
                                                         {skill.description}
                                                     </span>
                                                 </TruncateTooltip>
@@ -479,21 +530,32 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                                                 handleBundledAction(skill.name)
                                             }
                                             disabled={!!pendingSkill}
-                                            className='ml-3 flex shrink-0 items-center gap-1.5 rounded-md bg-white/5 px-2.5 py-1 text-[11px] font-medium text-gray-300 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50'
+                                            className='bg-foreground/5 text-foreground/80 hover:bg-foreground/10 ml-3 flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50'
                                         >
                                             {isPending ? (
                                                 <CircleNotchIcon className='h-3 w-3 animate-spin' />
                                             ) : active ? (
-                                                t('playground.clawHubRemove')
+                                                <>
+                                                    <TrashIcon className='h-3 w-3' />
+                                                    {t(
+                                                        'playground.clawHubRemove'
+                                                    )}
+                                                </>
                                             ) : (
-                                                t('playground.clawHubInstall')
+                                                <>
+                                                    <DownloadSimpleIcon className='h-3 w-3' />
+                                                    {t(
+                                                        'playground.clawHubInstall'
+                                                    )}
+                                                </>
                                             )}
                                         </button>
                                     </div>
                                 )
                             })}
 
-                        {!isBundledLoading && isClawHubFirstLoad &&
+                        {!isBundledLoading &&
+                            isClawHubFirstLoad &&
                             Array.from({ length: 12 }).map((_, i) => (
                                 <Skeleton
                                     key={`ch-skel-${i}`}
@@ -505,35 +567,44 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                             !isBrowseError &&
                             clawHubSkills.map((skill: ClawHubSearchResult) => {
                                 const normalizedSlug = skill.slug.toLowerCase()
-                                const isInstalled = installedSlugs.has(normalizedSlug)
+                                const isInstalled =
+                                    installedSlugs.has(normalizedSlug)
                                 const hasUpdate = updatesMap.has(normalizedSlug)
-                                const latestVersion = updatesMap.get(normalizedSlug)
+                                const latestVersion =
+                                    updatesMap.get(normalizedSlug)
                                 const isPending = pendingSlug === skill.slug
 
                                 return (
                                     <div
                                         key={`clawhub-${skill.slug}`}
-                                        className='flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2.5 transition-colors'
+                                        className='border-border bg-foreground/[0.02] flex items-center justify-between rounded-lg border px-3 py-2.5 transition-colors'
                                     >
                                         <div className='min-w-0 flex-1'>
                                             <div className='flex items-center gap-2'>
-                                                <StorefrontIcon className='h-3 w-3 shrink-0 text-[#ef5350]/40' weight='duotone' />
-                                                <TruncateTooltip content={skill.name}>
-                                                    <span className='block truncate text-xs font-medium text-white'>
+                                                <StorefrontIcon
+                                                    className='h-3 w-3 shrink-0 text-[#ef5350]/40'
+                                                    weight='duotone'
+                                                />
+                                                <TruncateTooltip
+                                                    content={skill.name}
+                                                >
+                                                    <span className='text-foreground block truncate text-xs font-medium'>
                                                         {skill.name}
                                                     </span>
                                                 </TruncateTooltip>
                                             </div>
                                             {skill.description && (
-                                                <TruncateTooltip content={skill.description}>
-                                                    <span className='mt-0.5 block truncate text-[11px] text-gray-500'>
+                                                <TruncateTooltip
+                                                    content={skill.description}
+                                                >
+                                                    <span className='text-muted-foreground mt-0.5 block truncate text-[11px]'>
                                                         {skill.description}
                                                     </span>
                                                 </TruncateTooltip>
                                             )}
                                             <div className='mt-1 flex items-center gap-2'>
                                                 {skill.author && (
-                                                    <span className='text-[10px] text-gray-600'>
+                                                    <span className='text-muted-foreground text-[10px]'>
                                                         {t(
                                                             'playground.clawHubBy',
                                                             {
@@ -543,7 +614,7 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                                                     </span>
                                                 )}
                                                 {skill.version && (
-                                                    <span className='text-[10px] text-gray-600'>
+                                                    <span className='text-muted-foreground text-[10px]'>
                                                         {t(
                                                             'playground.clawHubVersion',
                                                             {
@@ -554,7 +625,7 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                                                     </span>
                                                 )}
                                                 {skill.downloads > 0 && (
-                                                    <span className='text-[10px] text-gray-600'>
+                                                    <span className='text-muted-foreground text-[10px]'>
                                                         {t(
                                                             'playground.clawHubDownloads',
                                                             {
@@ -564,7 +635,7 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                                                     </span>
                                                 )}
                                                 {hasUpdate && latestVersion && (
-                                                    <span className='text-[10px] text-amber-400'>
+                                                    <span className='text-[10px] text-amber-600 dark:text-amber-400'>
                                                         {t(
                                                             'playground.clawHubUpdateAvailable',
                                                             {
@@ -581,16 +652,26 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                                                 handleClawHubAction(skill.slug)
                                             }
                                             disabled={!!pendingSlug}
-                                            className='ml-3 flex shrink-0 items-center gap-1.5 rounded-md bg-white/5 px-2.5 py-1 text-[11px] font-medium text-gray-300 transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-50'
+                                            className='bg-foreground/5 text-foreground/80 hover:bg-foreground/10 ml-3 flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50'
                                         >
                                             {isPending ? (
                                                 <CircleNotchIcon className='h-3 w-3 animate-spin' />
                                             ) : isInstalled && hasUpdate ? (
                                                 t('playground.clawHubUpdate')
                                             ) : isInstalled ? (
-                                                t('playground.clawHubRemove')
+                                                <>
+                                                    <TrashIcon className='h-3 w-3' />
+                                                    {t(
+                                                        'playground.clawHubRemove'
+                                                    )}
+                                                </>
                                             ) : (
-                                                t('playground.clawHubInstall')
+                                                <>
+                                                    <DownloadSimpleIcon className='h-3 w-3' />
+                                                    {t(
+                                                        'playground.clawHubInstall'
+                                                    )}
+                                                </>
                                             )}
                                         </button>
                                     </div>
@@ -602,7 +683,7 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                                 <PanelPlaceholder
                                     icon={
                                         <StorefrontIcon
-                                            className='h-6 w-6 text-gray-500'
+                                            className='text-muted-foreground h-6 w-6'
                                             weight='duotone'
                                         />
                                     }
@@ -631,7 +712,7 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                         <PanelPlaceholder
                             icon={
                                 <LightningIcon
-                                    className='h-6 w-6 text-gray-500'
+                                    className='text-muted-foreground h-6 w-6'
                                     weight='duotone'
                                 />
                             }
@@ -643,8 +724,8 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                             description={
                                 isAgentMode
                                     ? t(
-                                        'playground.agentSkillsEmptyDescription'
-                                    )
+                                          'playground.agentSkillsEmptyDescription'
+                                      )
                                     : t('playground.clawHubEmptyDescription')
                             }
                         />

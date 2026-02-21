@@ -56,7 +56,7 @@ const updateClawSkills = async (c: AuthenticatedContext) => {
             await executeSSH(
                 claw.ip,
                 claw.rootPassword,
-                `echo '${configB64}' | base64 -d > ${BASE_DIR}/openclaw.json && (openclaw doctor --fix || true) && systemctl restart openclaw-gateway`,
+                `echo '${configB64}' | base64 -d > ${BASE_DIR}/openclaw.json && (su - openclaw -c "openclaw doctor --fix" || true) && systemctl restart openclaw-gateway`,
                 20000
             )
 

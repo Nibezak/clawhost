@@ -1,7 +1,8 @@
 import type { FC, ReactNode } from 'react'
 import type { ClawFileExplorerDialogProps } from '@/ts/Interfaces'
+import type { ClawFileType } from '@/ts/Types'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { t } from '@openclaw/i18n'
 import {
     Button,
@@ -18,18 +19,24 @@ import {
     WarningIcon,
     FileIcon,
     FileJsIcon,
+    FileMdIcon,
+    FileTextIcon,
     FolderOpenIcon,
     XIcon
 } from '@phosphor-icons/react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useClawFiles, useClawFile, useUpdateClawFile } from '@/hooks'
-import { useUIStore } from '@/lib/store'
+import { useUIStore, usePreferencesStore } from '@/lib/store'
+import { THEMES } from '@/lib'
 import CodeMirror, { EditorView } from '@uiw/react-codemirror'
 import { createTheme } from '@uiw/codemirror-themes'
 import { tags } from '@lezer/highlight'
 import { json } from '@codemirror/lang-json'
+import { javascript } from '@codemirror/lang-javascript'
+import { markdown } from '@codemirror/lang-markdown'
+import { yaml } from '@codemirror/lang-yaml'
 
-const editorTheme = createTheme({
+const darkEditorTheme = createTheme({
     theme: 'dark',
     settings: {
         background: '#000000',
@@ -47,7 +54,47 @@ const editorTheme = createTheme({
         { tag: tags.number, color: '#fde68a' },
         { tag: tags.bool, color: '#f9a8d4' },
         { tag: tags.null, color: '#a78bfa' },
-        { tag: tags.punctuation, color: '#a1a1aa' }
+        { tag: tags.punctuation, color: '#a1a1aa' },
+        { tag: tags.keyword, color: '#c084fc' },
+        { tag: tags.function(tags.variableName), color: '#67e8f9' },
+        { tag: tags.comment, color: '#6b7280' },
+        { tag: tags.operator, color: '#f9a8d4' },
+        { tag: tags.heading, color: '#93c5fd', fontWeight: 'bold' },
+        { tag: tags.emphasis, color: '#d4d4d8', fontStyle: 'italic' },
+        { tag: tags.strong, color: '#d4d4d8', fontWeight: 'bold' },
+        { tag: tags.link, color: '#67e8f9' },
+        { tag: tags.url, color: '#86efac' }
+    ]
+})
+
+const lightEditorTheme = createTheme({
+    theme: 'light',
+    settings: {
+        background: '#fafafa',
+        foreground: '#18181b',
+        caret: '#18181b',
+        selection: '#c7d2fe',
+        selectionMatch: '#c7d2fe66',
+        lineHighlight: '#00000008',
+        gutterBackground: '#fafafa',
+        gutterForeground: '#a1a1aa'
+    },
+    styles: [
+        { tag: tags.propertyName, color: '#2563eb' },
+        { tag: tags.string, color: '#16a34a' },
+        { tag: tags.number, color: '#d97706' },
+        { tag: tags.bool, color: '#db2777' },
+        { tag: tags.null, color: '#7c3aed' },
+        { tag: tags.punctuation, color: '#71717a' },
+        { tag: tags.keyword, color: '#7c3aed' },
+        { tag: tags.function(tags.variableName), color: '#0891b2' },
+        { tag: tags.comment, color: '#9ca3af' },
+        { tag: tags.operator, color: '#db2777' },
+        { tag: tags.heading, color: '#2563eb', fontWeight: 'bold' },
+        { tag: tags.emphasis, color: '#18181b', fontStyle: 'italic' },
+        { tag: tags.strong, color: '#18181b', fontWeight: 'bold' },
+        { tag: tags.link, color: '#0891b2' },
+        { tag: tags.url, color: '#16a34a' }
     ]
 })
 
@@ -57,12 +104,53 @@ const editorStyles = EditorView.theme({
     '.cm-gutters': { borderRight: 'none' }
 })
 
+const EDITABLE_FILE_TYPES: ClawFileType[] = [
+    'json',
+    'markdown',
+    'javascript',
+    'yaml',
+    'text'
+]
+
+const getLanguageExtension = (fileType: ClawFileType) => {
+    if (fileType === 'json') return json()
+    if (fileType === 'javascript') return javascript()
+    if (fileType === 'markdown') return markdown()
+    if (fileType === 'yaml') return yaml()
+    return null
+}
+
+const getFileIcon = (fileType: ClawFileType, className: string): ReactNode => {
+    if (fileType === 'json' || fileType === 'javascript')
+        return <FileJsIcon className={className} />
+    if (fileType === 'markdown') return <FileMdIcon className={className} />
+    if (fileType === 'yaml' || fileType === 'text')
+        return <FileTextIcon className={className} />
+    return <FileIcon className={className} />
+}
+
+const getFileIconColor = (fileType: ClawFileType): string => {
+    if (fileType === 'json') return 'h-3.5 w-3.5 shrink-0 text-yellow-500'
+    if (fileType === 'javascript') return 'h-3.5 w-3.5 shrink-0 text-yellow-500'
+    if (fileType === 'markdown') return 'h-3.5 w-3.5 shrink-0 text-blue-400'
+    if (fileType === 'yaml') return 'h-3.5 w-3.5 shrink-0 text-purple-400'
+    if (fileType === 'text') return 'h-3.5 w-3.5 shrink-0 text-zinc-400'
+    return 'h-3.5 w-3.5 shrink-0'
+}
+
 const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
     clawId,
     open,
     onOpenChange
 }): ReactNode => {
     const queryClient = useQueryClient()
+    const storeTheme = usePreferencesStore((s) => s.theme)
+    const resolvedTheme =
+        storeTheme === THEMES.SYSTEM
+            ? window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? THEMES.DARK
+                : THEMES.LIGHT
+            : storeTheme
     const files = useClawFiles(clawId, open)
     const updateFile = useUpdateClawFile()
     const showToast = useUIStore((s) => s.showToast)
@@ -71,7 +159,9 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
     const [jsonError, setJsonError] = useState(false)
 
     const selectedFile = files.data?.files.find((f) => f.path === selectedPath)
-    const isJson = selectedFile?.isJson ?? false
+    const fileType = selectedFile?.fileType ?? 'unknown'
+    const isEditable = EDITABLE_FILE_TYPES.includes(fileType)
+    const isJson = fileType === 'json'
 
     const fileContent = useClawFile(
         clawId,
@@ -107,8 +197,8 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
     }
 
     const handleContentLoaded = useCallback(
-        (content: string, fileIsJson: boolean) => {
-            if (fileIsJson) {
+        (content: string, type: ClawFileType) => {
+            if (type === 'json') {
                 try {
                     const parsed = JSON.parse(content)
                     return JSON.stringify(parsed, null, 4)
@@ -124,10 +214,14 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
     const currentContent = fileContent.data?.content
     const displayContent =
         currentContent !== undefined && editedContent === ''
-            ? handleContentLoaded(currentContent, isJson)
+            ? handleContentLoaded(currentContent, fileType)
             : editedContent
 
     const handleChange = useCallback((value: string) => {
+        setEditedContent(value)
+    }, [])
+
+    const handleJsonChange = useCallback((value: string) => {
         setEditedContent(value)
         try {
             JSON.parse(value)
@@ -138,30 +232,40 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
     }, [])
 
     const handleSave = () => {
-        if (jsonError || !selectedPath) return
+        if (jsonError || !selectedPath || !isEditable) return
 
-        try {
-            const minified = JSON.stringify(
-                JSON.parse(editedContent || displayContent)
-            )
-            updateFile.mutate(
-                { id: clawId, data: { path: selectedPath, content: minified } },
-                {
-                    onSuccess: () => {
-                        showToast(t('dashboard.fileExplorerSaved'), 'success')
-                    },
-                    onError: (err) => {
-                        showToast(
-                            err.message || t('api.failedToUpdateFile'),
-                            'error'
-                        )
-                    }
-                }
-            )
-        } catch {
-            setJsonError(true)
+        const rawContent = editedContent || displayContent
+
+        let content = rawContent
+        if (isJson) {
+            try {
+                content = JSON.stringify(JSON.parse(rawContent))
+            } catch {
+                setJsonError(true)
+                return
+            }
         }
+
+        updateFile.mutate(
+            { id: clawId, data: { path: selectedPath, content } },
+            {
+                onSuccess: () => {
+                    showToast(t('dashboard.fileExplorerSaved'), 'success')
+                },
+                onError: (err) => {
+                    showToast(
+                        err.message || t('api.failedToUpdateFile'),
+                        'error'
+                    )
+                }
+            }
+        )
     }
+
+    const editorExtensions = useMemo(() => {
+        const langExt = getLanguageExtension(fileType)
+        return langExt ? [langExt, editorStyles] : [editorStyles]
+    }, [fileType])
 
     const groupedFiles = files.data?.files.reduce<
         Record<string, typeof files.data.files>
@@ -190,13 +294,13 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className='mt-2 flex max-w-lg items-start gap-2 rounded-md bg-yellow-950/50 p-3 text-xs text-yellow-400'>
+                <div className='bg-muted text-muted-foreground mt-2 flex max-w-lg items-start gap-2 rounded-md p-3 text-xs'>
                     <WarningIcon className='mt-0.5 h-3.5 w-3.5 shrink-0' />
                     {t('dashboard.fileExplorerWarning')}
                 </div>
 
                 <div className='flex h-[530px] gap-3 overflow-hidden pt-3'>
-                    <div className='w-56 shrink-0 overflow-y-auto rounded-md border border-zinc-800 bg-black'>
+                    <div className='border-border bg-muted w-56 shrink-0 overflow-y-auto rounded-md border'>
                         {files.isPending && (
                             <div className='p-3'>
                                 <div className='flex items-center gap-1.5 py-1.5'>
@@ -204,33 +308,33 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                                     <Skeleton className='h-3 w-16 rounded' />
                                 </div>
                                 <div className='ml-[19px]'>
-                                    <div className="relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:bg-zinc-700/50 before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:bg-zinc-700/50 after:content-['']">
+                                    <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
                                         <div className='flex items-center gap-1.5'>
                                             <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
                                             <Skeleton className='h-3 w-24 rounded' />
                                         </div>
                                     </div>
-                                    <div className='border-l border-zinc-700/50'>
+                                    <div className='border-muted-foreground/20 border-l'>
                                         <div className='ml-[19px]'>
-                                            <div className="relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:bg-zinc-700/50 before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:bg-zinc-700/50 after:content-['']">
+                                            <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
                                                 <div className='flex items-center gap-1.5'>
                                                     <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
                                                     <Skeleton className='h-3 w-16 rounded' />
                                                 </div>
                                             </div>
-                                            <div className="relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:bg-zinc-700/50 before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:bg-zinc-700/50 after:content-['']">
+                                            <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
                                                 <div className='flex items-center gap-1.5'>
                                                     <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
                                                     <Skeleton className='h-3 w-20 rounded' />
                                                 </div>
                                             </div>
-                                            <div className="relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:bg-zinc-700/50 before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:bg-zinc-700/50 after:content-['']">
+                                            <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
                                                 <div className='flex items-center gap-1.5'>
                                                     <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
                                                     <Skeleton className='h-3 w-14 rounded' />
                                                 </div>
                                             </div>
-                                            <div className="relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:rounded-bl-[5px] before:border-b before:border-l before:border-zinc-700/50 before:content-['']">
+                                            <div className="before:border-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:border-b before:border-l before:content-['']">
                                                 <div className='flex items-center gap-1.5'>
                                                     <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
                                                     <Skeleton className='h-3 w-24 rounded' />
@@ -238,27 +342,27 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:bg-zinc-700/50 before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:bg-zinc-700/50 after:content-['']">
+                                    <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
                                         <div className='flex items-center gap-1.5'>
                                             <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
                                             <Skeleton className='h-3 w-14 rounded' />
                                         </div>
                                     </div>
-                                    <div className='border-l border-zinc-700/50'>
+                                    <div className='border-muted-foreground/20 border-l'>
                                         <div className='ml-[19px]'>
-                                            <div className="relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:bg-zinc-700/50 before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:bg-zinc-700/50 after:content-['']">
+                                            <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
                                                 <div className='flex items-center gap-1.5'>
                                                     <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
                                                     <Skeleton className='h-3 w-16 rounded' />
                                                 </div>
                                             </div>
-                                            <div className="relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:bg-zinc-700/50 before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:bg-zinc-700/50 after:content-['']">
+                                            <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
                                                 <div className='flex items-center gap-1.5'>
                                                     <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
                                                     <Skeleton className='h-3 w-20 rounded' />
                                                 </div>
                                             </div>
-                                            <div className="relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:rounded-bl-[5px] before:border-b before:border-l before:border-zinc-700/50 before:content-['']">
+                                            <div className="before:border-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:border-b before:border-l before:content-['']">
                                                 <div className='flex items-center gap-1.5'>
                                                     <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
                                                     <Skeleton className='h-3 w-12 rounded' />
@@ -266,19 +370,19 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:bg-zinc-700/50 before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:bg-zinc-700/50 after:content-['']">
+                                    <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
                                         <div className='flex items-center gap-1.5'>
                                             <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
                                             <Skeleton className='h-3 w-20 rounded' />
                                         </div>
                                     </div>
-                                    <div className="relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:bg-zinc-700/50 before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:bg-zinc-700/50 after:content-['']">
+                                    <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
                                         <div className='flex items-center gap-1.5'>
                                             <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
                                             <Skeleton className='h-3 w-16 rounded' />
                                         </div>
                                     </div>
-                                    <div className="relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:rounded-bl-[5px] before:border-b before:border-l before:border-zinc-700/50 before:content-['']">
+                                    <div className="before:border-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:border-b before:border-l before:content-['']">
                                         <div className='flex items-center gap-1.5'>
                                             <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
                                             <Skeleton className='h-3 w-24 rounded' />
@@ -288,19 +392,19 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                             </div>
                         )}
                         {files.isError && (
-                            <div className='p-3 text-xs text-red-400'>
+                            <div className='p-3 text-xs text-red-600 dark:text-red-400'>
                                 {files.error?.message ||
                                     t('api.failedToListFiles')}
                             </div>
                         )}
                         {files.data && files.data.files.length === 0 && (
-                            <div className='p-3 text-xs text-zinc-500'>
+                            <div className='text-muted-foreground p-3 text-xs'>
                                 {t('dashboard.fileExplorerNoFiles')}
                             </div>
                         )}
                         {groupedFiles && (
                             <>
-                                <div className='flex items-center gap-1.5 px-3 pb-1 pt-2 text-xs font-medium text-zinc-400'>
+                                <div className='text-muted-foreground flex items-center gap-1.5 px-3 pb-1 pt-2 text-xs font-medium'>
                                     <FolderOpenIcon className='h-3.5 w-3.5 shrink-0' />
                                     {t('dashboard.fileExplorerRoot')}
                                 </div>
@@ -312,10 +416,10 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                                         return (
                                             <div key={dir}>
                                                 <div
-                                                    className={`relative flex items-center gap-1.5 py-1.5 pl-5 pr-3 text-xs font-medium text-zinc-500 ${
+                                                    className={`text-muted-foreground relative flex items-center gap-1.5 py-1.5 pl-5 pr-3 text-xs font-medium ${
                                                         isLastRootChild
-                                                            ? "before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:rounded-bl-[5px] before:border-b before:border-l before:border-zinc-700/50 before:content-['']"
-                                                            : "before:absolute before:left-0 before:top-0 before:h-full before:w-px before:bg-zinc-700/50 before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:bg-zinc-700/50 after:content-['']"
+                                                            ? "before:border-muted-foreground/20 before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:border-b before:border-l before:content-['']"
+                                                            : "before:bg-muted-foreground/20 after:bg-muted-foreground/20 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']"
                                                     }`}
                                                 >
                                                     <FolderOpenIcon className='h-3.5 w-3.5 shrink-0' />
@@ -324,7 +428,7 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                                                 <div
                                                     className={
                                                         !isLastRootChild
-                                                            ? 'border-l border-zinc-700/50'
+                                                            ? 'border-muted-foreground/20 border-l'
                                                             : ''
                                                     }
                                                 >
@@ -344,19 +448,20 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                                                                         fi ===
                                                                         dirFiles.length -
                                                                             1
-                                                                            ? "before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:rounded-bl-[5px] before:border-b before:border-l before:border-zinc-700/50 before:content-['']"
-                                                                            : "before:absolute before:left-0 before:top-0 before:h-full before:w-px before:bg-zinc-700/50 before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:bg-zinc-700/50 after:content-['']"
+                                                                            ? "before:border-muted-foreground/20 before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:border-b before:border-l before:content-['']"
+                                                                            : "before:bg-muted-foreground/20 after:bg-muted-foreground/20 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']"
                                                                     } ${
                                                                         selectedPath ===
                                                                         file.path
-                                                                            ? 'bg-zinc-800 text-zinc-200'
-                                                                            : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-300'
+                                                                            ? 'bg-muted text-foreground'
+                                                                            : 'text-muted-foreground hover:bg-muted hover:text-foreground/80'
                                                                     }`}
                                                                 >
-                                                                    {file.isJson ? (
-                                                                        <FileJsIcon className='h-3.5 w-3.5 shrink-0 text-yellow-500' />
-                                                                    ) : (
-                                                                        <FileIcon className='h-3.5 w-3.5 shrink-0' />
+                                                                    {getFileIcon(
+                                                                        file.fileType,
+                                                                        getFileIconColor(
+                                                                            file.fileType
+                                                                        )
                                                                     )}
                                                                     <span className='truncate'>
                                                                         {
@@ -379,18 +484,17 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                                             }
                                             className={`relative flex w-full items-center gap-2 py-1.5 pl-5 pr-3 text-left text-xs transition-colors ${
                                                 index === rootFiles.length - 1
-                                                    ? "before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:rounded-bl-[5px] before:border-b before:border-l before:border-zinc-700/50 before:content-['']"
-                                                    : "before:absolute before:left-0 before:top-0 before:h-full before:w-px before:bg-zinc-700/50 before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:bg-zinc-700/50 after:content-['']"
+                                                    ? "before:border-muted-foreground/20 before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:border-b before:border-l before:content-['']"
+                                                    : "before:bg-muted-foreground/20 after:bg-muted-foreground/20 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']"
                                             } ${
                                                 selectedPath === file.path
-                                                    ? 'bg-zinc-800 text-zinc-200'
-                                                    : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-300'
+                                                    ? 'bg-muted text-foreground'
+                                                    : 'text-muted-foreground hover:bg-muted hover:text-foreground/80'
                                             }`}
                                         >
-                                            {file.isJson ? (
-                                                <FileJsIcon className='h-3.5 w-3.5 shrink-0 text-yellow-500' />
-                                            ) : (
-                                                <FileIcon className='h-3.5 w-3.5 shrink-0' />
+                                            {getFileIcon(
+                                                file.fileType,
+                                                getFileIconColor(file.fileType)
                                             )}
                                             <span className='truncate'>
                                                 {file.name}
@@ -404,19 +508,19 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
 
                     <div className='flex min-w-0 flex-1 flex-col gap-2'>
                         {!selectedPath && (
-                            <div className='flex flex-1 flex-col items-center justify-center gap-2 rounded-md border border-zinc-800 bg-black text-sm text-zinc-500'>
-                                <FileIcon className='h-8 w-8 text-zinc-600' />
+                            <div className='border-border bg-muted text-muted-foreground flex flex-1 flex-col items-center justify-center gap-2 rounded-md border text-sm'>
+                                <FileIcon className='text-muted-foreground h-8 w-8' />
                                 {t('dashboard.fileExplorerSelectFile')}
                             </div>
                         )}
                         {selectedPath && fileContent.isPending && (
                             <div className='flex flex-col'>
-                                <div className='h-7 w-28 rounded-b-none rounded-t-md bg-zinc-800/60' />
+                                <div className='bg-muted/60 h-7 w-28 rounded-b-none rounded-t-md' />
                                 <Skeleton className='h-[486px] rounded-b-sm rounded-tl-none rounded-tr-sm' />
                             </div>
                         )}
                         {selectedPath && fileContent.isError && (
-                            <div className='flex flex-1 items-center justify-center rounded-md border border-zinc-800 bg-black text-sm text-red-400'>
+                            <div className='border-border bg-muted flex flex-1 items-center justify-center rounded-md border text-sm text-red-600 dark:text-red-400'>
                                 {fileContent.error?.message ||
                                     t('api.failedToReadFile')}
                             </div>
@@ -424,15 +528,14 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                         {selectedPath && fileContent.data && (
                             <>
                                 <div className='flex items-center'>
-                                    <div className='flex items-center gap-1.5 rounded-t-md border border-b-0 border-zinc-800 bg-black px-3 py-1.5 text-xs text-zinc-300'>
-                                        {isJson ? (
-                                            <FileJsIcon className='h-3.5 w-3.5 shrink-0 text-yellow-500' />
-                                        ) : (
-                                            <FileIcon className='h-3.5 w-3.5 shrink-0' />
+                                    <div className='border-border bg-muted text-foreground/80 flex items-center gap-1.5 rounded-t-md border border-b-0 px-3 py-1.5 text-xs'>
+                                        {getFileIcon(
+                                            fileType,
+                                            getFileIconColor(fileType)
                                         )}
                                         {selectedFile?.name}
-                                        {!isJson && (
-                                            <span className='ml-0.5 rounded-full bg-zinc-800 px-2 py-px text-[10px] lowercase text-zinc-500'>
+                                        {!isEditable && (
+                                            <span className='bg-muted text-muted-foreground ml-0.5 rounded-full px-2 py-px text-[10px] lowercase'>
                                                 {t(
                                                     'dashboard.fileExplorerReadOnly'
                                                 )}
@@ -440,44 +543,48 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                                         )}
                                         <button
                                             onClick={() => handleSelectFile('')}
-                                            className='ml-0.5 rounded p-0.5 text-zinc-500 transition-colors hover:bg-zinc-700 hover:text-zinc-300'
+                                            className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground/80 ml-0.5 rounded p-0.5 transition-colors'
                                         >
                                             <XIcon className='h-3 w-3' />
                                         </button>
                                     </div>
                                 </div>
                                 <div
-                                    className={`-mt-2 h-[500px] overflow-hidden rounded-md rounded-tl-none border bg-black ${
+                                    className={`bg-muted -mt-2 h-[500px] overflow-hidden rounded-md rounded-tl-none border ${
                                         jsonError
                                             ? 'border-red-500/50'
-                                            : 'border-zinc-800'
+                                            : 'border-border'
                                     }`}
                                 >
                                     <CodeMirror
                                         value={displayContent}
                                         onChange={
-                                            isJson ? handleChange : undefined
-                                        }
-                                        readOnly={!isJson}
-                                        extensions={
                                             isJson
-                                                ? [json(), editorStyles]
-                                                : [editorStyles]
+                                                ? handleJsonChange
+                                                : isEditable
+                                                  ? handleChange
+                                                  : undefined
                                         }
-                                        theme={editorTheme}
+                                        readOnly={!isEditable}
+                                        extensions={editorExtensions}
+                                        theme={
+                                            resolvedTheme === THEMES.DARK
+                                                ? darkEditorTheme
+                                                : lightEditorTheme
+                                        }
                                         height='500px'
                                         basicSetup={{
                                             lineNumbers: true,
-                                            foldGutter: isJson,
-                                            bracketMatching: isJson,
-                                            closeBrackets: isJson,
-                                            highlightActiveLine: isJson,
-                                            indentOnInput: isJson
+                                            foldGutter: isEditable,
+                                            bracketMatching: isEditable,
+                                            closeBrackets: isEditable,
+                                            highlightActiveLine: isEditable,
+                                            indentOnInput: isEditable
                                         }}
                                     />
                                 </div>
                                 {jsonError && (
-                                    <p className='text-xs text-red-400'>
+                                    <p className='text-xs text-red-600 dark:text-red-400'>
                                         {t('dashboard.fileExplorerInvalidJson')}
                                     </p>
                                 )}
@@ -486,18 +593,18 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                     </div>
                 </div>
 
-                <div className='mt-6 flex justify-end border-t border-zinc-800 pt-3'>
+                <div className='border-border mt-6 flex justify-end border-t pt-3'>
                     <Button
                         onClick={handleSave}
                         className='mt-3'
                         disabled={
-                            !isJson ||
+                            !isEditable ||
                             !selectedPath ||
                             !fileContent.data ||
                             jsonError ||
                             updateFile.isPending
                         }
-                        size='sm'
+                        size='default'
                     >
                         {updateFile.isPending ? (
                             <CircleNotchIcon className='mr-2 h-4 w-4 animate-spin' />

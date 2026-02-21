@@ -2,6 +2,7 @@ import type { FC, ReactNode } from 'react'
 import type { PageTitleProps } from '@/ts/Interfaces'
 
 import { useEffect } from 'react'
+import { t } from '@openclaw/i18n'
 
 const setMetaTag = (attr: string, key: string, content: string) => {
     let meta = document.querySelector(
@@ -36,7 +37,7 @@ const PageTitle: FC<PageTitleProps> = ({
     noIndex
 }): ReactNode => {
     useEffect(() => {
-        const fullTitle = `${title} - ClawHost`
+        const fullTitle = `${title} - ${t('common.brandName')}`
         document.title = fullTitle
         setMetaTag('property', 'og:title', fullTitle)
         setMetaTag('name', 'twitter:title', fullTitle)

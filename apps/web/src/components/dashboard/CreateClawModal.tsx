@@ -52,6 +52,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     onNavigateToSSHKeys
 }): ReactNode => {
     const [name, setName] = useState('')
+    const [nameError, setNameError] = useState('')
     const [provider, setProvider] = useState<ProviderType>(
         preselectedProvider || 'hetzner'
     )
@@ -164,6 +165,10 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     const purchaseMutation = usePurchaseClaw()
 
     const handleCreate = () => {
+        if (name && !/^[a-zA-Z0-9-]+$/.test(name)) {
+            setNameError(t('createClaw.clawNameInvalidChars'))
+            return
+        }
         if (!location) {
             showToast(t('errors.invalidLocation'), 'error')
             return
@@ -236,16 +241,34 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                         <Input
                             type='text'
                             value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            onChange={(e) => {
+                                const val = e.target.value
+                                setName(val)
+                                if (val && !/^[a-zA-Z0-9-]+$/.test(val)) {
+                                    setNameError(
+                                        t('createClaw.clawNameInvalidChars')
+                                    )
+                                } else {
+                                    setNameError('')
+                                }
+                            }}
                             placeholder={t('createClaw.clawNamePlaceholder')}
-                            className='h-11'
+                            className={`h-11 ${nameError ? 'border-red-500/50' : ''}`}
                         />
+                        {nameError && (
+                            <p className='mt-1.5 text-[11px] text-red-600 dark:text-red-400'>
+                                {nameError}
+                            </p>
+                        )}
                     </div>
 
                     <div className='space-y-1'>
                         <Label>
                             {t('createClaw.provider')}
-                            <span className='text-red-400'> *</span>
+                            <span className='text-red-600 dark:text-red-400'>
+                                {' '}
+                                *
+                            </span>
                         </Label>
                         <div className='bg-muted flex w-fit rounded-lg p-1'>
                             <button
@@ -327,7 +350,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                             </button>
                         </div>
                         {atCapacity && (
-                            <p className='mt-2 rounded-md bg-yellow-500/10 px-3 py-2 text-xs text-yellow-400'>
+                            <p className='mt-2 rounded-md bg-yellow-500/10 px-3 py-2 text-xs text-yellow-600 dark:text-yellow-400'>
                                 {t('createClaw.providerAtCapacity')}
                             </p>
                         )}
@@ -336,7 +359,10 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                     <div className='space-y-2'>
                         <Label>
                             {t('createClaw.location')}
-                            <span className='text-red-400'> *</span>
+                            <span className='text-red-600 dark:text-red-400'>
+                                {' '}
+                                *
+                            </span>
                         </Label>
                         {isProviderLoading ? (
                             <div className='grid grid-cols-2 gap-2'>
@@ -432,7 +458,10 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                     <div className='space-y-2'>
                         <Label>
                             {t('createClaw.plan')}
-                            <span className='text-red-400'> *</span>
+                            <span className='text-red-600 dark:text-red-400'>
+                                {' '}
+                                *
+                            </span>
                         </Label>
                         {isProviderLoading ? (
                             <div className='space-y-2'>
@@ -524,9 +553,20 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                             )}
                                                         </p>
                                                         <p className='text-muted-foreground text-xs'>
-                                                            {plan.cpu} vCPU /{' '}
-                                                            {plan.memory} GB RAM
-                                                            / {plan.disk} GB SSD
+                                                            {t(
+                                                                'createClaw.planSpec',
+                                                                {
+                                                                    cpu: String(
+                                                                        plan.cpu
+                                                                    ),
+                                                                    memory: String(
+                                                                        plan.memory
+                                                                    ),
+                                                                    disk: String(
+                                                                        plan.disk
+                                                                    )
+                                                                }
+                                                            )}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -535,7 +575,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                     {plan.priceMonthly.toFixed(
                                                         2
                                                     )}
-                                                    /mo
+                                                    {t('landing.perMonth')}
                                                 </span>
                                             </label>
                                         )
@@ -595,129 +635,118 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                         </button>
 
                         {showAdvanced && (
-                            <div className='space-y-5 border-t border-border/50 p-4'>
-                            <div className='space-y-2'>
-                                <Label>{t('createClaw.rootPassword')}</Label>
-                                <div className='flex items-center gap-2'>
-                                    <div className='relative flex-1'>
-                                        <Input
-                                            type={
-                                                showPassword
-                                                    ? 'text'
-                                                    : 'password'
-                                            }
-                                            value={password}
-                                            onChange={(e) =>
-                                                setPassword(e.target.value)
-                                            }
-                                            placeholder={t(
-                                                'createClaw.rootPasswordPlaceholder'
-                                            )}
-                                            className='bg-muted pr-10 font-mono text-sm'
-                                        />
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <button
-                                                    type='button'
-                                                    onClick={() =>
-                                                        setShowPassword(!showPassword)
-                                                    }
-                                                    className='text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2'
-                                                >
-                                                    {showPassword ? (
-                                                        <EyeSlashIcon className='h-4 w-4' />
-                                                    ) : (
-                                                        <EyeIcon className='h-4 w-4' />
-                                                    )}
-                                                </button>
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                {showPassword ? t('common.hide') : t('common.show')}
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </div>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <Button
-                                                type='button'
-                                                variant='ghost'
-                                                size='icon'
-                                                onClick={() => {
-                                                    navigator.clipboard.writeText(
-                                                        password
-                                                    )
-                                                    showToast(
-                                                        t('createClaw.passwordCopied'),
-                                                        'success'
-                                                    )
-                                                }}
-                                            >
-                                                <CopyIcon className='h-4 w-4' />
-                                            </Button>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            {t('common.copy')}
-                                        </TooltipContent>
-                                    </Tooltip>
-                                    <TooltipProvider delayDuration={200}>
+                            <div className='border-border/50 space-y-5 border-t p-4'>
+                                <div className='space-y-2'>
+                                    <Label>
+                                        {t('createClaw.rootPassword')}
+                                    </Label>
+                                    <div className='flex items-center gap-2'>
+                                        <div className='relative flex-1'>
+                                            <Input
+                                                type={
+                                                    showPassword
+                                                        ? 'text'
+                                                        : 'password'
+                                                }
+                                                value={password}
+                                                onChange={(e) =>
+                                                    setPassword(e.target.value)
+                                                }
+                                                placeholder={t(
+                                                    'createClaw.rootPasswordPlaceholder'
+                                                )}
+                                                className='bg-muted pr-10 font-mono text-sm'
+                                            />
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <button
+                                                        type='button'
+                                                        onClick={() =>
+                                                            setShowPassword(
+                                                                !showPassword
+                                                            )
+                                                        }
+                                                        className='text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2'
+                                                    >
+                                                        {showPassword ? (
+                                                            <EyeSlashIcon className='h-4 w-4' />
+                                                        ) : (
+                                                            <EyeIcon className='h-4 w-4' />
+                                                        )}
+                                                    </button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    {showPassword
+                                                        ? t('common.hide')
+                                                        : t('common.show')}
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </div>
                                         <Tooltip>
                                             <TooltipTrigger asChild>
                                                 <Button
                                                     type='button'
                                                     variant='ghost'
                                                     size='icon'
-                                                    onClick={() =>
-                                                        setPassword(generatePassword())
-                                                    }
+                                                    onClick={() => {
+                                                        navigator.clipboard.writeText(
+                                                            password
+                                                        )
+                                                        showToast(
+                                                            t(
+                                                                'createClaw.passwordCopied'
+                                                            ),
+                                                            'success'
+                                                        )
+                                                    }}
                                                 >
-                                                    <ArrowClockwiseIcon className='h-4 w-4' />
+                                                    <CopyIcon className='h-4 w-4' />
                                                 </Button>
                                             </TooltipTrigger>
                                             <TooltipContent>
-                                                {t('createClaw.regeneratePassword')}
+                                                {t('common.copy')}
                                             </TooltipContent>
                                         </Tooltip>
-                                    </TooltipProvider>
+                                        <TooltipProvider delayDuration={200}>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Button
+                                                        type='button'
+                                                        variant='ghost'
+                                                        size='icon'
+                                                        onClick={() =>
+                                                            setPassword(
+                                                                generatePassword()
+                                                            )
+                                                        }
+                                                    >
+                                                        <ArrowClockwiseIcon className='h-4 w-4' />
+                                                    </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    {t(
+                                                        'createClaw.regeneratePassword'
+                                                    )}
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                    </div>
+                                    <p className='text-muted-foreground text-xs'>
+                                        {t(
+                                            'createClaw.autoGeneratePasswordHint'
+                                        )}
+                                    </p>
                                 </div>
-                                <p className='text-muted-foreground text-xs'>
-                                    {t('createClaw.autoGeneratePasswordHint')}
-                                </p>
-                            </div>
 
-                            <div className='space-y-2'>
-                                <Label>{t('createClaw.sshKeyOptional')}</Label>
-                                {sshKeys.length > 0 ? (
-                                    <div className='space-y-2'>
-                                        <label
-                                            className={`flex cursor-pointer items-center rounded-lg p-3 transition ${
-                                                selectedSshKeyId === ''
-                                                    ? 'border border-[#ef5350]/50 bg-[#ef5350]/20'
-                                                    : 'bg-muted hover:bg-muted/80 border border-transparent'
-                                            }`}
-                                        >
-                                            <input
-                                                type='radio'
-                                                name='sshKey'
-                                                value=''
-                                                checked={
-                                                    selectedSshKeyId === ''
-                                                }
-                                                onChange={() =>
-                                                    setSelectedSshKeyId('')
-                                                }
-                                                className='sr-only'
-                                            />
-                                            <span className='text-sm'>
-                                                {t(
-                                                    'createClaw.noSshKeyPasswordOnly'
-                                                )}
-                                            </span>
-                                        </label>
-                                        {sshKeys.map((key) => (
+                                <div className='space-y-2'>
+                                    <Label>
+                                        {t('createClaw.sshKeyOptional')}
+                                    </Label>
+                                    {sshKeys.length > 0 ? (
+                                        <div className='space-y-2'>
                                             <label
-                                                key={key.id}
                                                 className={`flex cursor-pointer items-center rounded-lg p-3 transition ${
-                                                    selectedSshKeyId === key.id
+                                                    selectedSshKeyId === ''
                                                         ? 'border border-[#ef5350]/50 bg-[#ef5350]/20'
                                                         : 'bg-muted hover:bg-muted/80 border border-transparent'
                                                 }`}
@@ -725,135 +754,171 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                 <input
                                                     type='radio'
                                                     name='sshKey'
-                                                    value={key.id}
+                                                    value=''
                                                     checked={
-                                                        selectedSshKeyId ===
-                                                        key.id
+                                                        selectedSshKeyId === ''
                                                     }
                                                     onChange={() =>
-                                                        setSelectedSshKeyId(
-                                                            key.id
-                                                        )
+                                                        setSelectedSshKeyId('')
                                                     }
                                                     className='sr-only'
                                                 />
-                                                <KeyIcon className='text-muted-foreground mr-3 h-4 w-4' />
-                                                <div>
-                                                    <p className='text-sm font-medium'>
-                                                        {key.name}
-                                                    </p>
-                                                    <p className='text-muted-foreground font-mono text-xs'>
-                                                        {key.fingerprint}
-                                                    </p>
-                                                </div>
-                                            </label>
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <div className='bg-muted flex items-center gap-3 rounded-lg p-3'>
-                                        <div className='bg-background flex h-10 w-10 items-center justify-center rounded-full'>
-                                            <KeyIcon className='text-muted-foreground h-5 w-5' />
-                                        </div>
-                                        <div className='flex-1'>
-                                            <p className='text-sm font-medium'>
-                                                {t(
-                                                    'createClaw.noSshKeysConfigured'
-                                                )}
-                                            </p>
-                                            <p className='text-muted-foreground text-xs'>
-                                                {t(
-                                                    'createClaw.addSshKeyForPasswordlessLogin'
-                                                )}
-                                            </p>
-                                        </div>
-                                        <Button
-                                            type='button'
-                                            variant='secondary'
-                                            size='sm'
-                                            onClick={onNavigateToSSHKeys}
-                                        >
-                                            {t('common.addKey')}
-                                        </Button>
-                                    </div>
-                                )}
-                            </div>
-
-                            {volumePricing && (
-                                <div className='space-y-2'>
-                                    <Label>
-                                        {t(
-                                            'createClaw.additionalStorageOptional'
-                                        )}
-                                    </Label>
-                                    <div
-                                        className={`bg-muted space-y-4 rounded-lg p-4`}
-                                    >
-                                        <div className='flex items-center justify-between'>
-                                            <div className='flex items-center gap-2'>
-                                                <ClawMascot className='h-4 w-4' />
-                                                <span className='text-sm font-medium'>
+                                                <span className='text-sm'>
                                                     {t(
-                                                        'createClaw.volumeStorage'
+                                                        'createClaw.noSshKeyPasswordOnly'
                                                     )}
                                                 </span>
-                                            </div>
-                                            <span className='text-sm font-semibold'>
-                                                {volumeSize > 0
-                                                    ? `+$${(volumeSize * volumePricing.pricePerGbMonthly).toFixed(2)}/mo`
-                                                    : t('common.none')}
-                                            </span>
-                                        </div>
-                                        <div className='space-y-3'>
-                                            <Slider
-                                                value={[volumeSize]}
-                                                onValueChange={(value) =>
-                                                    setVolumeSize(value[0])
-                                                }
-                                                min={0}
-                                                max={500}
-                                                step={10}
-                                            />
-                                            <div className='flex items-center justify-between'>
-                                                <span className='text-muted-foreground text-xs'>
-                                                    0 GB
-                                                </span>
-                                                <div className='flex items-center gap-2'>
-                                                    <Input
-                                                        type='number'
-                                                        min={0}
-                                                        max={
-                                                            volumePricing.maxSize
+                                            </label>
+                                            {sshKeys.map((key) => (
+                                                <label
+                                                    key={key.id}
+                                                    className={`flex cursor-pointer items-center rounded-lg p-3 transition ${
+                                                        selectedSshKeyId ===
+                                                        key.id
+                                                            ? 'border border-[#ef5350]/50 bg-[#ef5350]/20'
+                                                            : 'bg-muted hover:bg-muted/80 border border-transparent'
+                                                    }`}
+                                                >
+                                                    <input
+                                                        type='radio'
+                                                        name='sshKey'
+                                                        value={key.id}
+                                                        checked={
+                                                            selectedSshKeyId ===
+                                                            key.id
                                                         }
-                                                        value={volumeSize}
-                                                        onChange={(e) => {
-                                                            const val =
-                                                                Math.min(
-                                                                    Math.max(
-                                                                        0,
-                                                                        Number(
-                                                                            e
-                                                                                .target
-                                                                                .value
-                                                                        )
-                                                                    ),
-                                                                    volumePricing.maxSize
-                                                                )
-                                                            setVolumeSize(val)
-                                                        }}
-                                                        className='h-8 w-20 text-center text-sm'
+                                                        onChange={() =>
+                                                            setSelectedSshKeyId(
+                                                                key.id
+                                                            )
+                                                        }
+                                                        className='sr-only'
                                                     />
-                                                    <span className='text-muted-foreground text-sm'>
-                                                        GB
+                                                    <KeyIcon className='text-muted-foreground mr-3 h-4 w-4' />
+                                                    <div>
+                                                        <p className='text-sm font-medium'>
+                                                            {key.name}
+                                                        </p>
+                                                        <p className='text-muted-foreground font-mono text-xs'>
+                                                            {key.fingerprint}
+                                                        </p>
+                                                    </div>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className='bg-muted flex items-center gap-3 rounded-lg p-3'>
+                                            <div className='bg-background flex h-10 w-10 items-center justify-center rounded-full'>
+                                                <KeyIcon className='text-muted-foreground h-5 w-5' />
+                                            </div>
+                                            <div className='flex-1'>
+                                                <p className='text-sm font-medium'>
+                                                    {t(
+                                                        'createClaw.noSshKeysConfigured'
+                                                    )}
+                                                </p>
+                                                <p className='text-muted-foreground text-xs'>
+                                                    {t(
+                                                        'createClaw.addSshKeyForPasswordlessLogin'
+                                                    )}
+                                                </p>
+                                            </div>
+                                            <Button
+                                                type='button'
+                                                variant='secondary'
+                                                size='sm'
+                                                onClick={onNavigateToSSHKeys}
+                                            >
+                                                {t('common.addKey')}
+                                            </Button>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {volumePricing && (
+                                    <div className='space-y-2'>
+                                        <Label>
+                                            {t(
+                                                'createClaw.additionalStorageOptional'
+                                            )}
+                                        </Label>
+                                        <div
+                                            className={`bg-muted space-y-4 rounded-lg p-4`}
+                                        >
+                                            <div className='flex items-center justify-between'>
+                                                <div className='flex items-center gap-2'>
+                                                    <ClawMascot className='h-4 w-4' />
+                                                    <span className='text-sm font-medium'>
+                                                        {t(
+                                                            'createClaw.volumeStorage'
+                                                        )}
                                                     </span>
                                                 </div>
-                                                <span className='text-muted-foreground text-xs'>
-                                                    500 GB
+                                                <span className='text-sm font-semibold'>
+                                                    {volumeSize > 0
+                                                        ? `+$${(volumeSize * volumePricing.pricePerGbMonthly).toFixed(2)}${t('landing.perMonth')}`
+                                                        : t('common.none')}
                                                 </span>
+                                            </div>
+                                            <div className='space-y-3'>
+                                                <Slider
+                                                    value={[volumeSize]}
+                                                    onValueChange={(value) =>
+                                                        setVolumeSize(value[0])
+                                                    }
+                                                    min={0}
+                                                    max={500}
+                                                    step={10}
+                                                />
+                                                <div className='flex items-center justify-between'>
+                                                    <span className='text-muted-foreground text-xs'>
+                                                        {t(
+                                                            'createClaw.volumeMin'
+                                                        )}
+                                                    </span>
+                                                    <div className='flex items-center gap-2'>
+                                                        <Input
+                                                            type='number'
+                                                            min={0}
+                                                            max={
+                                                                volumePricing.maxSize
+                                                            }
+                                                            value={volumeSize}
+                                                            onChange={(e) => {
+                                                                const val =
+                                                                    Math.min(
+                                                                        Math.max(
+                                                                            0,
+                                                                            Number(
+                                                                                e
+                                                                                    .target
+                                                                                    .value
+                                                                            )
+                                                                        ),
+                                                                        volumePricing.maxSize
+                                                                    )
+                                                                setVolumeSize(
+                                                                    val
+                                                                )
+                                                            }}
+                                                            className='h-8 w-20 text-center text-sm'
+                                                        />
+                                                        <span className='text-muted-foreground text-sm'>
+                                                            {t(
+                                                                'createClaw.volumeUnit'
+                                                            )}
+                                                        </span>
+                                                    </div>
+                                                    <span className='text-muted-foreground text-xs'>
+                                                        {t(
+                                                            'createClaw.volumeMax'
+                                                        )}
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            )}
+                                )}
                             </div>
                         )}
                     </div>
@@ -888,7 +953,8 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                     )}
                                 </span>
                                 <span>
-                                    ${selectedPlan.priceMonthly.toFixed(2)}/mo
+                                    ${selectedPlan.priceMonthly.toFixed(2)}
+                                    {t('landing.perMonth')}
                                 </span>
                             </div>
                             {volumeSize > 0 && volumePricing && (
@@ -903,7 +969,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                             volumeSize *
                                             volumePricing.pricePerGbMonthly
                                         ).toFixed(2)}
-                                        /mo
+                                        {t('landing.perMonth')}
                                     </span>
                                 </div>
                             )}
@@ -920,7 +986,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                               volumePricing.pricePerGbMonthly
                                             : 0)
                                     ).toFixed(2)}
-                                    /mo
+                                    {t('landing.perMonth')}
                                 </span>
                             </div>
                         </div>
@@ -935,27 +1001,26 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                             disabled={
                                 purchaseMutation.isPending ||
                                 !selectedPlan ||
-                                !location
+                                !location ||
+                                !!nameError
                             }
                         >
                             {purchaseMutation.isPending && (
                                 <CircleNotchIcon className='h-4 w-4 animate-spin' />
                             )}
-                            {!selectedPlan ? (
-                                t('createClaw.selectServerToContinue')
-                            ) : !location ? (
-                                t('createClaw.selectLocationToContinue')
-                            ) : (
-                                t('createClaw.proceedToPayment', {
-                                    amount: (
-                                        selectedPlan.priceMonthly +
-                                        (volumeSize > 0 && volumePricing
-                                            ? volumeSize *
-                                              volumePricing.pricePerGbMonthly
-                                            : 0)
-                                    ).toFixed(2)
-                                })
-                            )}
+                            {!selectedPlan
+                                ? t('createClaw.selectServerToContinue')
+                                : !location
+                                  ? t('createClaw.selectLocationToContinue')
+                                  : t('createClaw.proceedToPayment', {
+                                        amount: (
+                                            selectedPlan.priceMonthly +
+                                            (volumeSize > 0 && volumePricing
+                                                ? volumeSize *
+                                                  volumePricing.pricePerGbMonthly
+                                                : 0)
+                                        ).toFixed(2)
+                                    })}
                         </Button>
                     </div>
                 </form>

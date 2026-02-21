@@ -3,7 +3,11 @@ import type { FC, ReactNode } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { ArrowLeftIcon, CalendarBlankIcon, ClockIcon } from '@phosphor-icons/react'
+import {
+    ArrowLeftIcon,
+    CalendarBlankIcon,
+    ClockIcon
+} from '@phosphor-icons/react'
 import {
     Header,
     LandingFooter,
@@ -12,7 +16,7 @@ import {
     JsonLd
 } from '@/components'
 import { getPostComponent, getPostMeta } from '@/lib/blog'
-import { ROUTES, getBaseDomain } from '@/lib'
+import { PATHS, ROUTES, getBaseDomain, getLocale } from '@/lib'
 import NotFound from '@/pages/NotFound'
 
 const SITE_URL = `https://${getBaseDomain()}`
@@ -28,7 +32,7 @@ const BlogPost: FC = (): ReactNode => {
     }
 
     const formattedDate = new Date(meta.publishedAt).toLocaleDateString(
-        'en-US',
+        getLocale(),
         {
             year: 'numeric',
             month: 'long',
@@ -36,13 +40,13 @@ const BlogPost: FC = (): ReactNode => {
         }
     )
 
-    const postUrl = `${SITE_URL}/posts/${meta.slug}`
+    const postUrl = `${SITE_URL}/${PATHS.BLOG}/${meta.slug}`
     const imageUrl = meta.coverImage
         ? `${SITE_URL}${meta.coverImage}`
         : `${SITE_URL}/og-image.webp`
 
     return (
-        <div className='relative flex min-h-screen flex-col bg-[#0a0a0f] text-white'>
+        <div className='bg-background text-foreground relative flex min-h-screen flex-col'>
             <PageTitle
                 title={meta.title}
                 description={meta.description}
@@ -66,7 +70,7 @@ const BlogPost: FC = (): ReactNode => {
                         name: 'ClawHost',
                         logo: {
                             '@type': 'ImageObject',
-                            url: `${SITE_URL}/favicon.svg`
+                            url: `${SITE_URL}/favicon.ico`
                         }
                     },
                     mainEntityOfPage: {
@@ -86,8 +90,8 @@ const BlogPost: FC = (): ReactNode => {
                 className='relative mx-auto w-full max-w-6xl flex-1 px-6 py-12'
             >
                 <Link
-                    to={ROUTES.POSTS}
-                    className='mb-8 inline-flex items-center gap-1.5 text-sm text-gray-400 transition hover:text-white'
+                    to={ROUTES.BLOG}
+                    className='text-muted-foreground hover:text-foreground mb-8 inline-flex items-center gap-1.5 text-sm transition'
                 >
                     <ArrowLeftIcon className='h-4 w-4' />
                     {t('blog.backToBlog')}
@@ -97,7 +101,7 @@ const BlogPost: FC = (): ReactNode => {
                     {meta.tags.map((tag) => (
                         <span
                             key={tag}
-                            className='rounded-full bg-white/5 px-2.5 py-0.5 text-xs text-gray-400'
+                            className='bg-foreground/5 text-muted-foreground rounded-full px-2.5 py-0.5 text-xs'
                         >
                             {tag}
                         </span>
@@ -108,7 +112,7 @@ const BlogPost: FC = (): ReactNode => {
                     {meta.title}
                 </h1>
 
-                <div className='mb-8 flex items-center gap-4 text-sm text-gray-400'>
+                <div className='text-muted-foreground mb-8 flex items-center gap-4 text-sm'>
                     <span className='flex items-center gap-1.5'>
                         <CalendarBlankIcon className='h-4 w-4' />
                         {formattedDate}
@@ -122,7 +126,7 @@ const BlogPost: FC = (): ReactNode => {
                 </div>
 
                 {meta.coverImage && (
-                    <div className='mb-12 overflow-hidden rounded-xl border border-white/10'>
+                    <div className='border-border mb-12 overflow-hidden rounded-xl border'>
                         <img
                             src={meta.coverImage}
                             alt={meta.title}
@@ -131,7 +135,7 @@ const BlogPost: FC = (): ReactNode => {
                     </div>
                 )}
 
-                <div className='prose prose-invert prose-sm prose-headings:font-clash prose-headings:font-semibold prose-h1:hidden prose-a:text-primary prose-a:no-underline hover:prose-a:underline max-w-none'>
+                <div className='prose dark:prose-invert prose-sm prose-headings:font-clash prose-headings:font-semibold prose-h1:hidden prose-a:text-primary prose-a:no-underline hover:prose-a:underline max-w-none'>
                     <Content />
                 </div>
             </motion.main>

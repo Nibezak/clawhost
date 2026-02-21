@@ -3,6 +3,7 @@ import type { ClawLogsContentProps } from '@/ts/Interfaces'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { t } from '@openclaw/i18n'
+import { getLocale } from '@/lib'
 import { Button, Skeleton } from '@/components/ui'
 import { ArrowDownIcon, ScrollIcon } from '@phosphor-icons/react'
 import { useClawLogs } from '@/hooks'
@@ -35,7 +36,7 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
                 if (match) {
                     const raw = match[1]
                     const date = new Date(raw)
-                    const time = date.toLocaleTimeString('en-US', {
+                    const time = date.toLocaleTimeString(getLocale(), {
                         hour: '2-digit',
                         minute: '2-digit',
                         second: '2-digit',
@@ -97,16 +98,16 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
                 className={`overflow-y-auto ${embedded ? 'min-h-0 flex-1' : 'h-full'}`}
             >
                 {logs.isPending && embedded && (
-                    <div className='h-full w-full animate-pulse bg-white/5' />
+                    <div className='bg-foreground/5 h-full w-full animate-pulse' />
                 )}
                 {logs.isPending && !embedded && (
-                    <Skeleton className='h-full w-full rounded-md border border-zinc-800' />
+                    <Skeleton className='border-border h-full w-full rounded-md border' />
                 )}
                 {logs.isError && (
                     <PanelPlaceholder
                         icon={
                             <ScrollIcon
-                                className='h-6 w-6 text-gray-500'
+                                className='text-muted-foreground h-6 w-6'
                                 weight='duotone'
                             />
                         }
@@ -115,17 +116,19 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
                     />
                 )}
                 {logs.data && !embedded && (
-                    <pre className='overflow-auto whitespace-pre-wrap break-words rounded-md border border-zinc-800 bg-black p-3 text-xs leading-snug text-zinc-300'>
+                    <pre className='border-border bg-muted text-muted-foreground overflow-auto whitespace-pre-wrap break-words rounded-md border p-3 text-xs leading-snug'>
                         {logs.data.logs || t('dashboard.diagnosticsNoLogs')}
                     </pre>
                 )}
                 {logs.data && embedded && (
-                    <div className={`flex flex-col gap-1 bg-black/50 p-4 ${parsedLines.length === 0 ? 'h-full items-center justify-center' : ''}`}>
+                    <div
+                        className={`bg-muted/50 flex flex-col gap-1 p-4 ${parsedLines.length === 0 ? 'h-full items-center justify-center' : ''}`}
+                    >
                         {parsedLines.length === 0 && (
                             <PanelPlaceholder
                                 icon={
                                     <ScrollIcon
-                                        className='h-6 w-6 text-gray-500'
+                                        className='text-muted-foreground h-6 w-6'
                                         weight='duotone'
                                     />
                                 }
@@ -136,11 +139,11 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
                         {parsedLines.map((line, i) => (
                             <div key={i} className='flex gap-2'>
                                 {line.time && (
-                                    <span className='shrink-0 font-mono text-[10px] leading-4 text-zinc-600'>
+                                    <span className='text-muted-foreground/60 shrink-0 font-mono text-[10px] leading-4'>
                                         {line.time}
                                     </span>
                                 )}
-                                <span className='min-w-0 whitespace-pre-wrap break-words font-mono text-xs text-zinc-300'>
+                                <span className='text-foreground/80 min-w-0 whitespace-pre-wrap break-words font-mono text-xs'>
                                     {line.text}
                                 </span>
                             </div>

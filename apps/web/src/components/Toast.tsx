@@ -14,17 +14,19 @@ const icons = {
 }
 
 const colors = {
-    success: 'bg-green-500/10 border-green-500/20 text-green-400',
-    error: 'bg-red-500/10 border-red-500/20 text-red-400',
-    warning: 'bg-yellow-500/10 border-yellow-500/20 text-yellow-400',
-    info: 'bg-blue-500/10 border-blue-500/20 text-blue-400'
+    success:
+        'bg-green-500/10 border-green-500/20 text-green-600 dark:text-green-400',
+    error: 'bg-red-500/10 border-red-500/20 text-red-600 dark:text-red-400',
+    warning:
+        'bg-yellow-500/10 border-yellow-500/20 text-yellow-600 dark:text-yellow-400',
+    info: 'bg-blue-500/10 border-blue-500/20 text-blue-600 dark:text-blue-400'
 }
 
 const iconColors = {
-    success: 'text-green-400',
-    error: 'text-red-400',
-    warning: 'text-yellow-400',
-    info: 'text-blue-400'
+    success: 'text-green-600 dark:text-green-400',
+    error: 'text-red-600 dark:text-red-400',
+    warning: 'text-yellow-600 dark:text-yellow-400',
+    info: 'text-blue-600 dark:text-blue-400'
 }
 
 const Toast: FC = (): ReactNode => {
@@ -60,13 +62,13 @@ const Toast: FC = (): ReactNode => {
                                 />
                             )
                         })()}
-                        <span className='text-sm font-medium text-white'>
+                        <span className='text-foreground text-sm font-medium'>
                             {toast.message}
                         </span>
                         <button
                             onClick={hideToast}
                             aria-label={t('common.closeNotification')}
-                            className='ml-2 text-gray-400 transition hover:text-white'
+                            className='text-muted-foreground hover:text-foreground ml-2 transition'
                         >
                             <XIcon className='h-4 w-4' />
                         </button>

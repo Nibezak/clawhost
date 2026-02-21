@@ -13,7 +13,7 @@ const connectAuthMethod = async (c: AuthenticatedContext) => {
         const userId = c.get('userId')
         const method = c.req.param('method')
 
-        if (!VALID_METHODS.includes(method as typeof VALID_METHODS[number])) {
+        if (!VALID_METHODS.includes(method as (typeof VALID_METHODS)[number])) {
             return fail(c, t('api.invalidAuthMethod'), 400)
         }
 
@@ -33,7 +33,9 @@ const connectAuthMethod = async (c: AuthenticatedContext) => {
         console.error('Connect auth method error:', err)
         return fail(
             c,
-            err instanceof Error ? err.message : t('api.failedToConnectAuthMethod'),
+            err instanceof Error
+                ? err.message
+                : t('api.failedToConnectAuthMethod'),
             500
         )
     }

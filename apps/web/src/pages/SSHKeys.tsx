@@ -490,7 +490,8 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                                                             )
                                                         }
                                                     >
-                                                        {copied === 'command' ? (
+                                                        {copied ===
+                                                        'command' ? (
                                                             <CheckIcon className='h-4 w-4' />
                                                         ) : (
                                                             <CopyIcon className='h-4 w-4' />
@@ -608,7 +609,7 @@ const SSHKeys: FC = (): ReactNode => {
     const [howItWorksOpen, setHowItWorksOpen] = useState(false)
 
     return (
-        <div className='relative flex min-h-screen flex-col bg-[#0a0a0f] text-white'>
+        <div className='bg-background text-foreground relative flex min-h-screen flex-col'>
             <PageTitle
                 title={t('sshKeys.title')}
                 description={t('sshKeys.description')}
@@ -641,8 +642,8 @@ const SSHKeys: FC = (): ReactNode => {
                     }
                 />
 
-                <div className='rounded-xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm'>
-                    <div className='mb-6 rounded-lg border border-white/5 bg-white/5'>
+                <div className='border-border bg-foreground/5 rounded-xl border p-8 backdrop-blur-sm'>
+                    <div className='border-border bg-foreground/5 mb-6 rounded-lg border'>
                         <button
                             type='button'
                             onClick={() => setHowItWorksOpen(!howItWorksOpen)}
@@ -652,7 +653,7 @@ const SSHKeys: FC = (): ReactNode => {
                                 {t('sshKeys.howSshKeysWork')}
                             </h3>
                             <CaretDownIcon
-                                className={`h-4 w-4 text-gray-400 transition-transform ${howItWorksOpen ? 'rotate-180' : ''}`}
+                                className={`text-muted-foreground h-4 w-4 transition-transform ${howItWorksOpen ? 'rotate-180' : ''}`}
                                 weight='bold'
                             />
                         </button>
@@ -661,7 +662,7 @@ const SSHKeys: FC = (): ReactNode => {
                                 <li>{t('sshKeys.step1')}</li>
                                 <li>
                                     {t('sshKeys.step2').split('public key')[0]}
-                                    <strong className='text-white'>
+                                    <strong className='text-foreground'>
                                         public key
                                     </strong>
                                     {t('sshKeys.step2').split(
@@ -671,7 +672,7 @@ const SSHKeys: FC = (): ReactNode => {
                                 <li>{t('sshKeys.step3')}</li>
                                 <li>
                                     {t('sshKeys.step4')}{' '}
-                                    <code className='rounded bg-white/10 px-1'>
+                                    <code className='bg-foreground/10 rounded px-1'>
                                         {t('sshKeys.step4Command')}
                                     </code>{' '}
                                     {t('sshKeys.step4Suffix')}
@@ -690,12 +691,17 @@ const SSHKeys: FC = (): ReactNode => {
                         />
                     ) : isLoading && knowsCount && skeletonCount === 0 ? (
                         <EmptyState
-                            icon={<KeyIcon className='text-primary h-10 w-10' />}
+                            icon={
+                                <KeyIcon className='text-primary h-10 w-10' />
+                            }
                             title={t('sshKeys.noSshKeysYet')}
                             description={t('sshKeys.noSshKeysDescription')}
                             actionLabel={t('sshKeys.addSshKey')}
                             actionIcon={
-                                <PlusCircleIcon className='h-5 w-5' weight='bold' />
+                                <PlusCircleIcon
+                                    className='h-5 w-5'
+                                    weight='bold'
+                                />
                             }
                             onAction={() => setShowCreate(true)}
                         />
@@ -709,12 +715,17 @@ const SSHKeys: FC = (): ReactNode => {
                         </div>
                     ) : sshKeys?.length === 0 ? (
                         <EmptyState
-                            icon={<KeyIcon className='text-primary h-10 w-10' />}
+                            icon={
+                                <KeyIcon className='text-primary h-10 w-10' />
+                            }
                             title={t('sshKeys.noSshKeysYet')}
                             description={t('sshKeys.noSshKeysDescription')}
                             actionLabel={t('sshKeys.addSshKey')}
                             actionIcon={
-                                <PlusCircleIcon className='h-5 w-5' weight='bold' />
+                                <PlusCircleIcon
+                                    className='h-5 w-5'
+                                    weight='bold'
+                                />
                             }
                             onAction={() => setShowCreate(true)}
                         />

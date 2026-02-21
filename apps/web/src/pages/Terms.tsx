@@ -4,13 +4,15 @@ import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { LEGAL_EMAIL } from '@/lib/links'
 import { Header, LandingFooter, PageBackground, PageTitle } from '@/components'
+import { PATHS, getBaseDomain } from '@/lib'
 
 const Terms: FC = (): ReactNode => {
     return (
-        <div className='relative flex min-h-screen flex-col bg-[#0a0a0f] text-white'>
+        <div className='bg-background text-foreground relative flex min-h-screen flex-col'>
             <PageTitle
                 title={t('terms.title')}
                 description={t('terms.description')}
+                url={`https://${getBaseDomain()}/${PATHS.TERMS}`}
             />
             <PageBackground />
             <Header />
@@ -28,7 +30,7 @@ const Terms: FC = (): ReactNode => {
                     {t('terms.lastUpdated')}
                 </p>
 
-                <div className='prose prose-invert prose-sm max-w-none space-y-8'>
+                <div className='prose dark:prose-invert prose-sm max-w-none space-y-8'>
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
                             {t('terms.acceptanceTitle')}
@@ -145,7 +147,7 @@ const Terms: FC = (): ReactNode => {
                                 href={LEGAL_EMAIL}
                                 className='text-primary hover:underline'
                             >
-                                legal@clawhost.cloud
+                                {t('common.legalEmail')}
                             </a>
                         </p>
                     </section>

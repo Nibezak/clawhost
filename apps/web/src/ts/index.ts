@@ -1,22 +1,31 @@
 export type {
     AuthMethod,
     ChatMessageRole,
+    CompareFeatureStatus,
+    OAuthProvider,
     ChatMessageStatus,
     ClawAvatarSize,
     ClawStatus,
     CopiedFieldType,
     GatewayConnectionState,
     GatewayEventHandler,
+    Language,
     PlaygroundAgentDetailTab,
     PlaygroundDetailTab,
     PlaygroundNodeType,
     SSHKeyModalMode,
+    ThemeMode,
     ToastType,
+    ClawFileType,
+    FeatureRequestSortBy,
+    FeatureRequestStatus,
     UserRole
 } from '@/ts/Types'
 
 export type {
     AgentConfigResponse,
+    AgentConfigSummary,
+    LanguageOption,
     AIModelOption,
     Claw,
     ClawEnvVarsResponse,
@@ -68,6 +77,7 @@ export type {
     CreateAgentResponse,
     CreateClawData,
     CreateSSHKeyData,
+    ResolveCredentialConflictData,
     DeleteAgentData,
     DemoPlaygroundData,
     UpdateProfileData,
@@ -92,5 +102,15 @@ export type {
     ClawHubUpdatesResponse,
     BrowseClawHubData,
     ClawHubSkillActionData,
-    ClawHubUpdateData
+    ClawHubUpdateData,
+    CompareCompetitor,
+    CompareFeatureValue,
+    CompareFeature,
+    CompareCategory,
+    CreateFeatureRequestData,
+    FeatureRequest,
+    FeatureRequestCardProps,
+    FeatureRequestsListResponse,
+    FeatureRequestStatusBadgeProps,
+    UpdateFeatureRequestStatusData
 } from '@/ts/Interfaces'

@@ -1,9 +1,8 @@
 interface ElectronAPI {
+    invoke: (channel: string, ...args: unknown[]) => Promise<unknown>
+    isDesktop: boolean
     getAppVersion: () => Promise<string>
     getPlatform: () => Promise<string>
-    spawnApi: (port: number) => Promise<void>
-    killApi: () => Promise<void>
-    onApiReady: (callback: (port: number) => void) => void
 }
 
 interface Window {

@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
 import { useUIStore } from '@/lib/store'
+import { api, getLocale } from '@/lib'
 import { useUserStats, useBillingHistory } from '@/hooks'
 import { Badge, Card, CardContent, Skeleton, Button } from '@/components/ui'
 import {
@@ -24,7 +25,6 @@ import {
     DownloadSimpleIcon,
     ArrowSquareOutIcon
 } from '@phosphor-icons/react'
-import { api } from '@/lib'
 
 const BillingSkeleton: FC = (): ReactNode => {
     return (
@@ -99,7 +99,7 @@ const Billing: FC = (): ReactNode => {
 
     const formatDate = (dateString: string | undefined) => {
         if (!dateString) return '...'
-        return new Date(dateString).toLocaleDateString('en-US', {
+        return new Date(dateString).toLocaleDateString(getLocale(), {
             year: 'numeric',
             month: 'long',
             day: 'numeric'
@@ -107,7 +107,7 @@ const Billing: FC = (): ReactNode => {
     }
 
     const formatCurrency = (amount: number, currency: string) => {
-        return new Intl.NumberFormat('en-US', {
+        return new Intl.NumberFormat(getLocale(), {
             style: 'currency',
             currency: currency.toUpperCase()
         }).format(amount / 100)
@@ -117,25 +117,25 @@ const Billing: FC = (): ReactNode => {
         switch (status) {
             case 'paid':
                 return (
-                    <Badge className='pointer-events-none border-green-500/30 bg-green-500/20 text-green-400'>
+                    <Badge className='pointer-events-none border-green-500/30 bg-green-500/20 text-green-600 dark:text-green-400'>
                         {t('billing.statusPaid')}
                     </Badge>
                 )
             case 'pending':
                 return (
-                    <Badge className='pointer-events-none border-yellow-500/30 bg-yellow-500/20 text-yellow-400'>
+                    <Badge className='pointer-events-none border-yellow-500/30 bg-yellow-500/20 text-yellow-600 dark:text-yellow-400'>
                         {t('billing.statusPending')}
                     </Badge>
                 )
             case 'refunded':
                 return (
-                    <Badge className='pointer-events-none border-red-500/30 bg-red-500/20 text-red-400'>
+                    <Badge className='pointer-events-none border-red-500/30 bg-red-500/20 text-red-600 dark:text-red-400'>
                         {t('billing.statusRefunded')}
                     </Badge>
                 )
             case 'partially_refunded':
                 return (
-                    <Badge className='pointer-events-none border-orange-500/30 bg-orange-500/20 text-orange-400'>
+                    <Badge className='pointer-events-none border-orange-500/30 bg-orange-500/20 text-orange-600 dark:text-orange-400'>
                         {t('billing.statusPartiallyRefunded')}
                     </Badge>
                 )
@@ -192,7 +192,7 @@ const Billing: FC = (): ReactNode => {
     }
 
     return (
-        <div className='relative flex min-h-screen flex-col bg-[#0a0a0f] text-white'>
+        <div className='bg-background text-foreground relative flex min-h-screen flex-col'>
             <PageTitle
                 title={t('billing.title')}
                 description={t('billing.description')}
@@ -235,7 +235,7 @@ const Billing: FC = (): ReactNode => {
                             }
                         />
 
-                        <div className='rounded-xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm sm:p-8'>
+                        <div className='border-border bg-foreground/5 rounded-xl border p-4 backdrop-blur-sm sm:p-8'>
                             {isBillingError ? (
                                 <ErrorState
                                     title={t('billing.failedToLoadBilling')}

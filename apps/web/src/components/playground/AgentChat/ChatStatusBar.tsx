@@ -13,7 +13,7 @@ const ChatStatusBar: FC<ChatStatusBarProps> = ({
     const isError = connectionState === 'error'
 
     return (
-        <div className='flex items-center gap-2 border-b border-white/10 px-4 py-2'>
+        <div className='border-border flex items-center gap-2 border-b px-4 py-2'>
             <div
                 className={`h-2 w-2 rounded-full ${
                     isConnecting
@@ -23,7 +23,7 @@ const ChatStatusBar: FC<ChatStatusBarProps> = ({
                           : 'bg-gray-500'
                 }`}
             />
-            <span className='text-xs text-gray-400'>
+            <span className='text-muted-foreground text-xs'>
                 {isConnecting && connectionState === 'connecting'
                     ? t('playground.chatConnecting')
                     : isConnecting

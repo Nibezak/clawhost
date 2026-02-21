@@ -15,7 +15,6 @@ import ChatBubble from '@/components/playground/AgentChat/ChatBubble'
 import ChatInput from '@/components/playground/AgentChat/ChatInput'
 import ChatEmptyState from '@/components/playground/AgentChat/ChatEmptyState'
 import ChatSkeleton from '@/components/playground/AgentChat/ChatSkeleton'
-import ChatStatusBar from '@/components/playground/AgentChat/ChatStatusBar'
 import ChatDateSeparator from '@/components/playground/AgentChat/ChatDateSeparator'
 
 const isDifferentDay = (a: ChatMessage, b: ChatMessage): boolean => {
@@ -36,7 +35,8 @@ const AgentChat: FC<AgentChatProps> = ({
     agentModel,
     readOnly,
     onConfigure,
-    configureDisabled
+    configureDisabled,
+    onConnectionStateChange
 }): ReactNode => {
     const scrollRef = useRef<HTMLDivElement>(null)
     const chatInputRef = useRef<ChatInputHandle>(null)
@@ -59,18 +59,26 @@ const AgentChat: FC<AgentChatProps> = ({
         enabled: !readOnly && !!subdomain && !!gatewayToken
     })
 
+    useEffect(() => {
+        onConnectionStateChange?.(connectionState)
+    }, [connectionState, onConnectionStateChange])
+
     const handleScroll = useCallback(() => {
         const el = scrollRef.current
         if (!el) return
         const threshold = 100
-        const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < threshold
+        const nearBottom =
+            el.scrollHeight - el.scrollTop - el.clientHeight < threshold
         isNearBottomRef.current = nearBottom
         setShowScrollButton(!nearBottom)
     }, [])
 
     const scrollToBottom = useCallback(() => {
         if (scrollRef.current) {
-            scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
+            scrollRef.current.scrollTo({
+                top: scrollRef.current.scrollHeight,
+                behavior: 'smooth'
+            })
         }
     }, [])
 
@@ -85,7 +93,11 @@ const AgentChat: FC<AgentChatProps> = ({
     }, [messages])
 
     const handleSend = useCallback(
-        (text: string, attachments?: ChatAttachment[], previews?: ChatImageSource[]) => {
+        (
+            text: string,
+            attachments?: ChatAttachment[],
+            previews?: ChatImageSource[]
+        ) => {
             sendMessage(text, attachments, previews)
             isNearBottomRef.current = true
         },
@@ -124,27 +136,27 @@ const AgentChat: FC<AgentChatProps> = ({
                 <div className='flex-1 space-y-3 overflow-y-auto p-4'>
                     <div className='flex justify-end'>
                         <div className='max-w-[85%] rounded-2xl rounded-br-md bg-[#ef5350]/15 px-3.5 py-2.5'>
-                            <p className='text-sm text-gray-200'>
+                            <p className='text-foreground/90 text-sm'>
                                 {t('playground.chatReadOnlyUser')}
                             </p>
                         </div>
                     </div>
                     <div className='flex justify-start'>
-                        <div className='max-w-[85%] rounded-2xl rounded-bl-md bg-white/5 px-3.5 py-2.5'>
-                            <p className='text-sm text-gray-300'>
+                        <div className='bg-foreground/5 max-w-[85%] rounded-2xl rounded-bl-md px-3.5 py-2.5'>
+                            <p className='text-foreground/80 text-sm'>
                                 {t('playground.chatReadOnlyAssistant')}
                             </p>
                         </div>
                     </div>
                 </div>
-                <div className='border-t border-white/10 p-3'>
+                <div className='border-border border-t p-3'>
                     <div className='flex items-center gap-2'>
                         <input
                             disabled
                             placeholder={t(
                                 'playground.chatReadOnlyPlaceholder'
                             )}
-                            className='flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-sm text-gray-500 outline-none placeholder:text-gray-600'
+                            className='border-border bg-foreground/5 text-muted-foreground placeholder:text-muted-foreground flex-1 rounded-lg border px-3 py-2 text-sm outline-none'
                         />
                     </div>
                 </div>
@@ -155,17 +167,17 @@ const AgentChat: FC<AgentChatProps> = ({
     if (!agentModel) {
         return (
             <div className='flex h-full flex-col items-center justify-center gap-3 px-14 pb-16'>
-                <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-white/5'>
+                <div className='bg-foreground/5 flex h-12 w-12 items-center justify-center rounded-xl'>
                     <GearSixIcon
-                        className='h-6 w-6 text-gray-500'
+                        className='text-muted-foreground h-6 w-6'
                         weight='duotone'
                     />
                 </div>
                 <div className='text-center'>
-                    <p className='text-sm font-medium text-gray-300'>
+                    <p className='text-foreground/80 text-sm font-medium'>
                         {t('playground.chatNotConfigured')}
                     </p>
-                    <p className='mt-1 text-xs text-gray-500'>
+                    <p className='text-muted-foreground mt-1 text-xs'>
                         {t('playground.chatNotConfiguredDescription')}
                     </p>
                 </div>
@@ -173,7 +185,7 @@ const AgentChat: FC<AgentChatProps> = ({
                     <button
                         onClick={onConfigure}
                         disabled={configureDisabled}
-                        className='mt-2 flex items-center gap-1.5 rounded-lg bg-white/10 px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-white/15 disabled:cursor-not-allowed disabled:opacity-40'
+                        className='bg-foreground/10 text-foreground hover:bg-foreground/15 mt-2 flex items-center gap-1.5 rounded-lg px-4 py-2 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40'
                     >
                         <GearSixIcon className='h-3.5 w-3.5' weight='bold' />
                         {t('playground.chatConfigureButton')}
@@ -223,17 +235,13 @@ const AgentChat: FC<AgentChatProps> = ({
         >
             {isDragging && (
                 <div className='absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[#ef5350]/40 bg-black/60'>
-                    <p className='text-sm font-medium text-gray-200/80'>
+                    <p className='text-foreground/80 text-sm font-medium'>
                         {t('playground.chatDropFiles')}
                     </p>
-                    <p className='text-xs text-gray-400/70'>
+                    <p className='text-muted-foreground/70 text-xs'>
                         {t('playground.chatDropFilesDescription')}
                     </p>
                 </div>
-            )}
-
-            {!isLoading && !isConnected && (
-                <ChatStatusBar connectionState={connectionState} />
             )}
 
             <div
@@ -265,7 +273,7 @@ const AgentChat: FC<AgentChatProps> = ({
                 <div className='flex justify-center pb-0.5'>
                     <button
                         onClick={scrollToBottom}
-                        className='absolute bottom-[4.25rem] z-10 flex items-center gap-1.5 rounded-full border border-white/10 bg-[#0a0a0f] px-3 py-1.5 text-xs text-gray-400 shadow-lg transition-colors hover:border-white/20 hover:text-white'
+                        className='border-border bg-background text-muted-foreground hover:border-border hover:text-foreground absolute bottom-[4.25rem] z-10 flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs shadow-lg transition-colors'
                     >
                         <ArrowDownIcon className='h-3 w-3' weight='bold' />
                         {t('playground.chatScrollToBottom')}

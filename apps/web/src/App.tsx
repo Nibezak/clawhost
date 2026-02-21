@@ -6,6 +6,7 @@ import { AuthProvider } from '@/lib/auth'
 import { ScrollToTop, Toast, ProtectedRoute } from '@/components'
 import { TooltipProvider } from '@/components/ui'
 import { ROUTES } from '@/lib'
+import { useThemeEffect, useLanguageEffect } from '@/hooks'
 
 const Landing = lazy(() => import('@/pages/Landing'))
 const Login = lazy(() => import('@/pages/Login'))
@@ -18,15 +19,19 @@ const Privacy = lazy(() => import('@/pages/Privacy'))
 const Changelog = lazy(() => import('@/pages/Changelog'))
 const Blog = lazy(() => import('@/pages/Blog'))
 const BlogPost = lazy(() => import('@/pages/BlogPost'))
+const Compare = lazy(() => import('@/pages/Compare'))
 const NotFound = lazy(() => import('@/pages/NotFound'))
 
 const App: FC = (): ReactNode => {
+    useThemeEffect()
+    const language = useLanguageEffect()
+
     return (
         <TooltipProvider delayDuration={300}>
             <AuthProvider>
                 <ScrollToTop />
                 <Toast />
-                <Suspense>
+                <Suspense key={language}>
                     <Routes>
                         <Route path={ROUTES.HOME} element={<Landing />} />
                         <Route path={ROUTES.LOGIN} element={<Login />} />
@@ -36,8 +41,9 @@ const App: FC = (): ReactNode => {
                             path={ROUTES.CHANGELOG}
                             element={<Changelog />}
                         />
-                        <Route path={ROUTES.POSTS} element={<Blog />} />
-                        <Route path={ROUTES.POST} element={<BlogPost />} />
+                        <Route path={ROUTES.BLOG} element={<Blog />} />
+                        <Route path={ROUTES.BLOG_POST} element={<BlogPost />} />
+                        <Route path={ROUTES.COMPARE} element={<Compare />} />
                         <Route
                             path={ROUTES.CLAWS}
                             element={

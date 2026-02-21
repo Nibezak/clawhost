@@ -1,3 +1,4 @@
 import demoPlaygroundData from '@/data/demoPlaygroundData'
+import getCompareData from '@/data/compareData'
 
-export { demoPlaygroundData }
+export { demoPlaygroundData, getCompareData }

@@ -1,12 +1,13 @@
 {
     "name": "clawhostgo",
-    "version": "0.0.37",
+    "version": "0.0.46",
     "private": true,
     "main": ".vite/build/main.js",
     "scripts": {
         "dev": "electron-forge start",
         "build": "electron-forge make",
         "package": "electron-forge package",
+        "download-node": "bash scripts/download-node.sh",
         "typecheck": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.renderer.json",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",

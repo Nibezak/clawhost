@@ -111,7 +111,11 @@ const getClaws = async (c: AuthenticatedContext) => {
                             .update(claws)
                             .set({ status: clawStatus.running, ip: live.ip })
                             .where(eq(claws.id, claw.id))
-                        return { ...claw, status: clawStatus.running, ip: live.ip }
+                        return {
+                            ...claw,
+                            status: clawStatus.running,
+                            ip: live.ip
+                        }
                     }
                 }
                 return { ...claw, ip: live.ip }
@@ -169,7 +173,9 @@ const getClaws = async (c: AuthenticatedContext) => {
                         .where(eq(pendingClaws.id, p.id))
                     return null
                 }
-                const paid = checkout?.status === 'succeeded' || checkout?.status === 'confirmed'
+                const paid =
+                    checkout?.status === 'succeeded' ||
+                    checkout?.status === 'confirmed'
                 return { pending: p, paid }
             } catch {
                 return { pending: p, paid: false }

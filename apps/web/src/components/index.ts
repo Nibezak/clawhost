@@ -9,6 +9,7 @@ import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 import HeroButtons from '@/components/HeroButtons'
 import JsonLd from '@/components/JsonLd'
+import LanguageSelector from '@/components/LanguageSelector'
 import LandingFooter from '@/components/LandingFooter'
 import Logo from '@/components/Logo'
 import PageBackground from '@/components/PageBackground'
@@ -16,9 +17,11 @@ import PageHeader from '@/components/PageHeader'
 import PageTitle from '@/components/PageTitle'
 import PanelPlaceholder from '@/components/PanelPlaceholder'
 import PlansSkeleton from '@/components/PlansSkeleton'
+import ProductHuntBanner from '@/components/ProductHuntBanner'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import ProviderIcon from '@/components/ProviderIcon'
 import ScrollToTop from '@/components/ScrollToTop'
+import ThemeToggle from '@/components/ThemeToggle'
 import Toast from '@/components/Toast'
 import TruncateTooltip from '@/components/TruncateTooltip'
 import UserDropdown from '@/components/UserDropdown'
@@ -35,6 +38,7 @@ export {
     Header,
     HeroButtons,
     JsonLd,
+    LanguageSelector,
     LandingFooter,
     Logo,
     PageBackground,
@@ -42,9 +46,11 @@ export {
     PageTitle,
     PanelPlaceholder,
     PlansSkeleton,
+    ProductHuntBanner,
     ProtectedRoute,
     ProviderIcon,
     ScrollToTop,
+    ThemeToggle,
     Toast,
     TruncateTooltip,
     UserDropdown

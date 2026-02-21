@@ -32,7 +32,10 @@ const syncClaw = async (c: AuthenticatedContext) => {
                 if (ready) {
                     await db
                         .update(claws)
-                        .set({ status: clawStatus.running, ip: serverStatus.ip })
+                        .set({
+                            status: clawStatus.running,
+                            ip: serverStatus.ip
+                        })
                         .where(eq(claws.id, id))
 
                     return ok(

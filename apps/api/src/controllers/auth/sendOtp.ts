@@ -5,7 +5,7 @@ import crypto from 'crypto'
 import { eq } from 'drizzle-orm'
 import { getResend, FROM_EMAIL } from '@/services/resend'
 import { db } from '@/db'
-import { otpCodes } from '@/db/schema'
+import { otpCodes, users } from '@/db/schema'
 import OtpCodeEmail from '@/emails/OtpCodeEmail'
 import { t } from '@openclaw/i18n'
 import {
@@ -43,6 +43,18 @@ const sendOtp = async (c: Context) => {
 
         if (!EMAIL_REGEX.test(email) || email.length > 320) {
             return fail(c, t('api.invalidEmailFormat'), 400)
+        }
+
+        if (email.includes('+')) {
+            const existingUser = await db
+                .select({ id: users.id })
+                .from(users)
+                .where(eq(users.email, email.toLowerCase()))
+                .then((rows) => rows[0])
+
+            if (!existingUser) {
+                return fail(c, t('api.plusAddressingNotAllowed'), 400)
+            }
         }
 
         const emailRetry = await checkRateLimit(`email:${email.toLowerCase()}`)

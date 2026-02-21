@@ -149,7 +149,7 @@ const updateClawAgentConfig = async (c: AuthenticatedContext) => {
             await executeSSH(
                 claw.ip,
                 claw.rootPassword,
-                `${writeCommand} && (openclaw doctor --fix || true) && systemctl restart openclaw-gateway`,
+                `${writeCommand} && (su - openclaw -c "openclaw doctor --fix" || true) && systemctl restart openclaw-gateway`,
                 20000
             )
 

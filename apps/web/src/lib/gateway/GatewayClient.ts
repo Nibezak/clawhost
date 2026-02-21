@@ -1,4 +1,8 @@
-import type { GatewayConnectionState, GatewayEventHandler, GatewayStateListener } from '@/ts/Types'
+import type {
+    GatewayConnectionState,
+    GatewayEventHandler,
+    GatewayStateListener
+} from '@/ts/Types'
 import type { GatewayPendingRequest } from '@/ts/Interfaces'
 
 import { getBaseDomain } from '@/lib'
@@ -54,8 +58,14 @@ class GatewayClient {
         this.intentionalClose = false
         this.setState('connecting')
 
-        const domain = getBaseDomain()
-        const url = `wss://${this.subdomain}.${domain}/`
+        let url: string
+        if (this.subdomain.startsWith('local:')) {
+            const port = this.subdomain.split(':')[1]
+            url = `ws://localhost:${port}/`
+        } else {
+            const domain = getBaseDomain()
+            url = `wss://${this.subdomain}.${domain}/`
+        }
 
         try {
             this.ws = new WebSocket(url)

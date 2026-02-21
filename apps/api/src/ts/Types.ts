@@ -34,3 +34,20 @@ export type AuthMethod = 'email' | 'google' | 'github'
 export type UserRole = 'user' | 'admin'
 
 export type Environment = 'development' | 'production'
+
+export type ClawFileType =
+    | 'json'
+    | 'markdown'
+    | 'javascript'
+    | 'yaml'
+    | 'text'
+    | 'unknown'
+
+export type FeatureRequestStatus =
+    | 'awaiting_approval'
+    | 'requested'
+    | 'marked_for_implementation'
+    | 'implemented'
+    | 'rejected'
+
+export type FeatureRequestSortBy = 'newest' | 'upvotes' | 'status'

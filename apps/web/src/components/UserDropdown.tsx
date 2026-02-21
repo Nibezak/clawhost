@@ -15,7 +15,12 @@ import {
     DropdownMenuTrigger
 } from '@/components/ui'
 import { ClawMascotOutline } from '@/components'
-import { KeyIcon, UserIcon, SignOutIcon, ReceiptIcon } from '@phosphor-icons/react'
+import {
+    KeyIcon,
+    UserIcon,
+    SignOutIcon,
+    ReceiptIcon
+} from '@phosphor-icons/react'
 
 const UserDropdown: FC<UserDropdownProps> = ({
     displayName,
@@ -46,54 +51,54 @@ const UserDropdown: FC<UserDropdownProps> = ({
                 <Button
                     variant='ghost'
                     size='sm'
-                    className='flex w-auto items-center gap-2 px-1.5 py-[18px] hover:bg-white/10'
+                    className='hover:bg-foreground/10 flex w-auto items-center gap-2 px-1.5 py-[18px]'
                 >
                     <Avatar className='h-7 w-7'>
                         <AvatarFallback className='bg-gradient-to-br from-[#ef5350] to-[#c62828] text-xs text-white'>
                             {getInitials(displayName)}
                         </AvatarFallback>
                     </Avatar>
-                    <span className='hidden max-w-[120px] truncate text-sm text-gray-300 sm:block'>
+                    <span className='text-foreground/80 hidden max-w-[120px] truncate text-sm sm:block'>
                         {displayName}
                     </span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
                 align='end'
-                className='w-56 border-white/10 bg-[#151518]'
+                className='border-border bg-popover w-56'
             >
                 <DropdownMenuItem
                     onClick={() => navigate(ROUTES.CLAWS)}
-                    className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.CLAWS ? 'bg-white/10' : ''}`}
+                    className={`text-foreground/80 focus:bg-foreground/10 focus:text-foreground ${location.pathname === ROUTES.CLAWS ? 'bg-foreground/10' : ''}`}
                 >
                     <ClawMascotOutline className='h-4 w-4' />
                     {t('nav.claws')}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                     onClick={() => navigate(ROUTES.SSH_KEYS)}
-                    className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.SSH_KEYS ? 'bg-white/10' : ''}`}
+                    className={`text-foreground/80 focus:bg-foreground/10 focus:text-foreground ${location.pathname === ROUTES.SSH_KEYS ? 'bg-foreground/10' : ''}`}
                 >
                     <KeyIcon className='h-4 w-4' />
                     {t('nav.sshKeys')}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                     onClick={() => navigate(ROUTES.ACCOUNT)}
-                    className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.ACCOUNT ? 'bg-white/10' : ''}`}
+                    className={`text-foreground/80 focus:bg-foreground/10 focus:text-foreground ${location.pathname === ROUTES.ACCOUNT ? 'bg-foreground/10' : ''}`}
                 >
                     <UserIcon className='h-4 w-4' />
                     {t('nav.account')}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                     onClick={() => navigate(ROUTES.BILLING)}
-                    className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.BILLING ? 'bg-white/10' : ''}`}
+                    className={`text-foreground/80 focus:bg-foreground/10 focus:text-foreground ${location.pathname === ROUTES.BILLING ? 'bg-foreground/10' : ''}`}
                 >
                     <ReceiptIcon className='h-4 w-4' />
                     {t('nav.billing')}
                 </DropdownMenuItem>
-                <DropdownMenuSeparator className='bg-white/10' />
+                <DropdownMenuSeparator className='bg-border' />
                 <DropdownMenuItem
                     onClick={onSignOut}
-                    className='text-red-400 focus:bg-white/10 focus:text-red-400'
+                    className='focus:bg-foreground/10 text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400'
                 >
                     <SignOutIcon className='h-4 w-4' />
                     {t('nav.signOut')}

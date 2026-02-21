@@ -1,12 +1,18 @@
 import type { FC, ReactNode } from 'react'
-import type { ChatSidebarClawHeaderProps, ClawCardActions, ExportRateLimitError } from '@/ts/Interfaces'
+import type {
+    ChatSidebarClawHeaderProps,
+    ClawCardActions,
+    ExportRateLimitError
+} from '@/ts/Interfaces'
 
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
 import { clawStatus } from '@openclaw/shared'
-import { GearSixIcon, PlusIcon } from '@phosphor-icons/react'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import { useUIStore } from '@/lib/store'
+import { getBaseDomain } from '@/lib'
+import { generateSlug } from '@/lib/claw-utils'
+import { ClawAvatar } from '@/components'
 import {
     useStartClaw,
     useStopClaw,
@@ -18,7 +24,7 @@ import {
     useReinstallClaw,
     useProfile
 } from '@/hooks'
-import { api } from '@/lib'
+import { api, TRUNCATE_LENGTHS } from '@/lib'
 import {
     ClawCardDropdownMenu,
     ClawCardDialogs,
@@ -29,11 +35,11 @@ import {
 
 const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
     claw,
-    isReachable,
+    isReachable: _isReachable,
     isSelected,
     statusConfig,
     onOpenClawSettings,
-    onCreateAgent
+    onCreateAgent: _onCreateAgent
 }): ReactNode => {
     const { showToast } = useUIStore()
     const [copied, setCopied] = useState(false)
@@ -175,44 +181,77 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
 
     return (
         <>
-            <div className='group/header mb-1.5 flex items-center justify-between px-3'>
-                <div className='flex items-center gap-1.5'>
+            <div
+                onClick={() => onOpenClawSettings(claw.id)}
+                className={`group/header relative mb-1 flex w-full cursor-pointer items-center gap-3 rounded-lg px-2.5 py-1.5 text-left transition-colors ${
+                    isSelected ? 'bg-foreground/10' : 'hover:bg-foreground/5'
+                }`}
+            >
+                <div className='relative shrink-0'>
+                    <ClawAvatar size='sm' />
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <div className='relative flex h-2 w-2 items-center justify-center'>
-                                <div className={`h-1.5 w-1.5 rounded-full ${statusConfig.color}`} />
-                                {statusConfig.pulse && (
-                                    <div className={`absolute h-2 w-2 animate-ping rounded-full ${statusConfig.color} opacity-40`} />
-                                )}
+                            <div className='border-background absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full border-2'>
+                                <div
+                                    className={`h-2 w-2 rounded-full ${statusConfig.color}`}
+                                />
                             </div>
                         </TooltipTrigger>
                         <TooltipContent side='bottom'>
                             <p>{statusConfig.label}</p>
                         </TooltipContent>
                     </Tooltip>
-                    <button
-                        onClick={() => onOpenClawSettings(claw.id)}
-                        className={`text-[11px] font-medium uppercase tracking-wider transition-colors hover:text-white ${isSelected ? 'text-white' : 'text-gray-500'}`}
-                    >
-                        {claw.name}
-                    </button>
                 </div>
-                <div className='flex items-center gap-0.5'>
-                    <button
-                        onClick={() => onOpenClawSettings(claw.id)}
-                        className='shrink-0 rounded-md p-1 text-gray-500 opacity-0 transition-all hover:bg-white/10 hover:text-white group-hover/header:opacity-100'
-                    >
-                        <GearSixIcon className='h-3.5 w-3.5' weight='bold' />
-                    </button>
-                    {isReachable && (
-                        <button
-                            onClick={() => onCreateAgent(claw.id, claw.name)}
-                            className='shrink-0 rounded-md p-1 text-gray-500 opacity-0 transition-all hover:bg-white/10 hover:text-white group-hover/header:opacity-100'
-                        >
-                            <PlusIcon className='h-3.5 w-3.5' weight='bold' />
-                        </button>
+                <div className='min-w-0 flex-1'>
+                    {claw.name.length > TRUNCATE_LENGTHS.SIDEBAR_CLAW_NAME ? (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <p className='text-foreground truncate text-[13px] font-medium'>
+                                    {claw.name.slice(
+                                        0,
+                                        TRUNCATE_LENGTHS.SIDEBAR_CLAW_NAME
+                                    )}
+                                    ...
+                                </p>
+                            </TooltipTrigger>
+                            <TooltipContent>{claw.name}</TooltipContent>
+                        </Tooltip>
+                    ) : (
+                        <p className='text-foreground truncate text-[13px] font-medium'>
+                            {claw.name}
+                        </p>
                     )}
-                    <div className='opacity-0 transition-all group-hover/header:opacity-100'>
+                    {claw.status !== clawStatus.configuring ? (
+                        claw.provider === 'local' && claw.port ? (
+                            <span
+                                className='text-muted-foreground block truncate text-[11px]'
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                localhost:{claw.port}
+                            </span>
+                        ) : (
+                            <a
+                                href={`https://${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                onClick={(e) => e.stopPropagation()}
+                                className='text-muted-foreground hover:text-foreground/80 block truncate text-[11px] transition-colors'
+                            >
+                                {claw.subdomain || generateSlug(claw.id)}.
+                                {getBaseDomain()}
+                            </a>
+                        )
+                    ) : (
+                        <p className='text-muted-foreground truncate text-[11px]'>
+                            {statusConfig.label}
+                        </p>
+                    )}
+                </div>
+                <div
+                    className='flex shrink-0 items-center gap-1'
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <div>
                         <ClawCardDropdownMenu
                             claw={claw}
                             actions={actions}

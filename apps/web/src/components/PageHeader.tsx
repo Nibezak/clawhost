@@ -11,7 +11,7 @@ const PageHeader: FC<PageHeaderProps> = ({
             <div>
                 <h2 className='font-clash text-2xl font-bold'>{title}</h2>
                 {description && (
-                    <p className='mt-1 text-base text-gray-400'>
+                    <p className='text-muted-foreground mt-1 text-base'>
                         {description}
                     </p>
                 )}

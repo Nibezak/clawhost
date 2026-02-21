@@ -1,28 +1,26 @@
-import type { ApiStatus } from '@/ts/Types'
-
-interface SpawnApiOptions {
-    port: number
-    apiPath: string
-}
-
-interface SpawnApiResult {
-    port: number
-    kill: () => void
-}
-
 interface ElectronAPI {
+    invoke: (channel: string, ...args: unknown[]) => Promise<unknown>
+    isDesktop: boolean
     getAppVersion: () => Promise<string>
     getPlatform: () => Promise<string>
-    spawnApi: (port: number) => Promise<void>
-    killApi: () => Promise<void>
-    onApiReady: (callback: (port: number) => void) => void
 }
 
-interface AppState {
-    apiPort: number | null
-    apiStatus: ApiStatus
-    setApiPort: (port: number | null) => void
-    setApiStatus: (status: ApiStatus) => void
+interface LocalClawConfig {
+    id: string
+    name: string
+    port: number
+    version: string
+    gatewayToken: string
+    createdAt: string
 }
 
-export type { SpawnApiOptions, SpawnApiResult, ElectronAPI, AppState }
+interface ConfigFile {
+    claws: LocalClawConfig[]
+    defaultVersion: string
+    portRange: {
+        min: number
+        max: number
+    }
+}
+
+export type { ElectronAPI, LocalClawConfig, ConfigFile }

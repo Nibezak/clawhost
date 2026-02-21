@@ -26,9 +26,9 @@ const useAgentChat = ({
         useState<GatewayConnectionState>('disconnected')
     const [isLoading, setIsLoading] = useState(true)
     const [isStreaming, setIsStreaming] = useState(false)
-    const clientRef = useRef<ReturnType<
-        typeof SharedGateway.acquire
-    > | null>(null)
+    const clientRef = useRef<ReturnType<typeof SharedGateway.acquire> | null>(
+        null
+    )
     const currentRunIdRef = useRef<string | null>(null)
     const streamBufferRef = useRef('')
     const streamImagesRef = useRef<ChatMessage['images']>([])
@@ -75,24 +75,19 @@ const useAgentChat = ({
                         : Array.isArray(
                                 (raw as Record<string, unknown>)?.sessions
                             )
-                          ? ((raw as Record<string, unknown>)
-                                .sessions as Array<
+                          ? ((raw as Record<string, unknown>).sessions as Array<
                                 Record<string, unknown>
                             >)
                           : []
                     const agentPrefix = `agent:${agentId}:`
                     const agentSession = sessions.find((s) => {
-                        const key = (
-                            (s as Record<string, unknown>).key ||
-                            (s as Record<string, unknown>).sessionKey
-                        ) as string
+                        const key = ((s as Record<string, unknown>).key ||
+                            (s as Record<string, unknown>).sessionKey) as string
                         return key?.startsWith(agentPrefix)
                     }) as Record<string, unknown> | undefined
                     if (agentSession) {
                         const resolved = (agentSession.key ||
-                            agentSession.sessionKey) as
-                            | string
-                            | undefined
+                            agentSession.sessionKey) as string | undefined
                         if (resolved) {
                             sessionKeyRef.current = resolved
                         }
@@ -130,9 +125,7 @@ const useAgentChat = ({
                             loaded.push({
                                 id: `history-${i}`,
                                 role: isUser ? 'user' : 'assistant',
-                                content: isUser
-                                    ? stripMetadata(text)
-                                    : text,
+                                content: isUser ? stripMetadata(text) : text,
                                 status: 'complete' as const,
                                 timestamp: new Date().toISOString(),
                                 images:
@@ -171,10 +164,7 @@ const useAgentChat = ({
             if (!mountedRef.current) return
 
             const event = payload as ChatEventPayload
-            if (
-                event.sessionKey &&
-                event.sessionKey !== sessionKeyRef.current
-            )
+            if (event.sessionKey && event.sessionKey !== sessionKeyRef.current)
                 return
 
             const rawContent =
@@ -201,8 +191,7 @@ const useAgentChat = ({
                                 status: 'streaming',
                                 runId: currentRunIdRef.current!,
                                 timestamp: new Date().toISOString(),
-                                images:
-                                    images.length > 0 ? images : undefined
+                                images: images.length > 0 ? images : undefined
                             }
                         ])
                     } else {
@@ -231,12 +220,10 @@ const useAgentChat = ({
                                 ...prev.slice(0, -1),
                                 {
                                     ...last,
-                                    content:
-                                        finalContent || last.content,
+                                    content: finalContent || last.content,
                                     status: 'complete' as const,
                                     images:
-                                        finalImages &&
-                                        finalImages.length > 0
+                                        finalImages && finalImages.length > 0
                                             ? finalImages
                                             : last.images
                                 }
@@ -283,8 +270,7 @@ const useAgentChat = ({
                             ...prev.slice(0, -1),
                             {
                                 ...last,
-                                content:
-                                    abortedContent || last.content,
+                                content: abortedContent || last.content,
                                 status: 'aborted' as const
                             }
                         ]
@@ -325,7 +311,11 @@ const useAgentChat = ({
     }, [subdomain, gatewayToken, agentId, enabled, flushStreamBuffer])
 
     const sendMessage = useCallback(
-        (text: string, attachments?: ChatAttachment[], previews?: ChatImageSource[]) => {
+        (
+            text: string,
+            attachments?: ChatAttachment[],
+            previews?: ChatImageSource[]
+        ) => {
             if (!clientRef.current || !text.trim()) return
 
             const userMessage: ChatMessage = {
@@ -357,14 +347,9 @@ const useAgentChat = ({
                 }))
             }
 
-            clientRef.current
-                .send('chat.send', params)
-                .catch((err: Error) => {
-                    console.error(
-                        '[useAgentChat] chat.send failed:',
-                        err.message
-                    )
-                })
+            clientRef.current.send('chat.send', params).catch((err: Error) => {
+                console.error('[useAgentChat] chat.send failed:', err.message)
+            })
         },
         []
     )

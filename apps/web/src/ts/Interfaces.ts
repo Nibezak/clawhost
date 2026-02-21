@@ -10,10 +10,15 @@ import type {
     ClawAvatarSize,
     ClawStatus,
     DashboardTab,
+    FeatureRequestStatus,
     GatewayConnectionState,
+    Language,
     PlaygroundAgentDetailTab,
     PlaygroundDetailTab,
     ProviderType,
+    ThemeMode,
+    ClawFileType,
+    CompareFeatureStatus,
     ToastType,
     UserRole
 } from '@/ts/Types'
@@ -53,6 +58,7 @@ export interface Claw {
     ownerEmail?: string | null
     deletionScheduledAt: string | null
     createdAt: string
+    port?: number
 }
 
 export interface VolumePricing {
@@ -147,6 +153,8 @@ export interface UIState {
     toast: ToastData | null
     showToast: (message: string, type?: ToastType, duration?: number) => void
     hideToast: () => void
+    phBannerVisible: boolean
+    dismissPhBanner: () => void
 }
 
 export interface PreferencesState {
@@ -154,6 +162,10 @@ export interface PreferencesState {
     setAdminMode: (mode: boolean) => void
     dashboardTab: DashboardTab
     setDashboardTab: (tab: DashboardTab) => void
+    theme: ThemeMode
+    setTheme: (theme: ThemeMode) => void
+    language: Language
+    setLanguage: (language: Language) => void
 }
 
 export interface CachedProfile {
@@ -163,6 +175,11 @@ export interface CachedProfile {
 
 export interface VerifyOtpResponse {
     customToken: string
+}
+
+export interface ResolveCredentialConflictData {
+    accessToken: string
+    providerId: string
 }
 
 export interface AuthContextType {
@@ -267,6 +284,7 @@ export interface CopyableFieldProps {
     label: string
     value: string
     icon?: ReactNode
+    secret?: boolean
 }
 
 export interface PlanAvailability {
@@ -318,7 +336,6 @@ export interface ClawCardDropdownMenuProps {
     isScheduledForDeletion: boolean
     isAdmin: boolean
     compact?: boolean
-    isPlayground?: boolean
 }
 
 export interface ClawCardDialogsProps {
@@ -407,6 +424,10 @@ export interface PurchaseClawResponse {
     expiresAt: string
 }
 
+export interface RenameClawData {
+    name: string
+}
+
 export interface CreateSSHKeyData {
     name: string
     publicKey: string
@@ -459,7 +480,7 @@ export interface PrerenderMeta {
     url: string
     type: string
     image: string
-    jsonLd: Record<string, unknown>
+    jsonLd?: Record<string, unknown>
     articleMeta?: ArticleMeta
 }
 
@@ -472,6 +493,26 @@ export interface ArticleMeta {
 
 export interface ClawVersionResponse {
     version: string
+}
+
+export interface OpenClawVersionEntry {
+    version: string
+    publishedAt: string
+    downloads: number
+}
+
+export interface ClawVersionsResponse {
+    currentVersion: string
+    latestVersion: string
+    versions: OpenClawVersionEntry[]
+}
+
+export interface InstallClawVersionResponse {
+    version: string
+}
+
+export interface PlaygroundVersionsContentProps {
+    clawId: string
 }
 
 export interface DiagnosticsStatusResponse {
@@ -487,7 +528,7 @@ export interface DiagnosticsLogsResponse {
 export interface ClawFileEntry {
     path: string
     name: string
-    isJson: boolean
+    fileType: ClawFileType
 }
 
 export interface ClawFilesResponse {
@@ -637,12 +678,20 @@ export interface PlaygroundToolbarProps {
     clawCount: number
 }
 
+export interface LanguageOption {
+    value: Language
+    label: string
+    flag: string
+}
+
+export interface AgentConfigSummary {
+    id: string
+    name: string
+    model: string | null
+}
+
 export interface AgentConfigResponse {
-    agent: {
-        id: string
-        name: string
-        model: string | null
-    }
+    agent: AgentConfigSummary
     envVars: Record<string, string>
     defaultModel: string | null
 }
@@ -818,6 +867,7 @@ export interface AgentChatProps {
     readOnly?: boolean
     onConfigure?: () => void
     configureDisabled?: boolean
+    onConnectionStateChange?: (state: GatewayConnectionState) => void
 }
 
 export interface ChatBubbleProps {
@@ -886,6 +936,16 @@ export interface UpdateClawChannelsData {
     channels: Record<string, ChannelConfig>
 }
 
+export interface WhatsAppPairResponse {
+    status: 'started' | 'already_paired' | 'unsupported'
+}
+
+export interface WhatsAppPairStatusResponse {
+    status: 'waiting' | 'qr_ready' | 'paired' | 'failed' | 'not_started'
+    qr?: string
+    log?: string
+}
+
 export interface SkillEntryConfig {
     enabled: boolean
     apiKey?: string
@@ -932,12 +992,19 @@ export interface ChannelDefinition {
     fields: ChannelFieldDefinition[]
 }
 
+export interface ChannelFieldOption {
+    value: string
+    label: TranslationKey
+}
+
 export interface ChannelFieldDefinition {
     key: keyof ChannelConfig
     label: TranslationKey
     placeholder: TranslationKey
     required?: boolean
     secret?: boolean
+    type?: 'text' | 'select'
+    options?: ChannelFieldOption[]
 }
 
 export interface PlaygroundSkillsContentProps {
@@ -1003,6 +1070,8 @@ export interface PlaygroundClawHubContentProps {
 export interface ChatSidebarItemProps {
     agent: ClawAgent
     isActive: boolean
+    isLast: boolean
+    connectionState?: GatewayConnectionState
     onClick: () => void
     onConfigure: () => void
 }
@@ -1023,6 +1092,7 @@ export interface ChatSidebarProps {
     clawsWithAgents: ClawWithAgents[]
     selectedAgent: ChatSelectedAgent | null
     selectedClawId: string | null
+    activeConnectionState?: GatewayConnectionState
     onAgentSelect: (selection: ChatSelectedAgent) => void
     onConfigureAgent: (agentId: string, clawId: string) => void
     onCreateAgent: (clawId: string, clawName: string) => void
@@ -1059,4 +1129,92 @@ export interface ChatViewProps {
 export interface TruncateTooltipProps {
     content: string
     children: ReactNode
+}
+
+export interface BindingMatch {
+    channel: string
+}
+
+export interface Binding {
+    agentId: string
+    match: BindingMatch
+}
+
+export interface ClawBindingsResponse {
+    bindings: Binding[]
+    channels: Record<string, ChannelConfig>
+    agents: Array<{ id: string; name: string }>
+}
+
+export interface UpdateClawBindingsData {
+    bindings: Binding[]
+}
+
+export interface PlaygroundBindingsContentProps {
+    clawId: string
+    agentId: string
+}
+
+export interface CompareCompetitor {
+    id: string
+    nameKey: string
+    highlighted: boolean
+}
+
+export interface CompareFeatureValue {
+    status: CompareFeatureStatus
+    detailKey?: string
+}
+
+export interface CompareFeature {
+    nameKey: string
+    values: Record<string, CompareFeatureValue>
+}
+
+export interface CompareCategory {
+    id: string
+    nameKey: string
+    features: CompareFeature[]
+}
+
+export interface FeatureRequest {
+    id: string
+    title: string
+    description: string
+    status: FeatureRequestStatus
+    rejectionReason: string | null
+    upvoteCount: number
+    userId: string
+    userName: string | null
+    userEmail: string
+    hasUpvoted: boolean
+    createdAt: string
+}
+
+export interface FeatureRequestsListResponse {
+    items: FeatureRequest[]
+    total: number
+}
+
+export interface CreateFeatureRequestData {
+    title: string
+    description: string
+}
+
+export interface UpdateFeatureRequestStatusData {
+    status: FeatureRequestStatus
+    rejectionReason?: string
+}
+
+export interface FeatureRequestCardProps {
+    featureRequest: FeatureRequest
+    isAuthenticated: boolean
+    isAdmin: boolean
+    onUpvote: (id: string) => void
+    onStatusChange: (id: string, status: FeatureRequestStatus) => void
+    onDelete: (id: string) => void
+}
+
+export interface FeatureRequestStatusBadgeProps {
+    status: FeatureRequestStatus
 }

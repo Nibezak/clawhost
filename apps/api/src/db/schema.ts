@@ -171,3 +171,51 @@ export const volumes = pgTable(
         index('volumes_claw_id_idx').on(table.clawId)
     ]
 )
+
+export const featureRequests = pgTable(
+    'feature_requests',
+    {
+        id: text('id').primaryKey(),
+        userId: text('user_id')
+            .notNull()
+            .references(() => users.id, { onDelete: 'cascade' }),
+        title: text('title').notNull(),
+        description: text('description').notNull(),
+        status: text('status').notNull().default('awaiting_approval'),
+        rejectionReason: text('rejection_reason'),
+        upvoteCount: integer('upvote_count').notNull().default(0),
+        createdAt: timestamp('created_at', { withTimezone: true })
+            .defaultNow()
+            .notNull()
+    },
+    (table) => [
+        index('feature_requests_user_id_idx').on(table.userId),
+        index('feature_requests_status_idx').on(table.status),
+        index('feature_requests_upvote_count_idx').on(table.upvoteCount)
+    ]
+)
+
+export const featureUpvotes = pgTable(
+    'feature_upvotes',
+    {
+        id: text('id').primaryKey(),
+        userId: text('user_id')
+            .notNull()
+            .references(() => users.id, { onDelete: 'cascade' }),
+        featureRequestId: text('feature_request_id')
+            .notNull()
+            .references(() => featureRequests.id, { onDelete: 'cascade' }),
+        createdAt: timestamp('created_at', { withTimezone: true })
+            .defaultNow()
+            .notNull()
+    },
+    (table) => [
+        unique('feature_upvotes_user_feature').on(
+            table.userId,
+            table.featureRequestId
+        ),
+        index('feature_upvotes_feature_request_id_idx').on(
+            table.featureRequestId
+        )
+    ]
+)

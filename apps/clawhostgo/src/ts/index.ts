@@ -1,10 +1,5 @@
-import type { ApiStatus, AppView } from '@/ts/Types'
-import type {
-    AppState,
-    ElectronAPI,
-    SpawnApiOptions,
-    SpawnApiResult
-} from '@/ts/Interfaces'
+import type { ApiStatus, AppView, ClawProcessStatus } from '@/ts/Types'
+import type { ElectronAPI, LocalClawConfig, ConfigFile } from '@/ts/Interfaces'
 
-export type { ApiStatus, AppView }
-export type { AppState, ElectronAPI, SpawnApiOptions, SpawnApiResult }
+export type { ApiStatus, AppView, ClawProcessStatus }
+export type { ElectronAPI, LocalClawConfig, ConfigFile }

@@ -125,7 +125,7 @@ server {
             "printf '[Service]\\nRestart=always\\nRestartSec=5\\n' > /etc/systemd/system/nginx.service.d/override.conf",
             'systemctl daemon-reload',
             'nginx -t && systemctl reload nginx',
-            'openclaw doctor --fix || true',
+            'su - openclaw -c "openclaw doctor --fix" || true',
             'systemctl restart openclaw-gateway',
             'sleep 15',
             'curl -sf -o /dev/null --max-time 5 http://127.0.0.1:18789 && echo "GATEWAY_OK" || echo "GATEWAY_FAILED"'

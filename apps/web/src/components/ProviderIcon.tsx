@@ -52,6 +52,25 @@ const ProviderIcon: FC<ProviderIconProps> = ({
         )
     }
 
+    if (provider === 'local') {
+        return (
+            <svg
+                className={className || 'h-4 w-4'}
+                viewBox='0 0 24 24'
+                fill='none'
+            >
+                <rect width='24' height='24' rx='12' fill='#6366f1' />
+                <path
+                    d='M7 8h10v6H7zM9 14v2M15 14v2M6 16h12'
+                    stroke='white'
+                    strokeWidth='1.5'
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                />
+            </svg>
+        )
+    }
+
     return null
 }
 
