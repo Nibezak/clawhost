@@ -14,6 +14,7 @@ const NotFound: FC = (): ReactNode => {
             <PageTitle
                 title={t('common.pageNotFound')}
                 description={t('errors.pageNotFoundDescription')}
+                noIndex
             />
             <PageBackground />
             <Header />

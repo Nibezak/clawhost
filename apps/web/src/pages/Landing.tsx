@@ -13,7 +13,8 @@ import {
     LandingFooter,
     HeroButtons,
     ProviderIcon,
-    PlansSkeleton
+    PlansSkeleton,
+    JsonLd
 } from '@/components'
 import { demoPlaygroundData } from '@/data'
 import {
@@ -23,8 +24,14 @@ import {
 } from '@/components/playground'
 import { useAuth } from '@/lib/auth'
 import { ROUTES, getBaseDomain } from '@/lib'
-import { usePlans } from '@/hooks'
-import { getBaseDomain } from '@/lib'
+import {
+    TWITTER_URL,
+    FACEBOOK_URL,
+    INSTAGRAM_URL,
+    YOUTUBE_URL,
+    TIKTOK_URL
+} from '@/lib/links'
+import { usePlans, GITHUB_REPO_URL } from '@/hooks'
 import { useUIStore } from '@/lib/store'
 import { TUTORIAL_URL } from '@/lib/links'
 import {
@@ -253,11 +260,50 @@ const Landing: FC = (): ReactNode => {
     ]
 
     return (
-        <div className='font-satoshi bg-background text-foreground min-h-screen'>
+        <div className='font-satoshi bg-background text-foreground min-h-screen' role='main'>
             <PageTitle
                 title={t('landing.title')}
                 description={t('landing.description')}
                 url={`https://${getBaseDomain()}`}
+            />
+            <JsonLd
+                data={{
+                    '@context': 'https://schema.org',
+                    '@type': 'Organization',
+                    name: 'ClawHost',
+                    url: `https://${getBaseDomain()}`,
+                    logo: `https://${getBaseDomain()}/favicon.ico`,
+                    sameAs: [
+                        TWITTER_URL,
+                        FACEBOOK_URL,
+                        INSTAGRAM_URL,
+                        YOUTUBE_URL,
+                        TIKTOK_URL,
+                        GITHUB_REPO_URL
+                    ]
+                }}
+            />
+            <JsonLd
+                data={{
+                    '@context': 'https://schema.org',
+                    '@type': 'WebSite',
+                    name: 'ClawHost',
+                    url: `https://${getBaseDomain()}`
+                }}
+            />
+            <JsonLd
+                data={{
+                    '@context': 'https://schema.org',
+                    '@type': 'FAQPage',
+                    mainEntity: getFaqs().map((faq) => ({
+                        '@type': 'Question',
+                        name: faq.question,
+                        acceptedAnswer: {
+                            '@type': 'Answer',
+                            text: faq.answer
+                        }
+                    }))
+                }}
             />
 
             <div className='landing-gradient pointer-events-none fixed inset-0' />
@@ -1023,6 +1069,7 @@ const Landing: FC = (): ReactNode => {
                                                 src='https://cdn.clawhost.cloud/assets/clawhost-logo-light.png'
                                                 alt={t('common.brandName')}
                                                 className='h-6'
+                                                loading='lazy'
                                             />
                                         </div>
                                     </th>

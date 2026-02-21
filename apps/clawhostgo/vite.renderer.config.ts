@@ -12,6 +12,9 @@ const keepAlive = () => ({
 
 export default defineConfig({
     plugins: [keepAlive(), react()],
+    optimizeDeps: {
+        exclude: ['@openclaw/i18n', '@openclaw/shared']
+    },
     resolve: {
         alias: {
             '@/lib/firebase': path.resolve(

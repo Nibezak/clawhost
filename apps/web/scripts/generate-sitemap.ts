@@ -7,15 +7,14 @@ const DIST = path.resolve(import.meta.dirname, '../dist')
 const CONTENT = path.resolve(import.meta.dirname, '../content/posts')
 const SITE_URL = 'https://clawhost.cloud'
 
-const staticRoutes = [
-    PATHS.HOME,
-    `/${PATHS.LOGIN}`,
-    `/${PATHS.TERMS}`,
-    `/${PATHS.PRIVACY}`,
-    `/${PATHS.BLOG}`,
-    `/${PATHS.CHANGELOG}`,
-    `/${PATHS.COMPARE}`,
-    `/${PATHS.FEATURE_REQUESTS}`
+const staticRoutes: { path: string; priority: string; changefreq: string }[] = [
+    { path: PATHS.HOME, priority: '1.0', changefreq: 'weekly' },
+    { path: `/${PATHS.TERMS}`, priority: '0.3', changefreq: 'yearly' },
+    { path: `/${PATHS.PRIVACY}`, priority: '0.3', changefreq: 'yearly' },
+    { path: `/${PATHS.BLOG}`, priority: '0.8', changefreq: 'weekly' },
+    { path: `/${PATHS.CHANGELOG}`, priority: '0.6', changefreq: 'weekly' },
+    { path: `/${PATHS.COMPARE}`, priority: '0.7', changefreq: 'monthly' },
+    { path: `/${PATHS.FEATURE_REQUESTS}`, priority: '0.5', changefreq: 'weekly' }
 ]
 
 const mdxFiles = fs.readdirSync(CONTENT).filter((f) => f.endsWith('.mdx'))
@@ -30,8 +29,10 @@ const today = new Date().toISOString().split('T')[0]
 
 const urls = [
     ...staticRoutes.map((route) => ({
-        loc: `${SITE_URL}${route}`,
-        lastmod: today
+        loc: `${SITE_URL}${route.path}`,
+        lastmod: today,
+        priority: route.priority,
+        changefreq: route.changefreq
     })),
     ...postSlugs.map((slug) => {
         const raw = fs.readFileSync(
@@ -51,7 +52,9 @@ const urls = [
             loc: `${SITE_URL}/${PATHS.BLOG}/${slug}`,
             lastmod:
                 (data as { updatedAt?: string; publishedAt: string })
-                    .updatedAt ?? (data as { publishedAt: string }).publishedAt
+                    .updatedAt ?? (data as { publishedAt: string }).publishedAt,
+            priority: '0.6',
+            changefreq: 'monthly'
         }
     })
 ]
@@ -63,6 +66,8 @@ ${urls
         (url) => `  <url>
     <loc>${url.loc}</loc>
     <lastmod>${url.lastmod}</lastmod>
+    <changefreq>${url.changefreq}</changefreq>
+    <priority>${url.priority}</priority>
   </url>`
     )
     .join('\n')}

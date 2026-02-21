@@ -480,7 +480,7 @@ export interface PrerenderMeta {
     url: string
     type: string
     image: string
-    jsonLd: Record<string, unknown>
+    jsonLd?: Record<string, unknown>
     articleMeta?: ArticleMeta
 }
 

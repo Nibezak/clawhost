@@ -70,7 +70,7 @@ const BlogPost: FC = (): ReactNode => {
                         name: 'ClawHost',
                         logo: {
                             '@type': 'ImageObject',
-                            url: `${SITE_URL}/favicon.svg`
+                            url: `${SITE_URL}/favicon.ico`
                         }
                     },
                     mainEntityOfPage: {

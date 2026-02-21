@@ -87,13 +87,100 @@ function injectMeta(html: string, meta: PrerenderMeta): string {
         }
     }
 
-    extraTags += `
-    <script type="application/ld+json">${JSON.stringify(meta.jsonLd)}</script>
-  `
+    if (meta.jsonLd) {
+        extraTags += `
+    <script type="application/ld+json">${JSON.stringify(meta.jsonLd)}</script>`
+    }
+
+    extraTags += '\n  '
 
     html = html.replace('</head>', `${extraTags}</head>`)
 
     return html
+}
+
+function writePrerenderedPage(routePath: string, html: string) {
+    if (routePath === '/') {
+        fs.writeFileSync(path.join(DIST, 'index.html'), html)
+        return
+    }
+    const dir = path.join(DIST, routePath)
+    fs.mkdirSync(dir, { recursive: true })
+    fs.writeFileSync(path.join(dir, 'index.html'), html)
+}
+
+const staticPages: { path: string; meta: PrerenderMeta }[] = [
+    {
+        path: '/',
+        meta: {
+            title: 'Deploy OpenClaw. One click. Done.',
+            description: 'Deploy OpenClaw on your own VPS with one click. Self-hostable cloud hosting with full root access, global locations, and transparent pricing.',
+            url: SITE_URL,
+            type: 'website',
+            image: `${SITE_URL}/og-image.webp`,
+            jsonLd: {
+                '@context': 'https://schema.org',
+                '@type': 'WebSite',
+                name: 'ClawHost',
+                url: SITE_URL
+            }
+        }
+    },
+    {
+        path: PATHS.CHANGELOG,
+        meta: {
+            title: 'Changelog',
+            description: 'Track updates, new features, and improvements to ClawHost.',
+            url: `${SITE_URL}/${PATHS.CHANGELOG}`,
+            type: 'website',
+            image: `${SITE_URL}/og-image.webp`
+        }
+    },
+    {
+        path: PATHS.COMPARE,
+        meta: {
+            title: 'Full Comparison',
+            description: 'See how ClawHost compares to other OpenClaw hosting platforms.',
+            url: `${SITE_URL}/${PATHS.COMPARE}`,
+            type: 'website',
+            image: `${SITE_URL}/og-image.webp`
+        }
+    },
+    {
+        path: PATHS.TERMS,
+        meta: {
+            title: 'Terms of Service',
+            description: 'Read the terms and conditions for using ClawHost services.',
+            url: `${SITE_URL}/${PATHS.TERMS}`,
+            type: 'website',
+            image: `${SITE_URL}/og-image.webp`
+        }
+    },
+    {
+        path: PATHS.PRIVACY,
+        meta: {
+            title: 'Privacy Policy',
+            description: 'Learn how ClawHost collects, uses, and protects your personal data.',
+            url: `${SITE_URL}/${PATHS.PRIVACY}`,
+            type: 'website',
+            image: `${SITE_URL}/og-image.webp`
+        }
+    },
+    {
+        path: PATHS.FEATURE_REQUESTS,
+        meta: {
+            title: 'Feature Requests',
+            description: 'Vote on features and suggest new ones.',
+            url: `${SITE_URL}/${PATHS.FEATURE_REQUESTS}`,
+            type: 'website',
+            image: `${SITE_URL}/og-image.webp`
+        }
+    }
+]
+
+for (const page of staticPages) {
+    const html = injectMeta(template, page.meta)
+    writePrerenderedPage(page.path, html)
 }
 
 const listingHtml = injectMeta(template, {
@@ -113,7 +200,7 @@ const listingHtml = injectMeta(template, {
         publisher: {
             '@type': 'Organization',
             name: 'ClawHost',
-            logo: { '@type': 'ImageObject', url: `${SITE_URL}/favicon.svg` }
+            logo: { '@type': 'ImageObject', url: `${SITE_URL}/favicon.ico` }
         }
     }
 })
@@ -151,7 +238,7 @@ for (const post of posts) {
             publisher: {
                 '@type': 'Organization',
                 name: 'ClawHost',
-                logo: { '@type': 'ImageObject', url: `${SITE_URL}/favicon.svg` }
+                logo: { '@type': 'ImageObject', url: `${SITE_URL}/favicon.ico` }
             },
             mainEntityOfPage: {
                 '@type': 'WebPage',
@@ -166,4 +253,4 @@ for (const post of posts) {
     fs.writeFileSync(path.join(dir, 'index.html'), postHtml)
 }
 
-console.log(`Pre-rendered ${posts.length} blog posts + listing page.`)
+console.log(`Pre-rendered ${staticPages.length} static pages, blog listing, and ${posts.length} blog posts.`)

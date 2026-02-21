@@ -103,9 +103,9 @@ const Changelog: FC = (): ReactNode => {
                         </div>
 
                         <div className='border-border bg-foreground/[0.02] rounded-2xl border p-8'>
-                            <span className='text-muted-foreground mb-4 block text-sm'>
+                            <time className='text-muted-foreground mb-4 block text-sm'>
                                 {t('changelog.release9Date')}
-                            </span>
+                            </time>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>
                                 {t('changelog.release9Title')}
@@ -169,9 +169,9 @@ const Changelog: FC = (): ReactNode => {
                         </div>
 
                         <div className='border-border bg-foreground/[0.02] rounded-2xl border p-8'>
-                            <span className='text-muted-foreground mb-4 block text-sm'>
+                            <time className='text-muted-foreground mb-4 block text-sm'>
                                 {t('changelog.release8Date')}
-                            </span>
+                            </time>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>
                                 {t('changelog.release8Title')}
@@ -217,9 +217,9 @@ const Changelog: FC = (): ReactNode => {
                         </div>
 
                         <div className='border-border bg-foreground/[0.02] rounded-2xl border p-8'>
-                            <span className='text-muted-foreground mb-4 block text-sm'>
+                            <time className='text-muted-foreground mb-4 block text-sm'>
                                 {t('changelog.release7Date')}
-                            </span>
+                            </time>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>
                                 {t('changelog.release7Title')}
@@ -271,9 +271,9 @@ const Changelog: FC = (): ReactNode => {
                         </div>
 
                         <div className='border-border bg-foreground/[0.02] rounded-2xl border p-8'>
-                            <span className='text-muted-foreground mb-4 block text-sm'>
+                            <time className='text-muted-foreground mb-4 block text-sm'>
                                 {t('changelog.release6Date')}
-                            </span>
+                            </time>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>
                                 {t('changelog.release6Title')}
@@ -325,9 +325,9 @@ const Changelog: FC = (): ReactNode => {
                         </div>
 
                         <div className='border-border bg-foreground/[0.02] rounded-2xl border p-8'>
-                            <span className='text-muted-foreground mb-4 block text-sm'>
+                            <time className='text-muted-foreground mb-4 block text-sm'>
                                 {t('changelog.release5Date')}
-                            </span>
+                            </time>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>
                                 {t('changelog.release5Title')}
@@ -379,9 +379,9 @@ const Changelog: FC = (): ReactNode => {
                         </div>
 
                         <div className='border-border bg-foreground/[0.02] rounded-2xl border p-8'>
-                            <span className='text-muted-foreground mb-4 block text-sm'>
+                            <time className='text-muted-foreground mb-4 block text-sm'>
                                 {t('changelog.release4Date')}
-                            </span>
+                            </time>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>
                                 {t('changelog.release4Title')}
@@ -427,9 +427,9 @@ const Changelog: FC = (): ReactNode => {
                         </div>
 
                         <div className='border-border bg-foreground/[0.02] rounded-2xl border p-8'>
-                            <span className='text-muted-foreground mb-4 block text-sm'>
+                            <time className='text-muted-foreground mb-4 block text-sm'>
                                 {t('changelog.release3Date')}
-                            </span>
+                            </time>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>
                                 {t('changelog.release3Title')}
@@ -475,9 +475,9 @@ const Changelog: FC = (): ReactNode => {
                         </div>
 
                         <div className='border-border bg-foreground/[0.02] rounded-2xl border p-8'>
-                            <span className='text-muted-foreground mb-4 block text-sm'>
+                            <time className='text-muted-foreground mb-4 block text-sm'>
                                 {t('changelog.release2Date')}
-                            </span>
+                            </time>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>
                                 {t('changelog.release2Title')}
@@ -529,9 +529,9 @@ const Changelog: FC = (): ReactNode => {
                         </div>
 
                         <div className='border-border bg-foreground/[0.02] rounded-2xl border p-8'>
-                            <span className='text-muted-foreground mb-4 block text-sm'>
+                            <time className='text-muted-foreground mb-4 block text-sm'>
                                 {t('changelog.release1Date')}
-                            </span>
+                            </time>
 
                             <h2 className='font-clash mb-2 text-2xl font-bold'>
                                 {t('changelog.release1Title')}
