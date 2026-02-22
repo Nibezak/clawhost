@@ -4,19 +4,16 @@ import { t } from '@openclaw/i18n'
 
 const getAgentStatusConfig = (status: string): StatusConfig => {
     switch (status) {
-        case 'running':
-            return {
-                color: 'bg-green-500',
-                bgColor: 'bg-green-500/10',
-                label: t('dashboard.status.running')
-            }
         case 'stopped':
+        case 'idle':
+        case 'off':
             return {
                 color: 'bg-gray-400',
                 bgColor: 'bg-gray-400/10',
                 label: t('dashboard.status.stopped')
             }
         case 'error':
+        case 'crashed':
             return {
                 color: 'bg-red-500',
                 bgColor: 'bg-red-500/10',
@@ -38,9 +35,9 @@ const getAgentStatusConfig = (status: string): StatusConfig => {
             }
         default:
             return {
-                color: 'bg-gray-400',
-                bgColor: 'bg-gray-400/10',
-                label: t('dashboard.status.unknown')
+                color: 'bg-green-500',
+                bgColor: 'bg-green-500/10',
+                label: t('dashboard.status.running')
             }
     }
 }

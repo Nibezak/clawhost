@@ -6,16 +6,20 @@ import type {
 } from '@/ts/Interfaces'
 import type { CopiedFieldType, SSHKeyModalMode } from '@/ts/Types'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { useUIStore } from '@/lib/store'
+import { useAuth } from '@/lib/auth'
+import { useUIStore, usePreferencesStore } from '@/lib/store'
+import { ROUTES } from '@/lib'
 import {
     useSSHKeys,
     useCreateSSHKey,
     useDeleteSSHKey,
-    useUserStats
+    useUserStats,
+    useProfile
 } from '@/hooks'
+import { getLegalLinks } from '@/data'
 import {
     Button,
     Input,
@@ -39,6 +43,10 @@ import {
     ErrorState,
     Header,
     LandingFooter,
+    Logo,
+    LanguageSelector,
+    ThemeToggle,
+    UserDropdown,
     PageBackground,
     PageTitle,
     PageHeader,
@@ -600,6 +608,31 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
 
 const SSHKeys: FC = (): ReactNode => {
     const [showCreate, setShowCreate] = useState(false)
+    const { isLocal, user, cachedProfile } = useAuth()
+    const { openLinksWindowed } = usePreferencesStore()
+    const { data: profile } = useProfile({
+        enabled: !!user,
+        staleTime: 1000 * 60 * 5
+    })
+
+    const localDisplayName =
+        profile?.name ||
+        cachedProfile?.name ||
+        t('account.noNameSet')
+    const dropdownFooterLinks = useMemo(() => {
+        if (!isLocal) return undefined
+        const BASE_URL = 'https://clawhost.cloud'
+        return [
+            { label: t('footer.website'), href: BASE_URL, external: true },
+            ...getLegalLinks().map((link) => ({
+                ...link,
+                href: link.href.startsWith('mailto:')
+                    ? link.href
+                    : `${BASE_URL}${link.href}`,
+                external: true
+            }))
+        ]
+    }, [isLocal])
 
     const { data: sshKeys, isLoading, isError, refetch } = useSSHKeys()
     const { data: userStats, isLoading: isStatsLoading } = useUserStats()
@@ -609,19 +642,45 @@ const SSHKeys: FC = (): ReactNode => {
     const [howItWorksOpen, setHowItWorksOpen] = useState(false)
 
     return (
-        <div className='bg-background text-foreground relative flex min-h-screen flex-col'>
+        <div
+            className={`bg-background text-foreground ${isLocal ? 'fixed inset-0 flex flex-col overflow-hidden' : 'relative flex min-h-screen flex-col'}`}
+        >
+            {isLocal && (
+                <div className='playground-grid pointer-events-none fixed inset-0 opacity-50' />
+            )}
+            {isLocal && (
+                <div className='playground-gradient pointer-events-none fixed inset-0 opacity-30' />
+            )}
             <PageTitle
                 title={t('sshKeys.title')}
                 description={t('sshKeys.description')}
             />
-            <PageBackground />
-            <Header />
+            {!isLocal && <PageBackground />}
+            {isLocal ? (
+                <div className='border-border bg-background relative z-10 flex items-center justify-between border-b px-6 py-3'>
+                    <Logo to={ROUTES.CLAWS} />
+                    <div className='flex items-center gap-1.5 sm:gap-3'>
+                        <LanguageSelector />
+                        <ThemeToggle />
+                        <UserDropdown
+                            displayName={localDisplayName}
+                            onSignOut={async () => {}}
+                            hideBilling
+                            hideSignOut
+                            footerLinks={dropdownFooterLinks}
+                            openLinksWindowed={openLinksWindowed}
+                        />
+                    </div>
+                </div>
+            ) : (
+                <Header />
+            )}
 
             <motion.main
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className='relative mx-auto w-full max-w-6xl flex-1 px-6 pb-16 pt-8'
+                className={`relative mx-auto w-full max-w-6xl flex-1 px-6 pb-16 pt-8 ${isLocal ? 'overflow-y-auto' : ''}`}
             >
                 <PageHeader
                     title={t('sshKeys.title')}
@@ -743,7 +802,7 @@ const SSHKeys: FC = (): ReactNode => {
                 )}
             </motion.main>
 
-            <LandingFooter />
+            {!isLocal && <LandingFooter />}
         </div>
     )
 }

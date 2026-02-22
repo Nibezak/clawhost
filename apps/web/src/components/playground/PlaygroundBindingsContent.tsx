@@ -195,14 +195,10 @@ const PlaygroundBindingsContent: FC<PlaygroundBindingsContentProps> = ({
                         disabled={mutation.isPending}
                         className='flex w-full items-center justify-center gap-2 rounded-lg bg-[#ef5350] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#e53935] disabled:opacity-50'
                     >
-                        {mutation.isPending ? (
-                            <>
-                                <CircleNotchIcon className='h-4 w-4 animate-spin' />
-                                {t('playground.bindingsSaving')}
-                            </>
-                        ) : (
-                            t('common.save')
+                        {mutation.isPending && (
+                            <CircleNotchIcon className='h-4 w-4 animate-spin' />
                         )}
+                        {t('common.save')}
                     </button>
                 </div>
             )}

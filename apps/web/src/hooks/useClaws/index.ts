@@ -21,6 +21,7 @@ import useUpdateClawFile from '@/hooks/useClaws/useUpdateClawFile'
 import useReinstallClaw from '@/hooks/useClaws/useReinstallClaw'
 import useClawVersion from '@/hooks/useClaws/useClawVersion'
 import useRenameClaw from '@/hooks/useClaws/useRenameClaw'
+import useUpdateClawSubdomain from '@/hooks/useClaws/useUpdateClawSubdomain'
 
 export {
     CLAWS_QUERY_KEY,
@@ -45,5 +46,6 @@ export {
     useUpdateClawFile,
     useReinstallClaw,
     useClawVersion,
-    useRenameClaw
+    useRenameClaw,
+    useUpdateClawSubdomain
 }

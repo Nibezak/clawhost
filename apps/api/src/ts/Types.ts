@@ -48,6 +48,7 @@ export type FeatureRequestStatus =
     | 'requested'
     | 'marked_for_implementation'
     | 'implemented'
-    | 'rejected'
 
-export type FeatureRequestSortBy = 'newest' | 'upvotes' | 'status'
+export type FeatureRequestPlatform = 'desktop' | 'mobile' | 'web'
+
+export type FeatureRequestSortBy = 'newest' | 'upvotes'

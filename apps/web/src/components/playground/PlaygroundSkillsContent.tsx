@@ -678,23 +678,6 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                                 )
                             })}
 
-                        {isBrowseError && (
-                            <div className='flex flex-1 items-center justify-center'>
-                                <PanelPlaceholder
-                                    icon={
-                                        <StorefrontIcon
-                                            className='text-muted-foreground h-6 w-6'
-                                            weight='duotone'
-                                        />
-                                    }
-                                    title={t('playground.clawHubLoadFailed')}
-                                    description={t(
-                                        'playground.clawHubLoadFailedDescription'
-                                    )}
-                                />
-                            </div>
-                        )}
-
                         {isFetchingNextPage &&
                             Array.from({ length: 6 }).map((_, i) => (
                                 <Skeleton

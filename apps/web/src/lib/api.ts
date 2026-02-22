@@ -8,6 +8,7 @@ import type {
     FeatureRequest,
     FeatureRequestsListResponse,
     RenameClawData,
+    UpdateClawSubdomainData,
     ClawAgentsResponse,
     ClawChannelsResponse,
     ClawFilesResponse,
@@ -36,6 +37,7 @@ import type {
     UpdateAgentConfigData,
     UpdateAgentSkillsData,
     UpdateClawChannelsData,
+    EditFeatureRequestData,
     UpdateFeatureRequestStatusData,
     WhatsAppPairResponse,
     WhatsAppPairStatusResponse,
@@ -92,7 +94,10 @@ const api = {
             code
         }),
     resolveCredentialConflict: (data: ResolveCredentialConflictData) =>
-        publicClient.post<VerifyOtpResponse>('/auth/resolve-credential-conflict', data),
+        publicClient.post<VerifyOtpResponse>(
+            '/auth/resolve-credential-conflict',
+            data
+        ),
 
     getPlans: (provider?: string) =>
         client.get<PlansResponse>(
@@ -126,6 +131,8 @@ const api = {
         client.delete<DeleteClawResponse>(`/claws/${id}`),
     renameClaw: (id: string, data: RenameClawData) =>
         client.patch<Claw>(`/claws/${id}`, data),
+    updateClawSubdomain: (id: string, data: UpdateClawSubdomainData) =>
+        client.patch<Claw>(`/claws/${id}/subdomain`, data),
     cancelDeletion: (id: string) =>
         client.post<Claw>(`/claws/${id}/cancel-deletion`),
     hardDeleteClaw: (id: string) =>
@@ -289,6 +296,8 @@ const api = {
         client.post<{ upvoteCount: number; hasUpvoted: boolean }>(
             `/feature-requests/${id}/upvote`
         ),
+    editFeatureRequest: (id: string, data: EditFeatureRequestData) =>
+        client.put<void>(`/feature-requests/${id}`, data),
     updateFeatureRequestStatus: (
         id: string,
         data: UpdateFeatureRequestStatusData

@@ -628,6 +628,17 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                                                         e.target.value
                                                     )
                                                 }
+                                                onKeyDown={(e) => {
+                                                    if (
+                                                        e.key === 'Enter' &&
+                                                        !readOnly &&
+                                                        !saveMutation.isPending &&
+                                                        hasChanges &&
+                                                        !nameError
+                                                    ) {
+                                                        handleSave()
+                                                    }
+                                                }}
                                                 placeholder={t(
                                                     'playground.configurationNamePlaceholder'
                                                 )}
@@ -793,6 +804,17 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                                                         )
                                                         setHasChanges(true)
                                                     }}
+                                                    onKeyDown={(e) => {
+                                                        if (
+                                                            e.key === 'Enter' &&
+                                                            !readOnly &&
+                                                            !saveMutation.isPending &&
+                                                            hasChanges &&
+                                                            !nameError
+                                                        ) {
+                                                            handleSave()
+                                                        }
+                                                    }}
                                                     placeholder={t(
                                                         'playground.configurationApiKeyPlaceholder'
                                                     )}
@@ -826,18 +848,10 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                                             }
                                             className='flex w-full items-center justify-center gap-2 rounded-lg bg-[#ef5350] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
                                         >
-                                            {saveMutation.isPending ? (
-                                                <>
-                                                    <CircleNotchIcon className='h-4 w-4 animate-spin' />
-                                                    {t(
-                                                        'playground.configurationSaving'
-                                                    )}
-                                                </>
-                                            ) : (
-                                                t(
-                                                    'playground.configurationSave'
-                                                )
+                                            {saveMutation.isPending && (
+                                                <CircleNotchIcon className='h-4 w-4 animate-spin' />
                                             )}
+                                            {t('playground.configurationSave')}
                                         </button>
                                     </div>
                                 )}
@@ -869,7 +883,7 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                             }
                         />
                         <span className='text-muted-foreground text-xs'>
-                            {t('playground.variablesDontAskAgain')}
+                            {t('playground.agentDontAskAgain')}
                         </span>
                     </label>
                     <div className='mt-4 flex justify-end gap-3'>

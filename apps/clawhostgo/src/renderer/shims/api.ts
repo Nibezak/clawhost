@@ -1,4 +1,15 @@
+import { clawProvider, RequestClient } from '@openclaw/shared'
+
+const API_BASE = 'https://api.clawhost.cloud'
+
+const publicClient = new RequestClient({
+    baseUrl: API_BASE
+})
+
 const invoke = (channel: string, ...args: unknown[]): Promise<unknown> => {
+    if (!window.electronAPI) {
+        return Promise.reject(new Error('Electron API not available'))
+    }
     return window.electronAPI.invoke(channel, ...args)
 }
 
@@ -9,25 +20,29 @@ const api = {
 
     getPlans: (_provider?: string) =>
         Promise.resolve({
-            plans: [{
-                id: 'local',
-                name: 'Local',
-                cpu: 0,
-                memory: 0,
-                disk: 0,
-                priceMonthly: 0,
-                architecture: 'local'
-            }],
+            plans: [
+                {
+                    id: clawProvider.local,
+                    name: 'Local',
+                    cpu: 0,
+                    memory: 0,
+                    disk: 0,
+                    priceMonthly: 0,
+                    architecture: clawProvider.local
+                }
+            ],
             atCapacity: false
         }),
     getLocations: (_provider?: string) =>
-        Promise.resolve([{
-            id: 'local',
-            name: 'Local',
-            city: 'Local',
-            country: 'Local',
-            disabled: false
-        }]),
+        Promise.resolve([
+            {
+                id: clawProvider.local,
+                name: 'Local',
+                city: 'Local',
+                country: 'Local',
+                disabled: false
+            }
+        ]),
     getVolumePricing: (_provider?: string) =>
         Promise.resolve({ pricePerGbMonthly: 0, minSize: 0, maxSize: 0 }),
     getPlanAvailability: (_provider?: string) => Promise.resolve([]),
@@ -44,6 +59,7 @@ const api = {
     restartClaw: (id: string) => invoke('restartClaw', id),
     deleteClaw: (id: string) => invoke('deleteClaw', id),
     renameClaw: (id: string, data: unknown) => invoke('renameClaw', id, data),
+    updateClawSubdomain: (id: string, data: unknown) => invoke('updateClawSubdomain', id, data),
     cancelDeletion: (id: string) => invoke('cancelDeletion', id),
     hardDeleteClaw: (id: string) => invoke('hardDeleteClaw', id),
     getClawDiagnostics: (id: string) => invoke('getClawDiagnostics', id),
@@ -78,8 +94,14 @@ const api = {
         invoke('getAgentSkills', clawId, agentId),
     updateAgentSkills: (clawId: string, agentId: string, data: unknown) =>
         invoke('updateAgentSkills', clawId, agentId, data),
-    browseClawHubSkills: (clawId: string, params: unknown) =>
-        invoke('browseClawHubSkills', clawId, params),
+    browseClawHubSkills: (_clawId: string, params: Record<string, unknown>) => {
+        const qs = new URLSearchParams()
+        if (params.query) qs.set('query', String(params.query))
+        if (params.limit) qs.set('limit', String(params.limit))
+        if (params.cursor) qs.set('cursor', String(params.cursor))
+        const str = qs.toString()
+        return publicClient.get(`/clawhub/skills${str ? `?${str}` : ''}`)
+    },
     getClawHubInstalled: (clawId: string, agentId?: string) =>
         invoke('getClawHubInstalled', clawId, { agentId }),
     installClawHubSkill: (clawId: string, data: unknown) =>
@@ -105,7 +127,7 @@ const api = {
     deleteSSHKey: (_id: string) => Promise.resolve(),
 
     getProfile: () => invoke('getProfile'),
-    updateProfile: (_data: unknown) => Promise.resolve({ success: true }),
+    updateProfile: (data: unknown) => invoke('updateProfile', data),
     connectAuthMethod: (_method: string) => Promise.resolve(),
     disconnectAuthMethod: (_method: string) => Promise.resolve(),
     getUserStats: () => invoke('getUserStats'),

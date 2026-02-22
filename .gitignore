@@ -13,4 +13,4 @@ android
 ios
 out
 .vite
-apps/clawhostgo/resources/node
+resources

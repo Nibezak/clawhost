@@ -185,7 +185,20 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
     }
 
     const actions: ClawCardActions = {
-        onStart: () => startMutation.mutate(claw.id),
+        onStart: () =>
+            startMutation.mutate(claw.id, {
+                onError: (err) => {
+                    const message =
+                        err instanceof Error
+                            ? err.message
+                            : typeof err === 'object' &&
+                                err !== null &&
+                                'message' in err
+                              ? String((err as { message: unknown }).message)
+                              : t('dashboard.startFailed')
+                    showToast(message, 'error')
+                }
+            }),
         onShowStopModal: () => setShowStopModal(true),
         onShowRestartModal: () => setShowRestartModal(true),
         onShowDeleteModal: () => setShowDeleteModal(true),

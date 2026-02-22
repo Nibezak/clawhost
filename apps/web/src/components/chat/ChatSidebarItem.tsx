@@ -6,7 +6,7 @@ import { t } from '@openclaw/i18n'
 import { GearSixIcon, AndroidLogoIcon } from '@phosphor-icons/react'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import { TRUNCATE_LENGTHS } from '@/lib'
-import { aiModels } from '@/lib/claw-utils'
+import { aiModels, getAgentStatusConfig } from '@/lib/claw-utils'
 
 const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
     agent,
@@ -49,11 +49,13 @@ const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
                     break
             }
         }
+        const agentStatus = getAgentStatusConfig(agent.status)
         return {
-            color: 'bg-gray-400',
-            label: t('dashboard.status.unknown')
+            color: agentStatus.color,
+            label: agentStatus.label,
+            pulse: agentStatus.pulse
         }
-    }, [connectionState])
+    }, [connectionState, agent.status])
 
     return (
         <div className='relative flex py-0.5'>

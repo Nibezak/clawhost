@@ -53,6 +53,27 @@ const BlogPost: FC = (): ReactNode => {
                 image={imageUrl}
                 url={postUrl}
                 type='article'
+                keywords={meta.tags}
+            />
+            <JsonLd
+                data={{
+                    '@context': 'https://schema.org',
+                    '@type': 'BreadcrumbList',
+                    itemListElement: [
+                        {
+                            '@type': 'ListItem',
+                            position: 1,
+                            name: t('blog.title'),
+                            item: `${SITE_URL}/${PATHS.BLOG}`
+                        },
+                        {
+                            '@type': 'ListItem',
+                            position: 2,
+                            name: meta.title,
+                            item: postUrl
+                        }
+                    ]
+                }}
             />
             <JsonLd
                 data={{
@@ -70,7 +91,7 @@ const BlogPost: FC = (): ReactNode => {
                         name: 'ClawHost',
                         logo: {
                             '@type': 'ImageObject',
-                            url: `${SITE_URL}/favicon.ico`
+                            url: 'https://cdn.clawhost.cloud/assets/clawhost-logo-light.png'
                         }
                     },
                     mainEntityOfPage: {
@@ -97,26 +118,18 @@ const BlogPost: FC = (): ReactNode => {
                     {t('blog.backToBlog')}
                 </Link>
 
-                <div className='mb-3 flex flex-wrap gap-2'>
-                    {meta.tags.map((tag) => (
-                        <span
-                            key={tag}
-                            className='bg-foreground/5 text-muted-foreground rounded-full px-2.5 py-0.5 text-xs'
-                        >
-                            {tag}
-                        </span>
-                    ))}
-                </div>
-
                 <h1 className='font-clash mb-4 text-4xl font-bold'>
                     {meta.title}
                 </h1>
 
                 <div className='text-muted-foreground mb-8 flex items-center gap-4 text-sm'>
-                    <span className='flex items-center gap-1.5'>
+                    <time
+                        dateTime={meta.publishedAt}
+                        className='flex items-center gap-1.5'
+                    >
                         <CalendarBlankIcon className='h-4 w-4' />
                         {formattedDate}
-                    </span>
+                    </time>
                     <span className='flex items-center gap-1.5'>
                         <ClockIcon className='h-4 w-4' />
                         {t('blog.readingTime', {
@@ -131,6 +144,8 @@ const BlogPost: FC = (): ReactNode => {
                             src={meta.coverImage}
                             alt={meta.title}
                             className='aspect-[2/1] w-full object-cover'
+                            width={1200}
+                            height={600}
                         />
                     </div>
                 )}

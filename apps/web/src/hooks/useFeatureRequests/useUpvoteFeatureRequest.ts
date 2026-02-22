@@ -31,7 +31,7 @@ const useUpvoteFeatureRequest = () => {
                                       ...item,
                                       hasUpvoted: !item.hasUpvoted,
                                       upvoteCount: item.hasUpvoted
-                                          ? item.upvoteCount - 1
+                                          ? Math.max(item.upvoteCount - 1, 0)
                                           : item.upvoteCount + 1
                                   }
                                 : item

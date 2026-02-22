@@ -3,6 +3,7 @@ import useFeatureRequests from '@/hooks/useFeatureRequests/useFeatureRequests'
 import useCreateFeatureRequest from '@/hooks/useFeatureRequests/useCreateFeatureRequest'
 import useUpvoteFeatureRequest from '@/hooks/useFeatureRequests/useUpvoteFeatureRequest'
 import useUpdateFeatureRequestStatus from '@/hooks/useFeatureRequests/useUpdateFeatureRequestStatus'
+import useEditFeatureRequest from '@/hooks/useFeatureRequests/useEditFeatureRequest'
 import useDeleteFeatureRequest from '@/hooks/useFeatureRequests/useDeleteFeatureRequest'
 
 export {
@@ -11,5 +12,6 @@ export {
     useCreateFeatureRequest,
     useUpvoteFeatureRequest,
     useUpdateFeatureRequestStatus,
+    useEditFeatureRequest,
     useDeleteFeatureRequest
 }

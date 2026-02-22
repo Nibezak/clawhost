@@ -77,13 +77,52 @@ const Changelog: FC = (): ReactNode => {
                                         {t('changelog.upcomingReleaseFeature2')}
                                     </span>
                                 </li>
+                            </ul>
+                        </div>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.2 }}
+                        className='relative md:pl-14'
+                    >
+                        <div className='absolute left-0 top-1 hidden md:block'>
+                            <div className='border-border bg-foreground/[0.04] flex h-10 w-10 items-center justify-center rounded-full border'>
+                                <div className='bg-foreground/60 h-2 w-2 rounded-full' />
+                            </div>
+                        </div>
+
+                        <div className='border-border bg-foreground/[0.02] rounded-2xl border p-8'>
+                            <time className='text-muted-foreground mb-4 block text-sm'>
+                                {t('changelog.release11Date')}
+                            </time>
+
+                            <h2 className='font-clash mb-2 text-2xl font-bold'>
+                                {t('changelog.release11Title')}
+                            </h2>
+
+                            <p className='text-muted-foreground mb-6 leading-relaxed'>
+                                {t('changelog.release11Description')}
+                            </p>
+
+                            <ul className='space-y-3'>
                                 <li className='flex items-center gap-3'>
-                                    <CircleIcon
-                                        className='h-2.5 w-2.5 flex-shrink-0 text-amber-600 dark:text-amber-400'
-                                        weight='fill'
-                                    />
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
                                     <span className='text-foreground text-sm'>
-                                        {t('changelog.upcomingReleaseFeature8')}
+                                        {t('changelog.release11Feature1')}
+                                    </span>
+                                </li>
+                                <li className='flex items-center gap-3'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
+                                        {t('changelog.release11Feature2')}
+                                    </span>
+                                </li>
+                                <li className='flex items-center gap-3'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
+                                        {t('changelog.release11Feature3')}
                                     </span>
                                 </li>
                             </ul>
@@ -94,6 +133,54 @@ const Changelog: FC = (): ReactNode => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.4, delay: 0.2 }}
+                        className='relative md:pl-14'
+                    >
+                        <div className='absolute left-0 top-1 hidden md:block'>
+                            <div className='border-border bg-foreground/[0.04] flex h-10 w-10 items-center justify-center rounded-full border'>
+                                <div className='bg-foreground/60 h-2 w-2 rounded-full' />
+                            </div>
+                        </div>
+
+                        <div className='border-border bg-foreground/[0.02] rounded-2xl border p-8'>
+                            <time className='text-muted-foreground mb-4 block text-sm'>
+                                {t('changelog.release10Date')}
+                            </time>
+
+                            <h2 className='font-clash mb-2 text-2xl font-bold'>
+                                {t('changelog.release10Title')}
+                            </h2>
+
+                            <p className='text-muted-foreground mb-6 leading-relaxed'>
+                                {t('changelog.release10Description')}
+                            </p>
+
+                            <ul className='space-y-3'>
+                                <li className='flex items-center gap-3'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
+                                        {t('changelog.release10Feature1')}
+                                    </span>
+                                </li>
+                                <li className='flex items-center gap-3'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
+                                        {t('changelog.release10Feature2')}
+                                    </span>
+                                </li>
+                                <li className='flex items-center gap-3'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
+                                        {t('changelog.release10Feature3')}
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.3 }}
                         className='relative md:pl-14'
                     >
                         <div className='absolute left-0 top-1 hidden md:block'>

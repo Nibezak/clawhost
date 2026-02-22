@@ -21,6 +21,7 @@ interface SelectProps {
 interface SelectTriggerProps {
     placeholder?: string
     className?: string
+    icon?: React.ReactNode
 }
 
 interface SelectContentProps {
@@ -95,6 +96,7 @@ const Select = ({
 const SelectTrigger = ({
     placeholder,
     className,
+    icon,
     disabled
 }: SelectTriggerProps & { disabled?: boolean }) => {
     const { displayText } = React.useContext(SelectContext)
@@ -109,7 +111,10 @@ const SelectTrigger = ({
                     className
                 )}
             >
-                <span className='truncate'>{displayText || placeholder}</span>
+                <span className='flex items-center gap-2 truncate'>
+                    {icon}
+                    {displayText || placeholder}
+                </span>
                 <CaretDownIcon className='h-4 w-4 shrink-0 opacity-50' />
             </button>
         </DropdownMenuTrigger>

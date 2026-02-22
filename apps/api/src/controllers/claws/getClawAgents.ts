@@ -10,6 +10,23 @@ import { findUserClaw } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
+const KNOWN_AGENT_STATUSES = new Set([
+    'running',
+    'stopped',
+    'idle',
+    'off',
+    'error',
+    'crashed',
+    'starting',
+    'stopping'
+])
+
+const normalizeAgentStatus = (status: unknown): string => {
+    const s = typeof status === 'string' ? status.toLowerCase() : ''
+    if (KNOWN_AGENT_STATUSES.has(s)) return s
+    return 'running'
+}
+
 const getClawAgents = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
@@ -73,7 +90,7 @@ const getClawAgents = async (c: AuthenticatedContext) => {
                                 `Agent ${index + 1}`,
                             model:
                                 (agent.model as string) || defaultModel || null,
-                            status: (agent.status as string) || 'running',
+                            status: normalizeAgentStatus(agent.status),
                             directory:
                                 (agent.workspace as string) ||
                                 (agent.directory as string) ||

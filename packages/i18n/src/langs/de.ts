@@ -8,6 +8,7 @@ const de: Translations = {
         confirm: 'Bestätigen',
         delete: 'Löschen',
         deleting: 'Wird gelöscht...',
+        back: 'Zurück',
         create: 'Erstellen',
         done: 'Fertig',
         copy: 'Kopieren',
@@ -26,6 +27,14 @@ const de: Translations = {
         beta: 'Beta',
         brandName: 'ClawHost',
         legalEmail: 'legal@clawhost.cloud'
+    },
+    setup: {
+        welcomeTitle: 'Willkommen bei ClawHost Go',
+        welcomeDescription: 'Richte dein Profil ein, um loszulegen.',
+        whatsYourName: 'Wie heißt du?',
+        namePlaceholder: 'Gib deinen Namen ein',
+        nameHint: 'Du kannst es jederzeit später festlegen.',
+        getStarted: 'Loslegen'
     },
     language: {
         en: 'English',
@@ -50,9 +59,12 @@ const de: Translations = {
         admin: 'Admin',
         login: 'Anmelden',
         deploy: 'Deployen',
-        deployOpenClaw: 'OpenClaw deployen'
+        deployOpenClaw: 'OpenClaw deployen',
+        mainNavigation: 'Hauptnavigation',
+        toggleMenu: 'Menu umschalten'
     },
     footer: {
+        website: 'Webseite',
         copyright: 'ClawHost. Alle Rechte vorbehalten.',
         termsOfService: 'Nutzungsbedingungen',
         privacyPolicy: 'Datenschutzerklärung',
@@ -131,7 +143,8 @@ const de: Translations = {
         inputTooLong: 'Eingabe überschreitet die maximal zulässige Länge!',
         invalidEnvVars: 'Ungültige Umgebungsvariablennamen oder -werte!',
         invalidEmailFormat: 'Ungültiges E-Mail-Format!',
-        plusAddressingNotAllowed: 'Plus-Adressierung ist für die E-Mail-Anmeldung nicht erlaubt!',
+        plusAddressingNotAllowed:
+            'Plus-Adressierung ist für die E-Mail-Anmeldung nicht erlaubt!',
         invalidRedirectUrl: 'Ungültige Weiterleitungs-URL!',
         fileTooLarge: 'Dateiinhalt überschreitet die maximal zulässige Größe!',
         nameAndKeyRequired:
@@ -344,15 +357,26 @@ const de: Translations = {
         featureRequestNotFound: 'Feature-Anfrage nicht gefunden!',
         featureRequestLimitReached:
             'Du hast das Maximum von {{limit}} offenen Anfragen erreicht!',
+        featureRequestTotalLimitReached:
+            'Die Anfragen-Übersicht ist voll ({{limit}} Anfragen). Bitte warte, bis bestehende Anfragen gelöst werden!',
         featureRequestTitleRequired: 'Titel ist erforderlich!',
         featureRequestDescriptionRequired: 'Beschreibung ist erforderlich!',
+        featureRequestTitleTooShort:
+            'Der Titel muss mindestens {{min}} Zeichen lang sein!',
         featureRequestTitleTooLong:
-            'Der Titel darf maximal 200 Zeichen lang sein!',
+            'Der Titel darf maximal {{max}} Zeichen lang sein!',
+        featureRequestDescriptionTooShort:
+            'Die Beschreibung muss mindestens {{min}} Zeichen lang sein!',
         featureRequestDescriptionTooLong:
-            'Die Beschreibung darf maximal 2000 Zeichen lang sein!',
+            'Die Beschreibung darf maximal {{max}} Zeichen lang sein!',
         featureRequestInvalidStatus: 'Ungültiger Status!',
-        featureRequestRejectionReasonRequired:
-            'Ein Ablehnungsgrund ist erforderlich!'
+        featureRequestUpdated: 'Feature-Anfrage aktualisiert.',
+        failedToUpdateFeatureRequest: 'Fehler beim Aktualisieren der Anfrage!',
+        noChangesProvided: 'Keine Änderungen bereitgestellt!',
+        platformRequired: 'Mindestens eine Plattform ist erforderlich!',
+        invalidPlatform: 'Ungültiger Plattformwert!',
+        featureRequestImplementationLimitReached:
+            'Dieser Benutzer hat bereits {{limit}} Feature-Anfragen in Bearbeitung!'
     },
     emails: {
         otpSubject: 'Dein ClawHost-Anmeldecode',
@@ -383,7 +407,8 @@ const de: Translations = {
         changeEmail: 'E-Mail ändern',
         invalidCode: 'Ungültiger Code',
         invalidEmailFormat: 'Bitte geben Sie eine gültige E-Mail-Adresse ein!',
-        plusAddressingNotAllowed: 'Plus-Adressierung ist für die E-Mail-Anmeldung nicht erlaubt!',
+        plusAddressingNotAllowed:
+            'Plus-Adressierung ist für die E-Mail-Anmeldung nicht erlaubt!',
         or: 'oder',
         continueWithGoogle: 'Weiter mit Google',
         continueWithGithub: 'Weiter mit GitHub',
@@ -446,10 +471,13 @@ const de: Translations = {
             'E-Mail ist immer als primäre Anmeldemethode verbunden.',
         providerConnected: '{{provider}} erfolgreich verbunden.',
         providerDisconnected: '{{provider}} erfolgreich getrennt.',
-        providerEmailMismatch: 'Du kannst nur Konten verknüpfen, die dieselbe E-Mail-Adresse verwenden!',
+        providerEmailMismatch:
+            'Du kannst nur Konten verknüpfen, die dieselbe E-Mail-Adresse verwenden!',
         settings: 'Einstellungen',
         settingsDescription: 'Verwalte deine Dashboard-Einstellungen.',
-        showAllClaws: 'Alle Claws aller Benutzer anzeigen'
+        showAllClaws: 'Alle Claws aller Benutzer anzeigen',
+        openLinksWindowed: 'Links in einer Fensteransicht öffnen',
+        openLinksWindowedDescription: 'Wenn aktiviert, werden externe Links in der App statt im Systembrowser geöffnet.'
     },
     billing: {
         title: 'Abrechnung',
@@ -522,6 +550,7 @@ const de: Translations = {
         ip: 'IP',
         domain: 'Domain',
         ipAddress: 'IP-Adresse',
+        port: 'Port',
         monthlyCost: 'Monatliche Kosten',
         serverId: 'Server-ID',
         created: 'Erstellt',
@@ -558,7 +587,8 @@ const de: Translations = {
         diagnosticsRepairFailed:
             'Reparatur durchgeführt, aber das Gateway antwortet noch nicht.',
         diagnosticsLoading: 'Verbindung zur Instanz wird hergestellt...',
-        diagnosticsNoLogs: 'Keine Logs verfügbar',
+        diagnosticsNoLogs:
+            'Keine Logs verfügbar. Starte deine Instanz, um Logs zu generieren.',
         diagnosticsIssueDetected:
             'Ein Problem mit deiner Instanz wurde erkannt.',
         diagnosticsHealthy: 'Deine Instanz läuft normal.',
@@ -584,6 +614,7 @@ const de: Translations = {
         updateInstance: 'Instanz aktualisieren',
         updateInstanceSuccess: 'Instanz erfolgreich aktualisiert.',
         updateInstanceFailed: 'Instanz konnte nicht aktualisiert werden!',
+        startFailed: 'Claw konnte nicht gestartet werden!',
         renameSuccess: 'Claw erfolgreich umbenannt.',
         renameFailed: 'Claw konnte nicht umbenannt werden!',
         renameInvalidChars:
@@ -605,6 +636,10 @@ const de: Translations = {
         configuringTooltip:
             'Dies kann einige Zeit dauern. Es hängt von OpenClaw, dem Serverstandort und Cloudflare DNS ab.',
         paymentSuccess: 'Dein Claw wird erstellt und konfiguriert.',
+        dnsSetupBanner: 'Richte lokales DNS ein, um auf deine Claws über subdomain.clawhost zuzugreifen.',
+        dnsSetupButton: 'DNS einrichten',
+        dnsSetupSuccess: 'DNS-Resolver erfolgreich konfiguriert.',
+        dnsSetupError: 'DNS-Resolver konnte nicht konfiguriert werden!',
         chatTab: 'Chat',
         playgroundTab: 'Playground',
         userTab: 'Benutzer',
@@ -922,7 +957,8 @@ const de: Translations = {
         comparisonSocialsUs: 'Präsenz in sozialen Medien',
         comparisonSocialsOthers: 'Keine sozialen Medien',
         seeFullComparison: 'Vollständigen Vergleich anzeigen',
-        comparisonCtaText: 'Wir vergleichen mit SimpleClaw, MyClaw.ai und mehr — Funktion für Funktion.',
+        comparisonCtaText:
+            'Wir vergleichen mit SimpleClaw, MyClaw.ai und mehr — Funktion für Funktion.',
         readyToOwnYourPrivacy: 'Bereit, OpenClaw bereitzustellen?',
         ctaDescription:
             'Erhalte einen dedizierten Server mit vorinstalliertem OpenClaw. Voller Root-Zugriff, globale Standorte und in Minuten bereit. Er gehört dir jederzeit.',
@@ -974,6 +1010,26 @@ const de: Translations = {
             'Refactoring der Playground-Funktionsstruktur und Vereinfachungen',
         upcomingReleaseFeature8:
             'Feature-Anfragen automatisch verwaltet und veröffentlicht durch OpenClaw-Agenten',
+        release11Date: '22. Februar 2026',
+        release11Title: 'Fehlerbehebungen & Stabilität',
+        release11Description:
+            'Behebung von Problemen bei der Skill-Installation, beim Wechsel des Modellanbieters und weitere Stabilitätsverbesserungen auf der Plattform.',
+        release11Feature1:
+            'Behebung von Skills, die nicht korrekt vom ClawHub-Marktplatz installiert wurden',
+        release11Feature2:
+            'Behebung des Modellanbieterwechsels, der Änderungen nicht in Echtzeit widerspiegelte',
+        release11Feature3:
+            'Allgemeine Fehlerbehebungen und Stabilitätsverbesserungen im Dashboard',
+        release10Date: '22. Februar 2026',
+        release10Title: 'Feature-Anfragen',
+        release10Description:
+            'Community-getriebene Feature-Anfragen werden jetzt automatisch von OpenClaw-Agenten verwaltet und veröffentlicht.',
+        release10Feature1:
+            'Feature-Anfragen automatisch verwaltet und veröffentlicht durch OpenClaw-Agenten',
+        release10Feature2:
+            'Benutzer können Feature-Anfragen direkt vom Dashboard einreichen, abstimmen und verfolgen',
+        release10Feature3:
+            'Admin-Tools zum Überprüfen, Genehmigen und Aktualisieren von Feature-Anfrage-Status',
         release9Date: '21. Februar 2026',
         release9Title: 'Vergleiche, Playground-Refactoring & Mehr',
         release9Description:
@@ -1164,8 +1220,7 @@ const de: Translations = {
         variablesDeleteDescription:
             'Bist du sicher, dass du {{key}} löschen möchtest? Dies entfernt sie sofort von der Instanz.',
         variablesDeleteConfirm: 'Löschen',
-        variablesDontAskAgain:
-            'Bestätigung für diese Sitzung nicht mehr anfordern',
+        variablesDontAskAgain: 'Beim Löschen von Variablen in dieser Sitzung nicht mehr fragen',
         variablesDeleted: 'Variable gelöscht.',
         addAgentTitle: 'Agent hinzufügen',
         addAgentDescription: 'Füge einen neuen Agenten zu {{clawName}} hinzu.',
@@ -1185,6 +1240,7 @@ const de: Translations = {
         deleteAgentDescription:
             'Bist du sicher, dass du den Agenten „{{agentName}}" löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden. Umgebungsvariablen werden nicht entfernt.',
         deleteAgentConfirm: 'Löschen',
+        agentDontAskAgain: 'Beim Löschen von Agenten in dieser Sitzung nicht mehr fragen',
         deleteAgentDeleting: 'Wird gelöscht...',
         deleteAgentSuccess: 'Agent erfolgreich gelöscht.',
         deleteAgentFailed: 'Agent konnte nicht gelöscht werden!',
@@ -1299,7 +1355,7 @@ const de: Translations = {
             'Verwalte gemeinsame Skills, die allen Agenten auf dieser Instanz zur Verfügung stehen.',
         skillsSearch: 'Skills suchen...',
         skillsNoResults: 'Keine Skills entsprechen deiner Suche.',
-        skillsEmpty: 'Keine gebündelten Skills auf dieser Instanz gefunden.',
+        skillsEmpty: 'Keine Skills',
         skillsSave: 'Skills speichern',
         skillsSaved: 'Skills erfolgreich aktualisiert.',
         skillsSaveFailed: 'Skills konnten nicht aktualisiert werden!',
@@ -1365,6 +1421,13 @@ const de: Translations = {
         settingsName: 'Name',
         settingsNamePlaceholder: 'Claw-Name eingeben',
         settingsNameDescription: 'Nur Buchstaben, Zahlen und Bindestriche.',
+        subdomain: 'Subdomain',
+        subdomainPlaceholder: 'Subdomain eingeben',
+        subdomainDescription: 'Kleinbuchstaben und Zahlen, 3-20 Zeichen.',
+        subdomainInvalid: 'Nur 3-20 Kleinbuchstaben und Zahlen verwenden.',
+        subdomainUpdated: 'Subdomain erfolgreich aktualisiert.',
+        subdomainUpdateFailed: 'Subdomain konnte nicht aktualisiert werden!',
+        subdomainInUse: 'Diese Subdomain wird bereits von einem anderen Claw verwendet!',
         settingsSave: 'Speichern',
         settingsSaving: 'Speichern...'
     },
@@ -1546,14 +1609,12 @@ const de: Translations = {
         subtitle:
             'Hilf mit, die Zukunft von OpenClaw zu gestalten, indem du Features anforderst und abstimmst.',
         submitRequest: 'Anfrage einreichen',
-        noRequestsYet: 'Noch keine Feature-Anfragen',
-        noRequestsDescription:
-            'Sei der Erste, der eine Feature-Anfrage einreicht und die Plattform mitgestaltet.',
+        noRequestsYet: 'Keine Anfragen',
+        noRequestsDescription: 'Es wurden noch keine Feature-Anfragen eingereicht. Sei der Erste, der seine Ideen teilt.',
         statusAwaitingApproval: 'Wartet auf Genehmigung',
         statusRequested: 'Angefragt',
         statusMarkedForImplementation: 'Für Implementierung markiert',
         statusImplemented: 'Implementiert',
-        statusRejected: 'Abgelehnt',
         sortByUpvotes: 'Meiste Stimmen',
         sortByNewest: 'Neueste',
         sortByStatus: 'Nach Status',
@@ -1562,39 +1623,51 @@ const de: Translations = {
         signInToUpvote: 'Melde dich an, um abzustimmen.',
         signInToSubmit: 'Melde dich an, um eine Anfrage einzureichen.',
         requestedBy: 'Angefragt von',
-        rejectionReason: 'Ablehnungsgrund',
         submitModalTitle: 'Feature-Anfrage einreichen',
         submitModalDescription:
             'Beschreibe das gewünschte Feature. Unsere KI-Agenten werden genehmigte Anfragen prüfen und umsetzen.',
         featureTitle: 'Titel',
-        featureTitlePlaceholder:
-            'Ein kurzer, beschreibender Titel für dein Feature',
+        featureTitlePlaceholder: 'Feature-Titel',
+        featureTitleMinLength:
+            'Der Titel muss mindestens {{min}} Zeichen lang sein.',
+        featureTitleMaxLength:
+            'Der Titel darf maximal {{max}} Zeichen lang sein.',
         featureDescription: 'Beschreibung',
         featureDescriptionPlaceholder:
-            'Beschreibe das Feature, das Problem das es löst, und wie du es dir vorstellst',
+            'Beschreibe das gewünschte Feature, das Problem das es löst, und wie du es dir vorstellst.',
+        featureDescriptionMinLength:
+            'Die Beschreibung muss mindestens {{min}} Zeichen lang sein.',
+        featureDescriptionMaxLength:
+            'Die Beschreibung darf maximal {{max}} Zeichen lang sein.',
         submitting: 'Wird eingereicht...',
         submitted: 'Feature-Anfrage eingereicht.',
         failedToSubmit: 'Feature-Anfrage konnte nicht eingereicht werden!',
         requestLimitReached:
             'Du hast das Maximum von {{limit}} offenen Anfragen erreicht.',
-        agentBannerTitle: 'Angetrieben von KI-Agenten',
+        agentBannerTitle: 'Angetrieben von OpenClaw-Agenten',
         agentBannerDescription:
-            'Feature-Anfragen werden von unseren KI-Agenten geprüft und umgesetzt. Stimme für die Features ab, die du am meisten möchtest, um die Priorisierung zu unterstützen.',
+            'Feature-Anfragen werden von OpenClaw-Agenten auf ClawHost geprüft und entwickelt. Stimme für die Features ab, die du am meisten möchtest.',
         changeStatus: 'Status ändern',
         deleteRequest: 'Anfrage löschen',
         deleteConfirmation:
             'Bist du sicher, dass du diese Feature-Anfrage löschen möchtest?',
-        rejectModalTitle: 'Feature-Anfrage ablehnen',
-        rejectModalDescription:
-            'Gib einen Grund für die Ablehnung dieser Anfrage an.',
-        rejectReasonPlaceholder: 'Erkläre, warum diese Anfrage abgelehnt wird',
-        rejectReasonRequired: 'Ein Ablehnungsgrund ist erforderlich.',
         statusUpdated: 'Status der Anfrage aktualisiert.',
         failedToUpdateStatus: 'Status konnte nicht aktualisiert werden!',
         deleted: 'Feature-Anfrage gelöscht.',
         failedToDelete: 'Löschen fehlgeschlagen!',
         upvoteToggled: 'Abstimmung aktualisiert.',
-        failedToUpvote: 'Abstimmung konnte nicht aktualisiert werden!'
+        failedToUpvote: 'Abstimmung konnte nicht aktualisiert werden!',
+        editModalTitle: 'Anfrage bearbeiten',
+        editModalDescription: 'Details und Status der Anfrage aktualisieren.',
+        updated: 'Feature-Anfrage aktualisiert.',
+        failedToUpdate: 'Fehler beim Aktualisieren der Anfrage!',
+        status: 'Status',
+        dontAskAgain: 'Beim Löschen von Anfragen in dieser Sitzung nicht mehr fragen',
+        platforms: 'Plattformen',
+        platformDesktop: 'Desktop',
+        platformMobile: 'Mobil',
+        platformWeb: 'Web',
+        platformRequired: 'Wähle mindestens eine Plattform'
     },
     compare: {
         title: 'Vollständiger Vergleich',
@@ -1698,8 +1771,7 @@ const de: Translations = {
         available: 'Verfügbar',
         comingSoon: 'Demnächst verfügbar',
         notAvailable: 'Nicht verfügbar',
-        disclaimer:
-            'Etwas geändert oder falsch? Schreib uns an',
+        disclaimer: 'Etwas geändert oder falsch? Schreib uns an',
         disclaimerOr: 'oder öffne einen Pull Request auf',
         github: 'GitHub',
         ctaTitle: 'Bereit, den Unterschied zu sehen?',

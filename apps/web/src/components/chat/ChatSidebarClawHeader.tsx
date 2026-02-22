@@ -2,12 +2,13 @@ import type { FC, ReactNode } from 'react'
 import type {
     ChatSidebarClawHeaderProps,
     ClawCardActions,
+    ElectronWindow,
     ExportRateLimitError
 } from '@/ts/Interfaces'
 
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
-import { clawStatus } from '@openclaw/shared'
+import { clawProvider, clawStatus } from '@openclaw/shared'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import { useUIStore } from '@/lib/store'
 import { getBaseDomain } from '@/lib'
@@ -161,7 +162,20 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
     }
 
     const actions: ClawCardActions = {
-        onStart: () => startMutation.mutate(claw.id),
+        onStart: () =>
+            startMutation.mutate(claw.id, {
+                onError: (err) => {
+                    const message =
+                        err instanceof Error
+                            ? err.message
+                            : typeof err === 'object' &&
+                                err !== null &&
+                                'message' in err
+                              ? String((err as { message: unknown }).message)
+                              : t('dashboard.startFailed')
+                    showToast(message, 'error')
+                }
+            }),
         onShowStopModal: () => setShowStopModal(true),
         onShowRestartModal: () => setShowRestartModal(true),
         onShowDeleteModal: () => setShowDeleteModal(true),
@@ -222,13 +236,23 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                         </p>
                     )}
                     {claw.status !== clawStatus.configuring ? (
-                        claw.provider === 'local' && claw.port ? (
-                            <span
-                                className='text-muted-foreground block truncate text-[11px]'
-                                onClick={(e) => e.stopPropagation()}
+                        claw.provider === clawProvider.local && claw.subdomain ? (
+                            <button
+                                type='button'
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    const url = `https://${claw.subdomain}.clawhost${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`
+                                    const eApi = (window as unknown as ElectronWindow).electronAPI
+                                    if (eApi?.openExternal) {
+                                        eApi.openExternal(url)
+                                    } else {
+                                        window.open(url, '_blank')
+                                    }
+                                }}
+                                className='text-muted-foreground hover:text-foreground/80 block truncate text-[11px] transition-colors'
                             >
-                                localhost:{claw.port}
-                            </span>
+                                {claw.subdomain}.clawhost
+                            </button>
                         ) : (
                             <a
                                 href={`https://${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}

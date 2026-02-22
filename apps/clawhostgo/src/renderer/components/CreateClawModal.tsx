@@ -3,6 +3,7 @@ import type { CreateClawModalProps } from '@/ts/Interfaces'
 
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
+import { clawProvider } from '@openclaw/shared'
 import { useQueryClient } from '@tanstack/react-query'
 import { useUIStore } from '@/lib/store'
 import {
@@ -38,9 +39,9 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ onClose }): ReactNode => {
         try {
             await api.createClaw({
                 name,
-                provider: 'local' as never,
-                planId: 'local',
-                location: 'local'
+                provider: clawProvider.local as never,
+                planId: clawProvider.local,
+                location: clawProvider.local
             })
             await queryClient.invalidateQueries({ queryKey: ['claws'] })
             showToast(t('createClaw.clawCreated'), 'success')

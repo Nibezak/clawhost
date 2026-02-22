@@ -86,6 +86,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 href={GITHUB_REPO_URL}
                                 target='_blank'
                                 rel='noopener noreferrer'
+                                aria-label='GitHub'
                                 className='bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-lg p-2 transition'
                             >
                                 <GithubLogoIcon
@@ -97,6 +98,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 href={TWITTER_URL}
                                 target='_blank'
                                 rel='noopener noreferrer'
+                                aria-label='X'
                                 className='bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-lg p-2 transition'
                             >
                                 <XLogoIcon className='h-5 w-5' weight='fill' />
@@ -105,6 +107,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 href={FACEBOOK_URL}
                                 target='_blank'
                                 rel='noopener noreferrer'
+                                aria-label='Facebook'
                                 className='bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-lg p-2 transition'
                             >
                                 <FacebookLogoIcon
@@ -116,6 +119,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 href={INSTAGRAM_URL}
                                 target='_blank'
                                 rel='noopener noreferrer'
+                                aria-label='Instagram'
                                 className='bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-lg p-2 transition'
                             >
                                 <InstagramLogoIcon
@@ -127,6 +131,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 href={THREADS_URL}
                                 target='_blank'
                                 rel='noopener noreferrer'
+                                aria-label='Threads'
                                 className='bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-lg p-2 transition'
                             >
                                 <ThreadsLogoIcon
@@ -138,6 +143,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 href={YOUTUBE_URL}
                                 target='_blank'
                                 rel='noopener noreferrer'
+                                aria-label='YouTube'
                                 className='bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-lg p-2 transition'
                             >
                                 <YoutubeLogoIcon
@@ -149,6 +155,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 href={TIKTOK_URL}
                                 target='_blank'
                                 rel='noopener noreferrer'
+                                aria-label='TikTok'
                                 className='bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-lg p-2 transition'
                             >
                                 <TiktokLogoIcon
@@ -171,7 +178,9 @@ const LandingFooter: FC = (): ReactNode => {
                             <li>
                                 <Link
                                     to='/#how-it-works'
-                                    onClick={(e) => handleHashClick(e, 'how-it-works')}
+                                    onClick={(e) =>
+                                        handleHashClick(e, 'how-it-works')
+                                    }
                                     className={hashClass('how-it-works')}
                                 >
                                     {t('landing.howItWorks')}
@@ -180,7 +189,9 @@ const LandingFooter: FC = (): ReactNode => {
                             <li>
                                 <Link
                                     to='/#features'
-                                    onClick={(e) => handleHashClick(e, 'features')}
+                                    onClick={(e) =>
+                                        handleHashClick(e, 'features')
+                                    }
                                     className={hashClass('features')}
                                 >
                                     {t('landing.features')}
@@ -189,7 +200,9 @@ const LandingFooter: FC = (): ReactNode => {
                             <li>
                                 <Link
                                     to='/#testimonials'
-                                    onClick={(e) => handleHashClick(e, 'testimonials')}
+                                    onClick={(e) =>
+                                        handleHashClick(e, 'testimonials')
+                                    }
                                     className={hashClass('testimonials')}
                                 >
                                     {t('landing.testimonials')}
@@ -198,7 +211,9 @@ const LandingFooter: FC = (): ReactNode => {
                             <li>
                                 <Link
                                     to='/#pricing'
-                                    onClick={(e) => handleHashClick(e, 'pricing')}
+                                    onClick={(e) =>
+                                        handleHashClick(e, 'pricing')
+                                    }
                                     className={hashClass('pricing')}
                                 >
                                     {t('landing.pricing')}
@@ -207,7 +222,9 @@ const LandingFooter: FC = (): ReactNode => {
                             <li>
                                 <Link
                                     to='/#comparison'
-                                    onClick={(e) => handleHashClick(e, 'comparison')}
+                                    onClick={(e) =>
+                                        handleHashClick(e, 'comparison')
+                                    }
                                     className={hashClass('comparison')}
                                 >
                                     {t('landing.comparison')}
@@ -240,22 +257,6 @@ const LandingFooter: FC = (): ReactNode => {
                             </li>
                             <li>
                                 <Link
-                                    to={ROUTES.PRIVACY}
-                                    className={pageClass(ROUTES.PRIVACY)}
-                                >
-                                    {t('footer.privacyPolicy')}
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    to={ROUTES.TERMS}
-                                    className={pageClass(ROUTES.TERMS)}
-                                >
-                                    {t('footer.termsOfService')}
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
                                     to={ROUTES.COMPARE}
                                     className={pageClass(ROUTES.COMPARE)}
                                 >
@@ -268,6 +269,32 @@ const LandingFooter: FC = (): ReactNode => {
                                     className={pageClass(ROUTES.CHANGELOG)}
                                 >
                                     {t('footer.changelog')}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to={ROUTES.FEATURE_REQUESTS}
+                                    className={pageClass(
+                                        ROUTES.FEATURE_REQUESTS
+                                    )}
+                                >
+                                    {t('footer.featureRequests')}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to={ROUTES.PRIVACY}
+                                    className={pageClass(ROUTES.PRIVACY)}
+                                >
+                                    {t('footer.privacyPolicy')}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to={ROUTES.TERMS}
+                                    className={pageClass(ROUTES.TERMS)}
+                                >
+                                    {t('footer.termsOfService')}
                                 </Link>
                             </li>
                             <li>

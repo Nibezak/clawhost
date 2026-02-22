@@ -23,7 +23,9 @@ const usePreferencesStore = create<PreferencesState>()(
             setLanguage: (language) => {
                 setI18nLanguage(language)
                 set({ language })
-            }
+            },
+            openLinksWindowed: false,
+            setOpenLinksWindowed: (value) => set({ openLinksWindowed: value })
         }),
         {
             name: STORAGE_KEYS.PREFERENCES,
@@ -38,9 +40,12 @@ const usePreferencesStore = create<PreferencesState>()(
                 if (version < 3) {
                     state.language = state.language || LANGUAGES.EN
                 }
+                if (version < 4) {
+                    state.openLinksWindowed = state.openLinksWindowed ?? false
+                }
                 return state
             },
-            version: 3
+            version: 4
         }
     )
 )

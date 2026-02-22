@@ -1,30 +1,37 @@
+import type { UpdateProfileData } from '@/ts/Interfaces'
+
 import { ipcMain } from 'electron'
+import { clawProvider } from '@openclaw/shared'
 import { configStore } from '@/main/services'
 
 const registerStubHandlers = (): void => {
     ipcMain.handle('getPlans', () => {
         return {
-            plans: [{
-                id: 'local',
-                name: 'Local',
-                cpu: 0,
-                memory: 0,
-                disk: 0,
-                priceMonthly: 0,
-                architecture: process.arch
-            }],
+            plans: [
+                {
+                    id: clawProvider.local,
+                    name: 'Local',
+                    cpu: 0,
+                    memory: 0,
+                    disk: 0,
+                    priceMonthly: 0,
+                    architecture: process.arch
+                }
+            ],
             atCapacity: false
         }
     })
 
     ipcMain.handle('getLocations', () => {
-        return [{
-            id: 'local',
-            name: 'Local',
-            city: 'Local',
-            country: 'Local',
-            disabled: false
-        }]
+        return [
+            {
+                id: clawProvider.local,
+                name: 'Local',
+                city: 'Local',
+                country: 'Local',
+                disabled: false
+            }
+        ]
     })
 
     ipcMain.handle('getVolumePricing', () => {
@@ -48,19 +55,38 @@ const registerStubHandlers = (): void => {
     })
 
     ipcMain.handle('getProfile', () => {
+        const config = configStore.readConfig()
         return {
-            id: 'local',
+            id: clawProvider.local,
             email: 'local@clawhostgo',
-            name: 'Local User',
+            name: config.userName || '',
             role: 'admin',
             authMethods: [],
-            createdAt: new Date().toISOString()
+            createdAt: config.createdAt || new Date().toISOString(),
+            setupComplete: config.setupComplete || false
         }
     })
 
-    ipcMain.handle('updateProfile', () => {
-        return { success: true }
-    })
+    ipcMain.handle(
+        'updateProfile',
+        (_event: unknown, data: UpdateProfileData) => {
+            if (data?.name !== undefined) {
+                const config = configStore.readConfig()
+                config.userName = data.name
+                if (!config.setupComplete) config.setupComplete = true
+                configStore.writeConfig(config)
+            }
+            const config = configStore.readConfig()
+            return {
+                id: clawProvider.local,
+                email: 'local@clawhostgo',
+                name: config.userName || '',
+                role: 'admin',
+                authMethods: [],
+                createdAt: config.createdAt || new Date().toISOString()
+            }
+        }
+    )
 
     ipcMain.handle('getUserStats', () => {
         const config = configStore.readConfig()

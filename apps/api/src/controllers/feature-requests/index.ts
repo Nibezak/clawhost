@@ -2,6 +2,7 @@ import getFeatureRequests from '@/controllers/feature-requests/getFeatureRequest
 import createFeatureRequest from '@/controllers/feature-requests/createFeatureRequest'
 import upvoteFeatureRequest from '@/controllers/feature-requests/upvoteFeatureRequest'
 import updateFeatureRequestStatus from '@/controllers/feature-requests/updateFeatureRequestStatus'
+import editFeatureRequest from '@/controllers/feature-requests/editFeatureRequest'
 import deleteFeatureRequest from '@/controllers/feature-requests/deleteFeatureRequest'
 
 export {
@@ -9,5 +10,6 @@ export {
     createFeatureRequest,
     upvoteFeatureRequest,
     updateFeatureRequestStatus,
+    editFeatureRequest,
     deleteFeatureRequest
 }

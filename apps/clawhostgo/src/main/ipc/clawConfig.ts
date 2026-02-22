@@ -65,7 +65,25 @@ const registerClawConfigHandlers = (): void => {
             const clawDir = configStore.getClawDir(claw.name)
             const config = readOpenclawConfig(clawDir)
             const agents = (config.agents as Record<string, unknown>) || {}
-            const list = (agents.list || []) as Array<Record<string, unknown>>
+            let list = (agents.list || []) as Array<Record<string, unknown>>
+
+            if (list.length === 0) {
+                const agentsDir = path.join(clawDir, 'agents')
+                if (fs.existsSync(agentsDir)) {
+                    const dirs = fs
+                        .readdirSync(agentsDir)
+                        .filter((name) =>
+                            fs
+                                .statSync(path.join(agentsDir, name))
+                                .isDirectory()
+                        )
+                    if (dirs.length > 0) {
+                        list = dirs.map((name) => ({ id: name, name }))
+                        config.agents = { ...agents, list }
+                        writeOpenclawConfig(clawDir, config)
+                    }
+                }
+            }
 
             const mapped = list.map((agent) => ({
                 id: agent.id || agent.name,
@@ -153,7 +171,7 @@ const registerClawConfigHandlers = (): void => {
                     id: agentId,
                     name: data.name,
                     model: data.model || null,
-                    status: 'idle',
+                    status: processManager.isRunning(id) ? 'running' : 'idle',
                     directory: null
                 }
             }
@@ -199,12 +217,26 @@ const registerClawConfigHandlers = (): void => {
             const clawDir = configStore.getClawDir(claw.name)
             const config = readOpenclawConfig(clawDir)
             const agents = (config.agents as Record<string, unknown>) || {}
+            const defaults = (agents.defaults as Record<string, unknown>) || {}
             const list = (agents.list || []) as Array<Record<string, unknown>>
             const agent = list.find(
                 (a) => String(a.id || a.name) === data.agentId
             )
 
-            return { config: agent || null }
+            const envPath = path.join(clawDir, '.env')
+            const envVars = parseEnvFile(envPath)
+
+            return {
+                agent: agent
+                    ? {
+                          id: String(agent.id || agent.name),
+                          name: String(agent.name || agent.id),
+                          model: agent.model || null
+                      }
+                    : null,
+                envVars,
+                defaultModel: (defaults.model as string) || null
+            }
         }
     )
 
@@ -213,7 +245,12 @@ const registerClawConfigHandlers = (): void => {
         async (
             _event: IpcMainInvokeEvent,
             id: string,
-            data: { agentId: string; config: Record<string, unknown> }
+            data: {
+                agentId: string
+                name?: string
+                model: string | null
+                envVars: Record<string, string>
+            }
         ) => {
             const claw = configStore.findClaw(id)
             if (!claw) throw new Error('Claw not found')
@@ -229,12 +266,27 @@ const registerClawConfigHandlers = (): void => {
             )
 
             if (index !== -1) {
-                list[index] = { ...list[index], ...data.config }
+                const updates: Record<string, unknown> = { model: data.model }
+                if (data.name) updates.name = data.name
+                list[index] = { ...list[index], ...updates }
                 config.agents = { ...agents, list }
                 writeOpenclawConfig(clawDir, config)
-                await restartGatewayIfRunning(id)
             }
 
+            if (data.envVars) {
+                const envPath = path.join(clawDir, '.env')
+                const existing = parseEnvFile(envPath)
+                for (const [key, value] of Object.entries(data.envVars)) {
+                    if (value === '') {
+                        delete existing[key]
+                    } else {
+                        existing[key] = value
+                    }
+                }
+                fs.writeFileSync(envPath, serializeEnvFile(existing))
+            }
+
+            await restartGatewayIfRunning(id)
             return { success: true }
         }
     )
@@ -247,7 +299,53 @@ const registerClawConfigHandlers = (): void => {
 
             const clawDir = configStore.getClawDir(claw.name)
             const config = readOpenclawConfig(clawDir)
-            return { skills: config.skills || {} }
+            const entries = (config.skillEntries || {}) as Record<
+                string,
+                Record<string, unknown>
+            >
+
+            const skillsMap = new Map<string, { name: string; enabled: boolean; description?: string }>()
+
+            if (claw.version) {
+                const skillsDir = path.join(
+                    configStore.getVersionDir(claw.version),
+                    'node_modules',
+                    'openclaw',
+                    'skills'
+                )
+                if (fs.existsSync(skillsDir)) {
+                    for (const entry of fs.readdirSync(skillsDir, { withFileTypes: true })) {
+                        if (!entry.isDirectory()) continue
+                        let description: string | undefined
+                        const skillMdPath = path.join(skillsDir, entry.name, 'SKILL.md')
+                        if (fs.existsSync(skillMdPath)) {
+                            const lines = fs.readFileSync(skillMdPath, 'utf-8').split('\n')
+                            description = lines
+                                .filter((l) => !l.startsWith('#') && l.trim() !== '' && !l.startsWith('---'))
+                                .at(0)
+                                ?.trim()
+                        }
+                        const configEntry = entries[entry.name]
+                        skillsMap.set(entry.name, {
+                            name: entry.name,
+                            enabled: configEntry?.enabled !== false,
+                            description
+                        })
+                    }
+                }
+            }
+
+            for (const [name, entry] of Object.entries(entries)) {
+                if (!skillsMap.has(name)) {
+                    skillsMap.set(name, {
+                        name,
+                        enabled: entry.enabled !== false,
+                        description: (entry.description as string) || undefined
+                    })
+                }
+            }
+
+            return { skills: Array.from(skillsMap.values()), entries }
         }
     )
 
@@ -256,14 +354,14 @@ const registerClawConfigHandlers = (): void => {
         async (
             _event: IpcMainInvokeEvent,
             id: string,
-            data: { skills: Record<string, unknown> }
+            data: { entries: Record<string, Record<string, unknown>> }
         ) => {
             const claw = configStore.findClaw(id)
             if (!claw) throw new Error('Claw not found')
 
             const clawDir = configStore.getClawDir(claw.name)
             const config = readOpenclawConfig(clawDir)
-            config.skills = data.skills
+            config.skillEntries = data.entries
             writeOpenclawConfig(clawDir, config)
 
             await restartGatewayIfRunning(id)
@@ -283,7 +381,13 @@ const registerClawConfigHandlers = (): void => {
             const list = (agents.list || []) as Array<Record<string, unknown>>
             const agent = list.find((a) => String(a.id || a.name) === agentId)
 
-            return { skills: agent?.skills || {} }
+            const rawSkills = agent?.skills
+            const skills = Array.isArray(rawSkills)
+                ? rawSkills.map((s: Record<string, unknown>) => ({
+                      name: String(s.name || s)
+                  }))
+                : []
+            return { skills }
         }
     )
 
@@ -293,7 +397,7 @@ const registerClawConfigHandlers = (): void => {
             _event: IpcMainInvokeEvent,
             id: string,
             agentId: string,
-            data: { skills: Record<string, unknown> }
+            data: { action: string; skillName: string }
         ) => {
             const claw = configStore.findClaw(id)
             if (!claw) throw new Error('Claw not found')
@@ -309,7 +413,22 @@ const registerClawConfigHandlers = (): void => {
             )
 
             if (index !== -1) {
-                list[index] = { ...list[index], skills: data.skills }
+                const current = ((list[index].skills || []) as Array<unknown>).map(
+                    (s) => (typeof s === 'string' ? s : String((s as Record<string, unknown>).name || s))
+                )
+                if (data.action === 'install') {
+                    if (!current.includes(data.skillName)) {
+                        list[index] = {
+                            ...list[index],
+                            skills: [...current, data.skillName]
+                        }
+                    }
+                } else if (data.action === 'remove') {
+                    list[index] = {
+                        ...list[index],
+                        skills: current.filter((s) => s !== data.skillName)
+                    }
+                }
                 config.agents = { ...agents, list }
                 writeOpenclawConfig(clawDir, config)
                 await restartGatewayIfRunning(id)
@@ -359,7 +478,18 @@ const registerClawConfigHandlers = (): void => {
 
             const clawDir = configStore.getClawDir(claw.name)
             const config = readOpenclawConfig(clawDir)
-            return { bindings: config.bindings || {} }
+            const rawBindings = config.bindings
+            const bindings = Array.isArray(rawBindings) ? rawBindings : []
+            const channels = (config.channels || {}) as Record<string, unknown>
+            const agentsSection =
+                (config.agents as Record<string, unknown>) || {}
+            const agentList = (
+                (agentsSection.list || []) as Array<Record<string, unknown>>
+            ).map((a) => ({
+                id: String(a.id || a.name),
+                name: String(a.name || a.id)
+            }))
+            return { bindings, channels, agents: agentList }
         }
     )
 
@@ -368,7 +498,7 @@ const registerClawConfigHandlers = (): void => {
         async (
             _event: IpcMainInvokeEvent,
             id: string,
-            data: { bindings: Record<string, unknown> }
+            data: { bindings: Array<Record<string, unknown>> }
         ) => {
             const claw = configStore.findClaw(id)
             if (!claw) throw new Error('Claw not found')
@@ -392,7 +522,7 @@ const registerClawConfigHandlers = (): void => {
             const clawDir = configStore.getClawDir(claw.name)
             const envPath = path.join(clawDir, '.env')
             const vars = parseEnvFile(envPath)
-            return { variables: vars }
+            return { envVars: vars }
         }
     )
 
@@ -401,7 +531,7 @@ const registerClawConfigHandlers = (): void => {
         async (
             _event: IpcMainInvokeEvent,
             id: string,
-            data: { variables: Record<string, string> }
+            data: { envVars: Record<string, string> }
         ) => {
             const claw = configStore.findClaw(id)
             if (!claw) throw new Error('Claw not found')
@@ -410,7 +540,7 @@ const registerClawConfigHandlers = (): void => {
             const envPath = path.join(clawDir, '.env')
             const existing = parseEnvFile(envPath)
 
-            for (const [key, value] of Object.entries(data.variables)) {
+            for (const [key, value] of Object.entries(data.envVars)) {
                 if (value === '') {
                     delete existing[key]
                 } else {

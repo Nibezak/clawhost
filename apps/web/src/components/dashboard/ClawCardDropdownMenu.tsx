@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react'
 import type { ClawCardDropdownMenuProps } from '@/ts/Interfaces'
 
 import { t } from '@openclaw/i18n'
-import { clawStatus } from '@openclaw/shared'
+import { clawProvider, clawStatus } from '@openclaw/shared'
 import {
     Button,
     DropdownMenu,
@@ -99,41 +99,44 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                         </DropdownMenuItem>
                     </>
                 )}
-                {(claw.ip || claw.rootPassword) && (
-                    <>
-                        {hasActionItems && <DropdownMenuSeparator />}
-                        {claw.ip && (
-                            <DropdownMenuItem onClick={actions.onCopySSH}>
-                                {copied ? (
-                                    <>
-                                        <CheckIcon className='mr-2 h-4 w-4' />
-                                        {t('common.copied')}
-                                    </>
-                                ) : (
-                                    <>
-                                        <TerminalIcon className='mr-2 h-4 w-4' />
-                                        {t('dashboard.connect')}
-                                    </>
-                                )}
-                            </DropdownMenuItem>
-                        )}
-                        {claw.rootPassword && (
-                            <DropdownMenuItem onClick={actions.onCopyPassword}>
-                                {passwordCopied ? (
-                                    <>
-                                        <CheckIcon className='mr-2 h-4 w-4' />
-                                        {t('common.copied')}
-                                    </>
-                                ) : (
-                                    <>
-                                        <CopyIcon className='mr-2 h-4 w-4' />
-                                        {t('dashboard.copyPassword')}
-                                    </>
-                                )}
-                            </DropdownMenuItem>
-                        )}
-                    </>
-                )}
+                {claw.provider !== clawProvider.local &&
+                    (claw.ip || claw.rootPassword) && (
+                        <>
+                            {hasActionItems && <DropdownMenuSeparator />}
+                            {claw.ip && (
+                                <DropdownMenuItem onClick={actions.onCopySSH}>
+                                    {copied ? (
+                                        <>
+                                            <CheckIcon className='mr-2 h-4 w-4' />
+                                            {t('common.copied')}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <TerminalIcon className='mr-2 h-4 w-4' />
+                                            {t('dashboard.connect')}
+                                        </>
+                                    )}
+                                </DropdownMenuItem>
+                            )}
+                            {claw.rootPassword && (
+                                <DropdownMenuItem
+                                    onClick={actions.onCopyPassword}
+                                >
+                                    {passwordCopied ? (
+                                        <>
+                                            <CheckIcon className='mr-2 h-4 w-4' />
+                                            {t('common.copied')}
+                                        </>
+                                    ) : (
+                                        <>
+                                            <CopyIcon className='mr-2 h-4 w-4' />
+                                            {t('dashboard.copyPassword')}
+                                        </>
+                                    )}
+                                </DropdownMenuItem>
+                            )}
+                        </>
+                    )}
                 {claw.ip && (
                     <>
                         <DropdownMenuSeparator />
@@ -141,11 +144,13 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                             <FolderSimpleIcon className='mr-2 h-4 w-4' />
                             {t('dashboard.fileExplorer')}
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={actions.onExport}>
-                            <ExportIcon className='mr-2 h-4 w-4' />
-                            {t('dashboard.exportData')}
-                        </DropdownMenuItem>
-                        {isAdmin && (
+                        {claw.provider !== clawProvider.local && (
+                            <DropdownMenuItem onClick={actions.onExport}>
+                                <ExportIcon className='mr-2 h-4 w-4' />
+                                {t('dashboard.exportData')}
+                            </DropdownMenuItem>
+                        )}
+                        {claw.provider !== clawProvider.local && isAdmin && (
                             <>
                                 <DropdownMenuItem
                                     onClick={actions.onUpdateInstance}
@@ -166,7 +171,16 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                     </>
                 )}
                 {(hasActionItems || claw.ip) && <DropdownMenuSeparator />}
-                {isScheduledForDeletion ? (
+                {claw.provider === clawProvider.local ? (
+                    <DropdownMenuItem
+                        onClick={actions.onShowDeleteModal}
+                        disabled={isLoading}
+                        className='text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400'
+                    >
+                        <TrashIcon className='mr-2 h-4 w-4' />
+                        {t('common.delete')}
+                    </DropdownMenuItem>
+                ) : isScheduledForDeletion ? (
                     <>
                         <DropdownMenuItem
                             onClick={actions.onCancelDeletion}

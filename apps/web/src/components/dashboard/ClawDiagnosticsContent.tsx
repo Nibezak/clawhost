@@ -75,17 +75,11 @@ const ClawDiagnosticsContent: FC<ClawDiagnosticsContentProps> = ({
                                 disabled={repair.isPending}
                             >
                                 {repair.isPending ? (
-                                    <>
-                                        <CircleNotchIcon className='mr-1 h-3.5 w-3.5 animate-spin' />
-                                        {t('dashboard.diagnosticsRepair')}
-                                        ...
-                                    </>
+                                    <CircleNotchIcon className='mr-1 h-3.5 w-3.5 animate-spin' />
                                 ) : (
-                                    <>
-                                        <WrenchIcon className='mr-1 h-3.5 w-3.5' />
-                                        {t('dashboard.diagnosticsRepair')}
-                                    </>
+                                    <WrenchIcon className='mr-1 h-3.5 w-3.5' />
                                 )}
+                                {t('dashboard.diagnosticsRepair')}
                             </Button>
                         </div>
                     )}

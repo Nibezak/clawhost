@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from 'react'
 import type {
+    ElectronWindow,
     PlaygroundDetailPanelProps,
     PlaygroundTabConfig
 } from '@/ts/Interfaces'
@@ -10,7 +11,7 @@ import { useCallback, useState, useMemo, useEffect } from 'react'
 import CLAW_DETAIL_TABS from '@/lib/clawDetailTabs'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { clawStatus } from '@openclaw/shared'
+import { clawProvider, clawStatus } from '@openclaw/shared'
 import { getLocale, TRUNCATE_LENGTHS } from '@/lib'
 import {
     XIcon,
@@ -43,8 +44,9 @@ import {
     PlaygroundChannelsContent
 } from '@/components/playground'
 import { useQueryClient } from '@tanstack/react-query'
-import { useClawVersion, useRenameClaw } from '@/hooks'
+import { useClawVersion, useRenameClaw, useUpdateClawSubdomain } from '@/hooks'
 import { useUIStore } from '@/lib/store'
+import { useAuth } from '@/lib/auth'
 import { locationFlags, locationNames, generateSlug } from '@/lib/claw-utils'
 
 const tabStateMap: Record<string, PlaygroundDetailTab> = {}
@@ -116,13 +118,22 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
     const [, setRenderKey] = useState(0)
     const [settingsName, setSettingsName] = useState(claw.name)
     const [settingsNameError, setSettingsNameError] = useState('')
+    const [settingsSubdomain, setSettingsSubdomain] = useState(claw.subdomain || '')
+    const [settingsSubdomainError, setSettingsSubdomainError] = useState('')
     const renameMutation = useRenameClaw()
+    const subdomainMutation = useUpdateClawSubdomain()
     const { showToast } = useUIStore()
+    const { isLocal } = useAuth()
 
     useEffect(() => {
         setSettingsName(claw.name)
         setSettingsNameError('')
     }, [claw.name])
+
+    useEffect(() => {
+        setSettingsSubdomain(claw.subdomain || '')
+        setSettingsSubdomainError('')
+    }, [claw.subdomain])
 
     const handleSettingsNameChange = useCallback((value: string) => {
         setSettingsName(value)
@@ -133,27 +144,61 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
         }
     }, [])
 
-    const settingsHasChanges = settingsName.trim() !== claw.name
+    const handleSettingsSubdomainChange = useCallback((value: string) => {
+        setSettingsSubdomain(value)
+        if (value.trim() && !/^[a-z0-9]{3,20}$/.test(value)) {
+            setSettingsSubdomainError(t('playground.subdomainInvalid'))
+        } else {
+            setSettingsSubdomainError('')
+        }
+    }, [])
+
+    const nameHasChanges = settingsName.trim() !== claw.name
+    const subdomainHasChanges = settingsSubdomain.trim() !== (claw.subdomain || '')
+    const settingsHasChanges = nameHasChanges || subdomainHasChanges
 
     const handleSettingsSave = useCallback(() => {
-        const trimmed = settingsName.trim()
-        if (!trimmed || trimmed === claw.name) return
-        if (!/^[a-zA-Z0-9-]+$/.test(trimmed)) {
-            setSettingsNameError(t('dashboard.renameInvalidChars'))
-            return
-        }
-        renameMutation.mutate(
-            { id: claw.id, name: trimmed },
-            {
-                onSuccess: () => {
-                    showToast(t('dashboard.renameSuccess'), 'success')
-                },
-                onError: () => {
-                    showToast(t('dashboard.renameFailed'), 'error')
-                }
+        const trimmedName = settingsName.trim()
+        const trimmedSubdomain = settingsSubdomain.trim()
+
+        if (nameHasChanges && trimmedName && trimmedName !== claw.name) {
+            if (!/^[a-zA-Z0-9-]+$/.test(trimmedName)) {
+                setSettingsNameError(t('dashboard.renameInvalidChars'))
+                return
             }
-        )
-    }, [settingsName, claw.name, claw.id, renameMutation, showToast])
+            renameMutation.mutate(
+                { id: claw.id, name: trimmedName },
+                {
+                    onSuccess: () => {
+                        showToast(t('dashboard.renameSuccess'), 'success')
+                    },
+                    onError: () => {
+                        showToast(t('dashboard.renameFailed'), 'error')
+                    }
+                }
+            )
+        }
+
+        if (subdomainHasChanges && trimmedSubdomain && trimmedSubdomain !== (claw.subdomain || '')) {
+            if (!/^[a-z0-9]{3,20}$/.test(trimmedSubdomain)) {
+                setSettingsSubdomainError(t('playground.subdomainInvalid'))
+                return
+            }
+            subdomainMutation.mutate(
+                { id: claw.id, subdomain: trimmedSubdomain },
+                {
+                    onSuccess: () => {
+                        showToast(t('playground.subdomainUpdated'), 'success')
+                    },
+                    onError: (err) => {
+                        const raw = err instanceof Error ? err.message : ''
+                        const message = raw.includes('already in use') ? t('playground.subdomainInUse') : t('playground.subdomainUpdateFailed')
+                        showToast(message, 'error')
+                    }
+                }
+            )
+        }
+    }, [settingsName, settingsSubdomain, claw.name, claw.subdomain, claw.id, nameHasChanges, subdomainHasChanges, renameMutation, subdomainMutation, showToast])
 
     const plan = plans.find((p) => p.id === claw.planId)
     const monthlyPrice = plan ? plan.priceMonthly : null
@@ -235,7 +280,7 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                 )}
                             </h3>
                             {claw.status !== clawStatus.configuring &&
-                                claw.provider !== 'local' && (
+                                claw.provider !== clawProvider.local && (
                                     <a
                                         href={`https://${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
                                         target='_blank'
@@ -247,11 +292,24 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                         .{getBaseDomain()}
                                     </a>
                                 )}
-                            {claw.provider === 'local' && claw.port && (
-                                <span className='text-muted-foreground block truncate text-xs leading-tight'>
-                                    localhost:{claw.port}
-                                </span>
-                            )}
+                            {claw.provider === clawProvider.local &&
+                                claw.subdomain && (
+                                    <button
+                                        type='button'
+                                        onClick={() => {
+                                            const url = `https://${claw.subdomain}.clawhost${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`
+                                            const eApi = (window as unknown as ElectronWindow).electronAPI
+                                            if (eApi?.openExternal) {
+                                                eApi.openExternal(url)
+                                            } else {
+                                                window.open(url, '_blank')
+                                            }
+                                        }}
+                                        className='text-muted-foreground hover:text-foreground/80 block truncate text-xs leading-tight transition-colors'
+                                    >
+                                        {claw.subdomain}.clawhost
+                                    </button>
+                                )}
                         </div>
                     </div>
                     <button
@@ -301,6 +359,13 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                     />
                                 )}
 
+                                {claw.provider === clawProvider.local && claw.port && (
+                                    <CopyableField
+                                        label={t('dashboard.port')}
+                                        value={String(claw.port)}
+                                    />
+                                )}
+
                                 {showVersion && versionLoading && (
                                     <div className='bg-foreground/5 rounded-lg px-3 py-2'>
                                         <span className='text-muted-foreground block text-xs'>
@@ -320,12 +385,14 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                 <CopyableField
                                     label={t('dashboard.provider')}
                                     value={
-                                        claw.provider === 'hetzner'
-                                            ? t('createClaw.providerHetzner')
-                                            : claw.provider === 'vultr'
-                                              ? t('createClaw.providerVultr')
-                                              : claw.provider === 'local'
-                                                ? t('createClaw.providerLocal')
+                                        claw.provider === clawProvider.local
+                                            ? t('createClaw.providerLocal')
+                                            : claw.provider ===
+                                                clawProvider.hetzner
+                                              ? t('createClaw.providerHetzner')
+                                              : claw.provider ===
+                                                  clawProvider.vultr
+                                                ? t('createClaw.providerVultr')
                                                 : t(
                                                       'createClaw.providerDigitalOcean'
                                                   )
@@ -338,26 +405,31 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                     }
                                 />
 
-                                <CopyableField
-                                    label={t('dashboard.location')}
-                                    value={`${flag || ''} ${locationName}`.trim()}
-                                />
-
-                                <CopyableField
-                                    label={t('dashboard.plan')}
-                                    value={
-                                        plan
-                                            ? `${plan.name.replace(/([A-Za-z])(\d)/, '$1 $2')} (${plan.cpu} vCPU, ${plan.memory}GB RAM, ${plan.disk}GB SSD)`
-                                            : claw.planId
-                                    }
-                                />
-
-                                {monthlyPrice && (
+                                {claw.provider !== clawProvider.local && (
                                     <CopyableField
-                                        label={t('dashboard.monthlyCost')}
-                                        value={`$${monthlyPrice.toFixed(0)}${t('landing.perMonth')}`}
+                                        label={t('dashboard.location')}
+                                        value={`${flag || ''} ${locationName}`.trim()}
                                     />
                                 )}
+
+                                {claw.provider !== clawProvider.local && (
+                                    <CopyableField
+                                        label={t('dashboard.plan')}
+                                        value={
+                                            plan
+                                                ? `${plan.name.replace(/([A-Za-z])(\d)/, '$1 $2')} (${plan.cpu} vCPU, ${plan.memory}GB RAM, ${plan.disk}GB SSD)`
+                                                : claw.planId
+                                        }
+                                    />
+                                )}
+
+                                {claw.provider !== clawProvider.local &&
+                                    monthlyPrice && (
+                                        <CopyableField
+                                            label={t('dashboard.monthlyCost')}
+                                            value={`$${monthlyPrice.toFixed(0)}${t('landing.perMonth')}`}
+                                        />
+                                    )}
 
                                 {claw.providerServerId && (
                                     <CopyableField
@@ -504,6 +576,16 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                                 e.target.value
                                             )
                                         }
+                                        onKeyDown={(e) => {
+                                            if (
+                                                e.key === 'Enter' &&
+                                                settingsHasChanges &&
+                                                !settingsNameError &&
+                                                !renameMutation.isPending
+                                            ) {
+                                                handleSettingsSave()
+                                            }
+                                        }}
                                         placeholder={t(
                                             'playground.settingsNamePlaceholder'
                                         )}
@@ -526,23 +608,68 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                     )}
                                 </div>
 
+                                {isLocal && (
+                                    <div>
+                                        <label className='text-muted-foreground mb-2 block text-xs font-medium'>
+                                            {t('playground.subdomain')}
+                                        </label>
+                                        <div className='flex items-center gap-0'>
+                                            <input
+                                                type='text'
+                                                value={settingsSubdomain}
+                                                onChange={(e) =>
+                                                    handleSettingsSubdomainChange(
+                                                        e.target.value.toLowerCase()
+                                                    )
+                                                }
+                                                onKeyDown={(e) => {
+                                                    if (
+                                                        e.key === 'Enter' &&
+                                                        settingsHasChanges &&
+                                                        !settingsSubdomainError &&
+                                                        !subdomainMutation.isPending
+                                                    ) {
+                                                        handleSettingsSave()
+                                                    }
+                                                }}
+                                                placeholder={t('playground.subdomainPlaceholder')}
+                                                className={`bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-l-md border border-r-0 px-3 py-2 text-sm outline-none transition-colors focus:border-[#ef5350]/50 ${
+                                                    settingsSubdomainError
+                                                        ? 'border-red-500/50'
+                                                        : 'border-border'
+                                                }`}
+                                            />
+                                            <span className='border-border bg-foreground/5 text-muted-foreground flex items-center rounded-r-md border px-3 py-2 text-sm'>
+                                                .clawhost
+                                            </span>
+                                        </div>
+                                        {settingsSubdomainError ? (
+                                            <p className='mt-1.5 text-[11px] text-red-600 dark:text-red-400'>
+                                                {settingsSubdomainError}
+                                            </p>
+                                        ) : (
+                                            <p className='text-muted-foreground mt-1.5 text-[11px]'>
+                                                {t('playground.subdomainDescription')}
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
+
                                 <button
                                     onClick={handleSettingsSave}
                                     disabled={
                                         !settingsHasChanges ||
                                         !!settingsNameError ||
-                                        renameMutation.isPending
+                                        !!settingsSubdomainError ||
+                                        renameMutation.isPending ||
+                                        subdomainMutation.isPending
                                     }
                                     className='flex w-full items-center justify-center gap-2 rounded-lg bg-[#ef5350] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
                                 >
-                                    {renameMutation.isPending ? (
-                                        <>
-                                            <CircleNotchIcon className='h-4 w-4 animate-spin' />
-                                            {t('playground.settingsSaving')}
-                                        </>
-                                    ) : (
-                                        t('playground.settingsSave')
+                                    {(renameMutation.isPending || subdomainMutation.isPending) && (
+                                        <CircleNotchIcon className='h-4 w-4 animate-spin' />
                                     )}
+                                    {t('playground.settingsSave')}
                                 </button>
                             </div>
                         </div>

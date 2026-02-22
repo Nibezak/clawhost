@@ -10,6 +10,7 @@ import type {
     ClawAvatarSize,
     ClawStatus,
     DashboardTab,
+    FeatureRequestPlatform,
     FeatureRequestStatus,
     GatewayConnectionState,
     Language,
@@ -166,6 +167,8 @@ export interface PreferencesState {
     setTheme: (theme: ThemeMode) => void
     language: Language
     setLanguage: (language: Language) => void
+    openLinksWindowed: boolean
+    setOpenLinksWindowed: (value: boolean) => void
 }
 
 export interface CachedProfile {
@@ -196,6 +199,21 @@ export interface AuthContextType {
     unlinkGoogle: () => Promise<void>
     unlinkGithub: () => Promise<void>
     signOut: () => Promise<void>
+    isLocal?: boolean
+}
+
+export interface FooterLink {
+    label: string
+    href: string
+    external?: boolean
+}
+
+export interface SetupScreenProps {
+    onComplete: () => void
+}
+
+export interface LogoProps {
+    to?: string
 }
 
 export interface NavLink {
@@ -228,6 +246,11 @@ export interface UserDropdownProps {
     displayName: string
     onSignOut: () => Promise<void>
     onOpen?: () => void
+    hideBilling?: boolean
+    hideSSHKeys?: boolean
+    hideSignOut?: boolean
+    footerLinks?: FooterLink[]
+    openLinksWindowed?: boolean
 }
 
 export interface EmptyStateProps {
@@ -258,6 +281,7 @@ export interface PageTitleProps {
     url?: string
     type?: string
     noIndex?: boolean
+    keywords?: string[]
 }
 
 export interface PageHeaderProps {
@@ -301,6 +325,10 @@ export interface CreateClawModalProps {
     preselectedProvider?: ProviderType | null
     onClose: () => void
     onNavigateToSSHKeys: () => void
+}
+
+export interface LocalCreateClawModalProps {
+    onClose: () => void
 }
 
 export interface ClawCardActions {
@@ -426,6 +454,10 @@ export interface PurchaseClawResponse {
 
 export interface RenameClawData {
     name: string
+}
+
+export interface UpdateClawSubdomainData {
+    subdomain: string
 }
 
 export interface CreateSSHKeyData {
@@ -1182,13 +1214,10 @@ export interface FeatureRequest {
     title: string
     description: string
     status: FeatureRequestStatus
-    rejectionReason: string | null
+    platforms: FeatureRequestPlatform[]
     upvoteCount: number
     userId: string
-    userName: string | null
-    userEmail: string
     hasUpvoted: boolean
-    createdAt: string
 }
 
 export interface FeatureRequestsListResponse {
@@ -1199,22 +1228,51 @@ export interface FeatureRequestsListResponse {
 export interface CreateFeatureRequestData {
     title: string
     description: string
+    platforms: FeatureRequestPlatform[]
 }
 
 export interface UpdateFeatureRequestStatusData {
     status: FeatureRequestStatus
-    rejectionReason?: string
+}
+
+export interface EditFeatureRequestData {
+    title?: string
+    description?: string
+    status?: FeatureRequestStatus
+    platforms?: FeatureRequestPlatform[]
 }
 
 export interface FeatureRequestCardProps {
     featureRequest: FeatureRequest
     isAuthenticated: boolean
     isAdmin: boolean
+    isDeleting: boolean
+    currentUserId: string | null
     onUpvote: (id: string) => void
-    onStatusChange: (id: string, status: FeatureRequestStatus) => void
+    onEdit: (featureRequest: FeatureRequest) => void
     onDelete: (id: string) => void
 }
 
 export interface FeatureRequestStatusBadgeProps {
     status: FeatureRequestStatus
+}
+
+export interface ElectronAPI {
+    isDesktop?: boolean
+    openExternal: (url: string) => Promise<void>
+    openWindowed: (url: string) => Promise<void>
+    getDnsStatus: () => Promise<boolean>
+    setupDns: () => Promise<boolean>
+}
+
+export interface ElectronWindow {
+    electronAPI?: ElectronAPI
+}
+
+export interface RenameClawMutationParams extends RenameClawData {
+    id: string
+}
+
+export interface UpdateClawSubdomainMutationParams extends UpdateClawSubdomainData {
+    id: string
 }

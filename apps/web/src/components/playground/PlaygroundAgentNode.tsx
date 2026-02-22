@@ -2,9 +2,10 @@ import type { FC, ReactNode } from 'react'
 import type { PlaygroundAgentNodeProps } from '@/ts/Interfaces'
 
 import { Handle, Position } from '@xyflow/react'
-import { AndroidLogoIcon } from '@phosphor-icons/react'
+import { AndroidLogoIcon, CircleNotchIcon } from '@phosphor-icons/react'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import { TRUNCATE_LENGTHS } from '@/lib'
+import { getAgentStatusConfig } from '@/lib/claw-utils'
 
 const handleStyle = {
     top: 0,
@@ -21,6 +22,7 @@ const PlaygroundAgentNode: FC<PlaygroundAgentNodeProps> = ({
     data
 }): ReactNode => {
     const { agent, isSelected } = data
+    const status = getAgentStatusConfig(agent.status)
 
     return (
         <div
@@ -58,6 +60,21 @@ const PlaygroundAgentNode: FC<PlaygroundAgentNodeProps> = ({
                             {agent.name}
                         </span>
                     )}
+                    <span
+                        className={`inline-flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium ${status.bgColor}`}
+                    >
+                        {status.pulse ? (
+                            <CircleNotchIcon
+                                className={`h-3 w-3 animate-spin ${status.color.replace('bg-', 'text-')}`}
+                                weight='bold'
+                            />
+                        ) : (
+                            <span
+                                className={`h-1.5 w-1.5 rounded-full ${status.color}`}
+                            />
+                        )}
+                        {status.label}
+                    </span>
                 </div>
 
                 {agent.model && (

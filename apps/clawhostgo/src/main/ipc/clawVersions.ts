@@ -51,31 +51,6 @@ const registerClawVersionHandlers = (): void => {
     )
 
     ipcMain.handle(
-        'browseClawHubSkills',
-        async (
-            _event: IpcMainInvokeEvent,
-            id: string,
-            params?: { query?: string; page?: number; limit?: number }
-        ) => {
-            const claw = configStore.findClaw(id)
-            if (!claw) throw new Error('Claw not found')
-
-            try {
-                const queryStr = new URLSearchParams()
-                if (params?.query) queryStr.set('query', params.query)
-                if (params?.page) queryStr.set('page', String(params.page))
-                if (params?.limit) queryStr.set('limit', String(params.limit))
-
-                const url = `http://localhost:${claw.port}/clawhub/skills${queryStr.toString() ? `?${queryStr}` : ''}`
-                const res = await fetch(url)
-                return await res.json()
-            } catch {
-                return { skills: [], total: 0, page: 1, limit: 20 }
-            }
-        }
-    )
-
-    ipcMain.handle(
         'getClawHubInstalled',
         async (
             _event: IpcMainInvokeEvent,

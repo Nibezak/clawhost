@@ -40,13 +40,15 @@ const upvoteFeatureRequest = async (c: AuthenticatedContext) => {
 
             await db
                 .update(featureRequests)
-                .set({ upvoteCount: sql`${featureRequests.upvoteCount} - 1` })
+                .set({
+                    upvoteCount: sql`GREATEST(${featureRequests.upvoteCount} - 1, 0)`
+                })
                 .where(eq(featureRequests.id, id))
 
             return ok(
                 c,
                 {
-                    upvoteCount: request.upvoteCount - 1,
+                    upvoteCount: Math.max(request.upvoteCount - 1, 0),
                     hasUpvoted: false
                 },
                 t('api.featureRequestUpvoted')

@@ -6,6 +6,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { t } from '@openclaw/i18n'
+import { clawProvider } from '@openclaw/shared'
 import { Button, Badge } from '@/components/ui'
 import {
     PageTitle,
@@ -122,8 +123,9 @@ const Landing: FC = (): ReactNode => {
     const { phBannerVisible } = useUIStore()
     const showTutorialBadge = true
     const [videoOpen, setVideoOpen] = useState(false)
-    const [pricingProvider, setPricingProvider] =
-        useState<ProviderType>('hetzner')
+    const [pricingProvider, setPricingProvider] = useState<ProviderType>(
+        clawProvider.hetzner
+    )
     const { plans, isLoading: plansLoading } = usePlans(pricingProvider)
 
     const [openFaq, setOpenFaq] = useState<number | null>(null)
@@ -260,7 +262,7 @@ const Landing: FC = (): ReactNode => {
     ]
 
     return (
-        <div className='font-satoshi bg-background text-foreground min-h-screen' role='main'>
+        <div className='font-satoshi bg-background text-foreground min-h-screen'>
             <PageTitle
                 title={t('landing.title')}
                 description={t('landing.description')}
@@ -272,7 +274,7 @@ const Landing: FC = (): ReactNode => {
                     '@type': 'Organization',
                     name: 'ClawHost',
                     url: `https://${getBaseDomain()}`,
-                    logo: `https://${getBaseDomain()}/favicon.ico`,
+                    logo: 'https://cdn.clawhost.cloud/assets/clawhost-logo-light.png',
                     sameAs: [
                         TWITTER_URL,
                         FACEBOOK_URL,
@@ -778,46 +780,51 @@ const Landing: FC = (): ReactNode => {
                             <div className='border-border bg-foreground/5 flex rounded-lg border p-1'>
                                 <button
                                     onClick={() =>
-                                        setPricingProvider('hetzner')
+                                        setPricingProvider(clawProvider.hetzner)
                                     }
                                     className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition ${
-                                        pricingProvider === 'hetzner'
+                                        pricingProvider === clawProvider.hetzner
                                             ? 'bg-foreground/10 text-foreground shadow-sm'
                                             : 'text-muted-foreground hover:text-foreground'
                                     }`}
                                 >
                                     <ProviderIcon
-                                        provider='hetzner'
+                                        provider={clawProvider.hetzner}
                                         className='h-4 w-4'
                                     />
                                     {t('createClaw.providerHetzner')}
                                 </button>
                                 <button
                                     onClick={() =>
-                                        setPricingProvider('digitalocean')
+                                        setPricingProvider(
+                                            clawProvider.digitalocean
+                                        )
                                     }
                                     className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition ${
-                                        pricingProvider === 'digitalocean'
+                                        pricingProvider ===
+                                        clawProvider.digitalocean
                                             ? 'bg-foreground/10 text-foreground shadow-sm'
                                             : 'text-muted-foreground hover:text-foreground'
                                     }`}
                                 >
                                     <ProviderIcon
-                                        provider='digitalocean'
+                                        provider={clawProvider.digitalocean}
                                         className='h-4 w-4'
                                     />
                                     {t('createClaw.providerDigitalOcean')}
                                 </button>
                                 <button
-                                    onClick={() => setPricingProvider('vultr')}
+                                    onClick={() =>
+                                        setPricingProvider(clawProvider.vultr)
+                                    }
                                     className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition ${
-                                        pricingProvider === 'vultr'
+                                        pricingProvider === clawProvider.vultr
                                             ? 'bg-foreground/10 text-foreground shadow-sm'
                                             : 'text-muted-foreground hover:text-foreground'
                                     }`}
                                 >
                                     <ProviderIcon
-                                        provider='vultr'
+                                        provider={clawProvider.vultr}
                                         className='h-4 w-4'
                                     />
                                     {t('createClaw.providerVultr')}
@@ -1070,6 +1077,8 @@ const Landing: FC = (): ReactNode => {
                                                 alt={t('common.brandName')}
                                                 className='h-6'
                                                 loading='lazy'
+                                                width={120}
+                                                height={24}
                                             />
                                         </div>
                                     </th>

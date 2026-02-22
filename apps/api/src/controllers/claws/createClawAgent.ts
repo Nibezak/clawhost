@@ -160,7 +160,7 @@ const createClawAgent = async (c: AuthenticatedContext) => {
                         id: agentId,
                         name: body.name,
                         model: body.model || null,
-                        status: 'idle',
+                        status: 'running',
                         directory: null
                     }
                 },

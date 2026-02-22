@@ -20,6 +20,7 @@ export {
     useReinstallClaw,
     useClawVersion,
     useRenameClaw,
+    useUpdateClawSubdomain,
     CLAWS_QUERY_KEY
 } from '@/hooks/useClaws'
 

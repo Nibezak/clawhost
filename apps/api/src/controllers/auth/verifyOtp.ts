@@ -8,10 +8,7 @@ import { db } from '@/db'
 import { otpCodes, users } from '@/db/schema'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
-import {
-    getClientIp,
-    clearRateLimit
-} from '@/controllers/auth/rateLimit'
+import { getClientIp, clearRateLimit } from '@/controllers/auth/rateLimit'
 
 const MAX_ATTEMPTS = 5
 

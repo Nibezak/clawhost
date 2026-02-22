@@ -1,11 +1,19 @@
 import type { FeatureRequestResponse } from '@/ts/Interfaces'
 import type { AuthenticatedContext, FeatureRequestSortBy } from '@/ts/Types'
 
-import { eq, desc, sql, ne } from 'drizzle-orm'
+import { desc, sql, ne, and, or, eq } from 'drizzle-orm'
 import { db } from '@/db'
-import { featureRequests, users } from '@/db/schema'
+import { featureRequests, featureUpvotes } from '@/db/schema'
 import { ok } from '@/lib/response'
 import { isAdmin } from '@/controllers/claws/helpers'
+
+const statusOrder = sql`CASE ${featureRequests.status}
+    WHEN 'awaiting_approval' THEN 1
+    WHEN 'requested' THEN 2
+    WHEN 'marked_for_implementation' THEN 3
+    WHEN 'implemented' THEN 4
+    ELSE 5
+END`
 
 const getFeatureRequests = async (c: AuthenticatedContext) => {
     try {
@@ -14,54 +22,57 @@ const getFeatureRequests = async (c: AuthenticatedContext) => {
 
         const admin = userId ? await isAdmin(userId) : false
 
-        const orderBy =
+        const secondaryOrder =
             sort === 'newest'
                 ? desc(featureRequests.createdAt)
-                : sort === 'status'
-                  ? desc(featureRequests.status)
-                  : desc(featureRequests.upvoteCount)
+                : desc(featureRequests.upvoteCount)
 
         const statusFilter = admin
-            ? undefined
-            : ne(featureRequests.status, 'awaiting_approval')
+            ? ne(featureRequests.status, 'rejected')
+            : and(
+                ne(featureRequests.status, 'rejected'),
+                or(
+                    ne(featureRequests.status, 'awaiting_approval'),
+                    userId ? eq(featureRequests.userId, userId) : undefined
+                )
+            )
 
-        const rows = await db
+        const query = db
             .select({
                 id: featureRequests.id,
                 title: featureRequests.title,
                 description: featureRequests.description,
                 status: featureRequests.status,
-                rejectionReason: featureRequests.rejectionReason,
+                platforms: featureRequests.platforms,
                 upvoteCount: featureRequests.upvoteCount,
                 userId: featureRequests.userId,
-                userName: users.name,
-                userEmail: users.email,
-                createdAt: featureRequests.createdAt,
-                hasUpvoted: userId
-                    ? sql<boolean>`EXISTS (
-                        SELECT 1 FROM feature_upvotes
-                        WHERE feature_upvotes.feature_request_id = ${featureRequests.id}
-                        AND feature_upvotes.user_id = ${userId}
-                    )`
-                    : sql<boolean>`false`
+                upvoteId: featureUpvotes.id
             })
             .from(featureRequests)
-            .innerJoin(users, eq(featureRequests.userId, users.id))
+
+        if (userId) {
+            query.leftJoin(
+                featureUpvotes,
+                and(
+                    eq(featureUpvotes.featureRequestId, featureRequests.id),
+                    eq(featureUpvotes.userId, userId)
+                )
+            )
+        }
+
+        const rows = await query
             .where(statusFilter)
-            .orderBy(orderBy)
+            .orderBy(statusOrder, secondaryOrder, desc(featureRequests.createdAt))
 
         const items: FeatureRequestResponse[] = rows.map((row) => ({
             id: row.id,
             title: row.title,
             description: row.description,
             status: row.status as FeatureRequestResponse['status'],
-            rejectionReason: row.rejectionReason,
+            platforms: (row.platforms ?? []) as string[],
             upvoteCount: row.upvoteCount,
             userId: row.userId,
-            userName: row.userName,
-            userEmail: row.userEmail,
-            hasUpvoted: Boolean(row.hasUpvoted),
-            createdAt: row.createdAt.toISOString()
+            hasUpvoted: row.upvoteId !== null
         }))
 
         return ok(c, { items, total: items.length })
