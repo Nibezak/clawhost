@@ -1010,26 +1010,18 @@ const de: Translations = {
             'Refactoring der Playground-Funktionsstruktur und Vereinfachungen',
         upcomingReleaseFeature8:
             'Feature-Anfragen automatisch verwaltet und veröffentlicht durch OpenClaw-Agenten',
-        release11Date: '22. Februar 2026',
-        release11Title: 'Fehlerbehebungen & Stabilität',
-        release11Description:
-            'Behebung von Problemen bei der Skill-Installation, beim Wechsel des Modellanbieters und weitere Stabilitätsverbesserungen auf der Plattform.',
-        release11Feature1:
-            'Behebung von Skills, die nicht korrekt vom ClawHub-Marktplatz installiert wurden',
-        release11Feature2:
-            'Behebung des Modellanbieterwechsels, der Änderungen nicht in Echtzeit widerspiegelte',
-        release11Feature3:
-            'Allgemeine Fehlerbehebungen und Stabilitätsverbesserungen im Dashboard',
         release10Date: '22. Februar 2026',
-        release10Title: 'Feature-Anfragen',
+        release10Title: 'Feature-Anfragen & Fehlerbehebungen',
         release10Description:
-            'Community-getriebene Feature-Anfragen werden jetzt automatisch von OpenClaw-Agenten verwaltet und veröffentlicht.',
+            'Community-getriebene Feature-Anfragen werden jetzt automatisch von OpenClaw-Agenten verwaltet, plus Behebungen bei der Skill-Installation und beim Modellanbieterwechsel.',
         release10Feature1:
             'Feature-Anfragen automatisch verwaltet und veröffentlicht durch OpenClaw-Agenten',
         release10Feature2:
-            'Benutzer können Feature-Anfragen direkt vom Dashboard einreichen, abstimmen und verfolgen',
+            'Behebung von Skills, die manchmal nicht vom ClawHub-Marktplatz installiert werden konnten',
         release10Feature3:
-            'Admin-Tools zum Überprüfen, Genehmigen und Aktualisieren von Feature-Anfrage-Status',
+            'Behebung des Modellanbieterwechsels, der sich nicht auswirkte und weiterhin das ursprüngliche Modell verwendete',
+        release10Feature4:
+            'Mehrere Verbesserungen und Fehlerbehebungen auf der Plattform',
         release9Date: '21. Februar 2026',
         release9Title: 'Vergleiche, Playground-Refactoring & Mehr',
         release9Description:

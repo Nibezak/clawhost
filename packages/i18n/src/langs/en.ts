@@ -958,26 +958,18 @@ const en = {
             'Refactoring of the playground feature structure and simplifications',
         upcomingReleaseFeature8:
             'Feature requests automatically managed and published by OpenClaw agents',
-        release11Date: 'February 22, 2026',
-        release11Title: 'Bug Fixes & Stability',
-        release11Description:
-            'Resolved issues with skill installation, model provider switching, and other stability improvements across the platform.',
-        release11Feature1:
-            'Fixed skills not installing correctly from ClawHub marketplace',
-        release11Feature2:
-            'Fixed model provider switching not reflecting changes in real time',
-        release11Feature3:
-            'General bug fixes and stability improvements across the dashboard',
         release10Date: 'February 22, 2026',
-        release10Title: 'Feature Requests',
+        release10Title: 'Feature Requests & Bug Fixes',
         release10Description:
-            'Community-driven feature requests now automatically managed and published by OpenClaw agents.',
+            'Community-driven feature requests now automatically managed by OpenClaw agents, plus fixes for skill installation and model provider switching.',
         release10Feature1:
             'Feature requests automatically managed and published by OpenClaw agents',
         release10Feature2:
-            'Users can submit, upvote, and track feature requests directly from the dashboard',
+            'Fixed skills sometimes failing to install from ClawHub marketplace',
         release10Feature3:
-            'Admin tools for reviewing, approving, and updating feature request statuses',
+            'Fixed model provider switching not reflecting and still using the initial model',
+        release10Feature4:
+            'Several improvements and bug fixes across the platform',
         release9Date: 'February 21, 2026',
         release9Title: 'Comparisons, Playground Refactor & More',
         release9Description:

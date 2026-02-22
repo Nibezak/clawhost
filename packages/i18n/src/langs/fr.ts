@@ -1020,26 +1020,18 @@ const fr: Translations = {
             'Refactorisation de la structure des fonctionnalités du playground et simplifications',
         upcomingReleaseFeature8:
             'Demandes de fonctionnalités automatiquement gérées et publiées par les agents OpenClaw',
-        release11Date: '22 février 2026',
-        release11Title: 'Corrections de bugs & Stabilité',
-        release11Description:
-            "Résolution de problèmes d'installation de compétences, de changement de fournisseur de modèle et d'autres améliorations de stabilité sur la plateforme.",
-        release11Feature1:
-            "Correction de l'installation incorrecte des compétences depuis le marketplace ClawHub",
-        release11Feature2:
-            'Correction du changement de fournisseur de modèle ne reflétant pas les modifications en temps réel',
-        release11Feature3:
-            'Corrections de bugs générales et améliorations de stabilité sur le tableau de bord',
         release10Date: '22 février 2026',
-        release10Title: 'Demandes de fonctionnalités',
+        release10Title: 'Demandes de fonctionnalités & Corrections de bugs',
         release10Description:
-            'Les demandes de fonctionnalités communautaires sont désormais automatiquement gérées et publiées par les agents OpenClaw.',
+            "Les demandes de fonctionnalités communautaires sont désormais automatiquement gérées par les agents OpenClaw, ainsi que des corrections pour l'installation de compétences et le changement de fournisseur de modèle.",
         release10Feature1:
             'Demandes de fonctionnalités automatiquement gérées et publiées par les agents OpenClaw',
         release10Feature2:
-            'Les utilisateurs peuvent soumettre, voter et suivre les demandes de fonctionnalités directement depuis le tableau de bord',
+            "Correction des compétences échouant parfois à s'installer depuis le marketplace ClawHub",
         release10Feature3:
-            "Outils d'administration pour examiner, approuver et mettre à jour les statuts des demandes de fonctionnalités",
+            'Correction du changement de fournisseur de modèle ne se reflétant pas et utilisant toujours le modèle initial',
+        release10Feature4:
+            'Plusieurs améliorations et corrections de bugs sur la plateforme',
         release9Date: '21 février 2026',
         release9Title: 'Comparaisons, refactorisation du playground & plus',
         release9Description:
