@@ -137,6 +137,8 @@ const api = {
         client.post<Claw>(`/claws/${id}/cancel-deletion`),
     hardDeleteClaw: (id: string) =>
         client.post<void>(`/claws/${id}/hard-delete`),
+    cancelPendingClaw: (id: string) =>
+        client.delete<void>(`/claws/pending/${id}`),
     getClawDiagnostics: (id: string) =>
         client.post<DiagnosticsStatusResponse>(
             `/claws/${id}/diagnostics/status`

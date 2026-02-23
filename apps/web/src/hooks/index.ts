@@ -21,6 +21,7 @@ export {
     useClawVersion,
     useRenameClaw,
     useUpdateClawSubdomain,
+    useCancelPendingClaw,
     CLAWS_QUERY_KEY
 } from '@/hooks/useClaws'
 

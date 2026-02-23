@@ -70,7 +70,7 @@ const PlaygroundAgentNode: FC<PlaygroundAgentNodeProps> = ({
                             />
                         ) : (
                             <span
-                                className={`h-1.5 w-1.5 rounded-full ${status.color}`}
+                                className={`h-1.5 w-1.5 rounded-full ${status.color} status-dot-alive`}
                             />
                         )}
                         {status.label}

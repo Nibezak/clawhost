@@ -58,6 +58,7 @@ export interface Claw {
     volumes?: Volume[]
     ownerEmail?: string | null
     deletionScheduledAt: string | null
+    checkoutUrl?: string | null
     createdAt: string
     port?: number
 }
@@ -348,6 +349,8 @@ export interface ClawCardActions {
     onCopySSHWithPassword: () => void
     onCopyPassword: () => void
     onExport: () => void
+    onResumeCheckout: () => void
+    onCancelPending: () => void
 }
 
 export interface ExportRateLimitError extends Error {

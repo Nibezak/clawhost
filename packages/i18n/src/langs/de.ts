@@ -244,6 +244,8 @@ const de: Translations = {
         clawDeletionScheduled: 'Claw-Löschung geplant.',
         clawDeletionCancelled: 'Claw-Löschung abgebrochen.',
         clawHardDeleted: 'Claw endgültig gelöscht.',
+        pendingClawCancelled: 'Kauf abgebrochen.',
+        failedToCancelPendingClaw: 'Kauf konnte nicht abgebrochen werden!',
         clawPurchaseInitiated: 'Kauf erfolgreich eingeleitet.',
         sshKeysFetched: 'SSH-Schlüssel erfolgreich abgerufen.',
         sshKeyCreated: 'SSH-Schlüssel erfolgreich erstellt.',
@@ -571,6 +573,8 @@ const de: Translations = {
         cancelDeletion: 'Löschung abbrechen',
         deletionCancelled: 'Löschung abgebrochen.',
         scheduleDeletion: 'Löschung planen',
+        resumeCheckout: 'Zahlung fortsetzen',
+        cancelPurchase: 'Kauf abbrechen',
         hardDelete: 'Sofort löschen',
         hardDeleteClaw: 'Sofort löschen',
         hardDeleteConfirmation:

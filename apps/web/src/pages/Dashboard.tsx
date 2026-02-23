@@ -409,7 +409,7 @@ const Dashboard: FC = (): ReactNode => {
     const activeIsError = adminMode ? isAdminClawsError : isError
     const activeRefetch = adminMode ? refetchAdmin : refetch
     const isLoading =
-        authLoading || (!awaitingClaw && (activeClawsLoading || !minLoadingMet))
+        authLoading || activeClawsLoading || (!awaitingClaw && !minLoadingMet)
 
     const graphClaws = displayedClaws
     const agentQueries = useAllClawAgents(graphClaws)

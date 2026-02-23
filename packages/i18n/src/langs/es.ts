@@ -242,6 +242,8 @@ const es: Translations = {
         clawDeletionScheduled: 'Eliminación del claw programada.',
         clawDeletionCancelled: 'Eliminación del claw cancelada.',
         clawHardDeleted: 'Claw eliminado permanentemente.',
+        pendingClawCancelled: 'Compra cancelada.',
+        failedToCancelPendingClaw: 'Error al cancelar la compra!',
         clawPurchaseInitiated: 'Compra iniciada exitosamente.',
         sshKeysFetched: 'Claves SSH obtenidas exitosamente.',
         sshKeyCreated: 'Clave SSH creada exitosamente.',
@@ -568,6 +570,8 @@ const es: Translations = {
         cancelDeletion: 'Cancelar eliminación',
         deletionCancelled: 'Eliminación cancelada.',
         scheduleDeletion: 'Programar eliminación',
+        resumeCheckout: 'Continuar pago',
+        cancelPurchase: 'Cancelar compra',
         hardDelete: 'Eliminar inmediatamente',
         hardDeleteClaw: 'Eliminar inmediatamente',
         hardDeleteConfirmation:

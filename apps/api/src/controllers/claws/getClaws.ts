@@ -184,16 +184,16 @@ const getClaws = async (c: AuthenticatedContext) => {
                 const paid =
                     checkout?.status === 'succeeded' ||
                     checkout?.status === 'confirmed'
-                return { pending: p, paid }
+                return { pending: p, paid, checkoutUrl: checkout?.url || null }
             } catch {
-                return { pending: p, paid: false }
+                return { pending: p, paid: false, checkoutUrl: null }
             }
         })
     )
 
     const pendingAsClaw = validPending
         .filter((v) => v !== null)
-        .map(({ pending: p, paid }) => ({
+        .map(({ pending: p, paid, checkoutUrl }) => ({
             id: `pending-${p.id}`,
             name: p.name,
             provider: p.provider,
@@ -210,6 +210,7 @@ const getClaws = async (c: AuthenticatedContext) => {
             currentPeriodEnd: null,
             volumes: [],
             deletionScheduledAt: null,
+            checkoutUrl: paid ? null : checkoutUrl,
             createdAt: p.createdAt.toISOString()
         }))
 

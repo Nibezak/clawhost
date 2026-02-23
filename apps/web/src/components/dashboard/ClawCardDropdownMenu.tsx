@@ -25,7 +25,8 @@ import {
     FolderSimpleIcon,
     ArrowsClockwiseIcon,
     ArrowCounterClockwiseIcon,
-    ExportIcon
+    ExportIcon,
+    ArrowSquareOutIcon
 } from '@phosphor-icons/react'
 
 const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
@@ -171,7 +172,26 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                     </>
                 )}
                 {(hasActionItems || claw.ip) && <DropdownMenuSeparator />}
-                {claw.provider === clawProvider.local ? (
+                {claw.status === clawStatus.awaitingPayment ? (
+                    <>
+                        {claw.checkoutUrl && (
+                            <DropdownMenuItem
+                                onClick={() => actions.onResumeCheckout()}
+                            >
+                                <ArrowSquareOutIcon className='mr-2 h-4 w-4' />
+                                {t('dashboard.resumeCheckout')}
+                            </DropdownMenuItem>
+                        )}
+                        <DropdownMenuItem
+                            onClick={actions.onCancelPending}
+                            disabled={isLoading}
+                            className='text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400'
+                        >
+                            <TrashIcon className='mr-2 h-4 w-4' />
+                            {t('dashboard.cancelPurchase')}
+                        </DropdownMenuItem>
+                    </>
+                ) : claw.provider === clawProvider.local ? (
                     <DropdownMenuItem
                         onClick={actions.onShowDeleteModal}
                         disabled={isLoading}

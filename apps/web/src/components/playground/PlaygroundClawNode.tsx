@@ -19,7 +19,8 @@ import {
     useHardDeleteClaw,
     useRepairClaw,
     useReinstallClaw,
-    useProfile
+    useProfile,
+    useCancelPendingClaw
 } from '@/hooks'
 import { api } from '@/lib'
 import { ProviderIcon } from '@/components'
@@ -86,6 +87,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
     const hardDeleteMutation = useHardDeleteClaw()
     const repairMutation = useRepairClaw()
     const reinstallMutation = useReinstallClaw()
+    const cancelPendingMutation = useCancelPendingClaw()
 
     const { data: profile } = useProfile({ enabled: true })
 
@@ -98,6 +100,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
         hardDeleteMutation.isPending ||
         repairMutation.isPending ||
         reinstallMutation.isPending ||
+        cancelPendingMutation.isPending ||
         isExporting
 
     const isScheduledForDeletion = !!claw.deletionScheduledAt
@@ -213,7 +216,16 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
         onCopySSHWithKey: copySSHWithKey,
         onCopySSHWithPassword: copySSHWithPassword,
         onCopyPassword: copyPassword,
-        onExport: handleExport
+        onExport: handleExport,
+        onResumeCheckout: () => {
+            if (claw.checkoutUrl) {
+                window.open(claw.checkoutUrl, '_blank')
+            }
+        },
+        onCancelPending: () => {
+            const pendingId = claw.id.replace('pending-', '')
+            cancelPendingMutation.mutate(pendingId)
+        }
     }
 
     return (
@@ -261,7 +273,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                                 />
                             ) : (
                                 <span
-                                    className={`h-1.5 w-1.5 rounded-full ${status.color}`}
+                                    className={`h-1.5 w-1.5 rounded-full ${status.color} status-dot-alive`}
                                 />
                             )}
                             {status.label}

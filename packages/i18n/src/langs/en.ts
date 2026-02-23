@@ -229,6 +229,8 @@ const en = {
         clawDeletionScheduled: 'Claw deletion scheduled.',
         clawDeletionCancelled: 'Claw deletion cancelled.',
         clawHardDeleted: 'Claw permanently deleted.',
+        pendingClawCancelled: 'Purchase cancelled.',
+        failedToCancelPendingClaw: 'Failed to cancel purchase!',
         clawPurchaseInitiated: 'Purchase initiated successfully.',
         sshKeysFetched: 'SSH keys fetched successfully.',
         sshKeyCreated: 'SSH key created successfully.',
@@ -534,6 +536,8 @@ const en = {
         cancelDeletion: 'Cancel Deletion',
         deletionCancelled: 'Deletion cancelled.',
         scheduleDeletion: 'Schedule Deletion',
+        resumeCheckout: 'Resume Checkout',
+        cancelPurchase: 'Cancel Purchase',
         hardDelete: 'Force Delete',
         hardDeleteClaw: 'Force Delete',
         hardDeleteConfirmation:

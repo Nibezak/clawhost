@@ -9,9 +9,10 @@ import type {
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
 import { clawProvider, clawStatus } from '@openclaw/shared'
+import { ClockIcon } from '@phosphor-icons/react'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import { useUIStore } from '@/lib/store'
-import { getBaseDomain } from '@/lib'
+import { getBaseDomain, getLocale } from '@/lib'
 import { generateSlug } from '@/lib/claw-utils'
 import { ClawAvatar } from '@/components'
 import {
@@ -23,7 +24,8 @@ import {
     useHardDeleteClaw,
     useRepairClaw,
     useReinstallClaw,
-    useProfile
+    useProfile,
+    useCancelPendingClaw
 } from '@/hooks'
 import { api, TRUNCATE_LENGTHS } from '@/lib'
 import {
@@ -63,6 +65,7 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
     const hardDeleteMutation = useHardDeleteClaw()
     const repairMutation = useRepairClaw()
     const reinstallMutation = useReinstallClaw()
+    const cancelPendingMutation = useCancelPendingClaw()
 
     const { data: profile } = useProfile({ enabled: true })
 
@@ -75,6 +78,7 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
         hardDeleteMutation.isPending ||
         repairMutation.isPending ||
         reinstallMutation.isPending ||
+        cancelPendingMutation.isPending ||
         isExporting
 
     const isScheduledForDeletion = !!claw.deletionScheduledAt
@@ -190,7 +194,16 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
         onCopySSHWithKey: copySSHWithKey,
         onCopySSHWithPassword: copySSHWithPassword,
         onCopyPassword: copyPassword,
-        onExport: handleExport
+        onExport: handleExport,
+        onResumeCheckout: () => {
+            if (claw.checkoutUrl) {
+                window.open(claw.checkoutUrl, '_blank')
+            }
+        },
+        onCancelPending: () => {
+            const pendingId = claw.id.replace('pending-', '')
+            cancelPendingMutation.mutate(pendingId)
+        }
     }
 
     return (
@@ -235,7 +248,37 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                             {claw.name}
                         </p>
                     )}
-                    {claw.status !== clawStatus.configuring && claw.status !== clawStatus.awaitingPayment ? (
+                    {isScheduledForDeletion ? (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <div className='flex items-center gap-1'>
+                                    <ClockIcon
+                                        className='text-muted-foreground h-3 w-3 shrink-0'
+                                        weight='fill'
+                                    />
+                                    <span className='text-muted-foreground truncate text-[11px]'>
+                                        {t(
+                                            'dashboard.scheduledDeletionShort',
+                                            {
+                                                date: new Date(
+                                                    claw.deletionScheduledAt!
+                                                ).toLocaleDateString(
+                                                    getLocale(),
+                                                    {
+                                                        month: 'short',
+                                                        day: 'numeric'
+                                                    }
+                                                )
+                                            }
+                                        )}
+                                    </span>
+                                </div>
+                            </TooltipTrigger>
+                            <TooltipContent side='bottom'>
+                                <p>{t('dashboard.scheduledForDeletion')}</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    ) : claw.status !== clawStatus.configuring && claw.status !== clawStatus.awaitingPayment ? (
                         claw.provider === clawProvider.local && claw.subdomain ? (
                             <button
                                 type='button'
