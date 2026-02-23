@@ -2,6 +2,11 @@ const p = require('path')
 const f = require('fs')
 
 const electronDir = p.join(__dirname, '..', 'node_modules', 'electron')
+
+if (!f.existsSync(electronDir)) {
+    process.exit(0)
+}
+
 const distDir = p.join(electronDir, 'dist')
 const oldApp = p.join(distDir, 'Electron.app')
 const newApp = p.join(distDir, 'ClawHostGo.app')
