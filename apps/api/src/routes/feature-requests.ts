@@ -149,6 +149,6 @@ app.post('/', requireAuth, createFeatureRequest)
 app.post('/:id/upvote', requireAuth, upvoteFeatureRequest)
 app.put('/:id', requireAuth, adminOnly, editFeatureRequest)
 app.put('/:id/status', requireAuth, adminOnly, updateFeatureRequestStatus)
-app.delete('/:id', requireAuth, deleteFeatureRequest)
+app.delete('/:id', requireAuth, adminOnly, deleteFeatureRequest)
 
 export default app

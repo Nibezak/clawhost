@@ -33,11 +33,7 @@ import {
     Select,
     SelectTrigger,
     SelectContent,
-    SelectItem,
-    DropdownMenu,
-    DropdownMenuTrigger,
-    DropdownMenuContent,
-    DropdownMenuItem
+    SelectItem
 } from '@/components/ui'
 import {
     ActionButton,
@@ -53,7 +49,6 @@ import {
 import {
     ArrowFatUpIcon,
     CircleNotchIcon,
-    DotsThreeOutlineIcon,
     FunnelIcon,
     LightningIcon,
     PencilSimpleIcon,
@@ -144,13 +139,10 @@ const FeatureRequestCard: FC<FeatureRequestCardProps> = ({
     isAuthenticated,
     isAdmin,
     isDeleting,
-    currentUserId,
     onUpvote,
     onEdit,
     onDelete
 }): ReactNode => {
-    const isOwner = currentUserId === featureRequest.userId
-
     return (
         <Card>
             <CardContent className='py-4'>
@@ -214,28 +206,6 @@ const FeatureRequestCard: FC<FeatureRequestCardProps> = ({
                                         : <TrashIcon className='h-4 w-4' />}
                                 </Button>
                             </>
-                        )}
-                        {!isAdmin && isOwner && (
-                            <DropdownMenu modal={false}>
-                                <DropdownMenuTrigger asChild>
-                                    <Button variant='ghost' size='icon' disabled={isDeleting}>
-                                        {isDeleting
-                                            ? <CircleNotchIcon className='h-4 w-4 animate-spin' />
-                                            : <DotsThreeOutlineIcon className='h-4 w-4' />}
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align='end'>
-                                    <DropdownMenuItem
-                                        onClick={() =>
-                                            onDelete(featureRequest.id)
-                                        }
-                                        className='text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400'
-                                    >
-                                        <TrashIcon className='mr-2 h-4 w-4' />
-                                        {t('featureRequests.deleteRequest')}
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
                         )}
                     </div>
                 </div>
@@ -545,7 +515,6 @@ const FeatureRequests: FC = (): ReactNode => {
                                     isAuthenticated={!!user}
                                     isAdmin={isAdmin}
                                     isDeleting={deleteMutation.isPending && deleteMutation.variables === item.id}
-                                    currentUserId={user?.uid ?? null}
                                     onUpvote={handleUpvote}
                                     onEdit={handleOpenEdit}
                                     onDelete={handleDelete}

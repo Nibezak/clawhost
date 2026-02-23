@@ -66,8 +66,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
     const isUnreachable = claw.status === clawStatus.unreachable
 
     const { showToast } = useUIStore()
-    const [copied, setCopied] = useState(false)
-    const [passwordCopied, setPasswordCopied] = useState(false)
+    const [isCopyingCredentials, setIsCopyingCredentials] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showStopModal, setShowStopModal] = useState(false)
     const [showRestartModal, setShowRestartModal] = useState(false)
@@ -101,7 +100,8 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
         repairMutation.isPending ||
         reinstallMutation.isPending ||
         cancelPendingMutation.isPending ||
-        isExporting
+        isExporting ||
+        isCopyingCredentials
 
     const isScheduledForDeletion = !!claw.deletionScheduledAt
     const hasActionItems =
@@ -112,28 +112,42 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
     const copySSHWithKey = () => {
         const command = `ssh root@${claw.ip}`
         navigator.clipboard.writeText(command)
-        setCopied(true)
         showToast(t('dashboard.sshCommandCopied'), 'success')
-        setTimeout(() => setCopied(false), 2000)
     }
 
-    const copySSHWithPassword = () => {
-        const command = `sshpass -p '${claw.rootPassword}' ssh -o StrictHostKeyChecking=no root@${claw.ip}`
-        navigator.clipboard.writeText(command)
-        setCopied(true)
-        showToast(t('dashboard.sshCommandWithPasswordCopied'), 'success')
-        setTimeout(() => setCopied(false), 2000)
-    }
-
-    const copyPassword = () => {
-        if (!claw.rootPassword) {
-            showToast(t('errors.noPasswordAvailable'), 'warning')
-            return
+    const copySSHWithPassword = async () => {
+        setIsCopyingCredentials(true)
+        try {
+            const res = await api.getClawCredentials(claw.id)
+            if (res.rootPassword) {
+                const command = `sshpass -p '${res.rootPassword}' ssh -o StrictHostKeyChecking=no root@${claw.ip}`
+                navigator.clipboard.writeText(command)
+                showToast(t('dashboard.sshCommandWithPasswordCopied'), 'success')
+            } else {
+                copySSHWithKey()
+            }
+        } catch {
+            showToast(t('errors.noPasswordAvailable'), 'error')
+        } finally {
+            setIsCopyingCredentials(false)
         }
-        navigator.clipboard.writeText(claw.rootPassword)
-        setPasswordCopied(true)
-        showToast(t('dashboard.passwordCopiedToClipboard'), 'success')
-        setTimeout(() => setPasswordCopied(false), 2000)
+    }
+
+    const copyPassword = async () => {
+        setIsCopyingCredentials(true)
+        try {
+            const res = await api.getClawCredentials(claw.id)
+            if (!res.rootPassword) {
+                showToast(t('errors.noPasswordAvailable'), 'warning')
+                return
+            }
+            navigator.clipboard.writeText(res.rootPassword)
+            showToast(t('dashboard.passwordCopiedToClipboard'), 'success')
+        } catch {
+            showToast(t('errors.noPasswordAvailable'), 'error')
+        } finally {
+            setIsCopyingCredentials(false)
+        }
     }
 
     const handleUpdateInstance = () => {
@@ -212,7 +226,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
         onShowConfig: () => setShowConfig(true),
         onUpdateInstance: handleUpdateInstance,
         onShowReinstallModal: () => setShowReinstallModal(true),
-        onCopySSH: claw.rootPassword ? copySSHWithPassword : copySSHWithKey,
+        onCopySSH: claw.hasRootPassword ? copySSHWithPassword : copySSHWithKey,
         onCopySSHWithKey: copySSHWithKey,
         onCopySSHWithPassword: copySSHWithPassword,
         onCopyPassword: copyPassword,
@@ -291,8 +305,6 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                                     claw={claw}
                                     actions={actions}
                                     isLoading={isMutating}
-                                    copied={copied}
-                                    passwordCopied={passwordCopied}
                                     hasActionItems={hasActionItems}
                                     isScheduledForDeletion={
                                         isScheduledForDeletion

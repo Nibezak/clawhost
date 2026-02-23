@@ -128,6 +128,9 @@ StandardError=append:/var/log/openclaw-gateway.log
 WantedBy=multi-user.target`
         const serviceB64 = Buffer.from(serviceFile).toString('base64')
 
+        const sslCertPath = `/etc/letsencrypt/live/${fullDomain}/fullchain.pem`
+        const sslKeyPath = `/etc/letsencrypt/live/${fullDomain}/privkey.pem`
+
         const nginxConf = `map $http_upgrade $connection_upgrade {
     default upgrade;
     '' close;
@@ -144,6 +147,18 @@ server {
     listen 80;
     listen [::]:80;
     server_name ${fullDomain};
+    return 301 https://\\$host\\$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name ${fullDomain};
+
+    ssl_certificate ${sslCertPath};
+    ssl_certificate_key ${sslKeyPath};
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
     location / {
         proxy_pass http://127.0.0.1:18789;
@@ -168,14 +183,13 @@ server {
             `echo '${configB64}' | base64 -d > ${BASE_DIR}/openclaw.json`,
             'chown -R openclaw:openclaw /home/openclaw',
             `echo '${serviceB64}' | base64 -d > /etc/systemd/system/openclaw-gateway.service`,
-            `echo '${nginxB64}' | base64 -d > /etc/nginx/sites-available/openclaw`,
+            `if [ -f ${sslCertPath} ]; then echo '${nginxB64}' | base64 -d > /etc/nginx/sites-available/openclaw; else certbot --nginx -d ${fullDomain} --non-interactive --agree-tos --email ssl@clawhost.cloud --redirect || true; fi`,
             'ln -sf /etc/nginx/sites-available/openclaw /etc/nginx/sites-enabled/',
             'rm -f /etc/nginx/sites-enabled/default',
             'mkdir -p /etc/systemd/system/nginx.service.d',
             "printf '[Service]\\nRestart=always\\nRestartSec=5\\n' > /etc/systemd/system/nginx.service.d/override.conf",
             'systemctl daemon-reload',
             'nginx -t && systemctl reload nginx',
-            `certbot --nginx -d ${fullDomain} --non-interactive --agree-tos --email ssl@clawhost.cloud --redirect || true`,
             'su - openclaw -c "openclaw doctor --fix" || true',
             'systemctl restart openclaw-gateway',
             'sleep 15',

@@ -48,6 +48,7 @@ export interface Claw {
     planId: string
     location: string | null
     rootPassword: string | null
+    hasRootPassword: boolean
     sshKeyId: string | null
     providerServerId: string | null
     subdomain: string | null
@@ -361,8 +362,6 @@ export interface ClawCardDropdownMenuProps {
     claw: Claw
     actions: ClawCardActions
     isLoading: boolean
-    copied: boolean
-    passwordCopied: boolean
     hasActionItems: boolean
     isScheduledForDeletion: boolean
     isAdmin: boolean
@@ -548,6 +547,11 @@ export interface InstallClawVersionResponse {
 
 export interface PlaygroundVersionsContentProps {
     clawId: string
+}
+
+export interface ClawCredentialsResponse {
+    rootPassword: string | null
+    ip: string | null
 }
 
 export interface DiagnosticsStatusResponse {
@@ -1263,7 +1267,6 @@ export interface FeatureRequestCardProps {
     isAuthenticated: boolean
     isAdmin: boolean
     isDeleting: boolean
-    currentUserId: string | null
     onUpvote: (id: string) => void
     onEdit: (featureRequest: FeatureRequest) => void
     onDelete: (id: string) => void

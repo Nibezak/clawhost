@@ -49,6 +49,7 @@ import {
     pairWhatsAppStatus,
     getClawBindings,
     updateClawBindings,
+    getClawCredentials,
     cancelPendingClaw
 } from '@/controllers/claws'
 import adminOnly from '@/middleware/adminOnly'
@@ -101,6 +102,7 @@ app.post('/:id/clawhub/install', installClawHubSkill)
 app.post('/:id/clawhub/remove', removeClawHubSkill)
 app.post('/:id/clawhub/update', updateClawHubSkill)
 app.post('/:id/clawhub/updates', checkClawHubUpdates)
+app.post('/:id/credentials', getClawCredentials)
 app.patch('/:id', renameClaw)
 app.delete('/:id', deleteClaw)
 

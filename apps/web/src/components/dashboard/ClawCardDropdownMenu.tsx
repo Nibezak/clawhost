@@ -18,7 +18,6 @@ import {
     TrashIcon,
     DotsThreeOutlineIcon,
     TerminalIcon,
-    CheckIcon,
     CircleNotchIcon,
     CopyIcon,
     ClockCountdownIcon,
@@ -33,8 +32,6 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
     claw,
     actions,
     isLoading,
-    copied,
-    passwordCopied,
     hasActionItems,
     isScheduledForDeletion,
     isAdmin,
@@ -100,44 +97,23 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                         </DropdownMenuItem>
                     </>
                 )}
-                {claw.provider !== clawProvider.local &&
-                    (claw.ip || claw.rootPassword) && (
-                        <>
-                            {hasActionItems && <DropdownMenuSeparator />}
-                            {claw.ip && (
-                                <DropdownMenuItem onClick={actions.onCopySSH}>
-                                    {copied ? (
-                                        <>
-                                            <CheckIcon className='mr-2 h-4 w-4' />
-                                            {t('common.copied')}
-                                        </>
-                                    ) : (
-                                        <>
-                                            <TerminalIcon className='mr-2 h-4 w-4' />
-                                            {t('dashboard.connect')}
-                                        </>
-                                    )}
-                                </DropdownMenuItem>
-                            )}
-                            {claw.rootPassword && (
-                                <DropdownMenuItem
-                                    onClick={actions.onCopyPassword}
-                                >
-                                    {passwordCopied ? (
-                                        <>
-                                            <CheckIcon className='mr-2 h-4 w-4' />
-                                            {t('common.copied')}
-                                        </>
-                                    ) : (
-                                        <>
-                                            <CopyIcon className='mr-2 h-4 w-4' />
-                                            {t('dashboard.copyPassword')}
-                                        </>
-                                    )}
-                                </DropdownMenuItem>
-                            )}
-                        </>
-                    )}
+                {claw.provider !== clawProvider.local && claw.ip && (
+                    <>
+                        {hasActionItems && <DropdownMenuSeparator />}
+                        <DropdownMenuItem onClick={actions.onCopySSH}>
+                            <TerminalIcon className='mr-2 h-4 w-4' />
+                            {t('dashboard.connect')}
+                        </DropdownMenuItem>
+                        {claw.hasRootPassword && (
+                            <DropdownMenuItem
+                                onClick={actions.onCopyPassword}
+                            >
+                                <CopyIcon className='mr-2 h-4 w-4' />
+                                {t('dashboard.copyPassword')}
+                            </DropdownMenuItem>
+                        )}
+                    </>
+                )}
                 {claw.ip && (
                     <>
                         <DropdownMenuSeparator />

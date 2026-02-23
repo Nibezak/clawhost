@@ -4,6 +4,7 @@ import type {
     ClawEnvVarsResponse,
     BillingInvoiceResponse,
     Claw,
+    ClawCredentialsResponse,
     CreateFeatureRequestData,
     FeatureRequest,
     FeatureRequestsListResponse,
@@ -148,6 +149,8 @@ const api = {
     repairClaw: (id: string) =>
         client.post<void>(`/claws/${id}/diagnostics/repair`),
     reinstallClaw: (id: string) => client.post<void>(`/claws/${id}/reinstall`),
+    getClawCredentials: (id: string) =>
+        client.post<ClawCredentialsResponse>(`/claws/${id}/credentials`),
     getClawVersion: (id: string) =>
         client.post<ClawVersionResponse>(`/claws/${id}/version`),
     getClawVersions: (id: string) =>

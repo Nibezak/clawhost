@@ -18,6 +18,7 @@ const demoClaws: Claw[] = [
         planId: 'cx22',
         location: 'Frankfurt, DE',
         rootPassword: null,
+        hasRootPassword: false,
         sshKeyId: null,
         providerServerId: '48291053',
         subdomain: 'personal-claw',
