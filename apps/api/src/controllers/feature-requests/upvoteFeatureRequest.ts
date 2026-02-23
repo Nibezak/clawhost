@@ -6,16 +6,21 @@ import { featureRequests, featureUpvotes } from '@/db/schema'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
+const syncUpvoteCount = (id: string) =>
+    db
+        .update(featureRequests)
+        .set({
+            upvoteCount: sql`(SELECT COUNT(*) FROM feature_upvotes WHERE feature_request_id = ${id})`
+        })
+        .where(eq(featureRequests.id, id))
+
 const upvoteFeatureRequest = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')
 
         const [request] = await db
-            .select({
-                id: featureRequests.id,
-                upvoteCount: featureRequests.upvoteCount
-            })
+            .select({ id: featureRequests.id })
             .from(featureRequests)
             .where(eq(featureRequests.id, id))
 
@@ -38,17 +43,17 @@ const upvoteFeatureRequest = async (c: AuthenticatedContext) => {
                 .delete(featureUpvotes)
                 .where(eq(featureUpvotes.id, existing.id))
 
-            await db
-                .update(featureRequests)
-                .set({
-                    upvoteCount: sql`GREATEST(${featureRequests.upvoteCount} - 1, 0)`
-                })
+            await syncUpvoteCount(id)
+
+            const [updated] = await db
+                .select({ upvoteCount: featureRequests.upvoteCount })
+                .from(featureRequests)
                 .where(eq(featureRequests.id, id))
 
             return ok(
                 c,
                 {
-                    upvoteCount: Math.max(request.upvoteCount - 1, 0),
+                    upvoteCount: updated.upvoteCount,
                     hasUpvoted: false
                 },
                 t('api.featureRequestUpvoted')
@@ -61,15 +66,17 @@ const upvoteFeatureRequest = async (c: AuthenticatedContext) => {
             featureRequestId: id
         })
 
-        await db
-            .update(featureRequests)
-            .set({ upvoteCount: sql`${featureRequests.upvoteCount} + 1` })
+        await syncUpvoteCount(id)
+
+        const [updated] = await db
+            .select({ upvoteCount: featureRequests.upvoteCount })
+            .from(featureRequests)
             .where(eq(featureRequests.id, id))
 
         return ok(
             c,
             {
-                upvoteCount: request.upvoteCount + 1,
+                upvoteCount: updated.upvoteCount,
                 hasUpvoted: true
             },
             t('api.featureRequestUpvoted')

@@ -37,7 +37,7 @@ const getFeatureRequests = async (c: AuthenticatedContext) => {
                 )
             )
 
-        const query = db
+        const rows = await db
             .select({
                 id: featureRequests.id,
                 title: featureRequests.title,
@@ -49,18 +49,15 @@ const getFeatureRequests = async (c: AuthenticatedContext) => {
                 upvoteId: featureUpvotes.id
             })
             .from(featureRequests)
-
-        if (userId) {
-            query.leftJoin(
+            .leftJoin(
                 featureUpvotes,
-                and(
-                    eq(featureUpvotes.featureRequestId, featureRequests.id),
-                    eq(featureUpvotes.userId, userId)
-                )
+                userId
+                    ? and(
+                        eq(featureUpvotes.featureRequestId, featureRequests.id),
+                        eq(featureUpvotes.userId, userId)
+                    )
+                    : sql`false`
             )
-        }
-
-        const rows = await query
             .where(statusFilter)
             .orderBy(statusOrder, secondaryOrder, desc(featureRequests.createdAt))
 

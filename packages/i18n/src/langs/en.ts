@@ -958,7 +958,7 @@ const en = {
             'Refactoring of the playground feature structure and simplifications',
         upcomingReleaseFeature8:
             'Feature requests automatically managed and published by OpenClaw agents',
-        release10Date: 'February 22, 2026',
+        release10Date: 'February 23, 2026',
         release10Title: 'Feature Requests & Bug Fixes',
         release10Description:
             'Community-driven feature requests now automatically managed by OpenClaw agents, plus fixes for skill installation and model provider switching.',
