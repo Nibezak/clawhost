@@ -1,5 +1,6 @@
 import ActionButton from '@/components/ActionButton'
 import BlogCard from '@/components/BlogCard'
+import BlogCTA from '@/components/BlogCTA'
 import ClawAvatar from '@/components/ClawAvatar'
 import ClawMascot from '@/components/ClawMascot'
 import ClawMascotOutline from '@/components/ClawMascotOutline'
@@ -29,6 +30,7 @@ import UserDropdown from '@/components/UserDropdown'
 export {
     ActionButton,
     BlogCard,
+    BlogCTA,
     ClawAvatar,
     ClawMascot,
     ClawMascotOutline,

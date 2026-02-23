@@ -24,7 +24,7 @@ const KNOWN_AGENT_STATUSES = new Set([
 const normalizeAgentStatus = (status: unknown): string => {
     const s = typeof status === 'string' ? status.toLowerCase() : ''
     if (KNOWN_AGENT_STATUSES.has(s)) return s
-    return 'running'
+    return 'unknown'
 }
 
 const getClawAgents = async (c: AuthenticatedContext) => {
@@ -60,7 +60,13 @@ const getClawAgents = async (c: AuthenticatedContext) => {
             let agents: ClawAgent[] = []
 
             try {
-                const config = JSON.parse(output.trim())
+                const trimmed = output.trim()
+                const jsonStart = trimmed.indexOf('{')
+                const jsonEnd = trimmed.lastIndexOf('}')
+                const jsonStr = jsonStart >= 0 && jsonEnd > jsonStart
+                    ? trimmed.substring(jsonStart, jsonEnd + 1)
+                    : '{}'
+                const config = JSON.parse(jsonStr)
                 const agentList = config?.agents?.list || []
                 const defaultModel =
                     config?.agents?.defaults?.model?.primary ||
@@ -76,7 +82,7 @@ const getClawAgents = async (c: AuthenticatedContext) => {
                                 typeof defaultModel === 'string'
                                     ? defaultModel
                                     : null,
-                            status: 'running',
+                            status: 'unknown',
                             directory: null
                         }
                     ]
@@ -104,7 +110,7 @@ const getClawAgents = async (c: AuthenticatedContext) => {
                         id: 'main',
                         name: 'main',
                         model: null,
-                        status: 'running',
+                        status: 'unknown',
                         directory: null
                     }
                 ]

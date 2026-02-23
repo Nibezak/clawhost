@@ -3,12 +3,13 @@ import type { FC, ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import {
+    BlogCard,
+    BlogCTA,
     Header,
     LandingFooter,
     PageBackground,
     PageTitle,
-    JsonLd,
-    BlogCard
+    JsonLd
 } from '@/components'
 import { allPosts } from '@/lib/blog'
 import { PATHS, getBaseDomain } from '@/lib'
@@ -62,6 +63,8 @@ const Blog: FC = (): ReactNode => {
                         </p>
                     </div>
                 )}
+
+                <BlogCTA />
             </motion.main>
 
             <LandingFooter />

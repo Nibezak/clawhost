@@ -12,6 +12,7 @@ const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
     agent,
     isActive,
     isLast,
+    isChecking,
     connectionState,
     onClick,
     onConfigure
@@ -49,13 +50,20 @@ const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
                     break
             }
         }
+        if (isChecking) {
+            return {
+                color: 'bg-blue-500',
+                label: t('dashboard.status.checking'),
+                pulse: true
+            }
+        }
         const agentStatus = getAgentStatusConfig(agent.status)
         return {
             color: agentStatus.color,
             label: agentStatus.label,
             pulse: agentStatus.pulse
         }
-    }, [connectionState, agent.status])
+    }, [connectionState, isChecking, agent.status])
 
     return (
         <div className='relative flex py-0.5'>

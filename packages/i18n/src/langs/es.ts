@@ -658,7 +658,8 @@ const es: Translations = {
             deleting: 'Eliminando',
             scheduledDeletion: 'Eliminación programada',
             awaitingPayment: 'Esperando pago',
-            unknown: 'Desconocido'
+            unknown: 'Desconocido',
+            checking: 'Verificando'
         }
     },
     chat: {
@@ -952,7 +953,7 @@ const es: Translations = {
             'Comparamos con SimpleClaw, MyClaw.ai y más — función por función.',
         readyToOwnYourPrivacy: '¿Listo para desplegar OpenClaw?',
         ctaDescription:
-            'Obtén un servidor dedicado con OpenClaw preinstalado. Acceso root completo, ubicaciones globales y listo en minutos. Es tuyo en todo momento.',
+            'Obtén un servidor dedicado con OpenClaw preinstalado. Acceso root completo, ubicaciones globales y listo en minutos. Es tuyo en todo momento. Desde $10.',
         deployOpenClawNow: 'Desplegar OpenClaw',
         selfHostInstead: 'Auto-hospedar en su lugar',
         noCreditCardRequired: 'Configuración instantánea',
@@ -974,7 +975,11 @@ const es: Translations = {
         backToBlog: 'Volver al blog',
         noPosts: 'Sin publicaciones aún',
         noPostsDescription:
-            'Las publicaciones del blog llegarán pronto. Vuelve más tarde.'
+            'Las publicaciones del blog llegarán pronto. Vuelve más tarde.',
+        ctaTitle: 'Despliega OpenClaw con un clic',
+        ctaDescription: 'Obtén un servidor dedicado con OpenClaw preinstalado. Acceso root completo, ubicaciones globales y listo en minutos. Es tuyo en todo momento. Desde $10.',
+        ctaDeploy: 'Desplegar OpenClaw',
+        ctaGitHub: 'Ver en GitHub'
     },
     changelog: {
         title: 'Historial de cambios',
@@ -1002,9 +1007,9 @@ const es: Translations = {
         upcomingReleaseFeature8:
             'Solicitudes de funciones gestionadas y publicadas automáticamente por los agentes de OpenClaw',
         release10Date: '22 de febrero de 2026',
-        release10Title: 'Solicitudes de funciones y correcciones de errores',
+        release10Title: 'Solicitudes de funciones, explorador de archivos y correcciones',
         release10Description:
-            'Las solicitudes de funciones de la comunidad ahora son gestionadas automáticamente por los agentes de OpenClaw, además de correcciones para la instalación de habilidades y el cambio de proveedor de modelo.',
+            'Solicitudes de funciones de la comunidad, soporte ampliado de edición de archivos y varias correcciones.',
         release10Feature1:
             'Solicitudes de funciones gestionadas y publicadas automáticamente por los agentes de OpenClaw',
         release10Feature2:
@@ -1013,6 +1018,8 @@ const es: Translations = {
             'Corrección del cambio de proveedor de modelo que no se reflejaba y seguía usando el modelo inicial',
         release10Feature4:
             'Varias mejoras y correcciones de errores en la plataforma',
+        release10Feature5:
+            'Los archivos TypeScript, Markdown y texto plano ahora son editables en el explorador de archivos',
         release9Date: '21 de febrero de 2026',
         release9Title: 'Comparaciones, refactorización del playground y más',
         release9Description:
@@ -1149,6 +1156,7 @@ const es: Translations = {
         tabInfo: 'Info',
         tabLogs: 'Registros',
         tabDiagnostics: 'Salud',
+        tabDisabledConfiguring: 'Disponible cuando la instancia termine de configurarse.',
         loadingTip1:
             '¿Sabías que puedes ejecutar múltiples agentes dentro de un solo OpenClaw?',
         loadingTip2: '¿Sabías que OpenClaw es de código abierto?',
@@ -1207,6 +1215,7 @@ const es: Translations = {
         variablesDeleteConfirm: 'Eliminar',
         variablesDontAskAgain: 'No volver a preguntar al eliminar variables en esta sesión',
         variablesDeleted: 'Variable eliminada.',
+        variablesOperationPending: 'Deshabilitado mientras se completa una operación anterior.',
         addAgentTitle: 'Agregar agente',
         addAgentDescription: 'Agrega un nuevo agente a {{clawName}}.',
         addAgentName: 'Nombre',

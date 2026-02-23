@@ -622,7 +622,8 @@ const en = {
             deleting: 'Deleting',
             scheduledDeletion: 'Deletion Scheduled',
             awaitingPayment: 'Awaiting Payment',
-            unknown: 'Unknown'
+            unknown: 'Unknown',
+            checking: 'Checking'
         }
     },
     chat: {
@@ -911,7 +912,7 @@ const en = {
             'We compare against SimpleClaw, MyClaw.ai and more — feature by feature.',
         readyToOwnYourPrivacy: 'Ready to deploy OpenClaw?',
         ctaDescription:
-            'Get a dedicated server with OpenClaw pre-installed. Full root access, global locations, and ready in minutes. You own it at all times.',
+            'Get a dedicated server with OpenClaw pre-installed. Full root access, global locations, and ready in minutes. You own it at all times. Starting from $10.',
         deployOpenClawNow: 'Deploy OpenClaw',
         selfHostInstead: 'Self Host Instead',
         noCreditCardRequired: 'Instant Setup',
@@ -932,7 +933,11 @@ const en = {
         writtenBy: 'By {{author}}',
         backToBlog: 'Back to Blog',
         noPosts: 'No Posts Yet',
-        noPostsDescription: 'Blog posts are coming soon. Check back later.'
+        noPostsDescription: 'Blog posts are coming soon. Check back later.',
+        ctaTitle: 'Deploy OpenClaw with One Click',
+        ctaDescription: 'Get a dedicated server with OpenClaw pre-installed. Full root access, global locations, and ready in minutes. You own it at all times. Starting from $10.',
+        ctaDeploy: 'Deploy OpenClaw',
+        ctaGitHub: 'View on GitHub'
     },
     changelog: {
         title: 'Changelog',
@@ -959,9 +964,9 @@ const en = {
         upcomingReleaseFeature8:
             'Feature requests automatically managed and published by OpenClaw agents',
         release10Date: 'February 23, 2026',
-        release10Title: 'Feature Requests & Bug Fixes',
+        release10Title: 'Feature Requests, File Explorer & Bug Fixes',
         release10Description:
-            'Community-driven feature requests now automatically managed by OpenClaw agents, plus fixes for skill installation and model provider switching.',
+            'Community-driven feature requests, expanded file editing support, and various bug fixes.',
         release10Feature1:
             'Feature requests automatically managed and published by OpenClaw agents',
         release10Feature2:
@@ -970,6 +975,8 @@ const en = {
             'Fixed model provider switching not reflecting and still using the initial model',
         release10Feature4:
             'Several improvements and bug fixes across the platform',
+        release10Feature5:
+            'TypeScript, Markdown, and plain text files are now editable in File Explorer',
         release9Date: 'February 21, 2026',
         release9Title: 'Comparisons, Playground Refactor & More',
         release9Description:
@@ -1101,6 +1108,7 @@ const en = {
         tabInfo: 'Info',
         tabLogs: 'Logs',
         tabDiagnostics: 'Health',
+        tabDisabledConfiguring: 'Available once the instance finishes configuring.',
         loadingTip1:
             'Did you know that you could run multiple agents within one OpenClaw?',
         loadingTip2: 'Did you know that OpenClaw is open-source?',
@@ -1157,6 +1165,7 @@ const en = {
         variablesDeleteConfirm: 'Delete',
         variablesDontAskAgain: "Don't ask again when deleting variables this session",
         variablesDeleted: 'Variable deleted.',
+        variablesOperationPending: 'Disabled while a previous operation completes.',
         addAgentTitle: 'Add Agent',
         addAgentDescription: 'Add a new agent to {{clawName}}.',
         addAgentName: 'Name',

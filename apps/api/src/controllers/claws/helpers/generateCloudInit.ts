@@ -26,6 +26,20 @@ export default function generateCloudInit(
             discord: {},
             slack: {},
             signal: { dmPolicy: 'open', allowFrom: ['*'] }
+        },
+        commands: {
+            restart: true,
+            bash: true
+        },
+        tools: {
+            profile: 'full',
+            elevated: { enabled: true }
+        },
+        browser: {
+            enabled: true,
+            executablePath: '/usr/bin/google-chrome-stable',
+            headless: true,
+            noSandbox: true
         }
     }
 
@@ -70,6 +84,10 @@ runcmd:
 
   - useradd -r -m -d /home/openclaw -s /bin/bash openclaw
   - echo 'openclaw ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/openclaw
+
+  - wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O /tmp/google-chrome.deb
+  - dpkg -i /tmp/google-chrome.deb || apt-get install -f -y
+  - rm -f /tmp/google-chrome.deb
 
   - mkdir -p /home/openclaw/.openclaw
   - mkdir -p /home/openclaw/.openclaw/agents/main/agent

@@ -14,9 +14,9 @@ const useAllClawAgents = (claws: Claw[]) => {
                 (claw.status === clawStatus.running ||
                     claw.status === clawStatus.unreachable) &&
                 !!claw.ip,
-            staleTime: 30000,
-            gcTime: 60000,
-            refetchInterval: 30000,
+            staleTime: 3000,
+            gcTime: 0,
+            refetchInterval: 3000,
             retry: 0
         }))
     })

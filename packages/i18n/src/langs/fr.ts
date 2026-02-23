@@ -674,7 +674,8 @@ const fr: Translations = {
             deleting: 'Suppression',
             scheduledDeletion: 'Suppression programmée',
             awaitingPayment: 'En attente de paiement',
-            unknown: 'Inconnu'
+            unknown: 'Inconnu',
+            checking: 'Vérification'
         }
     },
     chat: {
@@ -971,7 +972,7 @@ const fr: Translations = {
             'Nous comparons avec SimpleClaw, MyClaw.ai et plus — fonctionnalité par fonctionnalité.',
         readyToOwnYourPrivacy: 'Prêt à déployer OpenClaw ?',
         ctaDescription:
-            'Obtenez un serveur dédié avec OpenClaw préinstallé. Accès root complet, emplacements mondiaux et prêt en quelques minutes. Vous en êtes propriétaire à tout moment.',
+            'Obtenez un serveur dédié avec OpenClaw préinstallé. Accès root complet, emplacements mondiaux et prêt en quelques minutes. Vous en êtes propriétaire à tout moment. À partir de 10 $.',
         deployOpenClawNow: 'Déployer OpenClaw',
         selfHostInstead: 'Auto-héberger à la place',
         noCreditCardRequired: 'Installation instantanée',
@@ -993,7 +994,11 @@ const fr: Translations = {
         backToBlog: 'Retour au blog',
         noPosts: 'Aucun article',
         noPostsDescription:
-            'Les articles de blog arrivent bientôt. Revenez plus tard.'
+            'Les articles de blog arrivent bientôt. Revenez plus tard.',
+        ctaTitle: 'Déployez OpenClaw en un clic',
+        ctaDescription: 'Obtenez un serveur dédié avec OpenClaw préinstallé. Accès root complet, emplacements mondiaux et prêt en quelques minutes. Vous en êtes propriétaire à tout moment. À partir de 10 $.',
+        ctaDeploy: 'Déployer OpenClaw',
+        ctaGitHub: 'Voir sur GitHub'
     },
     changelog: {
         title: 'Journal des modifications',
@@ -1021,9 +1026,9 @@ const fr: Translations = {
         upcomingReleaseFeature8:
             'Demandes de fonctionnalités automatiquement gérées et publiées par les agents OpenClaw',
         release10Date: '22 février 2026',
-        release10Title: 'Demandes de fonctionnalités & Corrections de bugs',
+        release10Title: 'Demandes de fonctionnalités, explorateur de fichiers & corrections',
         release10Description:
-            "Les demandes de fonctionnalités communautaires sont désormais automatiquement gérées par les agents OpenClaw, ainsi que des corrections pour l'installation de compétences et le changement de fournisseur de modèle.",
+            'Demandes de fonctionnalités communautaires, support élargi de l\'édition de fichiers et diverses corrections.',
         release10Feature1:
             'Demandes de fonctionnalités automatiquement gérées et publiées par les agents OpenClaw',
         release10Feature2:
@@ -1032,6 +1037,8 @@ const fr: Translations = {
             'Correction du changement de fournisseur de modèle ne se reflétant pas et utilisant toujours le modèle initial',
         release10Feature4:
             'Plusieurs améliorations et corrections de bugs sur la plateforme',
+        release10Feature5:
+            'Les fichiers TypeScript, Markdown et texte brut sont maintenant modifiables dans l\'explorateur de fichiers',
         release9Date: '21 février 2026',
         release9Title: 'Comparaisons, refactorisation du playground & plus',
         release9Description:
@@ -1168,6 +1175,7 @@ const fr: Translations = {
         tabInfo: 'Info',
         tabLogs: 'Journaux',
         tabDiagnostics: 'Santé',
+        tabDisabledConfiguring: 'Disponible une fois la configuration de l\'instance terminée.',
         loadingTip1:
             "Saviez-vous que vous pouvez exécuter plusieurs agents au sein d'un même OpenClaw ?",
         loadingTip2: "Saviez-vous qu'OpenClaw est open source ?",
@@ -1229,6 +1237,7 @@ const fr: Translations = {
         variablesDeleteConfirm: 'Supprimer',
         variablesDontAskAgain: 'Ne plus demander lors de la suppression de variables cette session',
         variablesDeleted: 'Variable supprimée.',
+        variablesOperationPending: "Désactivé pendant qu'une opération précédente se termine.",
         addAgentTitle: 'Ajouter un agent',
         addAgentDescription: 'Ajouter un nouvel agent à {{clawName}}.',
         addAgentName: 'Nom',

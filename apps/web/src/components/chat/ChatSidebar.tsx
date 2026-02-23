@@ -122,6 +122,7 @@ const ChatSidebar: FC<ChatSidebarProps> = ({
                                                     agent={agent}
                                                     isActive={isActiveAgent}
                                                     isLast={false}
+                                                    isChecking={isLoading}
                                                     connectionState={
                                                         isActiveAgent
                                                             ? activeConnectionState

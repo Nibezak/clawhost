@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react'
 
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { Header, LandingFooter, PageBackground, PageTitle } from '@/components'
+import { BlogCTA, Header, LandingFooter, PageBackground, PageTitle } from '@/components'
 import { PATHS, getBaseDomain } from '@/lib'
 import { CheckIcon, CircleIcon } from '@phosphor-icons/react'
 
@@ -123,6 +123,12 @@ const Changelog: FC = (): ReactNode => {
                                     <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
                                     <span className='text-foreground text-sm'>
                                         {t('changelog.release10Feature3')}
+                                    </span>
+                                </li>
+                                <li className='flex items-center gap-3'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
+                                        {t('changelog.release10Feature5')}
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
@@ -657,6 +663,8 @@ const Changelog: FC = (): ReactNode => {
                         </div>
                     </motion.div>
                 </div>
+
+                <BlogCTA />
             </motion.main>
 
             <LandingFooter />

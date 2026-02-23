@@ -1103,6 +1103,7 @@ export interface ChatSidebarItemProps {
     agent: ClawAgent
     isActive: boolean
     isLast: boolean
+    isChecking: boolean
     connectionState?: GatewayConnectionState
     onClick: () => void
     onConfigure: () => void

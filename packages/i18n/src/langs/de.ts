@@ -666,7 +666,8 @@ const de: Translations = {
             deleting: 'Wird gelöscht',
             scheduledDeletion: 'Löschung geplant',
             awaitingPayment: 'Wartet auf Zahlung',
-            unknown: 'Unbekannt'
+            unknown: 'Unbekannt',
+            checking: 'Wird überprüft'
         }
     },
     chat: {
@@ -961,7 +962,7 @@ const de: Translations = {
             'Wir vergleichen mit SimpleClaw, MyClaw.ai und mehr — Funktion für Funktion.',
         readyToOwnYourPrivacy: 'Bereit, OpenClaw bereitzustellen?',
         ctaDescription:
-            'Erhalte einen dedizierten Server mit vorinstalliertem OpenClaw. Voller Root-Zugriff, globale Standorte und in Minuten bereit. Er gehört dir jederzeit.',
+            'Erhalte einen dedizierten Server mit vorinstalliertem OpenClaw. Voller Root-Zugriff, globale Standorte und in Minuten bereit. Er gehört dir jederzeit. Ab 10 $.',
         deployOpenClawNow: 'OpenClaw bereitstellen',
         selfHostInstead: 'Stattdessen selbst hosten',
         noCreditCardRequired: 'Sofortige Einrichtung',
@@ -983,7 +984,11 @@ const de: Translations = {
         backToBlog: 'Zurück zum Blog',
         noPosts: 'Noch keine Beiträge',
         noPostsDescription:
-            'Blogbeiträge kommen bald. Schau später noch einmal vorbei.'
+            'Blogbeiträge kommen bald. Schau später noch einmal vorbei.',
+        ctaTitle: 'Deploye OpenClaw mit einem Klick',
+        ctaDescription: 'Erhalte einen dedizierten Server mit vorinstalliertem OpenClaw. Voller Root-Zugriff, globale Standorte und in Minuten bereit. Er gehört dir jederzeit. Ab 10 $.',
+        ctaDeploy: 'OpenClaw deployen',
+        ctaGitHub: 'Auf GitHub ansehen'
     },
     changelog: {
         title: 'Änderungsprotokoll',
@@ -1011,9 +1016,9 @@ const de: Translations = {
         upcomingReleaseFeature8:
             'Feature-Anfragen automatisch verwaltet und veröffentlicht durch OpenClaw-Agenten',
         release10Date: '22. Februar 2026',
-        release10Title: 'Feature-Anfragen & Fehlerbehebungen',
+        release10Title: 'Feature-Anfragen, Datei-Explorer & Fehlerbehebungen',
         release10Description:
-            'Community-getriebene Feature-Anfragen werden jetzt automatisch von OpenClaw-Agenten verwaltet, plus Behebungen bei der Skill-Installation und beim Modellanbieterwechsel.',
+            'Community-getriebene Feature-Anfragen, erweiterte Dateibearbeitungsunterstützung und verschiedene Fehlerbehebungen.',
         release10Feature1:
             'Feature-Anfragen automatisch verwaltet und veröffentlicht durch OpenClaw-Agenten',
         release10Feature2:
@@ -1022,6 +1027,8 @@ const de: Translations = {
             'Behebung des Modellanbieterwechsels, der sich nicht auswirkte und weiterhin das ursprüngliche Modell verwendete',
         release10Feature4:
             'Mehrere Verbesserungen und Fehlerbehebungen auf der Plattform',
+        release10Feature5:
+            'TypeScript-, Markdown- und Textdateien sind jetzt im Datei-Explorer bearbeitbar',
         release9Date: '21. Februar 2026',
         release9Title: 'Vergleiche, Playground-Refactoring & Mehr',
         release9Description:
@@ -1155,6 +1162,7 @@ const de: Translations = {
         tabInfo: 'Info',
         tabLogs: 'Logs',
         tabDiagnostics: 'Zustand',
+        tabDisabledConfiguring: 'Verfügbar, sobald die Instanz fertig konfiguriert ist.',
         loadingTip1:
             'Wusstest du, dass du mehrere Agenten in einem OpenClaw betreiben kannst?',
         loadingTip2: 'Wusstest du, dass OpenClaw Open Source ist?',
@@ -1214,6 +1222,7 @@ const de: Translations = {
         variablesDeleteConfirm: 'Löschen',
         variablesDontAskAgain: 'Beim Löschen von Variablen in dieser Sitzung nicht mehr fragen',
         variablesDeleted: 'Variable gelöscht.',
+        variablesOperationPending: 'Deaktiviert, bis ein vorheriger Vorgang abgeschlossen ist.',
         addAgentTitle: 'Agent hinzufügen',
         addAgentDescription: 'Füge einen neuen Agenten zu {{clawName}} hinzu.',
         addAgentName: 'Name',

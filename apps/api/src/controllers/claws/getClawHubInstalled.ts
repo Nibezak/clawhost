@@ -76,7 +76,15 @@ const getClawHubInstalled = async (c: AuthenticatedContext) => {
 
             let skills: ClawHubInstalledSkill[] = []
             try {
-                const parsed = JSON.parse(output.trim())
+                const trimmed = output.trim()
+                const arrStart = trimmed.indexOf('[')
+                const objStart = trimmed.indexOf('{')
+                const start = arrStart >= 0 && (objStart < 0 || arrStart < objStart) ? arrStart : objStart
+                const end = start === arrStart ? trimmed.lastIndexOf(']') : trimmed.lastIndexOf('}')
+                const jsonStr = start >= 0 && end > start
+                    ? trimmed.substring(start, end + 1)
+                    : '[]'
+                const parsed = JSON.parse(jsonStr)
                 const rawItems: Record<string, unknown>[] = Array.isArray(
                     parsed
                 )

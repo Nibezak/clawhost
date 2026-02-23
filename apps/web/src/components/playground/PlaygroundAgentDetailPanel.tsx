@@ -869,7 +869,7 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
                         <DialogTitle>
                             {t('playground.deleteAgentTitle')}
                         </DialogTitle>
-                        <DialogDescription>
+                        <DialogDescription className='w-[90%]'>
                             {t('playground.deleteAgentDescription', {
                                 agentName: agent.name
                             })}

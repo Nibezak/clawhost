@@ -40,14 +40,15 @@ import {
     DropdownMenuItem
 } from '@/components/ui'
 import {
+    ActionButton,
+    BlogCTA,
     EmptyState,
     ErrorState,
     Header,
     LandingFooter,
     PageBackground,
     PageTitle,
-    PageHeader,
-    ActionButton
+    PageHeader
 } from '@/components'
 import {
     ArrowFatUpIcon,
@@ -805,6 +806,8 @@ const FeatureRequests: FC = (): ReactNode => {
                         </div>
                     </DialogContent>
                 </Dialog>
+
+                <BlogCTA />
             </motion.main>
             <LandingFooter />
         </div>

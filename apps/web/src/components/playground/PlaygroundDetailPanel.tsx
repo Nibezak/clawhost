@@ -90,6 +90,15 @@ const tabs: PlaygroundTabConfig<PlaygroundDetailTab>[] = [
     }
 ]
 
+const CONFIGURING_DISABLED_TABS: PlaygroundDetailTab[] = [
+    CLAW_DETAIL_TABS.CHANNELS,
+    CLAW_DETAIL_TABS.VERSIONS,
+    CLAW_DETAIL_TABS.VARIABLES,
+    CLAW_DETAIL_TABS.SKILLS,
+    CLAW_DETAIL_TABS.LOGS,
+    CLAW_DETAIL_TABS.DIAGNOSTICS
+]
+
 const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
     claw,
     plans,
@@ -100,21 +109,39 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
     onTabChange,
     fullScreen
 }): ReactNode => {
+    const isConfiguring = claw.status === clawStatus.configuring
+    const isTabDisabled = useCallback(
+        (tabId: PlaygroundDetailTab) =>
+            isConfiguring && CONFIGURING_DISABLED_TABS.includes(tabId),
+        [isConfiguring]
+    )
     const activeTab = tabStateMap[claw.id] || CLAW_DETAIL_TABS.INFO
     const setActiveTab = useCallback(
         (tab: PlaygroundDetailTab) => {
+            if (isConfiguring && CONFIGURING_DISABLED_TABS.includes(tab)) return
             tabStateMap[claw.id] = tab
             setRenderKey((k) => k + 1)
             if (onTabChange) onTabChange(tab)
         },
-        [claw.id, onTabChange]
+        [claw.id, onTabChange, isConfiguring]
     )
     useEffect(() => {
         if (initialTab && initialTab !== tabStateMap[claw.id]) {
-            tabStateMap[claw.id] = initialTab
+            const safeTab =
+                isConfiguring && CONFIGURING_DISABLED_TABS.includes(initialTab)
+                    ? CLAW_DETAIL_TABS.INFO
+                    : initialTab
+            tabStateMap[claw.id] = safeTab
             setRenderKey((k) => k + 1)
         }
-    }, [initialTab, claw.id])
+    }, [initialTab, claw.id, isConfiguring])
+    useEffect(() => {
+        if (isConfiguring && CONFIGURING_DISABLED_TABS.includes(activeTab)) {
+            tabStateMap[claw.id] = CLAW_DETAIL_TABS.INFO
+            setRenderKey((k) => k + 1)
+            if (onTabChange) onTabChange(CLAW_DETAIL_TABS.INFO)
+        }
+    }, [isConfiguring, activeTab, claw.id, onTabChange])
     const [, setRenderKey] = useState(0)
     const [settingsName, setSettingsName] = useState(claw.name)
     const [settingsNameError, setSettingsNameError] = useState('')
@@ -323,20 +350,39 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                 <div
                     className={`border-border flex border-b ${fullScreen ? '' : 'overflow-x-auto'}`}
                 >
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
-                            className={`flex items-center justify-center gap-1.5 border-b-2 px-3 py-2 text-xs font-medium transition-colors ${fullScreen ? 'flex-1' : 'shrink-0'} ${
-                                activeTab === tab.id
-                                    ? 'text-foreground border-[#ef5350]'
-                                    : 'text-muted-foreground hover:text-foreground/80 border-transparent'
-                            }`}
-                        >
-                            <tab.icon className='h-3.5 w-3.5' />
-                            {t(tab.label as TranslationKey)}
-                        </button>
-                    ))}
+                    {tabs.map((tab) => {
+                        const disabled = isTabDisabled(tab.id)
+                        const tabButton = (
+                            <button
+                                key={tab.id}
+                                onClick={() => !disabled && setActiveTab(tab.id)}
+                                disabled={disabled}
+                                className={`flex items-center justify-center gap-1.5 border-b-2 px-3 py-2 text-xs font-medium transition-colors ${fullScreen ? 'flex-1' : 'shrink-0'} ${
+                                    disabled
+                                        ? 'text-muted-foreground/40 cursor-not-allowed border-transparent'
+                                        : activeTab === tab.id
+                                            ? 'text-foreground border-[#ef5350]'
+                                            : 'text-muted-foreground hover:text-foreground/80 border-transparent'
+                                }`}
+                            >
+                                <tab.icon className='h-3.5 w-3.5' />
+                                {t(tab.label as TranslationKey)}
+                            </button>
+                        )
+                        if (disabled) {
+                            return (
+                                <Tooltip key={tab.id}>
+                                    <TooltipTrigger asChild>
+                                        {tabButton}
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        {t('playground.tabDisabledConfiguring')}
+                                    </TooltipContent>
+                                </Tooltip>
+                            )
+                        }
+                        return tabButton
+                    })}
                 </div>
 
                 <div className='flex min-h-0 flex-1 flex-col overflow-hidden'>

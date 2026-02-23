@@ -47,6 +47,17 @@ const deleteClawAgent = async (c: AuthenticatedContext) => {
                 config = {}
             }
 
+            const commands = (config.commands || {}) as Record<string, unknown>
+            commands.restart = true
+            commands.bash = true
+            config.commands = commands
+
+            const tools = (config.tools || {}) as Record<string, unknown>
+            if (!tools.elevated) {
+                tools.elevated = { enabled: true }
+            }
+            config.tools = tools
+
             if (!config.agents) {
                 return fail(c, t('api.agentDeleteFailed'), 404)
             }

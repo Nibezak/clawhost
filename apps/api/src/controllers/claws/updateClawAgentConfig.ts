@@ -43,9 +43,37 @@ const updateClawAgentConfig = async (c: AuthenticatedContext) => {
 
             let config: Record<string, unknown> = {}
             try {
-                config = JSON.parse(configOutput)
+                const jsonStart = configOutput.indexOf('{')
+                const jsonEnd = configOutput.lastIndexOf('}')
+                const jsonStr = jsonStart >= 0 && jsonEnd > jsonStart
+                    ? configOutput.substring(jsonStart, jsonEnd + 1)
+                    : '{}'
+                config = JSON.parse(jsonStr)
             } catch {
                 config = {}
+            }
+
+            const commands = (config.commands || {}) as Record<string, unknown>
+            commands.restart = true
+            commands.bash = true
+            config.commands = commands
+
+            const tools = (config.tools || {}) as Record<string, unknown>
+            if (!tools.profile) {
+                tools.profile = 'full'
+            }
+            if (!tools.elevated) {
+                tools.elevated = { enabled: true }
+            }
+            config.tools = tools
+
+            if (!config.browser) {
+                config.browser = {
+                    enabled: true,
+                    executablePath: '/usr/bin/google-chrome-stable',
+                    headless: true,
+                    noSandbox: true
+                }
             }
 
             if (!config.agents) {
@@ -81,19 +109,31 @@ const updateClawAgentConfig = async (c: AuthenticatedContext) => {
                 }
             }
 
+            const validModel = body.model && /^[a-zA-Z0-9_-]+\/[a-zA-Z0-9._-]+$/.test(body.model)
+                ? body.model
+                : undefined
+
             if (agentIndex >= 0) {
                 if (body.name !== undefined) {
                     agentList[agentIndex].name = body.name
                 }
-                if (body.model !== undefined) {
-                    agentList[agentIndex].model = body.model
+                if (validModel) {
+                    agentList[agentIndex].model = validModel
                 }
             } else {
-                agentList.push({
+                const newAgent: Record<string, unknown> = {
                     id: body.agentId,
-                    name: body.agentId,
-                    model: body.model
-                })
+                    name: body.agentId
+                }
+                if (validModel) {
+                    newAgent.model = validModel
+                }
+                agentList.push(newAgent)
+            }
+
+            if (validModel) {
+                const defaults = agents.defaults as Record<string, unknown>
+                defaults.model = { primary: validModel }
             }
 
             agentList.forEach((a) => {
@@ -149,7 +189,7 @@ const updateClawAgentConfig = async (c: AuthenticatedContext) => {
             await executeSSH(
                 claw.ip,
                 claw.rootPassword,
-                `(su - openclaw -c "openclaw doctor --fix" || true) && ${writeCommand} && systemctl restart openclaw-gateway`,
+                `${writeCommand} && (su - openclaw -c "openclaw doctor --fix" || true) && systemctl restart openclaw-gateway`,
                 20000
             )
 

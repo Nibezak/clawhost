@@ -77,6 +77,7 @@ export type ClawFileType =
     | 'json'
     | 'markdown'
     | 'javascript'
+    | 'typescript'
     | 'yaml'
     | 'text'
     | 'unknown'
