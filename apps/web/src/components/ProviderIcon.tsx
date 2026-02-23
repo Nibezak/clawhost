@@ -1,11 +1,13 @@
 import type { FC, ReactNode } from 'react'
 import type { ProviderIconProps } from '@/ts/Interfaces'
 
+import { clawProvider } from '@openclaw/shared'
+
 const ProviderIcon: FC<ProviderIconProps> = ({
     provider,
     className
 }): ReactNode => {
-    if (provider === 'hetzner') {
+    if (provider === clawProvider.hetzner) {
         return (
             <svg
                 className={className || 'h-4 w-4'}
@@ -21,7 +23,7 @@ const ProviderIcon: FC<ProviderIconProps> = ({
         )
     }
 
-    if (provider === 'digitalocean') {
+    if (provider === clawProvider.digitalocean) {
         return (
             <svg
                 className={className || 'h-4 w-4'}
@@ -36,7 +38,7 @@ const ProviderIcon: FC<ProviderIconProps> = ({
         )
     }
 
-    if (provider === 'vultr') {
+    if (provider === clawProvider.vultr) {
         return (
             <svg
                 className={className || 'h-4 w-4'}
@@ -52,14 +54,14 @@ const ProviderIcon: FC<ProviderIconProps> = ({
         )
     }
 
-    if (provider === 'local') {
+    if (provider === clawProvider.local) {
         return (
             <svg
                 className={className || 'h-4 w-4'}
                 viewBox='0 0 24 24'
                 fill='none'
             >
-                <rect width='24' height='24' rx='12' fill='#6366f1' />
+                <rect width='24' height='24' rx='12' fill='#ef5350' />
                 <path
                     d='M7 8h10v6H7zM9 14v2M15 14v2M6 16h12'
                     stroke='white'

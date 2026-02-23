@@ -39,6 +39,10 @@ const BlogCard: FC<BlogCardProps> = ({ post }): ReactNode => {
             </div>
 
             <div className='flex flex-1 flex-col p-5'>
+                <h2 className='font-clash group-hover:text-primary text-foreground mb-2 text-lg font-semibold transition'>
+                    {post.title}
+                </h2>
+
                 <div className='mb-3 flex flex-wrap gap-2'>
                     {post.tags.map((tag) => (
                         <span
@@ -50,20 +54,19 @@ const BlogCard: FC<BlogCardProps> = ({ post }): ReactNode => {
                     ))}
                 </div>
 
-                <h2 className='font-clash group-hover:text-primary text-foreground mb-2 text-lg font-semibold transition'>
-                    {post.title}
-                </h2>
-
                 <p className='text-muted-foreground mb-4 line-clamp-2 flex-1 text-sm leading-relaxed'>
                     {post.description}
                 </p>
 
                 <div className='flex items-center justify-between'>
                     <div className='text-muted-foreground flex items-center gap-3 text-xs'>
-                        <span className='flex items-center gap-1.5'>
+                        <time
+                            dateTime={post.publishedAt}
+                            className='flex items-center gap-1.5'
+                        >
                             <CalendarBlankIcon className='h-3.5 w-3.5' />
                             {formattedDate}
-                        </span>
+                        </time>
                         <span className='flex items-center gap-1.5'>
                             <ClockIcon className='h-3.5 w-3.5' />
                             {t('blog.readingTime', {

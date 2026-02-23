@@ -9,6 +9,7 @@ const getFileType = (name: string): ClawFileType => {
     if (name.endsWith('.json') || name.endsWith('.jsonb')) return 'json'
     if (name.endsWith('.md')) return 'markdown'
     if (name.endsWith('.js')) return 'javascript'
+    if (name.endsWith('.ts') || name.endsWith('.tsx')) return 'typescript'
     if (name.endsWith('.yml') || name.endsWith('.yaml')) return 'yaml'
     if (!name.includes('.')) return 'text'
     return 'unknown'

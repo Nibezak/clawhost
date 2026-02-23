@@ -89,7 +89,13 @@ const updateClawChannels = async (c: AuthenticatedContext) => {
 
             let config: Record<string, unknown> = {}
             try {
-                config = JSON.parse(output.trim())
+                const trimmed = output.trim()
+                const jsonStart = trimmed.indexOf('{')
+                const jsonEnd = trimmed.lastIndexOf('}')
+                const jsonStr = jsonStart >= 0 && jsonEnd > jsonStart
+                    ? trimmed.substring(jsonStart, jsonEnd + 1)
+                    : '{}'
+                config = JSON.parse(jsonStr)
             } catch {
                 config = {}
             }

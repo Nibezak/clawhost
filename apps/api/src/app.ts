@@ -18,6 +18,7 @@ import {
     usersRoutes,
     webhooksRoutes
 } from '@/routes'
+import { browseSkills } from '@/services/clawhub'
 
 const app = new Hono<HonoEnv>()
 
@@ -56,6 +57,19 @@ app.route('/plans', plansRoutes)
 app.route('/webhooks', webhooksRoutes)
 app.route('/feature-requests', featureRequestsRoutes)
 
+app.get('/clawhub/skills', async (c) => {
+    try {
+        const result = await browseSkills({
+            query: c.req.query('query') || undefined,
+            limit: c.req.query('limit') ? Number(c.req.query('limit')) : undefined,
+            cursor: c.req.query('cursor') || undefined
+        })
+        return ok(c, { skills: result.skills, nextCursor: result.nextCursor, hasMore: result.hasMore }, t('api.clawHubSearchSuccess'))
+    } catch {
+        return fail(c, t('api.clawHubSearchFailed'), 500)
+    }
+})
+
 app.use('/*', async (c, next) => {
     try {
         const authHeader = c.req.header('Authorization')
@@ -71,9 +85,12 @@ app.use('/*', async (c, next) => {
         }
 
         const signInProvider = decoded.firebase?.sign_in_provider
-        const authMethod = signInProvider === 'google.com' ? 'google'
-            : signInProvider === 'github.com' ? 'github'
-            : 'email'
+        const authMethod =
+            signInProvider === 'google.com'
+                ? 'google'
+                : signInProvider === 'github.com'
+                  ? 'github'
+                  : 'email'
 
         const existingUser = await db
             .select({ id: users.id })

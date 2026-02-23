@@ -3,7 +3,7 @@ import type {
     GatewayEventHandler,
     GatewayStateListener
 } from '@/ts/Types'
-import type { GatewayPendingRequest } from '@/ts/Interfaces'
+import type { ElectronWindow, GatewayPendingRequest } from '@/ts/Interfaces'
 
 import { getBaseDomain } from '@/lib'
 
@@ -59,9 +59,12 @@ class GatewayClient {
         this.setState('connecting')
 
         let url: string
+        const electronAPI = (window as unknown as ElectronWindow).electronAPI
         if (this.subdomain.startsWith('local:')) {
             const port = this.subdomain.split(':')[1]
             url = `ws://localhost:${port}/`
+        } else if (electronAPI?.isDesktop) {
+            url = `wss://${this.subdomain}.clawhost/`
         } else {
             const domain = getBaseDomain()
             url = `wss://${this.subdomain}.${domain}/`

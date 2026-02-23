@@ -45,6 +45,8 @@ import pairWhatsApp from '@/controllers/claws/pairWhatsApp'
 import pairWhatsAppStatus from '@/controllers/claws/pairWhatsAppStatus'
 import getClawBindings from '@/controllers/claws/getClawBindings'
 import updateClawBindings from '@/controllers/claws/updateClawBindings'
+import getClawCredentials from '@/controllers/claws/getClawCredentials'
+import cancelPendingClaw from '@/controllers/claws/cancelPendingClaw'
 
 export {
     getClaws,
@@ -93,5 +95,7 @@ export {
     pairWhatsApp,
     pairWhatsAppStatus,
     getClawBindings,
-    updateClawBindings
+    updateClawBindings,
+    getClawCredentials,
+    cancelPendingClaw
 }

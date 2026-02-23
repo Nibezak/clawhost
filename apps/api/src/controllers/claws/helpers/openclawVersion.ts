@@ -1,3 +1,3 @@
-const OPENCLAW_VERSION = '2026.2.13'
+import { OPENCLAW_VERSION } from '@openclaw/shared'
 
 export default OPENCLAW_VERSION

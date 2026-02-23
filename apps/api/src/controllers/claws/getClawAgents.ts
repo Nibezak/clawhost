@@ -10,6 +10,23 @@ import { findUserClaw } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
+const KNOWN_AGENT_STATUSES = new Set([
+    'running',
+    'stopped',
+    'idle',
+    'off',
+    'error',
+    'crashed',
+    'starting',
+    'stopping'
+])
+
+const normalizeAgentStatus = (status: unknown): string => {
+    const s = typeof status === 'string' ? status.toLowerCase() : ''
+    if (KNOWN_AGENT_STATUSES.has(s)) return s
+    return 'unknown'
+}
+
 const getClawAgents = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
@@ -43,7 +60,13 @@ const getClawAgents = async (c: AuthenticatedContext) => {
             let agents: ClawAgent[] = []
 
             try {
-                const config = JSON.parse(output.trim())
+                const trimmed = output.trim()
+                const jsonStart = trimmed.indexOf('{')
+                const jsonEnd = trimmed.lastIndexOf('}')
+                const jsonStr = jsonStart >= 0 && jsonEnd > jsonStart
+                    ? trimmed.substring(jsonStart, jsonEnd + 1)
+                    : '{}'
+                const config = JSON.parse(jsonStr)
                 const agentList = config?.agents?.list || []
                 const defaultModel =
                     config?.agents?.defaults?.model?.primary ||
@@ -59,7 +82,7 @@ const getClawAgents = async (c: AuthenticatedContext) => {
                                 typeof defaultModel === 'string'
                                     ? defaultModel
                                     : null,
-                            status: 'running',
+                            status: 'unknown',
                             directory: null
                         }
                     ]
@@ -73,7 +96,7 @@ const getClawAgents = async (c: AuthenticatedContext) => {
                                 `Agent ${index + 1}`,
                             model:
                                 (agent.model as string) || defaultModel || null,
-                            status: (agent.status as string) || 'running',
+                            status: normalizeAgentStatus(agent.status),
                             directory:
                                 (agent.workspace as string) ||
                                 (agent.directory as string) ||
@@ -87,7 +110,7 @@ const getClawAgents = async (c: AuthenticatedContext) => {
                         id: 'main',
                         name: 'main',
                         model: null,
-                        status: 'running',
+                        status: 'unknown',
                         directory: null
                     }
                 ]

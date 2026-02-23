@@ -1,4 +1,4 @@
-import { execSync, execFile } from 'child_process'
+import { execFile } from 'child_process'
 import fs from 'fs'
 import path from 'path'
 import configStore from '@/main/services/configStore'
@@ -6,8 +6,9 @@ import nodeBinary from '@/main/services/nodeBinary'
 
 interface VersionEntry {
     version: string
+    publishedAt: string
+    downloads: number
     installed: boolean
-    date: string | null
 }
 
 const listInstalled = (): string[] => {
@@ -63,44 +64,89 @@ const installVersion = (version: string): Promise<void> => {
     })
 }
 
-const getAvailableVersions = async (): Promise<VersionEntry[]> => {
-    try {
+const getAvailableVersions = (): Promise<VersionEntry[]> => {
+    return new Promise((resolve) => {
         const nodePath = nodeBinary.getNodeBinaryPath()
-        const output = execSync(
-            `${nodePath} -e "fetch('https://registry.npmjs.org/openclaw').then(r=>r.json()).then(d=>{const versions=Object.keys(d.versions).reverse();const times=d.time||{};console.log(JSON.stringify(versions.map(v=>({version:v,date:times[v]||null}))))})"`,
-            { encoding: 'utf-8', timeout: 15000 }
+        const script = [
+            'Promise.all([',
+            "fetch('https://registry.npmjs.org/openclaw').then(r=>r.json()),",
+            "fetch('https://api.npmjs.org/versions/openclaw/last-week').then(r=>r.json()).catch(()=>({downloads:{}}))",
+            ']).then(([registry,dl])=>{',
+            'const times=registry.time||{};',
+            'const downloads=dl.downloads||{};',
+            'const versions=Object.entries(times)',
+            '.filter(([k])=>k!=="created"&&k!=="modified")',
+            '.map(([v,t])=>({version:v,publishedAt:t,downloads:downloads[v]||0}))',
+            '.sort((a,b)=>new Date(b.publishedAt)-new Date(a.publishedAt));',
+            'console.log(JSON.stringify(versions))',
+            '})'
+        ].join('')
+
+        execFile(
+            nodePath,
+            ['-e', script],
+            { encoding: 'utf-8', timeout: 15000 },
+            (error, stdout) => {
+                if (error || !stdout.trim()) {
+                    const installed = listInstalled()
+                    resolve(
+                        installed.map((v) => ({
+                            version: v,
+                            publishedAt: new Date().toISOString(),
+                            downloads: 0,
+                            installed: true
+                        }))
+                    )
+                    return
+                }
+                try {
+                    const versions = JSON.parse(stdout.trim()) as Array<{
+                        version: string
+                        publishedAt: string
+                        downloads: number
+                    }>
+                    const installed = new Set(listInstalled())
+                    resolve(
+                        versions.map((v) => ({
+                            ...v,
+                            installed: installed.has(v.version)
+                        }))
+                    )
+                } catch {
+                    const installed = listInstalled()
+                    resolve(
+                        installed.map((v) => ({
+                            version: v,
+                            publishedAt: new Date().toISOString(),
+                            downloads: 0,
+                            installed: true
+                        }))
+                    )
+                }
+            }
         )
-        const versions = JSON.parse(output.trim()) as Array<{
-            version: string
-            date: string | null
-        }>
-        const installed = new Set(listInstalled())
-        return versions.map((v) => ({
-            version: v.version,
-            installed: installed.has(v.version),
-            date: v.date
-        }))
-    } catch {
-        const installed = listInstalled()
-        return installed.map((v) => ({
-            version: v,
-            installed: true,
-            date: null
-        }))
-    }
+    })
 }
 
-const getLatestVersion = async (): Promise<string | null> => {
-    try {
+const getLatestVersion = (): Promise<string | null> => {
+    return new Promise((resolve) => {
         const nodePath = nodeBinary.getNodeBinaryPath()
-        const output = execSync(
-            `${nodePath} -e "fetch('https://registry.npmjs.org/openclaw/latest').then(r=>r.json()).then(d=>console.log(d.version))"`,
-            { encoding: 'utf-8', timeout: 10000 }
+        const script =
+            "fetch('https://registry.npmjs.org/openclaw/latest').then(r=>r.json()).then(d=>console.log(d.version))"
+
+        execFile(
+            nodePath,
+            ['-e', script],
+            { encoding: 'utf-8', timeout: 10000 },
+            (error, stdout) => {
+                if (error || !stdout.trim()) {
+                    resolve(null)
+                    return
+                }
+                resolve(stdout.trim())
+            }
         )
-        return output.trim()
-    } catch {
-        return null
-    }
+    })
 }
 
 const getVersionBinaryPath = (version: string): string => {

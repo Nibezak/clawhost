@@ -114,7 +114,8 @@ const staticPages: { path: string; meta: PrerenderMeta }[] = [
         path: '/',
         meta: {
             title: 'Deploy OpenClaw. One click. Done.',
-            description: 'Deploy OpenClaw on your own VPS with one click. Self-hostable cloud hosting with full root access, global locations, and transparent pricing.',
+            description:
+                'Deploy OpenClaw on your own VPS with one click. Self-hostable cloud hosting with full root access, global locations, and transparent pricing.',
             url: SITE_URL,
             type: 'website',
             image: `${SITE_URL}/og-image.webp`,
@@ -130,7 +131,8 @@ const staticPages: { path: string; meta: PrerenderMeta }[] = [
         path: PATHS.CHANGELOG,
         meta: {
             title: 'Changelog',
-            description: 'Track updates, new features, and improvements to ClawHost.',
+            description:
+                'Track updates, new features, and improvements to ClawHost.',
             url: `${SITE_URL}/${PATHS.CHANGELOG}`,
             type: 'website',
             image: `${SITE_URL}/og-image.webp`
@@ -140,7 +142,8 @@ const staticPages: { path: string; meta: PrerenderMeta }[] = [
         path: PATHS.COMPARE,
         meta: {
             title: 'Full Comparison',
-            description: 'See how ClawHost compares to other OpenClaw hosting platforms.',
+            description:
+                'See how ClawHost compares to other OpenClaw hosting platforms.',
             url: `${SITE_URL}/${PATHS.COMPARE}`,
             type: 'website',
             image: `${SITE_URL}/og-image.webp`
@@ -150,7 +153,8 @@ const staticPages: { path: string; meta: PrerenderMeta }[] = [
         path: PATHS.TERMS,
         meta: {
             title: 'Terms of Service',
-            description: 'Read the terms and conditions for using ClawHost services.',
+            description:
+                'Read the terms and conditions for using ClawHost services.',
             url: `${SITE_URL}/${PATHS.TERMS}`,
             type: 'website',
             image: `${SITE_URL}/og-image.webp`
@@ -160,7 +164,8 @@ const staticPages: { path: string; meta: PrerenderMeta }[] = [
         path: PATHS.PRIVACY,
         meta: {
             title: 'Privacy Policy',
-            description: 'Learn how ClawHost collects, uses, and protects your personal data.',
+            description:
+                'Learn how ClawHost collects, uses, and protects your personal data.',
             url: `${SITE_URL}/${PATHS.PRIVACY}`,
             type: 'website',
             image: `${SITE_URL}/og-image.webp`
@@ -253,4 +258,6 @@ for (const post of posts) {
     fs.writeFileSync(path.join(dir, 'index.html'), postHtml)
 }
 
-console.log(`Pre-rendered ${staticPages.length} static pages, blog listing, and ${posts.length} blog posts.`)
+console.log(
+    `Pre-rendered ${staticPages.length} static pages, blog listing, and ${posts.length} blog posts.`
+)

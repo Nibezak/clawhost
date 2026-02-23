@@ -23,6 +23,13 @@ const useDeleteClaw = () => {
                         c.id === id ? { ...c, ...response.claw } : c
                     )
                 )
+            } else {
+                queryClient.setQueryData<Claw[]>(CLAWS_QUERY_KEY, (old) =>
+                    old?.filter((c) => c.id !== id)
+                )
+                queryClient.setQueryData<Claw[]>(ADMIN_CLAWS_QUERY_KEY, (old) =>
+                    old?.filter((c) => c.id !== id)
+                )
             }
             queryClient.invalidateQueries({ queryKey: USER_STATS_QUERY_KEY })
         }

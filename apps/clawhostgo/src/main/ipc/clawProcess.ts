@@ -1,7 +1,39 @@
 import type { IpcMainInvokeEvent } from 'electron'
 
 import { ipcMain } from 'electron'
+import fs from 'fs'
+import path from 'path'
+import os from 'os'
+import { clawProvider, clawStatus } from '@openclaw/shared'
 import { configStore, processManager } from '@/main/services'
+
+const ensureClawConfig = (clawDir: string): void => {
+    const configPath = path.join(clawDir, 'openclaw.json')
+    if (!fs.existsSync(configPath)) return
+    try {
+        const raw = fs.readFileSync(configPath, 'utf-8')
+        const config = JSON.parse(raw)
+        if (!config.gateway?.controlUi?.dangerouslyDisableDeviceAuth) {
+            if (!config.gateway) config.gateway = {}
+            if (!config.gateway.controlUi) config.gateway.controlUi = {}
+            config.gateway.controlUi.dangerouslyDisableDeviceAuth = true
+            config.gateway.controlUi.allowInsecureAuth = true
+            fs.writeFileSync(configPath, JSON.stringify(config, null, 4))
+        }
+    } catch {}
+}
+
+const getDeviceIp = (): string => {
+    const interfaces = os.networkInterfaces()
+    for (const name of Object.keys(interfaces)) {
+        for (const iface of interfaces[name] || []) {
+            if (iface.family === 'IPv4' && !iface.internal) {
+                return iface.address
+            }
+        }
+    }
+    return '127.0.0.1'
+}
 
 const registerClawProcessHandlers = (): void => {
     ipcMain.handle(
@@ -12,31 +44,38 @@ const registerClawProcessHandlers = (): void => {
 
             if (!claw.version) {
                 throw new Error(
-                    'No OpenClaw version assigned to this claw. Install a version first.'
+                    'No OpenClaw version installed. Go to the Versions tab and install one first.'
                 )
             }
 
             const clawDir = configStore.getClawDir(claw.name)
-            await processManager.startGateway(
-                claw.id,
-                clawDir,
-                claw.port,
-                claw.version,
-                claw.gatewayToken
-            )
+            ensureClawConfig(clawDir)
+            try {
+                await processManager.startGateway(
+                    claw.id,
+                    clawDir,
+                    claw.port,
+                    claw.version,
+                    claw.gatewayToken
+                )
+            } catch (err) {
+                throw new Error(
+                    err instanceof Error ? err.message : 'Failed to start claw.'
+                )
+            }
 
             return {
                 id: claw.id,
                 name: claw.name,
-                provider: 'local',
-                status: 'running',
-                ip: 'localhost',
-                planId: 'local',
-                location: 'local',
+                provider: clawProvider.local,
+                status: clawStatus.running,
+                ip: getDeviceIp(),
+                planId: clawProvider.local,
+                location: clawProvider.local,
                 rootPassword: null,
                 sshKeyId: null,
                 providerServerId: null,
-                subdomain: `local:${claw.port}`,
+                subdomain: claw.subdomain,
                 gatewayToken: claw.gatewayToken,
                 subscriptionStatus: null,
                 currentPeriodStart: null,
@@ -61,15 +100,15 @@ const registerClawProcessHandlers = (): void => {
             return {
                 id: claw.id,
                 name: claw.name,
-                provider: 'local',
-                status: 'stopped',
-                ip: 'localhost',
-                planId: 'local',
-                location: 'local',
+                provider: clawProvider.local,
+                status: clawStatus.stopped,
+                ip: getDeviceIp(),
+                planId: clawProvider.local,
+                location: clawProvider.local,
                 rootPassword: null,
                 sshKeyId: null,
                 providerServerId: null,
-                subdomain: `local:${claw.port}`,
+                subdomain: claw.subdomain,
                 gatewayToken: claw.gatewayToken,
                 subscriptionStatus: null,
                 currentPeriodStart: null,
@@ -94,6 +133,7 @@ const registerClawProcessHandlers = (): void => {
             }
 
             const clawDir = configStore.getClawDir(claw.name)
+            ensureClawConfig(clawDir)
             await processManager.restartGateway(
                 claw.id,
                 clawDir,
@@ -105,15 +145,15 @@ const registerClawProcessHandlers = (): void => {
             return {
                 id: claw.id,
                 name: claw.name,
-                provider: 'local',
-                status: 'running',
-                ip: 'localhost',
-                planId: 'local',
-                location: 'local',
+                provider: clawProvider.local,
+                status: clawStatus.running,
+                ip: getDeviceIp(),
+                planId: clawProvider.local,
+                location: clawProvider.local,
                 rootPassword: null,
                 sshKeyId: null,
                 providerServerId: null,
-                subdomain: `local:${claw.port}`,
+                subdomain: claw.subdomain,
                 gatewayToken: claw.gatewayToken,
                 subscriptionStatus: null,
                 currentPeriodStart: null,
@@ -171,6 +211,7 @@ const registerClawProcessHandlers = (): void => {
             }
 
             const clawDir = configStore.getClawDir(claw.name)
+            ensureClawConfig(clawDir)
             await processManager.restartGateway(
                 claw.id,
                 clawDir,
@@ -195,6 +236,7 @@ const registerClawProcessHandlers = (): void => {
 
             if (claw.version) {
                 const clawDir = configStore.getClawDir(claw.name)
+                ensureClawConfig(clawDir)
                 await processManager.startGateway(
                     claw.id,
                     clawDir,

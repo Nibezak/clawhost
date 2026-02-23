@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react'
-import type { Claw, ChatSelectedAgent } from '@/ts/Interfaces'
+import type { Claw, ChatSelectedAgent, ElectronWindow } from '@/ts/Interfaces'
 import type {
     DashboardTab,
     PlaygroundAgentDetailTab,
@@ -7,7 +7,13 @@ import type {
     ProviderType
 } from '@/ts/Types'
 
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
+import {
+    useState,
+    useEffect,
+    useMemo,
+    useCallback,
+    useRef
+} from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { t } from '@openclaw/i18n'
@@ -43,11 +49,12 @@ import {
 } from '@/components'
 import {
     ChatCircleDotsIcon,
+    CircleNotchIcon,
     GraphIcon,
     LightningIcon
 } from '@phosphor-icons/react'
 import { Button } from '@/components/ui'
-import { CreateClawModal } from '@/components/dashboard'
+import { CreateClawModal, LocalCreateClawModal } from '@/components/dashboard'
 import {
     PlaygroundCanvas,
     PlaygroundDetailPanel,
@@ -56,6 +63,7 @@ import {
     CreateAgentModal
 } from '@/components/playground'
 import { ChatView } from '@/components/chat'
+import { getLegalLinks } from '@/data'
 import { useAuth } from '@/lib/auth'
 
 const Dashboard: FC = (): ReactNode => {
@@ -98,7 +106,8 @@ const Dashboard: FC = (): ReactNode => {
     const {
         adminMode: adminModeRaw,
         dashboardTab,
-        setDashboardTab
+        setDashboardTab,
+        openLinksWindowed
     } = usePreferencesStore()
 
     const [minLoadingMet, setMinLoadingMet] = useState(false)
@@ -108,7 +117,13 @@ const Dashboard: FC = (): ReactNode => {
         return () => clearTimeout(timer)
     }, [])
 
-    const { user, loading: authLoading, cachedProfile, signOut } = useAuth()
+    const {
+        user,
+        loading: authLoading,
+        cachedProfile,
+        signOut,
+        isLocal
+    } = useAuth()
     const { data: profile } = useProfile({
         enabled: !!user,
         staleTime: 1000 * 60 * 5
@@ -116,12 +131,54 @@ const Dashboard: FC = (): ReactNode => {
     const isAdmin = profile?.role === 'admin'
     const adminMode = !!isAdmin && adminModeRaw
 
+    const [dnsSetup, setDnsSetup] = useState<boolean | null>(null)
+    const [dnsLoading, setDnsLoading] = useState(false)
+
+    useEffect(() => {
+        if (!isLocal) return
+        const api = (window as unknown as ElectronWindow).electronAPI
+        if (api?.getDnsStatus) {
+            api.getDnsStatus().then(setDnsSetup)
+        }
+    }, [isLocal])
+
+    const handleDnsSetup = useCallback(async () => {
+        const api = (window as unknown as ElectronWindow).electronAPI
+        if (!api?.setupDns) return
+        setDnsLoading(true)
+        try {
+            const success = await api.setupDns()
+            if (success) {
+                setDnsSetup(true)
+                showToast(t('dashboard.dnsSetupSuccess'), 'success')
+            } else {
+                showToast(t('dashboard.dnsSetupError'), 'error')
+            }
+        } catch {
+            showToast(t('dashboard.dnsSetupError'), 'error')
+        }
+        setDnsLoading(false)
+    }, [showToast])
+
     const displayName =
         profile?.name ||
         cachedProfile?.name ||
-        user?.email ||
-        cachedProfile?.email ||
-        ''
+        (isLocal ? t('account.noNameSet') : (user?.email || cachedProfile?.email || ''))
+
+    const dropdownFooterLinks = useMemo(() => {
+        if (!isLocal) return undefined
+        const BASE_URL = 'https://clawhost.cloud'
+        return [
+            { label: t('footer.website'), href: BASE_URL, external: true },
+            ...getLegalLinks().map((link) => ({
+                ...link,
+                href: link.href.startsWith('mailto:')
+                    ? link.href
+                    : `${BASE_URL}${link.href}`,
+                external: true
+            }))
+        ]
+    }, [isLocal])
 
     useEffect(() => {
         if (awaitingClaw) {
@@ -352,7 +409,7 @@ const Dashboard: FC = (): ReactNode => {
     const activeIsError = adminMode ? isAdminClawsError : isError
     const activeRefetch = adminMode ? refetchAdmin : refetch
     const isLoading =
-        authLoading || (!awaitingClaw && (activeClawsLoading || !minLoadingMet))
+        authLoading || activeClawsLoading || (!awaitingClaw && !minLoadingMet)
 
     const graphClaws = displayedClaws
     const agentQueries = useAllClawAgents(graphClaws)
@@ -388,18 +445,26 @@ const Dashboard: FC = (): ReactNode => {
     const selectedAgent = selectedAgentResult?.agent || null
     const isSelectedAgentOnly = selectedAgentResult?.isOnly || false
 
-    const chatEmpty = dashboardTab === DASHBOARD_TABS.CHAT && !isLoading && !activeIsError && displayedClaws.length === 0
-    const showFullBackground = dashboardTab === DASHBOARD_TABS.PLAYGROUND || chatEmpty
+    const chatEmpty =
+        dashboardTab === DASHBOARD_TABS.CHAT &&
+        !isLoading &&
+        !activeIsError &&
+        displayedClaws.length === 0
+    const showFullBackground =
+        dashboardTab === DASHBOARD_TABS.PLAYGROUND || chatEmpty
 
     return (
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
-            className={`bg-background text-foreground fixed inset-0 flex flex-col ${showFullBackground ? 'playground-grid' : ''}`}
+            className={`bg-background text-foreground fixed inset-0 flex flex-col ${showFullBackground && !isLocal ? 'playground-grid' : ''}`}
         >
+            {isLocal && showFullBackground && (
+                <div className='playground-grid pointer-events-none fixed inset-0 opacity-50' />
+            )}
             <div
-                className={`playground-gradient pointer-events-none fixed inset-0 ${dashboardTab === DASHBOARD_TABS.CHAT && !chatEmpty ? 'opacity-30' : ''}`}
+                className={`playground-gradient pointer-events-none fixed inset-0 ${isLocal || (dashboardTab === DASHBOARD_TABS.CHAT && !chatEmpty) ? 'opacity-30' : ''}`}
             />
             <PageTitle
                 title={
@@ -414,7 +479,7 @@ const Dashboard: FC = (): ReactNode => {
 
             <div className='border-border bg-background md:bg-background/80 relative z-10 flex items-center justify-between border-b px-6 py-3 md:backdrop-blur-xl'>
                 <div className='flex items-center gap-3'>
-                    <Logo />
+                    <Logo to={isLocal ? ROUTES.CLAWS : undefined} />
                     <div className='border-border flex items-center rounded-lg border p-0.5'>
                         <button
                             onClick={() => setDashboardTab(DASHBOARD_TABS.CHAT)}
@@ -504,9 +569,32 @@ const Dashboard: FC = (): ReactNode => {
                     <UserDropdown
                         displayName={displayName}
                         onSignOut={signOut}
+                        hideBilling={!!isLocal}
+                        hideSSHKeys={!!isLocal}
+                        hideSignOut={!!isLocal}
+                        footerLinks={dropdownFooterLinks}
+                        openLinksWindowed={isLocal ? openLinksWindowed : undefined}
                     />
                 </div>
             </div>
+
+            {isLocal && dnsSetup === false && displayedClaws.length > 0 && (
+                <div className='border-border bg-foreground/5 relative z-10 flex items-center justify-between border-b px-6 py-2.5'>
+                    <p className='text-foreground text-xs'>
+                        {t('dashboard.dnsSetupBanner')}
+                    </p>
+                    <button
+                        onClick={handleDnsSetup}
+                        disabled={dnsLoading}
+                        className='flex items-center gap-1.5 rounded-md bg-[#ef5350] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[#e53935] disabled:opacity-50'
+                    >
+                        {dnsLoading && (
+                            <CircleNotchIcon className='h-3 w-3 animate-spin' />
+                        )}
+                        {t('dashboard.dnsSetupButton')}
+                    </button>
+                </div>
+            )}
 
             <div className='flex flex-1 overflow-hidden'>
                 {activeIsError ? (
@@ -704,7 +792,15 @@ const Dashboard: FC = (): ReactNode => {
                 )}
             </div>
 
-            {showCreate && plans.length > 0 && locations && (
+            {showCreate && isLocal && (
+                <LocalCreateClawModal
+                    onClose={() => {
+                        setShowCreate(false)
+                    }}
+                />
+            )}
+
+            {showCreate && !isLocal && plans.length > 0 && locations && (
                 <CreateClawModal
                     plans={plans}
                     locations={locations}

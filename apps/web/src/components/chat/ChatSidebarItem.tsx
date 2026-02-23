@@ -6,12 +6,13 @@ import { t } from '@openclaw/i18n'
 import { GearSixIcon, AndroidLogoIcon } from '@phosphor-icons/react'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import { TRUNCATE_LENGTHS } from '@/lib'
-import { aiModels } from '@/lib/claw-utils'
+import { aiModels, getAgentStatusConfig } from '@/lib/claw-utils'
 
 const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
     agent,
     isActive,
     isLast,
+    isChecking,
     connectionState,
     onClick,
     onConfigure
@@ -43,17 +44,26 @@ const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
                 case 'disconnected':
                     return {
                         color: 'bg-red-500',
-                        label: t('playground.chatDisconnected')
+                        label: t('dashboard.status.unreachable')
                     }
                 default:
                     break
             }
         }
-        return {
-            color: 'bg-gray-400',
-            label: t('dashboard.status.unknown')
+        if (isChecking) {
+            return {
+                color: 'bg-orange-500',
+                label: t('dashboard.status.checking'),
+                pulse: true
+            }
         }
-    }, [connectionState])
+        const agentStatus = getAgentStatusConfig(agent.status)
+        return {
+            color: agentStatus.color,
+            label: agentStatus.label,
+            pulse: agentStatus.pulse
+        }
+    }, [connectionState, isChecking, agent.status])
 
     return (
         <div className='relative flex py-0.5'>
@@ -82,7 +92,7 @@ const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
                         <TooltipTrigger asChild>
                             <div className='border-background absolute -bottom-0.5 -right-0.5 flex h-3 w-3 items-center justify-center rounded-full border-2'>
                                 <div
-                                    className={`h-1.5 w-1.5 rounded-full ${statusConfig.color} ${statusConfig.pulse ? 'animate-pulse' : ''}`}
+                                    className={`h-1.5 w-1.5 rounded-full ${statusConfig.color} ${statusConfig.pulse ? 'animate-pulse' : 'status-dot-alive'}`}
                                 />
                             </div>
                         </TooltipTrigger>

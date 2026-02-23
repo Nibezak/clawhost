@@ -7,9 +7,9 @@ import type {
 
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
-import { clawStatus } from '@openclaw/shared'
+import { clawStatus, clawProvider } from '@openclaw/shared'
 import { useUIStore } from '@/lib/store'
-import { getLocale, TRUNCATE_LENGTHS } from '@/lib'
+import { getLocale, getBaseDomain, TRUNCATE_LENGTHS } from '@/lib'
 import {
     useStartClaw,
     useStopClaw,
@@ -19,11 +19,12 @@ import {
     useHardDeleteClaw,
     useRepairClaw,
     useReinstallClaw,
-    useProfile
+    useProfile,
+    useCancelPendingClaw
 } from '@/hooks'
 import { api } from '@/lib'
 import { ProviderIcon } from '@/components'
-import { getStatusConfig } from '@/lib/claw-utils'
+import { getStatusConfig, generateSlug } from '@/lib/claw-utils'
 import {
     PlusIcon,
     ClockIcon,
@@ -65,8 +66,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
     const isUnreachable = claw.status === clawStatus.unreachable
 
     const { showToast } = useUIStore()
-    const [copied, setCopied] = useState(false)
-    const [passwordCopied, setPasswordCopied] = useState(false)
+    const [isCopyingCredentials, setIsCopyingCredentials] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showStopModal, setShowStopModal] = useState(false)
     const [showRestartModal, setShowRestartModal] = useState(false)
@@ -86,6 +86,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
     const hardDeleteMutation = useHardDeleteClaw()
     const repairMutation = useRepairClaw()
     const reinstallMutation = useReinstallClaw()
+    const cancelPendingMutation = useCancelPendingClaw()
 
     const { data: profile } = useProfile({ enabled: true })
 
@@ -98,7 +99,9 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
         hardDeleteMutation.isPending ||
         repairMutation.isPending ||
         reinstallMutation.isPending ||
-        isExporting
+        cancelPendingMutation.isPending ||
+        isExporting ||
+        isCopyingCredentials
 
     const isScheduledForDeletion = !!claw.deletionScheduledAt
     const hasActionItems =
@@ -109,28 +112,42 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
     const copySSHWithKey = () => {
         const command = `ssh root@${claw.ip}`
         navigator.clipboard.writeText(command)
-        setCopied(true)
         showToast(t('dashboard.sshCommandCopied'), 'success')
-        setTimeout(() => setCopied(false), 2000)
     }
 
-    const copySSHWithPassword = () => {
-        const command = `sshpass -p '${claw.rootPassword}' ssh -o StrictHostKeyChecking=no root@${claw.ip}`
-        navigator.clipboard.writeText(command)
-        setCopied(true)
-        showToast(t('dashboard.sshCommandWithPasswordCopied'), 'success')
-        setTimeout(() => setCopied(false), 2000)
-    }
-
-    const copyPassword = () => {
-        if (!claw.rootPassword) {
-            showToast(t('errors.noPasswordAvailable'), 'warning')
-            return
+    const copySSHWithPassword = async () => {
+        setIsCopyingCredentials(true)
+        try {
+            const res = await api.getClawCredentials(claw.id)
+            if (res.rootPassword) {
+                const command = `sshpass -p '${res.rootPassword}' ssh -o StrictHostKeyChecking=no root@${claw.ip}`
+                navigator.clipboard.writeText(command)
+                showToast(t('dashboard.sshCommandWithPasswordCopied'), 'success')
+            } else {
+                copySSHWithKey()
+            }
+        } catch {
+            showToast(t('errors.noPasswordAvailable'), 'error')
+        } finally {
+            setIsCopyingCredentials(false)
         }
-        navigator.clipboard.writeText(claw.rootPassword)
-        setPasswordCopied(true)
-        showToast(t('dashboard.passwordCopiedToClipboard'), 'success')
-        setTimeout(() => setPasswordCopied(false), 2000)
+    }
+
+    const copyPassword = async () => {
+        setIsCopyingCredentials(true)
+        try {
+            const res = await api.getClawCredentials(claw.id)
+            if (!res.rootPassword) {
+                showToast(t('errors.noPasswordAvailable'), 'warning')
+                return
+            }
+            navigator.clipboard.writeText(res.rootPassword)
+            showToast(t('dashboard.passwordCopiedToClipboard'), 'success')
+        } catch {
+            showToast(t('errors.noPasswordAvailable'), 'error')
+        } finally {
+            setIsCopyingCredentials(false)
+        }
     }
 
     const handleUpdateInstance = () => {
@@ -185,7 +202,20 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
     }
 
     const actions: ClawCardActions = {
-        onStart: () => startMutation.mutate(claw.id),
+        onStart: () =>
+            startMutation.mutate(claw.id, {
+                onError: (err) => {
+                    const message =
+                        err instanceof Error
+                            ? err.message
+                            : typeof err === 'object' &&
+                                err !== null &&
+                                'message' in err
+                              ? String((err as { message: unknown }).message)
+                              : t('dashboard.startFailed')
+                    showToast(message, 'error')
+                }
+            }),
         onShowStopModal: () => setShowStopModal(true),
         onShowRestartModal: () => setShowRestartModal(true),
         onShowDeleteModal: () => setShowDeleteModal(true),
@@ -196,11 +226,20 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
         onShowConfig: () => setShowConfig(true),
         onUpdateInstance: handleUpdateInstance,
         onShowReinstallModal: () => setShowReinstallModal(true),
-        onCopySSH: claw.rootPassword ? copySSHWithPassword : copySSHWithKey,
+        onCopySSH: claw.hasRootPassword ? copySSHWithPassword : copySSHWithKey,
         onCopySSHWithKey: copySSHWithKey,
         onCopySSHWithPassword: copySSHWithPassword,
         onCopyPassword: copyPassword,
-        onExport: handleExport
+        onExport: handleExport,
+        onResumeCheckout: () => {
+            if (claw.checkoutUrl) {
+                window.open(claw.checkoutUrl, '_blank')
+            }
+        },
+        onCancelPending: () => {
+            const pendingId = claw.id.replace('pending-', '')
+            cancelPendingMutation.mutate(pendingId)
+        }
     }
 
     return (
@@ -248,7 +287,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                                 />
                             ) : (
                                 <span
-                                    className={`h-1.5 w-1.5 rounded-full ${status.color}`}
+                                    className={`h-1.5 w-1.5 rounded-full ${status.color} status-dot-alive`}
                                 />
                             )}
                             {status.label}
@@ -266,8 +305,6 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                                     claw={claw}
                                     actions={actions}
                                     isLoading={isMutating}
-                                    copied={copied}
-                                    passwordCopied={passwordCopied}
                                     hasActionItems={hasActionItems}
                                     isScheduledForDeletion={
                                         isScheduledForDeletion
@@ -310,10 +347,17 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                 </div>
 
                 <div className='px-4 py-3'>
-                    {claw.ip && (
-                        <p className='text-muted-foreground mb-2 font-mono text-xs'>
-                            {claw.ip}
-                        </p>
+                    {claw.status === clawStatus.running &&
+                        agentCount > 0 && (
+                        claw.provider === clawProvider.local && claw.subdomain ? (
+                            <p className='text-muted-foreground mb-2 truncate text-xs'>
+                                {claw.subdomain}.clawhost
+                            </p>
+                        ) : claw.provider !== clawProvider.local ? (
+                            <p className='text-muted-foreground mb-2 truncate text-xs'>
+                                {claw.subdomain || generateSlug(claw.id)}.{getBaseDomain()}
+                            </p>
+                        ) : null
                     )}
 
                     <div className='flex items-center gap-2'>

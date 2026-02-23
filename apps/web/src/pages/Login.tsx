@@ -178,8 +178,14 @@ const Login: FC = (): ReactNode => {
         [code]
     )
 
+    const isCodeComplete = code.every((d) => d !== '')
+
     const handleCodeKeyDown = useCallback(
         (key: string, index: number) => {
+            if (key === 'Enter' && isCodeComplete) {
+                handleVerifyOtp(code.join(''))
+                return
+            }
             if (key === 'Backspace' && !code[index] && index > 0) {
                 const newCode = [...code]
                 newCode[index - 1] = ''
@@ -187,7 +193,7 @@ const Login: FC = (): ReactNode => {
                 inputRefs.current[index - 1]?.focus()
             }
         },
-        [code]
+        [code, isCodeComplete, handleVerifyOtp]
     )
 
     const handleOAuth = useCallback(
@@ -470,7 +476,7 @@ const Login: FC = (): ReactNode => {
                             size='lg'
                             className='w-full gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90'
                             disabled={
-                                !!loadingMethod || code.some((d) => d === '')
+                                !!loadingMethod || !isCodeComplete
                             }
                         >
                             {loadingMethod === 'email' && (

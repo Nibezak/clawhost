@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react'
 import type { ClawCardDropdownMenuProps } from '@/ts/Interfaces'
 
 import { t } from '@openclaw/i18n'
-import { clawStatus } from '@openclaw/shared'
+import { clawProvider, clawStatus } from '@openclaw/shared'
 import {
     Button,
     DropdownMenu,
@@ -18,22 +18,20 @@ import {
     TrashIcon,
     DotsThreeOutlineIcon,
     TerminalIcon,
-    CheckIcon,
     CircleNotchIcon,
     CopyIcon,
     ClockCountdownIcon,
     FolderSimpleIcon,
     ArrowsClockwiseIcon,
     ArrowCounterClockwiseIcon,
-    ExportIcon
+    ExportIcon,
+    ArrowSquareOutIcon
 } from '@phosphor-icons/react'
 
 const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
     claw,
     actions,
     isLoading,
-    copied,
-    passwordCopied,
     hasActionItems,
     isScheduledForDeletion,
     isAdmin,
@@ -99,37 +97,19 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                         </DropdownMenuItem>
                     </>
                 )}
-                {(claw.ip || claw.rootPassword) && (
+                {claw.provider !== clawProvider.local && claw.ip && (
                     <>
                         {hasActionItems && <DropdownMenuSeparator />}
-                        {claw.ip && (
-                            <DropdownMenuItem onClick={actions.onCopySSH}>
-                                {copied ? (
-                                    <>
-                                        <CheckIcon className='mr-2 h-4 w-4' />
-                                        {t('common.copied')}
-                                    </>
-                                ) : (
-                                    <>
-                                        <TerminalIcon className='mr-2 h-4 w-4' />
-                                        {t('dashboard.connect')}
-                                    </>
-                                )}
-                            </DropdownMenuItem>
-                        )}
-                        {claw.rootPassword && (
-                            <DropdownMenuItem onClick={actions.onCopyPassword}>
-                                {passwordCopied ? (
-                                    <>
-                                        <CheckIcon className='mr-2 h-4 w-4' />
-                                        {t('common.copied')}
-                                    </>
-                                ) : (
-                                    <>
-                                        <CopyIcon className='mr-2 h-4 w-4' />
-                                        {t('dashboard.copyPassword')}
-                                    </>
-                                )}
+                        <DropdownMenuItem onClick={actions.onCopySSH}>
+                            <TerminalIcon className='mr-2 h-4 w-4' />
+                            {t('dashboard.connect')}
+                        </DropdownMenuItem>
+                        {claw.hasRootPassword && (
+                            <DropdownMenuItem
+                                onClick={actions.onCopyPassword}
+                            >
+                                <CopyIcon className='mr-2 h-4 w-4' />
+                                {t('dashboard.copyPassword')}
                             </DropdownMenuItem>
                         )}
                     </>
@@ -141,11 +121,13 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                             <FolderSimpleIcon className='mr-2 h-4 w-4' />
                             {t('dashboard.fileExplorer')}
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={actions.onExport}>
-                            <ExportIcon className='mr-2 h-4 w-4' />
-                            {t('dashboard.exportData')}
-                        </DropdownMenuItem>
-                        {isAdmin && (
+                        {claw.provider !== clawProvider.local && (
+                            <DropdownMenuItem onClick={actions.onExport}>
+                                <ExportIcon className='mr-2 h-4 w-4' />
+                                {t('dashboard.exportData')}
+                            </DropdownMenuItem>
+                        )}
+                        {claw.provider !== clawProvider.local && isAdmin && (
                             <>
                                 <DropdownMenuItem
                                     onClick={actions.onUpdateInstance}
@@ -166,7 +148,35 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                     </>
                 )}
                 {(hasActionItems || claw.ip) && <DropdownMenuSeparator />}
-                {isScheduledForDeletion ? (
+                {claw.status === clawStatus.awaitingPayment ? (
+                    <>
+                        {claw.checkoutUrl && (
+                            <DropdownMenuItem
+                                onClick={() => actions.onResumeCheckout()}
+                            >
+                                <ArrowSquareOutIcon className='mr-2 h-4 w-4' />
+                                {t('dashboard.resumeCheckout')}
+                            </DropdownMenuItem>
+                        )}
+                        <DropdownMenuItem
+                            onClick={actions.onCancelPending}
+                            disabled={isLoading}
+                            className='text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400'
+                        >
+                            <TrashIcon className='mr-2 h-4 w-4' />
+                            {t('dashboard.cancelPurchase')}
+                        </DropdownMenuItem>
+                    </>
+                ) : claw.provider === clawProvider.local ? (
+                    <DropdownMenuItem
+                        onClick={actions.onShowDeleteModal}
+                        disabled={isLoading}
+                        className='text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400'
+                    >
+                        <TrashIcon className='mr-2 h-4 w-4' />
+                        {t('common.delete')}
+                    </DropdownMenuItem>
+                ) : isScheduledForDeletion ? (
                     <>
                         <DropdownMenuItem
                             onClick={actions.onCancelDeletion}

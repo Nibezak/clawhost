@@ -11,12 +11,17 @@ const getAgentStatusConfig = (status: string): StatusConfig => {
                 label: t('dashboard.status.running')
             }
         case 'stopped':
+        case 'idle':
+        case 'off':
             return {
                 color: 'bg-gray-400',
                 bgColor: 'bg-gray-400/10',
                 label: t('dashboard.status.stopped')
             }
         case 'error':
+        case 'crashed':
+        case 'unknown':
+        default:
             return {
                 color: 'bg-red-500',
                 bgColor: 'bg-red-500/10',
@@ -35,12 +40,6 @@ const getAgentStatusConfig = (status: string): StatusConfig => {
                 bgColor: 'bg-yellow-500/10',
                 label: t('dashboard.status.stopping'),
                 pulse: true
-            }
-        default:
-            return {
-                color: 'bg-gray-400',
-                bgColor: 'bg-gray-400/10',
-                label: t('dashboard.status.unknown')
             }
     }
 }

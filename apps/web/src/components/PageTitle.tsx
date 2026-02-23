@@ -34,7 +34,8 @@ const PageTitle: FC<PageTitleProps> = ({
     image,
     url,
     type,
-    noIndex
+    noIndex,
+    keywords
 }): ReactNode => {
     useEffect(() => {
         const fullTitle = `${title} - ${t('common.brandName')}`
@@ -70,6 +71,28 @@ const PageTitle: FC<PageTitleProps> = ({
             setMetaTag('property', 'og:type', type)
         }
     }, [type])
+
+    useEffect(() => {
+        if (keywords && keywords.length > 0) {
+            setMetaTag('name', 'keywords', keywords.join(', '))
+            document
+                .querySelectorAll('meta[property="article:tag"]')
+                .forEach((el) => el.remove())
+            keywords.forEach((tag) => {
+                const meta = document.createElement('meta')
+                meta.setAttribute('property', 'article:tag')
+                meta.content = tag
+                document.head.appendChild(meta)
+            })
+        }
+        return () => {
+            document
+                .querySelectorAll('meta[property="article:tag"]')
+                .forEach((el) => el.remove())
+            const kw = document.querySelector('meta[name="keywords"]')
+            if (kw) kw.remove()
+        }
+    }, [keywords])
 
     useEffect(() => {
         if (noIndex) {

@@ -2,15 +2,17 @@ import type { FC, ReactNode } from 'react'
 import type {
     ChatSidebarClawHeaderProps,
     ClawCardActions,
+    ElectronWindow,
     ExportRateLimitError
 } from '@/ts/Interfaces'
 
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
-import { clawStatus } from '@openclaw/shared'
+import { clawProvider, clawStatus } from '@openclaw/shared'
+import { ClockIcon } from '@phosphor-icons/react'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import { useUIStore } from '@/lib/store'
-import { getBaseDomain } from '@/lib'
+import { getBaseDomain, getLocale } from '@/lib'
 import { generateSlug } from '@/lib/claw-utils'
 import { ClawAvatar } from '@/components'
 import {
@@ -22,7 +24,8 @@ import {
     useHardDeleteClaw,
     useRepairClaw,
     useReinstallClaw,
-    useProfile
+    useProfile,
+    useCancelPendingClaw
 } from '@/hooks'
 import { api, TRUNCATE_LENGTHS } from '@/lib'
 import {
@@ -42,8 +45,7 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
     onCreateAgent: _onCreateAgent
 }): ReactNode => {
     const { showToast } = useUIStore()
-    const [copied, setCopied] = useState(false)
-    const [passwordCopied, setPasswordCopied] = useState(false)
+    const [isCopyingCredentials, setIsCopyingCredentials] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showStopModal, setShowStopModal] = useState(false)
     const [showRestartModal, setShowRestartModal] = useState(false)
@@ -62,6 +64,7 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
     const hardDeleteMutation = useHardDeleteClaw()
     const repairMutation = useRepairClaw()
     const reinstallMutation = useReinstallClaw()
+    const cancelPendingMutation = useCancelPendingClaw()
 
     const { data: profile } = useProfile({ enabled: true })
 
@@ -74,7 +77,9 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
         hardDeleteMutation.isPending ||
         repairMutation.isPending ||
         reinstallMutation.isPending ||
-        isExporting
+        cancelPendingMutation.isPending ||
+        isExporting ||
+        isCopyingCredentials
 
     const isScheduledForDeletion = !!claw.deletionScheduledAt
     const hasActionItems =
@@ -85,28 +90,42 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
     const copySSHWithKey = () => {
         const command = `ssh root@${claw.ip}`
         navigator.clipboard.writeText(command)
-        setCopied(true)
         showToast(t('dashboard.sshCommandCopied'), 'success')
-        setTimeout(() => setCopied(false), 2000)
     }
 
-    const copySSHWithPassword = () => {
-        const command = `sshpass -p '${claw.rootPassword}' ssh -o StrictHostKeyChecking=no root@${claw.ip}`
-        navigator.clipboard.writeText(command)
-        setCopied(true)
-        showToast(t('dashboard.sshCommandWithPasswordCopied'), 'success')
-        setTimeout(() => setCopied(false), 2000)
-    }
-
-    const copyPassword = () => {
-        if (!claw.rootPassword) {
-            showToast(t('errors.noPasswordAvailable'), 'warning')
-            return
+    const copySSHWithPassword = async () => {
+        setIsCopyingCredentials(true)
+        try {
+            const res = await api.getClawCredentials(claw.id)
+            if (res.rootPassword) {
+                const command = `sshpass -p '${res.rootPassword}' ssh -o StrictHostKeyChecking=no root@${claw.ip}`
+                navigator.clipboard.writeText(command)
+                showToast(t('dashboard.sshCommandWithPasswordCopied'), 'success')
+            } else {
+                copySSHWithKey()
+            }
+        } catch {
+            showToast(t('errors.noPasswordAvailable'), 'error')
+        } finally {
+            setIsCopyingCredentials(false)
         }
-        navigator.clipboard.writeText(claw.rootPassword)
-        setPasswordCopied(true)
-        showToast(t('dashboard.passwordCopiedToClipboard'), 'success')
-        setTimeout(() => setPasswordCopied(false), 2000)
+    }
+
+    const copyPassword = async () => {
+        setIsCopyingCredentials(true)
+        try {
+            const res = await api.getClawCredentials(claw.id)
+            if (!res.rootPassword) {
+                showToast(t('errors.noPasswordAvailable'), 'warning')
+                return
+            }
+            navigator.clipboard.writeText(res.rootPassword)
+            showToast(t('dashboard.passwordCopiedToClipboard'), 'success')
+        } catch {
+            showToast(t('errors.noPasswordAvailable'), 'error')
+        } finally {
+            setIsCopyingCredentials(false)
+        }
     }
 
     const handleUpdateInstance = () => {
@@ -161,7 +180,20 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
     }
 
     const actions: ClawCardActions = {
-        onStart: () => startMutation.mutate(claw.id),
+        onStart: () =>
+            startMutation.mutate(claw.id, {
+                onError: (err) => {
+                    const message =
+                        err instanceof Error
+                            ? err.message
+                            : typeof err === 'object' &&
+                                err !== null &&
+                                'message' in err
+                              ? String((err as { message: unknown }).message)
+                              : t('dashboard.startFailed')
+                    showToast(message, 'error')
+                }
+            }),
         onShowStopModal: () => setShowStopModal(true),
         onShowRestartModal: () => setShowRestartModal(true),
         onShowDeleteModal: () => setShowDeleteModal(true),
@@ -172,11 +204,20 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
         onShowConfig: () => setShowConfig(true),
         onUpdateInstance: handleUpdateInstance,
         onShowReinstallModal: () => setShowReinstallModal(true),
-        onCopySSH: claw.rootPassword ? copySSHWithPassword : copySSHWithKey,
+        onCopySSH: claw.hasRootPassword ? copySSHWithPassword : copySSHWithKey,
         onCopySSHWithKey: copySSHWithKey,
         onCopySSHWithPassword: copySSHWithPassword,
         onCopyPassword: copyPassword,
-        onExport: handleExport
+        onExport: handleExport,
+        onResumeCheckout: () => {
+            if (claw.checkoutUrl) {
+                window.open(claw.checkoutUrl, '_blank')
+            }
+        },
+        onCancelPending: () => {
+            const pendingId = claw.id.replace('pending-', '')
+            cancelPendingMutation.mutate(pendingId)
+        }
     }
 
     return (
@@ -193,7 +234,7 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                         <TooltipTrigger asChild>
                             <div className='border-background absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full border-2'>
                                 <div
-                                    className={`h-2 w-2 rounded-full ${statusConfig.color}`}
+                                    className={`h-2 w-2 rounded-full ${statusConfig.color} ${statusConfig.pulse ? 'animate-pulse' : 'status-dot-alive'}`}
                                 />
                             </div>
                         </TooltipTrigger>
@@ -221,14 +262,54 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                             {claw.name}
                         </p>
                     )}
-                    {claw.status !== clawStatus.configuring ? (
-                        claw.provider === 'local' && claw.port ? (
-                            <span
-                                className='text-muted-foreground block truncate text-[11px]'
-                                onClick={(e) => e.stopPropagation()}
+                    {isScheduledForDeletion ? (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <div className='flex items-center gap-1'>
+                                    <ClockIcon
+                                        className='text-muted-foreground h-3 w-3 shrink-0'
+                                        weight='fill'
+                                    />
+                                    <span className='text-muted-foreground truncate text-[11px]'>
+                                        {t(
+                                            'dashboard.scheduledDeletionShort',
+                                            {
+                                                date: new Date(
+                                                    claw.deletionScheduledAt!
+                                                ).toLocaleDateString(
+                                                    getLocale(),
+                                                    {
+                                                        month: 'short',
+                                                        day: 'numeric'
+                                                    }
+                                                )
+                                            }
+                                        )}
+                                    </span>
+                                </div>
+                            </TooltipTrigger>
+                            <TooltipContent side='bottom'>
+                                <p>{t('dashboard.scheduledForDeletion')}</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    ) : claw.status !== clawStatus.configuring && claw.status !== clawStatus.awaitingPayment ? (
+                        claw.provider === clawProvider.local && claw.subdomain ? (
+                            <button
+                                type='button'
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    const url = `https://${claw.subdomain}.clawhost${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`
+                                    const eApi = (window as unknown as ElectronWindow).electronAPI
+                                    if (eApi?.openExternal) {
+                                        eApi.openExternal(url)
+                                    } else {
+                                        window.open(url, '_blank')
+                                    }
+                                }}
+                                className='text-muted-foreground hover:text-foreground/80 block truncate text-[11px] transition-colors'
                             >
-                                localhost:{claw.port}
-                            </span>
+                                {claw.subdomain}.clawhost
+                            </button>
                         ) : (
                             <a
                                 href={`https://${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
@@ -256,8 +337,6 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                             claw={claw}
                             actions={actions}
                             isLoading={isMutating}
-                            copied={copied}
-                            passwordCopied={passwordCopied}
                             hasActionItems={hasActionItems}
                             isScheduledForDeletion={isScheduledForDeletion}
                             isAdmin={profile?.role === 'admin'}

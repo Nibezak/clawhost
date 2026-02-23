@@ -48,7 +48,9 @@ import {
     pairWhatsApp,
     pairWhatsAppStatus,
     getClawBindings,
-    updateClawBindings
+    updateClawBindings,
+    getClawCredentials,
+    cancelPendingClaw
 } from '@/controllers/claws'
 import adminOnly from '@/middleware/adminOnly'
 
@@ -59,6 +61,7 @@ app.get('/admin', adminOnly, getAdminClaws)
 app.get('/:id', getClaw)
 app.post('/', createClaw)
 app.post('/purchase', initiateClawPurchase)
+app.delete('/pending/:id', cancelPendingClaw)
 app.post('/:id/sync', syncClaw)
 app.post('/:id/start', startClaw)
 app.post('/:id/stop', stopClaw)
@@ -99,6 +102,7 @@ app.post('/:id/clawhub/install', installClawHubSkill)
 app.post('/:id/clawhub/remove', removeClawHubSkill)
 app.post('/:id/clawhub/update', updateClawHubSkill)
 app.post('/:id/clawhub/updates', checkClawHubUpdates)
+app.post('/:id/credentials', getClawCredentials)
 app.patch('/:id', renameClaw)
 app.delete('/:id', deleteClaw)
 

@@ -183,6 +183,7 @@ export const featureRequests = pgTable(
         description: text('description').notNull(),
         status: text('status').notNull().default('awaiting_approval'),
         rejectionReason: text('rejection_reason'),
+        platforms: text('platforms').array().default([]),
         upvoteCount: integer('upvote_count').notNull().default(0),
         createdAt: timestamp('created_at', { withTimezone: true })
             .defaultNow()

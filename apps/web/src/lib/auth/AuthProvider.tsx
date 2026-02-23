@@ -100,26 +100,33 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
         await signInWithCustomToken(auth, customToken)
     }, [])
 
-    const resolveConflict = useCallback(async (
-        credential: OAuthCredential | null,
-        providerId: string
-    ) => {
-        if (!credential?.accessToken) return false
-        const { customToken } = await api.resolveCredentialConflict({
-            accessToken: credential.accessToken,
-            providerId
-        })
-        await signInWithCustomToken(auth, customToken)
-        return true
-    }, [])
+    const resolveConflict = useCallback(
+        async (credential: OAuthCredential | null, providerId: string) => {
+            if (!credential?.accessToken) return false
+            const { customToken } = await api.resolveCredentialConflict({
+                accessToken: credential.accessToken,
+                providerId
+            })
+            await signInWithCustomToken(auth, customToken)
+            return true
+        },
+        []
+    )
 
     const signInWithGoogle = useCallback(async () => {
         try {
             await signInWithPopup(auth, new GoogleAuthProvider())
         } catch (error) {
             const firebaseError = error as { code?: string }
-            if (firebaseError.code === 'auth/account-exists-with-different-credential') {
-                const credential = GoogleAuthProvider.credentialFromError(error as Parameters<typeof GoogleAuthProvider.credentialFromError>[0])
+            if (
+                firebaseError.code ===
+                'auth/account-exists-with-different-credential'
+            ) {
+                const credential = GoogleAuthProvider.credentialFromError(
+                    error as Parameters<
+                        typeof GoogleAuthProvider.credentialFromError
+                    >[0]
+                )
                 const resolved = await resolveConflict(credential, 'google.com')
                 if (resolved) return
             }
@@ -132,8 +139,15 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
             await signInWithPopup(auth, new GithubAuthProvider())
         } catch (error) {
             const firebaseError = error as { code?: string }
-            if (firebaseError.code === 'auth/account-exists-with-different-credential') {
-                const credential = GithubAuthProvider.credentialFromError(error as Parameters<typeof GithubAuthProvider.credentialFromError>[0])
+            if (
+                firebaseError.code ===
+                'auth/account-exists-with-different-credential'
+            ) {
+                const credential = GithubAuthProvider.credentialFromError(
+                    error as Parameters<
+                        typeof GithubAuthProvider.credentialFromError
+                    >[0]
+                )
                 const resolved = await resolveConflict(credential, 'github.com')
                 if (resolved) return
             }
@@ -144,8 +158,14 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
     const linkGoogle = useCallback(async () => {
         if (!user) return
         const result = await linkWithPopup(user, new GoogleAuthProvider())
-        const linked = result.user.providerData.find(p => p.providerId === 'google.com')
-        if (linked?.email && user.email && linked.email.toLowerCase() !== user.email.toLowerCase()) {
+        const linked = result.user.providerData.find(
+            (p) => p.providerId === 'google.com'
+        )
+        if (
+            linked?.email &&
+            user.email &&
+            linked.email.toLowerCase() !== user.email.toLowerCase()
+        ) {
             await unlink(result.user, 'google.com')
             throw new Error(t('account.providerEmailMismatch'))
         }
@@ -154,8 +174,14 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
     const linkGithub = useCallback(async () => {
         if (!user) return
         const result = await linkWithPopup(user, new GithubAuthProvider())
-        const linked = result.user.providerData.find(p => p.providerId === 'github.com')
-        if (linked?.email && user.email && linked.email.toLowerCase() !== user.email.toLowerCase()) {
+        const linked = result.user.providerData.find(
+            (p) => p.providerId === 'github.com'
+        )
+        if (
+            linked?.email &&
+            user.email &&
+            linked.email.toLowerCase() !== user.email.toLowerCase()
+        ) {
             await unlink(result.user, 'github.com')
             throw new Error(t('account.providerEmailMismatch'))
         }

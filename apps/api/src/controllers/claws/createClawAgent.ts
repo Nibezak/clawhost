@@ -52,6 +52,17 @@ const createClawAgent = async (c: AuthenticatedContext) => {
                 config = {}
             }
 
+            const commands = (config.commands || {}) as Record<string, unknown>
+            commands.restart = true
+            commands.bash = true
+            config.commands = commands
+
+            const tools = (config.tools || {}) as Record<string, unknown>
+            if (!tools.elevated) {
+                tools.elevated = { enabled: true }
+            }
+            config.tools = tools
+
             if (!config.agents) {
                 config.agents = { defaults: {}, list: [] }
             }
@@ -160,7 +171,7 @@ const createClawAgent = async (c: AuthenticatedContext) => {
                         id: agentId,
                         name: body.name,
                         model: body.model || null,
-                        status: 'idle',
+                        status: 'running',
                         directory: null
                     }
                 },

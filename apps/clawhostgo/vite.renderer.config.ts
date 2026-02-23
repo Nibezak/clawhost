@@ -15,6 +15,14 @@ export default defineConfig({
     optimizeDeps: {
         exclude: ['@openclaw/i18n', '@openclaw/shared']
     },
+    server: {
+        watch: {
+            ignored: [
+                '!**/packages/i18n/**',
+                '!**/packages/shared/**'
+            ]
+        }
+    },
     resolve: {
         alias: {
             '@/lib/firebase': path.resolve(

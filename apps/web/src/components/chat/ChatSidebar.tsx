@@ -3,11 +3,10 @@ import type { ChatSidebarProps } from '@/ts/Interfaces'
 
 import { useMemo, useCallback } from 'react'
 import { t } from '@openclaw/i18n'
-import { RobotIcon, PlusIcon } from '@phosphor-icons/react'
-import { Skeleton } from '@/components/ui'
+import { RobotIcon } from '@phosphor-icons/react'
 import { getStatusConfig } from '@/lib/claw-utils'
-import ChatSidebarItem from '@/components/chat/ChatSidebarItem'
 import ChatSidebarClawHeader from '@/components/chat/ChatSidebarClawHeader'
+import ChatSidebarAgentList from '@/components/chat/ChatSidebarAgentList'
 
 const ChatSidebar: FC<ChatSidebarProps> = ({
     clawsWithAgents,
@@ -75,102 +74,17 @@ const ChatSidebar: FC<ChatSidebarProps> = ({
                                     onOpenClawSettings={handleClawSettings}
                                     onCreateAgent={onCreateAgent}
                                 />
-                                {!isReachable ? (
-                                    <div className='opacity-40'>
-                                        <div className='relative flex py-0.5'>
-                                            <div className='relative ml-[19px] flex w-7 shrink-0 justify-start'>
-                                                <div className='bg-border absolute -top-1 left-0 h-[calc(22px+4px)] w-px' />
-                                                <div className='bg-border absolute left-0 top-[22px] h-px w-[calc(100%-6px)]' />
-                                            </div>
-                                            <div className='flex min-w-0 flex-1 items-center gap-2.5 px-2 py-1'>
-                                                <Skeleton className='h-7 w-7 shrink-0 rounded-md' />
-                                                <div className='min-w-0 flex-1'>
-                                                    <Skeleton className='h-3.5 w-24 rounded' />
-                                                    <Skeleton className='mt-1 h-3 w-16 rounded' />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ) : isLoading && agents.length === 0 ? (
-                                    <div>
-                                        <div className='relative flex py-0.5'>
-                                            <div className='relative ml-[19px] flex w-7 shrink-0 justify-start'>
-                                                <div className='bg-border absolute -top-1 left-0 h-[calc(22px+4px)] w-px' />
-                                                <div className='bg-border absolute left-0 top-[22px] h-px w-[calc(100%-6px)]' />
-                                            </div>
-                                            <div className='flex min-w-0 flex-1 items-center gap-2.5 px-2 py-1'>
-                                                <Skeleton className='h-7 w-7 shrink-0 rounded-md' />
-                                                <div className='min-w-0 flex-1'>
-                                                    <Skeleton className='h-3.5 w-24 rounded' />
-                                                    <Skeleton className='mt-1 h-3 w-16 rounded' />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div>
-                                        {agents.map((agent) => {
-                                            const isActiveAgent =
-                                                selectedAgent?.agentId ===
-                                                    agent.id &&
-                                                selectedAgent?.clawId ===
-                                                    claw.id
-
-                                            return (
-                                                <ChatSidebarItem
-                                                    key={agent.id}
-                                                    agent={agent}
-                                                    isActive={isActiveAgent}
-                                                    isLast={false}
-                                                    connectionState={
-                                                        isActiveAgent
-                                                            ? activeConnectionState
-                                                            : undefined
-                                                    }
-                                                    onClick={() =>
-                                                        handleAgentClick(
-                                                            agent.id,
-                                                            claw.id
-                                                        )
-                                                    }
-                                                    onConfigure={() =>
-                                                        onConfigureAgent(
-                                                            agent.id,
-                                                            claw.id
-                                                        )
-                                                    }
-                                                />
-                                            )
-                                        })}
-                                        {isReachable && (
-                                            <div className='relative flex py-0.5'>
-                                                <div className='relative ml-[19px] flex w-7 shrink-0 justify-start'>
-                                                    <div className='bg-border absolute -top-1 left-0 h-[calc(18px+4px)] w-px' />
-                                                    <div className='bg-border absolute left-0 top-[18px] h-px w-[calc(100%-6px)]' />
-                                                </div>
-                                                <button
-                                                    onClick={() =>
-                                                        onCreateAgent(
-                                                            claw.id,
-                                                            claw.name
-                                                        )
-                                                    }
-                                                    className='text-muted-foreground hover:bg-foreground/5 hover:text-foreground flex min-w-0 flex-1 items-center gap-2.5 rounded-lg px-2 py-2 text-left transition-colors'
-                                                >
-                                                    <div className='border-border flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-dashed'>
-                                                        <PlusIcon
-                                                            className='h-3 w-3'
-                                                            weight='bold'
-                                                        />
-                                                    </div>
-                                                    <span className='text-[13px]'>
-                                                        {t('chat.addAgent')}
-                                                    </span>
-                                                </button>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
+                                <ChatSidebarAgentList
+                                    claw={claw}
+                                    agents={agents}
+                                    isLoading={isLoading}
+                                    isReachable={isReachable}
+                                    selectedAgent={selectedAgent}
+                                    activeConnectionState={activeConnectionState}
+                                    onAgentClick={handleAgentClick}
+                                    onConfigureAgent={onConfigureAgent}
+                                    onCreateAgent={onCreateAgent}
+                                />
                             </div>
                         )
                     }

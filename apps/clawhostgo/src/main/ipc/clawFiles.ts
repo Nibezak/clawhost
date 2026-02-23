@@ -1,4 +1,5 @@
 import type { IpcMainInvokeEvent } from 'electron'
+import type { ReadClawFileData } from '@/ts/Interfaces'
 
 import { ipcMain } from 'electron'
 import fs from 'fs'
@@ -32,43 +33,44 @@ const getFileType = (name: string): string => {
     return typeMap[ext] || 'text'
 }
 
+const scanFilesRecursive = (
+    dir: string,
+    baseDir: string
+): Array<{ name: string; path: string; fileType: string }> => {
+    const results: Array<{ name: string; path: string; fileType: string }> = []
+    if (!fs.existsSync(dir)) return results
+
+    const entries = fs.readdirSync(dir, { withFileTypes: true })
+    for (const entry of entries) {
+        if (entry.name.startsWith('.') && entry.name !== '.env') continue
+        const fullPath = path.join(dir, entry.name)
+        if (entry.isDirectory()) {
+            results.push(...scanFilesRecursive(fullPath, baseDir))
+        } else {
+            results.push({
+                name: entry.name,
+                path: path.relative(baseDir, fullPath),
+                fileType: getFileType(entry.name)
+            })
+        }
+    }
+    return results
+}
+
 const registerClawFileHandlers = (): void => {
     ipcMain.handle(
         'listClawFiles',
-        (_event: IpcMainInvokeEvent, id: string, data?: { path?: string }) => {
+        (_event: IpcMainInvokeEvent, id: string) => {
             const claw = configStore.findClaw(id)
             if (!claw) throw new Error('Claw not found')
 
             const clawDir = configStore.getClawDir(claw.name)
-            const targetDir = data?.path
-                ? path.join(clawDir, data.path)
-                : clawDir
-
-            if (!isPathSafe(clawDir, data?.path || '.')) {
-                throw new Error('Invalid path')
-            }
-
-            if (!fs.existsSync(targetDir)) {
+            if (!fs.existsSync(clawDir)) {
                 return { files: [] }
             }
 
-            const entries = fs.readdirSync(targetDir, { withFileTypes: true })
-            const files = entries
-                .filter((e) => !e.name.startsWith('.') || e.name === '.env')
-                .map((entry) => ({
-                    name: entry.name,
-                    path: path.relative(
-                        clawDir,
-                        path.join(targetDir, entry.name)
-                    ),
-                    isDirectory: entry.isDirectory(),
-                    type: entry.isDirectory()
-                        ? 'directory'
-                        : getFileType(entry.name),
-                    size: entry.isDirectory()
-                        ? 0
-                        : fs.statSync(path.join(targetDir, entry.name)).size
-                }))
+            const files = scanFilesRecursive(clawDir, clawDir)
+            files.sort((a, b) => a.path.localeCompare(b.path))
 
             return { files }
         }
@@ -76,7 +78,7 @@ const registerClawFileHandlers = (): void => {
 
     ipcMain.handle(
         'readClawFile',
-        (_event: IpcMainInvokeEvent, id: string, data: { path: string }) => {
+        (_event: IpcMainInvokeEvent, id: string, data: ReadClawFileData) => {
             const claw = configStore.findClaw(id)
             if (!claw) throw new Error('Claw not found')
 
@@ -91,7 +93,7 @@ const registerClawFileHandlers = (): void => {
             }
 
             const content = fs.readFileSync(filePath, 'utf-8')
-            return { content, type: getFileType(data.path) }
+            return { content, path: data.path }
         }
     )
 

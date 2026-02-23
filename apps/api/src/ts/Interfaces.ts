@@ -987,11 +987,18 @@ export interface RootLayoutProps {
 export interface CreateFeatureRequestBody {
     title: string
     description: string
+    platforms: string[]
 }
 
 export interface UpdateFeatureRequestStatusBody {
     status: FeatureRequestStatus
-    rejectionReason?: string
+}
+
+export interface EditFeatureRequestBody {
+    title?: string
+    description?: string
+    status?: FeatureRequestStatus
+    platforms?: string[]
 }
 
 export interface FeatureRequestResponse {
@@ -999,16 +1006,28 @@ export interface FeatureRequestResponse {
     title: string
     description: string
     status: FeatureRequestStatus
-    rejectionReason: string | null
+    platforms: string[]
     upvoteCount: number
     userId: string
-    userName: string | null
-    userEmail: string
     hasUpvoted: boolean
-    createdAt: string
 }
 
 export interface FeatureRequestsListResponse {
     items: FeatureRequestResponse[]
     total: number
+}
+
+export interface ClawBindingEntry {
+    agentId: string
+    match: { channel: string }
+}
+
+export interface ClawBindingAgent {
+    id: string
+    name: string
+}
+
+export interface GithubEmailEntry {
+    primary: boolean
+    email: string
 }

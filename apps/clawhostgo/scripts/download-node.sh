@@ -36,12 +36,12 @@ rm -rf "${OUTPUT_DIR}"
 mkdir -p "${OUTPUT_DIR}/bin"
 
 cp "${EXTRACTED}/bin/node" "${OUTPUT_DIR}/bin/node"
-cp -r "${EXTRACTED}/lib/node_modules/npm" "${OUTPUT_DIR}/bin/"
+cp -r "${EXTRACTED}/lib/node_modules/npm" "${OUTPUT_DIR}/bin/npm-pkg"
 
 cat > "${OUTPUT_DIR}/bin/npm" << 'NPMSCRIPT'
 #!/bin/sh
 basedir=$(dirname "$(readlink -f "$0" 2>/dev/null || echo "$0")")
-exec "$basedir/node" "$basedir/npm/bin/npm-cli.js" "$@"
+exec "$basedir/node" "$basedir/npm-pkg/bin/npm-cli.js" "$@"
 NPMSCRIPT
 chmod +x "${OUTPUT_DIR}/bin/npm"
 chmod +x "${OUTPUT_DIR}/bin/node"

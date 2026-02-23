@@ -1,5 +1,5 @@
 import type { Context } from 'hono'
-import type { ResolveCredentialConflictBody } from '@/ts/Interfaces'
+import type { GithubEmailEntry, ResolveCredentialConflictBody } from '@/ts/Interfaces'
 
 import { eq, sql } from 'drizzle-orm'
 import { auth } from '@/services/firebase'
@@ -27,7 +27,9 @@ const verifyGithubToken = async (accessToken: string) => {
 
     if (!email && emailsRes.ok) {
         const emails = await emailsRes.json()
-        const primary = emails.find((e: { primary: boolean; email: string }) => e.primary)
+        const primary = emails.find(
+            (e: GithubEmailEntry) => e.primary
+        )
         email = primary?.email
     }
 
@@ -51,13 +53,15 @@ const verifyGoogleToken = async (accessToken: string) => {
 
 const resolveCredentialConflict = async (c: Context) => {
     try {
-        const { accessToken, providerId } = await c.req.json<ResolveCredentialConflictBody>()
+        const { accessToken, providerId } =
+            await c.req.json<ResolveCredentialConflictBody>()
 
         if (!accessToken || !providerId) {
             return fail(c, t('api.missingRequiredFields'), 400)
         }
 
-        const verifier = providerId === 'github.com' ? verifyGithubToken : verifyGoogleToken
+        const verifier =
+            providerId === 'github.com' ? verifyGithubToken : verifyGoogleToken
         const verified = await verifier(accessToken)
 
         if (!verified?.email) {

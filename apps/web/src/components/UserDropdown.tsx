@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react'
-import type { UserDropdownProps } from '@/ts/Interfaces'
+import type { UserDropdownProps, FooterLink, ElectronWindow } from '@/ts/Interfaces'
 
 import { useNavigate, useLocation } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
@@ -25,7 +25,12 @@ import {
 const UserDropdown: FC<UserDropdownProps> = ({
     displayName,
     onSignOut,
-    onOpen
+    onOpen,
+    hideBilling,
+    hideSSHKeys,
+    hideSignOut,
+    footerLinks,
+    openLinksWindowed
 }): ReactNode => {
     const navigate = useNavigate()
     const location = useLocation()
@@ -43,6 +48,23 @@ const UserDropdown: FC<UserDropdownProps> = ({
 
     const handleOpenChange = (open: boolean) => {
         if (open && onOpen) onOpen()
+    }
+
+    const openLink = (link: FooterLink) => {
+        if (link.external) {
+            const api = (window as unknown as ElectronWindow).electronAPI
+            if (api) {
+                if (openLinksWindowed && api.openWindowed) {
+                    api.openWindowed(link.href)
+                } else {
+                    api.openExternal(link.href)
+                }
+            } else {
+                window.open(link.href, '_blank')
+            }
+        } else {
+            navigate(link.href)
+        }
     }
 
     return (
@@ -74,13 +96,15 @@ const UserDropdown: FC<UserDropdownProps> = ({
                     <ClawMascotOutline className='h-4 w-4' />
                     {t('nav.claws')}
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                    onClick={() => navigate(ROUTES.SSH_KEYS)}
-                    className={`text-foreground/80 focus:bg-foreground/10 focus:text-foreground ${location.pathname === ROUTES.SSH_KEYS ? 'bg-foreground/10' : ''}`}
-                >
-                    <KeyIcon className='h-4 w-4' />
-                    {t('nav.sshKeys')}
-                </DropdownMenuItem>
+                {!hideSSHKeys && (
+                    <DropdownMenuItem
+                        onClick={() => navigate(ROUTES.SSH_KEYS)}
+                        className={`text-foreground/80 focus:bg-foreground/10 focus:text-foreground ${location.pathname === ROUTES.SSH_KEYS ? 'bg-foreground/10' : ''}`}
+                    >
+                        <KeyIcon className='h-4 w-4' />
+                        {t('nav.sshKeys')}
+                    </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
                     onClick={() => navigate(ROUTES.ACCOUNT)}
                     className={`text-foreground/80 focus:bg-foreground/10 focus:text-foreground ${location.pathname === ROUTES.ACCOUNT ? 'bg-foreground/10' : ''}`}
@@ -88,21 +112,44 @@ const UserDropdown: FC<UserDropdownProps> = ({
                     <UserIcon className='h-4 w-4' />
                     {t('nav.account')}
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                    onClick={() => navigate(ROUTES.BILLING)}
-                    className={`text-foreground/80 focus:bg-foreground/10 focus:text-foreground ${location.pathname === ROUTES.BILLING ? 'bg-foreground/10' : ''}`}
-                >
-                    <ReceiptIcon className='h-4 w-4' />
-                    {t('nav.billing')}
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className='bg-border' />
-                <DropdownMenuItem
-                    onClick={onSignOut}
-                    className='focus:bg-foreground/10 text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400'
-                >
-                    <SignOutIcon className='h-4 w-4' />
-                    {t('nav.signOut')}
-                </DropdownMenuItem>
+                {!hideBilling && (
+                    <DropdownMenuItem
+                        onClick={() => navigate(ROUTES.BILLING)}
+                        className={`text-foreground/80 focus:bg-foreground/10 focus:text-foreground ${location.pathname === ROUTES.BILLING ? 'bg-foreground/10' : ''}`}
+                    >
+                        <ReceiptIcon className='h-4 w-4' />
+                        {t('nav.billing')}
+                    </DropdownMenuItem>
+                )}
+                {footerLinks && footerLinks.length > 0 && (
+                    <>
+                        <DropdownMenuSeparator className='bg-border' />
+                        <p className='text-muted-foreground px-2 py-1 text-[10px] font-medium uppercase tracking-wider'>
+                            {t('footer.legalAndMore')}
+                        </p>
+                        {footerLinks.map((link) => (
+                            <DropdownMenuItem
+                                key={link.href}
+                                onClick={() => openLink(link)}
+                                className='text-foreground/80 focus:bg-foreground/10 focus:text-foreground text-xs'
+                            >
+                                {link.label}
+                            </DropdownMenuItem>
+                        ))}
+                    </>
+                )}
+                {!hideSignOut && (
+                    <>
+                        <DropdownMenuSeparator className='bg-border' />
+                        <DropdownMenuItem
+                            onClick={onSignOut}
+                            className='focus:bg-foreground/10 text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400'
+                        >
+                            <SignOutIcon className='h-4 w-4' />
+                            {t('nav.signOut')}
+                        </DropdownMenuItem>
+                    </>
+                )}
             </DropdownMenuContent>
         </DropdownMenu>
     )

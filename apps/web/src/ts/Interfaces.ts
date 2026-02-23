@@ -10,6 +10,7 @@ import type {
     ClawAvatarSize,
     ClawStatus,
     DashboardTab,
+    FeatureRequestPlatform,
     FeatureRequestStatus,
     GatewayConnectionState,
     Language,
@@ -47,6 +48,7 @@ export interface Claw {
     planId: string
     location: string | null
     rootPassword: string | null
+    hasRootPassword: boolean
     sshKeyId: string | null
     providerServerId: string | null
     subdomain: string | null
@@ -57,6 +59,7 @@ export interface Claw {
     volumes?: Volume[]
     ownerEmail?: string | null
     deletionScheduledAt: string | null
+    checkoutUrl?: string | null
     createdAt: string
     port?: number
 }
@@ -166,6 +169,8 @@ export interface PreferencesState {
     setTheme: (theme: ThemeMode) => void
     language: Language
     setLanguage: (language: Language) => void
+    openLinksWindowed: boolean
+    setOpenLinksWindowed: (value: boolean) => void
 }
 
 export interface CachedProfile {
@@ -196,6 +201,21 @@ export interface AuthContextType {
     unlinkGoogle: () => Promise<void>
     unlinkGithub: () => Promise<void>
     signOut: () => Promise<void>
+    isLocal?: boolean
+}
+
+export interface FooterLink {
+    label: string
+    href: string
+    external?: boolean
+}
+
+export interface SetupScreenProps {
+    onComplete: () => void
+}
+
+export interface LogoProps {
+    to?: string
 }
 
 export interface NavLink {
@@ -228,6 +248,11 @@ export interface UserDropdownProps {
     displayName: string
     onSignOut: () => Promise<void>
     onOpen?: () => void
+    hideBilling?: boolean
+    hideSSHKeys?: boolean
+    hideSignOut?: boolean
+    footerLinks?: FooterLink[]
+    openLinksWindowed?: boolean
 }
 
 export interface EmptyStateProps {
@@ -258,6 +283,7 @@ export interface PageTitleProps {
     url?: string
     type?: string
     noIndex?: boolean
+    keywords?: string[]
 }
 
 export interface PageHeaderProps {
@@ -303,6 +329,10 @@ export interface CreateClawModalProps {
     onNavigateToSSHKeys: () => void
 }
 
+export interface LocalCreateClawModalProps {
+    onClose: () => void
+}
+
 export interface ClawCardActions {
     onStart: () => void
     onShowStopModal: () => void
@@ -320,6 +350,8 @@ export interface ClawCardActions {
     onCopySSHWithPassword: () => void
     onCopyPassword: () => void
     onExport: () => void
+    onResumeCheckout: () => void
+    onCancelPending: () => void
 }
 
 export interface ExportRateLimitError extends Error {
@@ -330,8 +362,6 @@ export interface ClawCardDropdownMenuProps {
     claw: Claw
     actions: ClawCardActions
     isLoading: boolean
-    copied: boolean
-    passwordCopied: boolean
     hasActionItems: boolean
     isScheduledForDeletion: boolean
     isAdmin: boolean
@@ -428,6 +458,10 @@ export interface RenameClawData {
     name: string
 }
 
+export interface UpdateClawSubdomainData {
+    subdomain: string
+}
+
 export interface CreateSSHKeyData {
     name: string
     publicKey: string
@@ -513,6 +547,11 @@ export interface InstallClawVersionResponse {
 
 export interface PlaygroundVersionsContentProps {
     clawId: string
+}
+
+export interface ClawCredentialsResponse {
+    rootPassword: string | null
+    ip: string | null
 }
 
 export interface DiagnosticsStatusResponse {
@@ -1071,6 +1110,7 @@ export interface ChatSidebarItemProps {
     agent: ClawAgent
     isActive: boolean
     isLast: boolean
+    isChecking?: boolean
     connectionState?: GatewayConnectionState
     onClick: () => void
     onConfigure: () => void
@@ -1098,6 +1138,18 @@ export interface ChatSidebarProps {
     onCreateAgent: (clawId: string, clawName: string) => void
     onOpenClawSettings: (clawId: string) => void
     onClose?: () => void
+}
+
+export interface ChatSidebarAgentListProps {
+    claw: Claw
+    agents: ClawAgent[]
+    isLoading: boolean
+    isReachable: boolean
+    selectedAgent: ChatSelectedAgent | null
+    activeConnectionState?: GatewayConnectionState
+    onAgentClick: (agentId: string, clawId: string) => void
+    onConfigureAgent: (agentId: string, clawId: string) => void
+    onCreateAgent: (clawId: string, clawName: string) => void
 }
 
 export interface ChatSidebarClawHeaderProps {
@@ -1182,13 +1234,10 @@ export interface FeatureRequest {
     title: string
     description: string
     status: FeatureRequestStatus
-    rejectionReason: string | null
+    platforms: FeatureRequestPlatform[]
     upvoteCount: number
     userId: string
-    userName: string | null
-    userEmail: string
     hasUpvoted: boolean
-    createdAt: string
 }
 
 export interface FeatureRequestsListResponse {
@@ -1199,22 +1248,50 @@ export interface FeatureRequestsListResponse {
 export interface CreateFeatureRequestData {
     title: string
     description: string
+    platforms: FeatureRequestPlatform[]
 }
 
 export interface UpdateFeatureRequestStatusData {
     status: FeatureRequestStatus
-    rejectionReason?: string
+}
+
+export interface EditFeatureRequestData {
+    title?: string
+    description?: string
+    status?: FeatureRequestStatus
+    platforms?: FeatureRequestPlatform[]
 }
 
 export interface FeatureRequestCardProps {
     featureRequest: FeatureRequest
     isAuthenticated: boolean
     isAdmin: boolean
+    isDeleting: boolean
     onUpvote: (id: string) => void
-    onStatusChange: (id: string, status: FeatureRequestStatus) => void
+    onEdit: (featureRequest: FeatureRequest) => void
     onDelete: (id: string) => void
 }
 
 export interface FeatureRequestStatusBadgeProps {
     status: FeatureRequestStatus
+}
+
+export interface ElectronAPI {
+    isDesktop?: boolean
+    openExternal: (url: string) => Promise<void>
+    openWindowed: (url: string) => Promise<void>
+    getDnsStatus: () => Promise<boolean>
+    setupDns: () => Promise<boolean>
+}
+
+export interface ElectronWindow {
+    electronAPI?: ElectronAPI
+}
+
+export interface RenameClawMutationParams extends RenameClawData {
+    id: string
+}
+
+export interface UpdateClawSubdomainMutationParams extends UpdateClawSubdomainData {
+    id: string
 }

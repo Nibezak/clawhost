@@ -7,6 +7,6 @@ const postModules = import.meta.glob<BlogPostModule>(
     }
 )
 
-const moduleEntries = Object.entries(postModules)
+const moduleEntries: [string, BlogPostModule][] = Object.entries(postModules)
 
 export default moduleEntries

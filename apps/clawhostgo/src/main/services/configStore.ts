@@ -3,6 +3,7 @@ import type { LocalClawConfig, ConfigFile } from '@/ts/Interfaces'
 import fs from 'fs'
 import path from 'path'
 import os from 'os'
+import crypto from 'crypto'
 
 const BASE_DIR = path.join(os.homedir(), '.clawhostgo')
 const CONFIG_PATH = path.join(BASE_DIR, 'config.json')
@@ -10,7 +11,8 @@ const CONFIG_PATH = path.join(BASE_DIR, 'config.json')
 const DEFAULT_CONFIG: ConfigFile = {
     claws: [],
     defaultVersion: '',
-    portRange: { min: 18789, max: 18889 }
+    portRange: { min: 18789, max: 18889 },
+    createdAt: new Date().toISOString()
 }
 
 const ensureDirectories = (): void => {
@@ -18,7 +20,8 @@ const ensureDirectories = (): void => {
         BASE_DIR,
         path.join(BASE_DIR, 'claws'),
         path.join(BASE_DIR, 'versions'),
-        path.join(BASE_DIR, 'node')
+        path.join(BASE_DIR, 'node'),
+        path.join(BASE_DIR, 'certs')
     ]
     for (const dir of dirs) {
         if (!fs.existsSync(dir)) {
@@ -27,6 +30,20 @@ const ensureDirectories = (): void => {
     }
     if (!fs.existsSync(CONFIG_PATH)) {
         fs.writeFileSync(CONFIG_PATH, JSON.stringify(DEFAULT_CONFIG, null, 4))
+    } else {
+        const config = readConfig()
+        let dirty = false
+        if (!config.createdAt) {
+            config.createdAt = new Date().toISOString()
+            dirty = true
+        }
+        for (const claw of config.claws) {
+            if (!claw.subdomain) {
+                claw.subdomain = generateSlug(claw.id)
+                dirty = true
+            }
+        }
+        if (dirty) writeConfig(config)
     }
 }
 
@@ -45,9 +62,24 @@ const writeConfig = (config: ConfigFile): void => {
     fs.renameSync(tmpPath, CONFIG_PATH)
 }
 
+const generateSlug = (id: string): string => {
+    const chars = 'abcdefghjkmnpqrstuvwxyz23456789'
+    const hash = crypto.createHash('sha256').update(id).digest()
+    let slug = ''
+    for (let i = 0; i < 8; i++) {
+        slug += chars[hash[i] % chars.length]
+    }
+    return slug
+}
+
 const findClaw = (id: string): LocalClawConfig | null => {
     const config = readConfig()
     return config.claws.find((c) => c.id === id) || null
+}
+
+const findClawBySubdomain = (subdomain: string): LocalClawConfig | null => {
+    const config = readConfig()
+    return config.claws.find((c) => c.subdomain === subdomain) || null
 }
 
 const addClaw = (claw: LocalClawConfig): void => {
@@ -100,7 +132,9 @@ export default {
     ensureDirectories,
     readConfig,
     writeConfig,
+    generateSlug,
     findClaw,
+    findClawBySubdomain,
     addClaw,
     removeClaw,
     updateClaw,

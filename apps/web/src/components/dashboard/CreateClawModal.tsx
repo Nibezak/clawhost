@@ -4,6 +4,7 @@ import type { ProviderType } from '@/ts/Types'
 
 import { useState, useEffect } from 'react'
 import { t } from '@openclaw/i18n'
+import { clawProvider } from '@openclaw/shared'
 import { useUIStore } from '@/lib/store'
 import {
     usePurchaseClaw,
@@ -54,7 +55,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     const [name, setName] = useState('')
     const [nameError, setNameError] = useState('')
     const [provider, setProvider] = useState<ProviderType>(
-        preselectedProvider || 'hetzner'
+        preselectedProvider || clawProvider.hetzner
     )
 
     const {
@@ -273,9 +274,11 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                         <div className='bg-muted flex w-fit rounded-lg p-1'>
                             <button
                                 type='button'
-                                onClick={() => handleProviderChange('hetzner')}
+                                onClick={() =>
+                                    handleProviderChange(clawProvider.hetzner)
+                                }
                                 className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition ${
-                                    provider === 'hetzner'
+                                    provider === clawProvider.hetzner
                                         ? 'bg-background text-foreground shadow-sm'
                                         : 'text-muted-foreground hover:text-foreground'
                                 }`}
@@ -301,10 +304,12 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                             <button
                                 type='button'
                                 onClick={() =>
-                                    handleProviderChange('digitalocean')
+                                    handleProviderChange(
+                                        clawProvider.digitalocean
+                                    )
                                 }
                                 className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition ${
-                                    provider === 'digitalocean'
+                                    provider === clawProvider.digitalocean
                                         ? 'bg-background text-foreground shadow-sm'
                                         : 'text-muted-foreground hover:text-foreground'
                                 }`}
@@ -323,9 +328,11 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                             </button>
                             <button
                                 type='button'
-                                onClick={() => handleProviderChange('vultr')}
+                                onClick={() =>
+                                    handleProviderChange(clawProvider.vultr)
+                                }
                                 className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition ${
-                                    provider === 'vultr'
+                                    provider === clawProvider.vultr
                                         ? 'bg-background text-foreground shadow-sm'
                                         : 'text-muted-foreground hover:text-foreground'
                                 }`}

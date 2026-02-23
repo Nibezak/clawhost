@@ -158,6 +158,7 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
         },
         onError: () => {
             showToast(t('playground.variablesSaveFailed'), 'error')
+            invalidateQueries()
         }
     })
 
@@ -172,6 +173,14 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
 
     const handleRemoveVar = useCallback(
         (index: number) => {
+            const key = envVars[index]?.key?.trim()
+            const isSaved = key && envData?.envVars && key in envData.envVars
+
+            if (!isSaved) {
+                setEnvVars((prev) => prev.filter((_, i) => i !== index))
+                return
+            }
+
             if (skipDeleteConfirmation) {
                 executeDelete(index)
             } else {
@@ -179,7 +188,7 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
                 setDontAskAgain(false)
             }
         },
-        [executeDelete]
+        [executeDelete, envVars, envData]
     )
 
     const handleConfirmDelete = useCallback(() => {
@@ -354,16 +363,25 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
                                                 </TooltipContent>
                                             </Tooltip>
                                         )}
-                                        <button
-                                            type='button'
-                                            onClick={() =>
-                                                handleRemoveVar(index)
-                                            }
-                                            disabled={saveMutation.isPending}
-                                            className='text-muted-foreground rounded p-1 transition-colors disabled:cursor-default disabled:opacity-50 [&:not(:disabled)]:hover:text-red-600 dark:[&:not(:disabled)]:hover:text-red-400'
-                                        >
-                                            <TrashIcon className='h-3.5 w-3.5' />
-                                        </button>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <button
+                                                    type='button'
+                                                    onClick={() =>
+                                                        handleRemoveVar(index)
+                                                    }
+                                                    disabled={saveMutation.isPending || deleteMutation.isPending}
+                                                    className='text-muted-foreground rounded p-1 transition-colors disabled:cursor-default disabled:opacity-50 [&:not(:disabled)]:hover:text-red-600 dark:[&:not(:disabled)]:hover:text-red-400'
+                                                >
+                                                    <TrashIcon className='h-3.5 w-3.5' />
+                                                </button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                {saveMutation.isPending || deleteMutation.isPending
+                                                    ? t('playground.variablesOperationPending')
+                                                    : t('common.delete')}
+                                            </TooltipContent>
+                                        </Tooltip>
                                     </div>
                                 </div>
                                 <input
@@ -420,7 +438,7 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
                 ) : (
                     <button
                         onClick={handleAddVar}
-                        disabled={saveMutation.isPending}
+                        disabled={saveMutation.isPending || deleteMutation.isPending}
                         className='border-border text-muted-foreground hover:border-border hover:text-muted-foreground flex w-full items-center justify-center gap-1 rounded-lg border border-dashed py-2 text-[11px] transition-colors disabled:cursor-default disabled:opacity-50'
                     >
                         <PlusIcon className='h-3 w-3' />
@@ -439,14 +457,10 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
                         }
                         className='flex w-full items-center justify-center gap-2 rounded-lg bg-[#ef5350] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
                     >
-                        {saveMutation.isPending ? (
-                            <>
-                                <CircleNotchIcon className='h-4 w-4 animate-spin' />
-                                {t('playground.variablesSaving')}
-                            </>
-                        ) : (
-                            t('playground.variablesSave')
+                        {saveMutation.isPending && (
+                            <CircleNotchIcon className='h-4 w-4 animate-spin' />
                         )}
+                        {t('common.save')}
                     </button>
                 )}
 

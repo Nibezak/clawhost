@@ -1,4 +1,4 @@
-import type { Claw, RenameClawData } from '@/ts/Interfaces'
+import type { Claw, RenameClawMutationParams } from '@/ts/Interfaces'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib'
@@ -9,7 +9,7 @@ const useRenameClaw = () => {
     const queryClient = useQueryClient()
 
     return useMutation({
-        mutationFn: ({ id, name }: { id: string } & RenameClawData) =>
+        mutationFn: ({ id, name }: RenameClawMutationParams) =>
             api.renameClaw(id, { name }),
         onSuccess: (updatedClaw, { id }) => {
             queryClient.setQueryData<Claw[]>(CLAWS_QUERY_KEY, (old) =>

@@ -9,6 +9,7 @@ const config: ForgeConfig = {
     packagerConfig: {
         asar: true,
         name: 'ClawHostGo',
+        icon: './resources/icon',
         extraResource: ['./resources/node']
     },
     makers: [new MakerDMG({}), new MakerZIP({}, ['darwin']), new MakerDeb({})],

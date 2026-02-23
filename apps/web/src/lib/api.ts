@@ -4,10 +4,12 @@ import type {
     ClawEnvVarsResponse,
     BillingInvoiceResponse,
     Claw,
+    ClawCredentialsResponse,
     CreateFeatureRequestData,
     FeatureRequest,
     FeatureRequestsListResponse,
     RenameClawData,
+    UpdateClawSubdomainData,
     ClawAgentsResponse,
     ClawChannelsResponse,
     ClawFilesResponse,
@@ -36,6 +38,7 @@ import type {
     UpdateAgentConfigData,
     UpdateAgentSkillsData,
     UpdateClawChannelsData,
+    EditFeatureRequestData,
     UpdateFeatureRequestStatusData,
     WhatsAppPairResponse,
     WhatsAppPairStatusResponse,
@@ -92,7 +95,10 @@ const api = {
             code
         }),
     resolveCredentialConflict: (data: ResolveCredentialConflictData) =>
-        publicClient.post<VerifyOtpResponse>('/auth/resolve-credential-conflict', data),
+        publicClient.post<VerifyOtpResponse>(
+            '/auth/resolve-credential-conflict',
+            data
+        ),
 
     getPlans: (provider?: string) =>
         client.get<PlansResponse>(
@@ -126,10 +132,14 @@ const api = {
         client.delete<DeleteClawResponse>(`/claws/${id}`),
     renameClaw: (id: string, data: RenameClawData) =>
         client.patch<Claw>(`/claws/${id}`, data),
+    updateClawSubdomain: (id: string, data: UpdateClawSubdomainData) =>
+        client.patch<Claw>(`/claws/${id}/subdomain`, data),
     cancelDeletion: (id: string) =>
         client.post<Claw>(`/claws/${id}/cancel-deletion`),
     hardDeleteClaw: (id: string) =>
         client.post<void>(`/claws/${id}/hard-delete`),
+    cancelPendingClaw: (id: string) =>
+        client.delete<void>(`/claws/pending/${id}`),
     getClawDiagnostics: (id: string) =>
         client.post<DiagnosticsStatusResponse>(
             `/claws/${id}/diagnostics/status`
@@ -139,6 +149,8 @@ const api = {
     repairClaw: (id: string) =>
         client.post<void>(`/claws/${id}/diagnostics/repair`),
     reinstallClaw: (id: string) => client.post<void>(`/claws/${id}/reinstall`),
+    getClawCredentials: (id: string) =>
+        client.post<ClawCredentialsResponse>(`/claws/${id}/credentials`),
     getClawVersion: (id: string) =>
         client.post<ClawVersionResponse>(`/claws/${id}/version`),
     getClawVersions: (id: string) =>
@@ -289,6 +301,8 @@ const api = {
         client.post<{ upvoteCount: number; hasUpvoted: boolean }>(
             `/feature-requests/${id}/upvote`
         ),
+    editFeatureRequest: (id: string, data: EditFeatureRequestData) =>
+        client.put<void>(`/feature-requests/${id}`, data),
     updateFeatureRequestStatus: (
         id: string,
         data: UpdateFeatureRequestStatusData

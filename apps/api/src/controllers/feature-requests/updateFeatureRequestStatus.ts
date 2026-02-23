@@ -1,7 +1,7 @@
 import type { UpdateFeatureRequestStatusBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext, FeatureRequestStatus } from '@/ts/Types'
 
-import { eq } from 'drizzle-orm'
+import { eq, and, count } from 'drizzle-orm'
 import { db } from '@/db'
 import { featureRequests } from '@/db/schema'
 import { ok, fail } from '@/lib/response'
@@ -11,29 +11,27 @@ const VALID_STATUSES: FeatureRequestStatus[] = [
     'awaiting_approval',
     'requested',
     'marked_for_implementation',
-    'implemented',
-    'rejected'
+    'implemented'
 ]
+
+const MAX_IN_PROGRESS_PER_USER = 3
 
 const updateFeatureRequestStatus = async (c: AuthenticatedContext) => {
     try {
         const id = c.req.param('id')
-        const { status, rejectionReason } =
+        const { status } =
             await c.req.json<UpdateFeatureRequestStatusBody>()
 
         if (!VALID_STATUSES.includes(status)) {
             return fail(c, t('api.featureRequestInvalidStatus'), 400)
         }
 
-        if (
-            status === 'rejected' &&
-            (!rejectionReason || !rejectionReason.trim())
-        ) {
-            return fail(c, t('api.featureRequestRejectionReasonRequired'), 400)
-        }
-
         const [existing] = await db
-            .select({ id: featureRequests.id })
+            .select({
+                id: featureRequests.id,
+                userId: featureRequests.userId,
+                status: featureRequests.status
+            })
             .from(featureRequests)
             .where(eq(featureRequests.id, id))
 
@@ -41,13 +39,34 @@ const updateFeatureRequestStatus = async (c: AuthenticatedContext) => {
             return fail(c, t('api.featureRequestNotFound'), 404)
         }
 
+        if (
+            status === 'marked_for_implementation' &&
+            existing.status !== 'marked_for_implementation'
+        ) {
+            const [{ value: inProgressCount }] = await db
+                .select({ value: count() })
+                .from(featureRequests)
+                .where(
+                    and(
+                        eq(featureRequests.userId, existing.userId),
+                        eq(featureRequests.status, 'marked_for_implementation')
+                    )
+                )
+
+            if (inProgressCount >= MAX_IN_PROGRESS_PER_USER) {
+                return fail(
+                    c,
+                    t('api.featureRequestImplementationLimitReached', {
+                        limit: String(MAX_IN_PROGRESS_PER_USER)
+                    }),
+                    400
+                )
+            }
+        }
+
         await db
             .update(featureRequests)
-            .set({
-                status,
-                rejectionReason:
-                    status === 'rejected' ? rejectionReason?.trim() : null
-            })
+            .set({ status })
             .where(eq(featureRequests.id, id))
 
         return ok(c, null, t('api.featureRequestStatusUpdated'))

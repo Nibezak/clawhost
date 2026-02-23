@@ -19,6 +19,7 @@ import {
     WarningIcon,
     FileIcon,
     FileJsIcon,
+    FileTsIcon,
     FileMdIcon,
     FileTextIcon,
     FolderOpenIcon,
@@ -108,6 +109,7 @@ const EDITABLE_FILE_TYPES: ClawFileType[] = [
     'json',
     'markdown',
     'javascript',
+    'typescript',
     'yaml',
     'text'
 ]
@@ -115,6 +117,7 @@ const EDITABLE_FILE_TYPES: ClawFileType[] = [
 const getLanguageExtension = (fileType: ClawFileType) => {
     if (fileType === 'json') return json()
     if (fileType === 'javascript') return javascript()
+    if (fileType === 'typescript') return javascript({ typescript: true })
     if (fileType === 'markdown') return markdown()
     if (fileType === 'yaml') return yaml()
     return null
@@ -123,6 +126,8 @@ const getLanguageExtension = (fileType: ClawFileType) => {
 const getFileIcon = (fileType: ClawFileType, className: string): ReactNode => {
     if (fileType === 'json' || fileType === 'javascript')
         return <FileJsIcon className={className} />
+    if (fileType === 'typescript')
+        return <FileTsIcon className={className} />
     if (fileType === 'markdown') return <FileMdIcon className={className} />
     if (fileType === 'yaml' || fileType === 'text')
         return <FileTextIcon className={className} />
@@ -132,6 +137,7 @@ const getFileIcon = (fileType: ClawFileType, className: string): ReactNode => {
 const getFileIconColor = (fileType: ClawFileType): string => {
     if (fileType === 'json') return 'h-3.5 w-3.5 shrink-0 text-yellow-500'
     if (fileType === 'javascript') return 'h-3.5 w-3.5 shrink-0 text-yellow-500'
+    if (fileType === 'typescript') return 'h-3.5 w-3.5 shrink-0 text-blue-500'
     if (fileType === 'markdown') return 'h-3.5 w-3.5 shrink-0 text-blue-400'
     if (fileType === 'yaml') return 'h-3.5 w-3.5 shrink-0 text-purple-400'
     if (fileType === 'text') return 'h-3.5 w-3.5 shrink-0 text-zinc-400'

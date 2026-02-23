@@ -77,11 +77,19 @@ const Header: FC<HeaderProps> = ({
                     <Logo />
 
                     {showNavLinks && navLinks.length > 0 ? (
-                        <nav className='hidden items-center justify-center gap-6 md:flex'>
+                        <nav
+                            className='hidden items-center justify-center gap-6 md:flex'
+                            aria-label={t('nav.mainNavigation')}
+                        >
                             {navLinks.map((link) => (
                                 <a
                                     key={link.href}
                                     href={link.href}
+                                    aria-current={
+                                        activeSection === link.id
+                                            ? 'true'
+                                            : undefined
+                                    }
                                     className={`text-sm font-medium transition ${
                                         activeSection === link.id
                                             ? 'text-foreground'
@@ -149,6 +157,8 @@ const Header: FC<HeaderProps> = ({
                                 onClick={() =>
                                     setMobileMenuOpen(!mobileMenuOpen)
                                 }
+                                aria-label={t('nav.toggleMenu')}
+                                aria-expanded={mobileMenuOpen}
                                 className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-lg p-1.5 transition-colors md:hidden'
                             >
                                 {mobileMenuOpen ? (

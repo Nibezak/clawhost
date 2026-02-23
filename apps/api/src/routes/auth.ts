@@ -1,5 +1,9 @@
 import { Hono } from 'hono'
-import { resolveCredentialConflict, sendOtp, verifyOtp } from '@/controllers/auth'
+import {
+    resolveCredentialConflict,
+    sendOtp,
+    verifyOtp
+} from '@/controllers/auth'
 
 const app = new Hono()
 

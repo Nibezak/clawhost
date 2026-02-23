@@ -42,6 +42,8 @@ const updateClawFile = async (c: AuthenticatedContext) => {
             normalized.endsWith('.jsonb') ||
             normalized.endsWith('.md') ||
             normalized.endsWith('.js') ||
+            normalized.endsWith('.ts') ||
+            normalized.endsWith('.tsx') ||
             normalized.endsWith('.yml') ||
             normalized.endsWith('.yaml') ||
             !fileName.includes('.')

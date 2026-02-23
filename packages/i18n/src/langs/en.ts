@@ -8,6 +8,7 @@ const en = {
         deleting: 'Deleting...',
         create: 'Create',
         done: 'Done',
+        back: 'Back',
         copy: 'Copy',
         copied: 'Copied.',
         copiedWithLabel: '{{label}} copied.',
@@ -24,6 +25,14 @@ const en = {
         beta: 'Beta',
         brandName: 'ClawHost',
         legalEmail: 'legal@clawhost.cloud'
+    },
+    setup: {
+        welcomeTitle: 'Welcome to ClawHost Go',
+        welcomeDescription: 'Set up your profile to get started.',
+        whatsYourName: "What's your name?",
+        namePlaceholder: 'Enter your name',
+        nameHint: 'You can always set it later.',
+        getStarted: 'Get Started'
     },
     language: {
         en: 'English',
@@ -48,9 +57,12 @@ const en = {
         admin: 'Admin',
         login: 'Login',
         deploy: 'Deploy',
-        deployOpenClaw: 'Deploy OpenClaw'
+        deployOpenClaw: 'Deploy OpenClaw',
+        mainNavigation: 'Main navigation',
+        toggleMenu: 'Toggle menu'
     },
     footer: {
+        website: 'Website',
         copyright: 'ClawHost. All rights reserved.',
         termsOfService: 'Terms of Service',
         privacyPolicy: 'Privacy Policy',
@@ -122,7 +134,8 @@ const en = {
         inputTooLong: 'Input exceeds maximum allowed length!',
         invalidEnvVars: 'Invalid environment variable names or values!',
         invalidEmailFormat: 'Invalid email format!',
-        plusAddressingNotAllowed: 'Plus addressing is not allowed for email login!',
+        plusAddressingNotAllowed:
+            'Plus addressing is not allowed for email login!',
         invalidRedirectUrl: 'Invalid redirect URL!',
         fileTooLarge: 'File content exceeds the maximum allowed size!',
         nameAndKeyRequired: 'Name and public key are required!',
@@ -216,6 +229,8 @@ const en = {
         clawDeletionScheduled: 'Claw deletion scheduled.',
         clawDeletionCancelled: 'Claw deletion cancelled.',
         clawHardDeleted: 'Claw permanently deleted.',
+        pendingClawCancelled: 'Purchase cancelled.',
+        failedToCancelPendingClaw: 'Failed to cancel purchase!',
         clawPurchaseInitiated: 'Purchase initiated successfully.',
         sshKeysFetched: 'SSH keys fetched successfully.',
         sshKeyCreated: 'SSH key created successfully.',
@@ -313,14 +328,25 @@ const en = {
         featureRequestNotFound: 'Feature request not found!',
         featureRequestLimitReached:
             'You have reached the maximum of {{limit}} open feature requests!',
+        featureRequestTotalLimitReached:
+            'The feature request board is full ({{limit}} requests). Please wait for existing requests to be resolved!',
         featureRequestTitleRequired: 'Title is required!',
         featureRequestDescriptionRequired: 'Description is required!',
-        featureRequestTitleTooLong: 'Title must be 200 characters or less!',
+        featureRequestTitleTooShort:
+            'Title must be at least {{min}} characters!',
+        featureRequestTitleTooLong: 'Title must be {{max}} characters or less!',
+        featureRequestDescriptionTooShort:
+            'Description must be at least {{min}} characters!',
         featureRequestDescriptionTooLong:
-            'Description must be 2000 characters or less!',
+            'Description must be {{max}} characters or less!',
         featureRequestInvalidStatus: 'Invalid status!',
-        featureRequestRejectionReasonRequired:
-            'Rejection reason is required when rejecting!'
+        featureRequestUpdated: 'Feature request updated.',
+        failedToUpdateFeatureRequest: 'Failed to update feature request!',
+        noChangesProvided: 'No changes provided!',
+        platformRequired: 'At least one platform is required!',
+        invalidPlatform: 'Invalid platform value!',
+        featureRequestImplementationLimitReached:
+            'This user already has {{limit}} feature requests in progress!'
     },
     emails: {
         otpSubject: 'Your ClawHost sign-in code',
@@ -350,7 +376,8 @@ const en = {
         changeEmail: 'Change email',
         invalidCode: 'Invalid code',
         invalidEmailFormat: 'Please enter a valid email address!',
-        plusAddressingNotAllowed: 'Plus addressing is not allowed for email login!',
+        plusAddressingNotAllowed:
+            'Plus addressing is not allowed for email login!',
         or: 'or',
         continueWithGoogle: 'Continue with Google',
         continueWithGithub: 'Continue with GitHub',
@@ -412,10 +439,13 @@ const en = {
             'Email is always connected as your primary sign-in method.',
         providerConnected: '{{provider}} connected successfully.',
         providerDisconnected: '{{provider}} disconnected successfully.',
-        providerEmailMismatch: 'You can only connect accounts that use the same email address!',
+        providerEmailMismatch:
+            'You can only connect accounts that use the same email address!',
         settings: 'Settings',
         settingsDescription: 'Manage your dashboard preferences.',
-        showAllClaws: 'Show all claws from all users'
+        showAllClaws: 'Show all claws from all users',
+        openLinksWindowed: 'Open links in a windowed view',
+        openLinksWindowedDescription: 'When enabled, external links open inside the app instead of the system browser.'
     },
     billing: {
         title: 'Billing',
@@ -485,6 +515,7 @@ const en = {
         ip: 'IP',
         domain: 'Domain',
         ipAddress: 'IP Address',
+        port: 'Port',
         monthlyCost: 'Monthly Cost',
         serverId: 'Server ID',
         created: 'Created',
@@ -505,6 +536,8 @@ const en = {
         cancelDeletion: 'Cancel Deletion',
         deletionCancelled: 'Deletion cancelled.',
         scheduleDeletion: 'Schedule Deletion',
+        resumeCheckout: 'Resume Checkout',
+        cancelPurchase: 'Cancel Purchase',
         hardDelete: 'Force Delete',
         hardDeleteClaw: 'Force Delete',
         hardDeleteConfirmation:
@@ -520,7 +553,8 @@ const en = {
         diagnosticsRepairFailed:
             'Repair applied but gateway is not responding yet.',
         diagnosticsLoading: 'Connecting to instance...',
-        diagnosticsNoLogs: 'No logs available',
+        diagnosticsNoLogs:
+            'No logs available. Start your instance to generate logs.',
         diagnosticsIssueDetected: 'An issue was detected with your instance.',
         diagnosticsHealthy: 'Your instance is running normally.',
         diagnosticsPort: 'Port 18789',
@@ -544,6 +578,7 @@ const en = {
         updateInstance: 'Update Instance',
         updateInstanceSuccess: 'Instance updated successfully.',
         updateInstanceFailed: 'Failed to update instance!',
+        startFailed: 'Failed to start claw!',
         renameSuccess: 'Claw renamed successfully.',
         renameFailed: 'Failed to rename claw!',
         renameInvalidChars: 'Only letters, numbers, and dashes are allowed.',
@@ -562,6 +597,10 @@ const en = {
         configuringTooltip:
             'This might take some time. It depends on OpenClaw, the server location, and Cloudflare DNS.',
         paymentSuccess: 'Your claw is being created and configured.',
+        dnsSetupBanner: 'Set up local DNS to access your claws via subdomain.clawhost.',
+        dnsSetupButton: 'Set Up DNS',
+        dnsSetupSuccess: 'DNS resolver configured successfully.',
+        dnsSetupError: 'Failed to configure DNS resolver!',
         chatTab: 'Chat',
         playgroundTab: 'Playground',
         userTab: 'User',
@@ -587,7 +626,8 @@ const en = {
             deleting: 'Deleting',
             scheduledDeletion: 'Deletion Scheduled',
             awaitingPayment: 'Awaiting Payment',
-            unknown: 'Unknown'
+            unknown: 'Unknown',
+            checking: 'Checking'
         }
     },
     chat: {
@@ -872,10 +912,11 @@ const en = {
         comparisonSocialsUs: 'Social media presence',
         comparisonSocialsOthers: 'No social media',
         seeFullComparison: 'See Full Comparison',
-        comparisonCtaText: 'We compare against SimpleClaw, MyClaw.ai and more — feature by feature.',
+        comparisonCtaText:
+            'We compare against SimpleClaw, MyClaw.ai and more — feature by feature.',
         readyToOwnYourPrivacy: 'Ready to deploy OpenClaw?',
         ctaDescription:
-            'Get a dedicated server with OpenClaw pre-installed. Full root access, global locations, and ready in minutes. You own it at all times.',
+            'Get a dedicated server with OpenClaw pre-installed. Full root access, global locations, and ready in minutes. You own it at all times. Starting from $10.',
         deployOpenClawNow: 'Deploy OpenClaw',
         selfHostInstead: 'Self Host Instead',
         noCreditCardRequired: 'Instant Setup',
@@ -896,7 +937,11 @@ const en = {
         writtenBy: 'By {{author}}',
         backToBlog: 'Back to Blog',
         noPosts: 'No Posts Yet',
-        noPostsDescription: 'Blog posts are coming soon. Check back later.'
+        noPostsDescription: 'Blog posts are coming soon. Check back later.',
+        ctaTitle: 'Deploy OpenClaw with One Click',
+        ctaDescription: 'Get a dedicated server with OpenClaw pre-installed. Full root access, global locations, and ready in minutes. You own it at all times. Starting from $10.',
+        ctaDeploy: 'Deploy OpenClaw',
+        ctaGitHub: 'View on GitHub'
     },
     changelog: {
         title: 'Changelog',
@@ -922,6 +967,20 @@ const en = {
             'Refactoring of the playground feature structure and simplifications',
         upcomingReleaseFeature8:
             'Feature requests automatically managed and published by OpenClaw agents',
+        release10Date: 'February 23, 2026',
+        release10Title: 'Feature Requests, File Explorer & Bug Fixes',
+        release10Description:
+            'Community-driven feature requests, expanded file editing support, and various bug fixes.',
+        release10Feature1:
+            'Feature requests automatically managed and published by OpenClaw agents',
+        release10Feature2:
+            'Fixed skills sometimes failing to install from ClawHub marketplace',
+        release10Feature3:
+            'Fixed model provider switching not reflecting and still using the initial model',
+        release10Feature4:
+            'Several improvements and bug fixes across the platform',
+        release10Feature5:
+            'TypeScript, Markdown, and plain text files are now editable in File Explorer',
         release9Date: 'February 21, 2026',
         release9Title: 'Comparisons, Playground Refactor & More',
         release9Description:
@@ -1036,8 +1095,7 @@ const en = {
             'Visualize your Claws and their agents in an interactive graph.',
         subtitle: 'Agent topology across your infrastructure',
         noClawsYet: 'No Claws',
-        noClawsDescription:
-            'Deploy your first Claw to interact with it.',
+        noClawsDescription: 'Deploy your first Claw to interact with it.',
         loadingAgents: 'Agents',
         unreachable: 'Unreachable',
         offline: 'Offline',
@@ -1054,6 +1112,8 @@ const en = {
         tabInfo: 'Info',
         tabLogs: 'Logs',
         tabDiagnostics: 'Health',
+        tabDisabledConfiguring: 'Available once the instance finishes configuring.',
+        tabDisabledAwaitingPayment: 'Available once the payment is processed.',
         loadingTip1:
             'Did you know that you could run multiple agents within one OpenClaw?',
         loadingTip2: 'Did you know that OpenClaw is open-source?',
@@ -1108,8 +1168,9 @@ const en = {
         variablesDeleteDescription:
             'Are you sure you want to delete {{key}}? This will immediately remove it from the instance.',
         variablesDeleteConfirm: 'Delete',
-        variablesDontAskAgain: "Don't require confirmation this session",
+        variablesDontAskAgain: "Don't ask again when deleting variables this session",
         variablesDeleted: 'Variable deleted.',
+        variablesOperationPending: 'Disabled while a previous operation completes.',
         addAgentTitle: 'Add Agent',
         addAgentDescription: 'Add a new agent to {{clawName}}.',
         addAgentName: 'Name',
@@ -1128,6 +1189,7 @@ const en = {
         deleteAgentDescription:
             'Are you sure you want to delete the agent "{{agentName}}"? This action cannot be undone. Environment variables will not be removed.',
         deleteAgentConfirm: 'Delete',
+        agentDontAskAgain: "Don't ask again when deleting agents this session",
         deleteAgentDeleting: 'Deleting...',
         deleteAgentSuccess: 'Agent deleted successfully.',
         deleteAgentFailed: 'Failed to delete agent!',
@@ -1236,7 +1298,7 @@ const en = {
             'Manage shared skills available to all agents on this instance.',
         skillsSearch: 'Search skills...',
         skillsNoResults: 'No skills match your search.',
-        skillsEmpty: 'No bundled skills found on this instance.',
+        skillsEmpty: 'No Skills',
         skillsSave: 'Save Skills',
         skillsSaved: 'Skills updated successfully.',
         skillsSaveFailed: 'Failed to update skills!',
@@ -1285,7 +1347,7 @@ const en = {
         versionsSearch: 'Search versions...',
         versionsEmpty: 'No versions found',
         versionsEmptyDescription: 'No versions match your search.',
-        versionsErrorDescription: 'Failed to load versions.',
+        versionsErrorDescription: 'Failed to load versions. Please check your connection and try again.',
         versionsChangelog: 'View changelogs on npm',
         versionCurrent: 'Current',
         versionLatest: 'Latest',
@@ -1299,6 +1361,13 @@ const en = {
         settingsName: 'Name',
         settingsNamePlaceholder: 'Enter claw name',
         settingsNameDescription: 'Letters, numbers, and dashes only.',
+        subdomain: 'Subdomain',
+        subdomainPlaceholder: 'Enter subdomain',
+        subdomainDescription: 'Lowercase letters and numbers, 3-20 characters.',
+        subdomainInvalid: 'Use 3-20 lowercase letters and numbers only.',
+        subdomainUpdated: 'Subdomain updated successfully.',
+        subdomainUpdateFailed: 'Failed to update subdomain!',
+        subdomainInUse: 'This subdomain is used by another claw!',
         settingsSave: 'Save',
         settingsSaving: 'Saving...'
     },
@@ -1474,14 +1543,12 @@ const en = {
         subtitle:
             'Help shape the future of OpenClaw by requesting and upvoting features.',
         submitRequest: 'Submit Request',
-        noRequestsYet: 'No feature requests yet',
-        noRequestsDescription:
-            'Be the first to submit a feature request and help shape the platform.',
+        noRequestsYet: 'No Feature Requests',
+        noRequestsDescription: 'No feature requests have been submitted yet. Be the first to share your ideas.',
         statusAwaitingApproval: 'Awaiting Approval',
         statusRequested: 'Requested',
         statusMarkedForImplementation: 'Marked for Implementation',
         statusImplemented: 'Implemented',
-        statusRejected: 'Rejected',
         sortByUpvotes: 'Most Upvoted',
         sortByNewest: 'Newest',
         sortByStatus: 'By Status',
@@ -1490,38 +1557,49 @@ const en = {
         signInToUpvote: 'Sign in to upvote.',
         signInToSubmit: 'Sign in to submit a request.',
         requestedBy: 'Requested by',
-        rejectionReason: 'Rejection reason',
         submitModalTitle: 'Submit a Feature Request',
         submitModalDescription:
             'Describe the feature you would like to see. Our AI agents will review and implement approved requests.',
         featureTitle: 'Title',
-        featureTitlePlaceholder: 'A short, descriptive title for your feature',
+        featureTitlePlaceholder: 'Feature title',
+        featureTitleMinLength: 'Title must be at least {{min}} characters.',
+        featureTitleMaxLength: 'Title must be {{max}} characters or less.',
         featureDescription: 'Description',
         featureDescriptionPlaceholder:
-            'Describe the feature, the problem it solves, and how you envision it working',
+            'Describe the feature you want, the problem it solves, and how you envision it working.',
+        featureDescriptionMinLength:
+            'Description must be at least {{min}} characters.',
+        featureDescriptionMaxLength:
+            'Description must be {{max}} characters or less.',
         submitting: 'Submitting...',
         submitted: 'Feature request submitted.',
         failedToSubmit: 'Failed to submit feature request!',
         requestLimitReached:
             'You have reached the maximum of {{limit}} open requests.',
-        agentBannerTitle: 'Powered by AI Agents',
+        agentBannerTitle: 'Powered by OpenClaw Agents',
         agentBannerDescription:
-            'Feature requests are reviewed and implemented by our AI agents. Upvote the features you want most to help prioritize what gets built next.',
+            'Feature requests are reviewed and built by OpenClaw agents hosted on ClawHost. Upvote the features you want most.',
         changeStatus: 'Change Status',
         deleteRequest: 'Delete Request',
         deleteConfirmation:
             'Are you sure you want to delete this feature request?',
-        rejectModalTitle: 'Reject Feature Request',
-        rejectModalDescription:
-            'Provide a reason for rejecting this feature request.',
-        rejectReasonPlaceholder: 'Explain why this request is being rejected',
-        rejectReasonRequired: 'A rejection reason is required.',
         statusUpdated: 'Feature request status updated.',
         failedToUpdateStatus: 'Failed to update status!',
         deleted: 'Feature request deleted.',
         failedToDelete: 'Failed to delete feature request!',
         upvoteToggled: 'Vote updated.',
-        failedToUpvote: 'Failed to update vote!'
+        failedToUpvote: 'Failed to update vote!',
+        editModalTitle: 'Edit Feature Request',
+        editModalDescription: 'Update the feature request details and status.',
+        updated: 'Feature request updated.',
+        failedToUpdate: 'Failed to update feature request!',
+        status: 'Status',
+        dontAskAgain: "Don't ask again when deleting requests this session",
+        platforms: 'Platforms',
+        platformDesktop: 'Desktop',
+        platformMobile: 'Mobile',
+        platformWeb: 'Web',
+        platformRequired: 'Select at least one platform'
     },
     compare: {
         title: 'Full Comparison',
@@ -1625,8 +1703,7 @@ const en = {
         available: 'Available',
         comingSoon: 'Coming soon',
         notAvailable: 'Not available',
-        disclaimer:
-            'Something changed or wrong? Email us at',
+        disclaimer: 'Something changed or wrong? Email us at',
         disclaimerOr: 'or open a pull request on',
         github: 'GitHub',
         ctaTitle: 'Ready to see the difference?',
