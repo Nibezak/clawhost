@@ -1103,7 +1103,7 @@ export interface ChatSidebarItemProps {
     agent: ClawAgent
     isActive: boolean
     isLast: boolean
-    isChecking: boolean
+    isChecking?: boolean
     connectionState?: GatewayConnectionState
     onClick: () => void
     onConfigure: () => void
@@ -1131,6 +1131,18 @@ export interface ChatSidebarProps {
     onCreateAgent: (clawId: string, clawName: string) => void
     onOpenClawSettings: (clawId: string) => void
     onClose?: () => void
+}
+
+export interface ChatSidebarAgentListProps {
+    claw: Claw
+    agents: ClawAgent[]
+    isLoading: boolean
+    isReachable: boolean
+    selectedAgent: ChatSelectedAgent | null
+    activeConnectionState?: GatewayConnectionState
+    onAgentClick: (agentId: string, clawId: string) => void
+    onConfigureAgent: (agentId: string, clawId: string) => void
+    onCreateAgent: (clawId: string, clawName: string) => void
 }
 
 export interface ChatSidebarClawHeaderProps {

@@ -1163,6 +1163,7 @@ const de: Translations = {
         tabLogs: 'Logs',
         tabDiagnostics: 'Zustand',
         tabDisabledConfiguring: 'Verfügbar, sobald die Instanz fertig konfiguriert ist.',
+        tabDisabledAwaitingPayment: 'Verfügbar, sobald die Zahlung verarbeitet wurde.',
         loadingTip1:
             'Wusstest du, dass du mehrere Agenten in einem OpenClaw betreiben kannst?',
         loadingTip2: 'Wusstest du, dass OpenClaw Open Source ist?',
@@ -1408,7 +1409,7 @@ const de: Translations = {
         versionsEmpty: 'Keine Versionen gefunden',
         versionsEmptyDescription:
             'Keine Versionen stimmen mit Ihrer Suche überein.',
-        versionsErrorDescription: 'Versionen konnten nicht geladen werden.',
+        versionsErrorDescription: 'Versionen konnten nicht geladen werden. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.',
         versionsChangelog: 'Changelogs auf npm ansehen',
         versionCurrent: 'Aktuell',
         versionLatest: 'Neueste',

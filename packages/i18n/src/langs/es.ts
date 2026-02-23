@@ -1157,6 +1157,7 @@ const es: Translations = {
         tabLogs: 'Registros',
         tabDiagnostics: 'Salud',
         tabDisabledConfiguring: 'Disponible cuando la instancia termine de configurarse.',
+        tabDisabledAwaitingPayment: 'Disponible una vez que se procese el pago.',
         loadingTip1:
             '¿Sabías que puedes ejecutar múltiples agentes dentro de un solo OpenClaw?',
         loadingTip2: '¿Sabías que OpenClaw es de código abierto?',
@@ -1397,7 +1398,7 @@ const es: Translations = {
         versionsSearch: 'Buscar versiones...',
         versionsEmpty: 'No se encontraron versiones',
         versionsEmptyDescription: 'Ninguna versión coincide con tu búsqueda.',
-        versionsErrorDescription: 'Error al cargar las versiones.',
+        versionsErrorDescription: 'Error al cargar las versiones. Por favor, verifica tu conexión e inténtalo de nuevo.',
         versionsChangelog: 'Ver changelogs en npm',
         versionCurrent: 'Actual',
         versionLatest: 'Última',

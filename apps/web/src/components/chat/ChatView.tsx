@@ -116,6 +116,15 @@ const ChatView: FC<ChatViewProps> = ({
 
     const handleAgentSelect = useCallback(
         (selection: ChatSelectedAgent) => {
+            const isAlreadySelected =
+                selectedAgent?.agentId === selection.agentId &&
+                selectedAgent?.clawId === selection.clawId
+            if (isAlreadySelected) {
+                setConfigAgent(null)
+                onAgentSelect(null)
+                setMobileSidebarOpen(false)
+                return
+            }
             setSettingsClawId(null)
             if (configAgent) {
                 setConfigAgent(selection)
@@ -124,7 +133,7 @@ const ChatView: FC<ChatViewProps> = ({
             onAgentSelect(selection)
             setMobileSidebarOpen(false)
         },
-        [onAgentSelect, configAgent, onAgentTabChange]
+        [onAgentSelect, configAgent, onAgentTabChange, selectedAgent]
     )
 
     const handleOpenConfig = useCallback(
@@ -144,12 +153,17 @@ const ChatView: FC<ChatViewProps> = ({
 
     const handleOpenClawSettings = useCallback(
         (clawId: string) => {
+            if (settingsClawId === clawId && !selectedAgent) {
+                setSettingsClawId(null)
+                setMobileSidebarOpen(false)
+                return
+            }
             setSettingsClawId(clawId)
             setConfigAgent(null)
             onAgentSelect(null)
             setMobileSidebarOpen(false)
         },
-        [onAgentSelect]
+        [onAgentSelect, settingsClawId, selectedAgent]
     )
 
     const handleCloseClawSettings = useCallback(() => {

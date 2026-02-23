@@ -207,7 +207,7 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                         <TooltipTrigger asChild>
                             <div className='border-background absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full border-2'>
                                 <div
-                                    className={`h-2 w-2 rounded-full ${statusConfig.color}`}
+                                    className={`h-2 w-2 rounded-full ${statusConfig.color} ${statusConfig.pulse ? 'animate-pulse' : 'status-dot-alive'}`}
                                 />
                             </div>
                         </TooltipTrigger>
@@ -235,7 +235,7 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                             {claw.name}
                         </p>
                     )}
-                    {claw.status !== clawStatus.configuring ? (
+                    {claw.status !== clawStatus.configuring && claw.status !== clawStatus.awaitingPayment ? (
                         claw.provider === clawProvider.local && claw.subdomain ? (
                             <button
                                 type='button'

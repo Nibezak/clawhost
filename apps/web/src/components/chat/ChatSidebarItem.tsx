@@ -44,7 +44,7 @@ const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
                 case 'disconnected':
                     return {
                         color: 'bg-red-500',
-                        label: t('playground.chatDisconnected')
+                        label: t('dashboard.status.unreachable')
                     }
                 default:
                     break
@@ -52,7 +52,7 @@ const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
         }
         if (isChecking) {
             return {
-                color: 'bg-blue-500',
+                color: 'bg-orange-500',
                 label: t('dashboard.status.checking'),
                 pulse: true
             }
@@ -92,7 +92,7 @@ const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
                         <TooltipTrigger asChild>
                             <div className='border-background absolute -bottom-0.5 -right-0.5 flex h-3 w-3 items-center justify-center rounded-full border-2'>
                                 <div
-                                    className={`h-1.5 w-1.5 rounded-full ${statusConfig.color} ${statusConfig.pulse ? 'animate-pulse' : ''}`}
+                                    className={`h-1.5 w-1.5 rounded-full ${statusConfig.color} ${statusConfig.pulse ? 'animate-pulse' : 'status-dot-alive'}`}
                                 />
                             </div>
                         </TooltipTrigger>

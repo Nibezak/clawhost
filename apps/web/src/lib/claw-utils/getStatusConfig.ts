@@ -57,8 +57,8 @@ const getStatusConfig = (): Record<string, StatusConfig> => {
             pulse: true
         },
         [clawStatus.rebuilding]: {
-            color: 'bg-orange-500',
-            bgColor: 'bg-orange-500/10',
+            color: 'bg-yellow-500',
+            bgColor: 'bg-yellow-500/10',
             label: t('dashboard.status.rebuilding'),
             pulse: true
         },
@@ -80,8 +80,8 @@ const getStatusConfig = (): Record<string, StatusConfig> => {
             pulse: true
         },
         [clawStatus.awaitingPayment]: {
-            color: 'bg-amber-500',
-            bgColor: 'bg-amber-500/10',
+            color: 'bg-yellow-500',
+            bgColor: 'bg-yellow-500/10',
             label: t('dashboard.status.awaitingPayment'),
             pulse: true
         },

@@ -18,7 +18,8 @@ const transitionCompletedBy: Record<string, string[]> = {
     [clawStatus.creating]: [clawStatus.running],
     [clawStatus.initializing]: [clawStatus.running],
     [clawStatus.migrating]: [clawStatus.running],
-    [clawStatus.rebuilding]: [clawStatus.running]
+    [clawStatus.rebuilding]: [clawStatus.running],
+    [clawStatus.restarting]: [clawStatus.running]
 }
 
 const getClaws = async (c: AuthenticatedContext) => {
@@ -128,6 +129,13 @@ const getClaws = async (c: AuthenticatedContext) => {
             const completionStates = transitionCompletedBy[claw.status]
             if (completionStates && !completionStates.includes(live.status)) {
                 return { ...claw, ip: live.ip }
+            }
+
+            if (claw.status !== live.status) {
+                await db
+                    .update(claws)
+                    .set({ status: live.status, ip: live.ip })
+                    .where(eq(claws.id, claw.id))
             }
 
             return { ...claw, status: live.status, ip: live.ip }

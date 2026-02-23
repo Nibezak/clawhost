@@ -1109,6 +1109,7 @@ const en = {
         tabLogs: 'Logs',
         tabDiagnostics: 'Health',
         tabDisabledConfiguring: 'Available once the instance finishes configuring.',
+        tabDisabledAwaitingPayment: 'Available once the payment is processed.',
         loadingTip1:
             'Did you know that you could run multiple agents within one OpenClaw?',
         loadingTip2: 'Did you know that OpenClaw is open-source?',
@@ -1342,7 +1343,7 @@ const en = {
         versionsSearch: 'Search versions...',
         versionsEmpty: 'No versions found',
         versionsEmptyDescription: 'No versions match your search.',
-        versionsErrorDescription: 'Failed to load versions.',
+        versionsErrorDescription: 'Failed to load versions. Please check your connection and try again.',
         versionsChangelog: 'View changelogs on npm',
         versionCurrent: 'Current',
         versionLatest: 'Latest',

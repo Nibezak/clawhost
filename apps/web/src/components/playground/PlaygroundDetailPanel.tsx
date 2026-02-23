@@ -11,7 +11,7 @@ import { useCallback, useState, useMemo, useEffect } from 'react'
 import CLAW_DETAIL_TABS from '@/lib/clawDetailTabs'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { clawProvider, clawStatus } from '@openclaw/shared'
+import { clawProvider, clawStatus, OPENCLAW_VERSION } from '@openclaw/shared'
 import { getLocale, TRUNCATE_LENGTHS } from '@/lib'
 import {
     XIcon,
@@ -99,6 +99,15 @@ const CONFIGURING_DISABLED_TABS: PlaygroundDetailTab[] = [
     CLAW_DETAIL_TABS.DIAGNOSTICS
 ]
 
+const AWAITING_PAYMENT_DISABLED_TABS: PlaygroundDetailTab[] = [
+    CLAW_DETAIL_TABS.CHANNELS,
+    CLAW_DETAIL_TABS.VERSIONS,
+    CLAW_DETAIL_TABS.VARIABLES,
+    CLAW_DETAIL_TABS.SKILLS,
+    CLAW_DETAIL_TABS.LOGS,
+    CLAW_DETAIL_TABS.DIAGNOSTICS
+]
+
 const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
     claw,
     plans,
@@ -110,38 +119,47 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
     fullScreen
 }): ReactNode => {
     const isConfiguring = claw.status === clawStatus.configuring
+    const isAwaitingPayment = claw.status === clawStatus.awaitingPayment
     const isTabDisabled = useCallback(
         (tabId: PlaygroundDetailTab) =>
-            isConfiguring && CONFIGURING_DISABLED_TABS.includes(tabId),
-        [isConfiguring]
+            (isConfiguring && CONFIGURING_DISABLED_TABS.includes(tabId)) ||
+            (isAwaitingPayment && AWAITING_PAYMENT_DISABLED_TABS.includes(tabId)),
+        [isConfiguring, isAwaitingPayment]
+    )
+    const getDisabledTooltip = useCallback(
+        (tabId: PlaygroundDetailTab) => {
+            if (isAwaitingPayment && AWAITING_PAYMENT_DISABLED_TABS.includes(tabId))
+                return t('playground.tabDisabledAwaitingPayment')
+            return t('playground.tabDisabledConfiguring')
+        },
+        [isAwaitingPayment]
     )
     const activeTab = tabStateMap[claw.id] || CLAW_DETAIL_TABS.INFO
     const setActiveTab = useCallback(
         (tab: PlaygroundDetailTab) => {
-            if (isConfiguring && CONFIGURING_DISABLED_TABS.includes(tab)) return
+            if (isTabDisabled(tab)) return
             tabStateMap[claw.id] = tab
             setRenderKey((k) => k + 1)
             if (onTabChange) onTabChange(tab)
         },
-        [claw.id, onTabChange, isConfiguring]
+        [claw.id, onTabChange, isTabDisabled]
     )
     useEffect(() => {
         if (initialTab && initialTab !== tabStateMap[claw.id]) {
-            const safeTab =
-                isConfiguring && CONFIGURING_DISABLED_TABS.includes(initialTab)
-                    ? CLAW_DETAIL_TABS.INFO
-                    : initialTab
+            const safeTab = isTabDisabled(initialTab)
+                ? CLAW_DETAIL_TABS.INFO
+                : initialTab
             tabStateMap[claw.id] = safeTab
             setRenderKey((k) => k + 1)
         }
-    }, [initialTab, claw.id, isConfiguring])
+    }, [initialTab, claw.id, isTabDisabled])
     useEffect(() => {
-        if (isConfiguring && CONFIGURING_DISABLED_TABS.includes(activeTab)) {
+        if (isTabDisabled(activeTab)) {
             tabStateMap[claw.id] = CLAW_DETAIL_TABS.INFO
             setRenderKey((k) => k + 1)
             if (onTabChange) onTabChange(CLAW_DETAIL_TABS.INFO)
         }
-    }, [isConfiguring, activeTab, claw.id, onTabChange])
+    }, [isTabDisabled, activeTab, claw.id, onTabChange])
     const [, setRenderKey] = useState(0)
     const [settingsName, setSettingsName] = useState(claw.name)
     const [settingsNameError, setSettingsNameError] = useState('')
@@ -241,21 +259,22 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
     const queryClient = useQueryClient()
     const versionQuery = useClawVersion(
         claw.id,
-        isInfoTab && !readOnly && !!claw.ip
+        isInfoTab && !readOnly && !!claw.ip && !isConfiguring && !isAwaitingPayment
     )
     useEffect(() => {
-        if (isInfoTab && !readOnly && claw.ip) {
+        if (isInfoTab && !readOnly && claw.ip && !isConfiguring && !isAwaitingPayment) {
             queryClient.resetQueries({
                 queryKey: ['claw-version', claw.id]
             })
         }
-    }, [isInfoTab, readOnly, claw.ip, claw.id, queryClient])
-    const showVersion = readOnly || !!claw.ip
+    }, [isInfoTab, readOnly, claw.ip, claw.id, queryClient, isConfiguring, isAwaitingPayment])
+    const showVersion = !isConfiguring && !isAwaitingPayment && (readOnly || !!claw.ip)
     const versionLoading = !readOnly && versionQuery.isPending
     const versionDisplay = useMemo(() => {
-        if (readOnly) return '2026.2.13'
+        if (readOnly) return OPENCLAW_VERSION
         if (versionQuery.isPending) return null
         if (versionQuery.isError || !versionQuery.data) return null
+        if (versionQuery.data.version === 'unknown') return null
         return versionQuery.data.version
     }, [
         readOnly,
@@ -307,6 +326,7 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                 )}
                             </h3>
                             {claw.status !== clawStatus.configuring &&
+                                claw.status !== clawStatus.awaitingPayment &&
                                 claw.provider !== clawProvider.local && (
                                     <a
                                         href={`https://${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
@@ -376,7 +396,7 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                         {tabButton}
                                     </TooltipTrigger>
                                     <TooltipContent>
-                                        {t('playground.tabDisabledConfiguring')}
+                                        {getDisabledTooltip(tab.id)}
                                     </TooltipContent>
                                 </Tooltip>
                             )

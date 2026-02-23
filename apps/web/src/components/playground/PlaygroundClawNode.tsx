@@ -7,9 +7,9 @@ import type {
 
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
-import { clawStatus } from '@openclaw/shared'
+import { clawStatus, clawProvider } from '@openclaw/shared'
 import { useUIStore } from '@/lib/store'
-import { getLocale, TRUNCATE_LENGTHS } from '@/lib'
+import { getLocale, getBaseDomain, TRUNCATE_LENGTHS } from '@/lib'
 import {
     useStartClaw,
     useStopClaw,
@@ -23,7 +23,7 @@ import {
 } from '@/hooks'
 import { api } from '@/lib'
 import { ProviderIcon } from '@/components'
-import { getStatusConfig } from '@/lib/claw-utils'
+import { getStatusConfig, generateSlug } from '@/lib/claw-utils'
 import {
     PlusIcon,
     ClockIcon,
@@ -323,10 +323,17 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                 </div>
 
                 <div className='px-4 py-3'>
-                    {claw.ip && (
-                        <p className='text-muted-foreground mb-2 font-mono text-xs'>
-                            {claw.ip}
-                        </p>
+                    {claw.status === clawStatus.running &&
+                        agentCount > 0 && (
+                        claw.provider === clawProvider.local && claw.subdomain ? (
+                            <p className='text-muted-foreground mb-2 truncate text-xs'>
+                                {claw.subdomain}.clawhost
+                            </p>
+                        ) : claw.provider !== clawProvider.local ? (
+                            <p className='text-muted-foreground mb-2 truncate text-xs'>
+                                {claw.subdomain || generateSlug(claw.id)}.{getBaseDomain()}
+                            </p>
+                        ) : null
                     )}
 
                     <div className='flex items-center gap-2'>
