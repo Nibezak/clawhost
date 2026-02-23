@@ -9,6 +9,7 @@ import { CaretDown, ChatCircleDots } from 'phosphor-react-native'
 import { t } from '@openclaw/i18n'
 import { clawStatus } from '@openclaw/shared'
 import { COLORS } from '@/lib/theme'
+import getLocale from '@/lib/getLocale'
 import {
     getStatusConfig,
     locationFlags,
@@ -56,7 +57,7 @@ const ClawCard: FC<ClawCardProps> = ({ claw, plan }): ReactNode => {
     const subdomain = claw.subdomain || generateSlug(claw.id)
 
     const formatDate = (dateString: string): string => {
-        return new Date(dateString).toLocaleDateString('en-US', {
+        return new Date(dateString).toLocaleDateString(getLocale(), {
             year: 'numeric',
             month: 'short',
             day: 'numeric'

@@ -263,7 +263,7 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
                 publicKey: sshPublicKey,
                 privateKey: pemPrivateKey
             })
-        } catch (err) {
+        } catch {
             setKeyGenError(t('errors.failedToGenerateKeyPair'))
         }
     }

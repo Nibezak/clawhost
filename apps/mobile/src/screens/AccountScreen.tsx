@@ -18,6 +18,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { Calendar, Key, ArrowSquareOut } from 'phosphor-react-native'
 import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
+import getLocale from '@/lib/getLocale'
 import api from '@/lib/api'
 import {
     useProfile,
@@ -132,7 +133,7 @@ const AccountScreen: FC = (): ReactNode => {
 
     const formatDate = (dateString: string | undefined): string => {
         if (!dateString) return '...'
-        return new Date(dateString).toLocaleDateString('en-US', {
+        return new Date(dateString).toLocaleDateString(getLocale(), {
             year: 'numeric',
             month: 'long',
             day: 'numeric'

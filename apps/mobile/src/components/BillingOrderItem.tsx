@@ -11,6 +11,7 @@ import {
 import { DownloadSimple } from 'phosphor-react-native'
 import { t } from '@openclaw/i18n'
 import { COLORS } from '@/lib/theme'
+import getLocale from '@/lib/getLocale'
 
 const BillingOrderItem: FC<BillingOrderItemProps> = ({
     order,
@@ -18,7 +19,7 @@ const BillingOrderItem: FC<BillingOrderItemProps> = ({
     isInvoiceLoading
 }): ReactNode => {
     const formatDate = (dateString: string): string => {
-        return new Date(dateString).toLocaleDateString('en-US', {
+        return new Date(dateString).toLocaleDateString(getLocale(), {
             year: 'numeric',
             month: 'short',
             day: 'numeric'
@@ -26,7 +27,7 @@ const BillingOrderItem: FC<BillingOrderItemProps> = ({
     }
 
     const formatCurrency = (amount: number, currency: string): string => {
-        return new Intl.NumberFormat('en-US', {
+        return new Intl.NumberFormat(getLocale(), {
             style: 'currency',
             currency: currency.toUpperCase()
         }).format(amount / 100)

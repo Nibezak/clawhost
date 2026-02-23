@@ -177,7 +177,7 @@ const LandingFooter: FC = (): ReactNode => {
                         <ul className='space-y-3 text-sm'>
                             <li>
                                 <Link
-                                    to='/#how-it-works'
+                                    to={`${ROUTES.HOME}#how-it-works`}
                                     onClick={(e) =>
                                         handleHashClick(e, 'how-it-works')
                                     }
@@ -188,7 +188,7 @@ const LandingFooter: FC = (): ReactNode => {
                             </li>
                             <li>
                                 <Link
-                                    to='/#features'
+                                    to={`${ROUTES.HOME}#features`}
                                     onClick={(e) =>
                                         handleHashClick(e, 'features')
                                     }
@@ -199,7 +199,7 @@ const LandingFooter: FC = (): ReactNode => {
                             </li>
                             <li>
                                 <Link
-                                    to='/#testimonials'
+                                    to={`${ROUTES.HOME}#testimonials`}
                                     onClick={(e) =>
                                         handleHashClick(e, 'testimonials')
                                     }
@@ -210,7 +210,7 @@ const LandingFooter: FC = (): ReactNode => {
                             </li>
                             <li>
                                 <Link
-                                    to='/#pricing'
+                                    to={`${ROUTES.HOME}#pricing`}
                                     onClick={(e) =>
                                         handleHashClick(e, 'pricing')
                                     }
@@ -221,7 +221,7 @@ const LandingFooter: FC = (): ReactNode => {
                             </li>
                             <li>
                                 <Link
-                                    to='/#comparison'
+                                    to={`${ROUTES.HOME}#comparison`}
                                     onClick={(e) =>
                                         handleHashClick(e, 'comparison')
                                     }
@@ -232,7 +232,7 @@ const LandingFooter: FC = (): ReactNode => {
                             </li>
                             <li>
                                 <Link
-                                    to='/#faq'
+                                    to={`${ROUTES.HOME}#faq`}
                                     onClick={(e) => handleHashClick(e, 'faq')}
                                     className={hashClass('faq')}
                                 >
