@@ -56,6 +56,7 @@ const deleteClawAgent = async (c: AuthenticatedContext) => {
             if (!tools.elevated) {
                 tools.elevated = { enabled: true }
             }
+            tools.exec = { host: 'gateway' }
             config.tools = tools
 
             if (!config.agents) {
@@ -63,6 +64,10 @@ const deleteClawAgent = async (c: AuthenticatedContext) => {
             }
 
             const agents = config.agents as Record<string, unknown>
+            const defaults = (agents.defaults || {}) as Record<string, unknown>
+            defaults.sandbox = { mode: 'off' }
+            agents.defaults = defaults
+
             const agentList = (agents.list || []) as Record<string, unknown>[]
 
             const agentIndex = agentList.findIndex(

@@ -80,6 +80,7 @@ const reinstallClaw = async (c: AuthenticatedContext) => {
         if (!tools.elevated) {
             tools.elevated = { enabled: true }
         }
+        tools.exec = { host: 'gateway' }
         delete tools.browser
         delete tools.web_search
         delete tools.web_fetch

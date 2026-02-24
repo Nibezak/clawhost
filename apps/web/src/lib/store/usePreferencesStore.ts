@@ -25,7 +25,9 @@ const usePreferencesStore = create<PreferencesState>()(
                 set({ language })
             },
             openLinksWindowed: false,
-            setOpenLinksWindowed: (value) => set({ openLinksWindowed: value })
+            setOpenLinksWindowed: (value) => set({ openLinksWindowed: value }),
+            chatSidebarView: 'tree',
+            setChatSidebarView: (view) => set({ chatSidebarView: view })
         }),
         {
             name: STORAGE_KEYS.PREFERENCES,
@@ -43,9 +45,12 @@ const usePreferencesStore = create<PreferencesState>()(
                 if (version < 4) {
                     state.openLinksWindowed = state.openLinksWindowed ?? false
                 }
+                if (version < 5) {
+                    state.chatSidebarView = state.chatSidebarView || 'tree'
+                }
                 return state
             },
-            version: 4
+            version: 5
         }
     )
 )

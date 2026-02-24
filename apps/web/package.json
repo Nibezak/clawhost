@@ -1,6 +1,6 @@
 {
     "name": "web",
-    "version": "0.0.86",
+    "version": "0.0.87",
     "private": true,
     "type": "module",
     "scripts": {
@@ -40,6 +40,8 @@
         "@types/dagre": "^0.7.53",
         "@uiw/codemirror-themes": "^4.25.4",
         "@uiw/react-codemirror": "^4.25.4",
+        "@xterm/addon-fit": "^0.10.0",
+        "@xterm/xterm": "^5.5.0",
         "@xyflow/react": "^12.10.0",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",

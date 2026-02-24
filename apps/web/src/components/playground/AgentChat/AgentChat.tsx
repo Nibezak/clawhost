@@ -11,6 +11,7 @@ import { useRef, useState, useEffect, useCallback } from 'react'
 import { t } from '@openclaw/i18n'
 import { GearSixIcon, ArrowDownIcon } from '@phosphor-icons/react'
 import { useAgentChat } from '@/hooks/useAgentChat'
+import useTextToSpeech from '@/hooks/useTextToSpeech'
 import ChatBubble from '@/components/playground/AgentChat/ChatBubble'
 import ChatInput from '@/components/playground/AgentChat/ChatInput'
 import ChatEmptyState from '@/components/playground/AgentChat/ChatEmptyState'
@@ -40,6 +41,7 @@ const AgentChat: FC<AgentChatProps> = ({
 }): ReactNode => {
     const scrollRef = useRef<HTMLDivElement>(null)
     const chatInputRef = useRef<ChatInputHandle>(null)
+    const { activeMessageId, speak, stop } = useTextToSpeech()
     const isNearBottomRef = useRef(true)
     const [isDragging, setIsDragging] = useState(false)
     const [showScrollButton, setShowScrollButton] = useState(false)
@@ -149,7 +151,7 @@ const AgentChat: FC<AgentChatProps> = ({
                         </div>
                     </div>
                 </div>
-                <div className='border-border border-t p-3'>
+                <div className='bg-background border-border border-t p-3'>
                     <div className='flex items-center gap-2'>
                         <input
                             disabled
@@ -262,7 +264,12 @@ const AgentChat: FC<AgentChatProps> = ({
                                             date={msg.timestamp}
                                         />
                                     )}
-                                <ChatBubble message={msg} />
+                                <ChatBubble
+                                    message={msg}
+                                    onSpeak={speak}
+                                    onStop={stop}
+                                    isSpeaking={activeMessageId === msg.id}
+                                />
                             </div>
                         ))}
                     </div>

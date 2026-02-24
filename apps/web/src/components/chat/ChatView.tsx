@@ -12,6 +12,7 @@ import { clawStatus } from '@openclaw/shared'
 import { t } from '@openclaw/i18n'
 import { ListIcon, XIcon, GearSixIcon } from '@phosphor-icons/react'
 import AGENT_DETAIL_TABS from '@/lib/agentDetailTabs'
+import { usePreferencesStore } from '@/lib/store'
 import ChatSidebar from '@/components/chat/ChatSidebar'
 import ChatEmptyState from '@/components/chat/ChatEmptyState'
 import {
@@ -36,6 +37,8 @@ const ChatView: FC<ChatViewProps> = ({
     initialClawTab,
     onClawTabChange
 }): ReactNode => {
+    const chatSidebarView = usePreferencesStore((s) => s.chatSidebarView)
+
     const [configAgent, setConfigAgent] = useState<ChatSelectedAgent | null>(
         () => (initialAgentTab && selectedAgent ? selectedAgent : null)
     )
@@ -295,22 +298,61 @@ const ChatView: FC<ChatViewProps> = ({
                             fullScreen
                         />
                     ) : activeAgent && activeClaw ? (
-                        <AgentChat
-                            key={`${activeClaw.id}-${activeAgent.id}`}
-                            agentId={activeAgent.id}
-                            agentName={activeAgent.name}
-                            clawId={activeClaw.id}
-                            subdomain={activeClaw.subdomain}
-                            gatewayToken={activeClaw.gatewayToken}
-                            agentModel={activeAgent.model}
-                            onConfigure={() =>
-                                handleOpenConfig(activeAgent.id, activeClaw.id)
-                            }
-                            configureDisabled={!!configAgent}
-                            onConnectionStateChange={
-                                handleConnectionStateChange
-                            }
-                        />
+                        <div className='flex h-full flex-col'>
+                            {chatSidebarView === 'list' && (
+                                <div className='bg-background border-border flex items-center gap-3 border-b px-4 py-2.5'>
+                                    <div className='bg-foreground/5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md'>
+                                        <AndroidLogoIcon
+                                            className='h-3.5 w-3.5'
+                                            weight='fill'
+                                        />
+                                    </div>
+                                    <div className='min-w-0 flex-1'>
+                                        <p className='text-foreground truncate text-[13px] font-medium'>
+                                            {activeAgent.name}
+                                        </p>
+                                        <p className='text-muted-foreground truncate text-[11px]'>
+                                            {activeClaw.name}
+                                            {activeAgent.model
+                                                ? ` · ${aiModels.find((m) => m.id === activeAgent.model)?.name || activeAgent.model}`
+                                                : ''}
+                                        </p>
+                                    </div>
+                                    <button
+                                        onClick={() =>
+                                            handleOpenConfig(
+                                                activeAgent.id,
+                                                activeClaw.id
+                                            )
+                                        }
+                                        className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground shrink-0 rounded-md p-1.5 transition-colors'
+                                    >
+                                        <GearSixIcon
+                                            className='h-4 w-4'
+                                            weight='bold'
+                                        />
+                                    </button>
+                                </div>
+                            )}
+                            <div className='min-h-0 flex-1'>
+                                <AgentChat
+                                    key={`${activeClaw.id}-${activeAgent.id}`}
+                                    agentId={activeAgent.id}
+                                    agentName={activeAgent.name}
+                                    clawId={activeClaw.id}
+                                    subdomain={activeClaw.subdomain}
+                                    gatewayToken={activeClaw.gatewayToken}
+                                    agentModel={activeAgent.model}
+                                    onConfigure={() =>
+                                        handleOpenConfig(activeAgent.id, activeClaw.id)
+                                    }
+                                    configureDisabled={!!configAgent}
+                                    onConnectionStateChange={
+                                        handleConnectionStateChange
+                                    }
+                                />
+                            </div>
+                        </div>
                     ) : (
                         <ChatEmptyState />
                     )}

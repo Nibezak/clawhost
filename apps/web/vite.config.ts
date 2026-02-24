@@ -23,7 +23,8 @@ export default defineConfig({
             '@codemirror/language',
             '@lezer/common',
             '@lezer/highlight',
-            '@lezer/lr'
+            '@lezer/lr',
+            '@xterm/xterm'
         ]
     },
     build: {
@@ -46,6 +47,11 @@ export default defineConfig({
     server: {
         port: 1111,
         proxy: {
+            '/ws': {
+                target: 'ws://localhost:2223',
+                ws: true,
+                rewrite: (path) => path.replace(/^\/ws/, '')
+            },
             '/api': {
                 target: 'http://localhost:2222',
                 changeOrigin: true,

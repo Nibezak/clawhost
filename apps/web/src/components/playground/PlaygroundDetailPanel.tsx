@@ -22,7 +22,7 @@ import {
     LightningIcon,
     GearSixIcon,
     CircleNotchIcon,
-    ChatsCircleIcon
+    TerminalWindowIcon
 } from '@phosphor-icons/react'
 import { ClawAvatar, ClawMascotOutline, ProviderIcon } from '@/components'
 import {
@@ -35,7 +35,8 @@ import { getBaseDomain } from '@/lib'
 import {
     CopyableField,
     ClawLogsContent,
-    ClawDiagnosticsContent
+    ClawDiagnosticsContent,
+    ClawTerminalContent
 } from '@/components/dashboard'
 import {
     PlaygroundVariablesContent,
@@ -54,14 +55,14 @@ const tabStateMap: Record<string, PlaygroundDetailTab> = {}
 const tabs: PlaygroundTabConfig<PlaygroundDetailTab>[] = [
     { id: CLAW_DETAIL_TABS.INFO, label: 'playground.tabInfo', icon: InfoIcon },
     {
-        id: CLAW_DETAIL_TABS.CHANNELS,
-        label: 'playground.tabChannels',
-        icon: ChatsCircleIcon
+        id: CLAW_DETAIL_TABS.TERMINAL,
+        label: 'playground.tabTerminal',
+        icon: TerminalWindowIcon
     },
     {
-        id: CLAW_DETAIL_TABS.VERSIONS,
-        label: 'playground.tabVersions',
-        icon: ClawMascotOutline
+        id: CLAW_DETAIL_TABS.LOGS,
+        label: 'playground.tabLogs',
+        icon: ScrollIcon
     },
     {
         id: CLAW_DETAIL_TABS.VARIABLES,
@@ -74,9 +75,9 @@ const tabs: PlaygroundTabConfig<PlaygroundDetailTab>[] = [
         icon: LightningIcon
     },
     {
-        id: CLAW_DETAIL_TABS.LOGS,
-        label: 'playground.tabLogs',
-        icon: ScrollIcon
+        id: CLAW_DETAIL_TABS.VERSIONS,
+        label: 'playground.tabVersions',
+        icon: ClawMascotOutline
     },
     {
         id: CLAW_DETAIL_TABS.DIAGNOSTICS,
@@ -96,7 +97,8 @@ const CONFIGURING_DISABLED_TABS: PlaygroundDetailTab[] = [
     CLAW_DETAIL_TABS.VARIABLES,
     CLAW_DETAIL_TABS.SKILLS,
     CLAW_DETAIL_TABS.LOGS,
-    CLAW_DETAIL_TABS.DIAGNOSTICS
+    CLAW_DETAIL_TABS.DIAGNOSTICS,
+    CLAW_DETAIL_TABS.TERMINAL
 ]
 
 const AWAITING_PAYMENT_DISABLED_TABS: PlaygroundDetailTab[] = [
@@ -105,7 +107,8 @@ const AWAITING_PAYMENT_DISABLED_TABS: PlaygroundDetailTab[] = [
     CLAW_DETAIL_TABS.VARIABLES,
     CLAW_DETAIL_TABS.SKILLS,
     CLAW_DETAIL_TABS.LOGS,
-    CLAW_DETAIL_TABS.DIAGNOSTICS
+    CLAW_DETAIL_TABS.DIAGNOSTICS,
+    CLAW_DETAIL_TABS.TERMINAL
 ]
 
 const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
@@ -598,6 +601,13 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                 }
                             />
                         </div>
+                    )}
+
+                    {activeTab === 'terminal' && (
+                        <ClawTerminalContent
+                            clawId={claw.id}
+                            enabled={activeTab === 'terminal'}
+                        />
                     )}
 
                     {activeTab === 'skills' && (

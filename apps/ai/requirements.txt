@@ -1,0 +1,7 @@
+qwen-tts
+torch
+soundfile
+fastapi
+uvicorn[standard]
+python-dotenv
+pydub

@@ -71,6 +71,16 @@ const updateClawBindings = async (c: AuthenticatedContext) => {
                 config = {}
             }
 
+            const tools = (config.tools || {}) as Record<string, unknown>
+            tools.exec = { host: 'gateway' }
+            config.tools = tools
+
+            const agents = (config.agents || { defaults: {}, list: [] }) as Record<string, unknown>
+            const defaults = (agents.defaults || {}) as Record<string, unknown>
+            defaults.sandbox = { mode: 'off' }
+            agents.defaults = defaults
+            config.agents = agents
+
             config.bindings = body.bindings
 
             const configJson = JSON.stringify(config, null, 4)

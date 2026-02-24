@@ -33,7 +33,8 @@ export default function generateCloudInit(
         },
         tools: {
             profile: 'full',
-            elevated: { enabled: true }
+            elevated: { enabled: true },
+            exec: { host: 'gateway' }
         },
         browser: {
             enabled: true,

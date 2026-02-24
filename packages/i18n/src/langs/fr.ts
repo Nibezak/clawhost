@@ -693,7 +693,9 @@ const fr: Translations = {
         openSidebar: 'Ouvrir la barre latérale',
         clawNotReady: "Le claw n'est pas encore prêt",
         notConfigured: 'Non configuré',
-        addAgent: 'Ajouter un agent'
+        addAgent: 'Ajouter un agent',
+        viewTree: 'Vue arborescente',
+        viewList: 'Vue liste'
     },
     createClaw: {
         title: 'Déployer OpenClaw',
@@ -1179,6 +1181,11 @@ const fr: Translations = {
         tabInfo: 'Info',
         tabLogs: 'Journaux',
         tabDiagnostics: 'Santé',
+        tabTerminal: 'Terminal',
+        terminalConnecting: 'Connexion au terminal...',
+        terminalDisconnected: 'Terminal déconnecté.',
+        terminalError: 'Échec de connexion au terminal !',
+        terminalReconnect: 'Reconnecter',
         tabDisabledConfiguring: 'Disponible une fois la configuration de l\'instance terminée.',
         tabDisabledAwaitingPayment: 'Disponible une fois le paiement traité.',
         loadingTip1:
@@ -1288,6 +1295,8 @@ const fr: Translations = {
         chatErrorMessage:
             'Une erreur est survenue lors de la génération de la réponse.',
         chatAbortedMessage: 'La réponse a été arrêtée.',
+        chatPlaySpeech: 'Lire le message',
+        chatStopSpeech: 'Arrêter la lecture',
         chatReadOnlyPlaceholder: 'Chat disponible sur vos propres Claws.',
         chatReadOnlyUser:
             "Bonjour ! Pouvez-vous m'aider à configurer un projet Node.js ?",
@@ -1439,6 +1448,8 @@ const fr: Translations = {
         versionDownloads: '{{count}} téléchargements',
         versionChangelog: 'Changelog',
         versionOutdated: 'Obsolète',
+        versionInstallConfirmTitle: 'Installer la version {{version}}',
+        versionInstallConfirmDescription: 'Le changement de version peut provoquer un comportement inattendu ou nécessiter une configuration manuelle supplémentaire, notamment pour les versions plus récentes qui n\'ont pas encore été entièrement vérifiées. Voulez-vous continuer ?',
         settingsName: 'Nom',
         settingsNamePlaceholder: 'Entrez le nom du claw',
         settingsNameDescription: 'Lettres, chiffres et tirets uniquement.',

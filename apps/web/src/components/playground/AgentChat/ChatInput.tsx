@@ -207,7 +207,7 @@ const ChatInputInner: ForwardRefRenderFunction<
     }, [])
 
     return (
-        <div className='border-border border-t p-3'>
+        <div className='bg-background border-border border-t p-3'>
             {attachments.length > 0 && (
                 <div className='mb-2 flex flex-wrap gap-2'>
                     {attachments.map((att, idx) => (

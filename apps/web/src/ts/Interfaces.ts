@@ -19,6 +19,7 @@ import type {
     ProviderType,
     ThemeMode,
     ClawFileType,
+    ChatSidebarViewMode,
     CompareFeatureStatus,
     ToastType,
     UserRole
@@ -171,6 +172,8 @@ export interface PreferencesState {
     setLanguage: (language: Language) => void
     openLinksWindowed: boolean
     setOpenLinksWindowed: (value: boolean) => void
+    chatSidebarView: ChatSidebarViewMode
+    setChatSidebarView: (view: ChatSidebarViewMode) => void
 }
 
 export interface CachedProfile {
@@ -608,6 +611,11 @@ export interface ClawLogsContentProps {
     mockLogs?: string
 }
 
+export interface ClawTerminalContentProps {
+    clawId: string
+    enabled: boolean
+}
+
 export interface ClawDiagnosticsContentProps {
     clawId: string
     enabled: boolean
@@ -911,6 +919,23 @@ export interface AgentChatProps {
 
 export interface ChatBubbleProps {
     message: ChatMessage
+    onSpeak?: (messageId: string, text: string) => void
+    onStop?: () => void
+    isSpeaking?: boolean
+}
+
+export interface UseTextToSpeechReturn {
+    activeMessageId: string | null
+    speak: (messageId: string, text: string) => void
+    stop: () => void
+}
+
+export interface ChatSpeechButtonProps {
+    messageId: string
+    text: string
+    isSpeaking: boolean
+    onSpeak: (messageId: string, text: string) => void
+    onStop: () => void
 }
 
 export interface ChatInputAttachment {
@@ -1138,6 +1163,41 @@ export interface ChatSidebarProps {
     onCreateAgent: (clawId: string, clawName: string) => void
     onOpenClawSettings: (clawId: string) => void
     onClose?: () => void
+}
+
+export interface ChatSidebarTreeViewProps {
+    clawsWithAgents: ClawWithAgents[]
+    selectedAgent: ChatSelectedAgent | null
+    selectedClawId: string | null
+    activeConnectionState?: GatewayConnectionState
+    onAgentClick: (agentId: string, clawId: string) => void
+    onConfigureAgent: (agentId: string, clawId: string) => void
+    onCreateAgent: (clawId: string, clawName: string) => void
+    onOpenClawSettings: (clawId: string) => void
+}
+
+export interface ChatSidebarListViewProps {
+    clawsWithAgents: ClawWithAgents[]
+    selectedAgent: ChatSelectedAgent | null
+    activeConnectionState?: GatewayConnectionState
+    onAgentClick: (agentId: string, clawId: string) => void
+    onConfigureAgent: (agentId: string, clawId: string) => void
+}
+
+export interface ChatSidebarListItemProps {
+    agentId: string
+    agentName: string
+    agentModel: string | null
+    agentStatus: string
+    clawId: string
+    clawName: string
+    clawSubdomain: string | null
+    clawGatewayToken: string | null
+    isReachable: boolean
+    isActive: boolean
+    activeConnectionState?: GatewayConnectionState
+    onClick: () => void
+    onConfigure: () => void
 }
 
 export interface ChatSidebarAgentListProps {

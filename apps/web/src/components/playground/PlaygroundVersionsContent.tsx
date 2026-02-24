@@ -11,7 +11,15 @@ import {
     ArrowSquareOutIcon
 } from '@phosphor-icons/react'
 import { ClawMascot, PanelPlaceholder } from '@/components'
-import { Skeleton } from '@/components/ui'
+import {
+    Button,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    Skeleton
+} from '@/components/ui'
 import { api, getLocale } from '@/lib'
 import { useUIStore } from '@/lib/store'
 
@@ -25,6 +33,7 @@ const PlaygroundVersionsContent: FC<PlaygroundVersionsContentProps> = ({
     const [installingVersion, setInstallingVersion] = useState<string | null>(
         null
     )
+    const [confirmVersion, setConfirmVersion] = useState<string | null>(null)
     const { showToast } = useUIStore()
     const queryClient = useQueryClient()
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -84,13 +93,20 @@ const PlaygroundVersionsContent: FC<PlaygroundVersionsContentProps> = ({
     }, [versionsData?.versions, debouncedSearch])
 
     const handleInstall = (version: string) => {
-        setInstallingVersion(version)
-        installMutation.mutate(version)
+        setConfirmVersion(version)
+    }
+
+    const handleConfirmInstall = () => {
+        if (!confirmVersion) return
+        setInstallingVersion(confirmVersion)
+        installMutation.mutate(confirmVersion)
+        setConfirmVersion(null)
     }
 
     const hasItems = isLoading || filteredVersions.length > 0
 
     return (
+        <>
         <div
             ref={scrollRef}
             className='flex h-full flex-col overflow-y-auto px-5 pb-5'
@@ -273,6 +289,43 @@ const PlaygroundVersionsContent: FC<PlaygroundVersionsContentProps> = ({
                 )}
             </div>
         </div>
+
+        <Dialog
+            open={confirmVersion !== null}
+            onOpenChange={(open) => {
+                if (!open) setConfirmVersion(null)
+            }}
+        >
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>
+                        {t('playground.versionInstallConfirmTitle', {
+                            version: confirmVersion ?? ''
+                        })}
+                    </DialogTitle>
+                    <DialogDescription>
+                        {t(
+                            'playground.versionInstallConfirmDescription'
+                        )}
+                    </DialogDescription>
+                </DialogHeader>
+                <div className='mt-4 flex justify-end gap-3'>
+                    <Button
+                        variant='outline'
+                        onClick={() => setConfirmVersion(null)}
+                    >
+                        {t('common.cancel')}
+                    </Button>
+                    <Button
+                        variant='destructive'
+                        onClick={handleConfirmInstall}
+                    >
+                        {t('playground.versionInstall')}
+                    </Button>
+                </div>
+            </DialogContent>
+        </Dialog>
+        </>
     )
 }
 

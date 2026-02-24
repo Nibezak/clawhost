@@ -70,7 +70,8 @@ export { useAgentChat } from '@/hooks/useAgentChat'
 
 import useGatewayState from '@/hooks/useGatewayState'
 import useSpeechRecognition from '@/hooks/useSpeechRecognition'
+import useTextToSpeech from '@/hooks/useTextToSpeech'
 import useThemeEffect from '@/hooks/useThemeEffect'
 import useLanguageEffect from '@/hooks/useLanguageEffect'
 
-export { useGatewayState, useSpeechRecognition, useThemeEffect, useLanguageEffect }
+export { useGatewayState, useSpeechRecognition, useTextToSpeech, useThemeEffect, useLanguageEffect }

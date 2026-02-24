@@ -17,6 +17,7 @@ export type {
     ThemeMode,
     ToastType,
     ClawFileType,
+    ChatSidebarViewMode,
     FeatureRequestSortBy,
     FeatureRequestStatus,
     UserRole
@@ -86,6 +87,8 @@ export type {
     AgentChatProps,
     ChatAbortParams,
     ChatBubbleProps,
+    UseTextToSpeechReturn,
+    ChatSpeechButtonProps,
     ChatEmptyStateProps,
     ChatEventPayload,
     ChatHistoryParams,

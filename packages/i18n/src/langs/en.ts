@@ -640,7 +640,9 @@ const en = {
         openSidebar: 'Open sidebar',
         clawNotReady: 'Claw is not ready yet',
         notConfigured: 'Not configured',
-        addAgent: 'Add agent'
+        addAgent: 'Add agent',
+        viewTree: 'Tree view',
+        viewList: 'List view'
     },
     createClaw: {
         title: 'Deploy OpenClaw',
@@ -1112,6 +1114,11 @@ const en = {
         tabInfo: 'Info',
         tabLogs: 'Logs',
         tabDiagnostics: 'Health',
+        tabTerminal: 'Terminal',
+        terminalConnecting: 'Connecting to terminal...',
+        terminalDisconnected: 'Terminal disconnected.',
+        terminalError: 'Failed to connect to terminal!',
+        terminalReconnect: 'Reconnect',
         tabDisabledConfiguring: 'Available once the instance finishes configuring.',
         tabDisabledAwaitingPayment: 'Available once the payment is processed.',
         loadingTip1:
@@ -1214,6 +1221,8 @@ const en = {
             'Send a message to start a conversation with this agent.',
         chatErrorMessage: 'An error occurred while generating a response.',
         chatAbortedMessage: 'Response was stopped.',
+        chatPlaySpeech: 'Play message',
+        chatStopSpeech: 'Stop playback',
         chatReadOnlyPlaceholder: 'Chat available on your own Claws.',
         chatReadOnlyUser: 'Hello! Can you help me set up a Node.js project?',
         chatReadOnlyAssistant:
@@ -1358,6 +1367,8 @@ const en = {
         versionDownloads: '{{count}} downloads',
         versionChangelog: 'Changelog',
         versionOutdated: 'Outdated',
+        versionInstallConfirmTitle: 'Install Version {{version}}',
+        versionInstallConfirmDescription: 'Switching versions may cause unexpected behavior or require additional manual configuration, especially for newer versions that have not been fully verified yet. Are you sure you want to proceed?',
         settingsName: 'Name',
         settingsNamePlaceholder: 'Enter claw name',
         settingsNameDescription: 'Letters, numbers, and dashes only.',

@@ -685,7 +685,9 @@ const de: Translations = {
         openSidebar: 'Seitenleiste öffnen',
         clawNotReady: 'Claw ist noch nicht bereit',
         notConfigured: 'Nicht konfiguriert',
-        addAgent: 'Agent hinzufügen'
+        addAgent: 'Agent hinzufügen',
+        viewTree: 'Baumansicht',
+        viewList: 'Listenansicht'
     },
     createClaw: {
         title: 'OpenClaw bereitstellen',
@@ -1166,6 +1168,11 @@ const de: Translations = {
         tabInfo: 'Info',
         tabLogs: 'Logs',
         tabDiagnostics: 'Zustand',
+        tabTerminal: 'Terminal',
+        terminalConnecting: 'Verbindung zum Terminal...',
+        terminalDisconnected: 'Terminal getrennt.',
+        terminalError: 'Verbindung zum Terminal fehlgeschlagen!',
+        terminalReconnect: 'Erneut verbinden',
         tabDisabledConfiguring: 'Verfügbar, sobald die Instanz fertig konfiguriert ist.',
         tabDisabledAwaitingPayment: 'Verfügbar, sobald die Zahlung verarbeitet wurde.',
         loadingTip1:
@@ -1274,6 +1281,8 @@ const de: Translations = {
         chatErrorMessage:
             'Beim Generieren einer Antwort ist ein Fehler aufgetreten.',
         chatAbortedMessage: 'Antwort wurde gestoppt.',
+        chatPlaySpeech: 'Nachricht vorlesen',
+        chatStopSpeech: 'Wiedergabe stoppen',
         chatReadOnlyPlaceholder: 'Chat verfügbar auf deinen eigenen Claws.',
         chatReadOnlyUser:
             'Hallo! Kannst du mir helfen, ein Node.js-Projekt einzurichten?',
@@ -1424,6 +1433,8 @@ const de: Translations = {
         versionDownloads: '{{count}} Downloads',
         versionChangelog: 'Changelog',
         versionOutdated: 'Veraltet',
+        versionInstallConfirmTitle: 'Version {{version}} installieren',
+        versionInstallConfirmDescription: 'Ein Versionswechsel kann unerwartetes Verhalten verursachen oder zusätzliche manuelle Konfiguration erfordern, insbesondere bei neueren Versionen, die noch nicht vollständig überprüft wurden. Möchten Sie fortfahren?',
         settingsName: 'Name',
         settingsNamePlaceholder: 'Claw-Name eingeben',
         settingsNameDescription: 'Nur Buchstaben, Zahlen und Bindestriche.',

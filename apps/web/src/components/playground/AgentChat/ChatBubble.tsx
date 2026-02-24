@@ -11,6 +11,7 @@ import {
 } from '@phosphor-icons/react'
 import ChatMarkdown from '@/components/playground/AgentChat/ChatMarkdown'
 import ChatLightbox from '@/components/playground/AgentChat/ChatLightbox'
+import ChatSpeechButton from '@/components/playground/AgentChat/ChatSpeechButton'
 
 const IMAGE_MIMES = [
     'image/jpeg',
@@ -40,7 +41,12 @@ const getImageSrc = (img: ChatImageSource): string => {
 const isImageAttachment = (img: ChatImageSource): boolean =>
     IMAGE_MIMES.includes(img.mediaType) && !!img.data
 
-const ChatBubble: FC<ChatBubbleProps> = ({ message }): ReactNode => {
+const ChatBubble: FC<ChatBubbleProps> = ({
+    message,
+    onSpeak,
+    onStop,
+    isSpeaking
+}): ReactNode => {
     const isUser = message.role === 'user'
     const [lightboxImage, setLightboxImage] = useState<ChatImageSource | null>(
         null
@@ -186,11 +192,25 @@ const ChatBubble: FC<ChatBubbleProps> = ({ message }): ReactNode => {
                             </p>
                         )}
                     </div>
-                    {formattedTime && (
-                        <span className='text-muted-foreground px-1 text-[10px]'>
-                            {formattedTime}
-                        </span>
-                    )}
+                    <div className='flex items-center gap-1.5 px-1'>
+                        {!showAsFileCard &&
+                            message.content &&
+                            onSpeak &&
+                            onStop && (
+                                <ChatSpeechButton
+                                    messageId={message.id}
+                                    text={message.content}
+                                    isSpeaking={!!isSpeaking}
+                                    onSpeak={onSpeak}
+                                    onStop={onStop}
+                                />
+                            )}
+                        {formattedTime && (
+                            <span className='text-muted-foreground text-[10px]'>
+                                {formattedTime}
+                            </span>
+                        )}
+                    </div>
                 </div>
                 {lightboxImage && (
                     <ChatLightbox
@@ -231,11 +251,25 @@ const ChatBubble: FC<ChatBubbleProps> = ({ message }): ReactNode => {
                         </div>
                     )}
                 </div>
-                {formattedTime && (
-                    <span className='text-muted-foreground px-1 text-[10px]'>
-                        {formattedTime}
-                    </span>
-                )}
+                <div className='flex items-center gap-1.5 px-1'>
+                    {message.status === 'complete' &&
+                        message.content &&
+                        onSpeak &&
+                        onStop && (
+                            <ChatSpeechButton
+                                messageId={message.id}
+                                text={message.content}
+                                isSpeaking={!!isSpeaking}
+                                onSpeak={onSpeak}
+                                onStop={onStop}
+                            />
+                        )}
+                    {formattedTime && (
+                        <span className='text-muted-foreground text-[10px]'>
+                            {formattedTime}
+                        </span>
+                    )}
+                </div>
             </div>
             {lightboxImage && (
                 <ChatLightbox
