@@ -9,6 +9,7 @@ import {
     FileTextIcon,
     DownloadSimpleIcon
 } from '@phosphor-icons/react'
+import { getLocale } from '@/lib'
 import ChatMarkdown from '@/components/playground/AgentChat/ChatMarkdown'
 import ChatLightbox from '@/components/playground/AgentChat/ChatLightbox'
 import ChatSpeechButton from '@/components/playground/AgentChat/ChatSpeechButton'
@@ -163,7 +164,7 @@ const ChatBubble: FC<ChatBubbleProps> = ({
     )
 
     const formattedTime = message.timestamp
-        ? new Date(message.timestamp).toLocaleTimeString([], {
+        ? new Date(message.timestamp).toLocaleTimeString(getLocale(), {
               hour: '2-digit',
               minute: '2-digit'
           })

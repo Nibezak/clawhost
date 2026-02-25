@@ -8,9 +8,6 @@ import { featureRequests, featureUpvotes } from '@/db/schema'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
-const MAX_OPEN_REQUESTS_PER_USER = 3
-const MAX_TOTAL_REQUESTS = 200
-
 const VALID_PLATFORMS: FeatureRequestPlatform[] = ['desktop', 'mobile', 'web']
 
 const titleLimits = inputValidation.FEATURE_REQUEST_TITLE
@@ -75,7 +72,11 @@ const createFeatureRequest = async (c: AuthenticatedContext) => {
         }
 
         const uniquePlatforms = [...new Set(platforms)]
-        if (uniquePlatforms.some((p) => !VALID_PLATFORMS.includes(p as FeatureRequestPlatform))) {
+        if (
+            uniquePlatforms.some(
+                (p) => !VALID_PLATFORMS.includes(p as FeatureRequestPlatform)
+            )
+        ) {
             return fail(c, t('api.invalidPlatform'), 400)
         }
 
@@ -83,11 +84,11 @@ const createFeatureRequest = async (c: AuthenticatedContext) => {
             .select({ value: count() })
             .from(featureRequests)
 
-        if (totalCount >= MAX_TOTAL_REQUESTS) {
+        if (totalCount >= inputValidation.TOTAL_FEATURE_REQUESTS.MAX) {
             return fail(
                 c,
                 t('api.featureRequestTotalLimitReached', {
-                    limit: String(MAX_TOTAL_REQUESTS)
+                    limit: String(inputValidation.TOTAL_FEATURE_REQUESTS.MAX)
                 }),
                 400
             )
@@ -98,11 +99,13 @@ const createFeatureRequest = async (c: AuthenticatedContext) => {
             .from(featureRequests)
             .where(eq(featureRequests.userId, userId))
 
-        if (openCount >= MAX_OPEN_REQUESTS_PER_USER) {
+        if (openCount >= inputValidation.OPEN_FEATURE_REQUESTS_PER_USER.MAX) {
             return fail(
                 c,
                 t('api.featureRequestLimitReached', {
-                    limit: String(MAX_OPEN_REQUESTS_PER_USER)
+                    limit: String(
+                        inputValidation.OPEN_FEATURE_REQUESTS_PER_USER.MAX
+                    )
                 }),
                 400
             )

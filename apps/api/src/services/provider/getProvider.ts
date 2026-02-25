@@ -9,7 +9,7 @@ const CACHE_TTL = 5 * 60 * 1000
 
 const cache = new Map<string, CacheEntry<unknown>>()
 
-function cached<T>(key: string, fn: () => Promise<T>): Promise<T> {
+const cached = <T>(key: string, fn: () => Promise<T>): Promise<T> => {
     const entry = cache.get(key)
     if (entry && Date.now() < entry.expiry)
         return Promise.resolve(entry.data as T)

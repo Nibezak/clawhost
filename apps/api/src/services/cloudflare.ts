@@ -2,7 +2,7 @@ import type { CloudflareDNSRecord, CloudflareDNSLookup } from '@/ts/Interfaces'
 
 import Cloudflare from 'cloudflare'
 
-function getClient() {
+const getClient = () => {
     const token = process.env.CLOUDFLARE_API_TOKEN
     if (!token) {
         throw new Error('CLOUDFLARE_API_TOKEN is not set')
@@ -11,7 +11,7 @@ function getClient() {
     return new Cloudflare({ apiToken: token })
 }
 
-function getZoneId() {
+const getZoneId = () => {
     const zoneId = process.env.CLOUDFLARE_ZONE_ID
     if (!zoneId) {
         throw new Error('CLOUDFLARE_ZONE_ID is not set')

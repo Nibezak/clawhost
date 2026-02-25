@@ -2,6 +2,7 @@ import type { RenameClawBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
+import { inputValidation } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { findUserClaw, sanitizeClaw } from '@/controllers/claws/helpers'
@@ -16,7 +17,7 @@ const renameClaw = async (c: AuthenticatedContext) => {
 
         const name = body.name?.trim()
 
-        if (!name || name.length > 50) {
+        if (!name || name.length > inputValidation.CLAW_NAME.MAX) {
             return fail(c, t('api.invalidClawName'), 400)
         }
 

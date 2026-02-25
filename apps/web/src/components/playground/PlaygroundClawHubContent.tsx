@@ -20,7 +20,7 @@ import {
 } from '@phosphor-icons/react'
 import { PanelPlaceholder, TruncateTooltip } from '@/components'
 import { Skeleton } from '@/components/ui'
-import { api } from '@/lib'
+import { api, getLocale } from '@/lib'
 import { useUIStore } from '@/lib/store'
 
 const PAGE_SIZE = 50
@@ -286,7 +286,7 @@ const PlaygroundClawHubContent: FC<PlaygroundClawHubContentProps> = ({
                                                     {t(
                                                         'playground.clawHubDownloads',
                                                         {
-                                                            count: skill.downloads.toLocaleString()
+                                                            count: skill.downloads.toLocaleString(getLocale())
                                                         }
                                                     )}
                                                 </span>

@@ -86,7 +86,6 @@ const handleConnection = (ws: WebSocket, ip: string, password: string) => {
                                 return
                             }
                         } catch {
-                            // Not valid JSON
                         }
                     }
 

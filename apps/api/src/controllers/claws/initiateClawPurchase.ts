@@ -2,6 +2,7 @@ import type { InitiateClawPurchaseBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext, ProviderType } from '@/ts/Types'
 
 import { eq, and, count, lt } from 'drizzle-orm'
+import { inputValidation } from '@openclaw/shared'
 import { db } from '@/db'
 import { users, sshKeys, claws, pendingClaws } from '@/db/schema'
 import { checkouts, customers } from '@/lib/polar'
@@ -82,7 +83,7 @@ const CLEANUP_INTERVAL = 60 * 60 * 1000
 
 let namePool: string[] = []
 
-function shufflePool() {
+const shufflePool = () => {
     namePool = []
     for (const adj of adjectives) {
         for (const noun of nouns) {
@@ -95,17 +96,17 @@ function shufflePool() {
     }
 }
 
-function generateClawName(): string {
+const generateClawName = (): string => {
     if (namePool.length === 0) {
         shufflePool()
     }
     return namePool.pop()!
 }
 
-function getPolarProductId(
+const getPolarProductId = (
     providerName: string,
     planId: string
-): string | null {
+): string | null => {
     const prefix =
         providerName === 'hetzner' ? '' : `${providerName.toUpperCase()}_`
     const envKey = `POLAR_PRODUCT_${prefix}${planId.toUpperCase().replace(/-/g, '_')}`
@@ -180,7 +181,8 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
 
         if (
             volumeSize !== undefined &&
-            (volumeSize < 10 || volumeSize > 10240)
+            (volumeSize < inputValidation.VOLUME_SIZE.MIN ||
+                volumeSize > inputValidation.VOLUME_SIZE.MAX)
         ) {
             return fail(c, t('api.volumeSizeInvalid'), 400)
         }
@@ -205,8 +207,7 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
                 : Promise.resolve(null)
         ])
 
-        const MAX_CLAWS_PER_ACCOUNT = 50
-        if (clawCountResult[0].value >= MAX_CLAWS_PER_ACCOUNT) {
+        if (clawCountResult[0].value >= inputValidation.CLAWS_PER_ACCOUNT.MAX) {
             return fail(c, t('api.clawLimitReached'), 400)
         }
 

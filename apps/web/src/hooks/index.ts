@@ -66,8 +66,7 @@ export {
     PLAYGROUND_AGENTS_QUERY_KEY
 } from '@/hooks/usePlayground'
 
-export { useAgentChat } from '@/hooks/useAgentChat'
-
+import useAgentChat from '@/hooks/useAgentChat/useAgentChat'
 import useGatewayState from '@/hooks/useGatewayState'
 import useScrollToBottom from '@/hooks/useScrollToBottom'
 import useSpeechRecognition from '@/hooks/useSpeechRecognition'
@@ -75,4 +74,4 @@ import useTextToSpeech from '@/hooks/useTextToSpeech'
 import useThemeEffect from '@/hooks/useThemeEffect'
 import useLanguageEffect from '@/hooks/useLanguageEffect'
 
-export { useGatewayState, useScrollToBottom, useSpeechRecognition, useTextToSpeech, useThemeEffect, useLanguageEffect }
+export { useAgentChat, useGatewayState, useScrollToBottom, useSpeechRecognition, useTextToSpeech, useThemeEffect, useLanguageEffect }

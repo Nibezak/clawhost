@@ -1,3 +1,12 @@
+import type {
+    SelectContextValue,
+    SelectProps,
+    SelectTriggerProps,
+    SelectContentProps,
+    SelectItemProps,
+    SelectGroupProps
+} from '@/ts/Interfaces'
+
 import * as React from 'react'
 import { CaretDownIcon, CheckIcon } from '@phosphor-icons/react'
 import {
@@ -10,44 +19,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib'
 
-interface SelectProps {
-    value: string
-    onValueChange: (value: string) => void
-    children: React.ReactNode
-    disabled?: boolean
-    displayValue?: string
-}
-
-interface SelectTriggerProps {
-    placeholder?: string
-    className?: string
-    icon?: React.ReactNode
-}
-
-interface SelectContentProps {
-    children: React.ReactNode
-    className?: string
-    align?: 'start' | 'center' | 'end'
-}
-
-interface SelectItemProps {
-    value: string
-    children: React.ReactNode
-    className?: string
-}
-
-interface SelectGroupProps {
-    label: string
-    children: React.ReactNode
-    isLast?: boolean
-}
-
-const SelectContext = React.createContext<{
-    value: string
-    onValueChange: (value: string) => void
-    displayText: string
-    setDisplayText: (text: string) => void
-}>({
+const SelectContext = React.createContext<SelectContextValue>({
     value: '',
     onValueChange: () => {},
     displayText: '',
@@ -80,9 +52,7 @@ const Select = ({
                         child.type === SelectTrigger
                     ) {
                         return React.cloneElement(
-                            child as React.ReactElement<
-                                SelectTriggerProps & { disabled?: boolean }
-                            >,
+                            child as React.ReactElement<SelectTriggerProps>,
                             { disabled }
                         )
                     }
@@ -98,7 +68,7 @@ const SelectTrigger = ({
     className,
     icon,
     disabled
-}: SelectTriggerProps & { disabled?: boolean }) => {
+}: SelectTriggerProps) => {
     const { displayText } = React.useContext(SelectContext)
 
     return (

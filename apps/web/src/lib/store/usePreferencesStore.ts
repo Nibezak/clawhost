@@ -6,7 +6,7 @@ import { setLanguage as setI18nLanguage } from '@openclaw/i18n'
 import DASHBOARD_TABS from '@/lib/dashboardTabs'
 import THEMES from '@/lib/themes'
 import LANGUAGES from '@/lib/languages'
-import { STORAGE_KEYS } from '@/lib/storageKeys'
+import STORAGE_KEYS from '@/lib/storageKeys'
 
 const VALID_TABS = new Set<string>(Object.values(DASHBOARD_TABS))
 

@@ -29,7 +29,6 @@ const tryParseGatewayTs = (text: string): string | null => {
         const parsed = new Date(`${date}T${time}:00Z`)
         if (!isNaN(parsed.getTime())) return parsed.toISOString()
     } catch {
-        // fall through
     }
 
     return null
@@ -54,7 +53,6 @@ const tryParseCurrentTime = (text: string): string | null => {
         const parsed = new Date(iso)
         if (!isNaN(parsed.getTime())) return parsed.toISOString()
     } catch {
-        // fall through
     }
 
     return null

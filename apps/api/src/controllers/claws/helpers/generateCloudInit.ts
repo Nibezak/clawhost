@@ -1,11 +1,11 @@
 import OPENCLAW_VERSION from '@/controllers/claws/helpers/openclawVersion'
 
-export default function generateCloudInit(
+const generateCloudInit = (
     rootPassword: string,
     subdomain: string,
     domain: string,
     gatewayToken: string
-): string {
+): string => {
     const fullDomain = `${subdomain}.${domain}`
 
     const config: Record<string, unknown> = {
@@ -215,3 +215,5 @@ runcmd:
 final_message: "OpenClaw instance ready! Access dashboard at https://${fullDomain}/"
 `
 }
+
+export default generateCloudInit

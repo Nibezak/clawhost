@@ -106,9 +106,9 @@ const de: Translations = {
         failedToAddSSHKey: 'SSH-Schlüssel konnte nicht hinzugefügt werden!',
         failedToCreateClaw: 'Claw konnte nicht erstellt werden!',
         failedToLoadLocations:
-            'Standorte konnten nicht geladen werden. Bitte versuche es erneut.',
+            'Standorte konnten nicht geladen werden. Bitte versuche es erneut!',
         failedToLoadPlans:
-            'Pläne konnten nicht geladen werden. Bitte versuche es erneut.',
+            'Pläne konnten nicht geladen werden. Bitte versuche es erneut!',
         invalidPlan: 'Ungültiger Plan ausgewählt!',
         invalidLocation: 'Bitte wähle einen Standort!',
         failedToGenerateKeyPair:
@@ -124,7 +124,7 @@ const de: Translations = {
     api: {
         missingRequiredFields: 'Pflichtfelder fehlen!',
         clawNotFound: 'Claw nicht gefunden!',
-        clawRenamed: 'Claw erfolgreich umbenannt!',
+        clawRenamed: 'Claw erfolgreich umbenannt.',
         invalidClawName:
             'Der Claw-Name muss zwischen 1 und 50 Zeichen lang sein!',
         userNotFound: 'Benutzer nicht gefunden!',
@@ -191,31 +191,31 @@ const de: Translations = {
         failedToFetchPlanAvailability:
             'Planverfügbarkeit konnte nicht abgerufen werden!',
         failedToSendEmail: 'E-Mail konnte nicht gesendet werden!',
-        failedToGetVersion: 'Version konnte nicht abgerufen werden.',
-        failedToGetVersions: 'Versionen konnten nicht abgerufen werden.',
-        failedToInstallVersion: 'Version konnte nicht installiert werden.',
+        failedToGetVersion: 'Version konnte nicht abgerufen werden!',
+        failedToGetVersions: 'Versionen konnten nicht abgerufen werden!',
+        failedToInstallVersion: 'Version konnte nicht installiert werden!',
         installVersionSuccess: 'Version erfolgreich installiert.',
-        invalidVersion: 'Ungültiges Versionsformat.',
+        invalidVersion: 'Ungültiges Versionsformat!',
         outdatedVersion:
-            'Diese Version ist veraltet und kann nicht installiert werden.',
+            'Diese Version ist veraltet und kann nicht installiert werden!',
         failedToGetDiagnostics: 'Verbindung zur Instanz fehlgeschlagen!',
         failedToGetDiagnosticsDescription:
-            'Diagnose konnte nicht abgerufen werden. Die Instanz ist möglicherweise offline oder wird gestartet.',
-        failedToGetLogs: 'Logs konnten nicht geladen werden.',
+            'Diagnose konnte nicht abgerufen werden. Die Instanz ist möglicherweise offline oder wird gestartet!',
+        failedToGetLogs: 'Logs konnten nicht geladen werden!',
         failedToGetLogsDescription:
-            'Logs für diese Instanz konnten nicht abgerufen werden. Bitte versuche es später erneut.',
+            'Logs für diese Instanz konnten nicht abgerufen werden. Bitte versuche es später erneut!',
         failedToRepairClaw: 'Instanz konnte nicht repariert werden!',
         repairSuccess: 'Instanz erfolgreich repariert.',
         repairGatewayNotResponding:
-            'Reparatur durchgeführt, aber das Gateway antwortet noch nicht. Es benötigt möglicherweise mehr Zeit zum Starten.',
+            'Reparatur durchgeführt, aber das Gateway antwortet noch nicht. Es benötigt möglicherweise mehr Zeit zum Starten!',
         failedToReinstallClaw: 'Instanz konnte nicht neu installiert werden!',
         reinstallSuccess: 'Instanz erfolgreich neu installiert.',
         reinstallGatewayNotResponding:
-            'Neuinstallation abgeschlossen, aber das Gateway antwortet noch nicht. Es benötigt möglicherweise mehr Zeit zum Starten.',
+            'Neuinstallation abgeschlossen, aber das Gateway antwortet noch nicht. Es benötigt möglicherweise mehr Zeit zum Starten!',
         failedToExportClaw: 'Claw-Daten konnten nicht exportiert werden!',
         clawNotReady: 'Claw ist nicht bereit für den Export!',
         exportRateLimited:
-            'Dieser Claw wurde kürzlich exportiert. Bitte warte, bevor du erneut exportierst.',
+            'Dieser Claw wurde kürzlich exportiert. Bitte warte, bevor du erneut exportierst!',
         failedToListFiles: 'Instanzdateien konnten nicht aufgelistet werden!',
         failedToReadFile: 'Datei konnte nicht gelesen werden!',
         failedToUpdateFile: 'Datei konnte nicht gespeichert werden!',
@@ -223,13 +223,13 @@ const de: Translations = {
         fileNotEditable: 'Dieser Dateityp kann nicht bearbeitet werden!',
         invalidJsonConfig: 'Ungültiges JSON!',
         fileSaveSuccess: 'Datei gespeichert.',
-        rateLimitExceeded: 'Bitte warte, bevor du einen neuen Code anforderst.',
+        rateLimitExceeded: 'Bitte warte, bevor du einen neuen Code anforderst!',
         otpExpiredOrNotFound:
-            'Code abgelaufen oder nicht gefunden. Bitte fordere einen neuen an.',
+            'Code abgelaufen oder nicht gefunden. Bitte fordere einen neuen an!',
         otpMaxAttemptsReached:
-            'Zu viele fehlgeschlagene Versuche. Bitte fordere einen neuen Code an.',
-        otpInvalidCode: 'Ungültiger Code. Bitte versuche es erneut.',
-        internalServerError: 'Ein interner Fehler ist aufgetreten.',
+            'Zu viele fehlgeschlagene Versuche. Bitte fordere einen neuen Code an!',
+        otpInvalidCode: 'Ungültiger Code. Bitte versuche es erneut!',
+        internalServerError: 'Ein interner Fehler ist aufgetreten!',
         invalidCredentials: 'Ungültige Anmeldedaten!',
         accountLinked: 'Konto erfolgreich verknüpft.',
         webhookProcessingFailed: 'Webhook-Verarbeitung fehlgeschlagen!',
@@ -263,22 +263,22 @@ const de: Translations = {
         planAvailabilityFetched: 'Planverfügbarkeit erfolgreich abgerufen.',
         agentsFetched: 'Agenten erfolgreich abgerufen.',
         agentsFetchFailed:
-            'Instanz konnte nicht erreicht werden, um Agenten abzurufen.',
+            'Instanz konnte nicht erreicht werden, um Agenten abzurufen!',
         agentConfigFetched: 'Agentenkonfiguration erfolgreich abgerufen.',
         agentConfigUpdated: 'Agentenkonfiguration erfolgreich aktualisiert.',
         agentConfigUpdateFailed:
-            'Agentenkonfiguration konnte nicht aktualisiert werden.',
+            'Agentenkonfiguration konnte nicht aktualisiert werden!',
         agentCreated: 'Agent erfolgreich erstellt.',
         agentCreateFailed:
-            'Agent konnte auf der Instanz nicht erstellt werden.',
+            'Agent konnte auf der Instanz nicht erstellt werden!',
         agentDeleted: 'Agent erfolgreich gelöscht.',
         agentDeleteFailed:
-            'Agent konnte von der Instanz nicht gelöscht werden.',
+            'Agent konnte von der Instanz nicht gelöscht werden!',
         cannotDeleteMainAgent:
-            'Der letzte verbleibende Agent kann nicht gelöscht werden.',
+            'Der letzte verbleibende Agent kann nicht gelöscht werden!',
         agentNameInvalid:
-            'Agentenname darf nur Buchstaben, Zahlen und Bindestriche enthalten.',
-        agentNameDuplicate: 'Ein Agent mit diesem Namen existiert bereits.',
+            'Agentenname darf nur Buchstaben, Zahlen und Bindestriche enthalten!',
+        agentNameDuplicate: 'Ein Agent mit diesem Namen existiert bereits!',
         diagnosticsFetched: 'Diagnose erfolgreich abgerufen.',
         logsFetched: 'Logs erfolgreich abgerufen.',
         filesFetched: 'Dateien erfolgreich abgerufen.',
@@ -286,54 +286,54 @@ const de: Translations = {
         otpSent: 'Code erfolgreich gesendet.',
         otpVerified: 'Code erfolgreich verifiziert.',
         webhookReceived: 'Webhook empfangen.',
-        unauthorized: 'Nicht autorisiert.',
-        invalidToken: 'Ungültiges Token.',
-        notFound: 'Nicht gefunden.',
+        unauthorized: 'Nicht autorisiert!',
+        invalidToken: 'Ungültiges Token!',
+        notFound: 'Nicht gefunden!',
         healthOk: 'API läuft.',
         channelsFetched: 'Kanäle erfolgreich abgerufen.',
         channelsUpdated: 'Kanäle erfolgreich aktualisiert.',
-        channelsUpdateFailed: 'Kanäle konnten nicht aktualisiert werden.',
-        channelsFetchFailed: 'Kanäle konnten nicht abgerufen werden.',
-        channelMissingRequired: 'Pflichtfelder für aktivierten Kanal fehlen.',
+        channelsUpdateFailed: 'Kanäle konnten nicht aktualisiert werden!',
+        channelsFetchFailed: 'Kanäle konnten nicht abgerufen werden!',
+        channelMissingRequired: 'Pflichtfelder für aktivierten Kanal fehlen!',
         whatsappPairStarted: 'WhatsApp-Kopplung gestartet.',
-        whatsappPairFailed: 'WhatsApp-Kopplung fehlgeschlagen.',
-        whatsappAlreadyPaired: 'WhatsApp ist bereits gekoppelt.',
+        whatsappPairFailed: 'WhatsApp-Kopplung fehlgeschlagen!',
+        whatsappAlreadyPaired: 'WhatsApp ist bereits gekoppelt!',
         whatsappUnsupported:
-            'Diese Instanz unterstützt die WhatsApp-Kopplung noch nicht.',
+            'Diese Instanz unterstützt die WhatsApp-Kopplung noch nicht!',
         bindingsFetched: 'Bindungen erfolgreich abgerufen.',
-        bindingsFetchFailed: 'Bindungen konnten nicht abgerufen werden.',
+        bindingsFetchFailed: 'Bindungen konnten nicht abgerufen werden!',
         bindingsUpdated: 'Bindungen erfolgreich aktualisiert.',
-        bindingsUpdateFailed: 'Bindungen konnten nicht aktualisiert werden.',
-        bindingsInvalidFormat: 'Ungültiges Bindungsformat.',
-        bindingsInvalidChannel: 'Nicht unterstützter Kanal in der Bindung.',
+        bindingsUpdateFailed: 'Bindungen konnten nicht aktualisiert werden!',
+        bindingsInvalidFormat: 'Ungültiges Bindungsformat!',
+        bindingsInvalidChannel: 'Nicht unterstützter Kanal in der Bindung!',
         bindingsDuplicateChannel:
-            'Ein Kanal kann nur einem Agenten zugewiesen werden.',
+            'Ein Kanal kann nur einem Agenten zugewiesen werden!',
         skillsFetched: 'Skills erfolgreich abgerufen.',
         skillsUpdated: 'Skills erfolgreich aktualisiert.',
-        skillsUpdateFailed: 'Skills konnten nicht aktualisiert werden.',
-        skillsFetchFailed: 'Skills konnten nicht abgerufen werden.',
+        skillsUpdateFailed: 'Skills konnten nicht aktualisiert werden!',
+        skillsFetchFailed: 'Skills konnten nicht abgerufen werden!',
         agentSkillsFetched: 'Agenten-Skills erfolgreich abgerufen.',
         agentSkillsUpdated: 'Agenten-Skills erfolgreich aktualisiert.',
         agentSkillsUpdateFailed:
-            'Agenten-Skills konnten nicht aktualisiert werden.',
+            'Agenten-Skills konnten nicht aktualisiert werden!',
         agentSkillsFetchFailed:
-            'Agenten-Skills konnten nicht abgerufen werden.',
+            'Agenten-Skills konnten nicht abgerufen werden!',
         invalidSkillName:
-            'Skill-Name darf nur Buchstaben, Zahlen, Bindestriche und Unterstriche enthalten.',
-        skillNotFound: 'Skill nicht gefunden.',
+            'Skill-Name darf nur Buchstaben, Zahlen, Bindestriche und Unterstriche enthalten!',
+        skillNotFound: 'Skill nicht gefunden!',
         clawHubSearchSuccess: 'ClawHub-Suche abgeschlossen.',
-        clawHubSearchFailed: 'ClawHub konnte nicht durchsucht werden.',
+        clawHubSearchFailed: 'ClawHub konnte nicht durchsucht werden!',
         clawHubFetched: 'ClawHub-Skills abgerufen.',
-        clawHubFetchFailed: 'ClawHub-Skills konnten nicht abgerufen werden.',
+        clawHubFetchFailed: 'ClawHub-Skills konnten nicht abgerufen werden!',
         clawHubInstalled: 'Skill von ClawHub installiert.',
         clawHubInstallFailed:
-            'Skill von ClawHub konnte nicht installiert werden.',
+            'Skill von ClawHub konnte nicht installiert werden!',
         clawHubRemoved: 'ClawHub-Skill entfernt.',
         clawHubRemoveFailed: 'ClawHub-Skill konnte nicht entfernt werden!',
         clawHubUpdated: 'Skill aktualisiert.',
         clawHubUpdateFailed: 'ClawHub-Skill konnte nicht aktualisiert werden!',
         clawHubUpdatesFetched: 'Update-Prüfung abgeschlossen.',
-        clawHubUpdatesFailed: 'Updates konnten nicht geprüft werden.',
+        clawHubUpdatesFailed: 'Updates konnten nicht geprüft werden!',
         invalidAuthMethod: 'Ungültige Authentifizierungsmethode!',
         authMethodNotConnected:
             'Diese Authentifizierungsmethode ist nicht verbunden!',
@@ -594,7 +594,7 @@ const de: Translations = {
             'Speicherlimits entfernen, neueste Dienstkonfiguration anwenden und das Gateway neu starten. Dies behebt die meisten häufigen Probleme.',
         diagnosticsRepairSuccess: 'Instanz erfolgreich repariert.',
         diagnosticsRepairFailed:
-            'Reparatur durchgeführt, aber das Gateway antwortet noch nicht.',
+            'Reparatur durchgeführt, aber das Gateway antwortet noch nicht!',
         diagnosticsLoading: 'Verbindung zur Instanz wird hergestellt...',
         diagnosticsNoLogs:
             'Keine Logs verfügbar. Starte deine Instanz, um Logs zu generieren.',
@@ -615,7 +615,7 @@ const de: Translations = {
         fileExplorerSave: 'Speichern',
         fileExplorerSaved: 'Datei gespeichert.',
         fileExplorerInvalidJson:
-            'Ungültiges JSON. Bitte behebe Syntaxfehler vor dem Speichern.',
+            'Ungültiges JSON. Bitte behebe Syntaxfehler vor dem Speichern!',
         fileExplorerNoFiles: 'Keine Dateien gefunden',
         fileExplorerSearchFiles: 'Dateien suchen...',
         fileExplorerNoSearchResults: 'Keine passenden Dateien.',
@@ -626,7 +626,7 @@ const de: Translations = {
         renameSuccess: 'Claw erfolgreich umbenannt.',
         renameFailed: 'Claw konnte nicht umbenannt werden!',
         renameInvalidChars:
-            'Nur Buchstaben, Zahlen und Bindestriche sind erlaubt.',
+            'Nur Buchstaben, Zahlen und Bindestriche sind erlaubt!',
         reinstallInstance: 'Instanz neu installieren',
         reinstallClaw: 'Instanz neu installieren',
         reinstallClawConfirmation:
@@ -639,9 +639,9 @@ const de: Translations = {
             'Export wird vorbereitet, das kann einen Moment dauern...',
         exportFailed: 'Claw-Daten konnten nicht exportiert werden!',
         exportRateLimited:
-            'Du kannst in {{minutes}} Minuten erneut exportieren.',
+            'Du kannst in {{minutes}} Minuten erneut exportieren!',
         exportRateLimitedSeconds:
-            'Du kannst in {{seconds}} Sekunden erneut exportieren.',
+            'Du kannst in {{seconds}} Sekunden erneut exportieren!',
         configuringTooltip:
             'Dies kann einige Zeit dauern. Es hängt von OpenClaw, dem Serverstandort und Cloudflare DNS ab.',
         paymentSuccess: 'Dein Claw wird erstellt und konfiguriert.',
@@ -657,7 +657,7 @@ const de: Translations = {
         adminDescription: 'Verwalte alle Claws auf der Plattform.',
         adminNoClaws: 'Noch keine Claws auf der Plattform.',
         adminAccessDenied:
-            'Du hast keine Berechtigung, auf diese Seite zuzugreifen.',
+            'Du hast keine Berechtigung, auf diese Seite zuzugreifen!',
         owner: 'Besitzer',
         status: {
             running: 'Läuft',
@@ -701,7 +701,7 @@ const de: Translations = {
         clawName: 'Name',
         clawNamePlaceholder: 'z. B. cozy-panda',
         clawNameInvalidChars:
-            'Nur Buchstaben, Zahlen und Bindestriche sind erlaubt.',
+            'Nur Buchstaben, Zahlen und Bindestriche sind erlaubt!',
         provider: 'Anbieter',
         providerHetzner: 'Hetzner',
         providerDigitalOcean: 'DigitalOcean',
@@ -1219,12 +1219,12 @@ const de: Translations = {
         configurationSaving: 'Wird gespeichert...',
         configurationSaved: 'Agentenkonfiguration gespeichert.',
         configurationSaveFailed:
-            'Agentenkonfiguration konnte nicht gespeichert werden.',
+            'Agentenkonfiguration konnte nicht gespeichert werden!',
         configurationLoading: 'Konfiguration wird geladen...',
         configurationLoadFailed:
-            'Agentenkonfiguration konnte nicht geladen werden.',
+            'Agentenkonfiguration konnte nicht geladen werden!',
         configurationLoadFailedDescription:
-            'Die Konfiguration für diesen Agenten konnte nicht abgerufen werden. Bitte versuche es später erneut.',
+            'Die Konfiguration für diesen Agenten konnte nicht abgerufen werden. Bitte versuche es später erneut!',
         configurationRemoveVar: 'Entfernen',
         configurationApiKey: 'API-Schlüssel',
         configurationApiKeyDescription:
@@ -1239,14 +1239,14 @@ const de: Translations = {
         variablesSaving: 'Wird gespeichert...',
         variablesSaved: 'Umgebungsvariablen gespeichert.',
         variablesSaveFailed:
-            'Umgebungsvariablen konnten nicht gespeichert werden.',
+            'Umgebungsvariablen konnten nicht gespeichert werden!',
         variablesLoading: 'Variablen werden geladen...',
-        variablesLoadFailed: 'Umgebungsvariablen konnten nicht geladen werden.',
+        variablesLoadFailed: 'Umgebungsvariablen konnten nicht geladen werden!',
         variablesLoadFailedDescription:
-            'Variablen für diese Instanz konnten nicht abgerufen werden. Bitte versuche es später erneut.',
-        variablesInvalidKey: 'Nur Buchstaben, Zahlen und Unterstriche.',
-        variablesEmptyValue: 'Wert darf nicht leer sein.',
-        variablesDuplicateKey: 'Doppelter Variablenname.',
+            'Variablen für diese Instanz konnten nicht abgerufen werden. Bitte versuche es später erneut!',
+        variablesInvalidKey: 'Nur Buchstaben, Zahlen und Unterstriche!',
+        variablesEmptyValue: 'Wert darf nicht leer sein!',
+        variablesDuplicateKey: 'Doppelter Variablenname!',
         variablesDeleteTitle: 'Variable löschen',
         variablesDeleteDescription:
             'Bist du sicher, dass du {{key}} löschen möchtest? Dies entfernt sie sofort von der Instanz.',
@@ -1283,10 +1283,10 @@ const de: Translations = {
         configurationNamePlaceholder: 'Agentennamen eingeben',
         configurationNameDescription:
             'Nur Buchstaben, Zahlen und Bindestriche.',
-        agentNameRequired: 'Agentenname ist erforderlich.',
+        agentNameRequired: 'Agentenname ist erforderlich!',
         agentNameInvalidChars:
-            'Nur Buchstaben, Zahlen und Bindestriche sind erlaubt.',
-        agentNameDuplicate: 'Ein Agent mit diesem Namen existiert bereits.',
+            'Nur Buchstaben, Zahlen und Bindestriche sind erlaubt!',
+        agentNameDuplicate: 'Ein Agent mit diesem Namen existiert bereits!',
         chatConnecting: 'Verbindung wird hergestellt...',
         chatAuthenticating: 'Authentifizierung...',
         chatDisconnected: 'Getrennt',
@@ -1303,7 +1303,7 @@ const de: Translations = {
         chatNoMessagesDescription:
             'Sende eine Nachricht, um eine Unterhaltung mit diesem Agenten zu starten.',
         chatErrorMessage:
-            'Beim Generieren einer Antwort ist ein Fehler aufgetreten.',
+            'Beim Generieren einer Antwort ist ein Fehler aufgetreten!',
         chatAbortedMessage: 'Antwort wurde gestoppt.',
         chatPlaySpeech: 'Vorlesen',
         chatReplaySpeech: 'Wiederholen',
@@ -1318,10 +1318,10 @@ const de: Translations = {
         chatReadOnlyUser2: 'Kannst du die Testsuite ausführen und auf Fehler prüfen?',
         chatReadOnlyAssistant2:
             'Klar! Ich führe jetzt alle Tests aus. 3 bestanden, 0 fehlgeschlagen. Alles in Ordnung — alle Assertions bestehen.',
-        chatConnectionFailed: 'Verbindung zu diesem Agenten fehlgeschlagen.',
+        chatConnectionFailed: 'Verbindung zu diesem Agenten fehlgeschlagen!',
         chatConnectionFailedDescription:
-            'Stelle sicher, dass der Claw läuft und erreichbar ist.',
-        chatNotConfigured: 'Agent nicht konfiguriert.',
+            'Stelle sicher, dass der Claw läuft und erreichbar ist!',
+        chatNotConfigured: 'Agent nicht konfiguriert!',
         chatNotConfiguredDescription:
             'Wähle ein Modell und setze einen API-Schlüssel im Konfiguration-Tab, um den Chat zu starten.',
         chatConfigureButton: 'Agent konfigurieren',
@@ -1334,9 +1334,9 @@ const de: Translations = {
         chatVoiceInput: 'Spracheingabe',
         chatVoiceListening: 'Hört zu...',
         chatVoiceNotSupported:
-            'Spracheingabe wird in diesem Browser nicht unterstützt.',
+            'Spracheingabe wird in diesem Browser nicht unterstützt!',
         chatAttachmentNotSupported:
-            'Dieser Dateityp wird nicht unterstützt. Verwende Bilder, PDFs oder Textdateien.',
+            'Dieser Dateityp wird nicht unterstützt. Verwende Bilder, PDFs oder Textdateien!',
         chatNoPreview: 'Keine Vorschau verfügbar.',
         chatDownloadFile: 'Datei herunterladen',
         tabChannels: 'Kanäle',
@@ -1351,11 +1351,11 @@ const de: Translations = {
             'Öffne WhatsApp > Einstellungen > Verknüpfte Geräte > Gerät hinzufügen',
         channelsWhatsAppPaired: 'WhatsApp erfolgreich gekoppelt.',
         channelsWhatsAppPairFailed:
-            'Kopplung fehlgeschlagen. Bitte versuche es erneut.',
-        channelsWhatsAppAlreadyPaired: 'WhatsApp ist bereits gekoppelt.',
+            'Kopplung fehlgeschlagen. Bitte versuche es erneut!',
+        channelsWhatsAppAlreadyPaired: 'WhatsApp ist bereits gekoppelt!',
         channelsWhatsAppUnpair: 'Entkoppeln',
         channelsWhatsAppUnsupported:
-            'WhatsApp-Kopplung ist auf dieser Instanz nicht verfügbar. Aktualisiere OpenClaw auf eine neuere Version, um sie zu aktivieren.',
+            'WhatsApp-Kopplung ist auf dieser Instanz nicht verfügbar. Aktualisiere OpenClaw auf eine neuere Version, um sie zu aktivieren!',
         channelsTelegram: 'Telegram',
         channelsDiscord: 'Discord',
         channelsSlack: 'Slack',
@@ -1382,9 +1382,9 @@ const de: Translations = {
         channelsSaved: 'Kanäle erfolgreich aktualisiert.',
         channelsSaveFailed: 'Kanäle konnten nicht aktualisiert werden!',
         channelsLoading: 'Kanäle werden geladen...',
-        channelsLoadFailed: 'Kanäle konnten nicht geladen werden.',
+        channelsLoadFailed: 'Kanäle konnten nicht geladen werden!',
         channelsLoadFailedDescription:
-            'Kanalkonfiguration konnte nicht abgerufen werden. Bitte versuche es erneut.',
+            'Kanalkonfiguration konnte nicht abgerufen werden. Bitte versuche es erneut!',
         channelsNoChanges: 'Keine Änderungen zum Speichern.',
         bindingsDescription:
             'Weise diesem Agenten Messaging-Kanäle zu. Jeder Kanal kann nur einem Agenten gleichzeitig zugewiesen werden.',
@@ -1404,9 +1404,9 @@ const de: Translations = {
         skillsSaved: 'Skills erfolgreich aktualisiert.',
         skillsSaveFailed: 'Skills konnten nicht aktualisiert werden!',
         skillsLoading: 'Skills werden geladen...',
-        skillsLoadFailed: 'Skills konnten nicht geladen werden.',
+        skillsLoadFailed: 'Skills konnten nicht geladen werden!',
         skillsLoadFailedDescription:
-            'Skills-Konfiguration konnte nicht abgerufen werden. Bitte versuche es erneut.',
+            'Skills-Konfiguration konnte nicht abgerufen werden. Bitte versuche es erneut!',
         agentSkillsDescription:
             'In diesem Agenten-Arbeitsbereich installierte Skills.',
         agentSkillsInstalling: 'Wird installiert...',
@@ -1432,7 +1432,7 @@ const de: Translations = {
         clawHubInstall: 'Installieren',
         clawHubInstalled: 'Skill von ClawHub installiert.',
         clawHubInstallFailed:
-            'Skill von ClawHub konnte nicht installiert werden.',
+            'Skill von ClawHub konnte nicht installiert werden!',
         clawHubRemove: 'Entfernen',
         clawHubRemoved: 'ClawHub-Skill entfernt.',
         clawHubRemoveFailed: 'ClawHub-Skill konnte nicht entfernt werden!',
@@ -1443,15 +1443,15 @@ const de: Translations = {
         clawHubBy: 'von {{author}}',
         clawHubDownloads: '{{count}} Downloads',
         clawHubVersion: 'v{{version}}',
-        clawHubLoadFailed: 'ClawHub konnte nicht geladen werden.',
+        clawHubLoadFailed: 'ClawHub konnte nicht geladen werden!',
         clawHubLoadFailedDescription:
-            'Verbindung zum ClawHub-Marktplatz konnte nicht hergestellt werden. Bitte versuche es erneut.',
+            'Verbindung zum ClawHub-Marktplatz konnte nicht hergestellt werden. Bitte versuche es erneut!',
         tabVersions: 'Versionen',
         versionsSearch: 'Versionen suchen...',
         versionsEmpty: 'Keine Versionen gefunden',
         versionsEmptyDescription:
             'Keine Versionen stimmen mit Ihrer Suche überein.',
-        versionsErrorDescription: 'Versionen konnten nicht geladen werden. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut.',
+        versionsErrorDescription: 'Versionen konnten nicht geladen werden. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut!',
         versionsChangelog: 'Changelogs auf npm ansehen',
         versionCurrent: 'Aktuell',
         versionLatest: 'Neueste',
@@ -1470,7 +1470,7 @@ const de: Translations = {
         subdomain: 'Subdomain',
         subdomainPlaceholder: 'Subdomain eingeben',
         subdomainDescription: 'Kleinbuchstaben und Zahlen, 3-20 Zeichen.',
-        subdomainInvalid: 'Nur 3-20 Kleinbuchstaben und Zahlen verwenden.',
+        subdomainInvalid: 'Nur 3-20 Kleinbuchstaben und Zahlen verwenden!',
         subdomainUpdated: 'Subdomain erfolgreich aktualisiert.',
         subdomainUpdateFailed: 'Subdomain konnte nicht aktualisiert werden!',
         subdomainInUse: 'Diese Subdomain wird bereits von einem anderen Claw verwendet!',
@@ -1632,7 +1632,7 @@ const de: Translations = {
         resendIn: 'Erneut senden in {{seconds}}s',
         changeEmail: 'E-Mail ändern',
         invalidCode: 'Ungültiger Code',
-        codeExpired: 'Code abgelaufen. Bitte fordere einen neuen an.',
+        codeExpired: 'Code abgelaufen. Bitte fordere einen neuen an!',
         signingIn: 'Anmeldung...',
         signOut: 'Abmelden',
         signedInAs: 'Angemeldet als',
@@ -1689,7 +1689,7 @@ const de: Translations = {
         submitted: 'Feature-Anfrage eingereicht.',
         failedToSubmit: 'Feature-Anfrage konnte nicht eingereicht werden!',
         requestLimitReached:
-            'Du hast das Maximum von {{limit}} offenen Anfragen erreicht.',
+            'Du hast das Maximum von {{limit}} offenen Anfragen erreicht!',
         agentBannerTitle: 'Angetrieben von OpenClaw-Agenten',
         agentBannerDescription:
             'Feature-Anfragen werden von OpenClaw-Agenten auf ClawHost geprüft und entwickelt. Stimme für die Features ab, die du am meisten möchtest.',

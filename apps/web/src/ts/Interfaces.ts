@@ -1387,3 +1387,43 @@ export interface RenameClawMutationParams extends RenameClawData {
 export interface UpdateClawSubdomainMutationParams extends UpdateClawSubdomainData {
     id: string
 }
+
+export interface SelectContextValue {
+    value: string
+    onValueChange: (value: string) => void
+    displayText: string
+    setDisplayText: (text: string) => void
+}
+
+export interface SelectProps {
+    value: string
+    onValueChange: (value: string) => void
+    children: ReactNode
+    disabled?: boolean
+    displayValue?: string
+}
+
+export interface SelectTriggerProps {
+    placeholder?: string
+    className?: string
+    icon?: ReactNode
+    disabled?: boolean
+}
+
+export interface SelectContentProps {
+    children: ReactNode
+    className?: string
+    align?: 'start' | 'center' | 'end'
+}
+
+export interface SelectItemProps {
+    value: string
+    children: ReactNode
+    className?: string
+}
+
+export interface SelectGroupProps {
+    label: string
+    children: ReactNode
+    isLast?: boolean
+}

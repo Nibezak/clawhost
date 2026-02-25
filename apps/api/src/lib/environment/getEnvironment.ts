@@ -1,7 +1,8 @@
 import type { Context } from 'hono'
 import type { Environment } from '@/ts/Types'
 
-import { DEV, PROD } from '@/lib/environment/constants'
+import DEV from '@/lib/environment/DEV'
+import PROD from '@/lib/environment/PROD'
 
 const getEnvironment = (c: Context): Environment => {
     const url = new URL(c.req.url)

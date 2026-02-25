@@ -20,7 +20,7 @@ import type {
 
 import { RequestClient, clawStatus } from '@openclaw/shared'
 
-function getClient() {
+const getClient = () => {
     const token = process.env.VULTR_API_TOKEN
     if (!token) {
         throw new Error('VULTR_API_TOKEN is not set')
@@ -35,7 +35,7 @@ function getClient() {
     })
 }
 
-function mapStatus(vultrStatus: string): string {
+const mapStatus = (vultrStatus: string): string => {
     const statusMap: Record<string, string> = {
         active: clawStatus.running,
         pending: clawStatus.initializing,

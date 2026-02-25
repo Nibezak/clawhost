@@ -1,5 +1,9 @@
 import type { EditFeatureRequestBody } from '@/ts/Interfaces'
-import type { AuthenticatedContext, FeatureRequestPlatform, FeatureRequestStatus } from '@/ts/Types'
+import type {
+    AuthenticatedContext,
+    FeatureRequestPlatform,
+    FeatureRequestStatus
+} from '@/ts/Types'
 
 import { eq, and, count } from 'drizzle-orm'
 import { inputValidation } from '@openclaw/shared'
@@ -16,8 +20,6 @@ const VALID_STATUSES: FeatureRequestStatus[] = [
 ]
 
 const VALID_PLATFORMS: FeatureRequestPlatform[] = ['desktop', 'mobile', 'web']
-
-const MAX_IN_PROGRESS_PER_USER = 3
 
 const titleLimits = inputValidation.FEATURE_REQUEST_TITLE
 const descLimits = inputValidation.FEATURE_REQUEST_DESCRIPTION
@@ -116,7 +118,12 @@ const editFeatureRequest = async (c: AuthenticatedContext) => {
 
         if (body.platforms !== undefined) {
             const uniquePlatforms = [...new Set(body.platforms)]
-            if (uniquePlatforms.some((p) => !VALID_PLATFORMS.includes(p as FeatureRequestPlatform))) {
+            if (
+                uniquePlatforms.some(
+                    (p) =>
+                        !VALID_PLATFORMS.includes(p as FeatureRequestPlatform)
+                )
+            ) {
                 return fail(c, t('api.invalidPlatform'), 400)
             }
         }
@@ -135,11 +142,17 @@ const editFeatureRequest = async (c: AuthenticatedContext) => {
                     )
                 )
 
-            if (inProgressCount >= MAX_IN_PROGRESS_PER_USER) {
+            if (
+                inProgressCount >=
+                inputValidation.IN_PROGRESS_FEATURE_REQUESTS_PER_USER.MAX
+            ) {
                 return fail(
                     c,
                     t('api.featureRequestImplementationLimitReached', {
-                        limit: String(MAX_IN_PROGRESS_PER_USER)
+                        limit: String(
+                            inputValidation
+                                .IN_PROGRESS_FEATURE_REQUESTS_PER_USER.MAX
+                        )
                     }),
                     400
                 )

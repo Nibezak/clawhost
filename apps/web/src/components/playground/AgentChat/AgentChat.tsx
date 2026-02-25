@@ -18,6 +18,7 @@ import ChatInput from '@/components/playground/AgentChat/ChatInput'
 import ChatEmptyState from '@/components/playground/AgentChat/ChatEmptyState'
 import ChatSkeleton from '@/components/playground/AgentChat/ChatSkeleton'
 import ChatDateSeparator from '@/components/playground/AgentChat/ChatDateSeparator'
+import { getLocale } from '@/lib'
 import ChatTypingIndicator from '@/components/playground/AgentChat/ChatTypingIndicator'
 
 const readOnlyChatStore: Record<
@@ -129,7 +130,7 @@ const AgentChat: FC<AgentChatProps> = ({
     const getInitialMessages = useCallback(
         (id: string, name?: string) => {
             if (!readOnlyChatStore[id]) {
-                const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                const now = new Date().toLocaleTimeString(getLocale(), { hour: '2-digit', minute: '2-digit' })
                 const isAlt = name && name.toLowerCase().includes('test')
                 readOnlyChatStore[id] = [
                     {
@@ -168,7 +169,7 @@ const AgentChat: FC<AgentChatProps> = ({
     const handleReadOnlySend = useCallback(() => {
         const text = readOnlyInput.trim()
         if (!text || readOnlyTyping) return
-        const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        const now = new Date().toLocaleTimeString(getLocale(), { hour: '2-digit', minute: '2-digit' })
         setReadOnlyMessages((prev) => [...prev, { role: 'user', text, time: now }])
         setReadOnlyInput('')
         setReadOnlyTyping(true)
@@ -179,7 +180,7 @@ const AgentChat: FC<AgentChatProps> = ({
             })
         })
         setTimeout(() => {
-            const replyTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            const replyTime = new Date().toLocaleTimeString(getLocale(), { hour: '2-digit', minute: '2-digit' })
             setReadOnlyMessages((prev) => [
                 ...prev,
                 { role: 'assistant', text: t('playground.chatReadOnlyReply'), time: replyTime }

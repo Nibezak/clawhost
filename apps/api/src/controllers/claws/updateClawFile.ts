@@ -2,6 +2,7 @@ import type { UpdateClawFileBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import path from 'path'
+import { inputValidation } from '@openclaw/shared'
 import { findUserClaw, safeShellWrite } from '@/controllers/claws/helpers'
 import executeSSH from '@/services/ssh'
 import { t } from '@openclaw/i18n'
@@ -24,7 +25,7 @@ const updateClawFile = async (c: AuthenticatedContext) => {
             return fail(c, t('api.missingRequiredFields'), 400)
         }
 
-        if (body.content.length > 1024 * 1024) {
+        if (body.content.length > inputValidation.FILE_CONTENT.MAX) {
             return fail(c, t('api.fileTooLarge'), 400)
         }
 
