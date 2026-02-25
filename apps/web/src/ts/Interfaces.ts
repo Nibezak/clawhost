@@ -20,6 +20,7 @@ import type {
     ThemeMode,
     ClawFileType,
     ChatSidebarViewMode,
+    ChatTypingIndicator,
     CompareFeatureStatus,
     ToastType,
     UserRole
@@ -893,6 +894,7 @@ export interface UseAgentChatReturn {
     connectionState: GatewayConnectionState
     isLoading: boolean
     isStreaming: boolean
+    typingIndicator: ChatTypingIndicator
     sendMessage: (
         text: string,
         attachments?: ChatAttachment[],
@@ -928,6 +930,10 @@ export interface ChatBubbleProps {
     isLoading?: boolean
 }
 
+export interface ChatTypingIndicatorProps {
+    state: ChatTypingIndicator
+}
+
 export interface UseTextToSpeechReturn {
     activeMessageId: string | null
     loadingMessageId: string | null
@@ -956,6 +962,7 @@ export interface ChatInputHandle {
 export interface ChatInputProps {
     isConnected: boolean
     isStreaming: boolean
+    isProcessing: boolean
     onSend: (
         text: string,
         attachments?: ChatAttachment[],

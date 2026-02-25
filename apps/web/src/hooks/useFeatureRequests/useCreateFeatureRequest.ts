@@ -23,6 +23,7 @@ const useCreateFeatureRequest = () => {
 
             queries.forEach(([queryKey, data]) => {
                 if (!data) return
+                if (data.items.some((i) => i.id === newItem.id)) return
                 const sort = (queryKey[1] as string) ?? 'upvotes'
                 queryClient.setQueryData<FeatureRequestsListResponse>(
                     queryKey,

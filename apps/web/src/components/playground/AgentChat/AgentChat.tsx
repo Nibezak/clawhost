@@ -18,6 +18,12 @@ import ChatInput from '@/components/playground/AgentChat/ChatInput'
 import ChatEmptyState from '@/components/playground/AgentChat/ChatEmptyState'
 import ChatSkeleton from '@/components/playground/AgentChat/ChatSkeleton'
 import ChatDateSeparator from '@/components/playground/AgentChat/ChatDateSeparator'
+import ChatTypingIndicator from '@/components/playground/AgentChat/ChatTypingIndicator'
+
+const readOnlyChatStore: Record<
+    string,
+    { role: 'user' | 'assistant'; text: string; time: string }[]
+> = {}
 
 const isDifferentDay = (a: ChatMessage, b: ChatMessage): boolean => {
     if (!a.timestamp || !b.timestamp) return false
@@ -32,6 +38,7 @@ const isDifferentDay = (a: ChatMessage, b: ChatMessage): boolean => {
 
 const AgentChat: FC<AgentChatProps> = ({
     agentId,
+    agentName,
     subdomain,
     gatewayToken,
     agentModel,
@@ -57,6 +64,7 @@ const AgentChat: FC<AgentChatProps> = ({
         connectionState,
         isLoading,
         isStreaming,
+        typingIndicator,
         sendMessage,
         abortResponse
     } = useAgentChat({
@@ -78,7 +86,7 @@ const AgentChat: FC<AgentChatProps> = ({
                 }
             })
         }
-    }, [messages])
+    }, [messages, typingIndicator])
 
     const handleSend = useCallback(
         (
@@ -118,20 +126,50 @@ const AgentChat: FC<AgentChatProps> = ({
         }
     }, [])
 
-    const [readOnlyMessages, setReadOnlyMessages] = useState<
-        { role: 'user' | 'assistant'; text: string }[]
-    >([
-        { role: 'user', text: t('playground.chatReadOnlyUser') },
-        { role: 'assistant', text: t('playground.chatReadOnlyAssistant') }
-    ])
+    const getInitialMessages = useCallback(
+        (id: string, name?: string) => {
+            if (!readOnlyChatStore[id]) {
+                const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                const isAlt = name && name.toLowerCase().includes('test')
+                readOnlyChatStore[id] = [
+                    {
+                        role: 'user',
+                        text: t(isAlt ? 'playground.chatReadOnlyUser2' : 'playground.chatReadOnlyUser'),
+                        time: now
+                    },
+                    {
+                        role: 'assistant',
+                        text: t(isAlt ? 'playground.chatReadOnlyAssistant2' : 'playground.chatReadOnlyAssistant'),
+                        time: now
+                    }
+                ]
+            }
+            return readOnlyChatStore[id]
+        },
+        []
+    )
+    const [readOnlyMessages, setReadOnlyMessages] = useState(
+        () => getInitialMessages(agentId, agentName)
+    )
     const [readOnlyInput, setReadOnlyInput] = useState('')
     const [readOnlyTyping, setReadOnlyTyping] = useState(false)
     const readOnlyScrollRef = useRef<HTMLDivElement>(null)
 
+    useEffect(() => {
+        setReadOnlyMessages(getInitialMessages(agentId, agentName))
+        setReadOnlyTyping(false)
+        setReadOnlyInput('')
+    }, [agentId, agentName, getInitialMessages])
+
+    useEffect(() => {
+        readOnlyChatStore[agentId] = readOnlyMessages
+    }, [readOnlyMessages, agentId])
+
     const handleReadOnlySend = useCallback(() => {
         const text = readOnlyInput.trim()
         if (!text || readOnlyTyping) return
-        setReadOnlyMessages((prev) => [...prev, { role: 'user', text }])
+        const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        setReadOnlyMessages((prev) => [...prev, { role: 'user', text, time: now }])
         setReadOnlyInput('')
         setReadOnlyTyping(true)
         requestAnimationFrame(() => {
@@ -141,9 +179,10 @@ const AgentChat: FC<AgentChatProps> = ({
             })
         })
         setTimeout(() => {
+            const replyTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             setReadOnlyMessages((prev) => [
                 ...prev,
-                { role: 'assistant', text: t('playground.chatReadOnlyReply') }
+                { role: 'assistant', text: t('playground.chatReadOnlyReply'), time: replyTime }
             ])
             setReadOnlyTyping(false)
             requestAnimationFrame(() => {
@@ -165,7 +204,7 @@ const AgentChat: FC<AgentChatProps> = ({
                     {readOnlyMessages.map((msg, i) => (
                         <div
                             key={i}
-                            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                            className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'} gap-1`}
                         >
                             <div
                                 className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 ${
@@ -184,17 +223,12 @@ const AgentChat: FC<AgentChatProps> = ({
                                     {msg.text}
                                 </p>
                             </div>
+                            <span className='text-muted-foreground px-1 text-[10px]'>
+                                {msg.time}
+                            </span>
                         </div>
                     ))}
-                    {readOnlyTyping && (
-                        <div className='flex justify-start'>
-                            <div className='bg-foreground/5 flex items-center gap-1 rounded-2xl rounded-bl-md px-4 py-3'>
-                                <span className='bg-foreground/40 h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:0ms]' />
-                                <span className='bg-foreground/40 h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:150ms]' />
-                                <span className='bg-foreground/40 h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:300ms]' />
-                            </div>
-                        </div>
-                    )}
+                    <ChatTypingIndicator state={readOnlyTyping ? 'writing' : null} />
                 </div>
                 <div className='bg-background border-border border-t p-3'>
                     <form
@@ -282,6 +316,7 @@ const AgentChat: FC<AgentChatProps> = ({
                 <ChatInput
                     isConnected={false}
                     isStreaming={false}
+                    isProcessing={false}
                     onSend={handleSend}
                     onAbort={abortResponse}
                 />
@@ -335,6 +370,7 @@ const AgentChat: FC<AgentChatProps> = ({
                                 />
                             </div>
                         ))}
+                        <ChatTypingIndicator state={typingIndicator} />
                     </div>
                 )}
             </div>
@@ -349,6 +385,7 @@ const AgentChat: FC<AgentChatProps> = ({
                 ref={chatInputRef}
                 isConnected={isConnected}
                 isStreaming={isStreaming}
+                isProcessing={typingIndicator === 'thinking'}
                 onSend={handleSend}
                 onAbort={abortResponse}
                 allowAttach

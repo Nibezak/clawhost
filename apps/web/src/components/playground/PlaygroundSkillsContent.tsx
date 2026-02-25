@@ -277,6 +277,7 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                 agentQueryKey,
                 (old) => {
                     if (!old) return { skills: [{ name }] }
+                    if (old.skills.some((s) => s.name === name)) return old
                     return { skills: [...old.skills, { name }] }
                 }
             )

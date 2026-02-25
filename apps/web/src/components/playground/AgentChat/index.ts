@@ -8,6 +8,7 @@ import ChatMarkdown from '@/components/playground/AgentChat/ChatMarkdown'
 import ChatDateSeparator from '@/components/playground/AgentChat/ChatDateSeparator'
 import ChatLightbox from '@/components/playground/AgentChat/ChatLightbox'
 import ChatSpeechButton from '@/components/playground/AgentChat/ChatSpeechButton'
+import ChatTypingIndicator from '@/components/playground/AgentChat/ChatTypingIndicator'
 
 export {
     AgentChat,
@@ -19,5 +20,6 @@ export {
     ChatMarkdown,
     ChatDateSeparator,
     ChatLightbox,
-    ChatSpeechButton
+    ChatSpeechButton,
+    ChatTypingIndicator
 }

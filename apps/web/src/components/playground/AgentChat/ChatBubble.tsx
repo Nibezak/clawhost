@@ -4,7 +4,7 @@ import type { ChatBubbleProps, ChatImageSource } from '@/ts/Interfaces'
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
 import {
-    StopIcon,
+    StopCircleIcon,
     WarningIcon,
     FileTextIcon,
     DownloadSimpleIcon
@@ -255,8 +255,8 @@ const ChatBubble: FC<ChatBubbleProps> = ({
                     )}
                     {message.status === 'aborted' && (
                         <div className='mt-2 flex items-center gap-1.5'>
-                            <StopIcon className='h-3 w-3 text-yellow-500' />
-                            <span className='text-[11px] text-yellow-500'>
+                            <StopCircleIcon className='h-3 w-3 text-[#ef5350]' />
+                            <span className='text-[11px] text-[#ef5350]'>
                                 {t('playground.chatAbortedMessage')}
                             </span>
                         </div>

@@ -93,3 +93,5 @@ export type FeatureRequestPlatform = 'desktop' | 'mobile' | 'web'
 export type FeatureRequestSortBy = 'newest' | 'upvotes'
 
 export type ChatSidebarViewMode = 'tree' | 'list'
+
+export type ChatTypingIndicator = 'thinking' | 'writing' | null

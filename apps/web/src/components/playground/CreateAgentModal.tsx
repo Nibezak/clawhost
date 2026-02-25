@@ -143,6 +143,8 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                 (old) => {
                     if (!old)
                         return { agents: [response.agent], reachable: true }
+                    if (old.agents.some((a) => a.id === response.agent.id))
+                        return old
                     return {
                         ...old,
                         agents: [...old.agents, response.agent]

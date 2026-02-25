@@ -7,7 +7,7 @@ import type {
     UseAgentChatParams,
     UseAgentChatReturn
 } from '@/ts/Interfaces'
-import type { GatewayConnectionState } from '@/ts/Types'
+import type { ChatTypingIndicator, GatewayConnectionState } from '@/ts/Types'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { SharedGateway } from '@/lib/gateway'
@@ -27,6 +27,7 @@ const useAgentChat = ({
         useState<GatewayConnectionState>('disconnected')
     const [isLoading, setIsLoading] = useState(true)
     const [isStreaming, setIsStreaming] = useState(false)
+    const [typingIndicator, setTypingIndicator] = useState<ChatTypingIndicator>(null)
     const clientRef = useRef<ReturnType<typeof SharedGateway.acquire> | null>(
         null
     )
@@ -185,6 +186,7 @@ const useAgentChat = ({
                         currentRunIdRef.current =
                             event.runId || crypto.randomUUID()
                         setIsStreaming(true)
+                        setTypingIndicator('writing')
                         streamBufferRef.current = text
                         streamImagesRef.current =
                             images.length > 0 ? images : undefined
@@ -241,6 +243,7 @@ const useAgentChat = ({
                     streamBufferRef.current = ''
                     streamImagesRef.current = []
                     setIsStreaming(false)
+                    setTypingIndicator(null)
                 }
             } else if (event.state === 'error') {
                 if (rafRef.current) {
@@ -262,6 +265,7 @@ const useAgentChat = ({
                 streamBufferRef.current = ''
                 streamImagesRef.current = []
                 setIsStreaming(false)
+                setTypingIndicator(null)
             } else if (event.state === 'aborted') {
                 if (rafRef.current) {
                     cancelAnimationFrame(rafRef.current)
@@ -287,6 +291,7 @@ const useAgentChat = ({
                 streamBufferRef.current = ''
                 streamImagesRef.current = []
                 setIsStreaming(false)
+                setTypingIndicator(null)
             }
         }
 
@@ -334,6 +339,7 @@ const useAgentChat = ({
             }
 
             setMessages((prev) => [...prev, userMessage])
+            setTypingIndicator('thinking')
             streamBufferRef.current = ''
             currentRunIdRef.current = null
 
@@ -361,14 +367,17 @@ const useAgentChat = ({
     )
 
     const abortResponse = useCallback(() => {
-        if (!clientRef.current || !currentRunIdRef.current) return
+        if (!clientRef.current) return
 
-        clientRef.current
-            .send('chat.abort', {
-                sessionKey: sessionKeyRef.current,
-                runId: currentRunIdRef.current
-            })
-            .catch(() => {})
+        const params: Record<string, string> = {
+            sessionKey: sessionKeyRef.current
+        }
+        if (currentRunIdRef.current) {
+            params.runId = currentRunIdRef.current
+        }
+
+        clientRef.current.send('chat.abort', params).catch(() => {})
+        setTypingIndicator(null)
     }, [])
 
     return {
@@ -376,6 +385,7 @@ const useAgentChat = ({
         connectionState,
         isLoading,
         isStreaming,
+        typingIndicator,
         sendMessage,
         abortResponse
     }

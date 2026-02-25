@@ -1296,6 +1296,8 @@ const de: Translations = {
         chatInputDisabled: 'Verbinde dich, um mit diesem Agenten zu chatten',
         chatSend: 'Senden',
         chatAbort: 'Stopp',
+        chatStopProcess: 'Prozess stoppen',
+        chatThinking: 'Denkt nach',
         chatLoadingHistory: 'Nachrichten werden geladen...',
         chatNoMessages: 'Noch keine Nachrichten.',
         chatNoMessagesDescription:
@@ -1312,7 +1314,10 @@ const de: Translations = {
         chatReadOnlyAssistant:
             'Natürlich! Ich kann dir helfen, ein neues Node.js-Projekt zu initialisieren. Soll ich eine package.json mit einigen gängigen Abhängigkeiten erstellen?',
         chatReadOnlyReply:
-            'Dies ist eine Vorschau! Stelle deinen eigenen Claw bereit, um mit KI-Agenten zu chatten.',
+            'Dies ist eine Vorschau! Stelle dein eigenes OpenClaw mit einem Klick bereit und chatte in wenigen Minuten mit deinen KI-Agenten!',
+        chatReadOnlyUser2: 'Kannst du die Testsuite ausführen und auf Fehler prüfen?',
+        chatReadOnlyAssistant2:
+            'Klar! Ich führe jetzt alle Tests aus. 3 bestanden, 0 fehlgeschlagen. Alles in Ordnung — alle Assertions bestehen.',
         chatConnectionFailed: 'Verbindung zu diesem Agenten fehlgeschlagen.',
         chatConnectionFailedDescription:
             'Stelle sicher, dass der Claw läuft und erreichbar ist.',

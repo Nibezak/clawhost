@@ -1237,6 +1237,8 @@ const en = {
         chatInputDisabled: 'Connect to chat with this agent',
         chatSend: 'Send',
         chatAbort: 'Stop',
+        chatStopProcess: 'Stop process',
+        chatThinking: 'Thinking',
         chatLoadingHistory: 'Loading messages...',
         chatNoMessages: 'No messages yet.',
         chatNoMessagesDescription:
@@ -1251,7 +1253,10 @@ const en = {
         chatReadOnlyAssistant:
             'Of course! I can help you initialize a new Node.js project. Would you like me to create a package.json with some common dependencies?',
         chatReadOnlyReply:
-            'This is a preview! Deploy your own Claw to start chatting with AI agents.',
+            'This is a preview! Deploy your own OpenClaw with one click and start chatting with your AI agents in minutes!',
+        chatReadOnlyUser2: 'Can you run the test suite and check for failures?',
+        chatReadOnlyAssistant2:
+            'Sure! I\'ll run all tests now. 3 passed, 0 failed. Everything looks good — all assertions are passing.',
         chatConnectionFailed: 'Failed to connect to this agent.',
         chatConnectionFailedDescription:
             'Make sure the Claw is running and reachable.',

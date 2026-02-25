@@ -13,7 +13,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { clawStatus } from '@openclaw/shared'
 import { t } from '@openclaw/i18n'
 import { ListIcon, XIcon, GearSixIcon } from '@phosphor-icons/react'
-import { usePreferencesStore, useUIStore } from '@/lib/store'
+import { useUIStore } from '@/lib/store'
+import { ClawAvatar } from '@/components'
 import { getBaseDomain, api } from '@/lib'
 import { generateSlug } from '@/lib/claw-utils'
 import {
@@ -59,7 +60,6 @@ const ChatView: FC<ChatViewProps> = ({
     initialClawTab,
     onClawTabChange
 }): ReactNode => {
-    const chatSidebarView = usePreferencesStore((s) => s.chatSidebarView)
     const { showToast } = useUIStore()
 
     const [settingsClawId, setSettingsClawId] = useState<string | null>(
@@ -216,7 +216,7 @@ const ChatView: FC<ChatViewProps> = ({
         return t('chat.explorer')
     }, [activeAgent, settingsClaw])
 
-    const headerDropdownClaw = chatSidebarView === 'list' ? activeClaw : null
+    const headerDropdownClaw = activeClaw
 
     const isMutating =
         startMutation.isPending ||
@@ -435,15 +435,22 @@ const ChatView: FC<ChatViewProps> = ({
                         />
                     ) : activeAgent && activeClaw ? (
                         <div className='flex h-full flex-col'>
-                            {chatSidebarView === 'list' && (
-                                <div className='bg-background border-border flex items-center gap-3 border-b px-4 py-2.5'>
-                                    <div className='min-w-0 flex-1'>
-                                        <p className='text-foreground truncate text-[13px] font-medium'>
+                            {activeAgent && (
+                                <div className='bg-background border-border flex items-center gap-2.5 border-b px-4 py-2.5'>
+                                    <ClawAvatar />
+                                    <div className='min-w-0 flex-1 space-y-0'>
+                                        <p className='text-foreground truncate text-sm font-semibold leading-tight'>
                                             {activeClaw.name}
                                         </p>
-                                        <p className='text-muted-foreground truncate text-[11px]'>
+                                        <a
+                                            href={`https://${activeClaw.subdomain || generateSlug(activeClaw.id)}.${getBaseDomain()}`}
+                                            target='_blank'
+                                            rel='noopener noreferrer'
+                                            className='text-muted-foreground hover:text-foreground block truncate text-[11px] leading-tight transition-colors'
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
                                             {activeClaw.subdomain || generateSlug(activeClaw.id)}.{getBaseDomain()}
-                                        </p>
+                                        </a>
                                     </div>
                                     <div className='flex shrink-0 items-center gap-1'>
                                         <button

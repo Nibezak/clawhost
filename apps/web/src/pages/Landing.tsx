@@ -652,31 +652,33 @@ const Landing: FC = (): ReactNode => {
                                         setDemoChatConfigClawId(null)
                                     }}
                                 />
-                                <div className='relative flex min-w-0 flex-1 translate-x-0 overflow-hidden'>
-                                    {demoChatSettingsClaw && !demoChatAgentId ? (
-                                        <PlaygroundDetailPanel
-                                            key={`chat-settings-${demoChatSettingsClaw.id}`}
-                                            claw={demoChatSettingsClaw}
-                                            plans={[]}
-                                            sshKeys={[]}
-                                            onClose={() => setDemoChatSettingsClawId(null)}
-                                            readOnly
-                                            fullScreen
-                                        />
-                                    ) : demoChatAgent ? (
-                                        <AgentChat
-                                            key={demoChatAgent.id}
-                                            agentId={demoChatAgent.id}
-                                            agentName={demoChatAgent.name}
-                                            clawId={demoChatClaw.id}
-                                            subdomain={null}
-                                            gatewayToken={null}
-                                            agentModel={demoChatAgent.model}
-                                            readOnly
-                                        />
-                                    ) : (
-                                        <ChatEmptyState />
-                                    )}
+                                <div className='relative flex min-h-0 min-w-0 flex-1 translate-x-0 overflow-hidden'>
+                                    <div className='min-w-0 flex-1'>
+                                        {demoChatSettingsClaw && !demoChatAgentId ? (
+                                            <PlaygroundDetailPanel
+                                                key={`chat-settings-${demoChatSettingsClaw.id}`}
+                                                claw={demoChatSettingsClaw}
+                                                plans={[]}
+                                                sshKeys={[]}
+                                                onClose={() => setDemoChatSettingsClawId(null)}
+                                                readOnly
+                                                fullScreen
+                                            />
+                                        ) : demoChatAgent ? (
+                                            <AgentChat
+                                                key={demoChatAgent.id}
+                                                agentId={demoChatAgent.id}
+                                                agentName={demoChatAgent.name}
+                                                clawId={demoChatClaw.id}
+                                                subdomain={null}
+                                                gatewayToken={null}
+                                                agentModel={demoChatAgent.model}
+                                                readOnly
+                                            />
+                                        ) : (
+                                            <ChatEmptyState />
+                                        )}
+                                    </div>
                                     <AnimatePresence>
                                         {demoChatConfigAgent && demoChatConfigClaw && (
                                             <PlaygroundAgentDetailPanel

@@ -293,11 +293,17 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                             </TooltipContent>
                         </Tooltip>
                     ) : claw.status !== clawStatus.configuring && claw.status !== clawStatus.awaitingPayment ? (
-                        <p className='text-muted-foreground truncate text-[11px]'>
+                        <a
+                            href={`https://${claw.provider === clawProvider.local && claw.subdomain ? `${claw.subdomain}.clawhost` : `${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}`}`}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            className='text-muted-foreground hover:text-foreground truncate text-[11px] transition-colors'
+                            onClick={(e) => e.stopPropagation()}
+                        >
                             {claw.provider === clawProvider.local && claw.subdomain
                                 ? `${claw.subdomain}.clawhost`
                                 : `${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}`}
-                        </p>
+                        </a>
                     ) : (
                         <p className='text-muted-foreground truncate text-[11px]'>
                             {statusConfig.label}
