@@ -53,3 +53,5 @@ export type FeatureRequestStatus =
 export type FeatureRequestPlatform = 'desktop' | 'mobile' | 'web'
 
 export type FeatureRequestSortBy = 'newest' | 'upvotes'
+
+export type PiperVoiceQuality = 'low' | 'medium' | 'high'

@@ -45,7 +45,8 @@ const ChatBubble: FC<ChatBubbleProps> = ({
     message,
     onSpeak,
     onStop,
-    isSpeaking
+    isSpeaking,
+    isLoading
 }): ReactNode => {
     const isUser = message.role === 'user'
     const [lightboxImage, setLightboxImage] = useState<ChatImageSource | null>(
@@ -193,6 +194,20 @@ const ChatBubble: FC<ChatBubbleProps> = ({
                         )}
                     </div>
                     <div className='flex items-center gap-1.5 px-1'>
+                        {formattedTime && (
+                            <span className='text-muted-foreground text-[10px]'>
+                                {formattedTime}
+                            </span>
+                        )}
+                        {formattedTime &&
+                            !showAsFileCard &&
+                            message.content &&
+                            onSpeak &&
+                            onStop && (
+                                <span className='text-muted-foreground text-[10px]'>
+                                    ·
+                                </span>
+                            )}
                         {!showAsFileCard &&
                             message.content &&
                             onSpeak &&
@@ -201,15 +216,11 @@ const ChatBubble: FC<ChatBubbleProps> = ({
                                     messageId={message.id}
                                     text={message.content}
                                     isSpeaking={!!isSpeaking}
+                                    isLoading={!!isLoading}
                                     onSpeak={onSpeak}
                                     onStop={onStop}
                                 />
                             )}
-                        {formattedTime && (
-                            <span className='text-muted-foreground text-[10px]'>
-                                {formattedTime}
-                            </span>
-                        )}
                     </div>
                 </div>
                 {lightboxImage && (
@@ -252,6 +263,20 @@ const ChatBubble: FC<ChatBubbleProps> = ({
                     )}
                 </div>
                 <div className='flex items-center gap-1.5 px-1'>
+                    {formattedTime && (
+                        <span className='text-muted-foreground text-[10px]'>
+                            {formattedTime}
+                        </span>
+                    )}
+                    {formattedTime &&
+                        message.status === 'complete' &&
+                        message.content &&
+                        onSpeak &&
+                        onStop && (
+                            <span className='text-muted-foreground text-[10px]'>
+                                ·
+                            </span>
+                        )}
                     {message.status === 'complete' &&
                         message.content &&
                         onSpeak &&
@@ -260,15 +285,11 @@ const ChatBubble: FC<ChatBubbleProps> = ({
                                 messageId={message.id}
                                 text={message.content}
                                 isSpeaking={!!isSpeaking}
+                                isLoading={!!isLoading}
                                 onSpeak={onSpeak}
                                 onStop={onStop}
                             />
                         )}
-                    {formattedTime && (
-                        <span className='text-muted-foreground text-[10px]'>
-                            {formattedTime}
-                        </span>
-                    )}
                 </div>
             </div>
             {lightboxImage && (

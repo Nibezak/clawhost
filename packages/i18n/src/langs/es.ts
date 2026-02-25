@@ -26,7 +26,8 @@ const es: Translations = {
         closeNotification: 'Cerrar notificación',
         beta: 'Beta',
         brandName: 'ClawHost',
-        legalEmail: 'legal@clawhost.cloud'
+        legalEmail: 'legal@clawhost.cloud',
+        scrollToBottom: 'Ir al final'
     },
     setup: {
         welcomeTitle: 'Bienvenido a ClawHost Go',
@@ -375,7 +376,11 @@ const es: Translations = {
         platformRequired: 'Se requiere al menos una plataforma!',
         invalidPlatform: 'Valor de plataforma no válido!',
         featureRequestImplementationLimitReached:
-            'Este usuario ya tiene {{limit}} solicitudes de funcionalidades en progreso!'
+            'Este usuario ya tiene {{limit}} solicitudes de funcionalidades en progreso!',
+        textRequired: 'El texto es obligatorio!',
+        voiceNotFound: 'Modelo de voz no encontrado!',
+        ttsGenerationFailed: 'Error al generar el habla!',
+        voicesFetched: 'Voces obtenidas exitosamente.'
     },
     emails: {
         otpSubject: 'Tu código de inicio de sesión de ClawHost',
@@ -596,13 +601,10 @@ const es: Translations = {
         diagnosticsMemory: 'Memoria',
         logsDescription:
             'Últimas 100 líneas del registro de tu gateway, actualizándose automáticamente.',
-        scrollToBottom: 'Ir a los nuevos registros',
         fileExplorer: 'Explorador de archivos',
         fileExplorerRoot: 'openclaw',
         fileExplorerDescription:
-            'Explora y edita archivos de configuración de OpenClaw en tu instancia.',
-        fileExplorerWarning:
-            'Los cambios incorrectos pueden dañar tu instancia. Edita con cuidado.',
+            'Explora y edita tus archivos de configuración de OpenClaw. Los cambios incorrectos pueden dañar tu instancia.',
         fileExplorerSelectFile: 'Selecciona un archivo para ver su contenido.',
         fileExplorerReadOnly: 'Solo lectura',
         fileExplorerSave: 'Guardar',
@@ -610,6 +612,8 @@ const es: Translations = {
         fileExplorerInvalidJson:
             'JSON no válido. Por favor, corrige los errores de sintaxis antes de guardar.',
         fileExplorerNoFiles: 'No se encontraron archivos',
+        fileExplorerSearchFiles: 'Buscar archivos...',
+        fileExplorerNoSearchResults: 'No hay archivos coincidentes.',
         updateInstance: 'Actualizar instancia',
         updateInstanceSuccess: 'Instancia actualizada exitosamente.',
         updateInstanceFailed: 'Error al actualizar la instancia!',
@@ -623,6 +627,7 @@ const es: Translations = {
             'Esto reinstalará OpenClaw y restablecerá todas las configuraciones de esta instancia. Tus datos y servidor se conservarán, pero todos los servicios serán reiniciados. ¿Continuar?',
         reinstallInstanceSuccess: 'Instancia reinstalada exitosamente.',
         reinstallInstanceFailed: 'Error al reinstalar la instancia!',
+        openControlPanel: 'Abrir panel de control',
         exportData: 'Exportar Claw (.zip)',
         exportStarted:
             'Preparando la exportación, esto puede tardar un momento...',
@@ -1012,6 +1017,20 @@ const es: Translations = {
             'Refactorización de la estructura de funciones del playground y simplificaciones',
         upcomingReleaseFeature8:
             'Solicitudes de funciones gestionadas y publicadas automáticamente por los agentes de OpenClaw',
+        release11Date: '25 de febrero de 2026',
+        release11Title: 'Texto a voz, terminal, pestañas de chat y explorador de archivos',
+        release11Description:
+            'Escucha las respuestas de los agentes con texto a voz, interactúa con tu VPS directamente a través del terminal, navega más rápido en los chats con las pestañas de la barra lateral, y explora archivos con el explorador mejorado.',
+        release11Feature1:
+            'Texto a voz en los mensajes de agentes en el playground',
+        release11Feature2:
+            'Terminal para interactuar con tus instancias VPS directamente desde el panel de control',
+        release11Feature3:
+            'Pestañas de vista de la barra lateral del chat para acceso y navegación fáciles',
+        release11Feature4:
+            'Mejoras en el explorador de archivos con barra de búsqueda para buscar entre archivos',
+        release11Feature5:
+            'Corrección de las marcas de tiempo de los mensajes que no reflejaban el tiempo real',
         release10Date: '22 de febrero de 2026',
         release10Title: 'Solicitudes de funciones, explorador de archivos y correcciones',
         release10Description:
@@ -1230,6 +1249,9 @@ const es: Translations = {
         variablesOperationPending: 'Deshabilitado mientras se completa una operación anterior.',
         addAgentTitle: 'Agregar agente',
         addAgentDescription: 'Agrega un nuevo agente a {{clawName}}.',
+        addAgentDescriptionNoClaw: 'Selecciona un claw y configura tu nuevo agente.',
+        addAgentSelectClaw: 'Claw',
+        addAgentSelectClawPlaceholder: 'Selecciona un claw',
         addAgentName: 'Nombre',
         addAgentNamePlaceholder: 'Ingresa el nombre del agente',
         addAgentModel: 'Modelo',
@@ -1271,13 +1293,16 @@ const es: Translations = {
             'Envía un mensaje para iniciar una conversación con este agente.',
         chatErrorMessage: 'Ocurrió un error al generar una respuesta.',
         chatAbortedMessage: 'La respuesta fue detenida.',
-        chatPlaySpeech: 'Reproducir mensaje',
-        chatStopSpeech: 'Detener reproducción',
+        chatPlaySpeech: 'Leer en voz alta',
+        chatReplaySpeech: 'Repetir',
+        chatStopSpeech: 'Detener',
         chatReadOnlyPlaceholder: 'Chat disponible en tus propios Claws.',
         chatReadOnlyUser:
             '¡Hola! ¿Puedes ayudarme a configurar un proyecto Node.js?',
         chatReadOnlyAssistant:
             '¡Por supuesto! Puedo ayudarte a inicializar un nuevo proyecto Node.js. ¿Te gustaría que cree un package.json con algunas dependencias comunes?',
+        chatReadOnlyReply:
+            '¡Esto es una vista previa! Despliega tu propio Claw para empezar a chatear con agentes de IA.',
         chatConnectionFailed: 'Error al conectar con este agente.',
         chatConnectionFailedDescription:
             'Asegúrate de que el Claw esté ejecutándose y sea accesible.',
@@ -1300,7 +1325,6 @@ const es: Translations = {
             'Este tipo de archivo no es compatible. Usa imágenes, PDFs o archivos de texto.',
         chatNoPreview: 'Vista previa no disponible.',
         chatDownloadFile: 'Descargar archivo',
-        chatScrollToBottom: 'Ir al final',
         tabChannels: 'Canales',
         channelsDescription:
             'Configura los canales de mensajería para esta instancia. Los mensajes se enrutan a los agentes mediante vínculos.',
@@ -1686,6 +1710,7 @@ const es: Translations = {
         competitorClawHost: 'ClawHost',
         competitorSimpleClaw: 'SimpleClaw',
         competitorMyClawAi: 'MyClaw.ai',
+        competitorQuickClaw: 'QuickClaw',
         categoryInfrastructure: 'Infraestructura',
         categoryPricing: 'Precios & Facturación',
         categoryDeployment: 'Despliegue & Configuración',
@@ -1730,6 +1755,7 @@ const es: Translations = {
         dedicatedVps: 'VPS dedicado',
         sharedContainers: 'Contenedores compartidos',
         isolatedContainers: 'Contenedores aislados',
+        cloudWorkspaces: 'Espacios de trabajo en la nube',
         threeProviders: 'Hetzner, DigitalOcean, Vultr',
         singleProvider: 'Proveedor único',
         fullyDedicated: 'Totalmente dedicado',
@@ -1744,9 +1770,11 @@ const es: Translations = {
         clearSpecsPricing: 'Especificaciones y precios claros',
         unclearPricing: 'Precios poco claros',
         fixedTiers: '3 niveles fijos',
+        creditBased: 'Basado en créditos',
         minutes: 'Minutos',
         underOneMinute: 'Menos de 1 minuto',
         thirtySeconds: '30 segundos',
+        instant: 'Instantáneo',
         noneRequired: 'Ninguna',
         minimal: 'Mínima',
         unlimited: 'Ilimitadas',
@@ -1756,6 +1784,7 @@ const es: Translations = {
         allChannels: 'WhatsApp, Telegram, Discord, Slack, Signal',
         telegramDiscord: 'Telegram, Discord',
         discordGithubSlack: 'Discord, GitHub, Slack',
+        appOnly: 'Solo aplicación',
         fullConfig: 'Configuración completa',
         limitedConfig: 'Limitada',
         zipExport: 'Exportación ZIP',
@@ -1767,16 +1796,20 @@ const es: Translations = {
         notIncluded: 'No incluido',
         managed: 'Gestionado',
         manual: 'Manual',
+        appStore: 'App Store',
         liveMonitoring: 'Monitoreo en vivo',
         liveLogs: 'Registros en vivo',
         oneClickRepair: 'Reparación con un clic',
         emailGithub: 'Email, GitHub',
         communityOnly: 'Solo comunidad',
+        appSupport: 'Soporte vía aplicación',
         prioritySupport: 'Soporte 24/7 (Pro+)',
         fourLanguages: '4 idiomas',
         englishOnly: 'Solo inglés',
         available: 'Disponible',
         comingSoon: 'Próximamente',
+        iosMacOs: 'iOS & macOS',
+        macOsOnly: 'Solo macOS',
         notAvailable: 'No disponible',
         disclaimer: '¿Algo cambió o es incorrecto? Escríbenos a',
         disclaimerOr: 'o abre un pull request en',

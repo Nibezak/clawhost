@@ -675,6 +675,8 @@ export interface PlaygroundAgentNodeData {
     clawName: string
     clawId: string
     isSelected: boolean
+    subdomain: string | null
+    gatewayToken: string | null
 }
 
 export interface PlaygroundClawNodeProps {
@@ -765,8 +767,9 @@ export interface DeleteAgentData {
 }
 
 export interface CreateAgentModalProps {
-    clawId: string
-    clawName: string
+    clawId?: string
+    clawName?: string
+    clawsWithAgents?: ClawWithAgents[]
     open: boolean
     onOpenChange: (open: boolean) => void
 }
@@ -922,10 +925,12 @@ export interface ChatBubbleProps {
     onSpeak?: (messageId: string, text: string) => void
     onStop?: () => void
     isSpeaking?: boolean
+    isLoading?: boolean
 }
 
 export interface UseTextToSpeechReturn {
     activeMessageId: string | null
+    loadingMessageId: string | null
     speak: (messageId: string, text: string) => void
     stop: () => void
 }
@@ -934,6 +939,7 @@ export interface ChatSpeechButtonProps {
     messageId: string
     text: string
     isSpeaking: boolean
+    isLoading: boolean
     onSpeak: (messageId: string, text: string) => void
     onStop: () => void
 }
@@ -1137,6 +1143,7 @@ export interface ChatSidebarItemProps {
     isLast: boolean
     isChecking?: boolean
     connectionState?: GatewayConnectionState
+    readOnly?: boolean
     onClick: () => void
     onConfigure: () => void
 }
@@ -1156,8 +1163,10 @@ export interface ClawWithAgents {
 export interface ChatSidebarProps {
     clawsWithAgents: ClawWithAgents[]
     selectedAgent: ChatSelectedAgent | null
+    configAgent: ChatSelectedAgent | null
     selectedClawId: string | null
     activeConnectionState?: GatewayConnectionState
+    readOnly?: boolean
     onAgentSelect: (selection: ChatSelectedAgent) => void
     onConfigureAgent: (agentId: string, clawId: string) => void
     onCreateAgent: (clawId: string, clawName: string) => void
@@ -1170,6 +1179,7 @@ export interface ChatSidebarTreeViewProps {
     selectedAgent: ChatSelectedAgent | null
     selectedClawId: string | null
     activeConnectionState?: GatewayConnectionState
+    readOnly?: boolean
     onAgentClick: (agentId: string, clawId: string) => void
     onConfigureAgent: (agentId: string, clawId: string) => void
     onCreateAgent: (clawId: string, clawName: string) => void
@@ -1179,7 +1189,9 @@ export interface ChatSidebarTreeViewProps {
 export interface ChatSidebarListViewProps {
     clawsWithAgents: ClawWithAgents[]
     selectedAgent: ChatSelectedAgent | null
+    configAgent: ChatSelectedAgent | null
     activeConnectionState?: GatewayConnectionState
+    readOnly?: boolean
     onAgentClick: (agentId: string, clawId: string) => void
     onConfigureAgent: (agentId: string, clawId: string) => void
 }
@@ -1196,6 +1208,7 @@ export interface ChatSidebarListItemProps {
     isReachable: boolean
     isActive: boolean
     activeConnectionState?: GatewayConnectionState
+    readOnly?: boolean
     onClick: () => void
     onConfigure: () => void
 }
@@ -1207,6 +1220,7 @@ export interface ChatSidebarAgentListProps {
     isReachable: boolean
     selectedAgent: ChatSelectedAgent | null
     activeConnectionState?: GatewayConnectionState
+    readOnly?: boolean
     onAgentClick: (agentId: string, clawId: string) => void
     onConfigureAgent: (agentId: string, clawId: string) => void
     onCreateAgent: (clawId: string, clawName: string) => void
@@ -1217,6 +1231,7 @@ export interface ChatSidebarClawHeaderProps {
     isReachable: boolean
     isSelected: boolean
     statusConfig: StatusConfig
+    readOnly?: boolean
     onOpenClawSettings: (clawId: string) => void
     onCreateAgent: (clawId: string, clawName: string) => void
 }
@@ -1342,6 +1357,16 @@ export interface ElectronAPI {
     openWindowed: (url: string) => Promise<void>
     getDnsStatus: () => Promise<boolean>
     setupDns: () => Promise<boolean>
+}
+
+export interface ScrollToBottomButtonProps {
+    visible: boolean
+    onClick: () => void
+    className?: string
+}
+
+export interface UseScrollToBottomOptions {
+    threshold?: number
 }
 
 export interface ElectronWindow {

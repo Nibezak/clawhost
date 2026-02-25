@@ -6,10 +6,16 @@ import { Terminal } from '@xterm/xterm'
 import { FitAddon } from '@xterm/addon-fit'
 import { t } from '@openclaw/i18n'
 import { getCachedToken } from '@/lib/firebase'
-import { CircleNotchIcon, TerminalWindowIcon, ArrowClockwiseIcon } from '@phosphor-icons/react'
+import {
+    CircleNotchIcon,
+    TerminalWindowIcon,
+    ArrowClockwiseIcon
+} from '@phosphor-icons/react'
 import { Button } from '@/components/ui'
-import { PanelPlaceholder } from '@/components'
+import { ScrollToBottomButton } from '@/components'
 import '@xterm/xterm/css/xterm.css'
+
+let connectCounter = 0
 
 const ClawTerminalContent: FC<ClawTerminalContentProps> = ({
     clawId,
@@ -20,9 +26,14 @@ const ClawTerminalContent: FC<ClawTerminalContentProps> = ({
     const fitAddonRef = useRef<FitAddon | null>(null)
     const wsRef = useRef<WebSocket | null>(null)
     const observerRef = useRef<ResizeObserver | null>(null)
-    const [status, setStatus] = useState<'idle' | 'connecting' | 'connected' | 'error' | 'disconnected'>('idle')
+    const connectIdRef = useRef(0)
+    const [status, setStatus] = useState<
+        'idle' | 'connecting' | 'connected' | 'error' | 'disconnected'
+    >('idle')
+    const [showScrollButton, setShowScrollButton] = useState(false)
 
     const cleanup = useCallback(() => {
+        connectIdRef.current = ++connectCounter
         if (observerRef.current) {
             observerRef.current.disconnect()
             observerRef.current = null
@@ -42,9 +53,13 @@ const ClawTerminalContent: FC<ClawTerminalContentProps> = ({
         cleanup()
         if (!containerRef.current) return
 
+        const myId = connectIdRef.current
         setStatus('connecting')
 
         const token = await getCachedToken()
+
+        if (connectIdRef.current !== myId) return
+
         if (!token) {
             setStatus('error')
             return
@@ -56,24 +71,37 @@ const ClawTerminalContent: FC<ClawTerminalContentProps> = ({
             return
         }
 
+        const styles = getComputedStyle(document.documentElement)
+        const bgL = parseFloat(
+            styles.getPropertyValue('--background').trim().split(/\s+/).pop() ||
+                '0'
+        )
+        const mutedL = parseFloat(
+            styles.getPropertyValue('--muted').trim().split(/\s+/).pop() || '0'
+        )
+        const termBg = `hsl(0 0% ${(bgL + mutedL) / 2}%)`
+        const fg = `hsl(${styles.getPropertyValue('--foreground').trim()})`
+        const mutedFg = `hsl(${styles.getPropertyValue('--muted-foreground').trim()})`
+
         const terminal = new Terminal({
             cursorBlink: true,
             fontSize: 13,
-            fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+            fontFamily:
+                'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
             theme: {
-                background: '#18181b',
-                foreground: '#e4e4e7',
+                background: termBg,
+                foreground: fg,
                 cursor: '#ef5350',
                 selectionBackground: '#ef535040',
-                black: '#09090b',
+                black: termBg,
                 red: '#ef5350',
                 green: '#4ade80',
                 yellow: '#facc15',
                 blue: '#60a5fa',
                 magenta: '#c084fc',
                 cyan: '#22d3ee',
-                white: '#e4e4e7',
-                brightBlack: '#52525b',
+                white: fg,
+                brightBlack: mutedFg,
                 brightRed: '#f87171',
                 brightGreen: '#86efac',
                 brightYellow: '#fde047',
@@ -91,16 +119,29 @@ const ClawTerminalContent: FC<ClawTerminalContentProps> = ({
         terminalRef.current = terminal
         fitAddonRef.current = fitAddon
 
-        requestAnimationFrame(() => {
-            fitAddon.fit()
-        })
+        const cropTerminal = () => {
+            const xtermEl = container.querySelector('.xterm') as HTMLElement
+            const screenEl = container.querySelector(
+                '.xterm-screen'
+            ) as HTMLElement
+            if (xtermEl && screenEl) {
+                xtermEl.style.height = `${screenEl.offsetHeight}px`
+            }
+        }
 
+        const fitAndCrop = () => {
+            if (fitAddonRef.current) {
+                fitAddonRef.current.fit()
+                cropTerminal()
+            }
+        }
+
+        requestAnimationFrame(fitAndCrop)
+
+        let resizeTimer: ReturnType<typeof setTimeout>
         const observer = new ResizeObserver(() => {
-            requestAnimationFrame(() => {
-                if (fitAddonRef.current) {
-                    fitAddonRef.current.fit()
-                }
-            })
+            clearTimeout(resizeTimer)
+            resizeTimer = setTimeout(fitAndCrop, 50)
         })
         observer.observe(container)
         observerRef.current = observer
@@ -110,25 +151,32 @@ const ClawTerminalContent: FC<ClawTerminalContentProps> = ({
         const ws = new WebSocket(wsUrl)
         wsRef.current = ws
 
+        let connected = false
+
         ws.onopen = () => {
-            setStatus('connected')
-            ws.send(JSON.stringify({
-                type: 'resize',
-                cols: terminal.cols,
-                rows: terminal.rows
-            }))
-            requestAnimationFrame(() => {
-                fitAddon.fit()
-                terminal.focus()
-            })
+            ws.send(
+                JSON.stringify({
+                    type: 'resize',
+                    cols: terminal.cols,
+                    rows: terminal.rows
+                })
+            )
+            requestAnimationFrame(fitAndCrop)
         }
 
         ws.onmessage = (event) => {
+            if (!connected) {
+                connected = true
+                setStatus('connected')
+                requestAnimationFrame(() => {
+                    terminal.focus()
+                })
+            }
             terminal.write(event.data)
         }
 
         ws.onclose = () => {
-            setStatus((prev) => prev === 'error' ? 'error' : 'disconnected')
+            setStatus((prev) => (prev === 'error' ? 'error' : 'disconnected'))
         }
 
         ws.onerror = () => {
@@ -146,6 +194,11 @@ const ClawTerminalContent: FC<ClawTerminalContentProps> = ({
                 ws.send(JSON.stringify({ type: 'resize', cols, rows }))
             }
         })
+
+        terminal.onScroll(() => {
+            const buf = terminal.buffer.active
+            setShowScrollButton(buf.viewportY < buf.baseY)
+        })
     }, [clawId, cleanup])
 
     useEffect(() => {
@@ -154,31 +207,39 @@ const ClawTerminalContent: FC<ClawTerminalContentProps> = ({
         } else {
             cleanup()
             setStatus('idle')
+            setShowScrollButton(false)
         }
 
         return cleanup
     }, [enabled, connect, cleanup])
 
-    const showOverlay = status === 'connecting' || status === 'error' || status === 'disconnected'
+    const handleTerminalScrollToBottom = useCallback(() => {
+        terminalRef.current?.scrollToBottom()
+        setShowScrollButton(false)
+    }, [])
+
+    const showOverlay =
+        status === 'connecting' ||
+        status === 'error' ||
+        status === 'disconnected'
 
     return (
         <div
-            className='relative h-full w-full bg-[#18181b]'
+            className='bg-muted/50 relative h-full w-full overflow-hidden'
             onKeyDown={(e) => e.stopPropagation()}
+            onMouseDown={(e) => {
+                if (terminalRef.current && e.target === e.currentTarget) {
+                    e.preventDefault()
+                    terminalRef.current.focus()
+                }
+            }}
         >
             <div
-                className={`h-full w-full p-2 ${showOverlay ? 'opacity-0' : ''}`}
-                onMouseDown={(e) => {
-                    if (terminalRef.current && e.target === e.currentTarget) {
-                        e.preventDefault()
-                        terminalRef.current.focus()
-                    }
-                }}
-            >
-                <div ref={containerRef} className='h-full w-full overflow-hidden' />
-            </div>
+                ref={containerRef}
+                className={`absolute bottom-2 left-2 right-0 top-2 overflow-hidden ${showOverlay ? 'opacity-0' : ''}`}
+            />
             {showOverlay && (
-                <div className='absolute inset-0 flex items-center justify-center bg-[#18181b]'>
+                <div className='bg-muted/50 absolute inset-0 flex items-center justify-center'>
                     {status === 'connecting' && (
                         <div className='flex flex-col items-center gap-3'>
                             <CircleNotchIcon className='text-muted-foreground h-6 w-6 animate-spin' />
@@ -187,37 +248,26 @@ const ClawTerminalContent: FC<ClawTerminalContentProps> = ({
                             </span>
                         </div>
                     )}
-                    {status === 'error' && (
+                    {(status === 'error' || status === 'disconnected') && (
                         <div className='flex flex-col items-center gap-3'>
-                            <PanelPlaceholder
-                                icon={
-                                    <TerminalWindowIcon
-                                        className='text-muted-foreground h-6 w-6'
-                                        weight='duotone'
-                                    />
-                                }
-                                title={t('playground.terminalError')}
-                                description=''
-                            />
-                            <Button size='sm' variant='outline' onClick={connect}>
-                                <ArrowClockwiseIcon className='mr-2 h-3.5 w-3.5' />
-                                {t('playground.terminalReconnect')}
-                            </Button>
-                        </div>
-                    )}
-                    {status === 'disconnected' && (
-                        <div className='flex flex-col items-center gap-3'>
-                            <PanelPlaceholder
-                                icon={
-                                    <TerminalWindowIcon
-                                        className='text-muted-foreground h-6 w-6'
-                                        weight='duotone'
-                                    />
-                                }
-                                title={t('playground.terminalDisconnected')}
-                                description=''
-                            />
-                            <Button size='sm' variant='outline' onClick={connect}>
+                            <div className='bg-foreground/5 flex h-12 w-12 items-center justify-center rounded-xl'>
+                                <TerminalWindowIcon
+                                    className='text-muted-foreground h-6 w-6'
+                                    weight='duotone'
+                                />
+                            </div>
+                            <p className='text-foreground/80 text-sm font-medium'>
+                                {t(
+                                    status === 'error'
+                                        ? 'playground.terminalError'
+                                        : 'playground.terminalDisconnected'
+                                )}
+                            </p>
+                            <Button
+                                size='sm'
+                                variant='outline'
+                                onClick={connect}
+                            >
                                 <ArrowClockwiseIcon className='mr-2 h-3.5 w-3.5' />
                                 {t('playground.terminalReconnect')}
                             </Button>
@@ -225,6 +275,10 @@ const ClawTerminalContent: FC<ClawTerminalContentProps> = ({
                     )}
                 </div>
             )}
+            <ScrollToBottomButton
+                visible={showScrollButton && !showOverlay}
+                onClick={handleTerminalScrollToBottom}
+            />
         </div>
     )
 }

@@ -2,7 +2,6 @@ import type { FC, ReactNode } from 'react'
 import type {
     ChatSidebarClawHeaderProps,
     ClawCardActions,
-    ElectronWindow,
     ExportRateLimitError
 } from '@/ts/Interfaces'
 
@@ -41,6 +40,7 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
     isReachable: _isReachable,
     isSelected,
     statusConfig,
+    readOnly,
     onOpenClawSettings,
     onCreateAgent: _onCreateAgent
 }): ReactNode => {
@@ -293,96 +293,78 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                             </TooltipContent>
                         </Tooltip>
                     ) : claw.status !== clawStatus.configuring && claw.status !== clawStatus.awaitingPayment ? (
-                        claw.provider === clawProvider.local && claw.subdomain ? (
-                            <button
-                                type='button'
-                                onClick={(e) => {
-                                    e.stopPropagation()
-                                    const url = `https://${claw.subdomain}.clawhost${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`
-                                    const eApi = (window as unknown as ElectronWindow).electronAPI
-                                    if (eApi?.openExternal) {
-                                        eApi.openExternal(url)
-                                    } else {
-                                        window.open(url, '_blank')
-                                    }
-                                }}
-                                className='text-muted-foreground hover:text-foreground/80 block truncate text-[11px] transition-colors'
-                            >
-                                {claw.subdomain}.clawhost
-                            </button>
-                        ) : (
-                            <a
-                                href={`https://${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                onClick={(e) => e.stopPropagation()}
-                                className='text-muted-foreground hover:text-foreground/80 block truncate text-[11px] transition-colors'
-                            >
-                                {claw.subdomain || generateSlug(claw.id)}.
-                                {getBaseDomain()}
-                            </a>
-                        )
+                        <p className='text-muted-foreground truncate text-[11px]'>
+                            {claw.provider === clawProvider.local && claw.subdomain
+                                ? `${claw.subdomain}.clawhost`
+                                : `${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}`}
+                        </p>
                     ) : (
                         <p className='text-muted-foreground truncate text-[11px]'>
                             {statusConfig.label}
                         </p>
                     )}
                 </div>
-                <div
-                    className='flex shrink-0 items-center gap-1'
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <div>
-                        <ClawCardDropdownMenu
-                            claw={claw}
-                            actions={actions}
-                            isLoading={isMutating}
-                            hasActionItems={hasActionItems}
-                            isScheduledForDeletion={isScheduledForDeletion}
-                            isAdmin={profile?.role === 'admin'}
-                            compact
-                        />
+                {!readOnly && (
+                    <div
+                        className='flex shrink-0 items-center gap-1'
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div>
+                            <ClawCardDropdownMenu
+                                claw={claw}
+                                actions={actions}
+                                isLoading={isMutating}
+                                hasActionItems={hasActionItems}
+                                isScheduledForDeletion={isScheduledForDeletion}
+                                isAdmin={profile?.role === 'admin'}
+                                compact
+                            />
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
-            <ClawCardDialogs
-                clawName={claw.name}
-                showDeleteModal={showDeleteModal}
-                setShowDeleteModal={setShowDeleteModal}
-                showStopModal={showStopModal}
-                setShowStopModal={setShowStopModal}
-                showRestartModal={showRestartModal}
-                setShowRestartModal={setShowRestartModal}
-                showHardDeleteModal={showHardDeleteModal}
-                setShowHardDeleteModal={setShowHardDeleteModal}
-                onDelete={() => deleteMutation.mutate(claw.id)}
-                onStop={() => stopMutation.mutate(claw.id)}
-                onRestart={() => restartMutation.mutate(claw.id)}
-                onHardDelete={() => hardDeleteMutation.mutate(claw.id)}
-                isDeletePending={deleteMutation.isPending}
-                isStopPending={stopMutation.isPending}
-                isRestartPending={restartMutation.isPending}
-                isHardDeletePending={hardDeleteMutation.isPending}
-                showReinstallModal={showReinstallModal}
-                setShowReinstallModal={setShowReinstallModal}
-                onReinstall={handleReinstall}
-                isReinstallPending={reinstallMutation.isPending}
-            />
-            <ClawDiagnosticsDialog
-                clawId={claw.id}
-                open={showDiagnostics}
-                onOpenChange={setShowDiagnostics}
-            />
-            <ClawLogsDialog
-                clawId={claw.id}
-                open={showLogs}
-                onOpenChange={setShowLogs}
-            />
-            <ClawConfigDialog
-                clawId={claw.id}
-                open={showConfig}
-                onOpenChange={setShowConfig}
-            />
+            {!readOnly && (
+                <>
+                    <ClawCardDialogs
+                        clawName={claw.name}
+                        showDeleteModal={showDeleteModal}
+                        setShowDeleteModal={setShowDeleteModal}
+                        showStopModal={showStopModal}
+                        setShowStopModal={setShowStopModal}
+                        showRestartModal={showRestartModal}
+                        setShowRestartModal={setShowRestartModal}
+                        showHardDeleteModal={showHardDeleteModal}
+                        setShowHardDeleteModal={setShowHardDeleteModal}
+                        onDelete={() => deleteMutation.mutate(claw.id)}
+                        onStop={() => stopMutation.mutate(claw.id)}
+                        onRestart={() => restartMutation.mutate(claw.id)}
+                        onHardDelete={() => hardDeleteMutation.mutate(claw.id)}
+                        isDeletePending={deleteMutation.isPending}
+                        isStopPending={stopMutation.isPending}
+                        isRestartPending={restartMutation.isPending}
+                        isHardDeletePending={hardDeleteMutation.isPending}
+                        showReinstallModal={showReinstallModal}
+                        setShowReinstallModal={setShowReinstallModal}
+                        onReinstall={handleReinstall}
+                        isReinstallPending={reinstallMutation.isPending}
+                    />
+                    <ClawDiagnosticsDialog
+                        clawId={claw.id}
+                        open={showDiagnostics}
+                        onOpenChange={setShowDiagnostics}
+                    />
+                    <ClawLogsDialog
+                        clawId={claw.id}
+                        open={showLogs}
+                        onOpenChange={setShowLogs}
+                    />
+                    <ClawConfigDialog
+                        clawId={claw.id}
+                        open={showConfig}
+                        onOpenChange={setShowConfig}
+                    />
+                </>
+            )}
         </>
     )
 }

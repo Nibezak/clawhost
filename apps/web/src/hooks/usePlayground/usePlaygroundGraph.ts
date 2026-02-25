@@ -70,7 +70,9 @@ const usePlaygroundGraph = (
                         agent,
                         clawName: claw.name,
                         clawId: claw.id,
-                        isSelected: false
+                        isSelected: false,
+                        subdomain: claw.subdomain,
+                        gatewayToken: claw.gatewayToken
                     } as Record<string, unknown>,
                     draggable: false
                 })

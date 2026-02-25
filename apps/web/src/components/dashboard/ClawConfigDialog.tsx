@@ -16,7 +16,7 @@ import {
 import {
     CircleNotchIcon,
     FloppyDiskIcon,
-    WarningIcon,
+    MagnifyingGlassIcon,
     FileIcon,
     FileJsIcon,
     FileTsIcon,
@@ -163,6 +163,7 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
     const [selectedPath, setSelectedPath] = useState('')
     const [editedContent, setEditedContent] = useState('')
     const [jsonError, setJsonError] = useState(false)
+    const [searchQuery, setSearchQuery] = useState('')
 
     const selectedFile = files.data?.files.find((f) => f.path === selectedPath)
     const fileType = selectedFile?.fileType ?? 'unknown'
@@ -180,6 +181,7 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
             setSelectedPath('')
             setEditedContent('')
             setJsonError(false)
+            setSearchQuery('')
             updateFile.reset()
             queryClient.removeQueries({
                 queryKey: ['claw-files', clawId]
@@ -218,10 +220,16 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
     )
 
     const currentContent = fileContent.data?.content
+    const formattedOriginal =
+        currentContent !== undefined
+            ? handleContentLoaded(currentContent, fileType)
+            : ''
     const displayContent =
         currentContent !== undefined && editedContent === ''
-            ? handleContentLoaded(currentContent, fileType)
+            ? formattedOriginal
             : editedContent
+    const hasUnsavedChanges =
+        editedContent !== '' && editedContent !== formattedOriginal
 
     const handleChange = useCallback((value: string) => {
         setEditedContent(value)
@@ -256,6 +264,10 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
             { id: clawId, data: { path: selectedPath, content } },
             {
                 onSuccess: () => {
+                    setEditedContent('')
+                    queryClient.invalidateQueries({
+                        queryKey: ['claw-file', clawId, selectedPath]
+                    })
                     showToast(t('dashboard.fileExplorerSaved'), 'success')
                 },
                 onError: (err) => {
@@ -273,8 +285,15 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
         return langExt ? [langExt, editorStyles] : [editorStyles]
     }, [fileType])
 
-    const groupedFiles = files.data?.files.reduce<
-        Record<string, typeof files.data.files>
+    const filteredFiles = files.data?.files.filter((file) =>
+        searchQuery === ''
+            ? true
+            : file.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              file.path.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+
+    const groupedFiles = filteredFiles?.reduce<
+        Record<string, typeof filteredFiles>
     >((acc, file) => {
         const parts = file.path.split('/')
         const dir = parts.length > 1 ? parts.slice(0, -1).join('/') : ''
@@ -300,13 +319,27 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className='bg-muted text-muted-foreground mt-2 flex max-w-lg items-start gap-2 rounded-md p-3 text-xs'>
-                    <WarningIcon className='mt-0.5 h-3.5 w-3.5 shrink-0' />
-                    {t('dashboard.fileExplorerWarning')}
-                </div>
-
                 <div className='flex h-[530px] gap-3 overflow-hidden pt-3'>
-                    <div className='border-border bg-muted w-56 shrink-0 overflow-y-auto rounded-md border'>
+                    <div className='border-border bg-muted flex w-56 shrink-0 flex-col overflow-hidden rounded-md border'>
+                        {files.data && files.data.files.length > 0 && (
+                            <div className='shrink-0 p-2'>
+                                <div className='relative'>
+                                    <MagnifyingGlassIcon className='text-muted-foreground absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2' />
+                                    <input
+                                        type='text'
+                                        value={searchQuery}
+                                        onChange={(e) =>
+                                            setSearchQuery(e.target.value)
+                                        }
+                                        placeholder={t(
+                                            'dashboard.fileExplorerSearchFiles'
+                                        )}
+                                        className='border-border bg-background text-foreground placeholder:text-muted-foreground w-full rounded-md border py-1.5 pl-7 pr-2 text-xs outline-none transition-colors focus:border-[#ef5350]/50'
+                                    />
+                                </div>
+                            </div>
+                        )}
+                        <div className='flex flex-1 flex-col overflow-y-auto'>
                         {files.isPending && (
                             <div className='p-3'>
                                 <div className='flex items-center gap-1.5 py-1.5'>
@@ -408,7 +441,7 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                                 {t('dashboard.fileExplorerNoFiles')}
                             </div>
                         )}
-                        {groupedFiles && (
+                        {groupedFiles && filteredFiles && filteredFiles.length > 0 && (
                             <>
                                 <div className='text-muted-foreground flex items-center gap-1.5 px-3 pb-1 pt-2 text-xs font-medium'>
                                     <FolderOpenIcon className='h-3.5 w-3.5 shrink-0' />
@@ -510,6 +543,13 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                                 </div>
                             </>
                         )}
+                        {searchQuery && filteredFiles && filteredFiles.length === 0 && (
+                            <div className='text-muted-foreground flex flex-1 flex-col items-center justify-center gap-1.5 text-xs'>
+                                <FileIcon className='h-6 w-6' />
+                                {t('dashboard.fileExplorerNoSearchResults')}
+                            </div>
+                        )}
+                        </div>
                     </div>
 
                     <div className='flex min-w-0 flex-1 flex-col gap-2'>
@@ -540,6 +580,9 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                                             getFileIconColor(fileType)
                                         )}
                                         {selectedFile?.name}
+                                        {hasUnsavedChanges && (
+                                            <span className='h-1.5 w-1.5 shrink-0 rounded-full bg-white/80' />
+                                        )}
                                         {!isEditable && (
                                             <span className='bg-muted text-muted-foreground ml-0.5 rounded-full px-2 py-px text-[10px] lowercase'>
                                                 {t(
@@ -607,6 +650,7 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                             !isEditable ||
                             !selectedPath ||
                             !fileContent.data ||
+                            !hasUnsavedChanges ||
                             jsonError ||
                             updateFile.isPending
                         }

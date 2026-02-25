@@ -26,7 +26,8 @@ const de: Translations = {
         closeNotification: 'Benachrichtigung schließen',
         beta: 'Beta',
         brandName: 'ClawHost',
-        legalEmail: 'legal@clawhost.cloud'
+        legalEmail: 'legal@clawhost.cloud',
+        scrollToBottom: 'Nach unten scrollen'
     },
     setup: {
         welcomeTitle: 'Willkommen bei ClawHost Go',
@@ -378,7 +379,11 @@ const de: Translations = {
         platformRequired: 'Mindestens eine Plattform ist erforderlich!',
         invalidPlatform: 'Ungültiger Plattformwert!',
         featureRequestImplementationLimitReached:
-            'Dieser Benutzer hat bereits {{limit}} Feature-Anfragen in Bearbeitung!'
+            'Dieser Benutzer hat bereits {{limit}} Feature-Anfragen in Bearbeitung!',
+        textRequired: 'Text ist erforderlich!',
+        voiceNotFound: 'Stimmmodell nicht gefunden!',
+        ttsGenerationFailed: 'Sprachgenerierung fehlgeschlagen!',
+        voicesFetched: 'Stimmen erfolgreich abgerufen.'
     },
     emails: {
         otpSubject: 'Dein ClawHost-Anmeldecode',
@@ -600,13 +605,10 @@ const de: Translations = {
         diagnosticsMemory: 'Arbeitsspeicher',
         logsDescription:
             'Die letzten 100 Zeilen deines Gateway-Logs, automatisch aktualisiert.',
-        scrollToBottom: 'Zu neuen Logs scrollen',
         fileExplorer: 'Datei-Explorer',
         fileExplorerRoot: 'openclaw',
         fileExplorerDescription:
-            'Durchsuche und bearbeite OpenClaw-Konfigurationsdateien auf deiner Instanz.',
-        fileExplorerWarning:
-            'Falsche Änderungen können deine Instanz beschädigen. Bearbeite mit Vorsicht.',
+            'Durchsuche und bearbeite deine OpenClaw-Konfigurationsdateien. Falsche Änderungen können deine Instanz beschädigen.',
         fileExplorerSelectFile:
             'Wähle eine Datei aus, um ihren Inhalt anzuzeigen.',
         fileExplorerReadOnly: 'Nur lesen',
@@ -615,6 +617,8 @@ const de: Translations = {
         fileExplorerInvalidJson:
             'Ungültiges JSON. Bitte behebe Syntaxfehler vor dem Speichern.',
         fileExplorerNoFiles: 'Keine Dateien gefunden',
+        fileExplorerSearchFiles: 'Dateien suchen...',
+        fileExplorerNoSearchResults: 'Keine passenden Dateien.',
         updateInstance: 'Instanz aktualisieren',
         updateInstanceSuccess: 'Instanz erfolgreich aktualisiert.',
         updateInstanceFailed: 'Instanz konnte nicht aktualisiert werden!',
@@ -629,6 +633,7 @@ const de: Translations = {
             'Dies installiert OpenClaw neu und setzt alle Konfigurationen auf dieser Instanz zurück. Deine Daten und dein Server bleiben erhalten, aber alle Dienste werden neu gestartet. Fortfahren?',
         reinstallInstanceSuccess: 'Instanz erfolgreich neu installiert.',
         reinstallInstanceFailed: 'Instanz konnte nicht neu installiert werden!',
+        openControlPanel: 'Systemsteuerung öffnen',
         exportData: 'Claw exportieren (.zip)',
         exportStarted:
             'Export wird vorbereitet, das kann einen Moment dauern...',
@@ -1021,6 +1026,20 @@ const de: Translations = {
             'Refactoring der Playground-Funktionsstruktur und Vereinfachungen',
         upcomingReleaseFeature8:
             'Feature-Anfragen automatisch verwaltet und veröffentlicht durch OpenClaw-Agenten',
+        release11Date: '25. Februar 2026',
+        release11Title: 'Text-zu-Sprache, Terminal, Chat-Tabs & Datei-Explorer',
+        release11Description:
+            'Hören Sie sich Agentenantworten mit Text-zu-Sprache an, interagieren Sie direkt über das Terminal mit Ihrem VPS, navigieren Sie schneller in Chats mit Seitenleisten-Tabs und durchsuchen Sie Dateien mit dem verbesserten Datei-Explorer.',
+        release11Feature1:
+            'Text-zu-Sprache für Agentennachrichten im Playground',
+        release11Feature2:
+            'Terminal zur direkten Interaktion mit Ihren VPS-Instanzen vom Dashboard aus',
+        release11Feature3:
+            'Chat-Seitenleisten-Tabs für einfachen Zugriff und Navigation',
+        release11Feature4:
+            'Verbesserungen am Datei-Explorer mit Suchleiste zum Durchsuchen von Dateien',
+        release11Feature5:
+            'Behebung von Nachrichtenzeitstempeln, die nicht in Echtzeit angezeigt wurden',
         release10Date: '22. Februar 2026',
         release10Title: 'Feature-Anfragen, Datei-Explorer & Fehlerbehebungen',
         release10Description:
@@ -1237,6 +1256,9 @@ const de: Translations = {
         variablesOperationPending: 'Deaktiviert, bis ein vorheriger Vorgang abgeschlossen ist.',
         addAgentTitle: 'Agent hinzufügen',
         addAgentDescription: 'Füge einen neuen Agenten zu {{clawName}} hinzu.',
+        addAgentDescriptionNoClaw: 'Wähle einen Claw aus und konfiguriere deinen neuen Agenten.',
+        addAgentSelectClaw: 'Claw',
+        addAgentSelectClawPlaceholder: 'Claw auswählen',
         addAgentName: 'Name',
         addAgentNamePlaceholder: 'Agentennamen eingeben',
         addAgentModel: 'Modell',
@@ -1281,13 +1303,16 @@ const de: Translations = {
         chatErrorMessage:
             'Beim Generieren einer Antwort ist ein Fehler aufgetreten.',
         chatAbortedMessage: 'Antwort wurde gestoppt.',
-        chatPlaySpeech: 'Nachricht vorlesen',
-        chatStopSpeech: 'Wiedergabe stoppen',
+        chatPlaySpeech: 'Vorlesen',
+        chatReplaySpeech: 'Wiederholen',
+        chatStopSpeech: 'Stoppen',
         chatReadOnlyPlaceholder: 'Chat verfügbar auf deinen eigenen Claws.',
         chatReadOnlyUser:
             'Hallo! Kannst du mir helfen, ein Node.js-Projekt einzurichten?',
         chatReadOnlyAssistant:
             'Natürlich! Ich kann dir helfen, ein neues Node.js-Projekt zu initialisieren. Soll ich eine package.json mit einigen gängigen Abhängigkeiten erstellen?',
+        chatReadOnlyReply:
+            'Dies ist eine Vorschau! Stelle deinen eigenen Claw bereit, um mit KI-Agenten zu chatten.',
         chatConnectionFailed: 'Verbindung zu diesem Agenten fehlgeschlagen.',
         chatConnectionFailedDescription:
             'Stelle sicher, dass der Claw läuft und erreichbar ist.',
@@ -1309,7 +1334,6 @@ const de: Translations = {
             'Dieser Dateityp wird nicht unterstützt. Verwende Bilder, PDFs oder Textdateien.',
         chatNoPreview: 'Keine Vorschau verfügbar.',
         chatDownloadFile: 'Datei herunterladen',
-        chatScrollToBottom: 'Nach unten scrollen',
         tabChannels: 'Kanäle',
         channelsDescription:
             'Konfiguriere Messaging-Kanäle für diese Instanz. Nachrichten werden über Bindungen an Agenten weitergeleitet.',
@@ -1696,6 +1720,7 @@ const de: Translations = {
         competitorClawHost: 'ClawHost',
         competitorSimpleClaw: 'SimpleClaw',
         competitorMyClawAi: 'MyClaw.ai',
+        competitorQuickClaw: 'QuickClaw',
         categoryInfrastructure: 'Infrastruktur',
         categoryPricing: 'Preise & Abrechnung',
         categoryDeployment: 'Bereitstellung & Einrichtung',
@@ -1740,6 +1765,7 @@ const de: Translations = {
         dedicatedVps: 'Dedizierter VPS',
         sharedContainers: 'Geteilte Container',
         isolatedContainers: 'Isolierte Container',
+        cloudWorkspaces: 'Cloud-Arbeitsbereiche',
         threeProviders: 'Hetzner, DigitalOcean, Vultr',
         singleProvider: 'Einzelner Anbieter',
         fullyDedicated: 'Vollständig dediziert',
@@ -1754,9 +1780,11 @@ const de: Translations = {
         clearSpecsPricing: 'Klare Spezifikationen & Preise',
         unclearPricing: 'Unklare Preise',
         fixedTiers: '3 feste Stufen',
+        creditBased: 'Kreditbasiert',
         minutes: 'Minuten',
         underOneMinute: 'Unter 1 Minute',
         thirtySeconds: '30 Sekunden',
+        instant: 'Sofort',
         noneRequired: 'Keine',
         minimal: 'Minimal',
         unlimited: 'Unbegrenzt',
@@ -1766,6 +1794,7 @@ const de: Translations = {
         allChannels: 'WhatsApp, Telegram, Discord, Slack, Signal',
         telegramDiscord: 'Telegram, Discord',
         discordGithubSlack: 'Discord, GitHub, Slack',
+        appOnly: 'Nur App',
         fullConfig: 'Vollständige Konfiguration',
         limitedConfig: 'Begrenzt',
         zipExport: 'ZIP-Export',
@@ -1777,16 +1806,20 @@ const de: Translations = {
         notIncluded: 'Nicht enthalten',
         managed: 'Verwaltet',
         manual: 'Manuell',
+        appStore: 'App Store',
         liveMonitoring: 'Live-Überwachung',
         liveLogs: 'Live-Logs',
         oneClickRepair: 'Ein-Klick-Reparatur',
         emailGithub: 'E-Mail, GitHub',
         communityOnly: 'Nur Community',
+        appSupport: 'App-Support',
         prioritySupport: '24/7-Support (Pro+)',
         fourLanguages: '4 Sprachen',
         englishOnly: 'Nur Englisch',
         available: 'Verfügbar',
         comingSoon: 'Demnächst verfügbar',
+        iosMacOs: 'iOS & macOS',
+        macOsOnly: 'Nur macOS',
         notAvailable: 'Nicht verfügbar',
         disclaimer: 'Etwas geändert oder falsch? Schreib uns an',
         disclaimerOr: 'oder öffne einen Pull Request auf',

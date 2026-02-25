@@ -1,11 +1,14 @@
 import type { FC, ReactNode } from 'react'
 import type { PlaygroundAgentNodeProps } from '@/ts/Interfaces'
 
+import { useMemo } from 'react'
+import { t } from '@openclaw/i18n'
 import { Handle, Position } from '@xyflow/react'
 import { AndroidLogoIcon, CircleNotchIcon } from '@phosphor-icons/react'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import { TRUNCATE_LENGTHS } from '@/lib'
 import { getAgentStatusConfig } from '@/lib/claw-utils'
+import { useGatewayState } from '@/hooks'
 
 const handleStyle = {
     top: 0,
@@ -21,8 +24,37 @@ const handleStyle = {
 const PlaygroundAgentNode: FC<PlaygroundAgentNodeProps> = ({
     data
 }): ReactNode => {
-    const { agent, isSelected } = data
-    const status = getAgentStatusConfig(agent.status)
+    const { agent, isSelected, subdomain, gatewayToken } = data
+
+    const gatewayState = useGatewayState(subdomain, gatewayToken)
+
+    const status = useMemo(() => {
+        if (subdomain && gatewayToken) {
+            if (gatewayState === 'connecting' || gatewayState === 'authenticating') {
+                return {
+                    color: 'bg-orange-500',
+                    bgColor: 'bg-orange-500/10',
+                    label: t('dashboard.status.checking'),
+                    pulse: true
+                }
+            }
+            if (gatewayState === 'connected') {
+                return {
+                    color: 'bg-green-500',
+                    bgColor: 'bg-green-500/10',
+                    label: t('dashboard.status.running')
+                }
+            }
+            if (gatewayState === 'error' || gatewayState === 'disconnected') {
+                return {
+                    color: 'bg-red-500',
+                    bgColor: 'bg-red-500/10',
+                    label: t('dashboard.status.unreachable')
+                }
+            }
+        }
+        return getAgentStatusConfig(agent.status)
+    }, [subdomain, gatewayToken, gatewayState, agent.status])
 
     return (
         <div
@@ -45,7 +77,7 @@ const PlaygroundAgentNode: FC<PlaygroundAgentNodeProps> = ({
                     {agent.name.length > TRUNCATE_LENGTHS.NODE_AGENT_NAME ? (
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <span className='text-foreground flex-1 truncate text-sm font-medium'>
+                                <span className='text-foreground truncate text-sm font-medium'>
                                     {agent.name.slice(
                                         0,
                                         TRUNCATE_LENGTHS.NODE_AGENT_NAME
@@ -56,7 +88,7 @@ const PlaygroundAgentNode: FC<PlaygroundAgentNodeProps> = ({
                             <TooltipContent>{agent.name}</TooltipContent>
                         </Tooltip>
                     ) : (
-                        <span className='text-foreground flex-1 truncate text-sm font-medium'>
+                        <span className='text-foreground truncate text-sm font-medium'>
                             {agent.name}
                         </span>
                     )}

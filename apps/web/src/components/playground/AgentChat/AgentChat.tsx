@@ -9,9 +9,10 @@ import type {
 
 import { useRef, useState, useEffect, useCallback } from 'react'
 import { t } from '@openclaw/i18n'
-import { GearSixIcon, ArrowDownIcon } from '@phosphor-icons/react'
-import { useAgentChat } from '@/hooks/useAgentChat'
+import { GearSixIcon, PaperPlaneRightIcon } from '@phosphor-icons/react'
+import { useAgentChat, useScrollToBottom } from '@/hooks'
 import useTextToSpeech from '@/hooks/useTextToSpeech'
+import { ScrollToBottomButton } from '@/components'
 import ChatBubble from '@/components/playground/AgentChat/ChatBubble'
 import ChatInput from '@/components/playground/AgentChat/ChatInput'
 import ChatEmptyState from '@/components/playground/AgentChat/ChatEmptyState'
@@ -39,12 +40,16 @@ const AgentChat: FC<AgentChatProps> = ({
     configureDisabled,
     onConnectionStateChange
 }): ReactNode => {
-    const scrollRef = useRef<HTMLDivElement>(null)
+    const {
+        scrollRef,
+        showButton,
+        handleScroll,
+        scrollToBottom,
+        isAtBottomRef
+    } = useScrollToBottom()
     const chatInputRef = useRef<ChatInputHandle>(null)
-    const { activeMessageId, speak, stop } = useTextToSpeech()
-    const isNearBottomRef = useRef(true)
+    const { activeMessageId, loadingMessageId, speak, stop } = useTextToSpeech()
     const [isDragging, setIsDragging] = useState(false)
-    const [showScrollButton, setShowScrollButton] = useState(false)
     const dragCounterRef = useRef(0)
 
     const {
@@ -65,27 +70,8 @@ const AgentChat: FC<AgentChatProps> = ({
         onConnectionStateChange?.(connectionState)
     }, [connectionState, onConnectionStateChange])
 
-    const handleScroll = useCallback(() => {
-        const el = scrollRef.current
-        if (!el) return
-        const threshold = 100
-        const nearBottom =
-            el.scrollHeight - el.scrollTop - el.clientHeight < threshold
-        isNearBottomRef.current = nearBottom
-        setShowScrollButton(!nearBottom)
-    }, [])
-
-    const scrollToBottom = useCallback(() => {
-        if (scrollRef.current) {
-            scrollRef.current.scrollTo({
-                top: scrollRef.current.scrollHeight,
-                behavior: 'smooth'
-            })
-        }
-    }, [])
-
     useEffect(() => {
-        if (isNearBottomRef.current && scrollRef.current) {
+        if (isAtBottomRef.current && scrollRef.current) {
             requestAnimationFrame(() => {
                 if (scrollRef.current) {
                     scrollRef.current.scrollTop = scrollRef.current.scrollHeight
@@ -101,7 +87,7 @@ const AgentChat: FC<AgentChatProps> = ({
             previews?: ChatImageSource[]
         ) => {
             sendMessage(text, attachments, previews)
-            isNearBottomRef.current = true
+            isAtBottomRef.current = true
         },
         [sendMessage]
     )
@@ -132,35 +118,111 @@ const AgentChat: FC<AgentChatProps> = ({
         }
     }, [])
 
+    const [readOnlyMessages, setReadOnlyMessages] = useState<
+        { role: 'user' | 'assistant'; text: string }[]
+    >([
+        { role: 'user', text: t('playground.chatReadOnlyUser') },
+        { role: 'assistant', text: t('playground.chatReadOnlyAssistant') }
+    ])
+    const [readOnlyInput, setReadOnlyInput] = useState('')
+    const [readOnlyTyping, setReadOnlyTyping] = useState(false)
+    const readOnlyScrollRef = useRef<HTMLDivElement>(null)
+
+    const handleReadOnlySend = useCallback(() => {
+        const text = readOnlyInput.trim()
+        if (!text || readOnlyTyping) return
+        setReadOnlyMessages((prev) => [...prev, { role: 'user', text }])
+        setReadOnlyInput('')
+        setReadOnlyTyping(true)
+        requestAnimationFrame(() => {
+            readOnlyScrollRef.current?.scrollTo({
+                top: readOnlyScrollRef.current.scrollHeight,
+                behavior: 'smooth'
+            })
+        })
+        setTimeout(() => {
+            setReadOnlyMessages((prev) => [
+                ...prev,
+                { role: 'assistant', text: t('playground.chatReadOnlyReply') }
+            ])
+            setReadOnlyTyping(false)
+            requestAnimationFrame(() => {
+                readOnlyScrollRef.current?.scrollTo({
+                    top: readOnlyScrollRef.current.scrollHeight,
+                    behavior: 'smooth'
+                })
+            })
+        }, 1200)
+    }, [readOnlyInput, readOnlyTyping])
+
     if (readOnly) {
         return (
             <div className='flex h-full flex-col'>
-                <div className='flex-1 space-y-3 overflow-y-auto p-4'>
-                    <div className='flex justify-end'>
-                        <div className='max-w-[85%] rounded-2xl rounded-br-md bg-[#ef5350]/15 px-3.5 py-2.5'>
-                            <p className='text-foreground/90 text-sm'>
-                                {t('playground.chatReadOnlyUser')}
-                            </p>
+                <div
+                    ref={readOnlyScrollRef}
+                    className='flex-1 space-y-3 overflow-y-auto p-4'
+                >
+                    {readOnlyMessages.map((msg, i) => (
+                        <div
+                            key={i}
+                            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                        >
+                            <div
+                                className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 ${
+                                    msg.role === 'user'
+                                        ? 'rounded-br-md bg-[#ef5350]/15'
+                                        : 'bg-foreground/5 rounded-bl-md'
+                                }`}
+                            >
+                                <p
+                                    className={`text-sm ${
+                                        msg.role === 'user'
+                                            ? 'text-foreground/90'
+                                            : 'text-foreground/80'
+                                    }`}
+                                >
+                                    {msg.text}
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                    <div className='flex justify-start'>
-                        <div className='bg-foreground/5 max-w-[85%] rounded-2xl rounded-bl-md px-3.5 py-2.5'>
-                            <p className='text-foreground/80 text-sm'>
-                                {t('playground.chatReadOnlyAssistant')}
-                            </p>
+                    ))}
+                    {readOnlyTyping && (
+                        <div className='flex justify-start'>
+                            <div className='bg-foreground/5 flex items-center gap-1 rounded-2xl rounded-bl-md px-4 py-3'>
+                                <span className='bg-foreground/40 h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:0ms]' />
+                                <span className='bg-foreground/40 h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:150ms]' />
+                                <span className='bg-foreground/40 h-1.5 w-1.5 animate-bounce rounded-full [animation-delay:300ms]' />
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
                 <div className='bg-background border-border border-t p-3'>
-                    <div className='flex items-center gap-2'>
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault()
+                            handleReadOnlySend()
+                        }}
+                        className='flex items-end gap-2'
+                    >
                         <input
-                            disabled
+                            value={readOnlyInput}
+                            onChange={(e) => setReadOnlyInput(e.target.value)}
                             placeholder={t(
-                                'playground.chatReadOnlyPlaceholder'
+                                'playground.chatInputPlaceholder'
                             )}
-                            className='border-border bg-foreground/5 text-muted-foreground placeholder:text-muted-foreground flex-1 rounded-lg border px-3 py-2 text-sm outline-none'
+                            className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground flex-1 rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-[#ef5350]/50'
                         />
-                    </div>
+                        <button
+                            type='submit'
+                            disabled={!readOnlyInput.trim() || readOnlyTyping}
+                            className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#ef5350] text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
+                        >
+                            <PaperPlaneRightIcon
+                                className='h-4 w-4'
+                                weight='bold'
+                            />
+                        </button>
+                    </form>
                 </div>
             </div>
         )
@@ -269,6 +331,7 @@ const AgentChat: FC<AgentChatProps> = ({
                                     onSpeak={speak}
                                     onStop={stop}
                                     isSpeaking={activeMessageId === msg.id}
+                                    isLoading={loadingMessageId === msg.id}
                                 />
                             </div>
                         ))}
@@ -276,17 +339,11 @@ const AgentChat: FC<AgentChatProps> = ({
                 )}
             </div>
 
-            {showScrollButton && messages.length > 0 && (
-                <div className='flex justify-center pb-0.5'>
-                    <button
-                        onClick={scrollToBottom}
-                        className='border-border bg-background text-muted-foreground hover:border-border hover:text-foreground absolute bottom-[4.25rem] z-10 flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs shadow-lg transition-colors'
-                    >
-                        <ArrowDownIcon className='h-3 w-3' weight='bold' />
-                        {t('playground.chatScrollToBottom')}
-                    </button>
-                </div>
-            )}
+            <ScrollToBottomButton
+                visible={showButton && messages.length > 0}
+                onClick={() => scrollToBottom('smooth')}
+                className='bottom-[4.25rem]'
+            />
 
             <ChatInput
                 ref={chatInputRef}

@@ -21,6 +21,7 @@ import PlansSkeleton from '@/components/PlansSkeleton'
 import ProductHuntBanner from '@/components/ProductHuntBanner'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import ProviderIcon from '@/components/ProviderIcon'
+import ScrollToBottomButton from '@/components/ScrollToBottomButton'
 import ScrollToTop from '@/components/ScrollToTop'
 import ThemeToggle from '@/components/ThemeToggle'
 import Toast from '@/components/Toast'
@@ -51,6 +52,7 @@ export {
     ProductHuntBanner,
     ProtectedRoute,
     ProviderIcon,
+    ScrollToBottomButton,
     ScrollToTop,
     ThemeToggle,
     Toast,

@@ -1,47 +1,110 @@
 import type { UseTextToSpeechReturn } from '@/ts/Interfaces'
 
 import { useState, useCallback, useRef, useEffect } from 'react'
+import { getCachedToken } from '@/lib/firebase'
+
+const BASE_URL = import.meta.env.VITE_API_URL || '/api'
 
 const useTextToSpeech = (): UseTextToSpeechReturn => {
     const [activeMessageId, setActiveMessageId] = useState<string | null>(null)
-    const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null)
+    const [loadingMessageId, setLoadingMessageId] = useState<string | null>(null)
+    const audioRef = useRef<HTMLAudioElement | null>(null)
+    const abortRef = useRef<AbortController | null>(null)
+    const cacheRef = useRef<Map<string, string>>(new Map())
+
+    const stopPlayback = useCallback(() => {
+        if (audioRef.current) {
+            audioRef.current.pause()
+            audioRef.current.currentTime = 0
+            audioRef.current = null
+        }
+        if (abortRef.current) {
+            abortRef.current.abort()
+            abortRef.current = null
+        }
+    }, [])
 
     const stop = useCallback(() => {
-        window.speechSynthesis.cancel()
-        utteranceRef.current = null
+        stopPlayback()
         setActiveMessageId(null)
+        setLoadingMessageId(null)
+    }, [stopPlayback])
+
+    const playFromUrl = useCallback((messageId: string, url: string) => {
+        const audio = new Audio(url)
+        audioRef.current = audio
+
+        audio.onended = () => {
+            audioRef.current = null
+            setActiveMessageId(null)
+        }
+
+        audio.onerror = () => {
+            audioRef.current = null
+            setActiveMessageId(null)
+        }
+
+        setLoadingMessageId(null)
+        setActiveMessageId(messageId)
+        audio.play()
     }, [])
 
     const speak = useCallback(
-        (messageId: string, text: string) => {
-            stop()
+        async (messageId: string, text: string) => {
+            stopPlayback()
+            setActiveMessageId(null)
 
-            const utterance = new SpeechSynthesisUtterance(text)
-            utteranceRef.current = utterance
-
-            utterance.onend = () => {
-                utteranceRef.current = null
-                setActiveMessageId(null)
+            const cached = cacheRef.current.get(messageId)
+            if (cached) {
+                playFromUrl(messageId, cached)
+                return
             }
 
-            utterance.onerror = () => {
-                utteranceRef.current = null
-                setActiveMessageId(null)
-            }
+            setLoadingMessageId(messageId)
 
-            setActiveMessageId(messageId)
-            window.speechSynthesis.speak(utterance)
+            try {
+                const token = await getCachedToken()
+                const controller = new AbortController()
+                abortRef.current = controller
+
+                const res = await fetch(`${BASE_URL}/ai/tts`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(token ? { Authorization: `Bearer ${token}` } : {})
+                    },
+                    body: JSON.stringify({ text }),
+                    signal: controller.signal
+                })
+
+                if (!res.ok) {
+                    setLoadingMessageId(null)
+                    return
+                }
+
+                const blob = await res.blob()
+                const url = URL.createObjectURL(blob)
+                cacheRef.current.set(messageId, url)
+
+                playFromUrl(messageId, url)
+            } catch {
+                stopPlayback()
+                setActiveMessageId(null)
+                setLoadingMessageId(null)
+            }
         },
-        [stop]
+        [stopPlayback, playFromUrl]
     )
 
     useEffect(() => {
         return () => {
-            window.speechSynthesis.cancel()
+            stopPlayback()
+            cacheRef.current.forEach((url) => URL.revokeObjectURL(url))
+            cacheRef.current.clear()
         }
-    }, [])
+    }, [stopPlayback])
 
-    return { activeMessageId, speak, stop }
+    return { activeMessageId, loadingMessageId, speak, stop }
 }
 
 export default useTextToSpeech

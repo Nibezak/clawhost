@@ -12,8 +12,10 @@ import ChatSidebarListView from '@/components/chat/ChatSidebarListView'
 const ChatSidebar: FC<ChatSidebarProps> = ({
     clawsWithAgents,
     selectedAgent,
+    configAgent,
     selectedClawId,
     activeConnectionState,
+    readOnly,
     onAgentSelect,
     onConfigureAgent,
     onCreateAgent,
@@ -57,7 +59,10 @@ const ChatSidebar: FC<ChatSidebarProps> = ({
 
     return (
         <div className='bg-background md:border-border relative z-10 flex h-full w-full shrink-0 flex-col md:w-[280px] md:border-r'>
-            <div className='flex items-center justify-end px-3 py-2'>
+            <div className='border-border flex items-center justify-between border-b px-4 py-1'>
+                <span className='text-foreground text-sm font-medium'>
+                    {t('nav.claws')}
+                </span>
                 <div className='border-border flex items-center rounded-lg border p-0.5'>
                     <Tooltip>
                         <TooltipTrigger asChild>
@@ -101,13 +106,14 @@ const ChatSidebar: FC<ChatSidebarProps> = ({
                     </Tooltip>
                 </div>
             </div>
-            <div className='flex-1 overflow-y-auto p-3 pt-0'>
+            <div className='flex-1 overflow-y-auto p-3'>
                 {chatSidebarView === 'tree' ? (
                     <ChatSidebarTreeView
                         clawsWithAgents={clawsWithAgents}
                         selectedAgent={selectedAgent}
                         selectedClawId={selectedClawId}
                         activeConnectionState={activeConnectionState}
+                        readOnly={readOnly}
                         onAgentClick={handleAgentClick}
                         onConfigureAgent={onConfigureAgent}
                         onCreateAgent={onCreateAgent}
@@ -117,7 +123,9 @@ const ChatSidebar: FC<ChatSidebarProps> = ({
                     <ChatSidebarListView
                         clawsWithAgents={clawsWithAgents}
                         selectedAgent={selectedAgent}
+                        configAgent={configAgent}
                         activeConnectionState={activeConnectionState}
+                        readOnly={readOnly}
                         onAgentClick={handleAgentClick}
                         onConfigureAgent={onConfigureAgent}
                     />

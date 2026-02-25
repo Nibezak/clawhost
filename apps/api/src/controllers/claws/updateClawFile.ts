@@ -3,6 +3,7 @@ import type { AuthenticatedContext } from '@/ts/Types'
 
 import path from 'path'
 import { findUserClaw, safeShellWrite } from '@/controllers/claws/helpers'
+import executeSSH from '@/services/ssh'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
@@ -73,6 +74,13 @@ const updateClawFile = async (c: AuthenticatedContext) => {
         const fullPath = `${BASE_DIR}/${normalized}`
 
         await safeShellWrite(claw.ip, claw.rootPassword, fullPath, body.content)
+
+        await executeSSH(
+            claw.ip,
+            claw.rootPassword,
+            '(su - openclaw -c "openclaw doctor --fix" || true) && systemctl restart openclaw-gateway',
+            20000
+        )
 
         return ok(c, null, t('api.fileSaveSuccess'))
     } catch {

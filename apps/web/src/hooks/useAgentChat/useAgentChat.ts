@@ -13,6 +13,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { SharedGateway } from '@/lib/gateway'
 import extractText from '@/hooks/useAgentChat/extractText'
 import extractImages from '@/hooks/useAgentChat/extractImages'
+import extractTimestamp from '@/hooks/useAgentChat/extractTimestamp'
 import stripMetadata from '@/hooks/useAgentChat/stripMetadata'
 
 const useAgentChat = ({
@@ -111,6 +112,7 @@ const useAgentChat = ({
                     ) as ChatHistoryEntry[]
                     if (history.length > 0) {
                         const loaded: ChatMessage[] = []
+                        let lastTimestamp = new Date().toISOString()
                         for (let i = 0; i < history.length; i++) {
                             const msg = history[i]
                             if (
@@ -121,13 +123,17 @@ const useAgentChat = ({
                             const isUser = msg.role === 'user'
                             const text = extractText(msg.content)
                             if (!text.trim()) continue
+                            if (isUser) {
+                                const extracted = extractTimestamp(text)
+                                if (extracted) lastTimestamp = extracted
+                            }
                             const images = extractImages(msg.content)
                             loaded.push({
                                 id: `history-${i}`,
                                 role: isUser ? 'user' : 'assistant',
                                 content: isUser ? stripMetadata(text) : text,
                                 status: 'complete' as const,
-                                timestamp: new Date().toISOString(),
+                                timestamp: lastTimestamp,
                                 images:
                                     images && images.length > 0
                                         ? images

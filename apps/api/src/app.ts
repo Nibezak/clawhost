@@ -10,6 +10,7 @@ import { users } from '@/db/schema'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 import {
+    aiRoutes,
     authRoutes,
     clawsRoutes,
     featureRequestsRoutes,
@@ -141,6 +142,7 @@ app.use('/*', async (c, next) => {
     }
 })
 
+app.route('/ai', aiRoutes)
 app.route('/claws', clawsRoutes)
 app.route('/ssh-keys', sshKeysRoutes)
 app.route('/users', usersRoutes)

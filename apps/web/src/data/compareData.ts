@@ -19,6 +19,11 @@ const getCompareData = (): {
             id: 'myclawai',
             nameKey: 'compare.competitorMyClawAi',
             highlighted: false
+        },
+        {
+            id: 'quickclaw',
+            nameKey: 'compare.competitorQuickClaw',
+            highlighted: false
         }
     ],
     categories: [
@@ -40,6 +45,10 @@ const getCompareData = (): {
                         myclawai: {
                             status: 'partial',
                             detailKey: 'compare.isolatedContainers'
+                        },
+                        quickclaw: {
+                            status: 'no',
+                            detailKey: 'compare.cloudWorkspaces'
                         }
                     }
                 },
@@ -57,6 +66,10 @@ const getCompareData = (): {
                         myclawai: {
                             status: 'no',
                             detailKey: 'compare.singleProvider'
+                        },
+                        quickclaw: {
+                            status: 'no',
+                            detailKey: 'compare.singleProvider'
                         }
                     }
                 },
@@ -71,7 +84,8 @@ const getCompareData = (): {
                             status: 'no',
                             detailKey: 'compare.shared'
                         },
-                        myclawai: { status: 'no', detailKey: 'compare.shared' }
+                        myclawai: { status: 'no', detailKey: 'compare.shared' },
+                        quickclaw: { status: 'no', detailKey: 'compare.shared' }
                     }
                 },
                 {
@@ -82,7 +96,8 @@ const getCompareData = (): {
                             detailKey: 'compare.fullRootSsh'
                         },
                         simpleclaw: { status: 'no' },
-                        myclawai: { status: 'no' }
+                        myclawai: { status: 'no' },
+                        quickclaw: { status: 'no' }
                     }
                 },
                 {
@@ -99,7 +114,8 @@ const getCompareData = (): {
                         myclawai: {
                             status: 'partial',
                             detailKey: 'compare.limitedLocations'
-                        }
+                        },
+                        quickclaw: { status: 'no' }
                     }
                 },
                 {
@@ -107,7 +123,8 @@ const getCompareData = (): {
                     values: {
                         clawhost: { status: 'yes' },
                         simpleclaw: { status: 'no' },
-                        myclawai: { status: 'no' }
+                        myclawai: { status: 'no' },
+                        quickclaw: { status: 'no' }
                     }
                 },
                 {
@@ -115,7 +132,8 @@ const getCompareData = (): {
                     values: {
                         clawhost: { status: 'yes' },
                         simpleclaw: { status: 'no' },
-                        myclawai: { status: 'no' }
+                        myclawai: { status: 'no' },
+                        quickclaw: { status: 'no' }
                     }
                 }
             ]
@@ -138,6 +156,10 @@ const getCompareData = (): {
                         myclawai: {
                             status: 'partial',
                             detailKey: 'compare.fromNineteenMonth'
+                        },
+                        quickclaw: {
+                            status: 'partial',
+                            detailKey: 'compare.creditBased'
                         }
                     }
                 },
@@ -155,6 +177,10 @@ const getCompareData = (): {
                         myclawai: {
                             status: 'partial',
                             detailKey: 'compare.fixedTiers'
+                        },
+                        quickclaw: {
+                            status: 'partial',
+                            detailKey: 'compare.creditBased'
                         }
                     }
                 },
@@ -163,7 +189,8 @@ const getCompareData = (): {
                     values: {
                         clawhost: { status: 'yes' },
                         simpleclaw: { status: 'no' },
-                        myclawai: { status: 'no' }
+                        myclawai: { status: 'no' },
+                        quickclaw: { status: 'no' }
                     }
                 }
             ]
@@ -186,6 +213,10 @@ const getCompareData = (): {
                         myclawai: {
                             status: 'yes',
                             detailKey: 'compare.thirtySeconds'
+                        },
+                        quickclaw: {
+                            status: 'yes',
+                            detailKey: 'compare.instant'
                         }
                     }
                 },
@@ -203,6 +234,10 @@ const getCompareData = (): {
                         myclawai: {
                             status: 'yes',
                             detailKey: 'compare.minimal'
+                        },
+                        quickclaw: {
+                            status: 'yes',
+                            detailKey: 'compare.noneRequired'
                         }
                     }
                 },
@@ -211,7 +246,8 @@ const getCompareData = (): {
                     values: {
                         clawhost: { status: 'yes' },
                         simpleclaw: { status: 'yes' },
-                        myclawai: { status: 'yes' }
+                        myclawai: { status: 'yes' },
+                        quickclaw: { status: 'yes' }
                     }
                 }
             ]
@@ -234,6 +270,10 @@ const getCompareData = (): {
                         myclawai: {
                             status: 'no',
                             detailKey: 'compare.singleInstance'
+                        },
+                        quickclaw: {
+                            status: 'no',
+                            detailKey: 'compare.singleInstance'
                         }
                     }
                 },
@@ -251,6 +291,10 @@ const getCompareData = (): {
                         myclawai: {
                             status: 'no',
                             detailKey: 'compare.singleInstance'
+                        },
+                        quickclaw: {
+                            status: 'no',
+                            detailKey: 'compare.singleInstance'
                         }
                     }
                 },
@@ -262,7 +306,8 @@ const getCompareData = (): {
                             detailKey: 'compare.fiveThousandSkills'
                         },
                         simpleclaw: { status: 'no' },
-                        myclawai: { status: 'no' }
+                        myclawai: { status: 'no' },
+                        quickclaw: { status: 'no' }
                     }
                 },
                 {
@@ -279,6 +324,10 @@ const getCompareData = (): {
                         myclawai: {
                             status: 'partial',
                             detailKey: 'compare.discordGithubSlack'
+                        },
+                        quickclaw: {
+                            status: 'no',
+                            detailKey: 'compare.appOnly'
                         }
                     }
                 },
@@ -296,7 +345,8 @@ const getCompareData = (): {
                         myclawai: {
                             status: 'partial',
                             detailKey: 'compare.limitedConfig'
-                        }
+                        },
+                        quickclaw: { status: 'no' }
                     }
                 }
             ]
@@ -310,7 +360,8 @@ const getCompareData = (): {
                     values: {
                         clawhost: { status: 'yes' },
                         simpleclaw: { status: 'no' },
-                        myclawai: { status: 'partial' }
+                        myclawai: { status: 'partial' },
+                        quickclaw: { status: 'no' }
                     }
                 },
                 {
@@ -321,7 +372,8 @@ const getCompareData = (): {
                             detailKey: 'compare.zipExport'
                         },
                         simpleclaw: { status: 'no' },
-                        myclawai: { status: 'no' }
+                        myclawai: { status: 'no' },
+                        quickclaw: { status: 'no' }
                     }
                 },
                 {
@@ -332,7 +384,8 @@ const getCompareData = (): {
                         myclawai: {
                             status: 'yes',
                             detailKey: 'compare.dailyBackups'
-                        }
+                        },
+                        quickclaw: { status: 'no' }
                     }
                 },
                 {
@@ -343,7 +396,8 @@ const getCompareData = (): {
                         myclawai: {
                             status: 'yes',
                             detailKey: 'compare.managed'
-                        }
+                        },
+                        quickclaw: { status: 'no' }
                     }
                 },
                 {
@@ -351,7 +405,8 @@ const getCompareData = (): {
                     values: {
                         clawhost: { status: 'yes' },
                         simpleclaw: { status: 'no' },
-                        myclawai: { status: 'yes' }
+                        myclawai: { status: 'yes' },
+                        quickclaw: { status: 'yes' }
                     }
                 },
                 {
@@ -359,7 +414,8 @@ const getCompareData = (): {
                     values: {
                         clawhost: { status: 'yes' },
                         simpleclaw: { status: 'no' },
-                        myclawai: { status: 'no' }
+                        myclawai: { status: 'no' },
+                        quickclaw: { status: 'no' }
                     }
                 }
             ]
@@ -376,7 +432,11 @@ const getCompareData = (): {
                             status: 'no',
                             detailKey: 'compare.manual'
                         },
-                        myclawai: { status: 'yes' }
+                        myclawai: { status: 'yes' },
+                        quickclaw: {
+                            status: 'yes',
+                            detailKey: 'compare.appStore'
+                        }
                     }
                 },
                 {
@@ -387,7 +447,8 @@ const getCompareData = (): {
                             detailKey: 'compare.liveMonitoring'
                         },
                         simpleclaw: { status: 'no' },
-                        myclawai: { status: 'no' }
+                        myclawai: { status: 'no' },
+                        quickclaw: { status: 'no' }
                     }
                 },
                 {
@@ -398,7 +459,8 @@ const getCompareData = (): {
                             detailKey: 'compare.liveLogs'
                         },
                         simpleclaw: { status: 'no' },
-                        myclawai: { status: 'no' }
+                        myclawai: { status: 'no' },
+                        quickclaw: { status: 'no' }
                     }
                 },
                 {
@@ -409,7 +471,8 @@ const getCompareData = (): {
                             detailKey: 'compare.oneClickRepair'
                         },
                         simpleclaw: { status: 'no' },
-                        myclawai: { status: 'no' }
+                        myclawai: { status: 'no' },
+                        quickclaw: { status: 'no' }
                     }
                 }
             ]
@@ -432,6 +495,10 @@ const getCompareData = (): {
                         myclawai: {
                             status: 'yes',
                             detailKey: 'compare.prioritySupport'
+                        },
+                        quickclaw: {
+                            status: 'partial',
+                            detailKey: 'compare.appSupport'
                         }
                     }
                 },
@@ -449,6 +516,10 @@ const getCompareData = (): {
                         myclawai: {
                             status: 'no',
                             detailKey: 'compare.englishOnly'
+                        },
+                        quickclaw: {
+                            status: 'no',
+                            detailKey: 'compare.englishOnly'
                         }
                     }
                 },
@@ -457,7 +528,8 @@ const getCompareData = (): {
                     values: {
                         clawhost: { status: 'yes' },
                         simpleclaw: { status: 'no' },
-                        myclawai: { status: 'no' }
+                        myclawai: { status: 'no' },
+                        quickclaw: { status: 'no' }
                     }
                 },
                 {
@@ -468,7 +540,11 @@ const getCompareData = (): {
                             detailKey: 'compare.comingSoon'
                         },
                         simpleclaw: { status: 'no' },
-                        myclawai: { status: 'no' }
+                        myclawai: { status: 'no' },
+                        quickclaw: {
+                            status: 'yes',
+                            detailKey: 'compare.iosMacOs'
+                        }
                     }
                 },
                 {
@@ -479,7 +555,11 @@ const getCompareData = (): {
                             detailKey: 'compare.comingSoon'
                         },
                         simpleclaw: { status: 'no' },
-                        myclawai: { status: 'no' }
+                        myclawai: { status: 'no' },
+                        quickclaw: {
+                            status: 'partial',
+                            detailKey: 'compare.macOsOnly'
+                        }
                     }
                 },
                 {
@@ -490,7 +570,8 @@ const getCompareData = (): {
                             detailKey: 'compare.comingSoon'
                         },
                         simpleclaw: { status: 'no' },
-                        myclawai: { status: 'no' }
+                        myclawai: { status: 'no' },
+                        quickclaw: { status: 'no' }
                     }
                 }
             ]

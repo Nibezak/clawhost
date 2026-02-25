@@ -102,7 +102,9 @@ const buildDemoGraph = (): DemoPlaygroundData => {
                     agent,
                     clawName: claw.name,
                     clawId: claw.id,
-                    isSelected: false
+                    isSelected: false,
+                    subdomain: null,
+                    gatewayToken: null
                 } as Record<string, unknown>,
                 draggable: false
             })

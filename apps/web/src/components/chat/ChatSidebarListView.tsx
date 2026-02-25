@@ -4,21 +4,25 @@ import type {
     ChatSidebarListItemProps
 } from '@/ts/Interfaces'
 
-import { useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { t } from '@openclaw/i18n'
-import { AndroidLogoIcon, GearSixIcon } from '@phosphor-icons/react'
+import { AndroidLogoIcon, GearSixIcon, PlusIcon } from '@phosphor-icons/react'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import { TRUNCATE_LENGTHS } from '@/lib'
 import { aiModels, getAgentStatusConfig } from '@/lib/claw-utils'
 import { useGatewayState } from '@/hooks'
+import { CreateAgentModal } from '@/components/playground'
 
 const ChatSidebarListView: FC<ChatSidebarListViewProps> = ({
     clawsWithAgents,
     selectedAgent,
     activeConnectionState,
+    readOnly,
     onAgentClick,
     onConfigureAgent
 }): ReactNode => {
+    const [showAddAgent, setShowAddAgent] = useState(false)
+
     const allAgents = useMemo(() => {
         return clawsWithAgents.flatMap(({ claw, agents, isReachable }) =>
             agents.map((agent) => ({
@@ -29,34 +33,59 @@ const ChatSidebarListView: FC<ChatSidebarListViewProps> = ({
         )
     }, [clawsWithAgents])
 
+    const hasReachableClaws = useMemo(() => {
+        return clawsWithAgents.some((c) => c.isReachable)
+    }, [clawsWithAgents])
+
     return (
-        <div className='space-y-1'>
-            {allAgents.map(({ agent, claw, isReachable }) => (
-                <ChatSidebarListItem
-                    key={`${claw.id}-${agent.id}`}
-                    agentId={agent.id}
-                    agentName={agent.name}
-                    agentModel={agent.model}
-                    agentStatus={agent.status}
-                    clawId={claw.id}
-                    clawName={claw.name}
-                    clawSubdomain={claw.subdomain}
-                    clawGatewayToken={claw.gatewayToken}
-                    isReachable={isReachable}
-                    isActive={
-                        selectedAgent?.agentId === agent.id &&
-                        selectedAgent?.clawId === claw.id
-                    }
-                    activeConnectionState={
-                        selectedAgent?.agentId === agent.id &&
-                        selectedAgent?.clawId === claw.id
-                            ? activeConnectionState
-                            : undefined
-                    }
-                    onClick={() => onAgentClick(agent.id, claw.id)}
-                    onConfigure={() => onConfigureAgent(agent.id, claw.id)}
-                />
-            ))}
+        <>
+            <div className='space-y-1'>
+                {allAgents.map(({ agent, claw, isReachable }) => (
+                    <ChatSidebarListItem
+                        key={`${claw.id}-${agent.id}`}
+                        agentId={agent.id}
+                        agentName={agent.name}
+                        agentModel={agent.model}
+                        agentStatus={agent.status}
+                        clawId={claw.id}
+                        clawName={claw.name}
+                        clawSubdomain={claw.subdomain}
+                        clawGatewayToken={claw.gatewayToken}
+                        isReachable={isReachable}
+                        isActive={
+                            selectedAgent?.agentId === agent.id &&
+                            selectedAgent?.clawId === claw.id
+                        }
+                        activeConnectionState={
+                            selectedAgent?.agentId === agent.id &&
+                            selectedAgent?.clawId === claw.id
+                                ? activeConnectionState
+                                : undefined
+                        }
+                        readOnly={readOnly}
+                        onClick={() => onAgentClick(agent.id, claw.id)}
+                        onConfigure={() => onConfigureAgent(agent.id, claw.id)}
+                    />
+                ))}
+                {!readOnly && hasReachableClaws && (
+                    <button
+                        onClick={() => setShowAddAgent(true)}
+                        className='text-muted-foreground hover:bg-foreground/5 hover:text-foreground flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-left transition-colors'
+                    >
+                        <div className='border-border flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-dashed'>
+                            <PlusIcon className='h-3.5 w-3.5' weight='bold' />
+                        </div>
+                        <span className='text-[13px]'>
+                            {t('chat.addAgent')}
+                        </span>
+                    </button>
+                )}
+            </div>
+            <CreateAgentModal
+                clawsWithAgents={clawsWithAgents}
+                open={showAddAgent}
+                onOpenChange={setShowAddAgent}
+            />
         </>
     )
 }
@@ -71,6 +100,7 @@ const ChatSidebarListItem: FC<ChatSidebarListItemProps> = ({
     isReachable,
     isActive,
     activeConnectionState,
+    readOnly,
     onClick,
     onConfigure
 }): ReactNode => {
@@ -84,51 +114,53 @@ const ChatSidebarListItem: FC<ChatSidebarListItemProps> = ({
     )
 
     const statusConfig = useMemo(() => {
-        if (activeConnectionState) {
-            switch (activeConnectionState) {
-                case 'connected':
-                    return {
-                        color: 'bg-green-500',
-                        label: t('dashboard.status.running')
-                    }
-                case 'connecting':
-                case 'authenticating':
-                    return {
-                        color: 'bg-yellow-500',
-                        label: t('playground.chatConnecting'),
-                        pulse: true
-                    }
-                case 'error':
-                    return {
-                        color: 'bg-red-500',
-                        label: t('playground.chatError')
-                    }
-                case 'disconnected':
-                    return {
-                        color: 'bg-red-500',
-                        label: t('dashboard.status.unreachable')
-                    }
-                default:
-                    break
+        if (!readOnly) {
+            if (activeConnectionState) {
+                switch (activeConnectionState) {
+                    case 'connected':
+                        return {
+                            color: 'bg-green-500',
+                            label: t('dashboard.status.running')
+                        }
+                    case 'connecting':
+                    case 'authenticating':
+                        return {
+                            color: 'bg-yellow-500',
+                            label: t('playground.chatConnecting'),
+                            pulse: true
+                        }
+                    case 'error':
+                        return {
+                            color: 'bg-red-500',
+                            label: t('playground.chatError')
+                        }
+                    case 'disconnected':
+                        return {
+                            color: 'bg-red-500',
+                            label: t('dashboard.status.unreachable')
+                        }
+                    default:
+                        break
+                }
             }
-        }
-        if (gatewayState === 'connecting' || gatewayState === 'authenticating') {
-            return {
-                color: 'bg-orange-500',
-                label: t('dashboard.status.checking'),
-                pulse: true
+            if (gatewayState === 'connecting' || gatewayState === 'authenticating') {
+                return {
+                    color: 'bg-orange-500',
+                    label: t('dashboard.status.checking'),
+                    pulse: true
+                }
             }
-        }
-        if (gatewayState === 'connected') {
-            return {
-                color: 'bg-green-500',
-                label: t('dashboard.status.running')
+            if (gatewayState === 'connected') {
+                return {
+                    color: 'bg-green-500',
+                    label: t('dashboard.status.running')
+                }
             }
-        }
-        if (gatewayState === 'error' || gatewayState === 'disconnected') {
-            return {
-                color: 'bg-red-500',
-                label: t('dashboard.status.unreachable')
+            if (gatewayState === 'error' || gatewayState === 'disconnected') {
+                return {
+                    color: 'bg-red-500',
+                    label: t('dashboard.status.unreachable')
+                }
             }
         }
         const agentStatusConfig = getAgentStatusConfig(agentStatus)
@@ -137,7 +169,7 @@ const ChatSidebarListItem: FC<ChatSidebarListItemProps> = ({
             label: agentStatusConfig.label,
             pulse: agentStatusConfig.pulse
         }
-    }, [activeConnectionState, gatewayState, agentStatus])
+    }, [readOnly, activeConnectionState, gatewayState, agentStatus])
 
     return (
         <button
@@ -199,7 +231,7 @@ const ChatSidebarListItem: FC<ChatSidebarListItemProps> = ({
                     e.stopPropagation()
                     onConfigure()
                 }}
-                className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground flex h-6 w-6 shrink-0 items-center justify-center rounded-md opacity-0 transition-all group-hover:opacity-100'
+                className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-colors'
             >
                 <GearSixIcon className='h-3 w-3' weight='bold' />
             </div>

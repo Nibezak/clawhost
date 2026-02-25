@@ -255,6 +255,7 @@ const Dashboard: FC = (): ReactNode => {
         ]
         const validClawTabs: PlaygroundDetailTab[] = [
             CLAW_DETAIL_TABS.INFO,
+            CLAW_DETAIL_TABS.TERMINAL,
             CLAW_DETAIL_TABS.VARIABLES,
             CLAW_DETAIL_TABS.LOGS,
             CLAW_DETAIL_TABS.DIAGNOSTICS,
@@ -450,8 +451,13 @@ const Dashboard: FC = (): ReactNode => {
         !isLoading &&
         !activeIsError &&
         displayedClaws.length === 0
+    const chatHasContent =
+        dashboardTab === DASHBOARD_TABS.CHAT &&
+        !isLoading &&
+        !activeIsError &&
+        displayedClaws.length > 0
     const showFullBackground =
-        dashboardTab === DASHBOARD_TABS.PLAYGROUND || chatEmpty
+        dashboardTab === DASHBOARD_TABS.PLAYGROUND || chatEmpty || activeIsError || isLoading
 
     return (
         <motion.div
@@ -464,7 +470,7 @@ const Dashboard: FC = (): ReactNode => {
                 <div className='playground-grid pointer-events-none fixed inset-0 opacity-50' />
             )}
             <div
-                className={`playground-gradient pointer-events-none fixed inset-0 ${isLocal || (dashboardTab === DASHBOARD_TABS.CHAT && !chatEmpty) ? 'opacity-30' : ''}`}
+                className={`playground-gradient pointer-events-none fixed inset-0 ${isLocal || chatHasContent ? 'opacity-30' : ''}`}
             />
             <PageTitle
                 title={

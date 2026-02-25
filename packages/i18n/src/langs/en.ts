@@ -24,7 +24,8 @@ const en = {
         closeNotification: 'Close notification',
         beta: 'Beta',
         brandName: 'ClawHost',
-        legalEmail: 'legal@clawhost.cloud'
+        legalEmail: 'legal@clawhost.cloud',
+        scrollToBottom: 'Scroll to Bottom'
     },
     setup: {
         welcomeTitle: 'Welcome to ClawHost Go',
@@ -346,7 +347,11 @@ const en = {
         platformRequired: 'At least one platform is required!',
         invalidPlatform: 'Invalid platform value!',
         featureRequestImplementationLimitReached:
-            'This user already has {{limit}} feature requests in progress!'
+            'This user already has {{limit}} feature requests in progress!',
+        textRequired: 'Text is required!',
+        voiceNotFound: 'Voice model not found!',
+        ttsGenerationFailed: 'Failed to generate speech!',
+        voicesFetched: 'Voices fetched successfully.'
     },
     emails: {
         otpSubject: 'Your ClawHost sign-in code',
@@ -561,13 +566,10 @@ const en = {
         diagnosticsMemory: 'Memory',
         logsDescription:
             'Latest 100 lines of your gateway log, auto-refreshing.',
-        scrollToBottom: 'Scroll to new Logs',
         fileExplorer: 'File Explorer',
         fileExplorerRoot: 'openclaw',
         fileExplorerDescription:
-            'Browse and edit OpenClaw configuration files on your instance.',
-        fileExplorerWarning:
-            'Incorrect changes may break your instance. Edit with care.',
+            'Browse and edit your OpenClaw config files. Wrong changes can break your instance.',
         fileExplorerSelectFile: 'Select a file to view its contents.',
         fileExplorerReadOnly: 'Read-only',
         fileExplorerSave: 'Save',
@@ -575,6 +577,8 @@ const en = {
         fileExplorerInvalidJson:
             'Invalid JSON. Please fix syntax errors before saving.',
         fileExplorerNoFiles: 'No files found',
+        fileExplorerSearchFiles: 'Search files...',
+        fileExplorerNoSearchResults: 'No matching files.',
         updateInstance: 'Update Instance',
         updateInstanceSuccess: 'Instance updated successfully.',
         updateInstanceFailed: 'Failed to update instance!',
@@ -588,6 +592,7 @@ const en = {
             'This will reinstall OpenClaw and reset all configurations on this instance. Your data and server will be preserved, but all services will be restarted. Continue?',
         reinstallInstanceSuccess: 'Instance reinstalled successfully.',
         reinstallInstanceFailed: 'Failed to reinstall instance!',
+        openControlPanel: 'Open Control Panel',
         exportData: 'Export Claw (.zip)',
         exportStarted: 'Preparing export, this may take a moment...',
         exportFailed: 'Failed to export claw data!',
@@ -969,6 +974,20 @@ const en = {
             'Refactoring of the playground feature structure and simplifications',
         upcomingReleaseFeature8:
             'Feature requests automatically managed and published by OpenClaw agents',
+        release11Date: 'February 25, 2026',
+        release11Title: 'Text-to-Speech, Terminal, Chat Tabs & File Explorer',
+        release11Description:
+            'Listen to agent responses with text-to-speech, interact with your VPS directly via terminal, navigate chats faster with sidebar view tabs, and explore files with the improved file explorer.',
+        release11Feature1:
+            'Text-to-speech on agent messages in the playground',
+        release11Feature2:
+            'Terminal to interact with your VPS instances directly from the dashboard',
+        release11Feature3:
+            'Chat sidebar view tabs for easy access and navigation',
+        release11Feature4:
+            'File explorer improvements with search bar to search through files',
+        release11Feature5:
+            'Fixed message timestamps not reflecting real time',
         release10Date: 'February 23, 2026',
         release10Title: 'Feature Requests, File Explorer & Bug Fixes',
         release10Description:
@@ -1180,6 +1199,9 @@ const en = {
         variablesOperationPending: 'Disabled while a previous operation completes.',
         addAgentTitle: 'Add Agent',
         addAgentDescription: 'Add a new agent to {{clawName}}.',
+        addAgentDescriptionNoClaw: 'Select a claw and configure your new agent.',
+        addAgentSelectClaw: 'Claw',
+        addAgentSelectClawPlaceholder: 'Select a claw',
         addAgentName: 'Name',
         addAgentNamePlaceholder: 'Enter agent name',
         addAgentModel: 'Model',
@@ -1221,12 +1243,15 @@ const en = {
             'Send a message to start a conversation with this agent.',
         chatErrorMessage: 'An error occurred while generating a response.',
         chatAbortedMessage: 'Response was stopped.',
-        chatPlaySpeech: 'Play message',
-        chatStopSpeech: 'Stop playback',
+        chatPlaySpeech: 'Read aloud',
+        chatReplaySpeech: 'Replay',
+        chatStopSpeech: 'Stop',
         chatReadOnlyPlaceholder: 'Chat available on your own Claws.',
         chatReadOnlyUser: 'Hello! Can you help me set up a Node.js project?',
         chatReadOnlyAssistant:
             'Of course! I can help you initialize a new Node.js project. Would you like me to create a package.json with some common dependencies?',
+        chatReadOnlyReply:
+            'This is a preview! Deploy your own Claw to start chatting with AI agents.',
         chatConnectionFailed: 'Failed to connect to this agent.',
         chatConnectionFailedDescription:
             'Make sure the Claw is running and reachable.',
@@ -1247,7 +1272,6 @@ const en = {
             'This file type is not supported. Use images, PDFs, or text files.',
         chatNoPreview: 'No preview available.',
         chatDownloadFile: 'Download file',
-        chatScrollToBottom: 'Scroll to Bottom',
         tabChannels: 'Channels',
         channelsDescription:
             'Configure messaging channels for this instance. Messages are routed to agents via bindings.',
@@ -1622,6 +1646,7 @@ const en = {
         competitorClawHost: 'ClawHost',
         competitorSimpleClaw: 'SimpleClaw',
         competitorMyClawAi: 'MyClaw.ai',
+        competitorQuickClaw: 'QuickClaw',
         categoryInfrastructure: 'Infrastructure',
         categoryPricing: 'Pricing & Billing',
         categoryDeployment: 'Deployment & Setup',
@@ -1666,6 +1691,7 @@ const en = {
         dedicatedVps: 'Dedicated VPS',
         sharedContainers: 'Shared containers',
         isolatedContainers: 'Isolated containers',
+        cloudWorkspaces: 'Cloud workspaces',
         threeProviders: 'Hetzner, DigitalOcean, Vultr',
         singleProvider: 'Single provider',
         fullyDedicated: 'Fully dedicated',
@@ -1680,9 +1706,11 @@ const en = {
         clearSpecsPricing: 'Clear specs & pricing',
         unclearPricing: 'Unclear pricing',
         fixedTiers: '3 fixed tiers',
+        creditBased: 'Credit-based',
         minutes: 'Minutes',
         underOneMinute: 'Under 1 minute',
         thirtySeconds: '30 seconds',
+        instant: 'Instant',
         noneRequired: 'None',
         minimal: 'Minimal',
         unlimited: 'Unlimited',
@@ -1692,6 +1720,7 @@ const en = {
         allChannels: 'WhatsApp, Telegram, Discord, Slack, Signal',
         telegramDiscord: 'Telegram, Discord',
         discordGithubSlack: 'Discord, GitHub, Slack',
+        appOnly: 'App only',
         fullConfig: 'Full configuration',
         limitedConfig: 'Limited',
         zipExport: 'ZIP export',
@@ -1703,16 +1732,20 @@ const en = {
         notIncluded: 'Not included',
         managed: 'Managed',
         manual: 'Manual',
+        appStore: 'App Store',
         liveMonitoring: 'Live monitoring',
         liveLogs: 'Live logs',
         oneClickRepair: 'One-click repair',
         emailGithub: 'Email, GitHub',
         communityOnly: 'Community only',
+        appSupport: 'App support',
         prioritySupport: '24/7 support (Pro+)',
         fourLanguages: '4 languages',
         englishOnly: 'English only',
         available: 'Available',
         comingSoon: 'Coming soon',
+        iosMacOs: 'iOS & macOS',
+        macOsOnly: 'macOS only',
         notAvailable: 'Not available',
         disclaimer: 'Something changed or wrong? Email us at',
         disclaimerOr: 'or open a pull request on',

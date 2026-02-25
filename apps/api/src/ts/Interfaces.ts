@@ -1031,3 +1031,21 @@ export interface GithubEmailEntry {
     primary: boolean
     email: string
 }
+
+export interface GenerateSpeechBody {
+    text: string
+    voice?: string
+}
+
+export interface PiperVoice {
+    id: string
+    name: string
+    gender: string
+    quality: string
+}
+
+export interface PiperSynthesisResult {
+    audio: Buffer
+    sampleRate: number
+    channels: number
+}

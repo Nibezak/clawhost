@@ -66,7 +66,7 @@ const handleConnection = (ws: WebSocket, ip: string, password: string) => {
 
                 stream.on('data', (data: Buffer) => {
                     if (ws.readyState === WebSocket.OPEN) {
-                        ws.send(data.toString('utf-8'))
+                        ws.send(data)
                     }
                 })
 
@@ -76,19 +76,21 @@ const handleConnection = (ws: WebSocket, ip: string, password: string) => {
                 })
 
                 ws.on('message', (msg: Buffer | string) => {
-                    const data = typeof msg === 'string' ? msg : msg.toString('utf-8')
+                    const str = typeof msg === 'string' ? msg : msg.toString('utf-8')
 
-                    try {
-                        const parsed = JSON.parse(data)
-                        if (parsed.type === 'resize' && parsed.cols && parsed.rows) {
-                            stream.setWindow(parsed.rows, parsed.cols, 0, 0)
-                            return
+                    if (str[0] === '{') {
+                        try {
+                            const parsed = JSON.parse(str)
+                            if (parsed.type === 'resize' && parsed.cols && parsed.rows) {
+                                stream.setWindow(parsed.rows, parsed.cols, 0, 0)
+                                return
+                            }
+                        } catch {
+                            // Not valid JSON
                         }
-                    } catch {
-                        // Not JSON, treat as terminal input
                     }
 
-                    stream.write(data)
+                    stream.write(str)
                 })
 
                 ws.on('close', () => {

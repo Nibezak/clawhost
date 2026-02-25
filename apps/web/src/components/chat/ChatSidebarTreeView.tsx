@@ -11,6 +11,7 @@ const ChatSidebarTreeView: FC<ChatSidebarTreeViewProps> = ({
     selectedAgent,
     selectedClawId,
     activeConnectionState,
+    readOnly,
     onAgentClick,
     onConfigureAgent,
     onCreateAgent,
@@ -35,6 +36,7 @@ const ChatSidebarTreeView: FC<ChatSidebarTreeViewProps> = ({
                                     !selectedAgent
                                 }
                                 statusConfig={status}
+                                readOnly={readOnly}
                                 onOpenClawSettings={onOpenClawSettings}
                                 onCreateAgent={onCreateAgent}
                             />
@@ -45,6 +47,7 @@ const ChatSidebarTreeView: FC<ChatSidebarTreeViewProps> = ({
                                 isReachable={isReachable}
                                 selectedAgent={selectedAgent}
                                 activeConnectionState={activeConnectionState}
+                                readOnly={readOnly}
                                 onAgentClick={onAgentClick}
                                 onConfigureAgent={onConfigureAgent}
                                 onCreateAgent={onCreateAgent}

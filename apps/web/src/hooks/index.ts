@@ -69,9 +69,10 @@ export {
 export { useAgentChat } from '@/hooks/useAgentChat'
 
 import useGatewayState from '@/hooks/useGatewayState'
+import useScrollToBottom from '@/hooks/useScrollToBottom'
 import useSpeechRecognition from '@/hooks/useSpeechRecognition'
 import useTextToSpeech from '@/hooks/useTextToSpeech'
 import useThemeEffect from '@/hooks/useThemeEffect'
 import useLanguageEffect from '@/hooks/useLanguageEffect'
 
-export { useGatewayState, useSpeechRecognition, useTextToSpeech, useThemeEffect, useLanguageEffect }
+export { useGatewayState, useScrollToBottom, useSpeechRecognition, useTextToSpeech, useThemeEffect, useLanguageEffect }
