@@ -8,6 +8,7 @@ dist
 *-firebase-adminsdk-*.json
 **/.env
 **/.env.*
+**/tsconfig.tsbuildinfo
 .expo
 android
 ios
