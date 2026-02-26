@@ -1,5 +1,17 @@
 [
   {
+    "title": "From Clawdbot to Moltbot to OpenClaw: The Full Naming History",
+    "slug": "the-naming-history-of-openclaw",
+    "tags": "openclaw, history, open-source",
+    "published": true
+  },
+  {
+    "title": "OpenClaw Founder Peter Steinberger Joins OpenAI: What It Means for the Project",
+    "slug": "openclaw-founder-peter-steinberger-joins-openai",
+    "tags": "openclaw, openai, peter-steinberger, open-source, ai-agents",
+    "published": true
+  },
+  {
     "title": "Install & Switch OpenClaw Versions in Seconds with ClawHost",
     "slug": "install-and-switch-openclaw-versions-in-seconds-with-clawhost",
     "tags": "openclaw, deployment, version-management, clawhost, one-click-install",
