@@ -97,7 +97,7 @@
     "publishedAt": "2026-02-26",
     "tags": "openclaw, architecture, tutorial, non-technical",
     "thumbnail": "/how-openclaw-works-architecture-explained-for-non-engineers.webp",
-    "published": false
+    "published": true
   },
   {
     "title": "The Gateway \u2014 OpenClaw's Brain and Nervous System",
