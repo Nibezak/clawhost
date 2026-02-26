@@ -157,7 +157,7 @@
     "publishedAt": "2026-02-26",
     "tags": "openclaw, security, privacy, safety, hardening",
     "thumbnail": "/openclaw-security-the-elephant-in-the-room.webp",
-    "published": false
+    "published": true
   },
   {
     "title": "Multi-Agent Architecture \u2014 Running Multiple AI Personalities in Parallel",
