@@ -107,7 +107,7 @@
     "publishedAt": "2026-02-26",
     "tags": "openclaw, gateway, architecture, technical",
     "thumbnail": "/the-gateway-openclaw-s-brain-and-nervous-system.webp",
-    "published": false
+    "published": true
   },
   {
     "title": "OpenClaw's Messaging Platform Support \u2014 Why Your Chat App Is the Interface",
