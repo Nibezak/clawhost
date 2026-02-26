@@ -1,3 +1,13 @@
+---
+title: 'Install & Switch OpenClaw Versions in Seconds with ClawHost'
+slug: 'install-and-switch-openclaw-versions-in-seconds-with-clawhost'
+description: 'Deploy any OpenClaw version with one click. Switch between versions instantly, zero downtime. Version management made effortless with ClawHost.'
+author: 'ClawHost'
+publishedAt: '2026-02-26'
+tags: ['openclaw', 'deployment', 'version-management', 'clawhost', 'one-click-install']
+coverImage: '/install-and-switch-openclaw-versions-in-seconds-with-clawhost.webp'
+---
+
 # Install & Switch OpenClaw Versions in Seconds with ClawHost
 
 ## One Click. Any Version. Always Ready.
