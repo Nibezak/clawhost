@@ -1330,6 +1330,7 @@ const es: Translations = {
             'Este tipo de archivo no es compatible. Usa imágenes, PDFs o archivos de texto!',
         chatNoPreview: 'Vista previa no disponible!',
         chatDownloadFile: 'Descargar archivo',
+        chatCopyMessage: 'Copiar mensaje',
         tabChannels: 'Canales',
         channelsDescription:
             'Configura los canales de mensajería para esta instancia. Los mensajes se enrutan a los agentes mediante vínculos.',

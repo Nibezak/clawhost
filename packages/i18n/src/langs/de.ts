@@ -1339,6 +1339,7 @@ const de: Translations = {
             'Dieser Dateityp wird nicht unterstützt. Verwende Bilder, PDFs oder Textdateien!',
         chatNoPreview: 'Keine Vorschau verfügbar.',
         chatDownloadFile: 'Datei herunterladen',
+        chatCopyMessage: 'Nachricht kopieren',
         tabChannels: 'Kanäle',
         channelsDescription:
             'Konfiguriere Messaging-Kanäle für diese Instanz. Nachrichten werden über Bindungen an Agenten weitergeleitet.',

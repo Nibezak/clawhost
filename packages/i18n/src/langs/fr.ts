@@ -1353,6 +1353,7 @@ const fr: Translations = {
             "Ce type de fichier n'est pas supporté. Utilisez des images, PDF ou fichiers texte !",
         chatNoPreview: 'Aucun aperçu disponible.',
         chatDownloadFile: 'Télécharger le fichier',
+        chatCopyMessage: 'Copier le message',
         tabChannels: 'Canaux',
         channelsDescription:
             'Configurez les canaux de messagerie pour cette instance. Les messages sont acheminés vers les agents via des liaisons.',

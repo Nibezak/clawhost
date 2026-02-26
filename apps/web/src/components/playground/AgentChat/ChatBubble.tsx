@@ -7,9 +7,12 @@ import {
     StopCircleIcon,
     WarningIcon,
     FileTextIcon,
-    DownloadSimpleIcon
+    DownloadSimpleIcon,
+    CopyIcon,
+    CheckIcon
 } from '@phosphor-icons/react'
 import { getLocale } from '@/lib'
+import useUIStore from '@/lib/store/useUIStore'
 import ChatMarkdown from '@/components/playground/AgentChat/ChatMarkdown'
 import ChatLightbox from '@/components/playground/AgentChat/ChatLightbox'
 import ChatSpeechButton from '@/components/playground/AgentChat/ChatSpeechButton'
@@ -56,6 +59,15 @@ const ChatBubble: FC<ChatBubbleProps> = ({
     const [lightboxFileName, setLightboxFileName] = useState<
         string | undefined
     >(undefined)
+    const [copied, setCopied] = useState(false)
+    const { showToast } = useUIStore()
+
+    const copyMessage = () => {
+        navigator.clipboard.writeText(message.content)
+        showToast(t('common.copied'), 'success')
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+    }
 
     const openLightbox = (image: ChatImageSource, fileName?: string) => {
         setLightboxImage(image)
@@ -174,7 +186,20 @@ const ChatBubble: FC<ChatBubbleProps> = ({
         return (
             <>
                 <div className='flex flex-col items-end gap-1'>
-                    <div className='max-w-[85%] rounded-2xl rounded-br-md bg-[#ef5350]/15 px-3.5 py-2.5'>
+                    <div className='group relative max-w-[85%] rounded-2xl rounded-br-md bg-[#ef5350]/15 px-3.5 py-2.5'>
+                        {!showAsFileCard && message.content && (
+                            <button
+                                onClick={copyMessage}
+                                title={t('playground.chatCopyMessage')}
+                                className='bg-background/80 absolute right-2.5 top-2.5 rounded-lg p-1.5 opacity-0 shadow-sm backdrop-blur-sm transition-opacity group-hover:opacity-100'
+                            >
+                                {copied ? (
+                                    <CheckIcon className='text-foreground/70 h-3 w-3' weight='bold' />
+                                ) : (
+                                    <CopyIcon className='text-foreground/70 hover:text-foreground h-3 w-3 transition-colors' weight='bold' />
+                                )}
+                            </button>
+                        )}
                         {hasAttachments && renderAttachments(message.images!)}
                         {showAsFileCard && !hasNonImageAttachments && (
                             <div className='mb-2 flex flex-wrap gap-2'>
@@ -238,7 +263,20 @@ const ChatBubble: FC<ChatBubbleProps> = ({
     return (
         <>
             <div className='flex flex-col items-start gap-1'>
-                <div className='bg-foreground/5 min-w-0 max-w-[85%] rounded-2xl rounded-bl-md px-3.5 py-2.5'>
+                <div className='group relative min-w-0 max-w-[85%] rounded-2xl rounded-bl-md bg-foreground/5 px-3.5 py-2.5'>
+                    {message.status === 'complete' && message.content && (
+                        <button
+                            onClick={copyMessage}
+                            title={t('playground.chatCopyMessage')}
+                            className='bg-background/80 absolute right-2.5 top-2.5 rounded-lg p-1.5 opacity-0 shadow-sm backdrop-blur-sm transition-opacity group-hover:opacity-100'
+                        >
+                            {copied ? (
+                                <CheckIcon className='text-muted-foreground h-3 w-3' weight='bold' />
+                            ) : (
+                                <CopyIcon className='text-muted-foreground hover:text-foreground h-3 w-3 transition-colors' weight='bold' />
+                            )}
+                        </button>
+                    )}
                     {hasAttachments && renderAttachments(message.images!)}
                     <div className='text-foreground/80 min-w-0 text-sm'>
                         <ChatMarkdown content={message.content} />

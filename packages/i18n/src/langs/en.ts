@@ -1277,6 +1277,7 @@ const en = {
             'This file type is not supported. Use images, PDFs, or text files.',
         chatNoPreview: 'No preview available.',
         chatDownloadFile: 'Download file',
+        chatCopyMessage: 'Copy message',
         tabChannels: 'Channels',
         channelsDescription:
             'Configure messaging channels for this instance. Messages are routed to agents via bindings.',
