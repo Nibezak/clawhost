@@ -2,19 +2,31 @@
   {
     "title": "From Clawdbot to Moltbot to OpenClaw: The Full Naming History",
     "slug": "the-naming-history-of-openclaw",
+    "description": "How OpenClaw got its name — from Clawdbot to Moltbot to OpenClaw in just three months. The story of trademark disputes, lobster metaphors, and a community that refused to quit.",
+    "author": "ClawHost",
+    "publishedAt": "2026-02-07",
     "tags": "openclaw, history, open-source",
+    "thumbnail": "/openclaw-naming-history.webp",
     "published": true
   },
   {
     "title": "OpenClaw Founder Peter Steinberger Joins OpenAI: What It Means for the Project",
     "slug": "openclaw-founder-peter-steinberger-joins-openai",
+    "description": "Peter Steinberger, the creator of OpenClaw, announced he is joining OpenAI. OpenClaw will move to a foundation and remain open source. Here is what happened, what it means, and how the community reacted.",
+    "author": "ClawHost",
+    "publishedAt": "2026-02-18",
     "tags": "openclaw, openai, peter-steinberger, open-source, ai-agents",
+    "thumbnail": "/blog/openclaw-openai-fullbleed.webp",
     "published": true
   },
   {
     "title": "Install & Switch OpenClaw Versions in Seconds with ClawHost",
     "slug": "install-and-switch-openclaw-versions-in-seconds-with-clawhost",
+    "description": "Deploy any OpenClaw version with one click. Switch between versions instantly, zero downtime. Version management made effortless with ClawHost.",
+    "author": "ClawHost",
+    "publishedAt": "2026-02-26",
     "tags": "openclaw, deployment, version-management, clawhost, one-click-install",
+    "thumbnail": "/install-and-switch-openclaw-versions-in-seconds-with-clawhost.webp",
     "published": true
   }
 ]
