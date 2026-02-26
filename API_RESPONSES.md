@@ -14,13 +14,13 @@ All API responses follow a consistent envelope format.
 }
 ```
 
-| Field     | Type        | Description                                       |
-| --------- | ----------- | ------------------------------------------------- |
-| `success` | `boolean`   | Whether the request succeeded                     |
-| `data`    | `T \| null` | Response payload (`null` for side-effect-only)    |
-| `message` | `string`    | Translated human-readable message                 |
-| `code`    | `number`    | HTTP status code                                  |
-| `version` | `string`    | API version from package.json (auto-bumped)       |
+| Field     | Type        | Description                                    |
+| --------- | ----------- | ---------------------------------------------- |
+| `success` | `boolean`   | Whether the request succeeded                  |
+| `data`    | `T \| null` | Response payload (`null` for side-effect-only) |
+| `message` | `string`    | Translated human-readable message              |
+| `code`    | `number`    | HTTP status code                               |
+| `version` | `string`    | API version from package.json (auto-bumped)    |
 
 ## Response Helpers
 

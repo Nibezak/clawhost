@@ -2,12 +2,13 @@ import type { Context } from 'hono'
 import type { VerifyOtpBody } from '@/ts/Interfaces'
 
 import crypto from 'crypto'
-import { eq, and, gt } from 'drizzle-orm'
+import { eq, and, gt, lt, sql } from 'drizzle-orm'
 import { auth } from '@/services/firebase'
 import { db } from '@/db'
 import { otpCodes, users } from '@/db/schema'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
+import { getClientIp, clearRateLimit } from '@/controllers/auth/rateLimit'
 
 const MAX_ATTEMPTS = 5
 
@@ -34,6 +35,7 @@ const verifyOtp = async (c: Context) => {
                     gt(otpCodes.expiresAt, new Date())
                 )
             )
+            .limit(1)
             .then((rows) => rows[0])
 
         if (!record) {
@@ -45,30 +47,47 @@ const verifyOtp = async (c: Context) => {
             return fail(c, t('api.otpMaxAttemptsReached'), 401)
         }
 
-        await db
+        const updated = await db
             .update(otpCodes)
-            .set({ attempts: record.attempts + 1 })
-            .where(eq(otpCodes.id, record.id))
+            .set({ attempts: sql`${otpCodes.attempts} + 1` })
+            .where(
+                and(
+                    eq(otpCodes.id, record.id),
+                    lt(otpCodes.attempts, MAX_ATTEMPTS)
+                )
+            )
+            .returning({ attempts: otpCodes.attempts })
+
+        if (!updated[0]) {
+            return fail(c, t('api.otpMaxAttemptsReached'), 401)
+        }
 
         const codeHash = hashCode(code)
         if (codeHash !== record.codeHash) {
-            const remaining = MAX_ATTEMPTS - (record.attempts + 1)
-            return fail(c, t('api.otpInvalidCode'), 401, { attemptsRemaining: remaining })
+            const remaining = MAX_ATTEMPTS - updated[0].attempts
+            return fail(c, t('api.otpInvalidCode'), 401, {
+                attemptsRemaining: remaining
+            })
         }
 
-        await db.delete(otpCodes).where(eq(otpCodes.id, record.id))
-
-        const existingUser = await db
-            .select()
-            .from(users)
-            .where(eq(users.email, normalizedEmail))
-            .then((rows) => rows[0])
+        const [, existingUser] = await Promise.all([
+            db.delete(otpCodes).where(eq(otpCodes.id, record.id)),
+            db
+                .select()
+                .from(users)
+                .where(eq(users.email, normalizedEmail))
+                .then((rows) => rows[0])
+        ])
 
         let uid: string
 
         if (existingUser) {
             uid = existingUser.id
         } else {
+            if (email.includes('+')) {
+                return fail(c, t('api.plusAddressingNotAllowed'), 400)
+            }
+
             uid = crypto.randomUUID()
             await db.insert(users).values({
                 id: uid,
@@ -76,17 +95,15 @@ const verifyOtp = async (c: Context) => {
             })
         }
 
+        const keysToClean = [`email:${normalizedEmail}`]
+        const ip = getClientIp(c)
+        if (ip) keysToClean.push(`ip:${ip}`)
+        await clearRateLimit(...keysToClean)
+
         const customToken = await auth().createCustomToken(uid)
         return ok(c, { customToken }, t('api.otpVerified'))
-    } catch (err) {
-        console.error('Verify OTP error:', err)
-        return fail(
-            c,
-            err instanceof Error
-                ? err.message
-                : t('api.internalServerError'),
-            500
-        )
+    } catch {
+        return fail(c, t('api.internalServerError'), 500)
     }
 }
 

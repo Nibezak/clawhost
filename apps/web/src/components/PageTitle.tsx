@@ -2,6 +2,7 @@ import type { FC, ReactNode } from 'react'
 import type { PageTitleProps } from '@/ts/Interfaces'
 
 import { useEffect } from 'react'
+import { t } from '@openclaw/i18n'
 
 const setMetaTag = (attr: string, key: string, content: string) => {
     let meta = document.querySelector(
@@ -33,10 +34,11 @@ const PageTitle: FC<PageTitleProps> = ({
     image,
     url,
     type,
-    noIndex
+    noIndex,
+    keywords
 }): ReactNode => {
     useEffect(() => {
-        const fullTitle = `${title} - ClawHost`
+        const fullTitle = `${title} - ${t('common.brandName')}`
         document.title = fullTitle
         setMetaTag('property', 'og:title', fullTitle)
         setMetaTag('name', 'twitter:title', fullTitle)
@@ -71,6 +73,28 @@ const PageTitle: FC<PageTitleProps> = ({
     }, [type])
 
     useEffect(() => {
+        if (keywords && keywords.length > 0) {
+            setMetaTag('name', 'keywords', keywords.join(', '))
+            document
+                .querySelectorAll('meta[property="article:tag"]')
+                .forEach((el) => el.remove())
+            keywords.forEach((tag) => {
+                const meta = document.createElement('meta')
+                meta.setAttribute('property', 'article:tag')
+                meta.content = tag
+                document.head.appendChild(meta)
+            })
+        }
+        return () => {
+            document
+                .querySelectorAll('meta[property="article:tag"]')
+                .forEach((el) => el.remove())
+            const kw = document.querySelector('meta[name="keywords"]')
+            if (kw) kw.remove()
+        }
+    }, [keywords])
+
+    useEffect(() => {
         if (noIndex) {
             setMetaTag('name', 'robots', 'noindex, nofollow')
         }
@@ -85,4 +109,4 @@ const PageTitle: FC<PageTitleProps> = ({
     return null
 }
 
-export { PageTitle }
+export default PageTitle

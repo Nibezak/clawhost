@@ -1,17 +1,10 @@
-function getProviderEnvVar(model: string): string | null {
-    if (model.startsWith('anthropic/')) return 'ANTHROPIC_API_KEY'
-    if (model.startsWith('openai/')) return 'OPENAI_API_KEY'
-    if (model.startsWith('google/')) return 'GEMINI_API_KEY'
-    return null
-}
+import OPENCLAW_VERSION from '@/controllers/claws/helpers/openclawVersion'
 
 export default function generateCloudInit(
     rootPassword: string,
     subdomain: string,
     domain: string,
-    gatewayToken: string,
-    model?: string,
-    apiToken?: string
+    gatewayToken: string
 ): string {
     const fullDomain = `${subdomain}.${domain}`
 
@@ -32,27 +25,25 @@ export default function generateCloudInit(
             telegram: { dmPolicy: 'open', allowFrom: ['*'] },
             discord: {},
             slack: {},
-            signal: { dmPolicy: 'open', allowFrom: ['*'] },
-            imessage: { dmPolicy: 'open', allowFrom: ['*'] }
+            signal: { dmPolicy: 'open', allowFrom: ['*'] }
+        },
+        commands: {
+            restart: true,
+            bash: true
+        },
+        tools: {
+            profile: 'full',
+            elevated: { enabled: true }
+        },
+        browser: {
+            enabled: true,
+            executablePath: '/usr/bin/google-chrome-stable',
+            headless: true,
+            noSandbox: true
         }
     }
 
-    const agentDefaults: Record<string, unknown> = {
-        sandbox: { mode: 'off' }
-    }
-
-    if (model) {
-        agentDefaults.model = { primary: model }
-
-        const envVarName = getProviderEnvVar(model)
-        if (envVarName && apiToken) {
-            config.env = {
-                [envVarName]: apiToken
-            }
-        }
-    }
-
-    config.agents = { defaults: agentDefaults }
+    config.agents = { defaults: { sandbox: { mode: 'off' } } }
 
     const configJson = JSON.stringify(config, null, 2).replace(/\n/g, '\n    ')
 
@@ -89,10 +80,14 @@ runcmd:
   - apt-get update -o Dir::Etc::sourcelist="sources.list.d/nodesource.list" -o Dir::Etc::sourceparts="-" -o APT::Get::List-Cleanup="0"
   - apt-get install -y nodejs
 
-  - npm install -g openclaw@latest
+  - npm install -g openclaw@${OPENCLAW_VERSION}
 
   - useradd -r -m -d /home/openclaw -s /bin/bash openclaw
   - echo 'openclaw ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/openclaw
+
+  - wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb -O /tmp/google-chrome.deb
+  - dpkg -i /tmp/google-chrome.deb || apt-get install -f -y
+  - rm -f /tmp/google-chrome.deb
 
   - mkdir -p /home/openclaw/.openclaw
   - mkdir -p /home/openclaw/.openclaw/agents/main/agent

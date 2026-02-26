@@ -1,4 +1,4 @@
-import type { Context } from 'hono'
+import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
@@ -7,9 +7,7 @@ import { orders } from '@/lib/polar'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
-const getBillingHistory = async (
-    c: Context<{ Variables: { userId: string } }>
-) => {
+const getBillingHistory = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const page = Math.max(1, parseInt(c.req.query('page') || '1', 10))
@@ -26,22 +24,30 @@ const getBillingHistory = async (
 
         const polarCustomerId = user[0]?.polarCustomerId
         if (!polarCustomerId) {
-            return ok(c, {
-                items: [],
-                total: 0,
-                page,
-                totalPages: 1
-            }, t('api.billingHistoryFetched'))
+            return ok(
+                c,
+                {
+                    items: [],
+                    total: 0,
+                    page,
+                    totalPages: 1
+                },
+                t('api.billingHistoryFetched')
+            )
         }
 
         const result = await orders.listByCustomer(polarCustomerId, page, limit)
 
-        return ok(c, {
-            items: result.items,
-            total: result.totalCount,
-            page,
-            totalPages: result.maxPage
-        }, t('api.billingHistoryFetched'))
+        return ok(
+            c,
+            {
+                items: result.items,
+                total: result.totalCount,
+                page,
+                totalPages: result.maxPage
+            },
+            t('api.billingHistoryFetched')
+        )
     } catch (err) {
         console.error('Get billing history error:', err)
         return fail(c, t('api.failedToGetBillingHistory'), 500)

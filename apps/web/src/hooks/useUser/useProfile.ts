@@ -1,7 +1,7 @@
 import type { UseProfileOptions } from '@/ts/Interfaces'
 
 import { useQuery } from '@tanstack/react-query'
-import { api } from '@/lib/api'
+import { api } from '@/lib'
 import PROFILE_QUERY_KEY from '@/hooks/useUser/PROFILE_QUERY_KEY'
 
 const useProfile = (options?: UseProfileOptions) => {

@@ -3,20 +3,27 @@ import type { FC, ReactNode } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { ArrowLeft, CalendarBlank, Clock } from '@phosphor-icons/react'
-import { Header } from '@/components/Header'
-import { LandingFooter } from '@/components/LandingFooter'
-import { PageBackground } from '@/components/PageBackground'
-import { PageTitle } from '@/components/PageTitle'
-import { JsonLd } from '@/components/JsonLd'
+import {
+    ArrowLeftIcon,
+    CalendarBlankIcon,
+    ClockIcon
+} from '@phosphor-icons/react'
+import {
+    BlogCTA,
+    Header,
+    LandingFooter,
+    PageBackground,
+    PageTitle,
+    JsonLd
+} from '@/components'
 import { getPostComponent, getPostMeta } from '@/lib/blog'
-import { ROUTES } from '@/lib/routes'
+import { PATHS, ROUTES, getBaseDomain, getLocale } from '@/lib'
 import NotFound from '@/pages/NotFound'
 
-const SITE_URL = 'https://clawhost.cloud'
+const SITE_URL = `https://${getBaseDomain()}`
 
 const BlogPost: FC = (): ReactNode => {
-    const { slug } = useParams<{ slug: string }>()
+    const { slug } = useParams<Record<string, string>>()
 
     const meta = slug ? getPostMeta(slug) : null
     const Content = slug ? getPostComponent(slug) : null
@@ -26,7 +33,7 @@ const BlogPost: FC = (): ReactNode => {
     }
 
     const formattedDate = new Date(meta.publishedAt).toLocaleDateString(
-        'en-US',
+        getLocale(),
         {
             year: 'numeric',
             month: 'long',
@@ -34,19 +41,40 @@ const BlogPost: FC = (): ReactNode => {
         }
     )
 
-    const postUrl = `${SITE_URL}/posts/${meta.slug}`
+    const postUrl = `${SITE_URL}/${PATHS.BLOG}/${meta.slug}`
     const imageUrl = meta.coverImage
         ? `${SITE_URL}${meta.coverImage}`
         : `${SITE_URL}/og-image.webp`
 
     return (
-        <div className='relative flex min-h-screen flex-col bg-[#0a0a0f] text-white'>
+        <div className='bg-background text-foreground relative flex min-h-screen flex-col'>
             <PageTitle
                 title={meta.title}
                 description={meta.description}
                 image={imageUrl}
                 url={postUrl}
                 type='article'
+                keywords={meta.tags}
+            />
+            <JsonLd
+                data={{
+                    '@context': 'https://schema.org',
+                    '@type': 'BreadcrumbList',
+                    itemListElement: [
+                        {
+                            '@type': 'ListItem',
+                            position: 1,
+                            name: t('blog.title'),
+                            item: `${SITE_URL}/${PATHS.BLOG}`
+                        },
+                        {
+                            '@type': 'ListItem',
+                            position: 2,
+                            name: meta.title,
+                            item: postUrl
+                        }
+                    ]
+                }}
             />
             <JsonLd
                 data={{
@@ -64,7 +92,7 @@ const BlogPost: FC = (): ReactNode => {
                         name: 'ClawHost',
                         logo: {
                             '@type': 'ImageObject',
-                            url: `${SITE_URL}/favicon.svg`
+                            url: 'https://cdn.clawhost.cloud/assets/clawhost-logo-light.png'
                         }
                     },
                     mainEntityOfPage: {
@@ -84,35 +112,27 @@ const BlogPost: FC = (): ReactNode => {
                 className='relative mx-auto w-full max-w-6xl flex-1 px-6 py-12'
             >
                 <Link
-                    to={ROUTES.POSTS}
-                    className='mb-8 inline-flex items-center gap-1.5 text-sm text-gray-400 transition hover:text-white'
+                    to={ROUTES.BLOG}
+                    className='text-muted-foreground hover:text-foreground mb-8 inline-flex items-center gap-1.5 text-sm transition'
                 >
-                    <ArrowLeft className='h-4 w-4' />
+                    <ArrowLeftIcon className='h-4 w-4' />
                     {t('blog.backToBlog')}
                 </Link>
-
-                <div className='mb-3 flex flex-wrap gap-2'>
-                    {meta.tags.map((tag) => (
-                        <span
-                            key={tag}
-                            className='rounded-full bg-white/5 px-2.5 py-0.5 text-xs text-gray-400'
-                        >
-                            {tag}
-                        </span>
-                    ))}
-                </div>
 
                 <h1 className='font-clash mb-4 text-4xl font-bold'>
                     {meta.title}
                 </h1>
 
-                <div className='mb-8 flex items-center gap-4 text-sm text-gray-400'>
-                    <span className='flex items-center gap-1.5'>
-                        <CalendarBlank className='h-4 w-4' />
+                <div className='text-muted-foreground mb-8 flex items-center gap-4 text-sm'>
+                    <time
+                        dateTime={meta.publishedAt}
+                        className='flex items-center gap-1.5'
+                    >
+                        <CalendarBlankIcon className='h-4 w-4' />
                         {formattedDate}
-                    </span>
+                    </time>
                     <span className='flex items-center gap-1.5'>
-                        <Clock className='h-4 w-4' />
+                        <ClockIcon className='h-4 w-4' />
                         {t('blog.readingTime', {
                             minutes: String(meta.readingTime)
                         })}
@@ -120,18 +140,22 @@ const BlogPost: FC = (): ReactNode => {
                 </div>
 
                 {meta.coverImage && (
-                    <div className='mb-12 overflow-hidden rounded-xl border border-white/10'>
+                    <div className='border-border mb-12 overflow-hidden rounded-xl border'>
                         <img
                             src={meta.coverImage}
                             alt={meta.title}
                             className='aspect-[2/1] w-full object-cover'
+                            width={1200}
+                            height={600}
                         />
                     </div>
                 )}
 
-                <div className='prose prose-invert prose-sm prose-headings:font-clash prose-headings:font-semibold prose-h1:hidden prose-a:text-primary prose-a:no-underline hover:prose-a:underline max-w-none'>
+                <div className='prose dark:prose-invert prose-sm prose-headings:font-clash prose-headings:font-semibold prose-h1:hidden prose-a:text-primary prose-a:no-underline hover:prose-a:underline max-w-none'>
                     <Content />
                 </div>
+
+                <BlogCTA />
             </motion.main>
 
             <LandingFooter />

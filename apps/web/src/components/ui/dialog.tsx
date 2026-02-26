@@ -1,8 +1,9 @@
 import * as React from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
-import { X } from '@phosphor-icons/react'
+import { XIcon } from '@phosphor-icons/react'
+import { t } from '@openclaw/i18n'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib'
 
 const Dialog = DialogPrimitive.Root
 
@@ -36,15 +37,15 @@ const DialogContent = React.forwardRef<
         <DialogPrimitive.Content
             ref={ref}
             className={cn(
-                'bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] border p-6 shadow-lg outline-none duration-200 sm:rounded-lg',
+                'bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] fixed left-[50%] top-[50%] z-50 grid w-[calc(100%-2rem)] max-w-lg translate-x-[-50%] translate-y-[-50%] rounded-lg border p-6 shadow-lg outline-none duration-200',
                 className
             )}
             {...props}
         >
             {children}
             <DialogPrimitive.Close className='bg-muted hover:bg-muted/80 absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-lg outline-none transition-colors disabled:pointer-events-none'>
-                <X className='h-4 w-4' />
-                <span className='sr-only'>Close</span>
+                <XIcon className='h-4 w-4' />
+                <span className='sr-only'>{t('common.close')}</span>
             </DialogPrimitive.Close>
         </DialogPrimitive.Content>
     </DialogPortal>
@@ -57,7 +58,7 @@ const DialogHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
     <div
         className={cn(
-            'flex flex-col space-y-1.5 text-center sm:text-left',
+            'flex flex-col space-y-1.5 pr-10 text-center sm:text-left',
             className
         )}
         {...props}

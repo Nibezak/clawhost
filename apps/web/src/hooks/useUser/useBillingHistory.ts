@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { api } from '@/lib/api'
+import { api } from '@/lib'
 import BILLING_HISTORY_QUERY_KEY from '@/hooks/useUser/BILLING_HISTORY_QUERY_KEY'
 
 const useBillingHistory = (limit: number = 10) => {

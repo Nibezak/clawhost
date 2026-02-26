@@ -1,15 +1,6 @@
-/**
- * One-time script to configure Polar customer portal settings.
- * Disables plan changes and cancellation in the customer portal.
- *
- * Usage: pnpm --filter api exec tsx ../../scripts/configure-polar-portal.ts
- * Requires: POLAR_ACCESS_TOKEN and POLAR_ORGANIZATION_ID in apps/api/.env
- */
-
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
 
-// Parse .env file manually to avoid dotenv dependency
 const envPath = resolve(import.meta.dirname ?? __dirname, '../apps/api/.env')
 const envContent = readFileSync(envPath, 'utf-8')
 for (const line of envContent.split('\n')) {
@@ -40,7 +31,6 @@ const BASE_URL = 'https://api.polar.sh'
 async function configurePortal() {
     console.log(`Configuring Polar organization: ${POLAR_ORGANIZATION_ID}\n`)
 
-    // First, get current organization settings
     const getRes = await fetch(
         `${BASE_URL}/v1/organizations/${POLAR_ORGANIZATION_ID}`,
         {
@@ -64,7 +54,6 @@ async function configurePortal() {
     )
     console.log()
 
-    // Update organization to disable plan changes and customer updates
     const updateRes = await fetch(
         `${BASE_URL}/v1/organizations/${POLAR_ORGANIZATION_ID}`,
         {

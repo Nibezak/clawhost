@@ -7,11 +7,11 @@ const PageHeader: FC<PageHeaderProps> = ({
     action
 }): ReactNode => {
     return (
-        <div className='mb-6 flex items-center justify-between'>
+        <div className='mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
             <div>
                 <h2 className='font-clash text-2xl font-bold'>{title}</h2>
                 {description && (
-                    <p className='mt-1 text-base text-gray-400'>
+                    <p className='text-muted-foreground mt-1 text-base'>
                         {description}
                     </p>
                 )}
@@ -21,4 +21,4 @@ const PageHeader: FC<PageHeaderProps> = ({
     )
 }
 
-export { PageHeader }
+export default PageHeader

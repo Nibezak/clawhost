@@ -1,10 +1,17 @@
 import type { FC, ReactNode } from 'react'
 import type { BillingOrderItemProps } from '@/ts/Interfaces'
 
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native'
+import {
+    ActivityIndicator,
+    Pressable,
+    StyleSheet,
+    Text,
+    View
+} from 'react-native'
 import { DownloadSimple } from 'phosphor-react-native'
 import { t } from '@openclaw/i18n'
-import COLORS from '@/lib/theme/colors'
+import { COLORS } from '@/lib/theme'
+import getLocale from '@/lib/getLocale'
 
 const BillingOrderItem: FC<BillingOrderItemProps> = ({
     order,
@@ -12,7 +19,7 @@ const BillingOrderItem: FC<BillingOrderItemProps> = ({
     isInvoiceLoading
 }): ReactNode => {
     const formatDate = (dateString: string): string => {
-        return new Date(dateString).toLocaleDateString('en-US', {
+        return new Date(dateString).toLocaleDateString(getLocale(), {
             year: 'numeric',
             month: 'short',
             day: 'numeric'
@@ -20,7 +27,7 @@ const BillingOrderItem: FC<BillingOrderItemProps> = ({
     }
 
     const formatCurrency = (amount: number, currency: string): string => {
-        return new Intl.NumberFormat('en-US', {
+        return new Intl.NumberFormat(getLocale(), {
             style: 'currency',
             currency: currency.toUpperCase()
         }).format(amount / 100)
@@ -77,14 +84,15 @@ const BillingOrderItem: FC<BillingOrderItemProps> = ({
         <View style={styles.container}>
             <View style={styles.leftSection}>
                 <Text style={styles.productName} numberOfLines={1}>
-                    {order.productName || getBillingReasonLabel(order.billingReason)}
+                    {order.productName ||
+                        getBillingReasonLabel(order.billingReason)}
                 </Text>
-                <Text style={styles.date}>
-                    {formatDate(order.createdAt)}
-                </Text>
+                <Text style={styles.date}>{formatDate(order.createdAt)}</Text>
                 {order.discountName && (
                     <Text style={styles.coupon}>
-                        {t('account.couponApplied', { name: order.discountName })}
+                        {t('account.couponApplied', {
+                            name: order.discountName
+                        })}
                     </Text>
                 )}
             </View>
@@ -92,15 +100,25 @@ const BillingOrderItem: FC<BillingOrderItemProps> = ({
                 <View style={styles.amountContainer}>
                     {order.discountAmount > 0 && (
                         <Text style={styles.originalAmount}>
-                            {formatCurrency(order.subtotalAmount, order.currency)}
+                            {formatCurrency(
+                                order.subtotalAmount,
+                                order.currency
+                            )}
                         </Text>
                     )}
                     <Text style={styles.amount}>
                         {formatCurrency(order.totalAmount, order.currency)}
                     </Text>
                 </View>
-                <View style={[styles.statusBadge, { backgroundColor: statusStyle.bg }]}>
-                    <Text style={[styles.statusText, { color: statusStyle.text }]}>
+                <View
+                    style={[
+                        styles.statusBadge,
+                        { backgroundColor: statusStyle.bg }
+                    ]}
+                >
+                    <Text
+                        style={[styles.statusText, { color: statusStyle.text }]}
+                    >
                         {getStatusLabel(order.status)}
                     </Text>
                 </View>
@@ -110,7 +128,10 @@ const BillingOrderItem: FC<BillingOrderItemProps> = ({
                     style={styles.invoiceButton}
                 >
                     {isInvoiceLoading ? (
-                        <ActivityIndicator size='small' color={COLORS.textMuted} />
+                        <ActivityIndicator
+                            size='small'
+                            color={COLORS.textMuted}
+                        />
                     ) : (
                         <DownloadSimple size={18} color={COLORS.textMuted} />
                     )}

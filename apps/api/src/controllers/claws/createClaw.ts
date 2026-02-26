@@ -1,11 +1,12 @@
-import type { Context } from 'hono'
 import type { CreateClawBody } from '@/ts/Interfaces'
+import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq, and, count } from 'drizzle-orm'
+import { clawStatus } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws, sshKeys, volumes } from '@/db/schema'
 import { getProvider } from '@/services/provider'
-import { cloudflare } from '@/services/cloudflare'
+import cloudflare from '@/services/cloudflare'
 import {
     generateSlug,
     generatePassword,
@@ -16,7 +17,7 @@ import {
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
-const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
+const createClaw = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const {
@@ -26,23 +27,11 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             location,
             password,
             sshKeyId,
-            volumeSize,
-            model,
-            apiToken
+            volumeSize
         } = await c.req.json<CreateClawBody>()
 
         if (!name || !planId || !location) {
             return fail(c, t('api.missingRequiredFields'), 400)
-        }
-
-        const MAX_CLAWS_PER_ACCOUNT = 50
-        const [{ value: clawCount }] = await db
-            .select({ value: count() })
-            .from(claws)
-            .where(eq(claws.userId, userId))
-
-        if (clawCount >= MAX_CLAWS_PER_ACCOUNT) {
-            return fail(c, t('api.clawLimitReached'), 400)
         }
 
         if (
@@ -54,8 +43,32 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
 
         const provider = getProvider(providerName || 'hetzner')
 
+        const [clawCountResult, serverTypes, sshKeyResult] = await Promise.all([
+            db
+                .select({ value: count() })
+                .from(claws)
+                .where(eq(claws.userId, userId)),
+            provider.getServerTypes(),
+            sshKeyId
+                ? db
+                      .select()
+                      .from(sshKeys)
+                      .where(
+                          and(
+                              eq(sshKeys.id, sshKeyId),
+                              eq(sshKeys.userId, userId)
+                          )
+                      )
+                      .limit(1)
+                : Promise.resolve(null)
+        ])
+
+        const MAX_CLAWS_PER_ACCOUNT = 50
+        if (clawCountResult[0].value >= MAX_CLAWS_PER_ACCOUNT) {
+            return fail(c, t('api.clawLimitReached'), 400)
+        }
+
         const MIN_MEMORY_GB = 4
-        const serverTypes = await provider.getServerTypes()
         const selectedPlan = serverTypes.find((st) => st.name === planId)
 
         if (!selectedPlan) {
@@ -71,25 +84,15 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
         const finalPassword = password || generatePassword()
 
         let providerSshKeyIds: number[] | undefined
-        if (sshKeyId) {
-            const sshKey = await db
-                .select()
-                .from(sshKeys)
-                .where(
-                    and(eq(sshKeys.id, sshKeyId), eq(sshKeys.userId, userId))
-                )
-                .limit(1)
-
-            if (sshKey[0]) {
-                const keyId =
-                    providerName === 'digitalocean'
-                        ? sshKey[0].digitaloceanKeyId
-                        : providerName === 'vultr'
-                          ? sshKey[0].vultrKeyId
-                          : sshKey[0].providerKeyId
-                if (keyId) {
-                    providerSshKeyIds = [keyId]
-                }
+        if (sshKeyResult && sshKeyResult[0]) {
+            const keyId =
+                providerName === 'digitalocean'
+                    ? sshKeyResult[0].digitaloceanKeyId
+                    : providerName === 'vultr'
+                      ? sshKeyResult[0].vultrKeyId
+                      : sshKeyResult[0].providerKeyId
+            if (keyId) {
+                providerSshKeyIds = [keyId]
             }
         }
 
@@ -98,9 +101,7 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             finalPassword,
             subdomain,
             DOMAIN,
-            gatewayToken,
-            model || undefined,
-            apiToken || undefined
+            gatewayToken
         )
 
         const { serverId, ip } = await provider.createServer(
@@ -113,28 +114,28 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             cloudInitScript
         )
 
-        try {
-            await cloudflare.createDNSRecord(subdomain, ip)
-        } catch (dnsErr) {
-            console.error('Failed to create DNS record:', dnsErr)
-        }
-
-        await db.insert(claws).values({
-            id,
-            userId,
-            name,
-            provider: providerName || 'hetzner',
-            providerServerId: serverId.toString(),
-            status: 'configuring',
-            ip,
-            planId,
-            location,
-            rootPassword: finalPassword,
-            sshKeyId: sshKeyId || null,
-            subdomain,
-            gatewayToken,
-            model: model || null
-        })
+        await Promise.all([
+            cloudflare
+                .createDNSRecord(subdomain, ip)
+                .catch((dnsErr) =>
+                    console.error('Failed to create DNS record:', dnsErr)
+                ),
+            db.insert(claws).values({
+                id,
+                userId,
+                name,
+                provider: providerName || 'hetzner',
+                providerServerId: serverId.toString(),
+                status: clawStatus.configuring,
+                ip,
+                planId,
+                location,
+                rootPassword: finalPassword,
+                sshKeyId: sshKeyId || null,
+                subdomain,
+                gatewayToken
+            })
+        ])
 
         let createdVolume = null
         if (volumeSize && volumeSize >= 10) {
@@ -168,24 +169,26 @@ const createClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             }
         }
 
-        return ok(c, {
-            id,
-            name,
-            provider: providerName || 'hetzner',
-            status: 'configuring',
-            ip,
-            planId,
-            location,
-            subdomain,
-            url: `https://${subdomain}.${DOMAIN}`,
-            createdAt: new Date().toISOString(),
-            rootPassword: finalPassword,
-            gatewayToken,
-            volume: createdVolume
-        }, t('api.clawCreated'))
-    } catch (err) {
-        console.error('Create claw error:', err)
-        return fail(c, err instanceof Error ? err.message : t('api.failedToCreateClaw'), 500)
+        return ok(
+            c,
+            {
+                id,
+                name,
+                provider: providerName || 'hetzner',
+                status: clawStatus.configuring,
+                ip,
+                planId,
+                location,
+                subdomain,
+                url: `https://${subdomain}.${DOMAIN}`,
+                createdAt: new Date().toISOString(),
+                rootPassword: finalPassword,
+                volume: createdVolume
+            },
+            t('api.clawCreated')
+        )
+    } catch {
+        return fail(c, t('api.failedToCreateClaw'), 500)
     }
 }
 

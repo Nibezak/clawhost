@@ -29,7 +29,6 @@ export interface Claw {
     providerServerId: string | null
     subdomain: string | null
     gatewayToken: string | null
-    model: string | null
     subscriptionStatus: string | null
     currentPeriodStart: string | null
     currentPeriodEnd: string | null
@@ -124,6 +123,10 @@ export interface ProviderIconProps {
     size?: number
 }
 
+export interface AuthProviderProps {
+    children: ReactNode
+}
+
 export interface AuthContextValue {
     user: FirebaseUser | null
     loading: boolean
@@ -199,12 +202,6 @@ export interface PlanAvailability {
     [planId: string]: string[]
 }
 
-export interface AIModelOption {
-    id: string
-    name: string
-    provider: string
-}
-
 export interface PurchaseClawData {
     name: string
     provider: ProviderType
@@ -213,8 +210,6 @@ export interface PurchaseClawData {
     password?: string
     sshKeyId?: string
     volumeSize?: number
-    model?: string
-    apiToken?: string
     priceMonthly: number
 }
 

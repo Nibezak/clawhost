@@ -5,10 +5,11 @@ import type {
 import type { ProviderType } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
+import { clawStatus } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws, pendingClaws, sshKeys, volumes } from '@/db/schema'
 import { getProvider } from '@/services/provider'
-import { cloudflare } from '@/services/cloudflare'
+import cloudflare from '@/services/cloudflare'
 import {
     generateSlug,
     generateToken,
@@ -46,7 +47,18 @@ export async function provisionClaw(
         const provider = getProvider(providerName)
 
         const MIN_MEMORY_GB = 4
-        const serverTypes = await provider.getServerTypes()
+
+        const [serverTypes, sshKeyResult] = await Promise.all([
+            provider.getServerTypes(),
+            pending.sshKeyId
+                ? db
+                      .select()
+                      .from(sshKeys)
+                      .where(eq(sshKeys.id, pending.sshKeyId))
+                      .limit(1)
+                : Promise.resolve(null)
+        ])
+
         const selectedPlan = serverTypes.find(
             (st) => st.name === pending.planId
         )
@@ -60,23 +72,15 @@ export async function provisionClaw(
         const gatewayToken = generateToken()
 
         let providerSshKeyIds: number[] | undefined
-        if (pending.sshKeyId) {
-            const sshKey = await db
-                .select()
-                .from(sshKeys)
-                .where(eq(sshKeys.id, pending.sshKeyId))
-                .limit(1)
-
-            if (sshKey[0]) {
-                const keyId =
-                    providerName === 'digitalocean'
-                        ? sshKey[0].digitaloceanKeyId
-                        : providerName === 'vultr'
-                          ? sshKey[0].vultrKeyId
-                          : sshKey[0].providerKeyId
-                if (keyId) {
-                    providerSshKeyIds = [keyId]
-                }
+        if (sshKeyResult && sshKeyResult[0]) {
+            const keyId =
+                providerName === 'digitalocean'
+                    ? sshKeyResult[0].digitaloceanKeyId
+                    : providerName === 'vultr'
+                      ? sshKeyResult[0].vultrKeyId
+                      : sshKeyResult[0].providerKeyId
+            if (keyId) {
+                providerSshKeyIds = [keyId]
             }
         }
 
@@ -84,9 +88,7 @@ export async function provisionClaw(
             pending.rootPassword || '',
             subdomain,
             DOMAIN,
-            gatewayToken,
-            pending.model || undefined,
-            pending.apiToken || undefined
+            gatewayToken
         )
 
         await db.insert(claws).values({
@@ -94,14 +96,13 @@ export async function provisionClaw(
             userId: pending.userId,
             name: pending.name,
             provider: providerName,
-            status: 'creating',
+            status: clawStatus.creating,
             planId: pending.planId,
             location: pending.location,
             rootPassword: pending.rootPassword,
             sshKeyId: pending.sshKeyId,
             subdomain,
             gatewayToken,
-            model: pending.model,
             polarSubscriptionId: params.subscriptionId,
             polarProductId: params.productId,
             polarCustomerId: params.customerId,
@@ -128,20 +129,21 @@ export async function provisionClaw(
             throw providerErr
         }
 
-        try {
-            await cloudflare.createDNSRecord(subdomain, ip)
-        } catch (dnsErr) {
-            console.error('Failed to create DNS record:', dnsErr)
-        }
-
-        await db
-            .update(claws)
-            .set({
-                providerServerId: serverId.toString(),
-                status: 'configuring',
-                ip
-            })
-            .where(eq(claws.id, id))
+        await Promise.all([
+            cloudflare
+                .createDNSRecord(subdomain, ip)
+                .catch((dnsErr) =>
+                    console.error('Failed to create DNS record:', dnsErr)
+                ),
+            db
+                .update(claws)
+                .set({
+                    providerServerId: serverId.toString(),
+                    status: clawStatus.configuring,
+                    ip
+                })
+                .where(eq(claws.id, id))
+        ])
 
         if (pending.volumeSize && pending.volumeSize >= 10) {
             try {
@@ -173,10 +175,7 @@ export async function provisionClaw(
         console.error('Provision claw error:', err)
         return {
             success: false,
-            error:
-                err instanceof Error
-                    ? err.message
-                    : t('api.failedToProvisionClaw')
+            error: t('api.failedToProvisionClaw')
         }
     }
 }

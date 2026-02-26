@@ -1,8 +1,8 @@
 import type { FC, ReactNode } from 'react'
 import type { EmptyStateProps } from '@/ts/Interfaces'
 
-import { ActionButton } from '@/components/ActionButton'
-import { Lightning } from '@phosphor-icons/react'
+import { ActionButton } from '@/components'
+import { LightningIcon } from '@phosphor-icons/react'
 
 const EmptyState: FC<EmptyStateProps> = ({
     icon,
@@ -26,7 +26,7 @@ const EmptyState: FC<EmptyStateProps> = ({
                     onClick={onAction}
                     icon={
                         actionIcon || (
-                            <Lightning className='h-5 w-5' weight='fill' />
+                            <LightningIcon className='h-5 w-5' weight='fill' />
                         )
                     }
                     label={actionLabel}
@@ -37,4 +37,4 @@ const EmptyState: FC<EmptyStateProps> = ({
     )
 }
 
-export { EmptyState }
+export default EmptyState

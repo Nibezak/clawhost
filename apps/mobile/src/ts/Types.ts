@@ -2,20 +2,9 @@ export type ProviderType = 'hetzner' | 'digitalocean' | 'vultr'
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info'
 
-export type ClawStatus =
-    | 'initializing'
-    | 'starting'
-    | 'running'
-    | 'stopping'
-    | 'off'
-    | 'stopped'
-    | 'deleting'
-    | 'migrating'
-    | 'rebuilding'
-    | 'unknown'
-    | 'creating'
-    | 'configuring'
-    | 'restarting'
+import type { clawStatus } from '@openclaw/shared'
+
+export type ClawStatus = (typeof clawStatus)[keyof typeof clawStatus]
 
 export type UserRole = 'user' | 'admin'
 

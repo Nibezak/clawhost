@@ -1,4 +1,5 @@
 import type { Context } from 'hono'
+import type { PlanConfig } from '@/ts/Interfaces'
 import type { ProviderType } from '@/ts/Types'
 
 import { getProvider } from '@/services/provider'
@@ -122,13 +123,10 @@ const vultrCustomPrices: Record<string, number> = {
 const MIN_MEMORY_GB = 4
 
 const providerLimits: Partial<Record<ProviderType, number>> = {
-    hetzner: 10
+    hetzner: 60
 }
 
-const planConfigs: Record<
-    ProviderType,
-    { order: string[]; prices: Record<string, number> }
-> = {
+const planConfigs: Record<ProviderType, PlanConfig> = {
     hetzner: { order: hetznerPlanOrder, prices: hetznerCustomPrices },
     digitalocean: {
         order: digitaloceanPlanOrder,

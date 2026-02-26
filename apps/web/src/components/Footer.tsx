@@ -2,10 +2,12 @@ import type { FC, ReactNode } from 'react'
 
 import { Link } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
+import { ROUTES } from '@/lib'
+import { SUPPORT_EMAIL } from '@/lib/links'
 
 const Footer: FC = (): ReactNode => {
     return (
-        <footer className='relative mt-auto border-t border-white/10'>
+        <footer className='border-border relative mt-auto border-t'>
             <div className='mx-auto max-w-6xl px-6 py-6'>
                 <div className='flex flex-col items-center justify-between gap-4 sm:flex-row'>
                     <p className='text-muted-foreground text-sm'>
@@ -14,25 +16,31 @@ const Footer: FC = (): ReactNode => {
                     </p>
                     <div className='flex items-center gap-6'>
                         <Link
-                            to='/terms'
+                            to={ROUTES.TERMS}
                             className='text-muted-foreground hover:text-foreground text-sm transition-colors'
                         >
                             {t('footer.termsOfService')}
                         </Link>
                         <Link
-                            to='/privacy'
+                            to={ROUTES.PRIVACY}
                             className='text-muted-foreground hover:text-foreground text-sm transition-colors'
                         >
                             {t('footer.privacyPolicy')}
                         </Link>
                         <Link
-                            to='/changelog'
+                            to={ROUTES.CHANGELOG}
                             className='text-muted-foreground hover:text-foreground text-sm transition-colors'
                         >
                             {t('footer.changelog')}
                         </Link>
+                        <Link
+                            to={ROUTES.FEATURE_REQUESTS}
+                            className='text-muted-foreground hover:text-foreground text-sm transition-colors'
+                        >
+                            {t('footer.featureRequests')}
+                        </Link>
                         <a
-                            href='mailto:support@clawhost.cloud'
+                            href={SUPPORT_EMAIL}
                             className='text-muted-foreground hover:text-foreground text-sm transition-colors'
                         >
                             {t('footer.getInTouch')}
@@ -44,4 +52,4 @@ const Footer: FC = (): ReactNode => {
     )
 }
 
-export { Footer }
+export default Footer

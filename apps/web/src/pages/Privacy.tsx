@@ -1,17 +1,18 @@
 import type { FC, ReactNode } from 'react'
 
 import { motion } from 'framer-motion'
-import { Header } from '@/components/Header'
-import { LandingFooter } from '@/components/LandingFooter'
-import { PageBackground } from '@/components/PageBackground'
-import { PageTitle } from '@/components/PageTitle'
+import { t } from '@openclaw/i18n'
+import { LEGAL_EMAIL } from '@/lib/links'
+import { BlogCTA, Header, LandingFooter, PageBackground, PageTitle } from '@/components'
+import { PATHS, getBaseDomain } from '@/lib'
 
 const Privacy: FC = (): ReactNode => {
     return (
-        <div className='relative flex min-h-screen flex-col bg-[#0a0a0f] text-white'>
+        <div className='bg-background text-foreground relative flex min-h-screen flex-col'>
             <PageTitle
-                title='Privacy Policy'
-                description='Learn how ClawHost collects, uses, and protects your personal data.'
+                title={t('privacy.title')}
+                description={t('privacy.description')}
+                url={`https://${getBaseDomain()}/${PATHS.PRIVACY}`}
             />
             <PageBackground />
             <Header />
@@ -23,213 +24,177 @@ const Privacy: FC = (): ReactNode => {
                 className='relative mx-auto w-full max-w-6xl flex-1 px-6 py-12'
             >
                 <h1 className='font-clash mb-2 text-4xl font-bold'>
-                    Privacy Policy
+                    {t('privacy.title')}
                 </h1>
                 <p className='text-muted-foreground mb-12'>
-                    Last updated: February 7, 2026
+                    {t('privacy.lastUpdated')}
                 </p>
 
-                <div className='prose prose-invert prose-sm max-w-none space-y-8'>
+                <div className='prose dark:prose-invert prose-sm max-w-none space-y-8'>
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
-                            1. Introduction
+                            {t('privacy.introTitle')}
                         </h2>
                         <p className='text-muted-foreground leading-relaxed'>
-                            ClawHost ("we", "our", or "us") is committed to
-                            protecting your privacy. This Privacy Policy
-                            explains how we collect, use, disclose, and
-                            safeguard your information when you use our Service.
+                            {t('privacy.introText')}
                         </p>
                     </section>
 
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
-                            2. Information We Collect
+                            {t('privacy.authTitle')}
+                        </h2>
+                        <p className='text-muted-foreground leading-relaxed'>
+                            {t('privacy.authText')}
+                        </p>
+                    </section>
+
+                    <section>
+                        <h2 className='mb-3 text-xl font-semibold'>
+                            {t('privacy.collectTitle')}
                         </h2>
                         <p className='text-muted-foreground mb-3 leading-relaxed'>
-                            We collect information in the following ways:
+                            {t('privacy.collectText')}
                         </p>
 
                         <h3 className='mb-2 text-lg font-medium'>
-                            Personal Information
+                            {t('privacy.personalInfoTitle')}
                         </h3>
                         <ul className='text-muted-foreground list-inside list-disc space-y-2'>
-                            <li>
-                                Email address (for account creation and
-                                communication)
-                            </li>
-                            <li>Name (optional, for personalization)</li>
-                            <li>
-                                Payment information (processed securely by
-                                third-party providers)
-                            </li>
+                            <li>{t('privacy.personalInfoEmail')}</li>
+                            <li>{t('privacy.personalInfoName')}</li>
+                            <li>{t('privacy.personalInfoPayment')}</li>
                         </ul>
 
                         <h3 className='mb-2 mt-4 text-lg font-medium'>
-                            Server Information
+                            {t('privacy.serverInfoTitle')}
                         </h3>
                         <ul className='text-muted-foreground list-inside list-disc space-y-2'>
-                            <li>
-                                Server configuration and status (hosted on
-                                Hetzner Cloud)
-                            </li>
-                            <li>Server IP address and location</li>
-                            <li>Resource allocation (CPU, RAM, storage)</li>
+                            <li>{t('privacy.serverInfoConfig')}</li>
+                            <li>{t('privacy.serverInfoIp')}</li>
+                            <li>{t('privacy.serverInfoResources')}</li>
                         </ul>
                     </section>
 
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
-                            3. How We Use Your Information
+                            {t('privacy.useTitle')}
                         </h2>
                         <p className='text-muted-foreground leading-relaxed'>
-                            We use the collected information to:
+                            {t('privacy.useText')}
                         </p>
                         <ul className='text-muted-foreground mt-2 list-inside list-disc space-y-2'>
-                            <li>Provide and maintain our Service</li>
-                            <li>
-                                Process transactions and send billing
-                                information
-                            </li>
-                            <li>Send important notices and updates</li>
-                            <li>Respond to customer support requests</li>
-                            <li>
-                                Monitor and analyze usage patterns to improve
-                                our Service
-                            </li>
-                            <li>Detect and prevent fraud or abuse</li>
+                            <li>{t('privacy.useProvide')}</li>
+                            <li>{t('privacy.useTransactions')}</li>
+                            <li>{t('privacy.useNotices')}</li>
+                            <li>{t('privacy.useSupport')}</li>
+                            <li>{t('privacy.useAnalyze')}</li>
+                            <li>{t('privacy.useFraud')}</li>
                         </ul>
                     </section>
 
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
-                            4. Data Sharing and Disclosure
+                            {t('privacy.sharingTitle')}
                         </h2>
                         <p className='text-muted-foreground leading-relaxed'>
-                            We do not sell your personal information. We may
-                            share information with:
+                            {t('privacy.sharingText')}
                         </p>
                         <ul className='text-muted-foreground mt-2 list-inside list-disc space-y-2'>
-                            <li>
-                                Service providers who assist in operating our
-                                Service (e.g., cloud infrastructure providers)
-                            </li>
-                            <li>
-                                Legal authorities when required by law or to
-                                protect our rights
-                            </li>
-                            <li>
-                                Business partners in case of merger,
-                                acquisition, or sale of assets
-                            </li>
+                            <li>{t('privacy.sharingProviders')}</li>
+                            <li>{t('privacy.sharingLegal')}</li>
+                            <li>{t('privacy.sharingBusiness')}</li>
                         </ul>
                     </section>
 
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
-                            5. Data Security
+                            {t('privacy.securityTitle')}
                         </h2>
                         <p className='text-muted-foreground leading-relaxed'>
-                            We implement appropriate technical and
-                            organizational measures to protect your personal
-                            information against unauthorized access, alteration,
-                            disclosure, or destruction. This includes
-                            encryption, secure servers, and regular security
-                            assessments.
+                            {t('privacy.securityText')}
                         </p>
                     </section>
 
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
-                            6. Data Retention
+                            {t('privacy.retentionTitle')}
                         </h2>
                         <p className='text-muted-foreground leading-relaxed'>
-                            We retain your personal information for as long as
-                            your account is active or as needed to provide you
-                            services. We may retain certain information as
-                            required by law or for legitimate business purposes.
+                            {t('privacy.retentionText')}
                         </p>
                     </section>
 
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
-                            7. Your Rights
+                            {t('privacy.rightsTitle')}
                         </h2>
                         <p className='text-muted-foreground leading-relaxed'>
-                            Depending on your location, you may have the right
-                            to:
+                            {t('privacy.rightsText')}
                         </p>
                         <ul className='text-muted-foreground mt-2 list-inside list-disc space-y-2'>
-                            <li>Access your personal data</li>
-                            <li>Correct inaccurate data</li>
-                            <li>Request deletion of your data</li>
-                            <li>Object to processing of your data</li>
-                            <li>Data portability</li>
-                            <li>Withdraw consent at any time</li>
+                            <li>{t('privacy.rightsAccess')}</li>
+                            <li>{t('privacy.rightsCorrect')}</li>
+                            <li>{t('privacy.rightsDelete')}</li>
+                            <li>{t('privacy.rightsObject')}</li>
+                            <li>{t('privacy.rightsPortability')}</li>
+                            <li>{t('privacy.rightsWithdraw')}</li>
                         </ul>
                     </section>
 
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
-                            8. Cookies and Tracking
+                            {t('privacy.cookiesTitle')}
                         </h2>
                         <p className='text-muted-foreground leading-relaxed'>
-                            We do not use cookies. Authentication is handled
-                            through Firebase and does not rely on cookies stored
-                            in your browser.
+                            {t('privacy.cookiesText')}
                         </p>
                     </section>
 
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
-                            9. International Data Transfers
+                            {t('privacy.transfersTitle')}
                         </h2>
                         <p className='text-muted-foreground leading-relaxed'>
-                            Your information may be transferred to and processed
-                            in countries other than your own. We ensure
-                            appropriate safeguards are in place to protect your
-                            data in accordance with this Privacy Policy.
+                            {t('privacy.transfersText')}
                         </p>
                     </section>
 
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
-                            10. Eligibility
+                            {t('privacy.eligibilityTitle')}
                         </h2>
                         <p className='text-muted-foreground leading-relaxed'>
-                            Our Service is available to anyone. There are no age
-                            restrictions for using ClawHost.
+                            {t('privacy.eligibilityText')}
                         </p>
                     </section>
 
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
-                            11. Changes to This Policy
+                            {t('privacy.changesTitle')}
                         </h2>
                         <p className='text-muted-foreground leading-relaxed'>
-                            We may update this Privacy Policy from time to time.
-                            We will notify you of any changes by posting the new
-                            Privacy Policy on this page and updating the "Last
-                            updated" date.
+                            {t('privacy.changesText')}
                         </p>
                     </section>
 
                     <section>
                         <h2 className='mb-3 text-xl font-semibold'>
-                            12. Contact Us
+                            {t('privacy.contactTitle')}
                         </h2>
                         <p className='text-muted-foreground leading-relaxed'>
-                            If you have questions about this Privacy Policy or
-                            wish to exercise your rights, please contact us at{' '}
+                            {t('privacy.contactText')}{' '}
                             <a
-                                href='mailto:legal@clawhost.cloud'
+                                href={LEGAL_EMAIL}
                                 className='text-primary hover:underline'
                             >
-                                legal@clawhost.cloud
+                                {t('common.legalEmail')}
                             </a>
                         </p>
                     </section>
                 </div>
+
+                <BlogCTA />
             </motion.main>
 
             <LandingFooter />

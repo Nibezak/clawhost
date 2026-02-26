@@ -57,4 +57,4 @@ const ClawMascotOutline: FC<ClawMascotProps> = ({ className }): ReactNode => {
     )
 }
 
-export { ClawMascotOutline }
+export default ClawMascotOutline

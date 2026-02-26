@@ -1,5 +1,5 @@
-import sendMagicLink from '@/controllers/auth/sendMagicLink'
+import resolveCredentialConflict from '@/controllers/auth/resolveCredentialConflict'
 import sendOtp from '@/controllers/auth/sendOtp'
 import verifyOtp from '@/controllers/auth/verifyOtp'
 
-export { sendMagicLink, sendOtp, verifyOtp }
+export { resolveCredentialConflict, sendOtp, verifyOtp }

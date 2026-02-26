@@ -2,20 +2,25 @@ import type { FC, ReactNode } from 'react'
 
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { Header } from '@/components/Header'
-import { LandingFooter } from '@/components/LandingFooter'
-import { PageBackground } from '@/components/PageBackground'
-import { PageTitle } from '@/components/PageTitle'
-import { JsonLd } from '@/components/JsonLd'
-import { BlogCard } from '@/components/BlogCard'
+import {
+    BlogCard,
+    BlogCTA,
+    Header,
+    LandingFooter,
+    PageBackground,
+    PageTitle,
+    JsonLd
+} from '@/components'
 import { allPosts } from '@/lib/blog'
+import { PATHS, getBaseDomain } from '@/lib'
 
 const Blog: FC = (): ReactNode => {
     return (
-        <div className='relative flex min-h-screen flex-col bg-[#0a0a0f] text-white'>
+        <div className='bg-background text-foreground relative flex min-h-screen flex-col'>
             <PageTitle
                 title={t('blog.title')}
                 description={t('blog.description')}
+                url={`https://${getBaseDomain()}/${PATHS.BLOG}`}
             />
             <JsonLd
                 data={{
@@ -23,7 +28,7 @@ const Blog: FC = (): ReactNode => {
                     '@type': 'Blog',
                     name: 'ClawHost Blog',
                     description: t('blog.description'),
-                    url: 'https://clawhost.cloud/posts'
+                    url: `https://${getBaseDomain()}/${PATHS.BLOG}`
                 }}
             />
             <PageBackground />
@@ -58,6 +63,8 @@ const Blog: FC = (): ReactNode => {
                         </p>
                     </div>
                 )}
+
+                <BlogCTA />
             </motion.main>
 
             <LandingFooter />

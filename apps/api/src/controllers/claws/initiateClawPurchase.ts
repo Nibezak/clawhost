@@ -1,6 +1,5 @@
-import type { Context } from 'hono'
 import type { InitiateClawPurchaseBody } from '@/ts/Interfaces'
-import type { ProviderType } from '@/ts/Types'
+import type { AuthenticatedContext, ProviderType } from '@/ts/Types'
 
 import { eq, and, count, lt } from 'drizzle-orm'
 import { db } from '@/db'
@@ -10,6 +9,7 @@ import { generatePassword } from '@/controllers/claws/helpers'
 import { getProvider } from '@/services/provider'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
+import { getEnvironment } from '@/lib/environment'
 
 const adjectives = [
     'cozy',
@@ -115,9 +115,7 @@ function getPolarProductId(
     else return null
 }
 
-const initiateClawPurchase = async (
-    c: Context<{ Variables: { userId: string } }>
-) => {
+const initiateClawPurchase = async (c: AuthenticatedContext) => {
     try {
         if (Date.now() - lastPendingCleanup > CLEANUP_INTERVAL) {
             await db
@@ -135,8 +133,6 @@ const initiateClawPurchase = async (
             password,
             sshKeyId,
             volumeSize,
-            model,
-            apiToken,
             priceMonthly
         } = await c.req.json<InitiateClawPurchaseBody>()
 
@@ -180,16 +176,6 @@ const initiateClawPurchase = async (
             return fail(c, t('api.invalidLocation'), 400)
         }
 
-        const MAX_CLAWS_PER_ACCOUNT = 50
-        const [{ value: clawCount }] = await db
-            .select({ value: count() })
-            .from(claws)
-            .where(eq(claws.userId, userId))
-
-        if (clawCount >= MAX_CLAWS_PER_ACCOUNT) {
-            return fail(c, t('api.clawLimitReached'), 400)
-        }
-
         const name = rawName || generateClawName()
 
         if (
@@ -199,36 +185,45 @@ const initiateClawPurchase = async (
             return fail(c, t('api.volumeSizeInvalid'), 400)
         }
 
-        const user = await db
-            .select()
-            .from(users)
-            .where(eq(users.id, userId))
-            .limit(1)
+        const [clawCountResult, userResult, sshKeyResult] = await Promise.all([
+            db
+                .select({ value: count() })
+                .from(claws)
+                .where(eq(claws.userId, userId)),
+            db.select().from(users).where(eq(users.id, userId)).limit(1),
+            sshKeyId
+                ? db
+                      .select()
+                      .from(sshKeys)
+                      .where(
+                          and(
+                              eq(sshKeys.id, sshKeyId),
+                              eq(sshKeys.userId, userId)
+                          )
+                      )
+                      .limit(1)
+                : Promise.resolve(null)
+        ])
 
-        if (!user[0]) {
+        const MAX_CLAWS_PER_ACCOUNT = 50
+        if (clawCountResult[0].value >= MAX_CLAWS_PER_ACCOUNT) {
+            return fail(c, t('api.clawLimitReached'), 400)
+        }
+
+        if (!userResult[0]) {
             return fail(c, t('api.userNotFound'), 404)
         }
 
-        if (sshKeyId) {
-            const sshKey = await db
-                .select()
-                .from(sshKeys)
-                .where(
-                    and(eq(sshKeys.id, sshKeyId), eq(sshKeys.userId, userId))
-                )
-                .limit(1)
-
-            if (!sshKey[0]) {
-                return fail(c, t('api.sshKeyNotFound'), 404)
-            }
+        if (sshKeyId && (!sshKeyResult || !sshKeyResult[0])) {
+            return fail(c, t('api.sshKeyNotFound'), 404)
         }
 
-        let polarCustomerId = user[0].polarCustomerId
+        let polarCustomerId = userResult[0].polarCustomerId
 
         if (!polarCustomerId) {
             const customer = await customers.getOrCreate({
-                email: user[0].email,
-                name: user[0].name || undefined,
+                email: userResult[0].email,
+                name: userResult[0].name || undefined,
                 externalId: userId
             })
             polarCustomerId = customer.id
@@ -249,18 +244,19 @@ const initiateClawPurchase = async (
 
         const checkout = await checkouts.create({
             productId,
-            customerEmail: user[0].email,
+            customerEmail: userResult[0].email,
             customerId: polarCustomerId,
             metadata: {
                 pendingClawId: pendingId,
                 userId,
                 planId,
                 location,
-                name
+                name,
+                environment: getEnvironment(c)
             }
         })
 
-        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000)
+        const expiresAt = new Date(Date.now() + 60 * 60 * 1000)
 
         await db.insert(pendingClaws).values({
             id: pendingId,
@@ -273,22 +269,22 @@ const initiateClawPurchase = async (
             rootPassword: finalPassword,
             sshKeyId: sshKeyId || null,
             volumeSize: volumeSize || null,
-            model: model || null,
-            apiToken: apiToken || null,
             priceMonthly: Math.round(priceMonthly * 100),
             expiresAt
         })
 
-        return ok(c, { checkoutUrl: checkout.url, checkoutId: checkout.id, pendingClawId: pendingId, expiresAt: expiresAt.toISOString() }, t('api.clawPurchaseInitiated'))
-    } catch (err) {
-        console.error('Initiate claw purchase error:', err)
-        return fail(
+        return ok(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToInitiatePurchase'),
-            500
+            {
+                checkoutUrl: checkout.url,
+                checkoutId: checkout.id,
+                pendingClawId: pendingId,
+                expiresAt: expiresAt.toISOString()
+            },
+            t('api.clawPurchaseInitiated')
         )
+    } catch {
+        return fail(c, t('api.failedToInitiatePurchase'), 500)
     }
 }
 

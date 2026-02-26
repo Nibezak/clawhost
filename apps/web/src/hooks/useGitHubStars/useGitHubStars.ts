@@ -5,14 +5,14 @@ import GITHUB_STARS_QUERY_KEY from '@/hooks/useGitHubStars/GITHUB_STARS_QUERY_KE
 
 const GITHUB_REPO = 'bfzli/clawhost'
 
-function formatStars(count: number): string {
+const formatStars = (count: number): string => {
     if (count >= 1000) {
         return `${(count / 1000).toFixed(1).replace(/\.0$/, '')}k`
     }
     return count.toString()
 }
 
-async function fetchGitHubStars(): Promise<GitHubStarsData> {
+const fetchGitHubStars = async (): Promise<GitHubStarsData> => {
     const response = await fetch(`https://api.github.com/repos/${GITHUB_REPO}`)
     if (!response.ok) {
         throw new Error('Failed to fetch GitHub stars')

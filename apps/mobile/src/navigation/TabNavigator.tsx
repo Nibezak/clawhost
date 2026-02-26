@@ -6,10 +6,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { User } from 'phosphor-react-native'
 import { BlurView } from 'expo-blur'
 import { t } from '@openclaw/i18n'
-import COLORS from '@/lib/theme/colors'
-import ClawMascotOutline from '@/components/ClawMascotOutline'
-import ClawsScreen from '@/screens/ClawsScreen'
-import AccountScreen from '@/screens/AccountScreen'
+import { COLORS } from '@/lib/theme'
+import { ClawMascotOutline } from '@/components'
+import { ClawsScreen, AccountScreen } from '@/screens'
 
 const Tab = createBottomTabNavigator<RootTabParamList>()
 
@@ -34,9 +33,13 @@ const TabNavigator: FC = (): ReactNode => {
                 ),
                 tabBarActiveTintColor: COLORS.tabBarActive,
                 tabBarInactiveTintColor: COLORS.tabBarInactive,
+                tabBarIconStyle: {
+                    marginBottom: 4
+                },
                 tabBarLabelStyle: {
                     fontSize: 12,
-                    fontFamily: 'Satoshi-Medium'
+                    fontFamily: 'Satoshi-Medium',
+                    marginTop: 2
                 }
             }}
         >
@@ -44,7 +47,9 @@ const TabNavigator: FC = (): ReactNode => {
                 name='Claws'
                 options={{
                     tabBarLabel: t('nav.claws'),
-                    tabBarIcon: ({ color, size }) => <ClawMascotOutline size={size} color={color} />
+                    tabBarIcon: ({ color, size }) => (
+                        <ClawMascotOutline size={size} color={color} />
+                    )
                 }}
             >
                 {() => <ClawsScreen />}
@@ -53,7 +58,9 @@ const TabNavigator: FC = (): ReactNode => {
                 name='Account'
                 options={{
                     tabBarLabel: t('nav.account'),
-                    tabBarIcon: ({ color, size }) => <User size={size} color={color} weight='bold' />
+                    tabBarIcon: ({ color, size }) => (
+                        <User size={size} color={color} weight='bold' />
+                    )
                 }}
             >
                 {() => <AccountScreen />}

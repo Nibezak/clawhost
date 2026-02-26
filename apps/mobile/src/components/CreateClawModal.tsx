@@ -28,7 +28,7 @@ import {
 } from 'phosphor-react-native'
 import * as Clipboard from 'expo-clipboard'
 import { t } from '@openclaw/i18n'
-import { useAuth } from '@/lib/auth/AuthProvider'
+import { useAuth } from '@/lib/auth'
 import {
     usePlans,
     useLocations,
@@ -37,15 +37,16 @@ import {
     useSSHKeys,
     usePurchaseClaw
 } from '@/hooks'
-import { generatePassword, locationFlags, aiModels } from '@/lib/claw-utils'
+import { generatePassword, locationFlags } from '@/lib/claw-utils'
 import { COLORS, SPACING, TYPOGRAPHY } from '@/lib/theme'
 import ProviderIcon from '@/components/ProviderIcon'
 
-const PROVIDERS: { id: ProviderType; label: string; recommended?: boolean }[] = [
-    { id: 'hetzner', label: 'Hetzner', recommended: true },
-    { id: 'digitalocean', label: 'DigitalOcean' },
-    { id: 'vultr', label: 'Vultr' }
-]
+const PROVIDERS: { id: ProviderType; label: string; recommended?: boolean }[] =
+    [
+        { id: 'hetzner', label: 'Hetzner', recommended: true },
+        { id: 'digitalocean', label: 'DigitalOcean' },
+        { id: 'vultr', label: 'Vultr' }
+    ]
 
 const TIER_STARTS: Record<string, Record<string, string>> = {
     hetzner: {
@@ -60,7 +61,10 @@ const TIER_STARTS: Record<string, Record<string, string>> = {
     }
 }
 
-const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactNode => {
+const CreateClawModal: FC<CreateClawModalProps> = ({
+    visible,
+    onClose
+}): ReactNode => {
     const insets = useSafeAreaInsets()
     const { user } = useAuth()
 
@@ -72,13 +76,18 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactN
     const [showPassword, setShowPassword] = useState(false)
     const [selectedSshKeyId, setSelectedSshKeyId] = useState('')
     const [volumeSize, setVolumeSize] = useState(0)
-    const [model, setModel] = useState('')
-    const [apiToken, setApiToken] = useState('')
     const [showAdvanced, setShowAdvanced] = useState(false)
-    const [showModelPicker, setShowModelPicker] = useState(false)
 
-    const { data: plansData, isLoading: isLoadingPlans } = usePlans(user, provider)
-    const { data: locationsData, isLoading: isLoadingLocations } = useLocations(user, provider)
+    const {
+        data: plansData,
+        isPending: isLoadingPlans,
+        isError: isPlansError
+    } = usePlans(user, provider)
+    const {
+        data: locationsData,
+        isPending: isLoadingLocations,
+        isError: isLocationsError
+    } = useLocations(user, provider)
     const { data: volumePricing } = useVolumePricing(user, provider)
     const { data: planAvailability } = usePlanAvailability(user, provider)
     const { data: sshKeys } = useSSHKeys(user)
@@ -89,7 +98,10 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactN
     const locations = locationsData || []
     const isProviderLoading = isLoadingPlans || isLoadingLocations
 
-    const isLocationAvailableForPlan = (locationId: string, selectedPlanId: string): boolean => {
+    const isLocationAvailableForPlan = (
+        locationId: string,
+        selectedPlanId: string
+    ): boolean => {
         if (!planAvailability) return true
         const available = planAvailability[selectedPlanId]
         if (!available) return true
@@ -98,7 +110,8 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactN
 
     const getFirstAvailableLocation = (selectedPlanId: string): string => {
         const available = locations.find(
-            (l) => !l.disabled && isLocationAvailableForPlan(l.id, selectedPlanId)
+            (l) =>
+                !l.disabled && isLocationAvailableForPlan(l.id, selectedPlanId)
         )
         return available?.id || locations[0]?.id || ''
     }
@@ -120,8 +133,13 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactN
 
     useEffect(() => {
         if (planId && planAvailability) {
-            const currentAvailable = isLocationAvailableForPlan(location, planId)
-            const currentDisabled = locations.find((l) => l.id === location)?.disabled
+            const currentAvailable = isLocationAvailableForPlan(
+                location,
+                planId
+            )
+            const currentDisabled = locations.find(
+                (l) => l.id === location
+            )?.disabled
             if (!currentAvailable || currentDisabled) {
                 setLocation(getFirstAvailableLocation(planId))
             }
@@ -168,8 +186,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactN
                 password: password || undefined,
                 sshKeyId: selectedSshKeyId || undefined,
                 volumeSize: volumeSize > 0 ? volumeSize : undefined,
-                model: model || undefined,
-                apiToken: apiToken || undefined,
                 priceMonthly: totalPrice
             },
             {
@@ -193,24 +209,21 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactN
               : 0)
         : 0
 
-    const selectedModelName = model
-        ? aiModels.find((m) => m.id === model)?.name || model
-        : t('createClaw.modelNone')
-
-    const modelGroups = aiModels.reduce<Record<string, typeof aiModels>>((groups, m) => {
-        const group = groups[m.provider] || []
-        group.push(m)
-        groups[m.provider] = group
-        return groups
-    }, {})
-
     return (
-        <Modal visible={visible} animationType='slide' presentationStyle='pageSheet'>
+        <Modal
+            visible={visible}
+            animationType='slide'
+            presentationStyle='pageSheet'
+        >
             <View style={[styles.container, { paddingTop: insets.top }]}>
                 <View style={styles.header}>
                     <View style={styles.headerTextContainer}>
-                        <Text style={styles.headerTitle}>{t('createClaw.title')}</Text>
-                        <Text style={styles.headerDescription}>{t('createClaw.description')}</Text>
+                        <Text style={styles.headerTitle}>
+                            {t('createClaw.title')}
+                        </Text>
+                        <Text style={styles.headerDescription}>
+                            {t('createClaw.description')}
+                        </Text>
                     </View>
                     <Pressable onPress={onClose} style={styles.closeButton}>
                         <X size={20} color={COLORS.textMuted} />
@@ -219,12 +232,17 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactN
 
                 <ScrollView
                     style={styles.scrollView}
-                    contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + SPACING.xxl }]}
+                    contentContainerStyle={[
+                        styles.scrollContent,
+                        { paddingBottom: insets.bottom + SPACING.xxl }
+                    ]}
                     showsVerticalScrollIndicator={false}
                     keyboardShouldPersistTaps='handled'
                 >
                     <View style={styles.section}>
-                        <Text style={styles.label}>{t('createClaw.clawName')}</Text>
+                        <Text style={styles.label}>
+                            {t('createClaw.clawName')}
+                        </Text>
                         <TextInput
                             style={styles.input}
                             value={name}
@@ -247,14 +265,16 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactN
                                     onPress={() => handleProviderChange(p.id)}
                                     style={[
                                         styles.providerChip,
-                                        provider === p.id && styles.providerChipSelected
+                                        provider === p.id &&
+                                            styles.providerChipSelected
                                     ]}
                                 >
                                     <ProviderIcon provider={p.id} size={16} />
                                     <Text
                                         style={[
                                             styles.providerText,
-                                            provider === p.id && styles.providerTextSelected
+                                            provider === p.id &&
+                                                styles.providerTextSelected
                                         ]}
                                     >
                                         {p.label}
@@ -266,7 +286,9 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactN
                                             end={{ x: 1, y: 0 }}
                                             style={styles.recommendedBadge}
                                         >
-                                            <Text style={styles.recommendedText}>
+                                            <Text
+                                                style={styles.recommendedText}
+                                            >
                                                 {t('landing.recommended')}
                                             </Text>
                                         </LinearGradient>
@@ -284,16 +306,30 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactN
                         {isProviderLoading ? (
                             <View style={styles.locationGrid}>
                                 {Array.from({ length: 6 }).map((_, i) => (
-                                    <View key={i} style={styles.skeletonLocation} />
+                                    <View
+                                        key={i}
+                                        style={styles.skeletonLocation}
+                                    />
                                 ))}
+                            </View>
+                        ) : isLocationsError ? (
+                            <View style={styles.errorCard}>
+                                <Text style={styles.errorCardText}>
+                                    {t('errors.failedToLoadLocations')}
+                                </Text>
                             </View>
                         ) : (
                             <View style={styles.locationGrid}>
                                 {locations.map((loc) => {
                                     const isSelected = location === loc.id
                                     const flag = locationFlags[loc.id] || ''
-                                    const unavailableForPlan = !isLocationAvailableForPlan(loc.id, planId)
-                                    const isDisabled = loc.disabled || unavailableForPlan
+                                    const unavailableForPlan =
+                                        !isLocationAvailableForPlan(
+                                            loc.id,
+                                            planId
+                                        )
+                                    const isDisabled =
+                                        loc.disabled || unavailableForPlan
                                     const locationLabel = loc.country
                                         ? `${loc.city}, ${loc.country}`
                                         : loc.city
@@ -301,18 +337,30 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactN
                                     return (
                                         <Pressable
                                             key={loc.id}
-                                            onPress={() => !isDisabled && setLocation(loc.id)}
+                                            onPress={() =>
+                                                !isDisabled &&
+                                                setLocation(loc.id)
+                                            }
                                             style={[
                                                 styles.locationCard,
-                                                isSelected && styles.locationCardSelected,
-                                                isDisabled && styles.locationCardDisabled
+                                                isSelected &&
+                                                    styles.locationCardSelected,
+                                                isDisabled &&
+                                                    styles.locationCardDisabled
                                             ]}
                                         >
-                                            {flag ? <Text style={styles.locationFlag}>{flag}</Text> : null}
+                                            {flag ? (
+                                                <Text
+                                                    style={styles.locationFlag}
+                                                >
+                                                    {flag}
+                                                </Text>
+                                            ) : null}
                                             <Text
                                                 style={[
                                                     styles.locationName,
-                                                    isDisabled && styles.textDisabled
+                                                    isDisabled &&
+                                                        styles.textDisabled
                                                 ]}
                                                 numberOfLines={1}
                                             >
@@ -343,6 +391,12 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactN
                                     <View key={i} style={styles.skeletonPlan} />
                                 ))}
                             </View>
+                        ) : isPlansError ? (
+                            <View style={styles.errorCard}>
+                                <Text style={styles.errorCardText}>
+                                    {t('errors.failedToLoadPlans')}
+                                </Text>
+                            </View>
                         ) : (
                             <View style={styles.planList}>
                                 {plans.map((plan, index) => {
@@ -354,31 +408,50 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactN
                                     return (
                                         <View key={plan.id}>
                                             {tierLabel && index > 0 && (
-                                                <Text style={styles.tierLabel}>{tierLabel}</Text>
+                                                <Text style={styles.tierLabel}>
+                                                    {tierLabel}
+                                                </Text>
                                             )}
                                             <Pressable
-                                                onPress={() => !isDisabled && handlePlanSelect(plan.id)}
+                                                onPress={() =>
+                                                    !isDisabled &&
+                                                    handlePlanSelect(plan.id)
+                                                }
                                                 style={[
                                                     styles.planCard,
-                                                    isSelected && styles.planCardSelected,
-                                                    isDisabled && styles.planCardDisabled
+                                                    isSelected &&
+                                                        styles.planCardSelected,
+                                                    isDisabled &&
+                                                        styles.planCardDisabled
                                                 ]}
                                             >
                                                 <View style={styles.planInfo}>
                                                     <Text
                                                         style={[
                                                             styles.planName,
-                                                            isDisabled && styles.textDisabled
+                                                            isDisabled &&
+                                                                styles.textDisabled
                                                         ]}
                                                     >
-                                                        {plan.name.replace(/([A-Za-z])(\d)/, '$1 $2')}
+                                                        {plan.name.replace(
+                                                            /([A-Za-z])(\d)/,
+                                                            '$1 $2'
+                                                        )}
                                                     </Text>
-                                                    <Text style={styles.planSpecs}>
-                                                        {plan.cpu} vCPU / {plan.memory} GB RAM / {plan.disk} GB SSD
+                                                    <Text
+                                                        style={styles.planSpecs}
+                                                    >
+                                                        {plan.cpu} vCPU /{' '}
+                                                        {plan.memory} GB RAM /{' '}
+                                                        {plan.disk} GB SSD
                                                     </Text>
                                                 </View>
                                                 <Text style={styles.planPrice}>
-                                                    ${plan.priceMonthly.toFixed(2)}/mo
+                                                    $
+                                                    {plan.priceMonthly.toFixed(
+                                                        2
+                                                    )}
+                                                    /mo
                                                 </Text>
                                             </Pressable>
                                         </View>
@@ -388,120 +461,90 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactN
                         )}
                     </View>
 
-                    <View style={styles.section}>
-                        <Text style={styles.label}>{t('createClaw.model')}</Text>
-                        <Pressable
-                            onPress={() => setShowModelPicker(!showModelPicker)}
-                            style={styles.pickerButton}
-                        >
-                            <Text style={styles.pickerText}>{selectedModelName}</Text>
-                            <CaretDown size={16} color={COLORS.textMuted} />
-                        </Pressable>
-                        {showModelPicker && (
-                            <View style={styles.modelList}>
-                                <Pressable
-                                    onPress={() => {
-                                        setModel('')
-                                        setShowModelPicker(false)
-                                    }}
-                                    style={[
-                                        styles.modelItem,
-                                        !model && styles.modelItemSelected
-                                    ]}
-                                >
-                                    <Text style={styles.modelItemText}>
-                                        {t('createClaw.modelNone')}
-                                    </Text>
-                                </Pressable>
-                                {Object.entries(modelGroups).map(([groupProvider, models]) => (
-                                    <View key={groupProvider}>
-                                        <Text style={styles.modelGroupLabel}>{groupProvider}</Text>
-                                        {models.map((m) => (
-                                            <Pressable
-                                                key={m.id}
-                                                onPress={() => {
-                                                    setModel(m.id)
-                                                    setShowModelPicker(false)
-                                                }}
-                                                style={[
-                                                    styles.modelItem,
-                                                    model === m.id && styles.modelItemSelected
-                                                ]}
-                                            >
-                                                <Text style={styles.modelItemText}>{m.name}</Text>
-                                            </Pressable>
-                                        ))}
-                                    </View>
-                                ))}
-                            </View>
-                        )}
-                        <Text style={styles.hint}>{t('createClaw.modelDescription')}</Text>
-                    </View>
-
-                    {model ? (
-                        <View style={styles.section}>
-                            <Text style={styles.label}>{t('createClaw.apiToken')}</Text>
-                            <TextInput
-                                style={[styles.input, styles.monoInput]}
-                                value={apiToken}
-                                onChangeText={setApiToken}
-                                placeholder={t('createClaw.apiTokenPlaceholder')}
-                                placeholderTextColor={COLORS.textDim}
-                                secureTextEntry
-                            />
-                            <Text style={styles.hint}>{t('createClaw.apiTokenDescription')}</Text>
-                        </View>
-                    ) : null}
-
                     <Pressable
                         onPress={() => setShowAdvanced(!showAdvanced)}
                         style={styles.advancedToggle}
                     >
-                        <View style={[styles.advancedCaret, showAdvanced && styles.caretRotated]}>
+                        <View
+                            style={[
+                                styles.advancedCaret,
+                                showAdvanced && styles.caretRotated
+                            ]}
+                        >
                             <CaretDown size={16} color={COLORS.textMuted} />
                         </View>
-                        <Text style={styles.advancedText}>{t('createClaw.advancedOptions')}</Text>
+                        <Text style={styles.advancedText}>
+                            {t('createClaw.advancedOptions')}
+                        </Text>
                     </Pressable>
 
                     {showAdvanced && (
                         <>
                             <View style={styles.section}>
-                                <Text style={styles.label}>{t('createClaw.rootPassword')}</Text>
+                                <Text style={styles.label}>
+                                    {t('createClaw.rootPassword')}
+                                </Text>
                                 <View style={styles.passwordRow}>
                                     <View style={styles.passwordInputContainer}>
                                         <TextInput
-                                            style={[styles.input, styles.monoInput, styles.passwordInput]}
+                                            style={[
+                                                styles.input,
+                                                styles.monoInput,
+                                                styles.passwordInput
+                                            ]}
                                             value={password}
                                             onChangeText={setPassword}
-                                            placeholder={t('createClaw.rootPasswordPlaceholder')}
-                                            placeholderTextColor={COLORS.textDim}
+                                            placeholder={t(
+                                                'createClaw.rootPasswordPlaceholder'
+                                            )}
+                                            placeholderTextColor={
+                                                COLORS.textDim
+                                            }
                                             secureTextEntry={!showPassword}
                                         />
                                         <Pressable
-                                            onPress={() => setShowPassword(!showPassword)}
+                                            onPress={() =>
+                                                setShowPassword(!showPassword)
+                                            }
                                             style={styles.eyeButton}
                                         >
                                             {showPassword ? (
-                                                <EyeSlash size={18} color={COLORS.textMuted} />
+                                                <EyeSlash
+                                                    size={18}
+                                                    color={COLORS.textMuted}
+                                                />
                                             ) : (
-                                                <Eye size={18} color={COLORS.textMuted} />
+                                                <Eye
+                                                    size={18}
+                                                    color={COLORS.textMuted}
+                                                />
                                             )}
                                         </Pressable>
                                     </View>
                                     <Pressable
                                         onPress={() => {
                                             Clipboard.setStringAsync(password)
-                                            Alert.alert(t('createClaw.passwordCopied'))
+                                            Alert.alert(
+                                                t('createClaw.passwordCopied')
+                                            )
                                         }}
                                         style={styles.iconButton}
                                     >
-                                        <Copy size={18} color={COLORS.textMuted} />
+                                        <Copy
+                                            size={18}
+                                            color={COLORS.textMuted}
+                                        />
                                     </Pressable>
                                     <Pressable
-                                        onPress={() => setPassword(generatePassword())}
+                                        onPress={() =>
+                                            setPassword(generatePassword())
+                                        }
                                         style={styles.iconButton}
                                     >
-                                        <ArrowClockwise size={18} color={COLORS.textMuted} />
+                                        <ArrowClockwise
+                                            size={18}
+                                            color={COLORS.textMuted}
+                                        />
                                     </Pressable>
                                 </View>
                                 <Text style={styles.hint}>
@@ -510,33 +553,57 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactN
                             </View>
 
                             <View style={styles.section}>
-                                <Text style={styles.label}>{t('createClaw.sshKeyOptional')}</Text>
+                                <Text style={styles.label}>
+                                    {t('createClaw.sshKeyOptional')}
+                                </Text>
                                 {sshKeys && sshKeys.length > 0 ? (
                                     <View style={styles.sshKeyList}>
                                         <Pressable
-                                            onPress={() => setSelectedSshKeyId('')}
+                                            onPress={() =>
+                                                setSelectedSshKeyId('')
+                                            }
                                             style={[
                                                 styles.sshKeyCard,
-                                                selectedSshKeyId === '' && styles.sshKeyCardSelected
+                                                selectedSshKeyId === '' &&
+                                                    styles.sshKeyCardSelected
                                             ]}
                                         >
                                             <Text style={styles.sshKeyName}>
-                                                {t('createClaw.noSshKeyPasswordOnly')}
+                                                {t(
+                                                    'createClaw.noSshKeyPasswordOnly'
+                                                )}
                                             </Text>
                                         </Pressable>
                                         {sshKeys.map((key) => (
                                             <Pressable
                                                 key={key.id}
-                                                onPress={() => setSelectedSshKeyId(key.id)}
+                                                onPress={() =>
+                                                    setSelectedSshKeyId(key.id)
+                                                }
                                                 style={[
                                                     styles.sshKeyCard,
-                                                    selectedSshKeyId === key.id && styles.sshKeyCardSelected
+                                                    selectedSshKeyId ===
+                                                        key.id &&
+                                                        styles.sshKeyCardSelected
                                                 ]}
                                             >
-                                                <Key size={16} color={COLORS.textMuted} />
+                                                <Key
+                                                    size={16}
+                                                    color={COLORS.textMuted}
+                                                />
                                                 <View style={styles.sshKeyInfo}>
-                                                    <Text style={styles.sshKeyName}>{key.name}</Text>
-                                                    <Text style={styles.sshKeyFingerprint}>
+                                                    <Text
+                                                        style={
+                                                            styles.sshKeyName
+                                                        }
+                                                    >
+                                                        {key.name}
+                                                    </Text>
+                                                    <Text
+                                                        style={
+                                                            styles.sshKeyFingerprint
+                                                        }
+                                                    >
                                                         {key.fingerprint}
                                                     </Text>
                                                 </View>
@@ -546,14 +613,25 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactN
                                 ) : (
                                     <View style={styles.noSshKeys}>
                                         <View style={styles.noSshKeysIcon}>
-                                            <Key size={20} color={COLORS.textMuted} />
+                                            <Key
+                                                size={20}
+                                                color={COLORS.textMuted}
+                                            />
                                         </View>
                                         <View style={styles.noSshKeysText}>
                                             <Text style={styles.noSshKeysTitle}>
-                                                {t('createClaw.noSshKeysConfigured')}
+                                                {t(
+                                                    'createClaw.noSshKeysConfigured'
+                                                )}
                                             </Text>
-                                            <Text style={styles.noSshKeysDescription}>
-                                                {t('createClaw.addSshKeyForPasswordlessLogin')}
+                                            <Text
+                                                style={
+                                                    styles.noSshKeysDescription
+                                                }
+                                            >
+                                                {t(
+                                                    'createClaw.addSshKeyForPasswordlessLogin'
+                                                )}
                                             </Text>
                                         </View>
                                     </View>
@@ -563,7 +641,9 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactN
                             {volumePricing && (
                                 <View style={styles.section}>
                                     <Text style={styles.label}>
-                                        {t('createClaw.additionalStorageOptional')}
+                                        {t(
+                                            'createClaw.additionalStorageOptional'
+                                        )}
                                     </Text>
                                     <View style={styles.volumeCard}>
                                         <View style={styles.volumeHeader}>
@@ -578,20 +658,34 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactN
                                         </View>
                                         <View style={styles.volumeInputRow}>
                                             <TextInput
-                                                style={[styles.input, styles.volumeInput]}
-                                                value={volumeSize > 0 ? String(volumeSize) : ''}
+                                                style={[
+                                                    styles.input,
+                                                    styles.volumeInput
+                                                ]}
+                                                value={
+                                                    volumeSize > 0
+                                                        ? String(volumeSize)
+                                                        : ''
+                                                }
                                                 onChangeText={(val) => {
                                                     const num = Math.min(
-                                                        Math.max(0, Number(val) || 0),
+                                                        Math.max(
+                                                            0,
+                                                            Number(val) || 0
+                                                        ),
                                                         volumePricing.maxSize
                                                     )
                                                     setVolumeSize(num)
                                                 }}
                                                 placeholder='0'
-                                                placeholderTextColor={COLORS.textDim}
+                                                placeholderTextColor={
+                                                    COLORS.textDim
+                                                }
                                                 keyboardType='number-pad'
                                             />
-                                            <Text style={styles.volumeUnit}>GB</Text>
+                                            <Text style={styles.volumeUnit}>
+                                                GB
+                                            </Text>
                                             <Text style={styles.volumeMax}>
                                                 (max {volumePricing.maxSize} GB)
                                             </Text>
@@ -606,21 +700,32 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactN
                         <View style={styles.summaryCard}>
                             {name ? (
                                 <View style={styles.summaryRow}>
-                                    <Text style={styles.summaryLabel}>{t('createClaw.clawName')}</Text>
-                                    <Text style={styles.summaryValue}>{name}</Text>
+                                    <Text style={styles.summaryLabel}>
+                                        {t('createClaw.clawName')}
+                                    </Text>
+                                    <Text style={styles.summaryValue}>
+                                        {name}
+                                    </Text>
                                 </View>
                             ) : null}
                             {location ? (
                                 <View style={styles.summaryRow}>
-                                    <Text style={styles.summaryLabel}>{t('createClaw.location')}</Text>
+                                    <Text style={styles.summaryLabel}>
+                                        {t('createClaw.location')}
+                                    </Text>
                                     <Text style={styles.summaryValue}>
-                                        {locations.find((l) => l.id === location)?.city || location}
+                                        {locations.find(
+                                            (l) => l.id === location
+                                        )?.city || location}
                                     </Text>
                                 </View>
                             ) : null}
                             <View style={styles.summaryRow}>
                                 <Text style={styles.summaryLabel}>
-                                    {selectedPlan.name.replace(/([A-Za-z])(\d)/, '$1 $2')}
+                                    {selectedPlan.name.replace(
+                                        /([A-Za-z])(\d)/,
+                                        '$1 $2'
+                                    )}
                                 </Text>
                                 <Text style={styles.summaryValue}>
                                     ${selectedPlan.priceMonthly.toFixed(2)}/mo
@@ -629,15 +734,25 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactN
                             {volumeSize > 0 && volumePricing && (
                                 <View style={styles.summaryRow}>
                                     <Text style={styles.summaryLabel}>
-                                        {t('createClaw.storageWithSize')} ({volumeSize} GB)
+                                        {t('createClaw.storageWithSize')} (
+                                        {volumeSize} GB)
                                     </Text>
                                     <Text style={styles.summaryValue}>
-                                        +${(volumeSize * volumePricing.pricePerGbMonthly).toFixed(2)}/mo
+                                        +$
+                                        {(
+                                            volumeSize *
+                                            volumePricing.pricePerGbMonthly
+                                        ).toFixed(2)}
+                                        /mo
                                     </Text>
                                 </View>
                             )}
-                            <View style={[styles.summaryRow, styles.summaryTotal]}>
-                                <Text style={styles.summaryLabel}>{t('createClaw.totalMonthly')}</Text>
+                            <View
+                                style={[styles.summaryRow, styles.summaryTotal]}
+                            >
+                                <Text style={styles.summaryLabel}>
+                                    {t('createClaw.totalMonthly')}
+                                </Text>
                                 <Text style={styles.summaryTotalValue}>
                                     ${totalMonthly.toFixed(2)}/mo
                                 </Text>
@@ -646,15 +761,26 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactN
                     )}
 
                     <View style={styles.actions}>
-                        <Pressable onPress={onClose} style={styles.cancelButton}>
-                            <Text style={styles.cancelText}>{t('common.cancel')}</Text>
+                        <Pressable
+                            onPress={onClose}
+                            style={styles.cancelButton}
+                        >
+                            <Text style={styles.cancelText}>
+                                {t('common.cancel')}
+                            </Text>
                         </Pressable>
                         <Pressable
                             onPress={handleCreate}
-                            disabled={purchaseMutation.isPending || !selectedPlan || !location}
+                            disabled={
+                                purchaseMutation.isPending ||
+                                !selectedPlan ||
+                                !location
+                            }
                             style={[
                                 styles.submitButton,
-                                (purchaseMutation.isPending || !selectedPlan || !location) &&
+                                (purchaseMutation.isPending ||
+                                    !selectedPlan ||
+                                    !location) &&
                                     styles.submitButtonDisabled
                             ]}
                         >
@@ -664,28 +790,23 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ visible, onClose }): ReactN
                                 end={{ x: 1, y: 0 }}
                                 style={styles.submitGradient}
                             >
-                                {purchaseMutation.isPending ? (
-                                    <>
-                                        <ActivityIndicator size='small' color={COLORS.white} />
-                                        <Text style={styles.submitText}>
-                                            {t('createClaw.redirecting')}
-                                        </Text>
-                                    </>
-                                ) : !selectedPlan ? (
-                                    <Text style={styles.submitText}>
-                                        {t('createClaw.selectServerToContinue')}
-                                    </Text>
-                                ) : !location ? (
-                                    <Text style={styles.submitText}>
-                                        {t('createClaw.selectLocationToContinue')}
-                                    </Text>
-                                ) : (
-                                    <Text style={styles.submitText}>
-                                        {t('createClaw.proceedToPayment', {
-                                            amount: totalMonthly.toFixed(2)
-                                        })}
-                                    </Text>
+                                {purchaseMutation.isPending && (
+                                    <ActivityIndicator
+                                        size='small'
+                                        color={COLORS.white}
+                                    />
                                 )}
+                                <Text style={styles.submitText}>
+                                    {!selectedPlan
+                                        ? t('createClaw.selectServerToContinue')
+                                        : !location
+                                          ? t(
+                                                'createClaw.selectLocationToContinue'
+                                            )
+                                          : t('createClaw.proceedToPayment', {
+                                                amount: totalMonthly.toFixed(2)
+                                            })}
+                                </Text>
                             </LinearGradient>
                         </Pressable>
                     </View>
@@ -847,6 +968,17 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         backgroundColor: 'rgba(255,255,255,0.05)'
     },
+    errorCard: {
+        backgroundColor: 'rgba(239,83,80,0.1)',
+        borderRadius: 8,
+        paddingHorizontal: SPACING.md,
+        paddingVertical: SPACING.sm
+    },
+    errorCardText: {
+        fontSize: 12,
+        fontFamily: 'Satoshi-Regular',
+        color: '#ef5350'
+    },
     capacityWarning: {
         backgroundColor: 'rgba(234,179,8,0.1)',
         borderRadius: 8,
@@ -912,51 +1044,6 @@ const styles = StyleSheet.create({
         height: 56,
         borderRadius: 8,
         backgroundColor: 'rgba(255,255,255,0.05)'
-    },
-    pickerButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        backgroundColor: 'rgba(255,255,255,0.05)',
-        borderWidth: 1,
-        borderColor: COLORS.border,
-        borderRadius: 8,
-        paddingHorizontal: SPACING.md,
-        paddingVertical: SPACING.sm
-    },
-    pickerText: {
-        fontSize: 14,
-        fontFamily: 'Satoshi-Regular',
-        color: COLORS.text
-    },
-    modelList: {
-        backgroundColor: COLORS.containerBackground,
-        borderWidth: 1,
-        borderColor: COLORS.containerBorder,
-        borderRadius: 8,
-        overflow: 'hidden'
-    },
-    modelItem: {
-        paddingHorizontal: SPACING.md,
-        paddingVertical: SPACING.sm
-    },
-    modelItemSelected: {
-        backgroundColor: 'rgba(239,83,80,0.15)'
-    },
-    modelItemText: {
-        fontSize: 14,
-        fontFamily: 'Satoshi-Regular',
-        color: COLORS.text
-    },
-    modelGroupLabel: {
-        fontSize: 11,
-        fontFamily: 'Satoshi-Bold',
-        color: COLORS.textMuted,
-        textTransform: 'uppercase',
-        letterSpacing: 1,
-        paddingHorizontal: SPACING.md,
-        paddingTop: SPACING.sm,
-        paddingBottom: SPACING.xs
     },
     hint: {
         fontSize: 12,

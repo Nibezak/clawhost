@@ -6,10 +6,10 @@ import { useFonts } from 'expo-font'
 import { NavigationContainer } from '@react-navigation/native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import AuthProvider, { useAuth } from '@/lib/auth/AuthProvider'
-import COLORS from '@/lib/theme/colors'
-import TabNavigator from '@/navigation/TabNavigator'
-import LoginScreen from '@/screens/LoginScreen'
+import { AuthProvider, useAuth } from '@/lib/auth'
+import { COLORS } from '@/lib/theme'
+import { TabNavigator } from '@/navigation'
+import { LoginScreen } from '@/screens'
 
 const queryClient = new QueryClient()
 
@@ -36,7 +36,14 @@ const AppContent: FC = (): ReactNode => {
 
     if (loading) {
         return (
-            <View style={{ flex: 1, backgroundColor: COLORS.background, alignItems: 'center', justifyContent: 'center' }}>
+            <View
+                style={{
+                    flex: 1,
+                    backgroundColor: COLORS.background,
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}
+            >
                 <ActivityIndicator size='large' color={COLORS.accent} />
             </View>
         )
@@ -63,7 +70,14 @@ const App: FC = (): ReactNode => {
 
     if (!fontsLoaded) {
         return (
-            <View style={{ flex: 1, backgroundColor: COLORS.background, alignItems: 'center', justifyContent: 'center' }}>
+            <View
+                style={{
+                    flex: 1,
+                    backgroundColor: COLORS.background,
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}
+            >
                 <ActivityIndicator size='large' color={COLORS.accent} />
             </View>
         )

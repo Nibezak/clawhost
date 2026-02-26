@@ -1,4 +1,6 @@
 import type {
+    ClawFileType,
+    FeatureRequestStatus,
     ProviderType,
     SubscriptionStatus,
     WebhookEventType
@@ -14,10 +16,6 @@ export interface ApiResponse<T = null> {
 
 export interface ExportRateLimitData {
     retryAfter: number
-}
-
-export interface MagicLinkEmailProps {
-    magicLink: string
 }
 
 export interface CloudProvider {
@@ -579,11 +577,6 @@ export interface ClawCleanupData {
     subdomain: string | null
 }
 
-export interface SendMagicLinkBody {
-    email: string
-    redirectUrl: string
-}
-
 export interface SendOtpBody {
     email: string
 }
@@ -591,6 +584,11 @@ export interface SendOtpBody {
 export interface VerifyOtpBody {
     email: string
     code: string
+}
+
+export interface ResolveCredentialConflictBody {
+    accessToken: string
+    providerId: string
 }
 
 export interface OtpCodeEmailProps {
@@ -614,8 +612,6 @@ export interface CreateClawBody {
     password?: string
     sshKeyId?: string
     volumeSize?: number
-    model?: string
-    apiToken?: string
 }
 
 export interface InitiateClawPurchaseBody {
@@ -626,8 +622,6 @@ export interface InitiateClawPurchaseBody {
     password?: string
     sshKeyId?: string
     volumeSize?: number
-    model?: string
-    apiToken?: string
     priceMonthly: number
 }
 
@@ -676,7 +670,7 @@ export interface DiagnosticsRepairResponse {
 export interface ClawFileEntry {
     path: string
     name: string
-    isJson: boolean
+    fileType: ClawFileType
 }
 
 export interface ClawFilesResponse {
@@ -718,4 +712,322 @@ export interface InitiateClawPurchaseResponse {
     checkoutId: string
     pendingClawId: string
     expiresAt: string
+}
+
+export interface ClawAgent {
+    id: string
+    name: string
+    model: string | null
+    status: string
+    directory: string | null
+}
+
+export interface ClawAgentsResponse {
+    agents: ClawAgent[]
+    reachable: boolean
+}
+
+export interface UpdateClawEnvVarsBody {
+    envVars: Record<string, string>
+}
+
+export interface GetAgentConfigBody {
+    agentId: string
+}
+
+export interface UpdateAgentConfigBody {
+    agentId: string
+    name?: string
+    model: string | null
+    envVars: Record<string, string>
+}
+
+export interface AgentConfigResponse {
+    agent: {
+        id: string
+        name: string
+        model: string | null
+    }
+    envVars: Record<string, string>
+    defaultModel: string | null
+}
+
+export interface CreateClawAgentBody {
+    name: string
+    model?: string | null
+    envVars?: Record<string, string>
+}
+
+export interface DeleteClawAgentBody {
+    agentId: string
+}
+
+export interface OrderCustomerResult {
+    customerId: string
+}
+
+export interface PolarPaginatedResult {
+    items: unknown[]
+    pagination: { totalCount: number; maxPage: number }
+}
+
+export interface PolarItemsResult {
+    items: unknown[]
+}
+
+export interface RegionMeta {
+    city: string
+    country: string
+}
+
+export interface PlanConfig {
+    order: string[]
+    prices: Record<string, number>
+}
+
+export interface ChannelConfig {
+    enabled: boolean
+    dmPolicy?: string
+    allowFrom?: string[]
+    botToken?: string
+    token?: string
+    appToken?: string
+    signingSecret?: string
+    account?: string
+}
+
+export interface ClawChannelsResponse {
+    channels: Record<string, ChannelConfig>
+}
+
+export interface UpdateClawChannelsBody {
+    channels: Record<string, ChannelConfig>
+}
+
+export interface WhatsAppPairResponse {
+    status: 'started' | 'already_paired' | 'unsupported'
+}
+
+export interface WhatsAppPairStatusResponse {
+    status: 'waiting' | 'qr_ready' | 'paired' | 'failed' | 'not_started'
+    qr?: string
+    log?: string
+}
+
+export interface SkillEntryConfig {
+    enabled: boolean
+    apiKey?: string
+    env?: Record<string, string>
+    config?: Record<string, unknown>
+}
+
+export interface BundledSkillInfo {
+    name: string
+    enabled: boolean
+    description?: string
+}
+
+export interface ClawSkillsResponse {
+    skills: BundledSkillInfo[]
+    entries: Record<string, SkillEntryConfig>
+}
+
+export interface UpdateClawSkillsBody {
+    entries: Record<string, SkillEntryConfig>
+}
+
+export interface AgentSkillInfo {
+    name: string
+}
+
+export interface GetAgentSkillsBody {
+    agentId: string
+}
+
+export interface GetAgentSkillsResponse {
+    skills: AgentSkillInfo[]
+}
+
+export interface UpdateAgentSkillsBody {
+    action: 'install' | 'remove'
+    skillName: string
+}
+
+export interface ClawHubSearchResult {
+    slug: string
+    name: string
+    description: string
+    author: string
+    version: string
+    downloads: number
+    tags: string[]
+}
+
+export interface ClawHubInstalledSkill {
+    slug: string
+    name: string
+    version: string
+    hasUpdate: boolean
+    latestVersion?: string
+}
+
+export interface BrowseClawHubSkillsQuery {
+    query?: string
+    limit?: number
+    cursor?: string
+    agentId?: string
+}
+
+export interface ClawHubInstallBody {
+    slug: string
+    agentId?: string
+}
+
+export interface ClawHubRemoveBody {
+    slug: string
+    agentId?: string
+}
+
+export interface ClawHubUpdateBody {
+    slug?: string
+    all?: boolean
+    agentId?: string
+}
+
+export interface ClawHubBrowseResponse {
+    skills: ClawHubSearchResult[]
+}
+
+export interface ClawHubInstalledResponse {
+    skills: ClawHubInstalledSkill[]
+}
+
+export interface ClawHubUpdatesResponse {
+    updates: ClawHubInstalledSkill[]
+}
+
+export interface ClawHubAPISearchHit {
+    score: number
+    slug: string
+    displayName: string
+    summary: string
+    version: string
+    updatedAt: string
+}
+
+export interface ClawHubAPISkillItem {
+    slug: string
+    displayName: string
+    summary: string
+    version: string
+    updatedAt: string
+    downloads?: number
+    author?: string
+    tags?: string[]
+}
+
+export interface BrowseClawHubSkillsParams {
+    query?: string
+    limit?: number
+    cursor?: string
+}
+
+export interface ClawHubBrowseResultPage {
+    skills: ClawHubSearchResult[]
+    nextCursor: string | null
+    hasMore: boolean
+}
+
+export interface CacheEntry<T> {
+    data: T
+    expiry: number
+}
+
+export interface SkillsCacheEntry {
+    data: ClawHubSearchResult[]
+    expires: number
+}
+
+export interface ClawHubAPISkillsPage {
+    items: ClawHubAPISkillItem[]
+    nextCursor?: string | null
+}
+
+export interface AgentIdBody {
+    agentId?: string
+}
+
+export interface RenameClawBody {
+    name: string
+}
+
+export interface BindingMatch {
+    channel: string
+}
+
+export interface Binding {
+    agentId: string
+    match: BindingMatch
+}
+
+export interface ClawBindingsResponse {
+    bindings: Binding[]
+    channels: Record<string, ChannelConfig>
+    agents: Array<{ id: string; name: string }>
+}
+
+export interface UpdateClawBindingsBody {
+    bindings: Binding[]
+}
+
+export interface RootLayoutProps {
+    children: React.ReactNode
+}
+
+export interface CreateFeatureRequestBody {
+    title: string
+    description: string
+    platforms: string[]
+}
+
+export interface UpdateFeatureRequestStatusBody {
+    status: FeatureRequestStatus
+}
+
+export interface EditFeatureRequestBody {
+    title?: string
+    description?: string
+    status?: FeatureRequestStatus
+    platforms?: string[]
+}
+
+export interface FeatureRequestResponse {
+    id: string
+    title: string
+    description: string
+    status: FeatureRequestStatus
+    platforms: string[]
+    upvoteCount: number
+    userId: string
+    hasUpvoted: boolean
+}
+
+export interface FeatureRequestsListResponse {
+    items: FeatureRequestResponse[]
+    total: number
+}
+
+export interface ClawBindingEntry {
+    agentId: string
+    match: { channel: string }
+}
+
+export interface ClawBindingAgent {
+    id: string
+    name: string
+}
+
+export interface GithubEmailEntry {
+    primary: boolean
+    email: string
 }

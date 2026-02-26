@@ -3,14 +3,12 @@ import type { ClawMascotProps } from '@/ts/Interfaces'
 
 import Svg, { Path, Circle } from 'react-native-svg'
 
-const ClawMascot: FC<ClawMascotProps> = ({ size = 20, color = '#fafafa' }): ReactNode => {
+const ClawMascot: FC<ClawMascotProps> = ({
+    size = 20,
+    color = '#fafafa'
+}): ReactNode => {
     return (
-        <Svg
-            width={size}
-            height={size}
-            viewBox='0 0 120 120'
-            fill='none'
-        >
+        <Svg width={size} height={size} viewBox='0 0 120 120' fill='none'>
             <Path
                 d='M60 10 C30 10 15 35 15 55 C15 75 30 95 45 100 L45 110 L55 110 L55 100 C55 100 60 102 65 100 L65 110 L75 110 L75 100 C90 95 105 75 105 55 C105 35 90 10 60 10Z'
                 fill={color}

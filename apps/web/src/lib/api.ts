@@ -1,27 +1,65 @@
 import type {
+    AgentConfigResponse,
     BillingHistoryResponse,
+    ClawEnvVarsResponse,
     BillingInvoiceResponse,
     Claw,
+    ClawCredentialsResponse,
+    CreateFeatureRequestData,
+    FeatureRequest,
+    FeatureRequestsListResponse,
+    RenameClawData,
+    UpdateClawSubdomainData,
+    ClawAgentsResponse,
+    ClawChannelsResponse,
     ClawFilesResponse,
+    ClawSkillsResponse,
+    ClawVersionResponse,
+    ClawVersionsResponse,
+    InstallClawVersionResponse,
     CreateClawData,
     CreateSSHKeyData,
     CustomerPortalResponse,
     DeleteClawResponse,
     DiagnosticsLogsResponse,
     DiagnosticsStatusResponse,
+    GetAgentSkillsResponse,
     Location,
     PlansResponse,
     PlanAvailability,
     PurchaseClawData,
     PurchaseClawResponse,
     ReadClawFileResponse,
+    ResolveCredentialConflictData,
     SSHKey,
+    CreateAgentData,
+    CreateAgentResponse,
+    DeleteAgentData,
+    UpdateAgentConfigData,
+    UpdateAgentSkillsData,
+    UpdateClawChannelsData,
+    EditFeatureRequestData,
+    UpdateFeatureRequestStatusData,
+    WhatsAppPairResponse,
+    WhatsAppPairStatusResponse,
+    BrowseClawHubData,
+    ClawHubSkillActionData,
+    ClawHubUpdateData,
+    ClawHubBrowseResponse,
+    ClawHubInstalledResponse,
+    ClawHubUpdatesResponse,
+    ClawBindingsResponse,
+    UpdateClawBindingsData,
+    UpdateClawEnvVarsData,
     UpdateClawFileData,
+    UpdateClawSkillsData,
     UpdateProfileData,
     UserProfile,
     UserStats,
+    VerifyOtpResponse,
     VolumePricing
 } from '@/ts/Interfaces'
+import type { FeatureRequestSortBy } from '@/ts/Types'
 
 import { RequestClient } from '@openclaw/shared'
 import { signOut } from 'firebase/auth'
@@ -48,12 +86,19 @@ const publicClient = new RequestClient({
     baseUrl: BASE_URL
 })
 
-export const api = {
-    sendMagicLink: (email: string, redirectUrl: string) =>
-        publicClient.post<void>('/auth/send-magic-link', {
+const api = {
+    sendOtp: (email: string) =>
+        publicClient.post<void>('/auth/send-otp', { email }),
+    verifyOtp: (email: string, code: string) =>
+        publicClient.post<VerifyOtpResponse>('/auth/verify-otp', {
             email,
-            redirectUrl
+            code
         }),
+    resolveCredentialConflict: (data: ResolveCredentialConflictData) =>
+        publicClient.post<VerifyOtpResponse>(
+            '/auth/resolve-credential-conflict',
+            data
+        ),
 
     getPlans: (provider?: string) =>
         client.get<PlansResponse>(
@@ -85,10 +130,16 @@ export const api = {
     restartClaw: (id: string) => client.post<Claw>(`/claws/${id}/restart`),
     deleteClaw: (id: string) =>
         client.delete<DeleteClawResponse>(`/claws/${id}`),
+    renameClaw: (id: string, data: RenameClawData) =>
+        client.patch<Claw>(`/claws/${id}`, data),
+    updateClawSubdomain: (id: string, data: UpdateClawSubdomainData) =>
+        client.patch<Claw>(`/claws/${id}/subdomain`, data),
     cancelDeletion: (id: string) =>
         client.post<Claw>(`/claws/${id}/cancel-deletion`),
     hardDeleteClaw: (id: string) =>
         client.post<void>(`/claws/${id}/hard-delete`),
+    cancelPendingClaw: (id: string) =>
+        client.delete<void>(`/claws/pending/${id}`),
     getClawDiagnostics: (id: string) =>
         client.post<DiagnosticsStatusResponse>(
             `/claws/${id}/diagnostics/status`
@@ -98,6 +149,90 @@ export const api = {
     repairClaw: (id: string) =>
         client.post<void>(`/claws/${id}/diagnostics/repair`),
     reinstallClaw: (id: string) => client.post<void>(`/claws/${id}/reinstall`),
+    getClawCredentials: (id: string) =>
+        client.post<ClawCredentialsResponse>(`/claws/${id}/credentials`),
+    getClawVersion: (id: string) =>
+        client.post<ClawVersionResponse>(`/claws/${id}/version`),
+    getClawVersions: (id: string) =>
+        client.post<ClawVersionsResponse>(`/claws/${id}/versions`),
+    installClawVersion: (id: string, version: string) =>
+        client.post<InstallClawVersionResponse>(
+            `/claws/${id}/install-version`,
+            { version }
+        ),
+    getClawAgents: (id: string) =>
+        client.post<ClawAgentsResponse>(`/claws/${id}/agents`),
+    getClawAgentConfig: (id: string, agentId: string) =>
+        client.post<AgentConfigResponse>(`/claws/${id}/agent-config`, {
+            agentId
+        }),
+    updateClawAgentConfig: (id: string, data: UpdateAgentConfigData) =>
+        client.put<void>(`/claws/${id}/agent-config`, data),
+    createClawAgent: (id: string, data: CreateAgentData) =>
+        client.post<CreateAgentResponse>(`/claws/${id}/agents/create`, data),
+    deleteClawAgent: (id: string, data: DeleteAgentData) =>
+        client.post<void>(`/claws/${id}/agents/delete`, data),
+    getClawChannels: (id: string) =>
+        client.post<ClawChannelsResponse>(`/claws/${id}/channels`),
+    updateClawChannels: (id: string, data: UpdateClawChannelsData) =>
+        client.put<void>(`/claws/${id}/channels`, data),
+    pairWhatsApp: (id: string) =>
+        client.post<WhatsAppPairResponse>(
+            `/claws/${id}/channels/whatsapp/pair`
+        ),
+    pairWhatsAppStatus: (id: string) =>
+        client.post<WhatsAppPairStatusResponse>(
+            `/claws/${id}/channels/whatsapp/pair-status`
+        ),
+    getClawBindings: (id: string) =>
+        client.post<ClawBindingsResponse>(`/claws/${id}/bindings`),
+    updateClawBindings: (id: string, data: UpdateClawBindingsData) =>
+        client.put<void>(`/claws/${id}/bindings`, data),
+    getClawSkills: (id: string) =>
+        client.post<ClawSkillsResponse>(`/claws/${id}/skills`),
+    updateClawSkills: (id: string, data: UpdateClawSkillsData) =>
+        client.put<void>(`/claws/${id}/skills`, data),
+    getAgentSkills: (clawId: string, agentId: string) =>
+        client.post<GetAgentSkillsResponse>(
+            `/claws/${clawId}/agents/${agentId}/skills`,
+            { agentId }
+        ),
+    updateAgentSkills: (
+        clawId: string,
+        agentId: string,
+        data: UpdateAgentSkillsData
+    ) => client.put<void>(`/claws/${clawId}/agents/${agentId}/skills`, data),
+    browseClawHubSkills: (clawId: string, params: BrowseClawHubData) => {
+        const qs = new URLSearchParams()
+        if (params.query) qs.set('query', params.query)
+        if (params.limit) qs.set('limit', String(params.limit))
+        if (params.cursor) qs.set('cursor', params.cursor)
+        if (params.agentId) qs.set('agentId', params.agentId)
+        const str = qs.toString()
+        return client.get<ClawHubBrowseResponse>(
+            `/claws/${clawId}/clawhub/skills${str ? `?${str}` : ''}`
+        )
+    },
+    getClawHubInstalled: (clawId: string, agentId?: string) =>
+        client.post<ClawHubInstalledResponse>(
+            `/claws/${clawId}/clawhub/installed`,
+            agentId ? { agentId } : {}
+        ),
+    installClawHubSkill: (clawId: string, data: ClawHubSkillActionData) =>
+        client.post<void>(`/claws/${clawId}/clawhub/install`, data),
+    removeClawHubSkill: (clawId: string, data: ClawHubSkillActionData) =>
+        client.post<void>(`/claws/${clawId}/clawhub/remove`, data),
+    updateClawHubSkill: (clawId: string, data: ClawHubUpdateData) =>
+        client.post<void>(`/claws/${clawId}/clawhub/update`, data),
+    checkClawHubUpdates: (clawId: string, agentId?: string) =>
+        client.post<ClawHubUpdatesResponse>(
+            `/claws/${clawId}/clawhub/updates`,
+            agentId ? { agentId } : {}
+        ),
+    getClawEnvVars: (id: string) =>
+        client.get<ClawEnvVarsResponse>(`/claws/${id}/env`),
+    updateClawEnvVars: (id: string, data: UpdateClawEnvVarsData) =>
+        client.put<void>(`/claws/${id}/env`, data),
     exportClaw: async (id: string, filename: string) => {
         const token = await getCachedToken()
         const res = await fetch(`${BASE_URL}/claws/${id}/export`, {
@@ -136,6 +271,10 @@ export const api = {
     getProfile: () => client.get<UserProfile>('/users/me'),
     updateProfile: (data: UpdateProfileData) =>
         client.put<UserProfile>('/users/me', data),
+    connectAuthMethod: (method: string) =>
+        client.post<void>(`/users/me/auth/${method}`),
+    disconnectAuthMethod: (method: string) =>
+        client.delete<void>(`/users/me/auth/${method}`),
     getUserStats: () => client.get<UserStats>('/users/me/stats'),
     getBillingHistory: (page: number = 1, limit: number = 10) =>
         client.get<BillingHistoryResponse>(
@@ -146,5 +285,30 @@ export const api = {
             `/users/me/billing/${orderId}/invoice`
         ),
     getCustomerPortal: () =>
-        client.post<CustomerPortalResponse>('/users/me/billing/portal')
+        client.post<CustomerPortalResponse>('/users/me/billing/portal'),
+
+    getFeatureRequests: (sort?: FeatureRequestSortBy) =>
+        client.get<FeatureRequestsListResponse>(
+            `/feature-requests${sort ? `?sort=${sort}` : ''}`
+        ),
+    getFeatureRequestsPublic: (sort?: FeatureRequestSortBy) =>
+        publicClient.get<FeatureRequestsListResponse>(
+            `/feature-requests${sort ? `?sort=${sort}` : ''}`
+        ),
+    createFeatureRequest: (data: CreateFeatureRequestData) =>
+        client.post<FeatureRequest>('/feature-requests', data),
+    upvoteFeatureRequest: (id: string) =>
+        client.post<{ upvoteCount: number; hasUpvoted: boolean }>(
+            `/feature-requests/${id}/upvote`
+        ),
+    editFeatureRequest: (id: string, data: EditFeatureRequestData) =>
+        client.put<void>(`/feature-requests/${id}`, data),
+    updateFeatureRequestStatus: (
+        id: string,
+        data: UpdateFeatureRequestStatusData
+    ) => client.put<void>(`/feature-requests/${id}/status`, data),
+    deleteFeatureRequest: (id: string) =>
+        client.delete<void>(`/feature-requests/${id}`)
 }
+
+export default api

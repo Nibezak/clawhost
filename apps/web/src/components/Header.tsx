@@ -1,25 +1,22 @@
 import type { FC, ReactNode } from 'react'
 import type { HeaderProps } from '@/ts/Interfaces'
 
-import { useState, useEffect } from 'react'
-import { useNavigate, useLocation, Link } from 'react-router-dom'
+import { useState, useEffect, useCallback } from 'react'
+import { useLocation, Link } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
 import { useProfile } from '@/hooks'
-import { Button } from '@/components/ui/button'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Button, Skeleton } from '@/components/ui'
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
-import { Logo } from '@/components/Logo'
-import { ROUTES } from '@/lib/routes'
-import { Key, User, SignOut, Lightning, GearSix } from '@phosphor-icons/react'
-import { ClawMascotOutline } from '@/components/ClawMascotOutline'
+    LanguageSelector,
+    Logo,
+    ProductHuntBanner,
+    ThemeToggle,
+    UserDropdown
+} from '@/components'
+import { ROUTES } from '@/lib'
+import { LightningIcon, ListIcon, XIcon } from '@phosphor-icons/react'
 
 const Header: FC<HeaderProps> = ({
     showNavLinks = false,
@@ -27,7 +24,6 @@ const Header: FC<HeaderProps> = ({
     activeSection = ''
 }): ReactNode => {
     const { user, loading: authLoading, cachedProfile, signOut } = useAuth()
-    const navigate = useNavigate()
     const location = useLocation()
     const [scrolled, setScrolled] = useState(false)
 
@@ -39,6 +35,17 @@ const Header: FC<HeaderProps> = ({
         handleScroll()
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
+
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+    const closeMobileMenu = useCallback(() => setMobileMenuOpen(false), [])
+
+    useEffect(() => {
+        if (!mobileMenuOpen) return
+        const onScroll = () => setMobileMenuOpen(false)
+        window.addEventListener('scroll', onScroll)
+        return () => window.removeEventListener('scroll', onScroll)
+    }, [mobileMenuOpen])
 
     const { data: profile } = useProfile({
         enabled: !!user,
@@ -52,149 +59,171 @@ const Header: FC<HeaderProps> = ({
         cachedProfile?.email ||
         ''
 
-    const getInitials = (text: string) => {
-        if (!text) return '?'
-        const parts = text.split(' ')
-        if (parts.length > 1) {
-            return (
-                parts[0].charAt(0) + parts[parts.length - 1].charAt(0)
-            ).toUpperCase()
-        }
-        return text.charAt(0).toUpperCase()
-    }
-
-    const isLandingPage = location.pathname === '/'
+    const isLandingPage = location.pathname === ROUTES.HOME
 
     return (
-        <header
-            className={`${isLandingPage ? 'fixed' : 'relative'} left-0 right-0 top-0 z-50 transition-all duration-300 ${
-                scrolled
-                    ? 'border-b border-white/10 bg-[#0a0a0f]/80 backdrop-blur-xl'
-                    : 'border-b border-transparent bg-transparent'
-            }`}
-        >
-            <div className='mx-auto grid max-w-6xl grid-cols-[auto_1fr_auto] items-center gap-4 px-6 py-4'>
-                <Logo />
+        <>
+            <header
+                className={`${isLandingPage ? 'fixed' : 'relative'} left-0 right-0 top-0 z-50 transition-all duration-300 ${
+                    mobileMenuOpen
+                        ? 'bg-background border-b border-transparent backdrop-blur-xl'
+                        : scrolled
+                          ? 'border-border bg-background/80 border-b backdrop-blur-xl'
+                          : 'border-b border-transparent bg-transparent'
+                }`}
+            >
+                <ProductHuntBanner />
+                <div className='mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4'>
+                    <Logo />
 
-                {showNavLinks && navLinks.length > 0 ? (
-                    <nav className='hidden items-center justify-center gap-6 md:flex'>
-                        {navLinks.map((link) => (
-                            <a
-                                key={link.href}
-                                href={link.href}
-                                className={`text-sm font-medium transition ${
-                                    activeSection === link.id
-                                        ? 'text-white'
-                                        : 'text-gray-400 hover:text-white'
-                                }`}
-                            >
-                                {link.label}
-                            </a>
-                        ))}
-                    </nav>
-                ) : (
-                    <div />
-                )}
-
-                <div className='flex items-center gap-3'>
-                    {authLoading && !cachedProfile ? (
-                        <Button
-                            variant='ghost'
-                            size='sm'
-                            className='pointer-events-none ml-auto flex w-auto items-center gap-2 px-1.5 py-5'
+                    {showNavLinks && navLinks.length > 0 ? (
+                        <nav
+                            className='hidden items-center justify-center gap-6 md:flex'
+                            aria-label={t('nav.mainNavigation')}
                         >
-                            <Skeleton className='h-7 w-7 shrink-0 rounded-full bg-white/10' />
-                            <Skeleton className='hidden h-4 w-16 rounded bg-white/10 sm:block' />
-                        </Button>
-                    ) : user || cachedProfile ? (
-                        <DropdownMenu modal={false}>
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant='ghost'
-                                    size='sm'
-                                    className='ml-auto flex w-auto items-center gap-2 px-1.5 py-[18px] hover:bg-white/10'
+                            {navLinks.map((link) => (
+                                <a
+                                    key={link.href}
+                                    href={link.href}
+                                    aria-current={
+                                        activeSection === link.id
+                                            ? 'true'
+                                            : undefined
+                                    }
+                                    className={`text-sm font-medium transition ${
+                                        activeSection === link.id
+                                            ? 'text-foreground'
+                                            : 'text-muted-foreground hover:text-foreground'
+                                    }`}
                                 >
-                                    <Avatar className='h-7 w-7'>
-                                        <AvatarFallback className='bg-gradient-to-br from-[#ef5350] to-[#c62828] text-xs text-white'>
-                                            {getInitials(displayName)}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <span className='hidden max-w-[120px] truncate text-sm text-gray-300 sm:block'>
-                                        {displayName}
-                                    </span>
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent
-                                align='end'
-                                className='w-56 border-white/10 bg-[#151518]'
-                            >
-                                <DropdownMenuItem
-                                    onClick={() => navigate(ROUTES.CLAWS)}
-                                    className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.CLAWS ? 'bg-white/10' : ''}`}
-                                >
-                                    <ClawMascotOutline className='h-4 w-4' />
-                                    {t('nav.claws')}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() => navigate(ROUTES.SSH_KEYS)}
-                                    className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.SSH_KEYS ? 'bg-white/10' : ''}`}
-                                >
-                                    <Key className='h-4 w-4' />
-                                    {t('nav.sshKeys')}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() => navigate(ROUTES.ACCOUNT)}
-                                    className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.ACCOUNT ? 'bg-white/10' : ''}`}
-                                >
-                                    <User className='h-4 w-4' />
-                                    {t('nav.account')}
-                                </DropdownMenuItem>
-                                {profile?.role === 'admin' && (
-                                    <DropdownMenuItem
-                                        onClick={() => navigate(ROUTES.ADMIN)}
-                                        className={`text-gray-300 focus:bg-white/10 focus:text-white ${location.pathname === ROUTES.ADMIN ? 'bg-white/10' : ''}`}
-                                    >
-                                        <GearSix className='h-4 w-4' />
-                                        {t('nav.admin')}
-                                    </DropdownMenuItem>
-                                )}
-                                <DropdownMenuSeparator className='bg-white/10' />
-                                <DropdownMenuItem
-                                    onClick={signOut}
-                                    className='text-red-400 focus:bg-white/10 focus:text-red-400'
-                                >
-                                    <SignOut className='h-4 w-4' />
-                                    {t('nav.signOut')}
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                                    {link.label}
+                                </a>
+                            ))}
+                        </nav>
                     ) : (
-                        <div className='flex items-center gap-2'>
-                            <Link
-                                to={ROUTES.LOGIN}
-                                className='hidden px-3 py-1.5 text-sm text-gray-400 transition hover:text-white sm:block'
-                            >
-                                {t('nav.login')}
-                            </Link>
-                            <Button
-                                size='lg'
-                                className='gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] px-4 text-white hover:opacity-90'
-                                asChild
-                            >
-                                <Link to={ROUTES.LOGIN}>
-                                    <Lightning
-                                        className='h-4 w-4'
-                                        weight='fill'
-                                    />
-                                    {t('nav.deployOpenClaw')}
-                                </Link>
-                            </Button>
-                        </div>
+                        <div />
                     )}
+
+                    <div className='flex items-center gap-3'>
+                        <div className='hidden items-center gap-1.5 sm:flex'>
+                            <LanguageSelector />
+                            <ThemeToggle />
+                        </div>
+                        {authLoading && !cachedProfile ? (
+                            <Button
+                                variant='ghost'
+                                size='sm'
+                                className='pointer-events-none ml-auto flex w-auto items-center gap-2 px-1.5 py-5'
+                            >
+                                <Skeleton className='bg-foreground/10 h-7 w-7 shrink-0 rounded-full' />
+                                <Skeleton className='bg-foreground/10 hidden h-4 w-16 rounded sm:block' />
+                            </Button>
+                        ) : user || cachedProfile ? (
+                            <UserDropdown
+                                displayName={displayName}
+                                onSignOut={signOut}
+                                onOpen={closeMobileMenu}
+                            />
+                        ) : (
+                            <div className='flex items-center gap-2'>
+                                <Link
+                                    to={ROUTES.LOGIN}
+                                    className='text-muted-foreground hover:text-foreground hidden px-3 py-1.5 text-sm transition sm:block'
+                                >
+                                    {t('nav.login')}
+                                </Link>
+                                <Button
+                                    size='lg'
+                                    className='gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] px-4 text-white hover:opacity-90'
+                                    asChild
+                                >
+                                    <Link to={ROUTES.LOGIN}>
+                                        <LightningIcon
+                                            className='h-4 w-4'
+                                            weight='fill'
+                                        />
+                                        <span className='sm:hidden'>
+                                            {t('nav.deploy')}
+                                        </span>
+                                        <span className='hidden sm:inline'>
+                                            {t('nav.deployOpenClaw')}
+                                        </span>
+                                    </Link>
+                                </Button>
+                            </div>
+                        )}
+                        {showNavLinks && navLinks.length > 0 && (
+                            <button
+                                onClick={() =>
+                                    setMobileMenuOpen(!mobileMenuOpen)
+                                }
+                                aria-label={t('nav.toggleMenu')}
+                                aria-expanded={mobileMenuOpen}
+                                className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-lg p-1.5 transition-colors md:hidden'
+                            >
+                                {mobileMenuOpen ? (
+                                    <XIcon className='h-5 w-5' weight='bold' />
+                                ) : (
+                                    <ListIcon
+                                        className='h-5 w-5'
+                                        weight='bold'
+                                    />
+                                )}
+                            </button>
+                        )}
+                    </div>
                 </div>
-            </div>
-        </header>
+
+                <AnimatePresence>
+                    {mobileMenuOpen && showNavLinks && navLinks.length > 0 && (
+                        <>
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.2 }}
+                                className='border-border bg-background border-b px-6 pb-6 pt-2 md:hidden'
+                            >
+                                <nav className='flex flex-col gap-1'>
+                                    {navLinks.map((link) => (
+                                        <a
+                                            key={link.href}
+                                            href={link.href}
+                                            onClick={closeMobileMenu}
+                                            className={`rounded-lg px-3 py-2.5 text-sm font-medium transition ${
+                                                activeSection === link.id
+                                                    ? 'bg-foreground/10 text-foreground'
+                                                    : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'
+                                            }`}
+                                        >
+                                            {link.label}
+                                        </a>
+                                    ))}
+                                </nav>
+                                <div className='border-border flex items-center gap-1.5 border-t pt-4 sm:hidden'>
+                                    <LanguageSelector />
+                                    <ThemeToggle />
+                                </div>
+                            </motion.div>
+                        </>
+                    )}
+                </AnimatePresence>
+            </header>
+
+            <AnimatePresence>
+                {mobileMenuOpen && showNavLinks && navLinks.length > 0 && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className='fixed inset-0 z-40 md:hidden'
+                        onClick={closeMobileMenu}
+                    />
+                )}
+            </AnimatePresence>
+        </>
     )
 }
 
-export { Header }
+export default Header

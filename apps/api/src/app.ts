@@ -1,7 +1,10 @@
+import type { HonoEnv } from '@/ts/Types'
+
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
-import { logger } from 'hono/logger'
+import { bodyLimit } from 'hono/body-limit'
 import { verifyToken } from '@/services/firebase'
+import { eq, sql } from 'drizzle-orm'
 import { db } from '@/db'
 import { users } from '@/db/schema'
 import { ok, fail } from '@/lib/response'
@@ -9,46 +12,65 @@ import { t } from '@openclaw/i18n'
 import {
     authRoutes,
     clawsRoutes,
+    featureRequestsRoutes,
     plansRoutes,
     sshKeysRoutes,
     usersRoutes,
     webhooksRoutes
 } from '@/routes'
+import { browseSkills } from '@/services/clawhub'
 
-const app = new Hono<{ Variables: { userId: string } }>()
+const app = new Hono<HonoEnv>()
 
-app.use('*', logger())
+const isDev = process.env.NODE_ENV !== 'production'
+
 app.use(
     '*',
     cors({
-        origin: [
-            'https://clawhost.cloud',
-            'https://www.clawhost.cloud',
-            'http://localhost:1111'
-        ],
+        origin: isDev
+            ? [
+                  'https://clawhost.cloud',
+                  'https://www.clawhost.cloud',
+                  'http://localhost:1111'
+              ]
+            : ['https://clawhost.cloud', 'https://www.clawhost.cloud'],
         allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
         allowHeaders: ['Content-Type', 'Authorization'],
         maxAge: 86400
     })
 )
 
+app.use('*', bodyLimit({ maxSize: 1024 * 1024 }))
+
+app.use('*', async (c, next) => {
+    await next()
+    c.header('X-Content-Type-Options', 'nosniff')
+    c.header('X-Frame-Options', 'DENY')
+    c.header('Referrer-Policy', 'strict-origin-when-cross-origin')
+    c.header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
+})
+
 app.get('/', (c) => ok(c, null, t('api.healthOk')))
 
 app.route('/auth', authRoutes)
 app.route('/plans', plansRoutes)
 app.route('/webhooks', webhooksRoutes)
+app.route('/feature-requests', featureRequestsRoutes)
+
+app.get('/clawhub/skills', async (c) => {
+    try {
+        const result = await browseSkills({
+            query: c.req.query('query') || undefined,
+            limit: c.req.query('limit') ? Number(c.req.query('limit')) : undefined,
+            cursor: c.req.query('cursor') || undefined
+        })
+        return ok(c, { skills: result.skills, nextCursor: result.nextCursor, hasMore: result.hasMore }, t('api.clawHubSearchSuccess'))
+    } catch {
+        return fail(c, t('api.clawHubSearchFailed'), 500)
+    }
+})
 
 app.use('/*', async (c, next) => {
-    if (
-        c.req.path === '/' ||
-        c.req.path.startsWith('/favicon') ||
-        c.req.path.startsWith('/auth') ||
-        c.req.path.startsWith('/plans') ||
-        c.req.path.startsWith('/webhooks')
-    ) {
-        return next()
-    }
-
     try {
         const authHeader = c.req.header('Authorization')
         if (!authHeader?.startsWith('Bearer ')) {
@@ -62,16 +84,54 @@ app.use('/*', async (c, next) => {
             return fail(c, t('api.invalidToken'), 401)
         }
 
-        await db
-            .insert(users)
-            .values({
-                id: decoded.uid,
-                email: decoded.email || ''
-            })
-            .onConflictDoUpdate({
-                target: users.email,
-                set: { id: decoded.uid }
-            })
+        const signInProvider = decoded.firebase?.sign_in_provider
+        const authMethod =
+            signInProvider === 'google.com'
+                ? 'google'
+                : signInProvider === 'github.com'
+                  ? 'github'
+                  : 'email'
+
+        const existingUser = await db
+            .select({ id: users.id })
+            .from(users)
+            .where(eq(users.id, decoded.uid))
+            .then((rows) => rows[0])
+
+        if (existingUser) {
+            await db
+                .update(users)
+                .set({
+                    ...(decoded.email ? { email: decoded.email } : {}),
+                    authMethods: sql`CASE
+                        WHEN ${authMethod} = ANY(COALESCE(${users.authMethods}, '{}'))
+                        THEN COALESCE(${users.authMethods}, '{}')
+                        ELSE array_append(COALESCE(${users.authMethods}, '{}'), ${authMethod})
+                    END`
+                })
+                .where(eq(users.id, decoded.uid))
+        } else if (decoded.email) {
+            await db
+                .insert(users)
+                .values({
+                    id: decoded.uid,
+                    email: decoded.email,
+                    authMethods: [authMethod]
+                })
+                .onConflictDoUpdate({
+                    target: users.id,
+                    set: {
+                        email: decoded.email,
+                        authMethods: sql`CASE
+                            WHEN ${authMethod} = ANY(COALESCE(${users.authMethods}, '{}'))
+                            THEN COALESCE(${users.authMethods}, '{}')
+                            ELSE array_append(COALESCE(${users.authMethods}, '{}'), ${authMethod})
+                        END`
+                    }
+                })
+        } else {
+            return fail(c, t('api.unauthorized'), 401)
+        }
 
         c.set('userId', decoded.uid)
         return next()

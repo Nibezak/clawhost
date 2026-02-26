@@ -2,15 +2,15 @@ import type { FC, ReactNode } from 'react'
 import type { ClawCardDialogsProps } from '@/ts/Interfaces'
 
 import { t } from '@openclaw/i18n'
-import { Button } from '@/components/ui/button'
 import {
+    Button,
     Dialog,
     DialogContent,
     DialogDescription,
     DialogHeader,
     DialogTitle
-} from '@/components/ui/dialog'
-import { CircleNotch } from '@phosphor-icons/react'
+} from '@/components/ui'
+import { CircleNotchIcon } from '@phosphor-icons/react'
 
 const ClawCardDialogs: FC<ClawCardDialogsProps> = ({
     clawName,
@@ -62,14 +62,10 @@ const ClawCardDialogs: FC<ClawCardDialogsProps> = ({
                             }}
                             disabled={isDeletePending}
                         >
-                            {isDeletePending ? (
-                                <>
-                                    <CircleNotch className='mr-2 h-4 w-4 animate-spin' />
-                                    {t('dashboard.deleting')}
-                                </>
-                            ) : (
-                                t('common.confirm')
+                            {isDeletePending && (
+                                <CircleNotchIcon className='mr-2 h-4 w-4 animate-spin' />
                             )}
+                            {t('common.confirm')}
                         </Button>
                     </div>
                 </DialogContent>
@@ -98,14 +94,10 @@ const ClawCardDialogs: FC<ClawCardDialogsProps> = ({
                             }}
                             disabled={isStopPending}
                         >
-                            {isStopPending ? (
-                                <>
-                                    <CircleNotch className='mr-2 h-4 w-4 animate-spin' />
-                                    {t('dashboard.stopping')}
-                                </>
-                            ) : (
-                                t('common.confirm')
+                            {isStopPending && (
+                                <CircleNotchIcon className='mr-2 h-4 w-4 animate-spin' />
                             )}
+                            {t('common.confirm')}
                         </Button>
                     </div>
                 </DialogContent>
@@ -134,14 +126,10 @@ const ClawCardDialogs: FC<ClawCardDialogsProps> = ({
                             }}
                             disabled={isRestartPending}
                         >
-                            {isRestartPending ? (
-                                <>
-                                    <CircleNotch className='mr-2 h-4 w-4 animate-spin' />
-                                    {t('dashboard.restarting')}
-                                </>
-                            ) : (
-                                t('common.confirm')
+                            {isRestartPending && (
+                                <CircleNotchIcon className='mr-2 h-4 w-4 animate-spin' />
                             )}
+                            {t('common.confirm')}
                         </Button>
                     </div>
                 </DialogContent>
@@ -175,14 +163,10 @@ const ClawCardDialogs: FC<ClawCardDialogsProps> = ({
                             }}
                             disabled={isHardDeletePending}
                         >
-                            {isHardDeletePending ? (
-                                <>
-                                    <CircleNotch className='mr-2 h-4 w-4 animate-spin' />
-                                    {t('dashboard.hardDeleting')}
-                                </>
-                            ) : (
-                                t('common.confirm')
+                            {isHardDeletePending && (
+                                <CircleNotchIcon className='mr-2 h-4 w-4 animate-spin' />
                             )}
+                            {t('common.confirm')}
                         </Button>
                     </div>
                 </DialogContent>
@@ -216,14 +200,10 @@ const ClawCardDialogs: FC<ClawCardDialogsProps> = ({
                             }}
                             disabled={isReinstallPending}
                         >
-                            {isReinstallPending ? (
-                                <>
-                                    <CircleNotch className='mr-2 h-4 w-4 animate-spin' />
-                                    {t('dashboard.reinstalling')}
-                                </>
-                            ) : (
-                                t('common.confirm')
+                            {isReinstallPending && (
+                                <CircleNotchIcon className='mr-2 h-4 w-4 animate-spin' />
                             )}
+                            {t('common.confirm')}
                         </Button>
                     </div>
                 </DialogContent>
@@ -232,4 +212,4 @@ const ClawCardDialogs: FC<ClawCardDialogsProps> = ({
     )
 }
 
-export { ClawCardDialogs }
+export default ClawCardDialogs

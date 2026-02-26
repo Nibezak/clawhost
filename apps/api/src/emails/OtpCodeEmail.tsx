@@ -1,9 +1,10 @@
 import type { OtpCodeEmailProps } from '@/ts/Interfaces'
 
+import { t } from '@openclaw/i18n'
+
 import {
     Body,
     Container,
-    Head,
     Html,
     Img,
     Preview,
@@ -11,70 +12,66 @@ import {
     Text
 } from '@react-email/components'
 
+import CDN_ASSETS from '@/lib/cdn'
 import {
-    darkModeStyles,
     main,
     container,
     body,
     paragraph,
-    paragraphMuted,
+    title,
     logoSection,
     logo
 } from '@/emails/styles'
+
+const codeWrapper = {
+    textAlign: 'center' as const,
+    margin: '8px 0 20px'
+}
+
+const codeBox = {
+    backgroundColor: '#f4f4f5',
+    borderRadius: '8px',
+    padding: '16px 24px',
+    display: 'inline-block' as const
+}
 
 const codeStyle = {
     fontSize: '32px',
     fontWeight: '700' as const,
     letterSpacing: '8px',
-    textAlign: 'center' as const,
-    color: '#ef5350',
-    padding: '16px 0',
-    margin: '8px 0 20px',
+    color: '#18181b',
+    margin: '0',
     fontFamily: 'monospace'
 }
 
-export const OtpCodeEmail = ({ code }: OtpCodeEmailProps) => {
+const OtpCodeEmail = ({ code }: OtpCodeEmailProps) => {
+    const formattedCode = code || '000000'
+
     return (
         <Html>
-            <Head>
-                <meta name='color-scheme' content='light dark' />
-                <meta name='supported-color-schemes' content='light dark' />
-                <style>{darkModeStyles}</style>
-            </Head>
-            <Preview>Your ClawHost sign-in code: {code}</Preview>
-            <Body style={main} className='email-body'>
-                <Container style={container} className='email-container'>
+            <Preview>{t('emails.otpPreview', { code: formattedCode })}</Preview>
+
+            <Body style={main}>
+                <Container style={container}>
                     <Section style={logoSection}>
                         <Img
-                            src='https://cdn.clawhost.cloud/assets/clawhost-logo-dark.png'
+                            src={CDN_ASSETS.LOGO}
                             width='140'
                             alt='ClawHost'
                             style={logo}
-                            className='logo-light'
-                        />
-                        <Img
-                            src='https://cdn.clawhost.cloud/assets/clawhost-logo-light.png'
-                            width='140'
-                            alt='ClawHost'
-                            style={{ ...logo, display: 'none' }}
-                            className='logo-dark'
                         />
                     </Section>
+
                     <Section style={body}>
-                        <Text style={paragraph} className='email-text'>
-                            Your sign-in code is:
-                        </Text>
-                        <Text style={codeStyle}>{code}</Text>
-                        <Text style={paragraph} className='email-text'>
-                            This code expires in 10 minutes.
-                        </Text>
-                        <Text
-                            style={paragraphMuted}
-                            className='email-text-muted'
-                        >
-                            If you didn't request this code, you can safely
-                            ignore this email.
-                        </Text>
+                        <Text style={title}>{t('emails.otpHeading')}</Text>
+
+                        <div style={codeWrapper}>
+                            <div style={codeBox}>
+                                <Text style={codeStyle}>{formattedCode}</Text>
+                            </div>
+                        </div>
+
+                        <Text style={paragraph}>{t('emails.otpExpiry')}</Text>
                     </Section>
                 </Container>
             </Body>

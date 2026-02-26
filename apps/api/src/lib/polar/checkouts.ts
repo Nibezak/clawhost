@@ -1,9 +1,16 @@
-import type { CheckoutSession, CreateCheckoutParams } from '@/ts/Interfaces'
+import type {
+    CacheEntry,
+    CheckoutSession,
+    CreateCheckoutParams
+} from '@/ts/Interfaces'
 
 import getPolarClient from '@/lib/polar/getPolarClient'
 import getPolarConfig from '@/lib/polar/getPolarConfig'
 
-export const checkouts = {
+const CHECKOUT_CACHE_TTL = 30_000
+const checkoutCache = new Map<string, CacheEntry<CheckoutSession>>()
+
+const checkouts = {
     async create(params: CreateCheckoutParams): Promise<CheckoutSession> {
         const polar = getPolarClient()
         const config = getPolarConfig()
@@ -30,11 +37,14 @@ export const checkouts = {
     },
 
     async get(checkoutId: string): Promise<CheckoutSession | null> {
+        const cached = checkoutCache.get(checkoutId)
+        if (cached && Date.now() < cached.expiry) return cached.data
+
         const polar = getPolarClient()
 
         try {
             const checkout = await polar.checkouts.get({ id: checkoutId })
-            return {
+            const result: CheckoutSession = {
                 id: checkout.id,
                 url: checkout.url,
                 status: checkout.status,
@@ -47,8 +57,15 @@ export const checkouts = {
                     | Record<string, string>
                     | undefined
             }
+            checkoutCache.set(checkoutId, {
+                data: result,
+                expiry: Date.now() + CHECKOUT_CACHE_TTL
+            })
+            return result
         } catch {
             return null
         }
     }
 }
+
+export default checkouts

@@ -1,51 +1,52 @@
-import type { Context } from 'hono'
-import type { ProviderType } from '@/ts/Types'
+import type { AuthenticatedContext, ProviderType } from '@/ts/Types'
 
-import { eq, and } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
+import { clawStatus } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { getProvider } from '@/services/provider'
-import { checkSubdomainReady, isAdmin } from '@/controllers/claws/helpers'
+import {
+    checkSubdomainReady,
+    findUserClaw,
+    sanitizeClaw
+} from '@/controllers/claws/helpers'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
-const syncClaw = async (c: Context<{ Variables: { userId: string } }>) => {
+const syncClaw = async (c: AuthenticatedContext) => {
     const userId = c.get('userId')
     const id = c.req.param('id')
-    const admin = await isAdmin(userId)
+    const claw = await findUserClaw(userId, id)
 
-    const claw = await db
-        .select()
-        .from(claws)
-        .where(
-            admin
-                ? eq(claws.id, id)
-                : and(eq(claws.id, id), eq(claws.userId, userId))
-        )
-        .limit(1)
-
-    if (!claw[0] || !claw[0].providerServerId) {
+    if (!claw || !claw.providerServerId) {
         return fail(c, t('api.clawNotFound'), 404)
     }
 
     try {
-        const provider = getProvider(claw[0].provider as ProviderType)
-        const serverStatus = await provider.getServer(claw[0].providerServerId)
+        const provider = getProvider(claw.provider as ProviderType)
+        const serverStatus = await provider.getServer(claw.providerServerId)
 
-        if (claw[0].status === 'configuring') {
-            if (serverStatus.status === 'running' && claw[0].subdomain) {
-                const ready = await checkSubdomainReady(claw[0].subdomain)
+        if (claw.status === clawStatus.configuring) {
+            if (serverStatus.status === clawStatus.running && claw.subdomain) {
+                const ready = await checkSubdomainReady(claw.subdomain)
                 if (ready) {
                     await db
                         .update(claws)
-                        .set({ status: 'running', ip: serverStatus.ip })
+                        .set({
+                            status: clawStatus.running,
+                            ip: serverStatus.ip
+                        })
                         .where(eq(claws.id, id))
 
-                    return ok(c, {
-                        ...claw[0],
-                        status: 'running',
-                        ip: serverStatus.ip
-                    }, t('api.clawSynced'))
+                    return ok(
+                        c,
+                        sanitizeClaw({
+                            ...claw,
+                            status: clawStatus.running,
+                            ip: serverStatus.ip
+                        }),
+                        t('api.clawSynced')
+                    )
                 }
             }
 
@@ -54,10 +55,14 @@ const syncClaw = async (c: Context<{ Variables: { userId: string } }>) => {
                 .set({ ip: serverStatus.ip })
                 .where(eq(claws.id, id))
 
-            return ok(c, {
-                ...claw[0],
-                ip: serverStatus.ip
-            }, t('api.clawSynced'))
+            return ok(
+                c,
+                sanitizeClaw({
+                    ...claw,
+                    ip: serverStatus.ip
+                }),
+                t('api.clawSynced')
+            )
         }
 
         await db
@@ -65,11 +70,15 @@ const syncClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             .set({ status: serverStatus.status, ip: serverStatus.ip })
             .where(eq(claws.id, id))
 
-        return ok(c, {
-            ...claw[0],
-            status: serverStatus.status,
-            ip: serverStatus.ip
-        }, t('api.clawSynced'))
+        return ok(
+            c,
+            sanitizeClaw({
+                ...claw,
+                status: serverStatus.status,
+                ip: serverStatus.ip
+            }),
+            t('api.clawSynced')
+        )
     } catch (err) {
         console.error('Failed to sync server status:', err)
         return fail(c, t('api.failedToSyncClaw'), 500)

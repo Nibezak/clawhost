@@ -33,12 +33,12 @@ const ClawMascot: FC<ClawMascotProps> = ({ className }): ReactNode => {
                 strokeWidth='2'
                 strokeLinecap='round'
             />
-            <circle cx='45' cy='35' r='6' fill='#0a0a0f' />
-            <circle cx='75' cy='35' r='6' fill='#0a0a0f' />
+            <circle cx='45' cy='35' r='6' className='fill-background' />
+            <circle cx='75' cy='35' r='6' className='fill-background' />
             <circle cx='46' cy='34' r='2' fill='#4dd0e1' />
             <circle cx='76' cy='34' r='2' fill='#4dd0e1' />
         </svg>
     )
 }
 
-export { ClawMascot }
+export default ClawMascot

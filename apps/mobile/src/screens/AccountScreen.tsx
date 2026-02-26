@@ -17,14 +17,22 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Calendar, Key, ArrowSquareOut } from 'phosphor-react-native'
 import { t } from '@openclaw/i18n'
-import { useAuth } from '@/lib/auth/AuthProvider'
+import { useAuth } from '@/lib/auth'
+import getLocale from '@/lib/getLocale'
 import api from '@/lib/api'
-import { useProfile, useUpdateProfile, useUserStats, useBillingHistory } from '@/hooks'
+import {
+    useProfile,
+    useUpdateProfile,
+    useUserStats,
+    useBillingHistory
+} from '@/hooks'
 import { COLORS, SPACING, TYPOGRAPHY } from '@/lib/theme'
-import ClawMascot from '@/components/ClawMascot'
-import GridBackground from '@/components/GridBackground'
-import BillingOrderItem from '@/components/BillingOrderItem'
-import BillingSkeleton from '@/components/BillingSkeleton'
+import {
+    ClawMascot,
+    GridBackground,
+    BillingOrderItem,
+    BillingSkeleton
+} from '@/components'
 
 const BILLING_PAGE_SIZE = 10
 
@@ -47,7 +55,9 @@ const AccountScreen: FC = (): ReactNode => {
 
     const [name, setName] = useState('')
     const [hasChanges, setHasChanges] = useState(false)
-    const [loadingInvoiceIds, setLoadingInvoiceIds] = useState<Set<string>>(new Set())
+    const [loadingInvoiceIds, setLoadingInvoiceIds] = useState<Set<string>>(
+        new Set()
+    )
     const [isPortalLoading, setIsPortalLoading] = useState(false)
 
     useEffect(() => {
@@ -71,7 +81,9 @@ const AccountScreen: FC = (): ReactNode => {
                     Alert.alert(t('account.profileUpdatedSuccessfully'))
                 },
                 onError: (err: Error) => {
-                    Alert.alert(err.message || t('errors.failedToUpdateProfile'))
+                    Alert.alert(
+                        err.message || t('errors.failedToUpdateProfile')
+                    )
                 }
             }
         )
@@ -112,21 +124,24 @@ const AccountScreen: FC = (): ReactNode => {
         if (!text) return '?'
         const parts = text.split(' ')
         if (parts.length > 1) {
-            return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase()
+            return (
+                parts[0].charAt(0) + parts[parts.length - 1].charAt(0)
+            ).toUpperCase()
         }
         return text.charAt(0).toUpperCase()
     }
 
     const formatDate = (dateString: string | undefined): string => {
         if (!dateString) return '...'
-        return new Date(dateString).toLocaleDateString('en-US', {
+        return new Date(dateString).toLocaleDateString(getLocale(), {
             year: 'numeric',
             month: 'long',
             day: 'numeric'
         })
     }
 
-    const allBillingItems = billingData?.pages.flatMap((page) => page.items) ?? []
+    const allBillingItems =
+        billingData?.pages.flatMap((page) => page.items) ?? []
     const billingTotal = userStats?.orderCount ?? 0
 
     return (
@@ -157,7 +172,9 @@ const AccountScreen: FC = (): ReactNode => {
                         </View>
                         <View style={styles.profileInfo}>
                             <Text style={styles.profileName} numberOfLines={1}>
-                                {name || profile?.name || t('account.noNameSet')}
+                                {name ||
+                                    profile?.name ||
+                                    t('account.noNameSet')}
                             </Text>
                             <Text style={styles.profileEmail} numberOfLines={1}>
                                 {email}
@@ -165,7 +182,8 @@ const AccountScreen: FC = (): ReactNode => {
                             <View style={styles.joinedRow}>
                                 <Calendar size={12} color={COLORS.textDim} />
                                 <Text style={styles.profileJoined}>
-                                    {t('account.joined')} {formatDate(profile?.createdAt)}
+                                    {t('account.joined')}{' '}
+                                    {formatDate(profile?.createdAt)}
                                 </Text>
                             </View>
                         </View>
@@ -174,21 +192,34 @@ const AccountScreen: FC = (): ReactNode => {
                     {!isStatsLoading && userStats && (
                         <View style={styles.statsRow}>
                             <View style={styles.statItem}>
-                                <ClawMascot size={14} color={COLORS.textMuted} />
-                                <Text style={styles.statValue}>{userStats.clawCount}</Text>
-                                <Text style={styles.statLabel}>{t('account.claws')}</Text>
+                                <ClawMascot
+                                    size={14}
+                                    color={COLORS.textMuted}
+                                />
+                                <Text style={styles.statValue}>
+                                    {userStats.clawCount}
+                                </Text>
+                                <Text style={styles.statLabel}>
+                                    {t('account.claws')}
+                                </Text>
                             </View>
                             <View style={styles.statItem}>
                                 <Key size={14} color={COLORS.textMuted} />
-                                <Text style={styles.statValue}>{userStats.sshKeyCount}</Text>
-                                <Text style={styles.statLabel}>{t('account.sshKeys')}</Text>
+                                <Text style={styles.statValue}>
+                                    {userStats.sshKeyCount}
+                                </Text>
+                                <Text style={styles.statLabel}>
+                                    {t('account.sshKeys')}
+                                </Text>
                             </View>
                         </View>
                     )}
                 </View>
 
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>{t('account.displayName')}</Text>
+                    <Text style={styles.sectionTitle}>
+                        {t('account.displayName')}
+                    </Text>
                     <TextInput
                         style={styles.nameInput}
                         value={name}
@@ -204,30 +235,51 @@ const AccountScreen: FC = (): ReactNode => {
                         disabled={!hasChanges || updateMutation.isPending}
                         style={[
                             styles.saveButton,
-                            (!hasChanges || updateMutation.isPending) && styles.saveButtonDisabled
+                            (!hasChanges || updateMutation.isPending) &&
+                                styles.saveButtonDisabled
                         ]}
                     >
                         {updateMutation.isPending && (
-                            <ActivityIndicator size='small' color={COLORS.white} />
+                            <ActivityIndicator
+                                size='small'
+                                color={COLORS.white}
+                            />
                         )}
-                        <Text style={styles.saveButtonText}>{t('common.save')}</Text>
+                        <Text style={styles.saveButtonText}>
+                            {t('common.save')}
+                        </Text>
                     </Pressable>
                 </View>
 
                 <View style={styles.section}>
                     <View style={styles.billingHeader}>
                         <View style={styles.billingHeaderLeft}>
-                            <Text style={styles.sectionTitle}>{t('account.billingHistory')}</Text>
-                            <Text style={styles.sectionDescription}>{t('account.billingDescription')}</Text>
+                            <Text style={styles.sectionTitle}>
+                                {t('account.billingHistory')}
+                            </Text>
+                            <Text style={styles.sectionDescription}>
+                                {t('account.billingDescription')}
+                            </Text>
                         </View>
                         {billingTotal > 0 && (
-                            <Pressable onPress={handleManageBilling} style={styles.manageBillingButton}>
+                            <Pressable
+                                onPress={handleManageBilling}
+                                style={styles.manageBillingButton}
+                            >
                                 {isPortalLoading ? (
-                                    <ActivityIndicator size='small' color={COLORS.black} />
+                                    <ActivityIndicator
+                                        size='small'
+                                        color={COLORS.black}
+                                    />
                                 ) : (
                                     <>
-                                        <Text style={styles.manageBillingText}>{t('account.manageBilling')}</Text>
-                                        <ArrowSquareOut size={14} color={COLORS.black} />
+                                        <Text style={styles.manageBillingText}>
+                                            {t('account.manageBilling')}
+                                        </Text>
+                                        <ArrowSquareOut
+                                            size={14}
+                                            color={COLORS.black}
+                                        />
                                     </>
                                 )}
                             </Pressable>
@@ -242,14 +294,23 @@ const AccountScreen: FC = (): ReactNode => {
                         </View>
                     ) : isBillingError ? (
                         <View style={styles.emptyState}>
-                            <Text style={styles.emptyTitle}>{t('account.failedToLoadBilling')}</Text>
-                            <Pressable onPress={() => refetchBilling()} style={styles.retryButton}>
-                                <Text style={styles.retryText}>{t('common.tryAgain')}</Text>
+                            <Text style={styles.emptyTitle}>
+                                {t('account.failedToLoadBilling')}
+                            </Text>
+                            <Pressable
+                                onPress={() => refetchBilling()}
+                                style={styles.retryButton}
+                            >
+                                <Text style={styles.retryText}>
+                                    {t('common.tryAgain')}
+                                </Text>
                             </Pressable>
                         </View>
                     ) : allBillingItems.length === 0 ? (
                         <View style={styles.emptyState}>
-                            <Text style={styles.emptyTitle}>{t('account.noBillingHistory')}</Text>
+                            <Text style={styles.emptyTitle}>
+                                {t('account.noBillingHistory')}
+                            </Text>
                             <Text style={styles.emptyDescription}>
                                 {t('account.noBillingHistoryDescription')}
                             </Text>
@@ -261,7 +322,9 @@ const AccountScreen: FC = (): ReactNode => {
                                     key={order.id}
                                     order={order}
                                     onViewInvoice={handleViewInvoice}
-                                    isInvoiceLoading={loadingInvoiceIds.has(order.id)}
+                                    isInvoiceLoading={loadingInvoiceIds.has(
+                                        order.id
+                                    )}
                                 />
                             ))}
                             {hasNextPage && (
@@ -271,9 +334,14 @@ const AccountScreen: FC = (): ReactNode => {
                                     style={styles.loadMoreButton}
                                 >
                                     {isFetchingNextPage ? (
-                                        <ActivityIndicator size='small' color={COLORS.accent} />
+                                        <ActivityIndicator
+                                            size='small'
+                                            color={COLORS.accent}
+                                        />
                                     ) : (
-                                        <Text style={styles.loadMoreText}>{t('mobile.loadMore')}</Text>
+                                        <Text style={styles.loadMoreText}>
+                                            {t('mobile.loadMore')}
+                                        </Text>
                                     )}
                                 </Pressable>
                             )}
@@ -282,7 +350,9 @@ const AccountScreen: FC = (): ReactNode => {
                 </View>
 
                 <Pressable style={styles.signOutButton} onPress={signOut}>
-                    <Text style={styles.signOutText}>{t('mobile.signOut')}</Text>
+                    <Text style={styles.signOutText}>
+                        {t('mobile.signOut')}
+                    </Text>
                 </Pressable>
 
                 <View style={{ height: insets.bottom + SPACING.xl }} />

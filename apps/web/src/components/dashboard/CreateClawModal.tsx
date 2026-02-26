@@ -4,6 +4,7 @@ import type { ProviderType } from '@/ts/Types'
 
 import { useState, useEffect } from 'react'
 import { t } from '@openclaw/i18n'
+import { clawProvider } from '@openclaw/shared'
 import { useUIStore } from '@/lib/store'
 import {
     usePurchaseClaw,
@@ -12,42 +13,33 @@ import {
     useVolumePricing,
     usePlanAvailability
 } from '@/hooks'
-import { generatePassword, locationFlags, aiModels } from '@/lib/claw-utils'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Slider } from '@/components/ui/slider'
-import { Label } from '@/components/ui/label'
+import { generatePassword, locationFlags } from '@/lib/claw-utils'
 import {
-    Select,
-    SelectTrigger,
-    SelectContent,
-    SelectItem,
-    SelectGroup
-} from '@/components/ui/select'
-import {
+    Button,
+    Input,
+    Slider,
+    Label,
     Dialog,
     DialogContent,
     DialogDescription,
     DialogHeader,
-    DialogTitle
-} from '@/components/ui/dialog'
-import {
-    CircleNotch,
-    Eye,
-    EyeSlash,
-    Key,
-    Copy,
-    ArrowClockwise,
-    CaretDown
-} from '@phosphor-icons/react'
-import {
+    DialogTitle,
     Tooltip,
     TooltipTrigger,
     TooltipContent,
-    TooltipProvider
-} from '@/components/ui/tooltip'
-import { Skeleton } from '@/components/ui/skeleton'
-import { ClawMascot } from '@/components/ClawMascot'
+    TooltipProvider,
+    Skeleton
+} from '@/components/ui'
+import {
+    CircleNotchIcon,
+    EyeIcon,
+    EyeSlashIcon,
+    KeyIcon,
+    CopyIcon,
+    ArrowClockwiseIcon,
+    CaretDownIcon
+} from '@phosphor-icons/react'
+import { ClawMascot } from '@/components'
 
 const CreateClawModal: FC<CreateClawModalProps> = ({
     plans: initialPlans,
@@ -56,14 +48,21 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     volumePricing: initialVolumePricing,
     planAvailability: initialPlanAvailability,
     preselectedPlanId,
+    preselectedProvider,
     onClose,
     onNavigateToSSHKeys
 }): ReactNode => {
     const [name, setName] = useState('')
-    const [provider, setProvider] = useState<ProviderType>('hetzner')
+    const [nameError, setNameError] = useState('')
+    const [provider, setProvider] = useState<ProviderType>(
+        preselectedProvider || clawProvider.hetzner
+    )
 
-    const { plans: providerPlans, isLoading: isLoadingPlans, atCapacity } =
-        usePlans(provider)
+    const {
+        plans: providerPlans,
+        isLoading: isLoadingPlans,
+        atCapacity
+    } = usePlans(provider)
     const { data: providerLocations, isLoading: isLoadingLocations } =
         useLocations(provider)
     const { data: providerVolumePricing } = useVolumePricing(provider)
@@ -75,9 +74,18 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     const volumePricing = providerVolumePricing || initialVolumePricing
     const planAvailability = providerPlanAvailability || initialPlanAvailability
 
+    const isPlanAvailable = (id: string): boolean => {
+        if (!planAvailability) return true
+        const available = planAvailability[id]
+        if (!available) return true
+        return available.length > 0
+    }
+
     const getFirstEnabledPlan = (planList: typeof plans): string => {
-        const enabled = planList.find((p) => !p.disabled)
-        return enabled?.id || ''
+        const enabled = planList.find(
+            (p) => !p.disabled && isPlanAvailable(p.id)
+        )
+        return enabled?.id || planList.find((p) => !p.disabled)?.id || ''
     }
 
     const initialPlanId =
@@ -112,8 +120,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     const [showPassword, setShowPassword] = useState(false)
     const [selectedSshKeyId, setSelectedSshKeyId] = useState<string>('')
     const [volumeSize, setVolumeSize] = useState<number>(0)
-    const [model, setModel] = useState('')
-    const [apiToken, setApiToken] = useState('')
     const [showAdvanced, setShowAdvanced] = useState(false)
     const { showToast } = useUIStore()
 
@@ -135,7 +141,15 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     }, [plans, locations])
 
     useEffect(() => {
-        if (planId && planAvailability) {
+        if (planAvailability && planId) {
+            if (!isPlanAvailable(planId)) {
+                const betterPlan = getFirstEnabledPlan(plans)
+                if (betterPlan) {
+                    setPlanId(betterPlan)
+                    setLocation(getFirstAvailableLocation(betterPlan))
+                    return
+                }
+            }
             const currentAvailable = isLocationAvailableForPlan(
                 location,
                 planId
@@ -152,6 +166,10 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     const purchaseMutation = usePurchaseClaw()
 
     const handleCreate = () => {
+        if (name && !/^[a-zA-Z0-9-]+$/.test(name)) {
+            setNameError(t('createClaw.clawNameInvalidChars'))
+            return
+        }
         if (!location) {
             showToast(t('errors.invalidLocation'), 'error')
             return
@@ -177,8 +195,6 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                 password: password || undefined,
                 sshKeyId: selectedSshKeyId || undefined,
                 volumeSize: volumeSize > 0 ? volumeSize : undefined,
-                model: model || undefined,
-                apiToken: apiToken || undefined,
                 priceMonthly: totalPrice
             },
             {
@@ -202,9 +218,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
         )
     }
 
-    const selectedPlan = plans.find(
-        (p) => p.id === planId && !p.disabled
-    )
+    const selectedPlan = plans.find((p) => p.id === planId && !p.disabled)
 
     return (
         <Dialog open onOpenChange={onClose}>
@@ -228,23 +242,43 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                         <Input
                             type='text'
                             value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            onChange={(e) => {
+                                const val = e.target.value
+                                setName(val)
+                                if (val && !/^[a-zA-Z0-9-]+$/.test(val)) {
+                                    setNameError(
+                                        t('createClaw.clawNameInvalidChars')
+                                    )
+                                } else {
+                                    setNameError('')
+                                }
+                            }}
                             placeholder={t('createClaw.clawNamePlaceholder')}
-                            className='h-11'
+                            className={`h-11 ${nameError ? 'border-red-500/50' : ''}`}
                         />
+                        {nameError && (
+                            <p className='mt-1.5 text-[11px] text-red-600 dark:text-red-400'>
+                                {nameError}
+                            </p>
+                        )}
                     </div>
 
                     <div className='space-y-1'>
                         <Label>
                             {t('createClaw.provider')}
-                            <span className='text-red-400'> *</span>
+                            <span className='text-red-600 dark:text-red-400'>
+                                {' '}
+                                *
+                            </span>
                         </Label>
                         <div className='bg-muted flex w-fit rounded-lg p-1'>
                             <button
                                 type='button'
-                                onClick={() => handleProviderChange('hetzner')}
+                                onClick={() =>
+                                    handleProviderChange(clawProvider.hetzner)
+                                }
                                 className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition ${
-                                    provider === 'hetzner'
+                                    provider === clawProvider.hetzner
                                         ? 'bg-background text-foreground shadow-sm'
                                         : 'text-muted-foreground hover:text-foreground'
                                 }`}
@@ -270,10 +304,12 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                             <button
                                 type='button'
                                 onClick={() =>
-                                    handleProviderChange('digitalocean')
+                                    handleProviderChange(
+                                        clawProvider.digitalocean
+                                    )
                                 }
                                 className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition ${
-                                    provider === 'digitalocean'
+                                    provider === clawProvider.digitalocean
                                         ? 'bg-background text-foreground shadow-sm'
                                         : 'text-muted-foreground hover:text-foreground'
                                 }`}
@@ -292,9 +328,11 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                             </button>
                             <button
                                 type='button'
-                                onClick={() => handleProviderChange('vultr')}
+                                onClick={() =>
+                                    handleProviderChange(clawProvider.vultr)
+                                }
                                 className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition ${
-                                    provider === 'vultr'
+                                    provider === clawProvider.vultr
                                         ? 'bg-background text-foreground shadow-sm'
                                         : 'text-muted-foreground hover:text-foreground'
                                 }`}
@@ -319,7 +357,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                             </button>
                         </div>
                         {atCapacity && (
-                            <p className='mt-2 rounded-md bg-yellow-500/10 px-3 py-2 text-xs text-yellow-400'>
+                            <p className='mt-2 rounded-md bg-yellow-500/10 px-3 py-2 text-xs text-yellow-600 dark:text-yellow-400'>
                                 {t('createClaw.providerAtCapacity')}
                             </p>
                         )}
@@ -328,7 +366,10 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                     <div className='space-y-2'>
                         <Label>
                             {t('createClaw.location')}
-                            <span className='text-red-400'> *</span>
+                            <span className='text-red-600 dark:text-red-400'>
+                                {' '}
+                                *
+                            </span>
                         </Label>
                         {isProviderLoading ? (
                             <div className='grid grid-cols-2 gap-2'>
@@ -352,7 +393,9 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                 planId
                                             )
                                         const isDisabled =
-                                            loc.disabled || unavailableForPlan || atCapacity
+                                            loc.disabled ||
+                                            unavailableForPlan ||
+                                            atCapacity
                                         const locationLabel = loc.country
                                             ? `${loc.city}, ${loc.country}`
                                             : loc.city
@@ -422,7 +465,10 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                     <div className='space-y-2'>
                         <Label>
                             {t('createClaw.plan')}
-                            <span className='text-red-400'> *</span>
+                            <span className='text-red-600 dark:text-red-400'>
+                                {' '}
+                                *
+                            </span>
                         </Label>
                         {isProviderLoading ? (
                             <div className='space-y-2'>
@@ -438,22 +484,37 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                 <div className='space-y-2'>
                                     {plans.map((plan, index) => {
                                         const isSelected = planId === plan.id
-                                        const isDisabled = plan.disabled
+                                        const isDisabled =
+                                            plan.disabled ||
+                                            !isPlanAvailable(plan.id)
 
-                                        const tierStarts: Record<string, Record<string, string>> = {
+                                        const tierStarts: Record<
+                                            string,
+                                            Record<string, string>
+                                        > = {
                                             hetzner: {
                                                 cx23: t('landing.tierShared'),
                                                 cax11: t('landing.tierArm'),
-                                                ccx13: t('landing.tierDedicated')
+                                                ccx13: t(
+                                                    'landing.tierDedicated'
+                                                )
                                             },
                                             vultr: {
-                                                'vc2-2c-4gb': t('landing.tierRegular'),
-                                                'vhp-2c-4gb-amd': t('landing.tierHighPerformance'),
-                                                'vhf-3c-8gb': t('landing.tierHighFrequency')
+                                                'vc2-2c-4gb': t(
+                                                    'landing.tierRegular'
+                                                ),
+                                                'vhp-2c-4gb-amd': t(
+                                                    'landing.tierHighPerformance'
+                                                ),
+                                                'vhf-3c-8gb': t(
+                                                    'landing.tierHighFrequency'
+                                                )
                                             }
                                         }
-                                        const providerTiers = tierStarts[provider]
-                                        const tierLabel = providerTiers?.[plan.id]
+                                        const providerTiers =
+                                            tierStarts[provider]
+                                        const tierLabel =
+                                            providerTiers?.[plan.id]
 
                                         const card = (
                                             <label
@@ -499,9 +560,20 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                             )}
                                                         </p>
                                                         <p className='text-muted-foreground text-xs'>
-                                                            {plan.cpu} vCPU /{' '}
-                                                            {plan.memory} GB RAM
-                                                            / {plan.disk} GB SSD
+                                                            {t(
+                                                                'createClaw.planSpec',
+                                                                {
+                                                                    cpu: String(
+                                                                        plan.cpu
+                                                                    ),
+                                                                    memory: String(
+                                                                        plan.memory
+                                                                    ),
+                                                                    disk: String(
+                                                                        plan.disk
+                                                                    )
+                                                                }
+                                                            )}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -510,21 +582,22 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                     {plan.priceMonthly.toFixed(
                                                         2
                                                     )}
-                                                    /mo
+                                                    {t('landing.perMonth')}
                                                 </span>
                                             </label>
                                         )
 
-                                        const separator = tierLabel && index > 0 ? (
-                                            <div
-                                                key={`tier-${plan.id}`}
-                                                className='pb-1 pt-4'
-                                            >
-                                                <span className='text-muted-foreground text-xs font-semibold uppercase tracking-wider'>
-                                                    {tierLabel}
-                                                </span>
-                                            </div>
-                                        ) : null
+                                        const separator =
+                                            tierLabel && index > 0 ? (
+                                                <div
+                                                    key={`tier-${plan.id}`}
+                                                    className='pb-1 pt-4'
+                                                >
+                                                    <span className='text-muted-foreground text-xs font-semibold uppercase tracking-wider'>
+                                                        {tierLabel}
+                                                    </span>
+                                                </div>
+                                            ) : null
 
                                         if (isDisabled) {
                                             return (
@@ -556,175 +629,131 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                         )}
                     </div>
 
-                    <div className='space-y-2'>
-                        <Label>{t('createClaw.model')}</Label>
-                        <Select value={model} onValueChange={setModel}>
-                            <SelectTrigger
-                                placeholder={t('createClaw.modelNone')}
+                    <div className='bg-muted/50 border-border rounded-lg border'>
+                        <button
+                            type='button'
+                            onClick={() => setShowAdvanced(!showAdvanced)}
+                            className='text-muted-foreground hover:text-foreground flex w-full items-center gap-2 p-4 text-sm transition-colors'
+                        >
+                            <CaretDownIcon
+                                className={`h-4 w-4 transition-transform ${showAdvanced ? 'rotate-180' : ''}`}
                             />
-                            <SelectContent>
-                                <SelectItem value=''>
-                                    {t('createClaw.modelNone')}
-                                </SelectItem>
-                                {Object.entries(
-                                    aiModels.reduce<
-                                        Record<string, typeof aiModels>
-                                    >((groups, m) => {
-                                        const group = groups[m.provider] || []
-                                        group.push(m)
-                                        groups[m.provider] = group
-                                        return groups
-                                    }, {})
-                                ).map(([provider, models], idx, arr) => (
-                                    <SelectGroup
-                                        key={provider}
-                                        label={provider}
-                                        isLast={idx === arr.length - 1}
-                                    >
-                                        {models.map((m) => (
-                                            <SelectItem key={m.id} value={m.id}>
-                                                {m.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                        <p className='text-muted-foreground text-xs'>
-                            {t('createClaw.modelDescription')}
-                        </p>
-                    </div>
+                            {t('createClaw.advancedOptions')}
+                        </button>
 
-                    {model && (
-                        <div className='space-y-2'>
-                            <Label>{t('createClaw.apiToken')}</Label>
-                            <Input
-                                type='password'
-                                value={apiToken}
-                                onChange={(e) => setApiToken(e.target.value)}
-                                placeholder={t(
-                                    'createClaw.apiTokenPlaceholder'
-                                )}
-                                className='h-11 font-mono text-sm'
-                            />
-                            <p className='text-muted-foreground text-xs'>
-                                {t('createClaw.apiTokenDescription')}
-                            </p>
-                        </div>
-                    )}
-
-                    <button
-                        type='button'
-                        onClick={() => setShowAdvanced(!showAdvanced)}
-                        className='text-muted-foreground hover:text-foreground flex items-center gap-2 text-sm transition-colors'
-                    >
-                        <CaretDown
-                            className={`h-4 w-4 transition-transform ${showAdvanced ? 'rotate-180' : ''}`}
-                        />
-                        {t('createClaw.advancedOptions')}
-                    </button>
-
-                    {showAdvanced && (
-                        <div className='space-y-5 pt-2'>
-                            <div className='space-y-2'>
-                                <Label>{t('createClaw.rootPassword')}</Label>
-                                <div className='flex items-center gap-2'>
-                                    <div className='relative flex-1'>
-                                        <Input
-                                            type={
-                                                showPassword
-                                                    ? 'text'
-                                                    : 'password'
-                                            }
-                                            value={password}
-                                            onChange={(e) =>
-                                                setPassword(e.target.value)
-                                            }
-                                            placeholder={t(
-                                                'createClaw.rootPasswordPlaceholder'
-                                            )}
-                                            className='pr-10 font-mono text-sm'
-                                        />
-                                        <button
-                                            type='button'
-                                            onClick={() =>
-                                                setShowPassword(!showPassword)
-                                            }
-                                            className='text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2'
-                                        >
-                                            {showPassword ? (
-                                                <EyeSlash className='h-4 w-4' />
-                                            ) : (
-                                                <Eye className='h-4 w-4' />
-                                            )}
-                                        </button>
-                                    </div>
-                                    <Button
-                                        type='button'
-                                        variant='ghost'
-                                        size='icon'
-                                        onClick={() => {
-                                            navigator.clipboard.writeText(
-                                                password
-                                            )
-                                            showToast(
-                                                t('createClaw.passwordCopied'),
-                                                'success'
-                                            )
-                                        }}
-                                    >
-                                        <Copy className='h-4 w-4' />
-                                    </Button>
-                                    <Button
-                                        type='button'
-                                        variant='ghost'
-                                        size='icon'
-                                        onClick={() =>
-                                            setPassword(generatePassword())
-                                        }
-                                    >
-                                        <ArrowClockwise className='h-4 w-4' />
-                                    </Button>
-                                </div>
-                                <p className='text-muted-foreground text-xs'>
-                                    {t('createClaw.autoGeneratePasswordHint')}
-                                </p>
-                            </div>
-
-                            <div className='space-y-2'>
-                                <Label>{t('createClaw.sshKeyOptional')}</Label>
-                                {sshKeys.length > 0 ? (
-                                    <div className='space-y-2'>
-                                        <label
-                                            className={`flex cursor-pointer items-center rounded-lg p-3 transition ${
-                                                selectedSshKeyId === ''
-                                                    ? 'border border-[#ef5350]/50 bg-[#ef5350]/20'
-                                                    : 'bg-muted hover:bg-muted/80 border border-transparent'
-                                            }`}
-                                        >
-                                            <input
-                                                type='radio'
-                                                name='sshKey'
-                                                value=''
-                                                checked={
-                                                    selectedSshKeyId === ''
+                        {showAdvanced && (
+                            <div className='border-border/50 space-y-5 border-t p-4'>
+                                <div className='space-y-2'>
+                                    <Label>
+                                        {t('createClaw.rootPassword')}
+                                    </Label>
+                                    <div className='flex items-center gap-2'>
+                                        <div className='relative flex-1'>
+                                            <Input
+                                                type={
+                                                    showPassword
+                                                        ? 'text'
+                                                        : 'password'
                                                 }
-                                                onChange={() =>
-                                                    setSelectedSshKeyId('')
+                                                value={password}
+                                                onChange={(e) =>
+                                                    setPassword(e.target.value)
                                                 }
-                                                className='sr-only'
-                                            />
-                                            <span className='text-sm'>
-                                                {t(
-                                                    'createClaw.noSshKeyPasswordOnly'
+                                                placeholder={t(
+                                                    'createClaw.rootPasswordPlaceholder'
                                                 )}
-                                            </span>
-                                        </label>
-                                        {sshKeys.map((key) => (
+                                                className='bg-muted pr-10 font-mono text-sm'
+                                            />
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <button
+                                                        type='button'
+                                                        onClick={() =>
+                                                            setShowPassword(
+                                                                !showPassword
+                                                            )
+                                                        }
+                                                        className='text-muted-foreground hover:text-foreground absolute right-3 top-1/2 -translate-y-1/2'
+                                                    >
+                                                        {showPassword ? (
+                                                            <EyeSlashIcon className='h-4 w-4' />
+                                                        ) : (
+                                                            <EyeIcon className='h-4 w-4' />
+                                                        )}
+                                                    </button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    {showPassword
+                                                        ? t('common.hide')
+                                                        : t('common.show')}
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </div>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button
+                                                    type='button'
+                                                    variant='ghost'
+                                                    size='icon'
+                                                    onClick={() => {
+                                                        navigator.clipboard.writeText(
+                                                            password
+                                                        )
+                                                        showToast(
+                                                            t(
+                                                                'createClaw.passwordCopied'
+                                                            ),
+                                                            'success'
+                                                        )
+                                                    }}
+                                                >
+                                                    <CopyIcon className='h-4 w-4' />
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                {t('common.copy')}
+                                            </TooltipContent>
+                                        </Tooltip>
+                                        <TooltipProvider delayDuration={200}>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Button
+                                                        type='button'
+                                                        variant='ghost'
+                                                        size='icon'
+                                                        onClick={() =>
+                                                            setPassword(
+                                                                generatePassword()
+                                                            )
+                                                        }
+                                                    >
+                                                        <ArrowClockwiseIcon className='h-4 w-4' />
+                                                    </Button>
+                                                </TooltipTrigger>
+                                                <TooltipContent>
+                                                    {t(
+                                                        'createClaw.regeneratePassword'
+                                                    )}
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                    </div>
+                                    <p className='text-muted-foreground text-xs'>
+                                        {t(
+                                            'createClaw.autoGeneratePasswordHint'
+                                        )}
+                                    </p>
+                                </div>
+
+                                <div className='space-y-2'>
+                                    <Label>
+                                        {t('createClaw.sshKeyOptional')}
+                                    </Label>
+                                    {sshKeys.length > 0 ? (
+                                        <div className='space-y-2'>
                                             <label
-                                                key={key.id}
                                                 className={`flex cursor-pointer items-center rounded-lg p-3 transition ${
-                                                    selectedSshKeyId === key.id
+                                                    selectedSshKeyId === ''
                                                         ? 'border border-[#ef5350]/50 bg-[#ef5350]/20'
                                                         : 'bg-muted hover:bg-muted/80 border border-transparent'
                                                 }`}
@@ -732,137 +761,174 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                 <input
                                                     type='radio'
                                                     name='sshKey'
-                                                    value={key.id}
+                                                    value=''
                                                     checked={
-                                                        selectedSshKeyId ===
-                                                        key.id
+                                                        selectedSshKeyId === ''
                                                     }
                                                     onChange={() =>
-                                                        setSelectedSshKeyId(
-                                                            key.id
-                                                        )
+                                                        setSelectedSshKeyId('')
                                                     }
                                                     className='sr-only'
                                                 />
-                                                <Key className='text-muted-foreground mr-3 h-4 w-4' />
-                                                <div>
-                                                    <p className='text-sm font-medium'>
-                                                        {key.name}
-                                                    </p>
-                                                    <p className='text-muted-foreground font-mono text-xs'>
-                                                        {key.fingerprint}
-                                                    </p>
-                                                </div>
+                                                <span className='text-sm'>
+                                                    {t(
+                                                        'createClaw.noSshKeyPasswordOnly'
+                                                    )}
+                                                </span>
                                             </label>
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <div className='bg-muted flex items-center gap-3 rounded-lg p-3'>
-                                        <div className='bg-background flex h-10 w-10 items-center justify-center rounded-full'>
-                                            <Key className='text-muted-foreground h-5 w-5' />
+                                            {sshKeys.map((key) => (
+                                                <label
+                                                    key={key.id}
+                                                    className={`flex cursor-pointer items-center rounded-lg p-3 transition ${
+                                                        selectedSshKeyId ===
+                                                        key.id
+                                                            ? 'border border-[#ef5350]/50 bg-[#ef5350]/20'
+                                                            : 'bg-muted hover:bg-muted/80 border border-transparent'
+                                                    }`}
+                                                >
+                                                    <input
+                                                        type='radio'
+                                                        name='sshKey'
+                                                        value={key.id}
+                                                        checked={
+                                                            selectedSshKeyId ===
+                                                            key.id
+                                                        }
+                                                        onChange={() =>
+                                                            setSelectedSshKeyId(
+                                                                key.id
+                                                            )
+                                                        }
+                                                        className='sr-only'
+                                                    />
+                                                    <KeyIcon className='text-muted-foreground mr-3 h-4 w-4' />
+                                                    <div>
+                                                        <p className='text-sm font-medium'>
+                                                            {key.name}
+                                                        </p>
+                                                        <p className='text-muted-foreground font-mono text-xs'>
+                                                            {key.fingerprint}
+                                                        </p>
+                                                    </div>
+                                                </label>
+                                            ))}
                                         </div>
-                                        <div className='flex-1'>
-                                            <p className='text-sm font-medium'>
-                                                {t(
-                                                    'createClaw.noSshKeysConfigured'
-                                                )}
-                                            </p>
-                                            <p className='text-muted-foreground text-xs'>
-                                                {t(
-                                                    'createClaw.addSshKeyForPasswordlessLogin'
-                                                )}
-                                            </p>
+                                    ) : (
+                                        <div className='bg-muted flex items-center gap-3 rounded-lg p-3'>
+                                            <div className='bg-background flex h-10 w-10 items-center justify-center rounded-full'>
+                                                <KeyIcon className='text-muted-foreground h-5 w-5' />
+                                            </div>
+                                            <div className='flex-1'>
+                                                <p className='text-sm font-medium'>
+                                                    {t(
+                                                        'createClaw.noSshKeysConfigured'
+                                                    )}
+                                                </p>
+                                                <p className='text-muted-foreground text-xs'>
+                                                    {t(
+                                                        'createClaw.addSshKeyForPasswordlessLogin'
+                                                    )}
+                                                </p>
+                                            </div>
+                                            <Button
+                                                type='button'
+                                                variant='secondary'
+                                                size='sm'
+                                                onClick={onNavigateToSSHKeys}
+                                            >
+                                                {t('common.addKey')}
+                                            </Button>
                                         </div>
-                                        <Button
-                                            type='button'
-                                            variant='secondary'
-                                            size='sm'
-                                            onClick={onNavigateToSSHKeys}
+                                    )}
+                                </div>
+
+                                {volumePricing && (
+                                    <div className='space-y-2'>
+                                        <Label>
+                                            {t(
+                                                'createClaw.additionalStorageOptional'
+                                            )}
+                                        </Label>
+                                        <div
+                                            className={`bg-muted space-y-4 rounded-lg p-4`}
                                         >
-                                            {t('common.addKey')}
-                                        </Button>
+                                            <div className='flex items-center justify-between'>
+                                                <div className='flex items-center gap-2'>
+                                                    <ClawMascot className='h-4 w-4' />
+                                                    <span className='text-sm font-medium'>
+                                                        {t(
+                                                            'createClaw.volumeStorage'
+                                                        )}
+                                                    </span>
+                                                </div>
+                                                <span className='text-sm font-semibold'>
+                                                    {volumeSize > 0
+                                                        ? `+$${(volumeSize * volumePricing.pricePerGbMonthly).toFixed(2)}${t('landing.perMonth')}`
+                                                        : t('common.none')}
+                                                </span>
+                                            </div>
+                                            <div className='space-y-3'>
+                                                <Slider
+                                                    value={[volumeSize]}
+                                                    onValueChange={(value) =>
+                                                        setVolumeSize(value[0])
+                                                    }
+                                                    min={0}
+                                                    max={500}
+                                                    step={10}
+                                                />
+                                                <div className='flex items-center justify-between'>
+                                                    <span className='text-muted-foreground text-xs'>
+                                                        {t(
+                                                            'createClaw.volumeMin'
+                                                        )}
+                                                    </span>
+                                                    <div className='flex items-center gap-2'>
+                                                        <Input
+                                                            type='number'
+                                                            min={0}
+                                                            max={
+                                                                volumePricing.maxSize
+                                                            }
+                                                            value={volumeSize}
+                                                            onChange={(e) => {
+                                                                const val =
+                                                                    Math.min(
+                                                                        Math.max(
+                                                                            0,
+                                                                            Number(
+                                                                                e
+                                                                                    .target
+                                                                                    .value
+                                                                            )
+                                                                        ),
+                                                                        volumePricing.maxSize
+                                                                    )
+                                                                setVolumeSize(
+                                                                    val
+                                                                )
+                                                            }}
+                                                            className='h-8 w-20 text-center text-sm'
+                                                        />
+                                                        <span className='text-muted-foreground text-sm'>
+                                                            {t(
+                                                                'createClaw.volumeUnit'
+                                                            )}
+                                                        </span>
+                                                    </div>
+                                                    <span className='text-muted-foreground text-xs'>
+                                                        {t(
+                                                            'createClaw.volumeMax'
+                                                        )}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 )}
                             </div>
-
-                            {volumePricing && (
-                                <div className='space-y-2'>
-                                    <Label>
-                                        {t(
-                                            'createClaw.additionalStorageOptional'
-                                        )}
-                                    </Label>
-                                    <div
-                                        className={`bg-muted space-y-4 rounded-lg p-4`}
-                                    >
-                                        <div className='flex items-center justify-between'>
-                                            <div className='flex items-center gap-2'>
-                                                <ClawMascot className='h-4 w-4' />
-                                                <span className='text-sm font-medium'>
-                                                    {t(
-                                                        'createClaw.volumeStorage'
-                                                    )}
-                                                </span>
-                                            </div>
-                                            <span className='text-sm font-semibold'>
-                                                {volumeSize > 0
-                                                    ? `+$${(volumeSize * volumePricing.pricePerGbMonthly).toFixed(2)}/mo`
-                                                    : t('common.none')}
-                                            </span>
-                                        </div>
-                                        <div className='space-y-3'>
-                                            <Slider
-                                                value={[volumeSize]}
-                                                onValueChange={(value) =>
-                                                    setVolumeSize(value[0])
-                                                }
-                                                min={0}
-                                                max={500}
-                                                step={10}
-                                            />
-                                            <div className='flex items-center justify-between'>
-                                                <span className='text-muted-foreground text-xs'>
-                                                    0 GB
-                                                </span>
-                                                <div className='flex items-center gap-2'>
-                                                    <Input
-                                                        type='number'
-                                                        min={0}
-                                                        max={
-                                                            volumePricing.maxSize
-                                                        }
-                                                        value={volumeSize}
-                                                        onChange={(e) => {
-                                                            const val =
-                                                                Math.min(
-                                                                    Math.max(
-                                                                        0,
-                                                                        Number(
-                                                                            e
-                                                                                .target
-                                                                                .value
-                                                                        )
-                                                                    ),
-                                                                    volumePricing.maxSize
-                                                                )
-                                                            setVolumeSize(val)
-                                                        }}
-                                                        className='h-8 w-20 text-center text-sm'
-                                                    />
-                                                    <span className='text-muted-foreground text-sm'>
-                                                        GB
-                                                    </span>
-                                                </div>
-                                                <span className='text-muted-foreground text-xs'>
-                                                    500 GB
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    )}
+                        )}
+                    </div>
 
                     {selectedPlan && (
                         <div className='bg-muted space-y-2 rounded-lg p-4'>
@@ -894,7 +960,8 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                     )}
                                 </span>
                                 <span>
-                                    ${selectedPlan.priceMonthly.toFixed(2)}/mo
+                                    ${selectedPlan.priceMonthly.toFixed(2)}
+                                    {t('landing.perMonth')}
                                 </span>
                             </div>
                             {volumeSize > 0 && volumePricing && (
@@ -909,7 +976,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                             volumeSize *
                                             volumePricing.pricePerGbMonthly
                                         ).toFixed(2)}
-                                        /mo
+                                        {t('landing.perMonth')}
                                     </span>
                                 </div>
                             )}
@@ -926,7 +993,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                               volumePricing.pricePerGbMonthly
                                             : 0)
                                     ).toFixed(2)}
-                                    /mo
+                                    {t('landing.perMonth')}
                                 </span>
                             </div>
                         </div>
@@ -941,29 +1008,26 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                             disabled={
                                 purchaseMutation.isPending ||
                                 !selectedPlan ||
-                                !location
+                                !location ||
+                                !!nameError
                             }
                         >
-                            {purchaseMutation.isPending ? (
-                                <>
-                                    <CircleNotch className='h-4 w-4 animate-spin' />
-                                    {t('createClaw.redirecting')}
-                                </>
-                            ) : !selectedPlan ? (
-                                t('createClaw.selectServerToContinue')
-                            ) : !location ? (
-                                t('createClaw.selectLocationToContinue')
-                            ) : (
-                                t('createClaw.proceedToPayment', {
-                                    amount: (
-                                        selectedPlan.priceMonthly +
-                                        (volumeSize > 0 && volumePricing
-                                            ? volumeSize *
-                                              volumePricing.pricePerGbMonthly
-                                            : 0)
-                                    ).toFixed(2)
-                                })
+                            {purchaseMutation.isPending && (
+                                <CircleNotchIcon className='h-4 w-4 animate-spin' />
                             )}
+                            {!selectedPlan
+                                ? t('createClaw.selectServerToContinue')
+                                : !location
+                                  ? t('createClaw.selectLocationToContinue')
+                                  : t('createClaw.proceedToPayment', {
+                                        amount: (
+                                            selectedPlan.priceMonthly +
+                                            (volumeSize > 0 && volumePricing
+                                                ? volumeSize *
+                                                  volumePricing.pricePerGbMonthly
+                                                : 0)
+                                        ).toFixed(2)
+                                    })}
                         </Button>
                     </div>
                 </form>
@@ -972,4 +1036,4 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     )
 }
 
-export { CreateClawModal }
+export default CreateClawModal

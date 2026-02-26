@@ -1,15 +1,26 @@
-import type { PolarSubscription, PolarSubscriptionRaw } from '@/ts/Interfaces'
+import type {
+    CacheEntry,
+    PolarSubscription,
+    PolarSubscriptionRaw,
+    PolarItemsResult
+} from '@/ts/Interfaces'
 import type { SubscriptionStatus } from '@/ts/Types'
 
 import getPolarClient from '@/lib/polar/getPolarClient'
 
-export const subscriptions = {
+const SUB_CACHE_TTL = 60_000
+const subCache = new Map<string, CacheEntry<PolarSubscription>>()
+
+const subscriptions = {
     async get(subscriptionId: string): Promise<PolarSubscription | null> {
+        const cached = subCache.get(subscriptionId)
+        if (cached && Date.now() < cached.expiry) return cached.data
+
         const polar = getPolarClient()
 
         try {
             const sub = await polar.subscriptions.get({ id: subscriptionId })
-            return {
+            const result: PolarSubscription = {
                 id: sub.id,
                 status: sub.status as SubscriptionStatus,
                 customerId: sub.customerId,
@@ -29,6 +40,11 @@ export const subscriptions = {
                 endedAt: sub.endedAt ? new Date(sub.endedAt) : undefined,
                 metadata: sub.metadata as Record<string, string> | undefined
             }
+            subCache.set(subscriptionId, {
+                data: result,
+                expiry: Date.now() + SUB_CACHE_TTL
+            })
+            return result
         } catch {
             return null
         }
@@ -45,7 +61,7 @@ export const subscriptions = {
             const items =
                 'result' in result
                     ? result.result
-                    : (result as unknown as { items: unknown[] }).items || []
+                    : (result as unknown as PolarItemsResult).items || []
 
             return (items as PolarSubscriptionRaw[]).map((sub) => ({
                 id: sub.id,
@@ -147,3 +163,5 @@ export const subscriptions = {
         await polar.subscriptions.revoke({ id: subscriptionId })
     }
 }
+
+export default subscriptions

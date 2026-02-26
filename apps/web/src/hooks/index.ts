@@ -18,6 +18,10 @@ export {
     useClawFile,
     useUpdateClawFile,
     useReinstallClaw,
+    useClawVersion,
+    useRenameClaw,
+    useUpdateClawSubdomain,
+    useCancelPendingClaw,
     CLAWS_QUERY_KEY
 } from '@/hooks/useClaws'
 
@@ -54,3 +58,19 @@ export {
     GITHUB_REPO_URL,
     GITHUB_STARS_QUERY_KEY
 } from '@/hooks/useGitHubStars'
+
+export {
+    useClawAgents,
+    useAllClawAgents,
+    usePlaygroundGraph,
+    PLAYGROUND_AGENTS_QUERY_KEY
+} from '@/hooks/usePlayground'
+
+export { useAgentChat } from '@/hooks/useAgentChat'
+
+import useGatewayState from '@/hooks/useGatewayState'
+import useSpeechRecognition from '@/hooks/useSpeechRecognition'
+import useThemeEffect from '@/hooks/useThemeEffect'
+import useLanguageEffect from '@/hooks/useLanguageEffect'
+
+export { useGatewayState, useSpeechRecognition, useThemeEffect, useLanguageEffect }

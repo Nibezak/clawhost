@@ -1,23 +1,16 @@
-import type { Context } from 'hono'
+import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
+import { clawStatus } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import executeSSH from '@/services/ssh'
-import { isAdmin } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
-const repairClaw = async (c: Context<{ Variables: { userId: string } }>) => {
+const repairClaw = async (c: AuthenticatedContext) => {
     try {
-        const userId = c.get('userId')
         const id = c.req.param('id')
-        const admin = await isAdmin(userId)
-
-        if (!admin) {
-            return fail(c, t('api.adminAccessDenied'), 403)
-        }
-
         const claw = await db
             .select()
             .from(claws)
@@ -40,7 +33,7 @@ const repairClaw = async (c: Context<{ Variables: { userId: string } }>) => {
             'mkdir -p /etc/systemd/system/nginx.service.d',
             "printf '[Service]\\nRestart=always\\nRestartSec=5\\n' > /etc/systemd/system/nginx.service.d/override.conf",
             'systemctl daemon-reload',
-            'openclaw doctor --fix || true',
+            'su - openclaw -c "openclaw doctor --fix" || true',
             'systemctl restart openclaw-gateway',
             'sleep 10',
             'curl -sf -o /dev/null --max-time 5 http://127.0.0.1:18789 && echo "GATEWAY_OK" || echo "GATEWAY_FAILED"'
@@ -54,10 +47,10 @@ const repairClaw = async (c: Context<{ Variables: { userId: string } }>) => {
         )
         const success = output.includes('GATEWAY_OK')
 
-        if (success && claw[0].status === 'configuring') {
+        if (success && claw[0].status === clawStatus.configuring) {
             await db
                 .update(claws)
-                .set({ status: 'running' })
+                .set({ status: clawStatus.running })
                 .where(eq(claws.id, id))
         }
 
@@ -70,9 +63,7 @@ const repairClaw = async (c: Context<{ Variables: { userId: string } }>) => {
         console.error('Repair claw error:', err)
         return fail(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToRepairClaw'),
+            err instanceof Error ? err.message : t('api.failedToRepairClaw'),
             500
         )
     }

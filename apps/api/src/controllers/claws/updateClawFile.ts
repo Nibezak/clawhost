@@ -1,19 +1,14 @@
-import type { Context } from 'hono'
 import type { UpdateClawFileBody } from '@/ts/Interfaces'
+import type { AuthenticatedContext } from '@/ts/Types'
 
-import { eq, and } from 'drizzle-orm'
-import { db } from '@/db'
-import { claws } from '@/db/schema'
-import executeSSH from '@/services/ssh'
-import { isAdmin } from '@/controllers/claws/helpers'
+import path from 'path'
+import { findUserClaw, safeShellWrite } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
 const BASE_DIR = '/home/openclaw/.openclaw'
 
-const updateClawFile = async (
-    c: Context<{ Variables: { userId: string } }>
-) => {
+const updateClawFile = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')
@@ -28,59 +23,60 @@ const updateClawFile = async (
             return fail(c, t('api.missingRequiredFields'), 400)
         }
 
-        if (body.path.includes('..') || body.path.startsWith('/')) {
+        if (body.content.length > 1024 * 1024) {
+            return fail(c, t('api.fileTooLarge'), 400)
+        }
+
+        const normalized = path.posix.normalize(body.path)
+        if (
+            normalized.includes('..') ||
+            normalized.startsWith('/') ||
+            normalized.includes('\0')
+        ) {
             return fail(c, t('api.invalidFilePath'), 400)
         }
 
-        if (!body.path.endsWith('.json')) {
+        const fileName = normalized.split('/').pop() || normalized
+        const isEditable =
+            normalized.endsWith('.json') ||
+            normalized.endsWith('.jsonb') ||
+            normalized.endsWith('.md') ||
+            normalized.endsWith('.js') ||
+            normalized.endsWith('.ts') ||
+            normalized.endsWith('.tsx') ||
+            normalized.endsWith('.yml') ||
+            normalized.endsWith('.yaml') ||
+            !fileName.includes('.')
+
+        if (!isEditable) {
             return fail(c, t('api.fileNotEditable'), 400)
         }
 
-        try {
-            JSON.parse(body.content)
-        } catch {
-            return fail(c, t('api.invalidJsonConfig'), 400)
+        if (normalized.endsWith('.json') || normalized.endsWith('.jsonb')) {
+            try {
+                JSON.parse(body.content)
+            } catch {
+                return fail(c, t('api.invalidJsonConfig'), 400)
+            }
         }
 
-        const admin = await isAdmin(userId)
+        const claw = await findUserClaw(userId, id)
 
-        const claw = await db
-            .select()
-            .from(claws)
-            .where(
-                admin
-                    ? eq(claws.id, id)
-                    : and(eq(claws.id, id), eq(claws.userId, userId))
-            )
-            .limit(1)
-
-        if (!claw[0]) {
+        if (!claw) {
             return fail(c, t('api.clawNotFound'), 404)
         }
 
-        if (!claw[0].ip || !claw[0].rootPassword) {
+        if (!claw.ip || !claw.rootPassword) {
             return fail(c, t('api.failedToUpdateFile'), 400)
         }
 
-        const fullPath = `${BASE_DIR}/${body.path}`
-        const escapedContent = body.content.replace(/'/g, "'\\''")
+        const fullPath = `${BASE_DIR}/${normalized}`
 
-        await executeSSH(
-            claw[0].ip,
-            claw[0].rootPassword,
-            `echo '${escapedContent}' > '${fullPath.replace(/'/g, "'\\''")}'`
-        )
+        await safeShellWrite(claw.ip, claw.rootPassword, fullPath, body.content)
 
         return ok(c, null, t('api.fileSaveSuccess'))
-    } catch (err) {
-        console.error('Update claw file error:', err)
-        return fail(
-            c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToUpdateFile'),
-            500
-        )
+    } catch {
+        return fail(c, t('api.failedToUpdateFile'), 500)
     }
 }
 

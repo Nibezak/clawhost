@@ -15,10 +15,11 @@ import type {
     VolumeDetails,
     VolumePricingResult,
     RawServerType,
-    DatacenterAvailability
+    DatacenterAvailability,
+    RegionMeta
 } from '@/ts/Interfaces'
 
-import { RequestClient } from '@openclaw/shared'
+import { RequestClient, clawStatus } from '@openclaw/shared'
 
 function getClient() {
     const token = process.env.DIGITALOCEAN_API_TOKEN
@@ -42,15 +43,15 @@ function getPublicIp(droplet: DigitalOceanDropletResponse['droplet']): string {
 
 function mapStatus(doStatus: string): string {
     const statusMap: Record<string, string> = {
-        new: 'initializing',
-        active: 'running',
-        off: 'off',
-        archive: 'stopped'
+        new: clawStatus.initializing,
+        active: clawStatus.running,
+        off: clawStatus.off,
+        archive: clawStatus.stopped
     }
     return statusMap[doStatus] || doStatus
 }
 
-export const digitalocean: CloudProvider = {
+const digitalocean: CloudProvider = {
     async createServer(
         name: string,
         serverType: string,
@@ -193,7 +194,7 @@ export const digitalocean: CloudProvider = {
         const data =
             await getClient().get<DigitalOceanRegionsResponse>('/regions')
 
-        const regionMeta: Record<string, { city: string; country: string }> = {
+        const regionMeta: Record<string, RegionMeta> = {
             nyc1: { city: 'New York 1', country: 'US' },
             nyc2: { city: 'New York 2', country: 'US' },
             nyc3: { city: 'New York 3', country: 'US' },
@@ -341,3 +342,5 @@ export const digitalocean: CloudProvider = {
         }
     }
 }
+
+export default digitalocean

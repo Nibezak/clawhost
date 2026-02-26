@@ -2,56 +2,52 @@ import type { FC, ReactNode } from 'react'
 import type { ClawCardDropdownMenuProps } from '@/ts/Interfaces'
 
 import { t } from '@openclaw/i18n'
-import { Button } from '@/components/ui/button'
+import { clawProvider, clawStatus } from '@openclaw/shared'
 import {
+    Button,
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu'
+} from '@/components/ui'
 import {
-    Play,
-    Square,
-    ArrowClockwise,
-    Trash,
-    DotsThreeOutline,
-    Terminal,
-    Check,
-    CircleNotch,
-    Copy,
-    ClockCountdown,
-    Pulse,
-    Scroll,
-    FolderSimple,
-    ArrowsClockwise,
-    ArrowCounterClockwise,
-    Export
+    PlayIcon,
+    SquareIcon,
+    ArrowClockwiseIcon,
+    TrashIcon,
+    DotsThreeOutlineIcon,
+    TerminalIcon,
+    CircleNotchIcon,
+    CopyIcon,
+    ClockCountdownIcon,
+    FolderSimpleIcon,
+    ArrowsClockwiseIcon,
+    ArrowCounterClockwiseIcon,
+    ExportIcon,
+    ArrowSquareOutIcon
 } from '@phosphor-icons/react'
 
 const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
     claw,
     actions,
     isLoading,
-    copied,
-    passwordCopied,
     hasActionItems,
     isScheduledForDeletion,
     isAdmin,
     compact
 }): ReactNode => {
-    const iconSize = compact ? 'h-4 w-4' : 'h-5 w-5'
-    const buttonClassName = compact ? 'h-8 w-8' : undefined
-
     if (isLoading) {
-        return (
-            <Button
-                variant='ghost'
-                size='icon'
-                className={buttonClassName}
+        return compact ? (
+            <button
+                className='text-muted-foreground shrink-0 rounded-md p-1'
                 disabled
             >
-                <CircleNotch className={`${iconSize} animate-spin`} />
+                <CircleNotchIcon className='h-3.5 w-3.5 animate-spin' />
+            </button>
+        ) : (
+            <Button variant='ghost' size='icon' disabled>
+                <CircleNotchIcon className='h-5 w-5 animate-spin' />
             </Button>
         )
     }
@@ -59,140 +55,154 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
     return (
         <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
-                <Button variant='ghost' size='icon' className={buttonClassName}>
-                    <DotsThreeOutline className={iconSize} />
-                </Button>
+                {compact ? (
+                    <button className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground shrink-0 rounded-md p-1 transition-colors'>
+                        <DotsThreeOutlineIcon
+                            className='h-3.5 w-3.5'
+                            weight='bold'
+                        />
+                    </button>
+                ) : (
+                    <Button variant='ghost' size='icon'>
+                        <DotsThreeOutlineIcon className='h-5 w-5' />
+                    </Button>
+                )}
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end' collisionPadding={8}>
-                {(claw.status === 'stopped' || claw.status === 'off') && (
+                {(claw.status === clawStatus.stopped ||
+                    claw.status === clawStatus.off) && (
                     <DropdownMenuItem
                         onClick={actions.onStart}
                         disabled={isLoading}
                     >
-                        <Play className='mr-2 h-4 w-4' />
+                        <PlayIcon className='mr-2 h-4 w-4' />
                         {t('dashboard.start')}
                     </DropdownMenuItem>
                 )}
-                {claw.status === 'running' && (
+                {claw.status === clawStatus.running && (
                     <>
                         <DropdownMenuItem
                             onClick={actions.onShowStopModal}
                             disabled={isLoading}
                         >
-                            <Square className='mr-2 h-4 w-4' />
+                            <SquareIcon className='mr-2 h-4 w-4' />
                             {t('dashboard.stop')}
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             onClick={actions.onShowRestartModal}
                             disabled={isLoading}
                         >
-                            <ArrowClockwise className='mr-2 h-4 w-4' />
+                            <ArrowClockwiseIcon className='mr-2 h-4 w-4' />
                             {t('dashboard.restart')}
                         </DropdownMenuItem>
                     </>
                 )}
-                {(claw.ip || claw.rootPassword) && (
+                {claw.provider !== clawProvider.local && claw.ip && (
                     <>
                         {hasActionItems && <DropdownMenuSeparator />}
-                        {claw.ip && (
-                            <DropdownMenuItem onClick={actions.onCopySSH}>
-                                {copied ? (
-                                    <>
-                                        <Check className='mr-2 h-4 w-4' />
-                                        {t('common.copied')}
-                                    </>
-                                ) : (
-                                    <>
-                                        <Terminal className='mr-2 h-4 w-4' />
-                                        {t('dashboard.connect')}
-                                    </>
-                                )}
-                            </DropdownMenuItem>
-                        )}
-                        {claw.rootPassword && (
-                            <DropdownMenuItem onClick={actions.onCopyPassword}>
-                                {passwordCopied ? (
-                                    <>
-                                        <Check className='mr-2 h-4 w-4' />
-                                        {t('common.copied')}
-                                    </>
-                                ) : (
-                                    <>
-                                        <Copy className='mr-2 h-4 w-4' />
-                                        {t('dashboard.copyPassword')}
-                                    </>
-                                )}
+                        <DropdownMenuItem onClick={actions.onCopySSH}>
+                            <TerminalIcon className='mr-2 h-4 w-4' />
+                            {t('dashboard.connect')}
+                        </DropdownMenuItem>
+                        {claw.hasRootPassword && (
+                            <DropdownMenuItem
+                                onClick={actions.onCopyPassword}
+                            >
+                                <CopyIcon className='mr-2 h-4 w-4' />
+                                {t('dashboard.copyPassword')}
                             </DropdownMenuItem>
                         )}
                     </>
                 )}
-                {claw.ip && claw.rootPassword && (
+                {claw.ip && (
                     <>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={actions.onShowDiagnostics}>
-                            <Pulse className='mr-2 h-4 w-4' />
-                            {t('dashboard.diagnostics')}
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={actions.onShowLogs}>
-                            <Scroll className='mr-2 h-4 w-4' />
-                            {t('dashboard.diagnosticsLogs')}
-                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={actions.onShowConfig}>
-                            <FolderSimple className='mr-2 h-4 w-4' />
+                            <FolderSimpleIcon className='mr-2 h-4 w-4' />
                             {t('dashboard.fileExplorer')}
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={actions.onExport}>
-                            <Export className='mr-2 h-4 w-4' />
-                            {t('dashboard.exportData')}
-                        </DropdownMenuItem>
-                        {isAdmin && (
+                        {claw.provider !== clawProvider.local && (
+                            <DropdownMenuItem onClick={actions.onExport}>
+                                <ExportIcon className='mr-2 h-4 w-4' />
+                                {t('dashboard.exportData')}
+                            </DropdownMenuItem>
+                        )}
+                        {claw.provider !== clawProvider.local && isAdmin && (
                             <>
                                 <DropdownMenuItem
                                     onClick={actions.onUpdateInstance}
                                     disabled={isLoading}
                                 >
-                                    <ArrowsClockwise className='mr-2 h-4 w-4' />
+                                    <ArrowsClockwiseIcon className='mr-2 h-4 w-4' />
                                     {t('dashboard.updateInstance')}
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                     onClick={actions.onShowReinstallModal}
                                     disabled={isLoading}
                                 >
-                                    <ArrowCounterClockwise className='mr-2 h-4 w-4' />
+                                    <ArrowCounterClockwiseIcon className='mr-2 h-4 w-4' />
                                     {t('dashboard.reinstallInstance')}
                                 </DropdownMenuItem>
                             </>
                         )}
                     </>
                 )}
-                {(hasActionItems || claw.rootPassword) && (
-                    <DropdownMenuSeparator />
-                )}
-                {isScheduledForDeletion ? (
+                {(hasActionItems || claw.ip) && <DropdownMenuSeparator />}
+                {claw.status === clawStatus.awaitingPayment ? (
+                    <>
+                        {claw.checkoutUrl && (
+                            <DropdownMenuItem
+                                onClick={() => actions.onResumeCheckout()}
+                            >
+                                <ArrowSquareOutIcon className='mr-2 h-4 w-4' />
+                                {t('dashboard.resumeCheckout')}
+                            </DropdownMenuItem>
+                        )}
+                        <DropdownMenuItem
+                            onClick={actions.onCancelPending}
+                            disabled={isLoading}
+                            className='text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400'
+                        >
+                            <TrashIcon className='mr-2 h-4 w-4' />
+                            {t('dashboard.cancelPurchase')}
+                        </DropdownMenuItem>
+                    </>
+                ) : claw.provider === clawProvider.local ? (
+                    <DropdownMenuItem
+                        onClick={actions.onShowDeleteModal}
+                        disabled={isLoading}
+                        className='text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400'
+                    >
+                        <TrashIcon className='mr-2 h-4 w-4' />
+                        {t('common.delete')}
+                    </DropdownMenuItem>
+                ) : isScheduledForDeletion ? (
                     <>
                         <DropdownMenuItem
                             onClick={actions.onCancelDeletion}
-                            className='text-orange-400 focus:text-orange-400'
+                            className='text-orange-600 focus:text-orange-600 dark:text-orange-400 dark:focus:text-orange-400'
                         >
-                            <ClockCountdown className='mr-2 h-4 w-4' />
+                            <ClockCountdownIcon className='mr-2 h-4 w-4' />
                             {t('dashboard.cancelDeletion')}
                         </DropdownMenuItem>
-                        <DropdownMenuItem
-                            onClick={actions.onShowHardDeleteModal}
-                            disabled={isLoading}
-                            className='text-red-400 focus:text-red-400'
-                        >
-                            <Trash className='mr-2 h-4 w-4' />
-                            {t('dashboard.hardDelete')}
-                        </DropdownMenuItem>
+                        {isAdmin && (
+                            <DropdownMenuItem
+                                onClick={actions.onShowHardDeleteModal}
+                                disabled={isLoading}
+                                className='text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400'
+                            >
+                                <TrashIcon className='mr-2 h-4 w-4' />
+                                {t('dashboard.hardDelete')}
+                            </DropdownMenuItem>
+                        )}
                     </>
                 ) : (
                     <DropdownMenuItem
                         onClick={actions.onShowDeleteModal}
                         disabled={isLoading}
-                        className='text-red-400 focus:text-red-400'
+                        className='text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400'
                     >
-                        <Trash className='mr-2 h-4 w-4' />
+                        <TrashIcon className='mr-2 h-4 w-4' />
                         {t('dashboard.scheduleDeletion')}
                     </DropdownMenuItem>
                 )}
@@ -201,4 +211,4 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
     )
 }
 
-export { ClawCardDropdownMenu }
+export default ClawCardDropdownMenu

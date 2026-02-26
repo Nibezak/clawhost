@@ -1,11 +1,27 @@
-import type { ReactNode } from 'react'
+import type { ElementType, ReactNode } from 'react'
 import type { User } from 'firebase/auth'
+import type { Node, Edge } from '@xyflow/react'
+import type { UseQueryResult } from '@tanstack/react-query'
+import type { TranslationKey } from '@openclaw/i18n'
 import type {
+    AuthMethod,
+    ChatMessageRole,
+    ChatMessageStatus,
+    ClawAvatarSize,
     ClawStatus,
+    DashboardTab,
+    FeatureRequestPlatform,
+    FeatureRequestStatus,
+    GatewayConnectionState,
+    Language,
+    PlaygroundAgentDetailTab,
+    PlaygroundDetailTab,
     ProviderType,
+    ThemeMode,
+    ClawFileType,
+    CompareFeatureStatus,
     ToastType,
-    UserRole,
-    ViewMode
+    UserRole
 } from '@/ts/Types'
 
 export interface ApiResponse<T = null> {
@@ -14,10 +30,6 @@ export interface ApiResponse<T = null> {
     message: string
     code: number
     version: string
-}
-
-export interface MagicLinkEmailProps {
-    magicLink: string
 }
 
 export interface Volume {
@@ -36,18 +48,20 @@ export interface Claw {
     planId: string
     location: string | null
     rootPassword: string | null
+    hasRootPassword: boolean
     sshKeyId: string | null
     providerServerId: string | null
     subdomain: string | null
     gatewayToken: string | null
-    model: string | null
     subscriptionStatus: string | null
     currentPeriodStart: string | null
     currentPeriodEnd: string | null
     volumes?: Volume[]
     ownerEmail?: string | null
     deletionScheduledAt: string | null
+    checkoutUrl?: string | null
     createdAt: string
+    port?: number
 }
 
 export interface VolumePricing {
@@ -93,6 +107,7 @@ export interface UserProfile {
     email: string
     name: string | null
     role: UserRole
+    authMethods: AuthMethod[]
     createdAt: string
 }
 
@@ -141,16 +156,35 @@ export interface UIState {
     toast: ToastData | null
     showToast: (message: string, type?: ToastType, duration?: number) => void
     hideToast: () => void
+    phBannerVisible: boolean
+    dismissPhBanner: () => void
 }
 
 export interface PreferencesState {
-    instancesViewMode: ViewMode
-    setInstancesViewMode: (mode: ViewMode) => void
+    adminMode: boolean
+    setAdminMode: (mode: boolean) => void
+    dashboardTab: DashboardTab
+    setDashboardTab: (tab: DashboardTab) => void
+    theme: ThemeMode
+    setTheme: (theme: ThemeMode) => void
+    language: Language
+    setLanguage: (language: Language) => void
+    openLinksWindowed: boolean
+    setOpenLinksWindowed: (value: boolean) => void
 }
 
 export interface CachedProfile {
     email: string
     name: string | null
+}
+
+export interface VerifyOtpResponse {
+    customToken: string
+}
+
+export interface ResolveCredentialConflictData {
+    accessToken: string
+    providerId: string
 }
 
 export interface AuthContextType {
@@ -159,8 +193,29 @@ export interface AuthContextType {
     cachedProfile: CachedProfile | null
     updateCachedProfile: (data: Partial<CachedProfile>) => void
     sendOtp: (email: string) => Promise<void>
-    verifyOtp: (email: string) => Promise<void>
+    verifyOtp: (email: string, code: string) => Promise<void>
+    signInWithGoogle: () => Promise<void>
+    signInWithGithub: () => Promise<void>
+    linkGoogle: () => Promise<void>
+    linkGithub: () => Promise<void>
+    unlinkGoogle: () => Promise<void>
+    unlinkGithub: () => Promise<void>
     signOut: () => Promise<void>
+    isLocal?: boolean
+}
+
+export interface FooterLink {
+    label: string
+    href: string
+    external?: boolean
+}
+
+export interface SetupScreenProps {
+    onComplete: () => void
+}
+
+export interface LogoProps {
+    to?: string
 }
 
 export interface NavLink {
@@ -173,6 +228,11 @@ export interface ClawMascotProps {
     className?: string
 }
 
+export interface ClawAvatarProps {
+    size?: ClawAvatarSize
+    className?: string
+}
+
 export interface ProviderIconProps {
     provider: ProviderType
     className?: string
@@ -182,6 +242,17 @@ export interface HeaderProps {
     showNavLinks?: boolean
     navLinks?: NavLink[]
     activeSection?: string
+}
+
+export interface UserDropdownProps {
+    displayName: string
+    onSignOut: () => Promise<void>
+    onOpen?: () => void
+    hideBilling?: boolean
+    hideSSHKeys?: boolean
+    hideSignOut?: boolean
+    footerLinks?: FooterLink[]
+    openLinksWindowed?: boolean
 }
 
 export interface EmptyStateProps {
@@ -199,6 +270,12 @@ export interface ErrorStateProps {
     onRetry?: () => void
 }
 
+export interface PanelPlaceholderProps {
+    icon: ReactNode
+    title: string
+    description: string
+}
+
 export interface PageTitleProps {
     title: string
     description?: string
@@ -206,6 +283,7 @@ export interface PageTitleProps {
     url?: string
     type?: string
     noIndex?: boolean
+    keywords?: string[]
 }
 
 export interface PageHeaderProps {
@@ -221,31 +299,6 @@ export interface ActionButtonProps {
     size?: 'default' | 'sm' | 'lg'
 }
 
-export interface MockClawData {
-    id: string
-    name: string
-    status: 'running' | 'stopped' | 'restarting'
-    subdomain: string
-    ip: string
-    provider: ProviderType
-    location: string
-    locationFlag: string
-    plan: string
-    planDetails: string
-    monthlyCost: string
-    serverId: string
-    createdAt: string
-    sshKey: string
-}
-
-export interface MockClawCardProps {
-    claw: MockClawData
-    onStart?: (id: string) => void
-    onStop?: (id: string) => void
-    onRestart?: (id: string) => void
-    onDelete?: (id: string) => void
-}
-
 export interface StatusConfig {
     color: string
     bgColor: string
@@ -253,17 +306,11 @@ export interface StatusConfig {
     pulse?: boolean
 }
 
-export interface ClawCardProps {
-    claw: Claw
-    sshKeys: SSHKey[]
-    plans: Plan[]
-    viewMode?: ViewMode
-}
-
 export interface CopyableFieldProps {
     label: string
     value: string
     icon?: ReactNode
+    secret?: boolean
 }
 
 export interface PlanAvailability {
@@ -277,8 +324,13 @@ export interface CreateClawModalProps {
     volumePricing?: VolumePricing
     planAvailability?: PlanAvailability
     preselectedPlanId?: string | null
+    preselectedProvider?: ProviderType | null
     onClose: () => void
     onNavigateToSSHKeys: () => void
+}
+
+export interface LocalCreateClawModalProps {
+    onClose: () => void
 }
 
 export interface ClawCardActions {
@@ -298,6 +350,8 @@ export interface ClawCardActions {
     onCopySSHWithPassword: () => void
     onCopyPassword: () => void
     onExport: () => void
+    onResumeCheckout: () => void
+    onCancelPending: () => void
 }
 
 export interface ExportRateLimitError extends Error {
@@ -308,8 +362,6 @@ export interface ClawCardDropdownMenuProps {
     claw: Claw
     actions: ClawCardActions
     isLoading: boolean
-    copied: boolean
-    passwordCopied: boolean
     hasActionItems: boolean
     isScheduledForDeletion: boolean
     isAdmin: boolean
@@ -340,49 +392,6 @@ export interface ClawCardDialogsProps {
     isReinstallPending: boolean
 }
 
-export interface ClawCardGridViewProps {
-    claw: Claw
-    status: StatusConfig
-    flag: string | null
-    locationName: string
-    plan: Plan | undefined
-    monthlyPrice: number | null
-    attachedSshKey: SSHKey | null
-    actions: ClawCardActions
-    isLoading: boolean
-    copied: boolean
-    passwordCopied: boolean
-    hasActionItems: boolean
-    hasBothOptions: boolean
-    isScheduledForDeletion: boolean
-    isAdmin: boolean
-}
-
-export interface ClawCardListViewProps {
-    claw: Claw
-    status: StatusConfig
-    flag: string | null
-    locationName: string
-    plan: Plan | undefined
-    monthlyPrice: number | null
-    attachedSshKey: SSHKey | null
-    actions: ClawCardActions
-    isLoading: boolean
-    copied: boolean
-    passwordCopied: boolean
-    hasActionItems: boolean
-    isScheduledForDeletion: boolean
-    isAdmin: boolean
-    isExpanded: boolean
-    onToggleExpand: () => void
-}
-
-export interface ScheduledDeletionBannerProps {
-    deletionScheduledAt: string
-    onCancelDeletion: () => void
-    isLoading: boolean
-}
-
 export interface SSHKeyCardProps {
     sshKey: SSHKey
 }
@@ -400,10 +409,6 @@ export interface ProtectedRouteProps {
     children: ReactNode
 }
 
-export interface AdminRouteProps {
-    children: ReactNode
-}
-
 export interface AuthProviderProps {
     children: ReactNode
 }
@@ -412,6 +417,7 @@ export interface AIModelOption {
     id: string
     name: string
     provider: string
+    envVar: string
 }
 
 export interface CreateClawData {
@@ -422,8 +428,6 @@ export interface CreateClawData {
     password?: string
     sshKeyId?: string
     volumeSize?: number
-    model?: string
-    apiToken?: string
 }
 
 export interface PurchaseClawData {
@@ -434,8 +438,6 @@ export interface PurchaseClawData {
     password?: string
     sshKeyId?: string
     volumeSize?: number
-    model?: string
-    apiToken?: string
     priceMonthly: number
 }
 
@@ -450,6 +452,14 @@ export interface PurchaseClawResponse {
     checkoutId: string
     pendingClawId: string
     expiresAt: string
+}
+
+export interface RenameClawData {
+    name: string
+}
+
+export interface UpdateClawSubdomainData {
+    subdomain: string
 }
 
 export interface CreateSSHKeyData {
@@ -504,7 +514,7 @@ export interface PrerenderMeta {
     url: string
     type: string
     image: string
-    jsonLd: Record<string, unknown>
+    jsonLd?: Record<string, unknown>
     articleMeta?: ArticleMeta
 }
 
@@ -513,6 +523,35 @@ export interface ArticleMeta {
     modifiedTime?: string
     author: string
     tags: string[]
+}
+
+export interface ClawVersionResponse {
+    version: string
+}
+
+export interface OpenClawVersionEntry {
+    version: string
+    publishedAt: string
+    downloads: number
+}
+
+export interface ClawVersionsResponse {
+    currentVersion: string
+    latestVersion: string
+    versions: OpenClawVersionEntry[]
+}
+
+export interface InstallClawVersionResponse {
+    version: string
+}
+
+export interface PlaygroundVersionsContentProps {
+    clawId: string
+}
+
+export interface ClawCredentialsResponse {
+    rootPassword: string | null
+    ip: string | null
 }
 
 export interface DiagnosticsStatusResponse {
@@ -528,7 +567,7 @@ export interface DiagnosticsLogsResponse {
 export interface ClawFileEntry {
     path: string
     name: string
-    isJson: boolean
+    fileType: ClawFileType
 }
 
 export interface ClawFilesResponse {
@@ -562,6 +601,19 @@ export interface ClawLogsDialogProps {
     onOpenChange: (open: boolean) => void
 }
 
+export interface ClawLogsContentProps {
+    clawId: string
+    enabled: boolean
+    embedded?: boolean
+    mockLogs?: string
+}
+
+export interface ClawDiagnosticsContentProps {
+    clawId: string
+    enabled: boolean
+    mockData?: DiagnosticsStatusResponse
+}
+
 export interface ClawFileExplorerDialogProps {
     clawId: string
     open: boolean
@@ -587,4 +639,659 @@ export interface Testimonial {
 export interface Faq {
     question: string
     answer: string
+}
+
+export interface ClawAgent {
+    id: string
+    name: string
+    model: string | null
+    status: string
+    directory: string | null
+}
+
+export interface ClawAgentsResponse {
+    agents: ClawAgent[]
+    reachable: boolean
+}
+
+export interface PlaygroundClawNodeData {
+    claw: Claw
+    agentCount: number
+    isLoadingAgents: boolean
+    isSelected: boolean
+    readOnly?: boolean
+}
+
+export interface PlaygroundAgentNodeData {
+    agent: ClawAgent
+    clawName: string
+    clawId: string
+    isSelected: boolean
+}
+
+export interface PlaygroundClawNodeProps {
+    data: PlaygroundClawNodeData
+}
+
+export interface PlaygroundAgentNodeProps {
+    data: PlaygroundAgentNodeData
+}
+
+export interface PlaygroundCanvasProps {
+    initialNodes: Node[]
+    initialEdges: Edge[]
+    onNodeClick?: (clawId: string) => void
+    onAgentClick?: (agentId: string, clawId: string) => void
+    onPaneClick?: () => void
+    panelOpen?: boolean
+    selectedClawId?: string | null
+    selectedAgentId?: string | null
+    selectedAgentClawId?: string | null
+    initialZoom?: number
+    allowPageScroll?: boolean
+}
+
+export interface PlaygroundCanvasInnerProps extends PlaygroundCanvasProps {
+    zoom: number
+    onZoomChange: (zoom: number) => void
+    isFitView: boolean
+    onFitViewChange: (value: boolean) => void
+}
+
+export interface PlaygroundDetailPanelProps {
+    claw: Claw
+    plans: Plan[]
+    sshKeys: SSHKey[]
+    onClose: () => void
+    readOnly?: boolean
+    initialTab?: PlaygroundDetailTab
+    onTabChange?: (tab: PlaygroundDetailTab) => void
+    fullScreen?: boolean
+}
+
+export interface PlaygroundToolbarProps {
+    zoom: number
+    onFitView: () => void
+    isFitView: boolean
+    nodesOutOfView: boolean
+    clawCount: number
+}
+
+export interface LanguageOption {
+    value: Language
+    label: string
+    flag: string
+}
+
+export interface AgentConfigSummary {
+    id: string
+    name: string
+    model: string | null
+}
+
+export interface AgentConfigResponse {
+    agent: AgentConfigSummary
+    envVars: Record<string, string>
+    defaultModel: string | null
+}
+
+export interface UpdateAgentConfigData {
+    agentId: string
+    name?: string
+    model: string | null
+    envVars: Record<string, string>
+}
+
+export interface CreateAgentData {
+    name: string
+    model?: string | null
+    envVars?: Record<string, string>
+}
+
+export interface CreateAgentResponse {
+    agent: ClawAgent
+}
+
+export interface DeleteAgentData {
+    agentId: string
+}
+
+export interface CreateAgentModalProps {
+    clawId: string
+    clawName: string
+    open: boolean
+    onOpenChange: (open: boolean) => void
+}
+
+export interface PlaygroundAgentDetailPanelProps {
+    agent: ClawAgent
+    clawId: string
+    clawName: string
+    isOnlyAgent: boolean
+    onClose: () => void
+    readOnly?: boolean
+    gatewayToken?: string | null
+    subdomain?: string | null
+    initialTab?: PlaygroundAgentDetailTab
+    onTabChange?: (tab: PlaygroundAgentDetailTab) => void
+    hideChatTab?: boolean
+}
+
+export interface ClawEnvVarsResponse {
+    envVars: Record<string, string>
+}
+
+export interface UpdateClawEnvVarsData {
+    envVars: Record<string, string>
+}
+
+export interface PlaygroundVariablesContentProps {
+    clawId: string
+    mockEnvVars?: Record<string, string>
+}
+
+export interface HeroButtonsProps {
+    deployLabel: string
+    githubLabel: string
+    showStars: boolean
+    large?: boolean
+}
+
+export interface PlaygroundTabConfig<T extends string = string> {
+    id: T
+    label: string
+    icon: ElementType
+}
+
+export interface DemoPlaygroundData {
+    nodes: Node[]
+    edges: Edge[]
+    claws: Claw[]
+    agentsByClawId: Record<string, ClawAgent[]>
+}
+
+export interface ChatHistoryEntry {
+    role: string
+    content: unknown
+}
+
+export interface ChatImageSource {
+    type: string
+    mediaType: string
+    data: string
+    filename?: string
+}
+
+export interface ChatMessage {
+    id: string
+    role: ChatMessageRole
+    content: string
+    status: ChatMessageStatus
+    runId?: string
+    timestamp?: string
+    images?: ChatImageSource[]
+}
+
+export interface ChatEventPayload {
+    runId: string
+    sessionKey: string
+    seq: number
+    state: 'delta' | 'final' | 'aborted' | 'error'
+    message?: unknown
+    errorMessage?: string
+}
+
+export interface ChatAttachment {
+    type: string
+    source: ChatImageSource
+}
+
+export interface ChatLightboxProps {
+    image: ChatImageSource
+    fileName?: string
+    onClose: () => void
+}
+
+export interface ChatSendParams {
+    sessionKey: string
+    message: string
+    idempotencyKey: string
+    deliver: boolean
+    attachments?: ChatAttachment[]
+}
+
+export interface ChatHistoryParams {
+    sessionKey: string
+    limit: number
+}
+
+export interface ChatAbortParams {
+    sessionKey: string
+    runId: string
+}
+
+export interface UseAgentChatParams {
+    subdomain: string | null | undefined
+    gatewayToken: string | null | undefined
+    agentId: string
+    enabled: boolean
+}
+
+export interface UseAgentChatReturn {
+    messages: ChatMessage[]
+    connectionState: GatewayConnectionState
+    isLoading: boolean
+    isStreaming: boolean
+    sendMessage: (
+        text: string,
+        attachments?: ChatAttachment[],
+        previews?: ChatImageSource[]
+    ) => void
+    abortResponse: () => void
+}
+
+export interface GatewayPendingRequest {
+    resolve: (payload: unknown) => void
+    reject: (error: Error) => void
+    timer: ReturnType<typeof setTimeout>
+}
+
+export interface AgentChatProps {
+    agentId: string
+    agentName?: string
+    clawId: string
+    subdomain: string | null | undefined
+    gatewayToken: string | null | undefined
+    agentModel: string | null
+    readOnly?: boolean
+    onConfigure?: () => void
+    configureDisabled?: boolean
+    onConnectionStateChange?: (state: GatewayConnectionState) => void
+}
+
+export interface ChatBubbleProps {
+    message: ChatMessage
+}
+
+export interface ChatInputAttachment {
+    file: File
+    preview: string
+}
+
+export interface ChatInputHandle {
+    addFiles: (files: File[]) => void
+}
+
+export interface ChatInputProps {
+    isConnected: boolean
+    isStreaming: boolean
+    onSend: (
+        text: string,
+        attachments?: ChatAttachment[],
+        previews?: ChatImageSource[]
+    ) => void
+    onAbort: () => void
+    allowAttach?: boolean
+}
+
+export interface ChatMarkdownProps {
+    content: string
+}
+
+export interface ChatDateSeparatorProps {
+    date: string
+}
+
+export interface ChatEmptyStateProps {
+    isError: boolean
+}
+
+export interface ChatStatusBarProps {
+    connectionState: GatewayConnectionState
+}
+
+export interface UseSpeechRecognitionReturn {
+    isRecording: boolean
+    isTranscribing: boolean
+    toggle: () => void
+}
+
+export interface ChannelConfig {
+    enabled: boolean
+    dmPolicy?: string
+    allowFrom?: string[]
+    botToken?: string
+    token?: string
+    appToken?: string
+    signingSecret?: string
+    account?: string
+}
+
+export interface ClawChannelsResponse {
+    channels: Record<string, ChannelConfig>
+}
+
+export interface UpdateClawChannelsData {
+    channels: Record<string, ChannelConfig>
+}
+
+export interface WhatsAppPairResponse {
+    status: 'started' | 'already_paired' | 'unsupported'
+}
+
+export interface WhatsAppPairStatusResponse {
+    status: 'waiting' | 'qr_ready' | 'paired' | 'failed' | 'not_started'
+    qr?: string
+    log?: string
+}
+
+export interface SkillEntryConfig {
+    enabled: boolean
+    apiKey?: string
+    env?: Record<string, string>
+    config?: Record<string, unknown>
+}
+
+export interface BundledSkillInfo {
+    name: string
+    enabled: boolean
+    description?: string
+}
+
+export interface ClawSkillsResponse {
+    skills: BundledSkillInfo[]
+    entries: Record<string, SkillEntryConfig>
+}
+
+export interface UpdateClawSkillsData {
+    entries: Record<string, SkillEntryConfig>
+}
+
+export interface AgentSkillInfo {
+    name: string
+}
+
+export interface GetAgentSkillsResponse {
+    skills: AgentSkillInfo[]
+}
+
+export interface UpdateAgentSkillsData {
+    action: 'install' | 'remove'
+    skillName: string
+}
+
+export interface PlaygroundChannelsContentProps {
+    clawId: string
+}
+
+export interface ChannelDefinition {
+    key: string
+    label: TranslationKey
+    icon: ElementType
+    fields: ChannelFieldDefinition[]
+}
+
+export interface ChannelFieldOption {
+    value: string
+    label: TranslationKey
+}
+
+export interface ChannelFieldDefinition {
+    key: keyof ChannelConfig
+    label: TranslationKey
+    placeholder: TranslationKey
+    required?: boolean
+    secret?: boolean
+    type?: 'text' | 'select'
+    options?: ChannelFieldOption[]
+}
+
+export interface PlaygroundSkillsContentProps {
+    clawId: string
+    agentId?: string
+}
+
+export interface ClawHubSearchResult {
+    slug: string
+    name: string
+    description: string
+    author: string
+    version: string
+    downloads: number
+    tags: string[]
+}
+
+export interface ClawHubInstalledSkill {
+    slug: string
+    name: string
+    version: string
+    hasUpdate: boolean
+    latestVersion?: string
+}
+
+export interface ClawHubBrowseResponse {
+    skills: ClawHubSearchResult[]
+    nextCursor: string | null
+    hasMore: boolean
+}
+
+export interface ClawHubInstalledResponse {
+    skills: ClawHubInstalledSkill[]
+}
+
+export interface ClawHubUpdatesResponse {
+    updates: ClawHubInstalledSkill[]
+}
+
+export interface BrowseClawHubData {
+    query?: string
+    limit?: number
+    cursor?: string
+    agentId?: string
+}
+
+export interface ClawHubSkillActionData {
+    slug: string
+    agentId?: string
+}
+
+export interface ClawHubUpdateData {
+    slug?: string
+    all?: boolean
+    agentId?: string
+}
+
+export interface PlaygroundClawHubContentProps {
+    clawId: string
+    agentId?: string
+}
+
+export interface ChatSidebarItemProps {
+    agent: ClawAgent
+    isActive: boolean
+    isLast: boolean
+    isChecking?: boolean
+    connectionState?: GatewayConnectionState
+    onClick: () => void
+    onConfigure: () => void
+}
+
+export interface ChatSelectedAgent {
+    agentId: string
+    clawId: string
+}
+
+export interface ClawWithAgents {
+    claw: Claw
+    agents: ClawAgent[]
+    isLoading: boolean
+    isReachable: boolean
+}
+
+export interface ChatSidebarProps {
+    clawsWithAgents: ClawWithAgents[]
+    selectedAgent: ChatSelectedAgent | null
+    selectedClawId: string | null
+    activeConnectionState?: GatewayConnectionState
+    onAgentSelect: (selection: ChatSelectedAgent) => void
+    onConfigureAgent: (agentId: string, clawId: string) => void
+    onCreateAgent: (clawId: string, clawName: string) => void
+    onOpenClawSettings: (clawId: string) => void
+    onClose?: () => void
+}
+
+export interface ChatSidebarAgentListProps {
+    claw: Claw
+    agents: ClawAgent[]
+    isLoading: boolean
+    isReachable: boolean
+    selectedAgent: ChatSelectedAgent | null
+    activeConnectionState?: GatewayConnectionState
+    onAgentClick: (agentId: string, clawId: string) => void
+    onConfigureAgent: (agentId: string, clawId: string) => void
+    onCreateAgent: (clawId: string, clawName: string) => void
+}
+
+export interface ChatSidebarClawHeaderProps {
+    claw: Claw
+    isReachable: boolean
+    isSelected: boolean
+    statusConfig: StatusConfig
+    onOpenClawSettings: (clawId: string) => void
+    onCreateAgent: (clawId: string, clawName: string) => void
+}
+
+export interface ChatViewProps {
+    claws: Claw[]
+    agentQueries: UseQueryResult<ClawAgentsResponse>[]
+    plans: Plan[]
+    sshKeys: SSHKey[]
+    selectedAgent: ChatSelectedAgent | null
+    onAgentSelect: (selection: ChatSelectedAgent | null) => void
+    onConfigureAgent: (agentId: string, clawId: string) => void
+    onCreateAgent: (clawId: string, clawName: string) => void
+    initialSettingsClawId?: string | null
+    onSettingsClawChange?: (clawId: string | null) => void
+    initialAgentTab?: PlaygroundAgentDetailTab
+    onAgentTabChange?: (tab: PlaygroundAgentDetailTab | null) => void
+    initialClawTab?: PlaygroundDetailTab
+    onClawTabChange?: (tab: PlaygroundDetailTab | null) => void
+}
+
+export interface TruncateTooltipProps {
+    content: string
+    children: ReactNode
+}
+
+export interface BindingMatch {
+    channel: string
+}
+
+export interface Binding {
+    agentId: string
+    match: BindingMatch
+}
+
+export interface ClawBindingsResponse {
+    bindings: Binding[]
+    channels: Record<string, ChannelConfig>
+    agents: Array<{ id: string; name: string }>
+}
+
+export interface UpdateClawBindingsData {
+    bindings: Binding[]
+}
+
+export interface PlaygroundBindingsContentProps {
+    clawId: string
+    agentId: string
+}
+
+export interface CompareCompetitor {
+    id: string
+    nameKey: string
+    highlighted: boolean
+}
+
+export interface CompareFeatureValue {
+    status: CompareFeatureStatus
+    detailKey?: string
+}
+
+export interface CompareFeature {
+    nameKey: string
+    values: Record<string, CompareFeatureValue>
+}
+
+export interface CompareCategory {
+    id: string
+    nameKey: string
+    features: CompareFeature[]
+}
+
+export interface FeatureRequest {
+    id: string
+    title: string
+    description: string
+    status: FeatureRequestStatus
+    platforms: FeatureRequestPlatform[]
+    upvoteCount: number
+    userId: string
+    hasUpvoted: boolean
+}
+
+export interface FeatureRequestsListResponse {
+    items: FeatureRequest[]
+    total: number
+}
+
+export interface CreateFeatureRequestData {
+    title: string
+    description: string
+    platforms: FeatureRequestPlatform[]
+}
+
+export interface UpdateFeatureRequestStatusData {
+    status: FeatureRequestStatus
+}
+
+export interface EditFeatureRequestData {
+    title?: string
+    description?: string
+    status?: FeatureRequestStatus
+    platforms?: FeatureRequestPlatform[]
+}
+
+export interface FeatureRequestCardProps {
+    featureRequest: FeatureRequest
+    isAuthenticated: boolean
+    isAdmin: boolean
+    isDeleting: boolean
+    onUpvote: (id: string) => void
+    onEdit: (featureRequest: FeatureRequest) => void
+    onDelete: (id: string) => void
+}
+
+export interface FeatureRequestStatusBadgeProps {
+    status: FeatureRequestStatus
+}
+
+export interface ElectronAPI {
+    isDesktop?: boolean
+    openExternal: (url: string) => Promise<void>
+    openWindowed: (url: string) => Promise<void>
+    getDnsStatus: () => Promise<boolean>
+    setupDns: () => Promise<boolean>
+}
+
+export interface ElectronWindow {
+    electronAPI?: ElectronAPI
+}
+
+export interface RenameClawMutationParams extends RenameClawData {
+    id: string
+}
+
+export interface UpdateClawSubdomainMutationParams extends UpdateClawSubdomainData {
+    id: string
 }

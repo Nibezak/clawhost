@@ -127,6 +127,27 @@
       "when": 1771128000000,
       "tag": "0017_add_claw_exports",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1771214400000,
+      "tag": "0018_add_auth_methods",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1771300800000,
+      "tag": "0019_add_feature_requests",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1771387200000,
+      "tag": "0020_add_feature_request_platforms",
+      "breakpoints": true
     }
   ]
 }

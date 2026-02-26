@@ -19,7 +19,11 @@ export default tseslint.config(
             '**/.expo/**',
             '**/next-env.d.ts',
             '**/*.config.js',
-            '**/*.config.cjs'
+            '**/*.config.cjs',
+            '**/out/**',
+            '**/.vite/**',
+            'apps/clawhostgo/resources/**',
+            'apps/clawhostgo/scripts/*.js'
         ]
     },
     js.configs.recommended,
@@ -52,7 +56,8 @@ export default tseslint.config(
                     maxBOF: 0
                 }
             ],
-            'eol-last': ['error', 'never']
+            'eol-last': ['error', 'never'],
+            'no-empty': ['error', { allowEmptyCatch: true }]
         }
     },
     {
@@ -76,6 +81,20 @@ export default tseslint.config(
         },
         rules: {
             ...reactHooks.configs.recommended.rules
+        }
+    },
+    {
+        files: ['apps/clawhostgo/src/renderer/**/*.{ts,tsx}'],
+        plugins: {
+            'react-hooks': reactHooks,
+            'react-refresh': reactRefresh
+        },
+        rules: {
+            ...reactHooks.configs.recommended.rules,
+            'react-refresh/only-export-components': [
+                'warn',
+                { allowConstantExport: true }
+            ]
         }
     },
     {

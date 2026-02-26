@@ -2,7 +2,7 @@ import type { FC, ReactNode } from 'react'
 
 import { useEffect, useRef } from 'react'
 import { Animated, StyleSheet, View } from 'react-native'
-import COLORS from '@/lib/theme/colors'
+import { COLORS } from '@/lib/theme'
 
 const ClawSkeleton: FC = (): ReactNode => {
     const pulseAnim = useRef(new Animated.Value(0.3)).current
@@ -29,10 +29,19 @@ const ClawSkeleton: FC = (): ReactNode => {
     return (
         <View style={styles.card}>
             <View style={styles.header}>
-                <Animated.View style={[styles.mascotPlaceholder, { opacity: pulseAnim }]} />
+                <Animated.View
+                    style={[styles.mascotPlaceholder, { opacity: pulseAnim }]}
+                />
                 <View style={styles.textPlaceholders}>
-                    <Animated.View style={[styles.namePlaceholder, { opacity: pulseAnim }]} />
-                    <Animated.View style={[styles.subdomainPlaceholder, { opacity: pulseAnim }]} />
+                    <Animated.View
+                        style={[styles.namePlaceholder, { opacity: pulseAnim }]}
+                    />
+                    <Animated.View
+                        style={[
+                            styles.subdomainPlaceholder,
+                            { opacity: pulseAnim }
+                        ]}
+                    />
                 </View>
             </View>
         </View>

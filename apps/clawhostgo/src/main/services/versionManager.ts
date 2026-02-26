@@ -1,0 +1,167 @@
+import { execFile } from 'child_process'
+import fs from 'fs'
+import path from 'path'
+import configStore from '@/main/services/configStore'
+import nodeBinary from '@/main/services/nodeBinary'
+
+interface VersionEntry {
+    version: string
+    publishedAt: string
+    downloads: number
+    installed: boolean
+}
+
+const listInstalled = (): string[] => {
+    const versionsDir = path.join(configStore.getBaseDir(), 'versions')
+    if (!fs.existsSync(versionsDir)) return []
+    return fs.readdirSync(versionsDir).filter((name) => {
+        const binPath = path.join(
+            versionsDir,
+            name,
+            'node_modules',
+            '.bin',
+            'openclaw'
+        )
+        return fs.existsSync(binPath)
+    })
+}
+
+const installVersion = (version: string): Promise<void> => {
+    return new Promise((resolve, reject) => {
+        const versionDir = configStore.getVersionDir(version)
+        if (!fs.existsSync(versionDir)) {
+            fs.mkdirSync(versionDir, { recursive: true })
+        }
+
+        const nodePath = nodeBinary.getNodeBinaryPath()
+        const npmPath = nodeBinary.getNpmPath()
+
+        execFile(
+            npmPath,
+            ['install', `openclaw@${version}`, '--prefix', versionDir],
+            {
+                env: {
+                    ...process.env,
+                    PATH: `${path.dirname(nodePath)}:${process.env.PATH}`
+                },
+                timeout: 120000
+            },
+            (error) => {
+                if (error) {
+                    try {
+                        fs.rmSync(versionDir, { recursive: true, force: true })
+                    } catch {}
+                    reject(
+                        new Error(
+                            `Failed to install OpenClaw ${version}: ${error.message}`
+                        )
+                    )
+                    return
+                }
+                resolve()
+            }
+        )
+    })
+}
+
+const getAvailableVersions = (): Promise<VersionEntry[]> => {
+    return new Promise((resolve) => {
+        const nodePath = nodeBinary.getNodeBinaryPath()
+        const script = [
+            'Promise.all([',
+            "fetch('https://registry.npmjs.org/openclaw').then(r=>r.json()),",
+            "fetch('https://api.npmjs.org/versions/openclaw/last-week').then(r=>r.json()).catch(()=>({downloads:{}}))",
+            ']).then(([registry,dl])=>{',
+            'const times=registry.time||{};',
+            'const downloads=dl.downloads||{};',
+            'const versions=Object.entries(times)',
+            '.filter(([k])=>k!=="created"&&k!=="modified")',
+            '.map(([v,t])=>({version:v,publishedAt:t,downloads:downloads[v]||0}))',
+            '.sort((a,b)=>new Date(b.publishedAt)-new Date(a.publishedAt));',
+            'console.log(JSON.stringify(versions))',
+            '})'
+        ].join('')
+
+        execFile(
+            nodePath,
+            ['-e', script],
+            { encoding: 'utf-8', timeout: 15000 },
+            (error, stdout) => {
+                if (error || !stdout.trim()) {
+                    const installed = listInstalled()
+                    resolve(
+                        installed.map((v) => ({
+                            version: v,
+                            publishedAt: new Date().toISOString(),
+                            downloads: 0,
+                            installed: true
+                        }))
+                    )
+                    return
+                }
+                try {
+                    const versions = JSON.parse(stdout.trim()) as Array<{
+                        version: string
+                        publishedAt: string
+                        downloads: number
+                    }>
+                    const installed = new Set(listInstalled())
+                    resolve(
+                        versions.map((v) => ({
+                            ...v,
+                            installed: installed.has(v.version)
+                        }))
+                    )
+                } catch {
+                    const installed = listInstalled()
+                    resolve(
+                        installed.map((v) => ({
+                            version: v,
+                            publishedAt: new Date().toISOString(),
+                            downloads: 0,
+                            installed: true
+                        }))
+                    )
+                }
+            }
+        )
+    })
+}
+
+const getLatestVersion = (): Promise<string | null> => {
+    return new Promise((resolve) => {
+        const nodePath = nodeBinary.getNodeBinaryPath()
+        const script =
+            "fetch('https://registry.npmjs.org/openclaw/latest').then(r=>r.json()).then(d=>console.log(d.version))"
+
+        execFile(
+            nodePath,
+            ['-e', script],
+            { encoding: 'utf-8', timeout: 10000 },
+            (error, stdout) => {
+                if (error || !stdout.trim()) {
+                    resolve(null)
+                    return
+                }
+                resolve(stdout.trim())
+            }
+        )
+    })
+}
+
+const getVersionBinaryPath = (version: string): string => {
+    return path.join(
+        configStore.getVersionDir(version),
+        'node_modules',
+        '.bin',
+        'openclaw'
+    )
+}
+
+export default {
+    listInstalled,
+    installVersion,
+    getAvailableVersions,
+    getLatestVersion,
+    getVersionBinaryPath
+}

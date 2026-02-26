@@ -1,13 +1,13 @@
-import type { Context } from 'hono'
+import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
-import { sshKeys } from '@/db/schema'
+import { sshKeys, claws, pendingClaws } from '@/db/schema'
 import { getProvider } from '@/services/provider'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
-const deleteSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
+const deleteSSHKey = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')
@@ -22,47 +22,67 @@ const deleteSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
             return fail(c, t('api.sshKeyNotFound'), 404)
         }
 
+        const [references, pendingRefs] = await Promise.all([
+            db
+                .select({ id: claws.id })
+                .from(claws)
+                .where(eq(claws.sshKeyId, id))
+                .limit(1),
+            db
+                .select({ id: pendingClaws.id })
+                .from(pendingClaws)
+                .where(eq(pendingClaws.sshKeyId, id))
+                .limit(1)
+        ])
+
+        if (references[0] || pendingRefs[0]) {
+            return fail(c, t('api.sshKeyInUse'), 400)
+        }
+
+        const providerDeletions: Promise<void>[] = []
         if (key[0].providerKeyId) {
-            try {
-                await getProvider('hetzner').deleteSSHKey(key[0].providerKeyId)
-            } catch (err) {
-                console.error('Failed to delete SSH key from Hetzner:', err)
-            }
+            providerDeletions.push(
+                getProvider('hetzner')
+                    .deleteSSHKey(key[0].providerKeyId)
+                    .catch((err) =>
+                        console.error(
+                            'Failed to delete SSH key from Hetzner:',
+                            err
+                        )
+                    )
+            )
         }
-
         if (key[0].digitaloceanKeyId) {
-            try {
-                await getProvider('digitalocean').deleteSSHKey(
-                    key[0].digitaloceanKeyId
-                )
-            } catch (err) {
-                console.error(
-                    'Failed to delete SSH key from DigitalOcean:',
-                    err
-                )
-            }
+            providerDeletions.push(
+                getProvider('digitalocean')
+                    .deleteSSHKey(key[0].digitaloceanKeyId)
+                    .catch((err) =>
+                        console.error(
+                            'Failed to delete SSH key from DigitalOcean:',
+                            err
+                        )
+                    )
+            )
         }
-
         if (key[0].vultrKeyId) {
-            try {
-                await getProvider('vultr').deleteSSHKey(key[0].vultrKeyId)
-            } catch (err) {
-                console.error('Failed to delete SSH key from Vultr:', err)
-            }
+            providerDeletions.push(
+                getProvider('vultr')
+                    .deleteSSHKey(key[0].vultrKeyId)
+                    .catch((err) =>
+                        console.error(
+                            'Failed to delete SSH key from Vultr:',
+                            err
+                        )
+                    )
+            )
         }
+        await Promise.all(providerDeletions)
 
         await db.delete(sshKeys).where(eq(sshKeys.id, id))
 
         return ok(c, null, t('api.sshKeyDeleted'))
-    } catch (err) {
-        console.error('Delete SSH key error:', err)
-        return fail(
-            c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToDeleteSshKey'),
-            500
-        )
+    } catch {
+        return fail(c, t('api.failedToDeleteSshKey'), 500)
     }
 }
 

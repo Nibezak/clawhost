@@ -5,9 +5,14 @@ import { useState } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import * as Clipboard from 'expo-clipboard'
 import { t } from '@openclaw/i18n'
-import COLORS from '@/lib/theme/colors'
+import { COLORS } from '@/lib/theme'
 
-const CopyableField: FC<CopyableFieldProps> = ({ label, value, icon, width }): ReactNode => {
+const CopyableField: FC<CopyableFieldProps> = ({
+    label,
+    value,
+    icon,
+    width
+}): ReactNode => {
     const [copied, setCopied] = useState(false)
 
     const handleCopy = async (): Promise<void> => {
@@ -17,7 +22,10 @@ const CopyableField: FC<CopyableFieldProps> = ({ label, value, icon, width }): R
     }
 
     return (
-        <Pressable onPress={handleCopy} style={[styles.container, width ? { width } : undefined]}>
+        <Pressable
+            onPress={handleCopy}
+            style={[styles.container, width ? { width } : undefined]}
+        >
             <View style={styles.content}>
                 <Text style={styles.label}>{label}</Text>
                 <View style={styles.valueRow}>

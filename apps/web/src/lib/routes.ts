@@ -1,15 +1,19 @@
-export const ROUTES = {
-    HOME: '/',
-    LOGIN: '/login',
-    CLAWS: '/claws',
-    ADMIN: '/admin',
-    SSH_KEYS: '/ssh-keys',
-    ACCOUNT: '/account',
-    TERMS: '/terms',
-    PRIVACY: '/privacy',
-    CHANGELOG: '/changelog',
-    POSTS: '/posts',
-    POST: '/posts/:slug'
+import PATHS from '@/lib/paths'
+
+const ROUTES = {
+    HOME: PATHS.HOME,
+    LOGIN: `/${PATHS.LOGIN}`,
+    CLAWS: `/${PATHS.CLAWS}`,
+    SSH_KEYS: `/${PATHS.SSH_KEYS}`,
+    ACCOUNT: `/${PATHS.ACCOUNT}`,
+    BILLING: `/${PATHS.BILLING}`,
+    TERMS: `/${PATHS.TERMS}`,
+    PRIVACY: `/${PATHS.PRIVACY}`,
+    CHANGELOG: `/${PATHS.CHANGELOG}`,
+    BLOG: `/${PATHS.BLOG}`,
+    BLOG_POST: `/${PATHS.BLOG}/:slug`,
+    COMPARE: `/${PATHS.COMPARE}`,
+    FEATURE_REQUESTS: `/${PATHS.FEATURE_REQUESTS}`
 } as const
 
-export type Route = (typeof ROUTES)[keyof typeof ROUTES]
+export default ROUTES

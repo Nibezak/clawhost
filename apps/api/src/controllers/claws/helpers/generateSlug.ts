@@ -1,15 +1,15 @@
-export function generateSlug(id: string): string {
+import crypto from 'crypto'
+
+function generateSlug(id: string): string {
     const chars = 'abcdefghjkmnpqrstuvwxyz23456789'
-    let hash = 0
-    for (let i = 0; i < id.length; i++) {
-        hash = (hash << 5) - hash + id.charCodeAt(i)
-        hash = hash & hash
-    }
+    const hash = crypto.createHash('sha256').update(id).digest()
     let slug = ''
-    let num = Math.abs(hash)
-    for (let i = 0; i < 7; i++) {
-        slug += chars[num % chars.length]
-        num = Math.floor(num / chars.length) + id.charCodeAt(i % id.length)
+
+    for (let i = 0; i < 8; i++) {
+        slug += chars[hash[i] % chars.length]
     }
+
     return slug
 }
+
+export default generateSlug

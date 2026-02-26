@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { api } from '@/lib/api'
+import { api } from '@/lib'
 import CLAWS_QUERY_KEY from '@/hooks/useClaws/CLAWS_QUERY_KEY'
 
 const useClaws = () => {
@@ -7,7 +7,7 @@ const useClaws = () => {
         queryKey: CLAWS_QUERY_KEY,
         queryFn: () => api.getClaws(),
         placeholderData: (previousData) => previousData,
-        refetchInterval: 3000
+        refetchInterval: 1000
     })
 }
 

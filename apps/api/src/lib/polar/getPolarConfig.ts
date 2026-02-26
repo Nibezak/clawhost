@@ -3,7 +3,7 @@ const getPolarConfig = () => {
     const http = url?.includes('localhost') ? 'http' : 'https'
 
     const successUrl = `${http}://${url}/claws?payment=success&checkout_id={CHECKOUT_ID}`
-    const cancelUrl = `${http}://${url}/claws?payment=success`
+    const cancelUrl = `${http}://${url}/claws`
 
     return {
         organizationId: process.env.POLAR_ORGANIZATION_ID,

@@ -16,6 +16,31 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': path.resolve(__dirname, './src')
+        },
+        dedupe: [
+            '@codemirror/state',
+            '@codemirror/view',
+            '@codemirror/language',
+            '@lezer/common',
+            '@lezer/highlight',
+            '@lezer/lr'
+        ]
+    },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    'framer-motion': ['framer-motion'],
+                    'react-flow': ['@xyflow/react'],
+                    codemirror: [
+                        '@codemirror/state',
+                        '@codemirror/view',
+                        '@codemirror/language',
+                        '@codemirror/lang-json'
+                    ],
+                    phosphor: ['@phosphor-icons/react']
+                }
+            }
         }
     },
     server: {

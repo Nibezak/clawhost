@@ -1,5 +1,5 @@
-import type { Context } from 'hono'
 import type { CreateSSHKeyBody } from '@/ts/Interfaces'
+import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq, count } from 'drizzle-orm'
 import { db } from '@/db'
@@ -10,13 +10,17 @@ import { t } from '@openclaw/i18n'
 
 const MAX_SSH_KEYS_PER_ACCOUNT = 50
 
-const createSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
+const createSSHKey = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const { name, publicKey } = await c.req.json<CreateSSHKeyBody>()
 
         if (!name || !publicKey) {
             return fail(c, t('api.nameAndKeyRequired'), 400)
+        }
+
+        if (name.length > 100 || publicKey.length > 10000) {
+            return fail(c, t('api.inputTooLong'), 400)
         }
 
         const [{ value: keyCount }] = await db
@@ -34,31 +38,35 @@ const createSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
 
         const keyLabel = `${name}-${userId.slice(0, 8)}`
 
-        const hetznerProvider = getProvider('hetzner')
-        const hetznerKey = await hetznerProvider.createSSHKey(
-            keyLabel,
-            publicKey
+        const [hetznerResult, doResult, vultrResult] = await Promise.allSettled(
+            [
+                getProvider('hetzner').createSSHKey(keyLabel, publicKey),
+                getProvider('digitalocean').createSSHKey(keyLabel, publicKey),
+                getProvider('vultr').createSSHKey(keyLabel, publicKey)
+            ]
         )
 
-        let digitaloceanKeyId: number | null = null
-        try {
-            const doProvider = getProvider('digitalocean')
-            const doKey = await doProvider.createSSHKey(keyLabel, publicKey)
-            digitaloceanKeyId = doKey.id
-        } catch (err) {
-            console.error('Failed to register SSH key with DigitalOcean:', err)
+        if (hetznerResult.status === 'rejected') {
+            throw hetznerResult.reason
         }
 
-        let vultrKeyId: number | null = null
-        try {
-            const vultrProvider = getProvider('vultr')
-            const vultrKey = await vultrProvider.createSSHKey(
-                keyLabel,
-                publicKey
+        const hetznerKey = hetznerResult.value
+        const digitaloceanKeyId =
+            doResult.status === 'fulfilled' ? doResult.value.id : null
+        const vultrKeyId =
+            vultrResult.status === 'fulfilled' ? vultrResult.value.id : null
+
+        if (doResult.status === 'rejected') {
+            console.error(
+                'Failed to register SSH key with DigitalOcean:',
+                doResult.reason
             )
-            vultrKeyId = vultrKey.id
-        } catch (err) {
-            console.error('Failed to register SSH key with Vultr:', err)
+        }
+        if (vultrResult.status === 'rejected') {
+            console.error(
+                'Failed to register SSH key with Vultr:',
+                vultrResult.reason
+            )
         }
 
         const id = crypto.randomUUID()
@@ -73,22 +81,19 @@ const createSSHKey = async (c: Context<{ Variables: { userId: string } }>) => {
             vultrKeyId
         })
 
-        return ok(c, {
-            id,
-            name,
-            fingerprint: hetznerKey.fingerprint,
-            publicKey,
-            createdAt: new Date().toISOString()
-        }, t('api.sshKeyCreated'))
-    } catch (err) {
-        console.error('Create SSH key error:', err)
-        return fail(
+        return ok(
             c,
-            err instanceof Error
-                ? err.message
-                : t('api.failedToCreateSshKey'),
-            500
+            {
+                id,
+                name,
+                fingerprint: hetznerKey.fingerprint,
+                publicKey,
+                createdAt: new Date().toISOString()
+            },
+            t('api.sshKeyCreated')
         )
+    } catch {
+        return fail(c, t('api.failedToCreateSshKey'), 500)
     }
 }
 

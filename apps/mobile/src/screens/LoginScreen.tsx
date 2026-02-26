@@ -15,9 +15,9 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
 import { t } from '@openclaw/i18n'
-import { useAuth } from '@/lib/auth/AuthProvider'
+import { useAuth } from '@/lib/auth'
 import { COLORS, SPACING, TYPOGRAPHY } from '@/lib/theme'
-import ClawMascot from '@/components/ClawMascot'
+import { ClawMascot } from '@/components'
 
 const COOLDOWN_DURATION = 60
 const CODE_LENGTH = 6
@@ -53,73 +53,95 @@ const LoginScreen: FC = (): ReactNode => {
             setStep('code')
             setCode(Array(CODE_LENGTH).fill(''))
         } catch (err: unknown) {
-            const message = err instanceof Error ? err.message : t('errors.failedToLoadClaws')
+            const message =
+                err instanceof Error
+                    ? err.message
+                    : t('errors.failedToLoadClaws')
             Alert.alert(t('errors.somethingWentWrong'), message)
         } finally {
             setLoading(false)
         }
     }, [email, loading, cooldown, sendOtp])
 
-    const handleVerifyOtp = useCallback(async (fullCode: string) => {
-        if (loading) return
-        setLoading(true)
-        setError(null)
-        try {
-            await verifyOtp(email.trim(), fullCode)
-        } catch (err: unknown) {
-            const message = err instanceof Error ? err.message : t('mobile.invalidCode')
-            setError(message)
-            setCode(Array(CODE_LENGTH).fill(''))
-            inputRefs.current[0]?.focus()
-        } finally {
-            setLoading(false)
-        }
-    }, [email, loading, verifyOtp])
+    const handleVerifyOtp = useCallback(
+        async (fullCode: string) => {
+            if (loading) return
+            setLoading(true)
+            setError(null)
+            try {
+                await verifyOtp(email.trim(), fullCode)
+            } catch (err: unknown) {
+                const message =
+                    err instanceof Error ? err.message : t('mobile.invalidCode')
+                setError(message)
+                setCode(Array(CODE_LENGTH).fill(''))
+                inputRefs.current[0]?.focus()
+            } finally {
+                setLoading(false)
+            }
+        },
+        [email, loading, verifyOtp]
+    )
 
-    const handleCodeChange = useCallback((value: string, index: number) => {
-        if (!/^\d*$/.test(value)) return
+    const handleCodeChange = useCallback(
+        (value: string, index: number) => {
+            if (!/^\d*$/.test(value)) return
 
-        const newCode = [...code]
+            const newCode = [...code]
 
-        if (value.length > 1) {
-            const digits = value.split('').slice(0, CODE_LENGTH)
-            digits.forEach((digit, i) => {
-                if (index + i < CODE_LENGTH) {
-                    newCode[index + i] = digit
+            if (value.length > 1) {
+                const digits = value.split('').slice(0, CODE_LENGTH)
+                digits.forEach((digit, i) => {
+                    if (index + i < CODE_LENGTH) {
+                        newCode[index + i] = digit
+                    }
+                })
+                setCode(newCode)
+                const nextIndex = Math.min(
+                    index + digits.length,
+                    CODE_LENGTH - 1
+                )
+                inputRefs.current[nextIndex]?.focus()
+
+                const fullCode = newCode.join('')
+                if (
+                    fullCode.length === CODE_LENGTH &&
+                    newCode.every((d) => d !== '')
+                ) {
+                    handleVerifyOtp(fullCode)
                 }
-            })
+                return
+            }
+
+            newCode[index] = value
             setCode(newCode)
-            const nextIndex = Math.min(index + digits.length, CODE_LENGTH - 1)
-            inputRefs.current[nextIndex]?.focus()
+
+            if (value && index < CODE_LENGTH - 1) {
+                inputRefs.current[index + 1]?.focus()
+            }
 
             const fullCode = newCode.join('')
-            if (fullCode.length === CODE_LENGTH && newCode.every((d) => d !== '')) {
+            if (
+                fullCode.length === CODE_LENGTH &&
+                newCode.every((d) => d !== '')
+            ) {
                 handleVerifyOtp(fullCode)
             }
-            return
-        }
+        },
+        [code, handleVerifyOtp]
+    )
 
-        newCode[index] = value
-        setCode(newCode)
-
-        if (value && index < CODE_LENGTH - 1) {
-            inputRefs.current[index + 1]?.focus()
-        }
-
-        const fullCode = newCode.join('')
-        if (fullCode.length === CODE_LENGTH && newCode.every((d) => d !== '')) {
-            handleVerifyOtp(fullCode)
-        }
-    }, [code, handleVerifyOtp])
-
-    const handleCodeKeyPress = useCallback((key: string, index: number) => {
-        if (key === 'Backspace' && !code[index] && index > 0) {
-            const newCode = [...code]
-            newCode[index - 1] = ''
-            setCode(newCode)
-            inputRefs.current[index - 1]?.focus()
-        }
-    }, [code])
+    const handleCodeKeyPress = useCallback(
+        (key: string, index: number) => {
+            if (key === 'Backspace' && !code[index] && index > 0) {
+                const newCode = [...code]
+                newCode[index - 1] = ''
+                setCode(newCode)
+                inputRefs.current[index - 1]?.focus()
+            }
+        },
+        [code]
+    )
 
     const handleResend = useCallback(async () => {
         if (cooldown > 0 || loading) return
@@ -129,7 +151,10 @@ const LoginScreen: FC = (): ReactNode => {
             await sendOtp(email.trim())
             setCooldown(COOLDOWN_DURATION)
         } catch (err: unknown) {
-            const message = err instanceof Error ? err.message : t('errors.failedToLoadClaws')
+            const message =
+                err instanceof Error
+                    ? err.message
+                    : t('errors.failedToLoadClaws')
             Alert.alert(t('errors.somethingWentWrong'), message)
         } finally {
             setLoading(false)
@@ -145,7 +170,11 @@ const LoginScreen: FC = (): ReactNode => {
     return (
         <View style={[styles.container, { paddingTop: insets.top }]}>
             <LinearGradient
-                colors={['rgba(239,83,80,0.25)', 'rgba(198,40,40,0.15)', 'transparent']}
+                colors={[
+                    'rgba(239,83,80,0.25)',
+                    'rgba(198,40,40,0.15)',
+                    'transparent'
+                ]}
                 locations={[0, 0.3, 0.7]}
                 style={styles.gradient}
             />
@@ -163,10 +192,14 @@ const LoginScreen: FC = (): ReactNode => {
                 {step === 'email' ? (
                     <View style={styles.formContainer}>
                         <Text style={styles.title}>{t('mobile.signIn')}</Text>
-                        <Text style={styles.subtitle}>{t('mobile.signInDescription')}</Text>
+                        <Text style={styles.subtitle}>
+                            {t('mobile.signInDescription')}
+                        </Text>
 
                         <View style={styles.inputContainer}>
-                            <Text style={styles.inputLabel}>{t('mobile.enterEmail')}</Text>
+                            <Text style={styles.inputLabel}>
+                                {t('mobile.enterEmail')}
+                            </Text>
                             <TextInput
                                 style={styles.textInput}
                                 value={email}
@@ -186,30 +219,44 @@ const LoginScreen: FC = (): ReactNode => {
                         <Pressable
                             style={[
                                 styles.button,
-                                (loading || cooldown > 0 || !email.trim()) && styles.buttonDisabled
+                                (loading || cooldown > 0 || !email.trim()) &&
+                                    styles.buttonDisabled
                             ]}
                             onPress={handleSendOtp}
                             disabled={loading || cooldown > 0 || !email.trim()}
                         >
                             {loading ? (
                                 <View style={styles.buttonContent}>
-                                    <ActivityIndicator size='small' color={COLORS.white} />
-                                    <Text style={styles.buttonText}>{t('mobile.sending')}</Text>
+                                    <ActivityIndicator
+                                        size='small'
+                                        color={COLORS.white}
+                                    />
+                                    <Text style={styles.buttonText}>
+                                        {t('mobile.sending')}
+                                    </Text>
                                 </View>
                             ) : cooldown > 0 ? (
                                 <Text style={styles.buttonText}>
-                                    {t('mobile.resendIn', { seconds: String(cooldown) })}
+                                    {t('mobile.resendIn', {
+                                        seconds: String(cooldown)
+                                    })}
                                 </Text>
                             ) : (
-                                <Text style={styles.buttonText}>{t('mobile.continueWithEmail')}</Text>
+                                <Text style={styles.buttonText}>
+                                    {t('mobile.continueWithEmail')}
+                                </Text>
                             )}
                         </Pressable>
 
-                        <Text style={styles.description}>{t('mobile.otpDescription')}</Text>
+                        <Text style={styles.description}>
+                            {t('mobile.otpDescription')}
+                        </Text>
                     </View>
                 ) : (
                     <View style={styles.formContainer}>
-                        <Text style={styles.title}>{t('mobile.checkYourEmail')}</Text>
+                        <Text style={styles.title}>
+                            {t('mobile.checkYourEmail')}
+                        </Text>
                         <Text style={styles.subtitle}>
                             {t('mobile.codeSentTo')}{' '}
                             <Text style={styles.emailHighlight}>{email}</Text>
@@ -219,15 +266,24 @@ const LoginScreen: FC = (): ReactNode => {
                             {code.map((digit, index) => (
                                 <TextInput
                                     key={index}
-                                    ref={(ref) => { inputRefs.current[index] = ref }}
+                                    ref={(ref) => {
+                                        inputRefs.current[index] = ref
+                                    }}
                                     style={[
                                         styles.codeInput,
                                         digit ? styles.codeInputFilled : null,
                                         error ? styles.codeInputError : null
                                     ]}
                                     value={digit}
-                                    onChangeText={(value) => handleCodeChange(value, index)}
-                                    onKeyPress={({ nativeEvent }) => handleCodeKeyPress(nativeEvent.key, index)}
+                                    onChangeText={(value) =>
+                                        handleCodeChange(value, index)
+                                    }
+                                    onKeyPress={({ nativeEvent }) =>
+                                        handleCodeKeyPress(
+                                            nativeEvent.key,
+                                            index
+                                        )
+                                    }
                                     keyboardType='number-pad'
                                     maxLength={index === 0 ? CODE_LENGTH : 1}
                                     selectTextOnFocus
@@ -240,26 +296,46 @@ const LoginScreen: FC = (): ReactNode => {
 
                         {loading && (
                             <View style={styles.loadingRow}>
-                                <ActivityIndicator size='small' color={COLORS.accent} />
-                                <Text style={styles.loadingText}>{t('mobile.signingIn')}</Text>
+                                <ActivityIndicator
+                                    size='small'
+                                    color={COLORS.accent}
+                                />
+                                <Text style={styles.loadingText}>
+                                    {t('mobile.signingIn')}
+                                </Text>
                             </View>
                         )}
 
                         <View style={styles.linksContainer}>
-                            <Pressable onPress={handleResend} disabled={cooldown > 0 || loading}>
-                                <Text style={[
-                                    styles.linkText,
-                                    (cooldown > 0 || loading) && styles.linkDisabled
-                                ]}>
+                            <Pressable
+                                onPress={handleResend}
+                                disabled={cooldown > 0 || loading}
+                            >
+                                <Text
+                                    style={[
+                                        styles.linkText,
+                                        (cooldown > 0 || loading) &&
+                                            styles.linkDisabled
+                                    ]}
+                                >
                                     {cooldown > 0
-                                        ? t('mobile.resendIn', { seconds: String(cooldown) })
-                                        : t('mobile.resendCode')
-                                    }
+                                        ? t('mobile.resendIn', {
+                                              seconds: String(cooldown)
+                                          })
+                                        : t('mobile.resendCode')}
                                 </Text>
                             </Pressable>
 
-                            <Pressable onPress={handleChangeEmail} disabled={loading}>
-                                <Text style={[styles.linkText, loading && styles.linkDisabled]}>
+                            <Pressable
+                                onPress={handleChangeEmail}
+                                disabled={loading}
+                            >
+                                <Text
+                                    style={[
+                                        styles.linkText,
+                                        loading && styles.linkDisabled
+                                    ]}
+                                >
                                     {t('mobile.changeEmail')}
                                 </Text>
                             </Pressable>

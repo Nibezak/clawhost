@@ -1,21 +1,28 @@
 import type { FC, ReactNode } from 'react'
-import type { User } from 'firebase/auth'
+import type { User, OAuthCredential } from 'firebase/auth'
 import type { AuthProviderProps, CachedProfile } from '@/ts/Interfaces'
 
 import { useCallback, useEffect, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import {
+    GoogleAuthProvider,
+    GithubAuthProvider,
     onAuthStateChanged,
-    signInWithEmailLink,
-    isSignInWithEmailLink,
+    signInWithCustomToken,
+    signInWithPopup,
+    linkWithPopup,
+    unlink,
     signOut as firebaseSignOut
 } from 'firebase/auth'
+import { t } from '@openclaw/i18n'
 import { auth, AUTH_STORAGE_KEY, PROFILE_CACHE_KEY } from '@/lib/firebase'
-import { api } from '@/lib/api'
+import { api } from '@/lib'
 import AuthContext from '@/lib/auth/AuthContext'
+import { STORAGE_KEYS } from '@/lib/storageKeys'
 
-function readCachedProfile(): CachedProfile | null {
+const readCachedProfile = (): CachedProfile | null => {
     try {
+        if (localStorage.getItem(AUTH_STORAGE_KEY) !== 'true') return null
         const raw = localStorage.getItem(PROFILE_CACHE_KEY)
         return raw ? JSON.parse(raw) : null
     } catch {
@@ -30,7 +37,6 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
     const [cachedProfile, setCachedProfile] = useState<CachedProfile | null>(
         readCachedProfile
     )
-
     const updateCachedProfile = useCallback((data: Partial<CachedProfile>) => {
         setCachedProfile((prev) => {
             const updated = { ...prev, ...data } as CachedProfile
@@ -47,6 +53,9 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
             if (user) {
                 localStorage.setItem(AUTH_STORAGE_KEY, 'true')
 
+                const cached = readCachedProfile()
+                if (cached) setCachedProfile(cached)
+
                 try {
                     const profile = await queryClient.fetchQuery({
                         queryKey: ['profile'],
@@ -61,7 +70,7 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
                         PROFILE_CACHE_KEY,
                         JSON.stringify(fresh)
                     )
-                } catch { /* localStorage unavailable */ }
+                } catch {}
 
                 queryClient.prefetchQuery({
                     queryKey: ['claws'],
@@ -74,28 +83,123 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
             } else {
                 localStorage.removeItem(AUTH_STORAGE_KEY)
                 localStorage.removeItem(PROFILE_CACHE_KEY)
+                localStorage.removeItem(STORAGE_KEYS.OTP_SENT_AT)
                 setCachedProfile(null)
+                queryClient.clear()
             }
         })
         return unsubscribe
     }, [queryClient])
 
-    const sendOtp = async (email: string) => {
-        const redirectUrl = `${window.location.origin}/login`
-        await api.sendMagicLink(email, redirectUrl)
-        window.localStorage.setItem('emailForSignIn', email)
-    }
+    const sendOtp = useCallback(async (email: string) => {
+        await api.sendOtp(email)
+    }, [])
 
-    const verifyOtp = async (email: string) => {
-        if (isSignInWithEmailLink(auth, window.location.href)) {
-            await signInWithEmailLink(auth, email, window.location.href)
-            window.localStorage.removeItem('emailForSignIn')
+    const verifyOtp = useCallback(async (email: string, code: string) => {
+        const { customToken } = await api.verifyOtp(email, code)
+        await signInWithCustomToken(auth, customToken)
+    }, [])
+
+    const resolveConflict = useCallback(
+        async (credential: OAuthCredential | null, providerId: string) => {
+            if (!credential?.accessToken) return false
+            const { customToken } = await api.resolveCredentialConflict({
+                accessToken: credential.accessToken,
+                providerId
+            })
+            await signInWithCustomToken(auth, customToken)
+            return true
+        },
+        []
+    )
+
+    const signInWithGoogle = useCallback(async () => {
+        try {
+            await signInWithPopup(auth, new GoogleAuthProvider())
+        } catch (error) {
+            const firebaseError = error as { code?: string }
+            if (
+                firebaseError.code ===
+                'auth/account-exists-with-different-credential'
+            ) {
+                const credential = GoogleAuthProvider.credentialFromError(
+                    error as Parameters<
+                        typeof GoogleAuthProvider.credentialFromError
+                    >[0]
+                )
+                const resolved = await resolveConflict(credential, 'google.com')
+                if (resolved) return
+            }
+            throw error
         }
-    }
+    }, [resolveConflict])
 
-    const signOut = async () => {
+    const signInWithGithub = useCallback(async () => {
+        try {
+            await signInWithPopup(auth, new GithubAuthProvider())
+        } catch (error) {
+            const firebaseError = error as { code?: string }
+            if (
+                firebaseError.code ===
+                'auth/account-exists-with-different-credential'
+            ) {
+                const credential = GithubAuthProvider.credentialFromError(
+                    error as Parameters<
+                        typeof GithubAuthProvider.credentialFromError
+                    >[0]
+                )
+                const resolved = await resolveConflict(credential, 'github.com')
+                if (resolved) return
+            }
+            throw error
+        }
+    }, [resolveConflict])
+
+    const linkGoogle = useCallback(async () => {
+        if (!user) return
+        const result = await linkWithPopup(user, new GoogleAuthProvider())
+        const linked = result.user.providerData.find(
+            (p) => p.providerId === 'google.com'
+        )
+        if (
+            linked?.email &&
+            user.email &&
+            linked.email.toLowerCase() !== user.email.toLowerCase()
+        ) {
+            await unlink(result.user, 'google.com')
+            throw new Error(t('account.providerEmailMismatch'))
+        }
+    }, [user])
+
+    const linkGithub = useCallback(async () => {
+        if (!user) return
+        const result = await linkWithPopup(user, new GithubAuthProvider())
+        const linked = result.user.providerData.find(
+            (p) => p.providerId === 'github.com'
+        )
+        if (
+            linked?.email &&
+            user.email &&
+            linked.email.toLowerCase() !== user.email.toLowerCase()
+        ) {
+            await unlink(result.user, 'github.com')
+            throw new Error(t('account.providerEmailMismatch'))
+        }
+    }, [user])
+
+    const unlinkGoogle = useCallback(async () => {
+        if (!user) return
+        await unlink(user, 'google.com')
+    }, [user])
+
+    const unlinkGithub = useCallback(async () => {
+        if (!user) return
+        await unlink(user, 'github.com')
+    }, [user])
+
+    const signOut = useCallback(async () => {
         await firebaseSignOut(auth)
-    }
+    }, [])
 
     return (
         <AuthContext.Provider
@@ -106,6 +210,12 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
                 updateCachedProfile,
                 sendOtp,
                 verifyOtp,
+                signInWithGoogle,
+                signInWithGithub,
+                linkGoogle,
+                linkGithub,
+                unlinkGoogle,
+                unlinkGithub,
                 signOut
             }}
         >

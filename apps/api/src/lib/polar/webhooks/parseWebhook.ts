@@ -8,7 +8,6 @@ const parseWebhook = async (c: Context): Promise<WebhookEvent | null> => {
     const config = getPolarConfig()
 
     if (!config.webhookSecret) {
-        console.error('POLAR_WEBHOOK_SECRET is not configured')
         return null
     }
 
@@ -17,7 +16,15 @@ const parseWebhook = async (c: Context): Promise<WebhookEvent | null> => {
     const signature = c.req.header('webhook-signature')
 
     if (!webhookId || !timestamp || !signature) {
-        console.error('Missing webhook headers')
+        return null
+    }
+
+    const WEBHOOK_TOLERANCE_SECONDS = 300
+    const ts = parseInt(timestamp, 10)
+    if (
+        isNaN(ts) ||
+        Math.abs(Date.now() / 1000 - ts) > WEBHOOK_TOLERANCE_SECONDS
+    ) {
         return null
     }
 
@@ -32,7 +39,6 @@ const parseWebhook = async (c: Context): Promise<WebhookEvent | null> => {
             config.webhookSecret
         )
     ) {
-        console.error('Invalid webhook signature')
         return null
     }
 

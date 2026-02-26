@@ -1,8 +1,6 @@
 <p align="center">
-  <img src="apps/web/public/favicon.ico" alt="ClawHost" width="80" />
+  <img src="https://cdn.clawhost.cloud/assets/clawhost-logo-light.png" alt="ClawHost" height="42" />
 </p>
-
-<h1 align="center">ClawHost</h1>
 
 <p align="center">
   Deploy OpenClaw on your own VPS with one click.<br/>
@@ -30,15 +28,23 @@ ClawHost is an open-source, self-hostable cloud hosting platform that lets anyon
 
 ### Key Highlights
 
-- **One-Click Deploy** — Select a server, pay, and OpenClaw is live within minutes
+- **One-Click Deploy** — Select a provider, pick a plan, pay, and OpenClaw is live within minutes
+- **Multi-Cloud** — Choose between Hetzner, DigitalOcean, and Vultr as your cloud provider
 - **Dedicated VPS** — Real servers with full root access, not shared containers
+- **Agent Playground** — Visual canvas for managing AI agents with drag-and-drop workflows
+- **Chat Interface** — Real-time WebSocket chat with your OpenClaw agents
+- **Channel Integrations** — Connect Telegram, Discord, Slack, Signal, and WhatsApp
+- **Skills & ClawHub** — Browse, install, and manage skills from the ClawHub marketplace
+- **Diagnostics & Logs** — Monitor server health, view logs, and repair instances
+- **File & Env Management** — Edit configuration files and environment variables remotely
 - **Automatic SSL** — HTTPS via Let's Encrypt, configured automatically
 - **DNS Management** — Automatic subdomain creation via Cloudflare
-- **Global Locations** — 6 server regions worldwide (US, Europe, Asia)
-- **SSH Key Management** — Store and assign keys for passwordless access
+- **SSH Key Management** — Store and assign keys for passwordless access across all providers
 - **Persistent Storage** — Attach additional volumes to any instance
-- **Passwordless Auth** — Magic link sign-in, no passwords to remember
-- **Billing Built-In** — Polar.sh integration for subscriptions and invoicing
+- **Multi-Auth** — Sign in with OTP email, Google, or GitHub
+- **Billing Built-In** — Polar.sh integration for subscriptions, invoicing, and billing portal
+- **Export & Backup** — Export claw configurations for backup and migration
+- **Cross-Platform** — Web, mobile (iOS/Android), and desktop (macOS/Linux) apps
 - **Fully Open Source** — MIT licensed, self-host the entire platform yourself
 
 ## Architecture
@@ -49,45 +55,56 @@ ClawHost is a TypeScript monorepo built with [Turborepo](https://turbo.build) an
 clawhost/
 ├── apps/
 │   ├── api/                 # Hono.js backend API
-│   └── web/                 # React + Vite frontend
+│   ├── web/                 # React + Vite frontend
+│   ├── mobile/              # React Native + Expo mobile app
+│   └── clawhostgo/          # Electron desktop app
 ├── packages/
 │   ├── shared/              # @openclaw/shared — HTTP client utility
 │   └── i18n/                # @openclaw/i18n — Internationalization
 ├── scripts/
-│   └── cloud-init.yaml      # Server initialization template
+│   ├── cloud-init.yaml      # Server initialization template
+│   └── configure-polar-portal.ts  # Polar portal configuration
 ├── turbo.json               # Turborepo build orchestration
 └── pnpm-workspace.yaml      # Workspace definition
 ```
 
 ### Tech Stack
 
-| Layer                   | Technology                                                                                                      |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------- |
-| **API Framework**       | [Hono](https://hono.dev) on Node.js                                                                             |
-| **Database**            | PostgreSQL with [Drizzle ORM](https://orm.drizzle.team)                                                         |
-| **Authentication**      | [Firebase](https://firebase.google.com) (passwordless email links)                                              |
-| **Server Provisioning** | [Hetzner Cloud API](https://docs.hetzner.cloud)                                                                 |
-| **DNS**                 | [Cloudflare API](https://developers.cloudflare.com/api)                                                         |
-| **Billing**             | [Polar.sh](https://polar.sh)                                                                                    |
-| **Email**               | [Resend](https://resend.com) with React Email                                                                   |
-| **Frontend**            | [React 18](https://react.dev) + [Vite](https://vitejs.dev)                                                      |
-| **UI Components**       | [shadcn/ui](https://ui.shadcn.com) + [Radix UI](https://radix-ui.com) + [Tailwind CSS](https://tailwindcss.com) |
-| **State Management**    | [Zustand](https://zustand-demo.pmnd.rs)                                                                         |
-| **Data Fetching**       | [TanStack React Query](https://tanstack.com/query)                                                              |
-| **Icons**               | [Phosphor Icons](https://phosphoricons.com)                                                                     |
-| **Animations**          | [Framer Motion](https://www.framer.com/motion)                                                                  |
-| **Blog**                | MDX with frontmatter                                                                                            |
-| **Monorepo**            | [Turborepo](https://turbo.build) + [pnpm](https://pnpm.io)                                                      |
+| Layer                   | Technology                                                                                                                      |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| **API Framework**       | [Hono](https://hono.dev) on Node.js                                                                                             |
+| **Database**            | PostgreSQL ([Neon](https://neon.tech)) with [Drizzle ORM](https://orm.drizzle.team)                                             |
+| **Authentication**      | [Firebase](https://firebase.google.com) (OTP email, Google, GitHub)                                                             |
+| **Server Provisioning** | [Hetzner Cloud](https://docs.hetzner.cloud), [DigitalOcean](https://docs.digitalocean.com), [Vultr](https://www.vultr.com/api/) |
+| **Remote Management**   | SSH2 for remote command execution, file management, and diagnostics                                                             |
+| **DNS**                 | [Cloudflare API](https://developers.cloudflare.com/api)                                                                         |
+| **Billing**             | [Polar.sh](https://polar.sh)                                                                                                    |
+| **Email**               | [Resend](https://resend.com) with React Email                                                                                   |
+| **Frontend**            | [React 18](https://react.dev) + [Vite](https://vitejs.dev)                                                                      |
+| **UI Components**       | [shadcn/ui](https://ui.shadcn.com) + [Radix UI](https://radix-ui.com) + [Tailwind CSS](https://tailwindcss.com)                 |
+| **Visual Canvas**       | [React Flow](https://reactflow.dev) with [Dagre](https://github.com/dagrejs/dagre) layout                                       |
+| **Code Editor**         | [CodeMirror](https://codemirror.net) via @uiw/react-codemirror                                                                  |
+| **State Management**    | [Zustand](https://zustand-demo.pmnd.rs)                                                                                         |
+| **Data Fetching**       | [TanStack React Query](https://tanstack.com/query)                                                                              |
+| **Icons**               | [Phosphor Icons](https://phosphoricons.com)                                                                                     |
+| **Animations**          | [Framer Motion](https://www.framer.com/motion)                                                                                  |
+| **Blog**                | MDX with frontmatter                                                                                                            |
+| **Mobile**              | [React Native](https://reactnative.dev) + [Expo](https://expo.dev)                                                              |
+| **Desktop**             | [Electron](https://www.electronjs.org) with Electron Forge                                                                      |
+| **Monorepo**            | [Turborepo](https://turbo.build) + [pnpm](https://pnpm.io)                                                                      |
 
 ### Database Schema
 
-| Table          | Purpose                                                               |
-| -------------- | --------------------------------------------------------------------- |
-| `users`        | Firebase-authenticated users with Polar customer IDs                  |
-| `claws`        | Hetzner Cloud server instances (status, IP, subdomain, gateway token) |
-| `pendingClaws` | Temporary storage for in-progress checkout sessions                   |
-| `sshKeys`      | SSH public keys with Hetzner sync                                     |
-| `volumes`      | Persistent storage volumes attached to claws                          |
+| Table          | Purpose                                                                  |
+| -------------- | ------------------------------------------------------------------------ |
+| `users`        | Firebase-authenticated users with Polar customer IDs and auth methods    |
+| `claws`        | Cloud server instances across all providers (status, IP, subdomain, etc) |
+| `pendingClaws` | Temporary storage for in-progress checkout sessions                      |
+| `sshKeys`      | SSH public keys with per-provider key IDs                                |
+| `volumes`      | Persistent storage volumes attached to claws                             |
+| `otpCodes`     | OTP authentication codes with expiration and attempt tracking            |
+| `rateLimits`   | Rate limiting for authentication endpoints                               |
+| `clawExports`  | Export/backup records with file metadata                                 |
 
 ## Self-Hosting
 
@@ -102,10 +119,14 @@ clawhost/
 | Service                                         | Purpose                 | What You Need                         |
 | ----------------------------------------------- | ----------------------- | ------------------------------------- |
 | [Hetzner Cloud](https://console.hetzner.cloud)  | Server provisioning     | API Token (Read & Write)              |
+| [DigitalOcean](https://cloud.digitalocean.com)  | Server provisioning     | API Token                             |
+| [Vultr](https://my.vultr.com)                   | Server provisioning     | API Key                               |
 | [Firebase](https://console.firebase.google.com) | Authentication          | Project credentials + Service account |
 | [Cloudflare](https://dash.cloudflare.com)       | DNS management          | API Token + Zone ID                   |
-| [Polar.sh](https://polar.sh)                    | Billing & subscriptions | API credentials                       |
+| [Polar.sh](https://polar.sh)                    | Billing & subscriptions | API credentials + Webhook secret      |
 | [Resend](https://resend.com)                    | Transactional email     | API Key                               |
+
+At least one cloud provider is required. You can configure one, two, or all three.
 
 ### 1. Clone & Install
 
@@ -128,20 +149,35 @@ FIREBASE_PROJECT_ID=your-project-id
 FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxxxx@your-project.iam.gserviceaccount.com
 FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 
-# Hetzner Cloud
+# Cloud Providers (at least one required)
 HETZNER_API_TOKEN=your-hetzner-api-token
+DIGITALOCEAN_API_TOKEN=your-digitalocean-api-token
+VULTR_API_TOKEN=your-vultr-api-token
 
 # Cloudflare DNS
 CLOUDFLARE_API_TOKEN=your-cloudflare-api-token
 CLOUDFLARE_ZONE_ID=your-zone-id
 
+# Polar (payments)
+POLAR_ACCESS_TOKEN=your-polar-access-token
+POLAR_ORGANIZATION_ID=your-polar-org-id
+POLAR_WEBHOOK_SECRET=your-polar-webhook-secret
+
+# Resend (email)
+RESEND_API_KEY=your-resend-api-key
+FROM_EMAIL=OpenClaw <noreply@yourdomain.com>
+
 # Server
 PORT=2222
+CLIENT=localhost:1111
 ```
 
 **Web** — create `apps/web/.env`:
 
 ```bash
+# API
+VITE_API_URL=/api
+
 # Firebase Client SDK
 VITE_FIREBASE_API_KEY=AIza...
 VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
@@ -165,14 +201,47 @@ VITE_FIREBASE_APP_ID=1:123456789:web:abc123
 </details>
 
 <details>
+<summary><strong>DigitalOcean</strong></summary>
+
+1. Go to [DigitalOcean Cloud Console](https://cloud.digitalocean.com)
+2. Navigate to **API** > **Tokens**
+3. Generate a personal access token with read and write scopes
+4. Copy to `DIGITALOCEAN_API_TOKEN`
+
+</details>
+
+<details>
+<summary><strong>Vultr</strong></summary>
+
+1. Go to [Vultr Dashboard](https://my.vultr.com)
+2. Navigate to **Account** > **API**
+3. Enable the API and copy your API key
+4. Copy to `VULTR_API_TOKEN`
+
+</details>
+
+<details>
 <summary><strong>Firebase</strong></summary>
 
 1. Go to [Firebase Console](https://console.firebase.google.com)
 2. Create a new project
-3. Enable **Authentication** > **Sign-in method** > **Email link (passwordless)**
+3. Enable **Authentication** > **Sign-in method** > **Email/Password** (required for OTP login)
 4. Add your domain to **Authorized domains**
 5. For the web app: **Project Settings** > **General** > **Your apps** > Add a web app and copy config
 6. For the API: **Project Settings** > **Service accounts** > Generate a new private key
+
+**Google Sign-In:**
+
+1. In **Authentication** > **Sign-in method**, enable **Google**
+2. Set a project support email
+
+**GitHub Sign-In:**
+
+1. Create an OAuth App on [GitHub Developer Settings](https://github.com/settings/developers)
+2. Set the **Authorization callback URL** to your Firebase callback URL (found in Firebase Console under the GitHub provider setup)
+3. In **Authentication** > **Sign-in method**, enable **GitHub** and paste the Client ID and Client Secret from your GitHub OAuth App
+
+All three sign-in methods (OTP, Google, GitHub) are always displayed in the UI, so all three must be configured in Firebase for a working setup. Users can also link/unlink Google and GitHub accounts from their Account settings page.
 
 </details>
 
@@ -192,8 +261,10 @@ VITE_FIREBASE_APP_ID=1:123456789:web:abc123
 
 1. Go to [Polar.sh](https://polar.sh)
 2. Create an organization and set up your products/subscriptions
-3. Configure webhook to point to your API's `/api/webhooks/polar` endpoint
-4. Copy API credentials to your `.env`
+3. Generate an access token and copy to `POLAR_ACCESS_TOKEN`
+4. Copy your organization ID to `POLAR_ORGANIZATION_ID`
+5. Configure webhook to point to your API's `/api/webhooks/polar` endpoint
+6. Copy the webhook secret to `POLAR_WEBHOOK_SECRET`
 
 </details>
 
@@ -222,17 +293,19 @@ The web dev server proxies `/api` requests to the API server automatically.
 
 ### Root Commands
 
-| Command             | Description                                      |
-| ------------------- | ------------------------------------------------ |
-| `pnpm dev`          | Start all apps in development mode               |
-| `pnpm dev:web`      | Start web app only                               |
-| `pnpm dev:api`      | Start API only                                   |
-| `pnpm build`        | Build all apps for production                    |
-| `pnpm lint`         | Run ESLint across the monorepo                   |
-| `pnpm lint:fix`     | Auto-fix ESLint issues                           |
-| `pnpm format`       | Format all files with Prettier                   |
-| `pnpm format:check` | Check formatting without writing                 |
-| `pnpm check`        | Run TypeScript type-check + ESLint for both apps |
+| Command             | Description                                     |
+| ------------------- | ----------------------------------------------- |
+| `pnpm dev`          | Start all apps in development mode              |
+| `pnpm dev:web`      | Start web app only                              |
+| `pnpm dev:api`      | Start API only                                  |
+| `pnpm dev:mobile`   | Start mobile app (Expo)                         |
+| `pnpm dev:desktop`  | Start desktop app (Electron)                    |
+| `pnpm build`        | Build all apps for production                   |
+| `pnpm lint`         | Run ESLint across the monorepo                  |
+| `pnpm lint:fix`     | Auto-fix ESLint issues                          |
+| `pnpm format`       | Format all files with Prettier                  |
+| `pnpm format:check` | Check formatting without writing                |
+| `pnpm check`        | Run TypeScript type-check + ESLint for all apps |
 
 ### Database Commands
 
@@ -252,29 +325,96 @@ pnpm --filter api email:dev    # Preview email templates at localhost:3333
 
 ### Public Endpoints
 
-| Method | Endpoint                    | Description                   |
-| ------ | --------------------------- | ----------------------------- |
-| `GET`  | `/api/plans`                | List available server plans   |
-| `GET`  | `/api/plans/locations`      | List available regions        |
-| `GET`  | `/api/plans/volume-pricing` | Get volume pricing            |
-| `POST` | `/api/auth/send-magic-link` | Send passwordless login email |
+| Method | Endpoint                    | Description                       |
+| ------ | --------------------------- | --------------------------------- |
+| `POST` | `/api/auth/send-otp`        | Send OTP code via email           |
+| `POST` | `/api/auth/verify-otp`      | Verify OTP and get Firebase token |
+| `GET`  | `/api/plans`                | List available server plans       |
+| `GET`  | `/api/plans/locations`      | List available regions            |
+| `GET`  | `/api/plans/volume-pricing` | Get volume pricing                |
+| `GET`  | `/api/plans/availability`   | Check plan availability           |
 
 ### Protected Endpoints (Bearer token required)
 
 **Claws (Server Instances)**
 
-| Method   | Endpoint                         | Description                 |
-| -------- | -------------------------------- | --------------------------- |
-| `GET`    | `/api/claws`                     | List all claws              |
-| `GET`    | `/api/claws/:id`                 | Get a specific claw         |
-| `POST`   | `/api/claws`                     | Create a claw (direct)      |
-| `POST`   | `/api/claws/purchase`            | Initiate paid claw purchase |
-| `POST`   | `/api/claws/:id/sync`            | Sync claw with Hetzner      |
-| `POST`   | `/api/claws/:id/start`           | Start a claw                |
-| `POST`   | `/api/claws/:id/stop`            | Stop a claw                 |
-| `POST`   | `/api/claws/:id/restart`         | Restart a claw              |
-| `POST`   | `/api/claws/:id/cancel-deletion` | Cancel scheduled deletion   |
-| `DELETE` | `/api/claws/:id`                 | Delete a claw               |
+| Method   | Endpoint                         | Description                   |
+| -------- | -------------------------------- | ----------------------------- |
+| `GET`    | `/api/claws`                     | List user's claws             |
+| `GET`    | `/api/claws/:id`                 | Get a specific claw           |
+| `POST`   | `/api/claws`                     | Create a claw (direct)        |
+| `POST`   | `/api/claws/purchase`            | Initiate paid claw purchase   |
+| `POST`   | `/api/claws/:id/sync`            | Sync claw with cloud provider |
+| `POST`   | `/api/claws/:id/start`           | Start a claw                  |
+| `POST`   | `/api/claws/:id/stop`            | Stop a claw                   |
+| `POST`   | `/api/claws/:id/restart`         | Restart a claw                |
+| `POST`   | `/api/claws/:id/cancel-deletion` | Cancel scheduled deletion     |
+| `DELETE` | `/api/claws/:id`                 | Delete a claw                 |
+| `GET`    | `/api/claws/:id/export`          | Export claw configuration     |
+| `POST`   | `/api/claws/:id/version`         | Get OpenClaw version          |
+
+**Claw Diagnostics**
+
+| Method | Endpoint                            | Description            |
+| ------ | ----------------------------------- | ---------------------- |
+| `POST` | `/api/claws/:id/diagnostics/status` | Get server diagnostics |
+| `POST` | `/api/claws/:id/diagnostics/logs`   | Get server logs        |
+
+**Claw Agents**
+
+| Method | Endpoint                       | Description                |
+| ------ | ------------------------------ | -------------------------- |
+| `POST` | `/api/claws/:id/agents`        | List agents                |
+| `POST` | `/api/claws/:id/agents/create` | Create a new agent         |
+| `POST` | `/api/claws/:id/agents/delete` | Delete an agent            |
+| `POST` | `/api/claws/:id/agent-config`  | Get agent configuration    |
+| `PUT`  | `/api/claws/:id/agent-config`  | Update agent configuration |
+
+**Claw Channels**
+
+| Method | Endpoint                  | Description                  |
+| ------ | ------------------------- | ---------------------------- |
+| `POST` | `/api/claws/:id/channels` | Get configured channels      |
+| `PUT`  | `/api/claws/:id/channels` | Update channel configuration |
+
+**Claw Skills**
+
+| Method | Endpoint                                | Description                  |
+| ------ | --------------------------------------- | ---------------------------- |
+| `POST` | `/api/claws/:id/skills`                 | Get claw skills              |
+| `PUT`  | `/api/claws/:id/skills`                 | Update claw skills           |
+| `POST` | `/api/claws/:id/agents/:agentId/skills` | Get agent-specific skills    |
+| `PUT`  | `/api/claws/:id/agents/:agentId/skills` | Update agent-specific skills |
+
+**ClawHub (Skills Marketplace)**
+
+| Method | Endpoint                           | Description                 |
+| ------ | ---------------------------------- | --------------------------- |
+| `POST` | `/api/claws/:id/clawhub/search`    | Search ClawHub skills       |
+| `POST` | `/api/claws/:id/clawhub/installed` | List installed skills       |
+| `POST` | `/api/claws/:id/clawhub/install`   | Install a skill             |
+| `POST` | `/api/claws/:id/clawhub/remove`    | Remove a skill              |
+| `POST` | `/api/claws/:id/clawhub/update`    | Update a skill              |
+| `POST` | `/api/claws/:id/clawhub/updates`   | Check for available updates |
+
+**Claw Files & Environment**
+
+| Method | Endpoint                    | Description                  |
+| ------ | --------------------------- | ---------------------------- |
+| `POST` | `/api/claws/:id/files`      | List files on instance       |
+| `POST` | `/api/claws/:id/files/read` | Read a file                  |
+| `PUT`  | `/api/claws/:id/files`      | Update a file                |
+| `GET`  | `/api/claws/:id/env`        | Get environment variables    |
+| `PUT`  | `/api/claws/:id/env`        | Update environment variables |
+
+**Admin Endpoints**
+
+| Method | Endpoint                            | Description                     |
+| ------ | ----------------------------------- | ------------------------------- |
+| `GET`  | `/api/claws/admin`                  | List all claws (admin only)     |
+| `POST` | `/api/claws/:id/hard-delete`        | Permanently delete (admin only) |
+| `POST` | `/api/claws/:id/diagnostics/repair` | Repair instance (admin only)    |
+| `POST` | `/api/claws/:id/reinstall`          | Reinstall OS (admin only)       |
 
 **SSH Keys**
 
@@ -286,14 +426,16 @@ pnpm --filter api email:dev    # Preview email templates at localhost:3333
 
 **Users**
 
-| Method | Endpoint                                 | Description               |
-| ------ | ---------------------------------------- | ------------------------- |
-| `GET`  | `/api/users/me`                          | Get current user profile  |
-| `PUT`  | `/api/users/me`                          | Update profile            |
-| `GET`  | `/api/users/me/stats`                    | Get user stats            |
-| `GET`  | `/api/users/me/billing`                  | Get billing history       |
-| `GET`  | `/api/users/me/billing/:orderId/invoice` | Get invoice for an order  |
-| `POST` | `/api/users/me/billing/portal`           | Open Polar billing portal |
+| Method   | Endpoint                                 | Description                         |
+| -------- | ---------------------------------------- | ----------------------------------- |
+| `GET`    | `/api/users/me`                          | Get current user profile            |
+| `PUT`    | `/api/users/me`                          | Update profile                      |
+| `GET`    | `/api/users/me/stats`                    | Get user stats                      |
+| `GET`    | `/api/users/me/billing`                  | Get billing history                 |
+| `GET`    | `/api/users/me/billing/:orderId/invoice` | Get invoice for an order            |
+| `POST`   | `/api/users/me/billing/portal`           | Open Polar billing portal           |
+| `POST`   | `/api/users/me/auth/:method`             | Connect auth method (Google/GitHub) |
+| `DELETE` | `/api/users/me/auth/:method`             | Disconnect auth method              |
 
 ### Webhooks
 
@@ -318,7 +460,7 @@ pnpm build
 
 ### API
 
-The API runs as a Next.js application (Hono mounted on Next.js for deployment flexibility):
+The API runs as a Hono.js application on Node.js:
 
 ```bash
 cd apps/api
@@ -331,7 +473,7 @@ pnpm start    # Starts on port 2222
 When a user deploys a new claw, the platform:
 
 1. **Creates a checkout** — Initiates a Polar.sh subscription for the selected plan
-2. **Provisions a server** — Spins up a Hetzner Cloud VPS in the chosen region
+2. **Provisions a server** — Spins up a VPS on the chosen cloud provider (Hetzner, DigitalOcean, or Vultr)
 3. **Runs cloud-init** — Automatically installs Node.js, OpenClaw, Nginx, SSL, and firewall
 4. **Configures DNS** — Creates a Cloudflare subdomain pointing to the server IP
 5. **Delivers access** — User gets a subdomain URL, root password, and SSH access
@@ -345,6 +487,8 @@ The `scripts/cloud-init.yaml` template configures every new instance with:
 - UFW firewall (ports 22, 80, 443)
 - systemd service for automatic OpenClaw startup
 
+Once provisioned, users can manage their claws through the dashboard — configuring agents, channels, skills, environment variables, and files all remotely via SSH.
+
 ## Customization
 
 ### Subdomain Pattern
@@ -353,7 +497,7 @@ Instances get subdomains like `abc1234.yourdomain.com`. To use your own domain, 
 
 ### Pricing Markup
 
-The default pricing markup on Hetzner base prices is configurable in the plans controller.
+The default pricing markup on cloud provider base prices is configurable in the plans controller.
 
 ### Cloud-Init
 
@@ -383,8 +527,9 @@ New subdomains may take 1-5 minutes to propagate through Cloudflare. Check that 
 <summary><strong>Firebase auth not working</strong></summary>
 
 1. Verify your domain is listed in Firebase **Authorized domains**
-2. Confirm email link sign-in is enabled under **Authentication** > **Sign-in method**
-3. Double-check that all `VITE_FIREBASE_*` values match your Firebase project
+2. Confirm Email/Password sign-in is enabled under **Authentication** > **Sign-in method**
+3. If using Google/GitHub auth, ensure those providers are configured
+4. Double-check that all `VITE_FIREBASE_*` values match your Firebase project
 
 </details>
 

@@ -3,20 +3,18 @@ import type { FC, ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { Button } from '@/components/ui/button'
-import { Header } from '@/components/Header'
-import { LandingFooter } from '@/components/LandingFooter'
-import { PageBackground } from '@/components/PageBackground'
-import { PageTitle } from '@/components/PageTitle'
-import { ROUTES } from '@/lib/routes'
-import { House, MagnifyingGlass } from '@phosphor-icons/react'
+import { Button } from '@/components/ui'
+import { Header, LandingFooter, PageBackground, PageTitle } from '@/components'
+import { ROUTES } from '@/lib'
+import { HouseIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
 
 const NotFound: FC = (): ReactNode => {
     return (
-        <div className='relative flex min-h-screen flex-col bg-[#0a0a0f] text-white'>
+        <div className='bg-background text-foreground relative flex min-h-screen flex-col'>
             <PageTitle
                 title={t('common.pageNotFound')}
                 description={t('errors.pageNotFoundDescription')}
+                noIndex
             />
             <PageBackground />
             <Header />
@@ -29,7 +27,7 @@ const NotFound: FC = (): ReactNode => {
             >
                 <div className='max-w-md text-center'>
                     <div className='from-primary/20 to-primary/5 mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br'>
-                        <MagnifyingGlass className='text-primary h-12 w-12' />
+                        <MagnifyingGlassIcon className='text-primary h-12 w-12' />
                     </div>
 
                     <h1 className='font-clash mb-4 text-6xl font-bold'>404</h1>
@@ -42,7 +40,7 @@ const NotFound: FC = (): ReactNode => {
 
                     <Button size='lg' asChild>
                         <Link to={ROUTES.HOME}>
-                            <House className='h-5 w-5' weight='regular' />
+                            <HouseIcon className='h-5 w-5' weight='regular' />
                             {t('errors.goToHomepage')}
                         </Link>
                     </Button>

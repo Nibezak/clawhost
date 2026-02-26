@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { CaretDown, Check } from '@phosphor-icons/react'
+import { CaretDownIcon, CheckIcon } from '@phosphor-icons/react'
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -8,18 +8,20 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib'
 
 interface SelectProps {
     value: string
     onValueChange: (value: string) => void
     children: React.ReactNode
     disabled?: boolean
+    displayValue?: string
 }
 
 interface SelectTriggerProps {
     placeholder?: string
     className?: string
+    icon?: React.ReactNode
 }
 
 interface SelectContentProps {
@@ -52,8 +54,20 @@ const SelectContext = React.createContext<{
     setDisplayText: () => {}
 })
 
-const Select = ({ value, onValueChange, children, disabled }: SelectProps) => {
-    const [displayText, setDisplayText] = React.useState('')
+const Select = ({
+    value,
+    onValueChange,
+    children,
+    disabled,
+    displayValue
+}: SelectProps) => {
+    const [displayText, setDisplayText] = React.useState(displayValue || '')
+
+    React.useEffect(() => {
+        if (displayValue !== undefined) {
+            setDisplayText(displayValue)
+        }
+    }, [displayValue])
 
     return (
         <SelectContext.Provider
@@ -82,6 +96,7 @@ const Select = ({ value, onValueChange, children, disabled }: SelectProps) => {
 const SelectTrigger = ({
     placeholder,
     className,
+    icon,
     disabled
 }: SelectTriggerProps & { disabled?: boolean }) => {
     const { displayText } = React.useContext(SelectContext)
@@ -96,8 +111,11 @@ const SelectTrigger = ({
                     className
                 )}
             >
-                <span className='truncate'>{displayText || placeholder}</span>
-                <CaretDown className='h-4 w-4 shrink-0 opacity-50' />
+                <span className='flex items-center gap-2 truncate'>
+                    {icon}
+                    {displayText || placeholder}
+                </span>
+                <CaretDownIcon className='h-4 w-4 shrink-0 opacity-50' />
             </button>
         </DropdownMenuTrigger>
     )
@@ -151,7 +169,7 @@ const SelectItem = ({ value, children, className }: SelectItemProps) => {
             >
                 {children}
             </span>
-            {isSelected && <Check className='h-4 w-4 shrink-0' />}
+            {isSelected && <CheckIcon className='h-4 w-4 shrink-0' />}
         </DropdownMenuItem>
     )
 }

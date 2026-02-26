@@ -1,5 +1,9 @@
+import type { HonoEnv } from '@/ts/Types'
+
 import { Hono } from 'hono'
 import {
+    connectAuthMethod,
+    disconnectAuthMethod,
     getCurrentUser,
     getBillingHistory,
     getOrderInvoice,
@@ -8,7 +12,7 @@ import {
     updateUserProfile
 } from '@/controllers/users'
 
-const app = new Hono<{ Variables: { userId: string } }>()
+const app = new Hono<HonoEnv>()
 
 app.get('/me', getCurrentUser)
 app.get('/me/stats', getUserStats)
@@ -16,5 +20,7 @@ app.get('/me/billing', getBillingHistory)
 app.get('/me/billing/:orderId/invoice', getOrderInvoice)
 app.post('/me/billing/portal', getCustomerPortal)
 app.put('/me', updateUserProfile)
+app.post('/me/auth/:method', connectAuthMethod)
+app.delete('/me/auth/:method', disconnectAuthMethod)
 
 export default app

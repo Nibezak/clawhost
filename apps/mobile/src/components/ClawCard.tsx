@@ -7,8 +7,15 @@ import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { CaretDown, ChatCircleDots } from 'phosphor-react-native'
 import { t } from '@openclaw/i18n'
-import COLORS from '@/lib/theme/colors'
-import { getStatusConfig, locationFlags, locationNames, generateSlug } from '@/lib/claw-utils'
+import { clawStatus } from '@openclaw/shared'
+import { COLORS } from '@/lib/theme'
+import getLocale from '@/lib/getLocale'
+import {
+    getStatusConfig,
+    locationFlags,
+    locationNames,
+    generateSlug
+} from '@/lib/claw-utils'
 import ClawMascot from '@/components/ClawMascot'
 import ProviderIcon from '@/components/ProviderIcon'
 import StatusBadge from '@/components/StatusBadge'
@@ -23,21 +30,25 @@ const ClawCard: FC<ClawCardProps> = ({ claw, plan }): ReactNode => {
 
     const handleGridLayout = (e: LayoutChangeEvent): void => {
         const gridWidth = e.nativeEvent.layout.width
-        setFieldWidth((gridWidth - GRID_GAP * (GRID_COLUMNS - 1)) / GRID_COLUMNS)
+        setFieldWidth(
+            (gridWidth - GRID_GAP * (GRID_COLUMNS - 1)) / GRID_COLUMNS
+        )
     }
 
     const statuses = getStatusConfig()
     const status = statuses[claw.status] || statuses.unknown
 
     const flag = claw.location ? locationFlags[claw.location] || '' : ''
-    const locationName = claw.location ? locationNames[claw.location] || claw.location : ''
+    const locationName = claw.location
+        ? locationNames[claw.location] || claw.location
+        : ''
 
     const providerLabel =
         claw.provider === 'hetzner'
             ? t('createClaw.providerHetzner')
             : claw.provider === 'vultr'
-                ? t('createClaw.providerVultr')
-                : t('createClaw.providerDigitalOcean')
+              ? t('createClaw.providerVultr')
+              : t('createClaw.providerDigitalOcean')
 
     const planLabel = plan
         ? `${plan.name.replace(/([A-Za-z])(\d)/, '$1 $2')} (${plan.cpu} vCPU, ${plan.memory}GB RAM, ${plan.disk}GB SSD)`
@@ -46,7 +57,7 @@ const ClawCard: FC<ClawCardProps> = ({ claw, plan }): ReactNode => {
     const subdomain = claw.subdomain || generateSlug(claw.id)
 
     const formatDate = (dateString: string): string => {
-        return new Date(dateString).toLocaleDateString('en-US', {
+        return new Date(dateString).toLocaleDateString(getLocale(), {
             year: 'numeric',
             month: 'short',
             day: 'numeric'
@@ -55,7 +66,10 @@ const ClawCard: FC<ClawCardProps> = ({ claw, plan }): ReactNode => {
 
     return (
         <View style={styles.card}>
-            <Pressable onPress={() => setIsExpanded(!isExpanded)} style={styles.header}>
+            <Pressable
+                onPress={() => setIsExpanded(!isExpanded)}
+                style={styles.header}
+            >
                 <View style={styles.mascotContainer}>
                     <ClawMascot size={20} />
                 </View>
@@ -66,13 +80,18 @@ const ClawCard: FC<ClawCardProps> = ({ claw, plan }): ReactNode => {
                         </Text>
                         <StatusBadge status={claw.status} config={status} />
                     </View>
-                    {claw.status !== 'configuring' && (
+                    {claw.status !== clawStatus.configuring && (
                         <Text style={styles.subdomain} numberOfLines={1}>
                             {subdomain}.clawhost.cloud
                         </Text>
                     )}
                 </View>
-                <View style={[styles.caretContainer, isExpanded && styles.caretRotated]}>
+                <View
+                    style={[
+                        styles.caretContainer,
+                        isExpanded && styles.caretRotated
+                    ]}
+                >
                     <CaretDown size={18} color={COLORS.textMuted} />
                 </View>
             </Pressable>
@@ -101,7 +120,12 @@ const ClawCard: FC<ClawCardProps> = ({ claw, plan }): ReactNode => {
                         <CopyableField
                             label={t('dashboard.provider')}
                             value={providerLabel}
-                            icon={<ProviderIcon provider={claw.provider} size={14} />}
+                            icon={
+                                <ProviderIcon
+                                    provider={claw.provider}
+                                    size={14}
+                                />
+                            }
                             width={fieldWidth || undefined}
                         />
 
@@ -139,14 +163,6 @@ const ClawCard: FC<ClawCardProps> = ({ claw, plan }): ReactNode => {
                             <CopyableField
                                 label={t('dashboard.created')}
                                 value={formatDate(claw.createdAt)}
-                                width={fieldWidth || undefined}
-                            />
-                        )}
-
-                        {claw.model && (
-                            <CopyableField
-                                label={t('dashboard.aiModel')}
-                                value={claw.model}
                                 width={fieldWidth || undefined}
                             />
                         )}
@@ -192,7 +208,9 @@ const ClawCard: FC<ClawCardProps> = ({ claw, plan }): ReactNode => {
                                 </Text>
                                 <Text style={styles.deletionDate}>
                                     {t('dashboard.deletionDate', {
-                                        date: formatDate(claw.deletionScheduledAt)
+                                        date: formatDate(
+                                            claw.deletionScheduledAt
+                                        )
                                     })}
                                 </Text>
                             </View>
@@ -201,7 +219,7 @@ const ClawCard: FC<ClawCardProps> = ({ claw, plan }): ReactNode => {
                 </>
             )}
 
-            {claw.status === 'running' && (
+            {claw.status === clawStatus.running && (
                 <Pressable style={styles.chatButton} onPress={() => {}}>
                     <LinearGradient
                         colors={['#ef5350', '#c62828']}
@@ -209,7 +227,11 @@ const ClawCard: FC<ClawCardProps> = ({ claw, plan }): ReactNode => {
                         end={{ x: 1, y: 0 }}
                         style={styles.chatButtonGradient}
                     >
-                        <ChatCircleDots size={18} color={COLORS.white} weight='fill' />
+                        <ChatCircleDots
+                            size={18}
+                            color={COLORS.white}
+                            weight='fill'
+                        />
                         <Text style={styles.chatButtonText}>
                             {t('mobile.chatWithYourClaw')}
                         </Text>

@@ -1,92 +1,70 @@
 import type { FC, ReactNode } from 'react'
-import type { BillingOrder } from '@/ts/Interfaces'
+import type { AuthMethod, OAuthProvider } from '@/ts/Types'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { motion } from 'framer-motion'
+import { useQueryClient } from '@tanstack/react-query'
 import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
-import { useUIStore } from '@/lib/store'
+import { useUIStore, usePreferencesStore } from '@/lib/store'
+import { api, getLocale, ROUTES } from '@/lib'
+import { useProfile, useUpdateProfile, useUserStats } from '@/hooks'
+import { getLegalLinks } from '@/data'
 import {
-    useProfile,
-    useUpdateProfile,
-    useUserStats,
-    useBillingHistory
-} from '@/hooks'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Header } from '@/components/Header'
-import { LandingFooter } from '@/components/LandingFooter'
-import { PageBackground } from '@/components/PageBackground'
-import { PageTitle } from '@/components/PageTitle'
+    Input,
+    Label,
+    Avatar,
+    AvatarFallback,
+    Button,
+    Checkbox,
+    Tooltip,
+    TooltipTrigger,
+    TooltipContent
+} from '@/components/ui'
 import {
-    CircleNotch,
-    Calendar,
-    Key,
-    Receipt,
-    DownloadSimple,
-    ArrowSquareOut
+    Header,
+    LandingFooter,
+    Logo,
+    LanguageSelector,
+    ThemeToggle,
+    UserDropdown,
+    PageBackground,
+    PageTitle,
+    ClawMascotOutline,
+    PageHeader
+} from '@/components'
+import {
+    CircleNotchIcon,
+    CalendarIcon,
+    KeyIcon,
+    EnvelopeIcon
 } from '@phosphor-icons/react'
-import { ActionButton } from '@/components/ActionButton'
-import { api } from '@/lib/api'
-import { ClawMascot } from '@/components/ClawMascot'
-import { EmptyState } from '@/components/EmptyState'
-import { ErrorState } from '@/components/ErrorState'
-import { PageHeader } from '@/components/PageHeader'
-import { Button } from '@/components/ui/button'
 
 const Account: FC = (): ReactNode => {
-    const { user, loading: authLoading, updateCachedProfile } = useAuth()
+    const {
+        user,
+        loading: authLoading,
+        updateCachedProfile,
+        linkGoogle,
+        linkGithub,
+        unlinkGoogle,
+        unlinkGithub,
+        isLocal
+    } = useAuth()
     const { showToast } = useUIStore()
+    const { adminMode, setAdminMode, openLinksWindowed, setOpenLinksWindowed } = usePreferencesStore()
+    const queryClient = useQueryClient()
 
     const [name, setName] = useState('')
     const [hasChanges, setHasChanges] = useState(false)
-    const [loadingInvoiceIds, setLoadingInvoiceIds] = useState<Set<string>>(
-        new Set()
+    const [linkingProvider, setLinkingProvider] = useState<AuthMethod | null>(
+        null
     )
-    const [isPortalLoading, setIsPortalLoading] = useState(false)
+    const [unlinkingProvider, setUnlinkingProvider] =
+        useState<AuthMethod | null>(null)
 
     const { data: profile } = useProfile({ enabled: !!user })
-    const { data: userStats, isLoading: isStatsLoading } = useUserStats()
-    const billingTotal = userStats?.orderCount ?? 0
-    const knowsBillingCount = !isStatsLoading && userStats !== undefined
-    const BILLING_PAGE_SIZE = 10
-    const {
-        data: billingData,
-        isLoading: isBillingLoading,
-        isError: isBillingError,
-        fetchNextPage,
-        hasNextPage,
-        isFetchingNextPage
-    } = useBillingHistory(BILLING_PAGE_SIZE)
-
-    const observerRef = useRef<IntersectionObserver | null>(null)
-    const loadMoreRef = useCallback(
-        (node: HTMLDivElement | null) => {
-            if (isFetchingNextPage) return
-            if (observerRef.current) observerRef.current.disconnect()
-            observerRef.current = new IntersectionObserver((entries) => {
-                if (entries[0].isIntersecting && hasNextPage) {
-                    fetchNextPage()
-                }
-            })
-            if (node) observerRef.current.observe(node)
-        },
-        [isFetchingNextPage, hasNextPage, fetchNextPage]
-    )
-
-    const allBillingItems =
-        billingData?.pages.flatMap((page) => page.items) ?? []
-    const remainingBillingCount = Math.max(
-        0,
-        billingTotal - allBillingItems.length
-    )
-    const nextPageSkeletonCount = Math.min(
-        BILLING_PAGE_SIZE,
-        remainingBillingCount
-    )
+    const { data: userStats } = useUserStats()
 
     useEffect(() => {
         if (profile?.name) {
@@ -124,8 +102,93 @@ const Account: FC = (): ReactNode => {
         setHasChanges(value !== (profile?.name || ''))
     }
 
-    const email = user?.email || ''
-    const displayName = name || profile?.name || email
+    const providerBusy = !!linkingProvider || !!unlinkingProvider
+
+    const handleLinkProvider = useCallback(
+        async (provider: OAuthProvider) => {
+            if (providerBusy) return
+            setLinkingProvider(provider)
+            try {
+                if (provider === 'google') {
+                    await linkGoogle()
+                } else {
+                    await linkGithub()
+                }
+                await api.connectAuthMethod(provider)
+                await queryClient.invalidateQueries({ queryKey: ['profile'] })
+                showToast(
+                    t('account.providerConnected', {
+                        provider:
+                            provider === 'google'
+                                ? t('account.authGoogle')
+                                : t('account.authGithub')
+                    }),
+                    'success'
+                )
+            } catch (err: unknown) {
+                const message =
+                    err instanceof Error
+                        ? err.message
+                        : t('errors.somethingWentWrong')
+                showToast(message, 'error')
+            } finally {
+                setLinkingProvider(null)
+            }
+        },
+        [providerBusy, linkGoogle, linkGithub, queryClient, showToast]
+    )
+
+    const handleUnlinkProvider = useCallback(
+        async (provider: OAuthProvider) => {
+            if (providerBusy) return
+            setUnlinkingProvider(provider)
+            try {
+                await api.disconnectAuthMethod(provider)
+                if (provider === 'google') {
+                    await unlinkGoogle()
+                } else {
+                    await unlinkGithub()
+                }
+                await queryClient.invalidateQueries({ queryKey: ['profile'] })
+                showToast(
+                    t('account.providerDisconnected', {
+                        provider:
+                            provider === 'google'
+                                ? t('account.authGoogle')
+                                : t('account.authGithub')
+                    }),
+                    'success'
+                )
+            } catch (err: unknown) {
+                const message =
+                    err instanceof Error
+                        ? err.message
+                        : t('errors.somethingWentWrong')
+                showToast(message, 'error')
+            } finally {
+                setUnlinkingProvider(null)
+            }
+        },
+        [providerBusy, unlinkGoogle, unlinkGithub, queryClient, showToast]
+    )
+
+    const dropdownFooterLinks = useMemo(() => {
+        if (!isLocal) return undefined
+        const BASE_URL = 'https://clawhost.cloud'
+        return [
+            { label: t('footer.website'), href: BASE_URL, external: true },
+            ...getLegalLinks().map((link) => ({
+                ...link,
+                href: link.href.startsWith('mailto:')
+                    ? link.href
+                    : `${BASE_URL}${link.href}`,
+                external: true
+            }))
+        ]
+    }, [isLocal])
+
+    const email = user?.email || profile?.email || ''
+    const displayName = name || profile?.name || (isLocal ? t('account.noNameSet') : email)
 
     const getInitials = (text: string) => {
         if (!text) return '?'
@@ -140,118 +203,65 @@ const Account: FC = (): ReactNode => {
 
     const formatDate = (dateString: string | undefined) => {
         if (!dateString) return '...'
-        return new Date(dateString).toLocaleDateString('en-US', {
+        return new Date(dateString).toLocaleDateString(getLocale(), {
             year: 'numeric',
-            month: 'long',
+            month: 'short',
             day: 'numeric'
         })
     }
 
-    const formatCurrency = (amount: number, currency: string) => {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: currency.toUpperCase()
-        }).format(amount / 100)
-    }
-
-    const getStatusBadge = (status: string) => {
-        switch (status) {
-            case 'paid':
-                return (
-                    <Badge className='pointer-events-none border-green-500/30 bg-green-500/20 text-green-400'>
-                        {t('account.statusPaid')}
-                    </Badge>
-                )
-            case 'pending':
-                return (
-                    <Badge className='pointer-events-none border-yellow-500/30 bg-yellow-500/20 text-yellow-400'>
-                        {t('account.statusPending')}
-                    </Badge>
-                )
-            case 'refunded':
-                return (
-                    <Badge className='pointer-events-none border-red-500/30 bg-red-500/20 text-red-400'>
-                        {t('account.statusRefunded')}
-                    </Badge>
-                )
-            case 'partially_refunded':
-                return (
-                    <Badge className='pointer-events-none border-orange-500/30 bg-orange-500/20 text-orange-400'>
-                        {t('account.statusPartiallyRefunded')}
-                    </Badge>
-                )
-            default:
-                return (
-                    <Badge variant='outline' className='pointer-events-none'>
-                        {status}
-                    </Badge>
-                )
-        }
-    }
-
-    const getBillingReasonLabel = (reason: string) => {
-        switch (reason) {
-            case 'purchase':
-                return t('account.billingReasonPurchase')
-            case 'subscription_create':
-                return t('account.billingReasonSubscriptionCreate')
-            case 'subscription_cycle':
-                return t('account.billingReasonSubscriptionCycle')
-            case 'subscription_update':
-                return t('account.billingReasonSubscriptionUpdate')
-            default:
-                return reason
-        }
-    }
-
-    const handleViewInvoice = async (orderId: string) => {
-        setLoadingInvoiceIds((prev) => new Set(prev).add(orderId))
-        try {
-            const { url } = await api.getOrderInvoice(orderId)
-            window.open(url, '_blank')
-        } catch {
-            showToast(t('account.failedToLoadInvoice'), 'error')
-        } finally {
-            setLoadingInvoiceIds((prev) => {
-                const next = new Set(prev)
-                next.delete(orderId)
-                return next
-            })
-        }
-    }
-
-    const handleManageBilling = async () => {
-        setIsPortalLoading(true)
-        try {
-            const { url } = await api.getCustomerPortal()
-            window.open(url, '_blank')
-        } catch {
-            showToast(t('account.failedToLoadPortal'), 'error')
-        } finally {
-            setIsPortalLoading(false)
-        }
-    }
-
-    const joinedDate = user?.metadata?.creationTime
+    const joinedDate = isLocal
+        ? profile?.createdAt
+        : user?.metadata?.creationTime
 
     return (
-        <div className='relative flex min-h-screen flex-col bg-[#0a0a0f] text-white'>
+        <div
+            className={`bg-background text-foreground ${isLocal ? 'fixed inset-0 flex flex-col overflow-hidden' : 'relative flex min-h-screen flex-col'}`}
+        >
+            {isLocal && (
+                <div className='playground-grid pointer-events-none fixed inset-0 opacity-50' />
+            )}
+            {isLocal && (
+                <div className='playground-gradient pointer-events-none fixed inset-0 opacity-30' />
+            )}
             <PageTitle
                 title={t('account.title')}
                 description={t('account.description')}
             />
-            <PageBackground />
-            <Header />
+            {!isLocal && <PageBackground />}
+            {isLocal ? (
+                <div className='border-border bg-background relative z-10 flex items-center justify-between border-b px-6 py-3'>
+                    <Logo to={ROUTES.CLAWS} />
+                    <div className='flex items-center gap-1.5 sm:gap-3'>
+                        <div className='flex items-center gap-1.5'>
+                            <LanguageSelector />
+                            <ThemeToggle />
+                        </div>
+                        <UserDropdown
+                            displayName={displayName}
+                            onSignOut={async () => {}}
+                            hideBilling
+                            hideSSHKeys={!!isLocal}
+                            hideSignOut
+                            footerLinks={dropdownFooterLinks}
+                            openLinksWindowed={openLinksWindowed}
+                        />
+                    </div>
+                </div>
+            ) : (
+                <Header />
+            )}
 
+            <div className={isLocal ? 'relative flex-1 overflow-y-auto' : 'relative flex-1'}>
             <motion.main
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className='relative mx-auto w-full max-w-6xl flex-1 px-6 py-8'
+                className='relative mx-auto w-full max-w-6xl px-6 pb-16 pt-8'
             >
                 {authLoading || !profile ? (
                     <div className='flex min-h-[60vh] items-center justify-center'>
-                        <CircleNotch className='text-primary h-8 w-8 animate-spin' />
+                        <CircleNotchIcon className='text-primary h-8 w-8 animate-spin' />
                     </div>
                 ) : (
                     <>
@@ -260,53 +270,53 @@ const Account: FC = (): ReactNode => {
                             description={t('account.manageYourAccount')}
                         />
 
-                        <div className='rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm'>
-                            <h3 className='mb-1 font-semibold'>
-                                {t('account.profileInformation')}
-                            </h3>
-                            <p className='text-muted-foreground mb-6 text-sm'>
-                                {t('account.profileDescription')}
-                            </p>
+                        <div className='border-border bg-foreground/5 rounded-xl border p-8 backdrop-blur-sm'>
+                            <div className='mb-6'>
+                                <h2 className='text-lg font-medium'>
+                                    {t('account.profileInformation')}
+                                </h2>
+                                <p className='text-muted-foreground mt-1 text-sm'>
+                                    {t('account.profileDescription')}
+                                </p>
+                            </div>
 
-                            <div className='mb-8 flex items-start gap-6'>
-                                <Avatar className='h-20 w-20'>
-                                    <AvatarFallback className='bg-gradient-to-br from-[#ef5350] to-[#c62828] text-4xl font-semibold text-white'>
+                            <div className='mb-8 flex items-center gap-5'>
+                                <Avatar className='h-16 w-16 shrink-0'>
+                                    <AvatarFallback className='bg-gradient-to-br from-[#ef5350] to-[#c62828] text-3xl font-semibold text-white'>
                                         {getInitials(displayName)}
                                     </AvatarFallback>
                                 </Avatar>
-                                <div className='flex-1 space-y-2'>
-                                    <div>
-                                        <p className='text-lg font-medium'>
-                                            {name ||
-                                                profile?.name ||
-                                                t('account.noNameSet')}
-                                        </p>
-                                        <p className='text-muted-foreground text-sm'>
-                                            {email}
-                                        </p>
-                                    </div>
-                                    <div className='text-muted-foreground flex items-center gap-6 text-sm'>
+                                <div className='flex-1'>
+                                    <p className='text-lg font-medium'>
+                                        {name ||
+                                            profile?.name ||
+                                            t('account.noNameSet')}
+                                    </p>
+                                    <div className='text-muted-foreground mt-1 flex flex-col gap-2 text-sm sm:flex-row sm:items-center sm:gap-6'>
                                         <div className='flex items-center gap-1.5'>
-                                            <Calendar className='h-4 w-4' />
+                                            <CalendarIcon className='h-4 w-4' />
                                             <span>
                                                 {t('account.joined')}{' '}
                                                 {formatDate(joinedDate)}
                                             </span>
                                         </div>
                                         <div className='flex items-center gap-1.5'>
-                                            <ClawMascot className='h-4 w-4' />
+                                            <ClawMascotOutline className='h-4 w-4' />
                                             <span>
                                                 {userStats?.clawCount ?? 0}{' '}
                                                 {t('account.claws')}
                                             </span>
                                         </div>
-                                        <div className='flex items-center gap-1.5'>
-                                            <Key className='h-4 w-4' />
-                                            <span>
-                                                {userStats?.sshKeyCount ?? 0}{' '}
-                                                {t('account.sshKeys')}
-                                            </span>
-                                        </div>
+                                        {!isLocal && (
+                                            <div className='flex items-center gap-1.5'>
+                                                <KeyIcon className='h-4 w-4' />
+                                                <span>
+                                                    {userStats?.sshKeyCount ??
+                                                        0}{' '}
+                                                    {t('account.sshKeys')}
+                                                </span>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -323,10 +333,45 @@ const Account: FC = (): ReactNode => {
                                         onChange={(e) =>
                                             handleNameChange(e.target.value)
                                         }
+                                        onKeyDown={(e) => {
+                                            if (
+                                                e.key === 'Enter' &&
+                                                hasChanges &&
+                                                !updateMutation.isPending
+                                            ) {
+                                                handleSave()
+                                            }
+                                        }}
                                         placeholder={t('account.enterYourName')}
                                         maxLength={100}
                                     />
                                 </div>
+
+                                {!isLocal && (
+                                    <div className='max-w-xs space-y-2'>
+                                        <Label htmlFor='email'>
+                                            {t('account.emailAddress')}
+                                        </Label>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Input
+                                                    id='email'
+                                                    type='email'
+                                                    value={email}
+                                                    readOnly
+                                                    className='cursor-not-allowed opacity-50'
+                                                />
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>
+                                                    {t(
+                                                        'account.emailNotEditable'
+                                                    )}
+                                                </p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </div>
+                                )}
 
                                 <div className='flex justify-end pt-6'>
                                     <Button
@@ -337,7 +382,7 @@ const Account: FC = (): ReactNode => {
                                         }
                                     >
                                         {updateMutation.isPending && (
-                                            <CircleNotch className='h-4 w-4 animate-spin' />
+                                            <CircleNotchIcon className='h-4 w-4 animate-spin' />
                                         )}
                                         {t('common.save')}
                                     </Button>
@@ -345,216 +390,222 @@ const Account: FC = (): ReactNode => {
                             </div>
                         </div>
 
-                        <div className='mt-6 rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm'>
-                            <div className='mb-6 flex items-start justify-between'>
-                                <div>
-                                    <h3 className='mb-1 font-semibold'>
-                                        {t('account.billingHistory')}
-                                    </h3>
-                                    <p className='text-muted-foreground text-sm'>
-                                        {t('account.billingDescription')}
+                        {isLocal && (
+                            <div className='border-border bg-foreground/5 mt-6 rounded-xl border p-8 backdrop-blur-sm'>
+                                <div className='mb-6'>
+                                    <h2 className='text-lg font-medium'>
+                                        {t('account.settings')}
+                                    </h2>
+                                    <p className='text-muted-foreground mt-1 text-sm'>
+                                        {t('account.settingsDescription')}
                                     </p>
                                 </div>
-                                {billingTotal > 0 && (
-                                    <ActionButton
-                                        onClick={handleManageBilling}
-                                        label={t('account.manageBilling')}
-                                        icon={
-                                            isPortalLoading ? (
-                                                <CircleNotch className='h-5 w-5 animate-spin' />
-                                            ) : (
-                                                <ArrowSquareOut
-                                                    className='h-5 w-5'
-                                                    weight='bold'
-                                                />
-                                            )
+
+                                <label className='flex cursor-pointer items-center gap-3'>
+                                    <Checkbox
+                                        checked={openLinksWindowed}
+                                        onCheckedChange={(checked) =>
+                                            setOpenLinksWindowed(!!checked)
                                         }
-                                        size='sm'
                                     />
-                                )}
+                                    <div>
+                                        <span className='text-sm'>
+                                            {t('account.openLinksWindowed')}
+                                        </span>
+                                        <p className='text-muted-foreground text-xs'>
+                                            {t('account.openLinksWindowedDescription')}
+                                        </p>
+                                    </div>
+                                </label>
                             </div>
+                        )}
 
-                            {isBillingLoading &&
-                            knowsBillingCount &&
-                            billingTotal === 0 ? (
-                                <EmptyState
-                                    icon={
-                                        <Receipt className='text-primary h-10 w-10' />
-                                    }
-                                    title={t('account.noBillingHistory')}
-                                    description={t(
-                                        'account.noBillingHistoryDescription'
-                                    )}
-                                />
-                            ) : isBillingLoading && billingTotal > 0 ? (
-                                <div className='space-y-2'>
-                                    {Array.from({
-                                        length: Math.min(
-                                            billingTotal,
-                                            BILLING_PAGE_SIZE
-                                        )
-                                    }).map((_, i) => (
-                                        <div
-                                            key={i}
-                                            className='flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] p-4'
-                                        >
-                                            <div className='space-y-2'>
-                                                <Skeleton className='h-4 w-32' />
-                                                <Skeleton className='h-3 w-24' />
-                                            </div>
-                                            <div className='flex items-center gap-4'>
-                                                <Skeleton className='h-4 w-16' />
-                                                <Skeleton className='h-5 w-14 rounded-full' />
-                                            </div>
-                                        </div>
-                                    ))}
+                        {!isLocal && (
+                            <div className='border-border bg-foreground/5 mt-6 rounded-xl border p-8 backdrop-blur-sm'>
+                                <div className='mb-6'>
+                                    <h2 className='text-lg font-medium'>
+                                        {t('account.connectedAccounts')}
+                                    </h2>
+                                    <p className='text-muted-foreground mt-1 text-sm'>
+                                        {t(
+                                            'account.connectedAccountsDescription'
+                                        )}
+                                    </p>
                                 </div>
-                            ) : isBillingLoading ? (
-                                <div className='space-y-2'>
-                                    {Array.from({ length: 3 }).map((_, i) => (
-                                        <div
-                                            key={i}
-                                            className='flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] p-4'
-                                        >
-                                            <div className='space-y-2'>
-                                                <Skeleton className='h-4 w-32' />
-                                                <Skeleton className='h-3 w-24' />
-                                            </div>
-                                            <div className='flex items-center gap-4'>
-                                                <Skeleton className='h-4 w-16' />
-                                                <Skeleton className='h-5 w-14 rounded-full' />
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            ) : isBillingError ? (
-                                <ErrorState
-                                    title={t('account.failedToLoadBilling')}
-                                />
-                            ) : !allBillingItems.length ? (
-                                <EmptyState
-                                    icon={
-                                        <Receipt className='text-primary h-10 w-10' />
-                                    }
-                                    title={t('account.noBillingHistory')}
-                                    description={t(
-                                        'account.noBillingHistoryDescription'
-                                    )}
-                                />
-                            ) : (
-                                <div className='space-y-2'>
-                                    {allBillingItems.map(
-                                        (order: BillingOrder) => (
-                                            <div
-                                                key={order.id}
-                                                className='flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] p-4 transition-colors hover:bg-white/[0.04]'
-                                            >
-                                                <div>
-                                                    <p className='text-sm font-medium'>
-                                                        {order.productName ||
-                                                            getBillingReasonLabel(
-                                                                order.billingReason
-                                                            )}
-                                                    </p>
-                                                    <p className='text-muted-foreground text-xs'>
-                                                        {formatDate(
-                                                            order.createdAt
-                                                        )}
-                                                    </p>
-                                                </div>
-                                                <div className='flex items-center gap-4'>
-                                                    <div className='text-right text-sm'>
-                                                        <div className='flex items-center gap-2 font-medium'>
-                                                            {order.discountAmount >
-                                                                0 && (
-                                                                <span className='text-muted-foreground line-through'>
-                                                                    {formatCurrency(
-                                                                        order.subtotalAmount,
-                                                                        order.currency
-                                                                    )}
-                                                                </span>
-                                                            )}
-                                                            <span>
-                                                                {formatCurrency(
-                                                                    order.totalAmount,
-                                                                    order.currency
-                                                                )}
-                                                            </span>
-                                                        </div>
-                                                        {order.discountName && (
-                                                            <p className='text-muted-foreground text-xs'>
-                                                                {t(
-                                                                    'account.couponApplied',
-                                                                    {
-                                                                        name: order.discountName
-                                                                    }
-                                                                )}
-                                                            </p>
-                                                        )}
-                                                    </div>
-                                                    {getStatusBadge(
-                                                        order.status
-                                                    )}
-                                                    <Button
-                                                        variant='ghost'
-                                                        size='icon'
-                                                        onClick={() =>
-                                                            handleViewInvoice(
-                                                                order.id
-                                                            )
-                                                        }
-                                                        disabled={loadingInvoiceIds.has(
-                                                            order.id
-                                                        )}
-                                                        title={t(
-                                                            'account.viewInvoice'
-                                                        )}
-                                                    >
-                                                        {loadingInvoiceIds.has(
-                                                            order.id
-                                                        ) ? (
-                                                            <CircleNotch className='h-5 w-5 animate-spin' />
-                                                        ) : (
-                                                            <DownloadSimple className='h-5 w-5' />
-                                                        )}
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        )
-                                    )}
 
-                                    {hasNextPage && (
-                                        <div
-                                            ref={loadMoreRef}
-                                            className='space-y-2'
-                                        >
-                                            {Array.from({
-                                                length: nextPageSkeletonCount
-                                            }).map((_, i) => (
-                                                <div
-                                                    key={`skeleton-${i}`}
-                                                    className='flex items-center justify-between rounded-lg border border-white/5 bg-white/[0.02] p-4'
+                                <div className='space-y-3'>
+                                    <div className='border-border bg-foreground/[0.02] flex items-center justify-between rounded-lg border px-4 py-3'>
+                                        <div className='flex items-center gap-3'>
+                                            <EnvelopeIcon className='text-foreground/60 h-5 w-5' />
+                                            <span className='text-sm font-medium'>
+                                                {t('account.authEmail')}
+                                            </span>
+                                        </div>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <button
+                                                    disabled
+                                                    className='border-border text-foreground/50 flex items-center gap-1.5 rounded-md border px-3 py-1 text-xs opacity-50'
                                                 >
-                                                    <div className='space-y-2'>
-                                                        <Skeleton className='h-4 w-32' />
-                                                        <Skeleton className='h-3 w-24' />
-                                                    </div>
-                                                    <div className='flex items-center gap-4'>
-                                                        <Skeleton className='h-4 w-16' />
-                                                        <Skeleton className='h-5 w-14 rounded-full' />
-                                                    </div>
-                                                </div>
-                                            ))}
+                                                    {t(
+                                                        'account.authDisconnect'
+                                                    )}
+                                                </button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                {t(
+                                                    'account.emailCannotBeDisconnected'
+                                                )}
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </div>
+
+                                    <div className='border-border bg-foreground/[0.02] flex items-center justify-between rounded-lg border px-4 py-3'>
+                                        <div className='flex items-center gap-3'>
+                                            <svg
+                                                width='20'
+                                                height='20'
+                                                viewBox='0 0 24 24'
+                                            >
+                                                <path
+                                                    d='M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z'
+                                                    fill='#4285F4'
+                                                />
+                                                <path
+                                                    d='M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z'
+                                                    fill='#34A853'
+                                                />
+                                                <path
+                                                    d='M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z'
+                                                    fill='#FBBC05'
+                                                />
+                                                <path
+                                                    d='M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z'
+                                                    fill='#EA4335'
+                                                />
+                                            </svg>
+                                            <span className='text-sm font-medium'>
+                                                {t('account.authGoogle')}
+                                            </span>
                                         </div>
-                                    )}
+                                        {profile?.authMethods?.includes(
+                                            'google'
+                                        ) ? (
+                                            <button
+                                                onClick={() =>
+                                                    handleUnlinkProvider(
+                                                        'google'
+                                                    )
+                                                }
+                                                disabled={providerBusy}
+                                                className='border-border text-foreground/50 flex items-center gap-1.5 rounded-md border px-3 py-1 text-xs transition-colors hover:border-red-500/50 hover:text-red-600 disabled:opacity-50 dark:hover:text-red-400'
+                                            >
+                                                {unlinkingProvider ===
+                                                    'google' && (
+                                                    <CircleNotchIcon className='h-3 w-3 animate-spin' />
+                                                )}
+                                                {t('account.authDisconnect')}
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={() =>
+                                                    handleLinkProvider('google')
+                                                }
+                                                disabled={providerBusy}
+                                                className='flex items-center gap-1.5 rounded-md bg-white px-3 py-1 text-xs font-medium text-black transition-opacity hover:opacity-80 disabled:opacity-50'
+                                            >
+                                                {linkingProvider ===
+                                                    'google' && (
+                                                    <CircleNotchIcon className='h-3 w-3 animate-spin' />
+                                                )}
+                                                {t('account.authConnect')}
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    <div className='border-border bg-foreground/[0.02] flex items-center justify-between rounded-lg border px-4 py-3'>
+                                        <div className='flex items-center gap-3'>
+                                            <svg
+                                                width='20'
+                                                height='20'
+                                                viewBox='0 0 24 24'
+                                                fill='currentColor'
+                                                className='text-foreground'
+                                            >
+                                                <path d='M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z' />
+                                            </svg>
+                                            <span className='text-sm font-medium'>
+                                                {t('account.authGithub')}
+                                            </span>
+                                        </div>
+                                        {profile?.authMethods?.includes(
+                                            'github'
+                                        ) ? (
+                                            <button
+                                                onClick={() =>
+                                                    handleUnlinkProvider(
+                                                        'github'
+                                                    )
+                                                }
+                                                disabled={providerBusy}
+                                                className='border-border text-foreground/50 flex items-center gap-1.5 rounded-md border px-3 py-1 text-xs transition-colors hover:border-red-500/50 hover:text-red-600 disabled:opacity-50 dark:hover:text-red-400'
+                                            >
+                                                {unlinkingProvider ===
+                                                    'github' && (
+                                                    <CircleNotchIcon className='h-3 w-3 animate-spin' />
+                                                )}
+                                                {t('account.authDisconnect')}
+                                            </button>
+                                        ) : (
+                                            <button
+                                                onClick={() =>
+                                                    handleLinkProvider('github')
+                                                }
+                                                disabled={providerBusy}
+                                                className='flex items-center gap-1.5 rounded-md bg-white px-3 py-1 text-xs font-medium text-black transition-opacity hover:opacity-80 disabled:opacity-50'
+                                            >
+                                                {linkingProvider ===
+                                                    'github' && (
+                                                    <CircleNotchIcon className='h-3 w-3 animate-spin' />
+                                                )}
+                                                {t('account.authConnect')}
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
-                            )}
-                        </div>
+                            </div>
+                        )}
+
+                        {!isLocal && profile?.role === 'admin' && (
+                            <div className='border-border bg-foreground/5 mt-6 rounded-xl border p-8 backdrop-blur-sm'>
+                                <div className='mb-6'>
+                                    <h2 className='text-lg font-medium'>
+                                        {t('account.settings')}
+                                    </h2>
+                                    <p className='text-muted-foreground mt-1 text-sm'>
+                                        {t('account.settingsDescription')}
+                                    </p>
+                                </div>
+
+                                <label className='flex cursor-pointer items-center gap-3'>
+                                    <Checkbox
+                                        checked={adminMode}
+                                        onCheckedChange={(checked) =>
+                                            setAdminMode(!!checked)
+                                        }
+                                    />
+                                    <span className='text-sm'>
+                                        {t('account.showAllClaws')}
+                                    </span>
+                                </label>
+                            </div>
+                        )}
                     </>
                 )}
             </motion.main>
+            </div>
 
-            <LandingFooter />
+            {!isLocal && <LandingFooter />}
         </div>
     )
 }
