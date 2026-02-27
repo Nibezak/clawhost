@@ -5,11 +5,17 @@ import mdx from '@mdx-js/rollup'
 import remarkFrontmatter from 'remark-frontmatter'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import remarkGfm from 'remark-gfm'
+import { remarkSanitizeFrontmatter } from './src/plugins/remark-sanitize-frontmatter'
 
 export default defineConfig({
     plugins: [
         mdx({
-            remarkPlugins: [remarkGfm, remarkFrontmatter, remarkMdxFrontmatter]
+            remarkPlugins: [
+                remarkSanitizeFrontmatter,  // Sanitize YAML BEFORE parsing (prevents errors)
+                remarkGfm,
+                remarkFrontmatter,
+                remarkMdxFrontmatter
+            ]
         }),
         react()
     ],
