@@ -297,7 +297,7 @@
     "publishedAt": "2026-02-26",
     "tags": "openclaw, smart-home, automation, iot, home-assistant",
     "thumbnail": "/smart-home-integration-openclaw-as-your-home-automation-hub.webp",
-    "published": false
+    "published": true
   },
   {
     "title": "Browser Automation \u2014 OpenClaw's Web Surfing Capabilities",
