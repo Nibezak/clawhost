@@ -968,6 +968,16 @@ export interface ChatInputProps {
     ) => void
     onAbort: () => void
     allowAttach?: boolean
+    onVoiceMode?: () => void
+}
+
+export interface VoiceModeOverlayProps {
+    onClose: () => void
+}
+
+export interface VoiceOrbProps {
+    isActive: boolean
+    size?: number
 }
 
 export interface ChatMarkdownProps {

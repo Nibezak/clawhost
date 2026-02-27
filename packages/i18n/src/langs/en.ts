@@ -1241,6 +1241,10 @@ const en = {
         chatVoiceInput: 'Voice input',
         chatVoiceListening: 'Listening...',
         chatVoiceNotSupported: 'Voice input is not supported in this browser.',
+        chatVoiceMode: 'Voice mode',
+        chatVoiceModeTapToSpeak: 'Tap to start speaking',
+        chatVoiceModeListening: 'Listening...',
+        chatVoiceModeClose: 'End voice mode',
         chatAttachmentNotSupported:
             'This file type is not supported. Use images, PDFs, or text files.',
         chatNoPreview: 'No preview available.',
@@ -1536,7 +1540,10 @@ const en = {
         loadMore: 'Load More',
         chatWithYourClaw: 'Chat with your Claw',
         deployClaw: 'Deploy Claw',
-        deployYourFirstClaw: 'Deploy your first Claw'
+        deployYourFirstClaw: 'Deploy your first Claw',
+        voiceMode: 'Voice Mode',
+        voiceListening: 'Listening...',
+        voiceTapToSpeak: 'Tap the orb to start'
     },
     productHunt: {
         liveOn: 'Live on',

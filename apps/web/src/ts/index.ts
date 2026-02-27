@@ -93,6 +93,8 @@ export type {
     ChatHistoryEntry,
     ChatInputProps,
     ChatMessage,
+    VoiceModeOverlayProps,
+    VoiceOrbProps,
     ChatSendParams,
     ChatStatusBarProps,
     GatewayPendingRequest,

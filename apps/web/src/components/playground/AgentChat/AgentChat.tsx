@@ -20,6 +20,7 @@ import ChatSkeleton from '@/components/playground/AgentChat/ChatSkeleton'
 import ChatDateSeparator from '@/components/playground/AgentChat/ChatDateSeparator'
 import { getLocale } from '@/lib'
 import ChatTypingIndicator from '@/components/playground/AgentChat/ChatTypingIndicator'
+import VoiceModeOverlay from '@/components/playground/AgentChat/VoiceModeOverlay'
 
 const readOnlyChatStore: Record<
     string,
@@ -58,6 +59,7 @@ const AgentChat: FC<AgentChatProps> = ({
     const chatInputRef = useRef<ChatInputHandle>(null)
     const { activeMessageId, loadingMessageId, speak, stop } = useTextToSpeech()
     const [isDragging, setIsDragging] = useState(false)
+    const [voiceModeOpen, setVoiceModeOpen] = useState(false)
     const dragCounterRef = useRef(0)
 
     const {
@@ -390,7 +392,12 @@ const AgentChat: FC<AgentChatProps> = ({
                 onSend={handleSend}
                 onAbort={abortResponse}
                 allowAttach
+                onVoiceMode={() => setVoiceModeOpen(true)}
             />
+
+            {voiceModeOpen && (
+                <VoiceModeOverlay onClose={() => setVoiceModeOpen(false)} />
+            )}
         </div>
     )
 }

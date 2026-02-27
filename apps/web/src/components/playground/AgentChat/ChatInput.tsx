@@ -26,7 +26,8 @@ import {
     StopCircleIcon,
     PaperclipIcon,
     XIcon,
-    MicrophoneIcon
+    MicrophoneIcon,
+    WaveformIcon
 } from '@phosphor-icons/react'
 import { useSpeechRecognition } from '@/hooks'
 import {
@@ -43,7 +44,7 @@ const ChatInputInner: ForwardRefRenderFunction<
     ChatInputHandle,
     ChatInputProps
 > = (
-    { isConnected, isStreaming, isProcessing, onSend, onAbort, allowAttach },
+    { isConnected, isStreaming, isProcessing, onSend, onAbort, allowAttach, onVoiceMode },
     ref
 ): ReactNode => {
     const [input, setInput] = useState('')
@@ -277,6 +278,24 @@ const ChatInputInner: ForwardRefRenderFunction<
                         <MicrophoneIcon className='h-4 w-4' weight='bold' />
                     )}
                 </button>
+                {onVoiceMode && (
+                    <>
+                        <div className='bg-border mx-0.5 h-6 w-px shrink-0' />
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <button
+                                    onClick={onVoiceMode}
+                                    className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white transition-opacity hover:opacity-90'
+                                >
+                                    <WaveformIcon className='h-4 w-4' weight='fill' />
+                                </button>
+                            </TooltipTrigger>
+                            <TooltipContent side='top'>
+                                <p>{t('playground.chatVoiceMode')}</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </>
+                )}
                 <textarea
                     ref={textareaRef}
                     value={input}

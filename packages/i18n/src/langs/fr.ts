@@ -1315,6 +1315,10 @@ const fr: Translations = {
         chatVoiceListening: 'Écoute en cours...',
         chatVoiceNotSupported:
             "La saisie vocale n'est pas supportée dans ce navigateur !",
+        chatVoiceMode: 'Mode vocal',
+        chatVoiceModeTapToSpeak: 'Appuyez pour commencer à parler',
+        chatVoiceModeListening: 'Écoute en cours...',
+        chatVoiceModeClose: 'Quitter le mode vocal',
         chatAttachmentNotSupported:
             "Ce type de fichier n'est pas supporté. Utilisez des images, PDF ou fichiers texte !",
         chatNoPreview: 'Aucun aperçu disponible.',
@@ -1620,7 +1624,10 @@ const fr: Translations = {
         loadMore: 'Charger plus',
         chatWithYourClaw: 'Discutez avec votre Claw',
         deployClaw: 'Déployer un Claw',
-        deployYourFirstClaw: 'Déployez votre premier Claw'
+        deployYourFirstClaw: 'Déployez votre premier Claw',
+        voiceMode: 'Mode vocal',
+        voiceListening: 'Écoute en cours...',
+        voiceTapToSpeak: "Appuyez sur l'orbe pour commencer"
     },
     productHunt: {
         liveOn: 'En direct sur',

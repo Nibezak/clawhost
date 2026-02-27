@@ -22,7 +22,9 @@ import type {
     ClawMascotProps,
     ProviderIconProps,
     AuthContextValue,
-    FirebaseUser
+    FirebaseUser,
+    VoiceOrbProps,
+    VoiceChatModalProps
 } from '@/ts/Interfaces'
 
 export type {
@@ -47,5 +49,7 @@ export type {
     ClawMascotProps,
     ProviderIconProps,
     AuthContextValue,
-    FirebaseUser
+    FirebaseUser,
+    VoiceOrbProps,
+    VoiceChatModalProps
 }
