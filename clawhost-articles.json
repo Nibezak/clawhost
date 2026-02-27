@@ -227,7 +227,7 @@
     "publishedAt": "2026-02-26",
     "tags": "openclaw, self-hosting, vps, deployment, privacy",
     "thumbnail": "/self-hosting-openclaw-running-your-own-ai-agent-on-a-vps.webp",
-    "published": false
+    "published": true
   },
   {
     "title": "ClawHost \u2014 The Managed Hosting Solution for OpenClaw",
