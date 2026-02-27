@@ -357,7 +357,7 @@
     "publishedAt": "2026-02-26",
     "tags": "openclaw, raspberry-pi, iot, budget, edge-computing",
     "thumbnail": "/running-openclaw-on-a-raspberry-pi-the-budget-friendly-approach.webp",
-    "published": false
+    "published": true
   },
   {
     "title": "The MoltMatch Controversy \u2014 When Your AI Agent Creates a Dating Profile",
