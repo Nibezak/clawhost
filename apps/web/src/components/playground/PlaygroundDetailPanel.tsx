@@ -22,7 +22,8 @@ import {
     LightningIcon,
     GearSixIcon,
     CircleNotchIcon,
-    TerminalWindowIcon
+    TerminalWindowIcon,
+    ArrowSquareOutIcon
 } from '@phosphor-icons/react'
 import { ClawAvatar, ClawMascotOutline, ProviderIcon } from '@/components'
 import {
@@ -306,7 +307,7 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                 <div className='border-border flex items-center justify-between border-b px-5 py-2.5'>
                     <div className='flex items-center gap-2.5'>
                         <ClawAvatar />
-                        <div className='space-y-0'>
+                        <div className='space-y-px'>
                             <h3 className='text-foreground text-sm font-semibold leading-tight'>
                                 {claw.name.length >
                                 TRUNCATE_LENGTHS.PANEL_NAME ? (
@@ -335,8 +336,9 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                         href={`https://${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
                                         target='_blank'
                                         rel='noopener noreferrer'
-                                        className='text-muted-foreground hover:text-foreground/80 block truncate text-xs leading-tight transition-colors'
+                                        className='text-muted-foreground hover:text-foreground/80 flex items-center gap-1 truncate text-xs leading-tight transition-colors'
                                     >
+                                        <ArrowSquareOutIcon className='h-3 w-3 shrink-0' />
                                         {claw.subdomain ||
                                             generateSlug(claw.id)}
                                         .{getBaseDomain()}

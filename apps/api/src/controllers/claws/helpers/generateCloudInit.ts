@@ -1,3 +1,4 @@
+import applyToolsDefaults from '@/controllers/claws/helpers/applyToolsDefaults'
 import OPENCLAW_VERSION from '@/controllers/claws/helpers/openclawVersion'
 
 const generateCloudInit = (
@@ -31,11 +32,6 @@ const generateCloudInit = (
             restart: true,
             bash: true
         },
-        tools: {
-            profile: 'full',
-            elevated: { enabled: true },
-            exec: { host: 'gateway' }
-        },
         browser: {
             enabled: true,
             executablePath: '/usr/bin/google-chrome-stable',
@@ -44,6 +40,7 @@ const generateCloudInit = (
         }
     }
 
+    applyToolsDefaults(config)
     config.agents = { defaults: { sandbox: { mode: 'off' } } }
 
     const configJson = JSON.stringify(config, null, 2).replace(/\n/g, '\n    ')

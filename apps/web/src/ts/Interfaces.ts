@@ -1235,6 +1235,7 @@ export interface ChatSidebarAgentListProps {
 
 export interface ChatSidebarClawHeaderProps {
     claw: Claw
+    agentCount: number
     isReachable: boolean
     isSelected: boolean
     statusConfig: StatusConfig

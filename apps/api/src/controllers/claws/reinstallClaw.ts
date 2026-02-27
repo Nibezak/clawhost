@@ -7,7 +7,7 @@ import { claws } from '@/db/schema'
 import executeSSH from '@/services/ssh'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
-import { OPENCLAW_VERSION } from '@/controllers/claws/helpers'
+import { applyToolsDefaults, OPENCLAW_VERSION } from '@/controllers/claws/helpers'
 
 const reinstallClaw = async (c: AuthenticatedContext) => {
     try {
@@ -75,12 +75,8 @@ const reinstallClaw = async (c: AuthenticatedContext) => {
         commands.bash = true
         config.commands = commands
 
-        const tools = (config.tools || {}) as Record<string, unknown>
-        tools.profile = 'full'
-        if (!tools.elevated) {
-            tools.elevated = { enabled: true }
-        }
-        tools.exec = { host: 'gateway' }
+        applyToolsDefaults(config)
+        const tools = config.tools as Record<string, unknown>
         delete tools.browser
         delete tools.web_search
         delete tools.web_fetch
@@ -89,7 +85,6 @@ const reinstallClaw = async (c: AuthenticatedContext) => {
         delete tools.image
         delete tools.message
         delete tools.cron
-        config.tools = tools
 
         config.browser = {
             enabled: true,

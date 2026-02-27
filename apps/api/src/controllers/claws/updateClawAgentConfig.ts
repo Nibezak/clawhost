@@ -2,7 +2,7 @@ import type { UpdateAgentConfigBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import executeSSH from '@/services/ssh'
-import { findUserClaw, validateEnvVars } from '@/controllers/claws/helpers'
+import { applyToolsDefaults, findUserClaw, validateEnvVars } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
@@ -58,15 +58,7 @@ const updateClawAgentConfig = async (c: AuthenticatedContext) => {
             commands.bash = true
             config.commands = commands
 
-            const tools = (config.tools || {}) as Record<string, unknown>
-            if (!tools.profile) {
-                tools.profile = 'full'
-            }
-            if (!tools.elevated) {
-                tools.elevated = { enabled: true }
-            }
-            tools.exec = { host: 'gateway' }
-            config.tools = tools
+            applyToolsDefaults(config)
 
             if (!config.browser) {
                 config.browser = {

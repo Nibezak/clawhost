@@ -10,11 +10,13 @@ import safeShellWrite from '@/controllers/claws/helpers/safeShellWrite'
 import validateEnvVars from '@/controllers/claws/helpers/validateEnvVars'
 import findUserClaw from '@/controllers/claws/helpers/findUserClaw'
 import ensureClawHub from '@/controllers/claws/helpers/ensureClawHub'
+import applyToolsDefaults from '@/controllers/claws/helpers/applyToolsDefaults'
 import BASE_DIR from '@/controllers/claws/helpers/baseDir'
 import DOMAIN from '@/controllers/claws/helpers/constants'
 import OPENCLAW_VERSION from '@/controllers/claws/helpers/openclawVersion'
 
 export {
+    applyToolsDefaults,
     generateCloudInit,
     checkSubdomainReady,
     generateSlug,

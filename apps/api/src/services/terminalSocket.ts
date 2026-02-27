@@ -11,7 +11,7 @@ const setupTerminalSocket = (server: Server) => {
     server.on('upgrade', async (request, socket, head) => {
         try {
             const url = new URL(request.url || '', `http://${request.headers.host}`)
-            const match = url.pathname.match(/^\/claws\/([^/]+)\/terminal$/)
+            const match = url.pathname.match(/^(?:\/ws)?\/claws\/([^/]+)\/terminal$/)
 
             if (!match) {
                 socket.destroy()
@@ -66,7 +66,7 @@ const handleConnection = (ws: WebSocket, ip: string, password: string) => {
 
                 stream.on('data', (data: Buffer) => {
                     if (ws.readyState === WebSocket.OPEN) {
-                        ws.send(data)
+                        ws.send(data.toString('utf-8'))
                     }
                 })
 

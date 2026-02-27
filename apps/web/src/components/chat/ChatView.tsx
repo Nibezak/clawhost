@@ -12,8 +12,8 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { clawStatus } from '@openclaw/shared'
 import { t } from '@openclaw/i18n'
-import { ListIcon, XIcon, GearSixIcon } from '@phosphor-icons/react'
-import { useUIStore } from '@/lib/store'
+import { ListIcon, XIcon, GearSixIcon, ArrowSquareOutIcon } from '@phosphor-icons/react'
+import { useUIStore, usePreferencesStore } from '@/lib/store'
 import { ClawAvatar } from '@/components'
 import { getBaseDomain, api } from '@/lib'
 import { generateSlug } from '@/lib/claw-utils'
@@ -31,6 +31,7 @@ import {
 } from '@/hooks'
 import ChatSidebar from '@/components/chat/ChatSidebar'
 import ChatEmptyState from '@/components/chat/ChatEmptyState'
+import ChatSkeleton from '@/components/playground/AgentChat/ChatSkeleton'
 import {
     ClawCardDropdownMenu,
     ClawCardDialogs,
@@ -61,6 +62,7 @@ const ChatView: FC<ChatViewProps> = ({
     onClawTabChange
 }): ReactNode => {
     const { showToast } = useUIStore()
+    const chatSidebarView = usePreferencesStore((s) => s.chatSidebarView)
 
     const [settingsClawId, setSettingsClawId] = useState<string | null>(
         initialSettingsClawId || null
@@ -125,6 +127,13 @@ const ChatView: FC<ChatViewProps> = ({
         const agents = query?.data?.agents || []
         return agents.find((a) => a.id === selectedAgent.agentId) || null
     }, [selectedAgent, activeClaw, claws, agentQueries])
+
+    const selectedAgentIsLoading = useMemo(() => {
+        if (!selectedAgent) return false
+        const clawIndex = claws.findIndex((c) => c.id === selectedAgent.clawId)
+        const query = clawIndex >= 0 ? agentQueries[clawIndex] : null
+        return query?.isLoading ?? false
+    }, [selectedAgent, claws, agentQueries])
 
     const settingsClaw = useMemo(() => {
         if (!settingsClawId) return null
@@ -433,12 +442,14 @@ const ChatView: FC<ChatViewProps> = ({
                             onTabChange={onClawTabChange}
                             fullScreen
                         />
+                    ) : selectedAgent && selectedAgentIsLoading ? (
+                        <ChatSkeleton />
                     ) : activeAgent && activeClaw ? (
                         <div className='flex h-full flex-col'>
-                            {activeAgent && (
+                            {activeAgent && chatSidebarView === 'list' && (
                                 <div className='bg-background border-border flex items-center gap-2.5 border-b px-4 py-2.5'>
                                     <ClawAvatar />
-                                    <div className='min-w-0 flex-1 space-y-0'>
+                                    <div className='min-w-0 flex-1 space-y-0.5'>
                                         <p className='text-foreground truncate text-sm font-semibold leading-tight'>
                                             {activeClaw.name}
                                         </p>
@@ -446,9 +457,10 @@ const ChatView: FC<ChatViewProps> = ({
                                             href={`https://${activeClaw.subdomain || generateSlug(activeClaw.id)}.${getBaseDomain()}`}
                                             target='_blank'
                                             rel='noopener noreferrer'
-                                            className='text-muted-foreground hover:text-foreground block truncate text-[11px] leading-tight transition-colors'
+                                            className='text-muted-foreground hover:text-foreground flex items-center gap-1 truncate text-[11px] leading-tight transition-colors'
                                             onClick={(e) => e.stopPropagation()}
                                         >
+                                            <ArrowSquareOutIcon className='h-2.5 w-2.5 shrink-0' />
                                             {activeClaw.subdomain || generateSlug(activeClaw.id)}.{getBaseDomain()}
                                         </a>
                                     </div>

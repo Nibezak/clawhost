@@ -7,12 +7,11 @@ import type {
 
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
-import { clawProvider, clawStatus } from '@openclaw/shared'
+import { clawStatus } from '@openclaw/shared'
 import { ClockIcon } from '@phosphor-icons/react'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import { useUIStore } from '@/lib/store'
-import { getBaseDomain, getLocale } from '@/lib'
-import { generateSlug } from '@/lib/claw-utils'
+import { getLocale } from '@/lib'
 import { ClawAvatar } from '@/components'
 import {
     useStartClaw,
@@ -37,6 +36,7 @@ import {
 
 const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
     claw,
+    agentCount,
     isReachable: _isReachable,
     isSelected,
     statusConfig,
@@ -224,7 +224,7 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
         <>
             <div
                 onClick={() => onOpenClawSettings(claw.id)}
-                className={`group/header relative mb-1 flex w-full cursor-pointer items-center gap-3 rounded-lg px-2.5 py-1.5 text-left transition-colors ${
+                className={`group/header relative mb-1.5 flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors ${
                     isSelected ? 'bg-foreground/10' : 'hover:bg-foreground/5'
                 }`}
             >
@@ -292,21 +292,15 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                                 <p>{t('dashboard.scheduledForDeletion')}</p>
                             </TooltipContent>
                         </Tooltip>
-                    ) : claw.status !== clawStatus.configuring && claw.status !== clawStatus.awaitingPayment ? (
-                        <a
-                            href={`https://${claw.provider === clawProvider.local && claw.subdomain ? `${claw.subdomain}.clawhost` : `${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}`}`}
-                            target='_blank'
-                            rel='noopener noreferrer'
-                            className='text-muted-foreground hover:text-foreground truncate text-[11px] transition-colors'
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            {claw.provider === clawProvider.local && claw.subdomain
-                                ? `${claw.subdomain}.clawhost`
-                                : `${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}`}
-                        </a>
-                    ) : (
+                    ) : claw.status === clawStatus.configuring || claw.status === clawStatus.awaitingPayment ? (
                         <p className='text-muted-foreground truncate text-[11px]'>
                             {statusConfig.label}
+                        </p>
+                    ) : (
+                        <p className='text-muted-foreground truncate text-[11px]'>
+                            {agentCount === 1
+                                ? t('playground.agentCount', { count: String(agentCount) })
+                                : t('playground.agentCountPlural', { count: String(agentCount) })}
                         </p>
                     )}
                 </div>
