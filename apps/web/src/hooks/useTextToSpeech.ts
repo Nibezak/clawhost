@@ -1,11 +1,14 @@
 import type { UseTextToSpeechReturn } from '@/ts/Interfaces'
 
 import { useState, useCallback, useRef, useEffect } from 'react'
+import { t } from '@openclaw/i18n'
 import { getCachedToken } from '@/lib/firebase'
+import useUIStore from '@/lib/store/useUIStore'
 
 const BASE_URL = import.meta.env.VITE_API_URL || '/api'
 
 const useTextToSpeech = (): UseTextToSpeechReturn => {
+    const { showToast } = useUIStore()
     const [activeMessageId, setActiveMessageId] = useState<string | null>(null)
     const [loadingMessageId, setLoadingMessageId] = useState<string | null>(null)
     const audioRef = useRef<HTMLAudioElement | null>(null)
@@ -79,6 +82,7 @@ const useTextToSpeech = (): UseTextToSpeechReturn => {
 
                 if (!res.ok) {
                     setLoadingMessageId(null)
+                    showToast(t('playground.chatSpeechFailed'), 'error')
                     return
                 }
 
@@ -87,13 +91,18 @@ const useTextToSpeech = (): UseTextToSpeechReturn => {
                 cacheRef.current.set(messageId, url)
 
                 playFromUrl(messageId, url)
-            } catch {
+            } catch (err) {
+                if (err instanceof DOMException && err.name === 'AbortError') {
+                    setLoadingMessageId(null)
+                    return
+                }
                 stopPlayback()
                 setActiveMessageId(null)
                 setLoadingMessageId(null)
+                showToast(t('playground.chatSpeechFailed'), 'error')
             }
         },
-        [stopPlayback, playFromUrl]
+        [stopPlayback, playFromUrl, showToast]
     )
 
     useEffect(() => {

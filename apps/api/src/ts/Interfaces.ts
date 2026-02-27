@@ -1,6 +1,5 @@
 import type {
     ClawFileType,
-    FeatureRequestStatus,
     ProviderType,
     SubscriptionStatus,
     WebhookEventType
@@ -982,39 +981,6 @@ export interface UpdateClawBindingsBody {
 
 export interface RootLayoutProps {
     children: React.ReactNode
-}
-
-export interface CreateFeatureRequestBody {
-    title: string
-    description: string
-    platforms: string[]
-}
-
-export interface UpdateFeatureRequestStatusBody {
-    status: FeatureRequestStatus
-}
-
-export interface EditFeatureRequestBody {
-    title?: string
-    description?: string
-    status?: FeatureRequestStatus
-    platforms?: string[]
-}
-
-export interface FeatureRequestResponse {
-    id: string
-    title: string
-    description: string
-    status: FeatureRequestStatus
-    platforms: string[]
-    upvoteCount: number
-    userId: string
-    hasUpvoted: boolean
-}
-
-export interface FeatureRequestsListResponse {
-    items: FeatureRequestResponse[]
-    total: number
 }
 
 export interface ClawBindingEntry {

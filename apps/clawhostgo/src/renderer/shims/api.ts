@@ -134,18 +134,7 @@ const api = {
     getBillingHistory: (_page?: number, _limit?: number) =>
         Promise.resolve({ orders: [], total: 0, page: 1, limit: 20 }),
     getOrderInvoice: (_orderId: string) => Promise.resolve({ url: null }),
-    getCustomerPortal: () => Promise.resolve({ url: null }),
-
-    getFeatureRequests: (_sort?: string) =>
-        Promise.resolve({ featureRequests: [], total: 0 }),
-    getFeatureRequestsPublic: (_sort?: string) =>
-        Promise.resolve({ featureRequests: [], total: 0 }),
-    createFeatureRequest: (_data: unknown) => Promise.resolve({}),
-    upvoteFeatureRequest: (_id: string) =>
-        Promise.resolve({ upvoteCount: 0, hasUpvoted: false }),
-    updateFeatureRequestStatus: (_id: string, _data: unknown) =>
-        Promise.resolve(),
-    deleteFeatureRequest: (_id: string) => Promise.resolve()
+    getCustomerPortal: () => Promise.resolve({ url: null })
 }
 
 export default api

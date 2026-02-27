@@ -13,7 +13,6 @@ import {
     aiRoutes,
     authRoutes,
     clawsRoutes,
-    featureRequestsRoutes,
     plansRoutes,
     sshKeysRoutes,
     usersRoutes,
@@ -56,8 +55,6 @@ app.get('/', (c) => ok(c, null, t('api.healthOk')))
 app.route('/auth', authRoutes)
 app.route('/plans', plansRoutes)
 app.route('/webhooks', webhooksRoutes)
-app.route('/feature-requests', featureRequestsRoutes)
-
 app.get('/clawhub/skills', async (c) => {
     try {
         const result = await browseSkills({

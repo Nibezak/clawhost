@@ -81,7 +81,6 @@ const fr: Translations = {
         faq: 'Questions',
         blog: 'Blog',
         changelog: 'Journal des modifications',
-        featureRequests: 'Demandes de fonctionnalités',
         compare: 'Comparaison complète',
         legalAndMore: 'Autres',
         documentation: 'Documentation',
@@ -351,40 +350,6 @@ const fr: Translations = {
             "Échec de la connexion de la méthode d'authentification !",
         failedToDisconnectAuthMethod:
             "Échec de la déconnexion de la méthode d'authentification !",
-        featureRequestsFetched:
-            'Demandes de fonctionnalités récupérées avec succès.',
-        featureRequestCreated: 'Demande de fonctionnalité créée avec succès.',
-        featureRequestUpvoted: 'Vote mis à jour.',
-        featureRequestStatusUpdated: 'Statut de la demande mis à jour.',
-        featureRequestDeleted: 'Demande de fonctionnalité supprimée.',
-        failedToCreateFeatureRequest: 'Échec de la création de la demande !',
-        failedToUpvoteFeatureRequest: 'Échec de la mise à jour du vote !',
-        failedToUpdateFeatureRequestStatus:
-            'Échec de la mise à jour du statut !',
-        failedToDeleteFeatureRequest: 'Échec de la suppression de la demande !',
-        featureRequestNotFound: 'Demande de fonctionnalité introuvable !',
-        featureRequestLimitReached:
-            'Vous avez atteint le maximum de {{limit}} demandes ouvertes !',
-        featureRequestTotalLimitReached:
-            'Le tableau de demandes est plein ({{limit}} demandes). Veuillez attendre que les demandes existantes soient résolues !',
-        featureRequestTitleRequired: 'Le titre est requis !',
-        featureRequestDescriptionRequired: 'La description est requise !',
-        featureRequestTitleTooShort:
-            'Le titre doit contenir au moins {{min}} caractères !',
-        featureRequestTitleTooLong:
-            'Le titre doit contenir {{max}} caractères ou moins !',
-        featureRequestDescriptionTooShort:
-            'La description doit contenir au moins {{min}} caractères !',
-        featureRequestDescriptionTooLong:
-            'La description doit contenir {{max}} caractères ou moins !',
-        featureRequestInvalidStatus: 'Statut invalide !',
-        featureRequestUpdated: 'Demande de fonctionnalité mise à jour.',
-        failedToUpdateFeatureRequest: 'Échec de la mise à jour de la demande !',
-        noChangesProvided: 'Aucune modification fournie !',
-        platformRequired: 'Au moins une plateforme est requise !',
-        invalidPlatform: 'Valeur de plateforme invalide !',
-        featureRequestImplementationLimitReached:
-            'Cet utilisateur a déjà {{limit}} demandes de fonctionnalités en cours !',
         textRequired: 'Le texte est requis !',
         voiceNotFound: 'Modèle vocal introuvable !',
         ttsGenerationFailed: 'Échec de la génération vocale !',
@@ -1036,7 +1001,7 @@ const fr: Translations = {
             'Refactorisation de la structure des fonctionnalités du playground et simplifications',
         upcomingReleaseFeature8:
             'Demandes de fonctionnalités automatiquement gérées et publiées par les agents OpenClaw',
-        release11Date: '25 février 2026',
+        release11Date: '27 février 2026',
         release11Title: 'Synthèse vocale, terminal, onglets de chat & explorateur de fichiers',
         release11Description:
             'Écoutez les réponses des agents avec la synthèse vocale, interagissez avec votre VPS directement via le terminal, naviguez plus rapidement dans les chats avec les onglets de la barre latérale, et explorez les fichiers avec l\'explorateur amélioré.',
@@ -1322,6 +1287,7 @@ const fr: Translations = {
         chatPlaySpeech: 'Lire à voix haute',
         chatReplaySpeech: 'Rejouer',
         chatStopSpeech: 'Arrêter',
+        chatSpeechFailed: 'Échec de la génération vocale !',
         chatReadOnlyPlaceholder: 'Chat disponible sur vos propres Claws.',
         chatReadOnlyUser:
             "Bonjour ! Pouvez-vous m'aider à configurer un projet Node.js ?",
@@ -1663,74 +1629,6 @@ const fr: Translations = {
         discount: '10% de réduction',
         yourFirstMonth: 'sur votre premier mois',
         upvoteNow: 'Votez pour nous'
-    },
-    featureRequests: {
-        title: 'Demandes de fonctionnalités',
-        description:
-            'Votez pour des fonctionnalités et suggérez-en de nouvelles.',
-        subtitle:
-            "Contribuez à façonner l'avenir d'OpenClaw en demandant et en votant pour des fonctionnalités.",
-        submitRequest: 'Soumettre une demande',
-        noRequestsYet: 'Aucune demande',
-        noRequestsDescription: "Aucune demande de fonctionnalité n'a encore été soumise. Soyez le premier à partager vos idées.",
-        statusAwaitingApproval: "En attente d'approbation",
-        statusRequested: 'Demandée',
-        statusMarkedForImplementation: 'Marquée pour implémentation',
-        statusImplemented: 'Implémentée',
-        sortByUpvotes: 'Plus votées',
-        sortByNewest: 'Plus récentes',
-        sortByStatus: 'Par statut',
-        upvote: 'Voter',
-        upvoted: 'Voté',
-        signInToUpvote: 'Connectez-vous pour voter.',
-        signInToSubmit: 'Connectez-vous pour soumettre une demande.',
-        requestedBy: 'Demandée par',
-        submitModalTitle: 'Soumettre une demande de fonctionnalité',
-        submitModalDescription:
-            'Décrivez la fonctionnalité souhaitée. Nos agents IA examineront et implémenteront les demandes approuvées.',
-        featureTitle: 'Titre',
-        featureTitlePlaceholder: 'Titre de la fonctionnalité',
-        featureTitleMinLength:
-            'Le titre doit contenir au moins {{min}} caractères !',
-        featureTitleMaxLength:
-            'Le titre doit contenir {{max}} caractères ou moins !',
-        featureDescription: 'Description',
-        featureDescriptionPlaceholder:
-            "Décrivez la fonctionnalité souhaitée, le problème qu'elle résout et comment vous l'imaginez.",
-        featureDescriptionMinLength:
-            'La description doit contenir au moins {{min}} caractères !',
-        featureDescriptionMaxLength:
-            'La description doit contenir {{max}} caractères ou moins !',
-        submitting: 'Envoi en cours...',
-        submitted: 'Demande de fonctionnalité soumise.',
-        failedToSubmit: 'Échec de la soumission de la demande !',
-        requestLimitReached:
-            'Vous avez atteint le maximum de {{limit}} demandes ouvertes !',
-        agentBannerTitle: 'Propulsé par les agents OpenClaw',
-        agentBannerDescription:
-            'Les demandes sont examinées et développées par les agents OpenClaw hébergés sur ClawHost. Votez pour les fonctionnalités que vous souhaitez le plus.',
-        changeStatus: 'Changer le statut',
-        deleteRequest: 'Supprimer la demande',
-        deleteConfirmation:
-            'Êtes-vous sûr de vouloir supprimer cette demande ?',
-        statusUpdated: 'Statut de la demande mis à jour.',
-        failedToUpdateStatus: 'Échec de la mise à jour du statut !',
-        deleted: 'Demande de fonctionnalité supprimée.',
-        failedToDelete: 'Échec de la suppression !',
-        upvoteToggled: 'Vote mis à jour.',
-        failedToUpvote: 'Échec de la mise à jour du vote !',
-        editModalTitle: 'Modifier la demande',
-        editModalDescription:
-            'Mettre à jour les détails et le statut de la demande.',
-        updated: 'Demande de fonctionnalité mise à jour.',
-        failedToUpdate: 'Échec de la mise à jour de la demande !',
-        status: 'Statut',
-        dontAskAgain: 'Ne plus demander lors de la suppression de demandes cette session',
-        platforms: 'Plateformes',
-        platformDesktop: 'Bureau',
-        platformMobile: 'Mobile',
-        platformWeb: 'Web',
-        platformRequired: 'Sélectionnez au moins une plateforme'
     },
     compare: {
         title: 'Comparaison complète',

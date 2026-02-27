@@ -65,7 +65,6 @@ export type Route =
     | '/blog'
     | '/blog/:slug'
     | '/full-comparison'
-    | '/feature-requests'
 
 export type DashboardTab = (typeof DASHBOARD_TABS)[keyof typeof DASHBOARD_TABS]
 
@@ -81,16 +80,6 @@ export type ClawFileType =
     | 'yaml'
     | 'text'
     | 'unknown'
-
-export type FeatureRequestStatus =
-    | 'awaiting_approval'
-    | 'requested'
-    | 'marked_for_implementation'
-    | 'implemented'
-
-export type FeatureRequestPlatform = 'desktop' | 'mobile' | 'web'
-
-export type FeatureRequestSortBy = 'newest' | 'upvotes'
 
 export type ChatSidebarViewMode = 'tree' | 'list'
 

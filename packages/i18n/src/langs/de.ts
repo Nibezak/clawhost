@@ -81,7 +81,6 @@ const de: Translations = {
         faq: 'Fragen',
         blog: 'Blog',
         changelog: 'Änderungsprotokoll',
-        featureRequests: 'Funktionsanfragen',
         compare: 'Vollständiger Vergleich',
         legalAndMore: 'Sonstiges',
         documentation: 'Dokumentation',
@@ -344,42 +343,6 @@ const de: Translations = {
             'Authentifizierungsmethode konnte nicht verbunden werden!',
         failedToDisconnectAuthMethod:
             'Authentifizierungsmethode konnte nicht getrennt werden!',
-        featureRequestsFetched: 'Feature-Anfragen erfolgreich abgerufen.',
-        featureRequestCreated: 'Feature-Anfrage erfolgreich erstellt.',
-        featureRequestUpvoted: 'Abstimmung aktualisiert.',
-        featureRequestStatusUpdated: 'Status der Anfrage aktualisiert.',
-        featureRequestDeleted: 'Feature-Anfrage gelöscht.',
-        failedToCreateFeatureRequest:
-            'Feature-Anfrage konnte nicht erstellt werden!',
-        failedToUpvoteFeatureRequest:
-            'Abstimmung konnte nicht aktualisiert werden!',
-        failedToUpdateFeatureRequestStatus:
-            'Status konnte nicht aktualisiert werden!',
-        failedToDeleteFeatureRequest:
-            'Feature-Anfrage konnte nicht gelöscht werden!',
-        featureRequestNotFound: 'Feature-Anfrage nicht gefunden!',
-        featureRequestLimitReached:
-            'Du hast das Maximum von {{limit}} offenen Anfragen erreicht!',
-        featureRequestTotalLimitReached:
-            'Die Anfragen-Übersicht ist voll ({{limit}} Anfragen). Bitte warte, bis bestehende Anfragen gelöst werden!',
-        featureRequestTitleRequired: 'Titel ist erforderlich!',
-        featureRequestDescriptionRequired: 'Beschreibung ist erforderlich!',
-        featureRequestTitleTooShort:
-            'Der Titel muss mindestens {{min}} Zeichen lang sein!',
-        featureRequestTitleTooLong:
-            'Der Titel darf maximal {{max}} Zeichen lang sein!',
-        featureRequestDescriptionTooShort:
-            'Die Beschreibung muss mindestens {{min}} Zeichen lang sein!',
-        featureRequestDescriptionTooLong:
-            'Die Beschreibung darf maximal {{max}} Zeichen lang sein!',
-        featureRequestInvalidStatus: 'Ungültiger Status!',
-        featureRequestUpdated: 'Feature-Anfrage aktualisiert.',
-        failedToUpdateFeatureRequest: 'Fehler beim Aktualisieren der Anfrage!',
-        noChangesProvided: 'Keine Änderungen bereitgestellt!',
-        platformRequired: 'Mindestens eine Plattform ist erforderlich!',
-        invalidPlatform: 'Ungültiger Plattformwert!',
-        featureRequestImplementationLimitReached:
-            'Dieser Benutzer hat bereits {{limit}} Feature-Anfragen in Bearbeitung!',
         textRequired: 'Text ist erforderlich!',
         voiceNotFound: 'Stimmmodell nicht gefunden!',
         ttsGenerationFailed: 'Sprachgenerierung fehlgeschlagen!',
@@ -1026,7 +989,7 @@ const de: Translations = {
             'Refactoring der Playground-Funktionsstruktur und Vereinfachungen',
         upcomingReleaseFeature8:
             'Feature-Anfragen automatisch verwaltet und veröffentlicht durch OpenClaw-Agenten',
-        release11Date: '25. Februar 2026',
+        release11Date: '27. Februar 2026',
         release11Title: 'Text-zu-Sprache, Terminal, Chat-Tabs & Datei-Explorer',
         release11Description:
             'Hören Sie sich Agentenantworten mit Text-zu-Sprache an, interagieren Sie direkt über das Terminal mit Ihrem VPS, navigieren Sie schneller in Chats mit Seitenleisten-Tabs und durchsuchen Sie Dateien mit dem verbesserten Datei-Explorer.',
@@ -1308,6 +1271,7 @@ const de: Translations = {
         chatPlaySpeech: 'Vorlesen',
         chatReplaySpeech: 'Wiederholen',
         chatStopSpeech: 'Stoppen',
+        chatSpeechFailed: 'Sprachgenerierung fehlgeschlagen!',
         chatReadOnlyPlaceholder: 'Chat verfügbar auf deinen eigenen Claws.',
         chatReadOnlyUser:
             'Hallo! Kannst du mir helfen, ein Node.js-Projekt einzurichten?',
@@ -1649,72 +1613,6 @@ const de: Translations = {
         discount: '10% Rabatt',
         yourFirstMonth: 'auf deinen ersten Monat',
         upvoteNow: 'Stimme für uns'
-    },
-    featureRequests: {
-        title: 'Feature-Anfragen',
-        description: 'Stimme für Features ab und schlage neue vor.',
-        subtitle:
-            'Hilf mit, die Zukunft von OpenClaw zu gestalten, indem du Features anforderst und abstimmst.',
-        submitRequest: 'Anfrage einreichen',
-        noRequestsYet: 'Keine Anfragen',
-        noRequestsDescription: 'Es wurden noch keine Feature-Anfragen eingereicht. Sei der Erste, der seine Ideen teilt.',
-        statusAwaitingApproval: 'Wartet auf Genehmigung',
-        statusRequested: 'Angefragt',
-        statusMarkedForImplementation: 'Für Implementierung markiert',
-        statusImplemented: 'Implementiert',
-        sortByUpvotes: 'Meiste Stimmen',
-        sortByNewest: 'Neueste',
-        sortByStatus: 'Nach Status',
-        upvote: 'Abstimmen',
-        upvoted: 'Abgestimmt',
-        signInToUpvote: 'Melde dich an, um abzustimmen.',
-        signInToSubmit: 'Melde dich an, um eine Anfrage einzureichen.',
-        requestedBy: 'Angefragt von',
-        submitModalTitle: 'Feature-Anfrage einreichen',
-        submitModalDescription:
-            'Beschreibe das gewünschte Feature. Unsere KI-Agenten werden genehmigte Anfragen prüfen und umsetzen.',
-        featureTitle: 'Titel',
-        featureTitlePlaceholder: 'Feature-Titel',
-        featureTitleMinLength:
-            'Der Titel muss mindestens {{min}} Zeichen lang sein.',
-        featureTitleMaxLength:
-            'Der Titel darf maximal {{max}} Zeichen lang sein.',
-        featureDescription: 'Beschreibung',
-        featureDescriptionPlaceholder:
-            'Beschreibe das gewünschte Feature, das Problem das es löst, und wie du es dir vorstellst.',
-        featureDescriptionMinLength:
-            'Die Beschreibung muss mindestens {{min}} Zeichen lang sein.',
-        featureDescriptionMaxLength:
-            'Die Beschreibung darf maximal {{max}} Zeichen lang sein.',
-        submitting: 'Wird eingereicht...',
-        submitted: 'Feature-Anfrage eingereicht.',
-        failedToSubmit: 'Feature-Anfrage konnte nicht eingereicht werden!',
-        requestLimitReached:
-            'Du hast das Maximum von {{limit}} offenen Anfragen erreicht!',
-        agentBannerTitle: 'Angetrieben von OpenClaw-Agenten',
-        agentBannerDescription:
-            'Feature-Anfragen werden von OpenClaw-Agenten auf ClawHost geprüft und entwickelt. Stimme für die Features ab, die du am meisten möchtest.',
-        changeStatus: 'Status ändern',
-        deleteRequest: 'Anfrage löschen',
-        deleteConfirmation:
-            'Bist du sicher, dass du diese Feature-Anfrage löschen möchtest?',
-        statusUpdated: 'Status der Anfrage aktualisiert.',
-        failedToUpdateStatus: 'Status konnte nicht aktualisiert werden!',
-        deleted: 'Feature-Anfrage gelöscht.',
-        failedToDelete: 'Löschen fehlgeschlagen!',
-        upvoteToggled: 'Abstimmung aktualisiert.',
-        failedToUpvote: 'Abstimmung konnte nicht aktualisiert werden!',
-        editModalTitle: 'Anfrage bearbeiten',
-        editModalDescription: 'Details und Status der Anfrage aktualisieren.',
-        updated: 'Feature-Anfrage aktualisiert.',
-        failedToUpdate: 'Fehler beim Aktualisieren der Anfrage!',
-        status: 'Status',
-        dontAskAgain: 'Beim Löschen von Anfragen in dieser Sitzung nicht mehr fragen',
-        platforms: 'Plattformen',
-        platformDesktop: 'Desktop',
-        platformMobile: 'Mobil',
-        platformWeb: 'Web',
-        platformRequired: 'Wähle mindestens eine Plattform'
     },
     compare: {
         title: 'Vollständiger Vergleich',

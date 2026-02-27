@@ -171,16 +171,6 @@ const staticPages: { path: string; meta: PrerenderMeta }[] = [
             image: `${SITE_URL}/og-image.webp`
         }
     },
-    {
-        path: PATHS.FEATURE_REQUESTS,
-        meta: {
-            title: 'Feature Requests',
-            description: 'Vote on features and suggest new ones.',
-            url: `${SITE_URL}/${PATHS.FEATURE_REQUESTS}`,
-            type: 'website',
-            image: `${SITE_URL}/og-image.webp`
-        }
-    }
 ]
 
 for (const page of staticPages) {

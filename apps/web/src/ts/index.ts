@@ -18,8 +18,6 @@ export type {
     ToastType,
     ClawFileType,
     ChatSidebarViewMode,
-    FeatureRequestSortBy,
-    FeatureRequestStatus,
     UserRole
 } from '@/ts/Types'
 
@@ -111,11 +109,5 @@ export type {
     CompareCompetitor,
     CompareFeatureValue,
     CompareFeature,
-    CompareCategory,
-    CreateFeatureRequestData,
-    FeatureRequest,
-    FeatureRequestCardProps,
-    FeatureRequestsListResponse,
-    FeatureRequestStatusBadgeProps,
-    UpdateFeatureRequestStatusData
+    CompareCategory
 } from '@/ts/Interfaces'

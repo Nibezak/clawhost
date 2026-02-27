@@ -10,8 +10,6 @@ import type {
     ClawAvatarSize,
     ClawStatus,
     DashboardTab,
-    FeatureRequestPlatform,
-    FeatureRequestStatus,
     GatewayConnectionState,
     Language,
     PlaygroundAgentDetailTab,
@@ -1310,53 +1308,6 @@ export interface CompareCategory {
     id: string
     nameKey: string
     features: CompareFeature[]
-}
-
-export interface FeatureRequest {
-    id: string
-    title: string
-    description: string
-    status: FeatureRequestStatus
-    platforms: FeatureRequestPlatform[]
-    upvoteCount: number
-    userId: string
-    hasUpvoted: boolean
-}
-
-export interface FeatureRequestsListResponse {
-    items: FeatureRequest[]
-    total: number
-}
-
-export interface CreateFeatureRequestData {
-    title: string
-    description: string
-    platforms: FeatureRequestPlatform[]
-}
-
-export interface UpdateFeatureRequestStatusData {
-    status: FeatureRequestStatus
-}
-
-export interface EditFeatureRequestData {
-    title?: string
-    description?: string
-    status?: FeatureRequestStatus
-    platforms?: FeatureRequestPlatform[]
-}
-
-export interface FeatureRequestCardProps {
-    featureRequest: FeatureRequest
-    isAuthenticated: boolean
-    isAdmin: boolean
-    isDeleting: boolean
-    onUpvote: (id: string) => void
-    onEdit: (featureRequest: FeatureRequest) => void
-    onDelete: (id: string) => void
-}
-
-export interface FeatureRequestStatusBadgeProps {
-    status: FeatureRequestStatus
 }
 
 export interface ElectronAPI {

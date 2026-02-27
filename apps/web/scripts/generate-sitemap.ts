@@ -13,12 +13,7 @@ const staticRoutes: { path: string; priority: string; changefreq: string }[] = [
     { path: `/${PATHS.PRIVACY}`, priority: '0.3', changefreq: 'yearly' },
     { path: `/${PATHS.BLOG}`, priority: '0.8', changefreq: 'weekly' },
     { path: `/${PATHS.CHANGELOG}`, priority: '0.6', changefreq: 'weekly' },
-    { path: `/${PATHS.COMPARE}`, priority: '0.7', changefreq: 'monthly' },
-    {
-        path: `/${PATHS.FEATURE_REQUESTS}`,
-        priority: '0.5',
-        changefreq: 'weekly'
-    }
+    { path: `/${PATHS.COMPARE}`, priority: '0.7', changefreq: 'monthly' }
 ]
 
 const mdxFiles = fs.readdirSync(CONTENT).filter((f) => f.endsWith('.mdx'))

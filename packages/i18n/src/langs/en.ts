@@ -79,7 +79,6 @@ const en = {
         faq: 'Questions',
         blog: 'Blog',
         changelog: 'Changelog',
-        featureRequests: 'Feature Requests',
         compare: 'Full Comparison',
         legalAndMore: 'Others',
         documentation: 'Documentation',
@@ -316,38 +315,6 @@ const en = {
         authMethodDisconnected: 'Auth method disconnected successfully.',
         failedToConnectAuthMethod: 'Failed to connect auth method!',
         failedToDisconnectAuthMethod: 'Failed to disconnect auth method!',
-        featureRequestsFetched: 'Feature requests fetched successfully.',
-        featureRequestCreated: 'Feature request created successfully.',
-        featureRequestUpvoted: 'Feature request vote updated.',
-        featureRequestStatusUpdated: 'Feature request status updated.',
-        featureRequestDeleted: 'Feature request deleted.',
-        failedToCreateFeatureRequest: 'Failed to create feature request!',
-        failedToUpvoteFeatureRequest: 'Failed to update vote!',
-        failedToUpdateFeatureRequestStatus:
-            'Failed to update feature request status!',
-        failedToDeleteFeatureRequest: 'Failed to delete feature request!',
-        featureRequestNotFound: 'Feature request not found!',
-        featureRequestLimitReached:
-            'You have reached the maximum of {{limit}} open feature requests!',
-        featureRequestTotalLimitReached:
-            'The feature request board is full ({{limit}} requests). Please wait for existing requests to be resolved!',
-        featureRequestTitleRequired: 'Title is required!',
-        featureRequestDescriptionRequired: 'Description is required!',
-        featureRequestTitleTooShort:
-            'Title must be at least {{min}} characters!',
-        featureRequestTitleTooLong: 'Title must be {{max}} characters or less!',
-        featureRequestDescriptionTooShort:
-            'Description must be at least {{min}} characters!',
-        featureRequestDescriptionTooLong:
-            'Description must be {{max}} characters or less!',
-        featureRequestInvalidStatus: 'Invalid status!',
-        featureRequestUpdated: 'Feature request updated.',
-        failedToUpdateFeatureRequest: 'Failed to update feature request!',
-        noChangesProvided: 'No changes provided!',
-        platformRequired: 'At least one platform is required!',
-        invalidPlatform: 'Invalid platform value!',
-        featureRequestImplementationLimitReached:
-            'This user already has {{limit}} feature requests in progress!',
         textRequired: 'Text is required!',
         voiceNotFound: 'Voice model not found!',
         ttsGenerationFailed: 'Failed to generate speech!',
@@ -974,7 +941,7 @@ const en = {
             'Refactoring of the playground feature structure and simplifications',
         upcomingReleaseFeature8:
             'Feature requests automatically managed and published by OpenClaw agents',
-        release11Date: 'February 25, 2026',
+        release11Date: 'February 27, 2026',
         release11Title: 'Text-to-Speech, Terminal, Chat Tabs & File Explorer',
         release11Description:
             'Listen to agent responses with text-to-speech, interact with your VPS directly via terminal, navigate chats faster with sidebar view tabs, and explore files with the improved file explorer.',
@@ -1248,6 +1215,7 @@ const en = {
         chatPlaySpeech: 'Read aloud',
         chatReplaySpeech: 'Replay',
         chatStopSpeech: 'Stop',
+        chatSpeechFailed: 'Failed to generate speech!',
         chatReadOnlyPlaceholder: 'Chat available on your own Claws.',
         chatReadOnlyUser: 'Hello! Can you help me set up a Node.js project?',
         chatReadOnlyAssistant:
@@ -1577,70 +1545,6 @@ const en = {
         discount: '10% off',
         yourFirstMonth: 'your first month',
         upvoteNow: 'Upvote Us'
-    },
-    featureRequests: {
-        title: 'Feature Requests',
-        description: 'Vote on features and suggest new ones.',
-        subtitle:
-            'Help shape the future of OpenClaw by requesting and upvoting features.',
-        submitRequest: 'Submit Request',
-        noRequestsYet: 'No Feature Requests',
-        noRequestsDescription: 'No feature requests have been submitted yet. Be the first to share your ideas.',
-        statusAwaitingApproval: 'Awaiting Approval',
-        statusRequested: 'Requested',
-        statusMarkedForImplementation: 'Marked for Implementation',
-        statusImplemented: 'Implemented',
-        sortByUpvotes: 'Most Upvoted',
-        sortByNewest: 'Newest',
-        sortByStatus: 'By Status',
-        upvote: 'Upvote',
-        upvoted: 'Upvoted',
-        signInToUpvote: 'Sign in to upvote.',
-        signInToSubmit: 'Sign in to submit a request.',
-        requestedBy: 'Requested by',
-        submitModalTitle: 'Submit a Feature Request',
-        submitModalDescription:
-            'Describe the feature you would like to see. Our AI agents will review and implement approved requests.',
-        featureTitle: 'Title',
-        featureTitlePlaceholder: 'Feature title',
-        featureTitleMinLength: 'Title must be at least {{min}} characters.',
-        featureTitleMaxLength: 'Title must be {{max}} characters or less.',
-        featureDescription: 'Description',
-        featureDescriptionPlaceholder:
-            'Describe the feature you want, the problem it solves, and how you envision it working.',
-        featureDescriptionMinLength:
-            'Description must be at least {{min}} characters.',
-        featureDescriptionMaxLength:
-            'Description must be {{max}} characters or less.',
-        submitting: 'Submitting...',
-        submitted: 'Feature request submitted.',
-        failedToSubmit: 'Failed to submit feature request!',
-        requestLimitReached:
-            'You have reached the maximum of {{limit}} open requests.',
-        agentBannerTitle: 'Powered by OpenClaw Agents',
-        agentBannerDescription:
-            'Feature requests are reviewed and built by OpenClaw agents hosted on ClawHost. Upvote the features you want most.',
-        changeStatus: 'Change Status',
-        deleteRequest: 'Delete Request',
-        deleteConfirmation:
-            'Are you sure you want to delete this feature request?',
-        statusUpdated: 'Feature request status updated.',
-        failedToUpdateStatus: 'Failed to update status!',
-        deleted: 'Feature request deleted.',
-        failedToDelete: 'Failed to delete feature request!',
-        upvoteToggled: 'Vote updated.',
-        failedToUpvote: 'Failed to update vote!',
-        editModalTitle: 'Edit Feature Request',
-        editModalDescription: 'Update the feature request details and status.',
-        updated: 'Feature request updated.',
-        failedToUpdate: 'Failed to update feature request!',
-        status: 'Status',
-        dontAskAgain: "Don't ask again when deleting requests this session",
-        platforms: 'Platforms',
-        platformDesktop: 'Desktop',
-        platformMobile: 'Mobile',
-        platformWeb: 'Web',
-        platformRequired: 'Select at least one platform'
     },
     compare: {
         title: 'Full Comparison',

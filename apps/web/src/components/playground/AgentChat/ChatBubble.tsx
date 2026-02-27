@@ -191,7 +191,7 @@ const ChatBubble: FC<ChatBubbleProps> = ({
                             <button
                                 onClick={copyMessage}
                                 title={t('playground.chatCopyMessage')}
-                                className='bg-background/80 absolute right-2.5 top-2.5 rounded-lg p-1.5 opacity-0 shadow-sm backdrop-blur-sm transition-opacity group-hover:opacity-100'
+                                className='bg-background/80 absolute right-2.5 top-2.5 rounded-md p-1.5 opacity-0 shadow-sm backdrop-blur-sm transition-opacity group-hover:opacity-100'
                             >
                                 {copied ? (
                                     <CheckIcon className='text-foreground/70 h-3 w-3' weight='bold' />
@@ -268,7 +268,7 @@ const ChatBubble: FC<ChatBubbleProps> = ({
                         <button
                             onClick={copyMessage}
                             title={t('playground.chatCopyMessage')}
-                            className='bg-background/80 absolute right-2.5 top-2.5 rounded-lg p-1.5 opacity-0 shadow-sm backdrop-blur-sm transition-opacity group-hover:opacity-100'
+                            className='bg-background/80 absolute right-2.5 top-2.5 rounded-md p-1.5 opacity-0 shadow-sm backdrop-blur-sm transition-opacity group-hover:opacity-100'
                         >
                             {copied ? (
                                 <CheckIcon className='text-muted-foreground h-3 w-3' weight='bold' />
