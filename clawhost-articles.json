@@ -347,7 +347,7 @@
     "publishedAt": "2026-02-26",
     "tags": "openclaw, agentic-ai, revolution, industry, impact",
     "thumbnail": "/openclaw-and-the-agentic-ai-revolution.webp",
-    "published": false
+    "published": true
   },
   {
     "title": "Running OpenClaw on a Raspberry Pi \u2014 The Budget-Friendly Approach",
