@@ -5,13 +5,13 @@ import mdx from '@mdx-js/rollup'
 import remarkFrontmatter from 'remark-frontmatter'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import remarkGfm from 'remark-gfm'
-import { remarkSanitizeFrontmatter } from './src/plugins/remark-sanitize-frontmatter'
+import { viteMdxSanitize } from './src/plugins/vite-mdx-sanitize'
 
 export default defineConfig({
     plugins: [
+        viteMdxSanitize(),  // Sanitize MDX files BEFORE mdx plugin processes them
         mdx({
             remarkPlugins: [
-                remarkSanitizeFrontmatter,  // Sanitize YAML BEFORE parsing (prevents errors)
                 remarkGfm,
                 remarkFrontmatter,
                 remarkMdxFrontmatter
