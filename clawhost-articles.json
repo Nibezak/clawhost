@@ -257,7 +257,7 @@
     "publishedAt": "2026-02-26",
     "tags": "openclaw, canvas, visualization, ui, frontend",
     "thumbnail": "/live-canvas-openclaw-s-visual-workspace.webp",
-    "published": false
+    "published": true
   },
   {
     "title": "Cron Jobs and Scheduled Tasks \u2014 Your Agent Works While You Sleep",
