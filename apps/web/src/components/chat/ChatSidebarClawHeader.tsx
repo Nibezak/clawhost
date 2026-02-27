@@ -37,6 +37,7 @@ import {
 const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
     claw,
     agentCount,
+    isLoadingAgents,
     isReachable: _isReachable,
     isSelected,
     statusConfig,
@@ -295,6 +296,10 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                     ) : claw.status === clawStatus.configuring || claw.status === clawStatus.awaitingPayment ? (
                         <p className='text-muted-foreground truncate text-[11px]'>
                             {statusConfig.label}
+                        </p>
+                    ) : isLoadingAgents ? (
+                        <p className='text-muted-foreground truncate text-[11px]'>
+                            {t('playground.loadingAgents')}
                         </p>
                     ) : (
                         <p className='text-muted-foreground truncate text-[11px]'>

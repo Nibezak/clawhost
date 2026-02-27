@@ -14,6 +14,7 @@ const useTextToSpeech = (): UseTextToSpeechReturn => {
     const audioRef = useRef<HTMLAudioElement | null>(null)
     const abortRef = useRef<AbortController | null>(null)
     const cacheRef = useRef<Map<string, string>>(new Map())
+    const outputDeviceIdRef = useRef<string | null>(null)
 
     const stopPlayback = useCallback(() => {
         if (audioRef.current) {
@@ -33,9 +34,18 @@ const useTextToSpeech = (): UseTextToSpeechReturn => {
         setLoadingMessageId(null)
     }, [stopPlayback])
 
+    const setOutputDeviceId = useCallback((deviceId: string | null) => {
+        outputDeviceIdRef.current = deviceId
+    }, [])
+
     const playFromUrl = useCallback((messageId: string, url: string) => {
         const audio = new Audio(url)
         audioRef.current = audio
+
+        if (outputDeviceIdRef.current && 'setSinkId' in audio) {
+            // @ts-ignore
+            audio.setSinkId(outputDeviceIdRef.current)
+        }
 
         audio.onended = () => {
             audioRef.current = null
@@ -113,7 +123,7 @@ const useTextToSpeech = (): UseTextToSpeechReturn => {
         }
     }, [stopPlayback])
 
-    return { activeMessageId, loadingMessageId, speak, stop }
+    return { activeMessageId, loadingMessageId, speak, stop, setOutputDeviceId }
 }
 
 export default useTextToSpeech

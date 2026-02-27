@@ -10,7 +10,7 @@ import type {
 import { useRef, useState, useEffect, useCallback } from 'react'
 import { t } from '@openclaw/i18n'
 import { GearSixIcon, PaperPlaneRightIcon } from '@phosphor-icons/react'
-import { useAgentChat, useScrollToBottom } from '@/hooks'
+import { useAgentChat, useScrollToBottom, useProfile } from '@/hooks'
 import useTextToSpeech from '@/hooks/useTextToSpeech'
 import { ScrollToBottomButton } from '@/components'
 import ChatBubble from '@/components/playground/AgentChat/ChatBubble'
@@ -57,9 +57,11 @@ const AgentChat: FC<AgentChatProps> = ({
         isAtBottomRef
     } = useScrollToBottom()
     const chatInputRef = useRef<ChatInputHandle>(null)
-    const { activeMessageId, loadingMessageId, speak, stop } = useTextToSpeech()
+    const { activeMessageId, loadingMessageId, speak, stop, setOutputDeviceId } = useTextToSpeech()
     const [isDragging, setIsDragging] = useState(false)
     const [voiceModeOpen, setVoiceModeOpen] = useState(false)
+    const { data: profile } = useProfile()
+    const isAdmin = profile?.role === 'admin'
     const dragCounterRef = useRef(0)
 
     const {
@@ -392,11 +394,22 @@ const AgentChat: FC<AgentChatProps> = ({
                 onSend={handleSend}
                 onAbort={abortResponse}
                 allowAttach
-                onVoiceMode={() => setVoiceModeOpen(true)}
+                onVoiceMode={isAdmin ? () => setVoiceModeOpen(true) : undefined}
             />
 
             {voiceModeOpen && (
-                <VoiceModeOverlay onClose={() => setVoiceModeOpen(false)} />
+                <VoiceModeOverlay
+                    onClose={() => setVoiceModeOpen(false)}
+                    messages={messages}
+                    sendMessage={sendMessage}
+                    isStreaming={isStreaming}
+                    typingIndicator={typingIndicator}
+                    speak={speak}
+                    stopSpeech={stop}
+                    ttsActiveMessageId={activeMessageId}
+                    ttsLoadingMessageId={loadingMessageId}
+                    setOutputDeviceId={setOutputDeviceId}
+                />
             )}
         </div>
     )

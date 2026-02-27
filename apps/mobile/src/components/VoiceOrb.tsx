@@ -5,162 +5,43 @@ import { useEffect, useRef } from 'react'
 import { Animated, StyleSheet, View } from 'react-native'
 import { COLORS } from '@/lib/theme'
 
-const VoiceOrb: FC<VoiceOrbProps> = ({ isActive, size = 160 }): ReactNode => {
-    const pulseScale1 = useRef(new Animated.Value(1)).current
-    const pulseScale2 = useRef(new Animated.Value(1)).current
-    const pulseOpacity1 = useRef(new Animated.Value(0.06)).current
-    const pulseOpacity2 = useRef(new Animated.Value(0.03)).current
+const VoiceOrb: FC<VoiceOrbProps> = ({ intensity, size = 160 }): ReactNode => {
     const coreScale = useRef(new Animated.Value(1)).current
+    const ring1Scale = useRef(new Animated.Value(1)).current
+    const ring2Scale = useRef(new Animated.Value(1)).current
+    const ring1Opacity = useRef(new Animated.Value(0.04)).current
+    const ring2Opacity = useRef(new Animated.Value(0.02)).current
 
     useEffect(() => {
-        if (isActive) {
-            const activeAnimation = Animated.loop(
-                Animated.parallel([
-                    Animated.sequence([
-                        Animated.timing(coreScale, {
-                            toValue: 1.12,
-                            duration: 300,
-                            useNativeDriver: true
-                        }),
-                        Animated.timing(coreScale, {
-                            toValue: 0.96,
-                            duration: 250,
-                            useNativeDriver: true
-                        }),
-                        Animated.timing(coreScale, {
-                            toValue: 1.08,
-                            duration: 200,
-                            useNativeDriver: true
-                        }),
-                        Animated.timing(coreScale, {
-                            toValue: 1,
-                            duration: 250,
-                            useNativeDriver: true
-                        })
-                    ]),
-                    Animated.sequence([
-                        Animated.timing(pulseScale1, {
-                            toValue: 1.3,
-                            duration: 500,
-                            useNativeDriver: true
-                        }),
-                        Animated.timing(pulseScale1, {
-                            toValue: 1.05,
-                            duration: 500,
-                            useNativeDriver: true
-                        })
-                    ]),
-                    Animated.sequence([
-                        Animated.timing(pulseOpacity1, {
-                            toValue: 0.12,
-                            duration: 500,
-                            useNativeDriver: true
-                        }),
-                        Animated.timing(pulseOpacity1, {
-                            toValue: 0.04,
-                            duration: 500,
-                            useNativeDriver: true
-                        })
-                    ]),
-                    Animated.sequence([
-                        Animated.delay(150),
-                        Animated.timing(pulseScale2, {
-                            toValue: 1.5,
-                            duration: 500,
-                            useNativeDriver: true
-                        }),
-                        Animated.timing(pulseScale2, {
-                            toValue: 1.1,
-                            duration: 350,
-                            useNativeDriver: true
-                        })
-                    ]),
-                    Animated.sequence([
-                        Animated.delay(150),
-                        Animated.timing(pulseOpacity2, {
-                            toValue: 0.08,
-                            duration: 500,
-                            useNativeDriver: true
-                        }),
-                        Animated.timing(pulseOpacity2, {
-                            toValue: 0.02,
-                            duration: 350,
-                            useNativeDriver: true
-                        })
-                    ])
-                ])
-            )
-            activeAnimation.start()
-            return () => activeAnimation.stop()
-        }
-
-        const idleAnimation = Animated.loop(
-            Animated.parallel([
-                Animated.sequence([
-                    Animated.timing(coreScale, {
-                        toValue: 1.03,
-                        duration: 2500,
-                        useNativeDriver: true
-                    }),
-                    Animated.timing(coreScale, {
-                        toValue: 1,
-                        duration: 2500,
-                        useNativeDriver: true
-                    })
-                ]),
-                Animated.sequence([
-                    Animated.timing(pulseScale1, {
-                        toValue: 1.12,
-                        duration: 3000,
-                        useNativeDriver: true
-                    }),
-                    Animated.timing(pulseScale1, {
-                        toValue: 1,
-                        duration: 3000,
-                        useNativeDriver: true
-                    })
-                ]),
-                Animated.sequence([
-                    Animated.timing(pulseOpacity1, {
-                        toValue: 0.09,
-                        duration: 3000,
-                        useNativeDriver: true
-                    }),
-                    Animated.timing(pulseOpacity1, {
-                        toValue: 0.04,
-                        duration: 3000,
-                        useNativeDriver: true
-                    })
-                ]),
-                Animated.sequence([
-                    Animated.timing(pulseScale2, {
-                        toValue: 1.2,
-                        duration: 3500,
-                        useNativeDriver: true
-                    }),
-                    Animated.timing(pulseScale2, {
-                        toValue: 1,
-                        duration: 3500,
-                        useNativeDriver: true
-                    })
-                ]),
-                Animated.sequence([
-                    Animated.timing(pulseOpacity2, {
-                        toValue: 0.05,
-                        duration: 3500,
-                        useNativeDriver: true
-                    }),
-                    Animated.timing(pulseOpacity2, {
-                        toValue: 0.02,
-                        duration: 3500,
-                        useNativeDriver: true
-                    })
-                ])
-            ])
-        )
-        idleAnimation.start()
-        return () => idleAnimation.stop()
-    }, [isActive, coreScale, pulseScale1, pulseScale2, pulseOpacity1, pulseOpacity2])
+        const i = Math.min(Math.max(intensity, 0), 1)
+        Animated.parallel([
+            Animated.timing(coreScale, {
+                toValue: 1 + i * 0.15,
+                duration: 100,
+                useNativeDriver: true
+            }),
+            Animated.timing(ring1Scale, {
+                toValue: 1 + i * 0.4,
+                duration: 100,
+                useNativeDriver: true
+            }),
+            Animated.timing(ring2Scale, {
+                toValue: 1 + i * 0.6,
+                duration: 100,
+                useNativeDriver: true
+            }),
+            Animated.timing(ring1Opacity, {
+                toValue: 0.04 + i * 0.12,
+                duration: 100,
+                useNativeDriver: true
+            }),
+            Animated.timing(ring2Opacity, {
+                toValue: 0.02 + i * 0.08,
+                duration: 100,
+                useNativeDriver: true
+            })
+        ]).start()
+    }, [intensity, coreScale, ring1Scale, ring2Scale, ring1Opacity, ring2Opacity])
 
     const glowSize = size * 2
 
@@ -173,8 +54,8 @@ const VoiceOrb: FC<VoiceOrbProps> = ({ isActive, size = 160 }): ReactNode => {
                         width: glowSize,
                         height: glowSize,
                         borderRadius: glowSize / 2,
-                        transform: [{ scale: pulseScale2 }],
-                        opacity: pulseOpacity2
+                        transform: [{ scale: ring2Scale }],
+                        opacity: ring2Opacity
                     }
                 ]}
             />
@@ -185,8 +66,8 @@ const VoiceOrb: FC<VoiceOrbProps> = ({ isActive, size = 160 }): ReactNode => {
                         width: size * 1.5,
                         height: size * 1.5,
                         borderRadius: size * 0.75,
-                        transform: [{ scale: pulseScale1 }],
-                        opacity: pulseOpacity1
+                        transform: [{ scale: ring1Scale }],
+                        opacity: ring1Opacity
                     }
                 ]}
             />

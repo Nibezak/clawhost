@@ -15,10 +15,15 @@ const VoiceChatModal: FC<VoiceChatModalProps> = ({
     onClose
 }): ReactNode => {
     const insets = useSafeAreaInsets()
-    const [isActive, setIsActive] = useState(false)
+    const [isListening, setIsListening] = useState(false)
+    const [intensity] = useState(0)
+
+    const handleToggle = (): void => {
+        setIsListening(!isListening)
+    }
 
     const handleClose = (): void => {
-        setIsActive(false)
+        setIsListening(false)
         onClose()
     }
 
@@ -48,13 +53,13 @@ const VoiceChatModal: FC<VoiceChatModalProps> = ({
 
                 <Pressable
                     style={styles.orbContainer}
-                    onPress={() => setIsActive(!isActive)}
+                    onPress={handleToggle}
                 >
-                    <VoiceOrb isActive={isActive} size={140} />
+                    <VoiceOrb intensity={intensity} size={140} />
                 </Pressable>
 
                 <Text style={styles.statusText}>
-                    {isActive
+                    {isListening
                         ? t('mobile.voiceListening')
                         : t('mobile.voiceTapToSpeak')}
                 </Text>

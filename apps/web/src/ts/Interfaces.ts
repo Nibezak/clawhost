@@ -937,6 +937,7 @@ export interface UseTextToSpeechReturn {
     loadingMessageId: string | null
     speak: (messageId: string, text: string) => void
     stop: () => void
+    setOutputDeviceId: (deviceId: string | null) => void
 }
 
 export interface ChatSpeechButtonProps {
@@ -973,10 +974,19 @@ export interface ChatInputProps {
 
 export interface VoiceModeOverlayProps {
     onClose: () => void
+    messages: ChatMessage[]
+    sendMessage: (text: string) => void
+    isStreaming: boolean
+    typingIndicator: ChatTypingIndicator
+    speak: (messageId: string, text: string) => void
+    stopSpeech: () => void
+    ttsActiveMessageId: string | null
+    ttsLoadingMessageId: string | null
+    setOutputDeviceId: (deviceId: string | null) => void
 }
 
 export interface VoiceOrbProps {
-    isActive: boolean
+    intensity: number
     size?: number
 }
 
@@ -1244,6 +1254,7 @@ export interface ChatSidebarAgentListProps {
 export interface ChatSidebarClawHeaderProps {
     claw: Claw
     agentCount: number
+    isLoadingAgents: boolean
     isReachable: boolean
     isSelected: boolean
     statusConfig: StatusConfig

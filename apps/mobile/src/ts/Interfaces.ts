@@ -226,7 +226,7 @@ export interface CreateClawModalProps {
 }
 
 export interface VoiceOrbProps {
-    isActive: boolean
+    intensity: number
     size?: number
 }
 

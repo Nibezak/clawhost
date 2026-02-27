@@ -31,6 +31,7 @@ const ChatSidebarTreeView: FC<ChatSidebarTreeViewProps> = ({
                             <ChatSidebarClawHeader
                                 claw={claw}
                                 agentCount={agents.length}
+                                isLoadingAgents={isLoading}
                                 isReachable={isReachable}
                                 isSelected={
                                     selectedClawId === claw.id &&
