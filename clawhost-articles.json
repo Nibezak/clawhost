@@ -267,7 +267,7 @@
     "publishedAt": "2026-02-26",
     "tags": "openclaw, cron, automation, scheduling, tasks",
     "thumbnail": "/cron-jobs-and-scheduled-tasks-your-agent-works-while-you-sleep.webp",
-    "published": false
+    "published": true
   },
   {
     "title": "OpenClaw for Developers \u2014 A 24/7 Coding Companion",
