@@ -217,7 +217,7 @@
     "publishedAt": "2026-02-26",
     "tags": "openclaw, openai, peter-steinberger, news, governance",
     "thumbnail": "/the-founder-joins-openai-what-it-means-for-openclaw-s-future.webp",
-    "published": false
+    "published": true
   },
   {
     "title": "Self-Hosting OpenClaw \u2014 Running Your Own AI Agent on a VPS",
