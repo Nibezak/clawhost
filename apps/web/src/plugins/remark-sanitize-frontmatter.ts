@@ -27,7 +27,7 @@ export function remarkSanitizeFrontmatter() {
     yamlContent = yamlContent.replace(/['']/g, "'");
     
     // Remove any other problematic Unicode
-    yamlContent = yamlContent.replace(/[^\x00-\x7F]/g, (char) => {
+    yamlContent = yamlContent.replace(/[^\x00-\x7F]/g, (char: string) => {
       // Keep common whitespace characters
       if (/\s/.test(char)) return char;
       // For everything else, remove or replace with ASCII
