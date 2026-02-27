@@ -1,5 +1,4 @@
 import fs from 'fs';
-import path from 'path';
 
 /**
  * Vite plugin to sanitize MDX files BEFORE MDX processing
