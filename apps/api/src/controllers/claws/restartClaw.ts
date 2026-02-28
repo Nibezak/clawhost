@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm'
 import { clawStatus } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
-import { getProvider } from '@/services/provider'
+import { getProvider, updateCachedServerStatus } from '@/services/provider'
 import { findUserClaw, sanitizeClaw } from '@/controllers/claws/helpers'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
@@ -29,6 +29,7 @@ const restartClaw = async (c: AuthenticatedContext) => {
             await getProvider(claw.provider as ProviderType).restartServer(
                 claw.providerServerId
             )
+            updateCachedServerStatus(claw.provider as ProviderType, claw.providerServerId, clawStatus.restarting)
         } catch {
             await db
                 .update(claws)
