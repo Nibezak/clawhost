@@ -7,7 +7,7 @@ import type {
 
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
-import { clawStatus } from '@openclaw/shared'
+import { clawStatus, userRole } from '@openclaw/shared'
 import { ClockIcon } from '@phosphor-icons/react'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import { useUIStore } from '@/lib/store'
@@ -321,7 +321,7 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                                 isLoading={isMutating}
                                 hasActionItems={hasActionItems}
                                 isScheduledForDeletion={isScheduledForDeletion}
-                                isAdmin={profile?.role === 'admin'}
+                                isAdmin={profile?.role === userRole.admin}
                                 compact
                             />
                         </div>

@@ -7,7 +7,7 @@ import type {
 
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
-import { clawStatus, clawProvider } from '@openclaw/shared'
+import { clawStatus, clawProvider, userRole } from '@openclaw/shared'
 import { useUIStore } from '@/lib/store'
 import { getLocale, getBaseDomain, TRUNCATE_LENGTHS } from '@/lib'
 import {
@@ -309,7 +309,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                                     isScheduledForDeletion={
                                         isScheduledForDeletion
                                     }
-                                    isAdmin={profile?.role === 'admin'}
+                                    isAdmin={profile?.role === userRole.admin}
                                     compact
                                 />
                             </div>

@@ -36,40 +36,43 @@ function injectMeta(html: string, meta: PrerenderMeta): string {
     )
 
     html = html.replace(
-        /<meta name="description"[^>]*\/>/,
+        /<meta\s+name="description"[^>]*\/>/,
         `<meta name="description" content="${escapeHtml(meta.description)}" />`
     )
     html = html.replace(
-        /<meta property="og:type"[^>]*\/>/,
+        /<meta\s+property="og:type"[^>]*\/>/,
         `<meta property="og:type" content="${meta.type}" />`
     )
     html = html.replace(
-        /<meta property="og:title"[^>]*\/>/,
+        /<meta\s+property="og:title"[^>]*\/>/,
         `<meta property="og:title" content="${escapeHtml(fullTitle)}" />`
     )
     html = html.replace(
-        /<meta property="og:description"[^>]*\/>/,
+        /<meta\s+property="og:description"[^>]*\/>/,
         `<meta property="og:description" content="${escapeHtml(meta.description)}" />`
     )
     html = html.replace(
-        /<meta property="og:image"[^>]*\/>/,
+        /<meta\s+property="og:image"[^>]*\/>/,
         `<meta property="og:image" content="${meta.image}" />`
     )
     html = html.replace(
-        /<meta name="twitter:title"[^>]*\/>/,
+        /<meta\s+property="og:url"[^>]*\/>/,
+        `<meta property="og:url" content="${meta.url}" />`
+    )
+    html = html.replace(
+        /<meta\s+name="twitter:title"[^>]*\/>/,
         `<meta name="twitter:title" content="${escapeHtml(fullTitle)}" />`
     )
     html = html.replace(
-        /<meta name="twitter:description"[^>]*\/>/,
+        /<meta\s+name="twitter:description"[^>]*\/>/,
         `<meta name="twitter:description" content="${escapeHtml(meta.description)}" />`
     )
     html = html.replace(
-        /<meta name="twitter:image"[^>]*\/>/,
+        /<meta\s+name="twitter:image"[^>]*\/>/,
         `<meta name="twitter:image" content="${meta.image}" />`
     )
 
     let extraTags = `
-    <meta property="og:url" content="${meta.url}" />
     <link rel="canonical" href="${meta.url}" />`
 
     if (meta.articleMeta) {

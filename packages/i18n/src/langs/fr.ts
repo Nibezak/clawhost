@@ -1001,7 +1001,9 @@ const fr: Translations = {
             'Refactorisation de la structure des fonctionnalités du playground et simplifications',
         upcomingReleaseFeature8:
             'Demandes de fonctionnalités automatiquement gérées et publiées par les agents OpenClaw',
-        release11Date: '27 février 2026',
+        upcomingReleaseFeature9:
+            'Mode vocal pour interagir avec les agents OpenClaw hébergés sur ClawHost',
+        release11Date: '28 février 2026',
         release11Title: 'Synthèse vocale, terminal, onglets de chat & explorateur de fichiers',
         release11Description:
             'Écoutez les réponses des agents avec la synthèse vocale, interagissez avec votre VPS directement via le terminal, naviguez plus rapidement dans les chats avec les onglets de la barre latérale, et explorez les fichiers avec l\'explorateur amélioré.',
@@ -1015,6 +1017,8 @@ const fr: Translations = {
             'Améliorations de l\'explorateur de fichiers avec barre de recherche pour chercher dans les fichiers',
         release11Feature5:
             'Correction des horodatages des messages ne reflétant pas le temps réel',
+        release11Dropped1:
+            'Suppression des demandes de fonctionnalités pour simplification',
         release10Date: '22 février 2026',
         release10Title: 'Demandes de fonctionnalités, explorateur de fichiers & corrections',
         release10Description:

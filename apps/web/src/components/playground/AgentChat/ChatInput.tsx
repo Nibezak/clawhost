@@ -260,7 +260,7 @@ const ChatInputInner: ForwardRefRenderFunction<
                                 <p>{t('playground.chatVoiceMode')}</p>
                             </TooltipContent>
                         </Tooltip>
-                        <div className='bg-border mx-0.5 h-6 w-px shrink-0' />
+                        <div className='bg-border mx-0.5 h-6 w-px shrink-0 self-center' />
                     </>
                 )}
                 <button

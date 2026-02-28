@@ -989,7 +989,9 @@ const de: Translations = {
             'Refactoring der Playground-Funktionsstruktur und Vereinfachungen',
         upcomingReleaseFeature8:
             'Feature-Anfragen automatisch verwaltet und veröffentlicht durch OpenClaw-Agenten',
-        release11Date: '27. Februar 2026',
+        upcomingReleaseFeature9:
+            'Sprachmodus zur Interaktion mit den auf ClawHost gehosteten OpenClaw-Agenten',
+        release11Date: '28. Februar 2026',
         release11Title: 'Text-zu-Sprache, Terminal, Chat-Tabs & Datei-Explorer',
         release11Description:
             'Hören Sie sich Agentenantworten mit Text-zu-Sprache an, interagieren Sie direkt über das Terminal mit Ihrem VPS, navigieren Sie schneller in Chats mit Seitenleisten-Tabs und durchsuchen Sie Dateien mit dem verbesserten Datei-Explorer.',
@@ -1003,6 +1005,8 @@ const de: Translations = {
             'Verbesserungen am Datei-Explorer mit Suchleiste zum Durchsuchen von Dateien',
         release11Feature5:
             'Behebung von Nachrichtenzeitstempeln, die nicht in Echtzeit angezeigt wurden',
+        release11Dropped1:
+            'Feature-Anfragen zur Vereinfachung entfernt',
         release10Date: '22. Februar 2026',
         release10Title: 'Feature-Anfragen, Datei-Explorer & Fehlerbehebungen',
         release10Description:

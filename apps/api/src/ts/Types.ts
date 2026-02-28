@@ -31,7 +31,9 @@ export type WebhookEventType =
 
 export type AuthMethod = 'email' | 'google' | 'github'
 
-export type UserRole = 'user' | 'admin'
+import type { userRole } from '@openclaw/shared'
+
+export type UserRole = (typeof userRole)[keyof typeof userRole]
 
 export type Environment = 'development' | 'production'
 

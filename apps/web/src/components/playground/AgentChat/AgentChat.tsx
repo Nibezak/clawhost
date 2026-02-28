@@ -9,6 +9,7 @@ import type {
 
 import { useRef, useState, useEffect, useCallback } from 'react'
 import { t } from '@openclaw/i18n'
+import { userRole } from '@openclaw/shared'
 import { GearSixIcon, PaperPlaneRightIcon } from '@phosphor-icons/react'
 import { useAgentChat, useScrollToBottom, useProfile } from '@/hooks'
 import useTextToSpeech from '@/hooks/useTextToSpeech'
@@ -60,8 +61,8 @@ const AgentChat: FC<AgentChatProps> = ({
     const { activeMessageId, loadingMessageId, speak, stop, setOutputDeviceId } = useTextToSpeech()
     const [isDragging, setIsDragging] = useState(false)
     const [voiceModeOpen, setVoiceModeOpen] = useState(false)
-    const { data: profile } = useProfile()
-    const isAdmin = profile?.role === 'admin'
+    const { data: profile, isLoading: isProfileLoading } = useProfile()
+    const isAdmin = isProfileLoading || profile?.role === userRole.admin
     const dragCounterRef = useRef(0)
 
     const {
@@ -324,6 +325,8 @@ const AgentChat: FC<AgentChatProps> = ({
                     isProcessing={false}
                     onSend={handleSend}
                     onAbort={abortResponse}
+                    allowAttach
+                    onVoiceMode={isAdmin ? () => setVoiceModeOpen(true) : undefined}
                 />
             </div>
         )

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { BlogCTA, Header, LandingFooter, PageBackground, PageTitle } from '@/components'
 import { PATHS, getBaseDomain } from '@/lib'
-import { CheckIcon, CircleIcon } from '@phosphor-icons/react'
+import { CheckIcon, CircleIcon, XIcon } from '@phosphor-icons/react'
 
 const Changelog: FC = (): ReactNode => {
     return (
@@ -77,6 +77,15 @@ const Changelog: FC = (): ReactNode => {
                                         {t('changelog.upcomingReleaseFeature2')}
                                     </span>
                                 </li>
+                                <li className='flex items-center gap-3'>
+                                    <CircleIcon
+                                        className='h-2.5 w-2.5 flex-shrink-0 text-amber-600 dark:text-amber-400'
+                                        weight='fill'
+                                    />
+                                    <span className='text-foreground text-sm'>
+                                        {t('changelog.upcomingReleaseFeature9')}
+                                    </span>
+                                </li>
                             </ul>
                         </div>
                     </motion.div>
@@ -135,6 +144,12 @@ const Changelog: FC = (): ReactNode => {
                                     <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
                                     <span className='text-foreground text-sm'>
                                         {t('changelog.release11Feature5')}
+                                    </span>
+                                </li>
+                                <li className='flex items-center gap-3'>
+                                    <XIcon className='h-4 w-4 flex-shrink-0 text-red-600 dark:text-red-400' weight='bold' />
+                                    <span className='text-foreground text-sm'>
+                                        {t('changelog.release11Dropped1')}
                                     </span>
                                 </li>
                             </ul>

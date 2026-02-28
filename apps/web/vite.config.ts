@@ -6,12 +6,14 @@ import mdx from '@mdx-js/rollup'
 import remarkFrontmatter from 'remark-frontmatter'
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter'
 import remarkGfm from 'remark-gfm'
+import viteMdxSanitize from './src/plugins/vite-mdx-sanitize'
 
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, process.cwd())
 
     return {
         plugins: [
+            viteMdxSanitize(),
             mdx({
                 remarkPlugins: [remarkGfm, remarkFrontmatter, remarkMdxFrontmatter]
             }),

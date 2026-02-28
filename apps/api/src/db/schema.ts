@@ -6,6 +6,7 @@ import {
     index,
     unique
 } from 'drizzle-orm/pg-core'
+import { userRole } from '@openclaw/shared'
 
 export const users = pgTable('users', {
     id: text('id').primaryKey(),
@@ -13,7 +14,7 @@ export const users = pgTable('users', {
     name: text('name'),
     authMethods: text('auth_methods').array().default([]),
     polarCustomerId: text('polar_customer_id'),
-    role: text('role').notNull().default('user'),
+    role: text('role').notNull().default(userRole.user),
     createdAt: timestamp('created_at', { withTimezone: true })
         .defaultNow()
         .notNull()

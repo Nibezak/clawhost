@@ -15,7 +15,9 @@ export type CopiedFieldType = 'command' | 'private' | null
 
 export type SSHKeyModalMode = 'upload' | 'generate'
 
-export type UserRole = 'user' | 'admin'
+import type { userRole } from '@openclaw/shared'
+
+export type UserRole = (typeof userRole)[keyof typeof userRole]
 
 export type AuthMethod = 'email' | 'google' | 'github'
 

@@ -17,12 +17,14 @@ import {
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { t } from '@openclaw/i18n'
+import { userRole } from '@openclaw/shared'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
 import {
     ROUTES,
     DASHBOARD_TABS,
     AGENT_DETAIL_TABS,
-    CLAW_DETAIL_TABS
+    CLAW_DETAIL_TABS,
+    fireConfetti
 } from '@/lib'
 import {
     useClaws,
@@ -128,7 +130,7 @@ const Dashboard: FC = (): ReactNode => {
         enabled: !!user,
         staleTime: 1000 * 60 * 5
     })
-    const isAdmin = profile?.role === 'admin'
+    const isAdmin = profile?.role === userRole.admin
     const adminMode = !!isAdmin && adminModeRaw
 
     const [dnsSetup, setDnsSetup] = useState<boolean | null>(null)
@@ -183,6 +185,7 @@ const Dashboard: FC = (): ReactNode => {
     useEffect(() => {
         if (awaitingClaw) {
             showToast(t('dashboard.paymentSuccess'), 'success')
+            fireConfetti()
         }
     }, [])
 

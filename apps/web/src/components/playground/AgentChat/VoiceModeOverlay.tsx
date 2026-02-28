@@ -13,6 +13,8 @@ import {
 } from '@phosphor-icons/react'
 import { t } from '@openclaw/i18n'
 import VoiceOrb from '@/components/playground/AgentChat/VoiceOrb'
+import ChatBubble from '@/components/playground/AgentChat/ChatBubble'
+import ChatTypingIndicator from '@/components/playground/AgentChat/ChatTypingIndicator'
 import getTranscriber from '@/lib/whisperTranscriber'
 import {
     DropdownMenu,
@@ -317,7 +319,7 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
         if (transcriptRef.current) {
             transcriptRef.current.scrollTop = transcriptRef.current.scrollHeight
         }
-    }, [sessionMessages.length])
+    }, [sessionMessages.length, typingIndicator])
 
     useEffect(() => {
         return () => {
@@ -356,10 +358,19 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
         onClose()
     }, [stopSpeech, onClose])
 
-    const selectedInputLabel = inputDevices.find((d) => d.deviceId === selectedInputId)?.label
-        || t('playground.chatVoiceModeInputDevice')
-    const selectedOutputLabel = outputDevices.find((d) => d.deviceId === selectedOutputId)?.label
-        || t('playground.chatVoiceModeOutputDevice')
+    const truncateLabel = (label: string, max: number): string =>
+        label.length > max ? label.slice(0, max) + '...' : label
+
+    const selectedInputLabel = truncateLabel(
+        inputDevices.find((d) => d.deviceId === selectedInputId)?.label
+            || t('playground.chatVoiceModeInputDevice'),
+        12
+    )
+    const selectedOutputLabel = truncateLabel(
+        outputDevices.find((d) => d.deviceId === selectedOutputId)?.label
+            || t('playground.chatVoiceModeOutputDevice'),
+        12
+    )
 
     const statusLabel = (() => {
         if (hasNoInput) return t('playground.chatVoiceModeNoMicrophone')
@@ -379,7 +390,7 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.3 }}
-                className='absolute inset-0 z-20 flex flex-col items-center justify-between overflow-hidden bg-[#0a0a0f]'
+                className='absolute inset-0 z-20 flex flex-col overflow-hidden bg-[#0a0a0f]'
             >
                 <div
                     className='pointer-events-none absolute inset-0'
@@ -392,9 +403,9 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
                     style={gridStyle}
                 />
 
-                <div className='z-10 flex w-full items-center justify-between border-b border-white/10 px-5 py-2.5'>
+                <div className='bg-background border-border z-10 flex w-full items-center justify-between border-b px-5 py-2.5'>
                     <div className='flex items-center gap-2'>
-                        <WaveformIcon className='h-4 w-4 text-[#ef5350]' weight='fill' />
+                        <WaveformIcon className='h-4 w-4 text-[#ef5350]' />
                         <span className='text-sm font-semibold text-white'>
                             {t('playground.chatVoiceMode')}
                         </span>
@@ -405,7 +416,7 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
                             <DropdownMenuTrigger asChild>
                                 <button className='flex items-center gap-1.5 rounded-lg bg-white/5 px-2.5 py-1.5 text-xs text-white/60 outline-none transition-colors hover:bg-white/10'>
                                     <MicrophoneIcon className='h-3 w-3 shrink-0 text-white/40' weight='fill' />
-                                    <span className='max-w-[120px] truncate'>{selectedInputLabel}</span>
+                                    <span>{selectedInputLabel}</span>
                                     <CaretDownIcon className='h-3 w-3 shrink-0 opacity-50' />
                                 </button>
                             </DropdownMenuTrigger>
@@ -432,7 +443,7 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
                                 <DropdownMenuTrigger asChild>
                                     <button className='flex items-center gap-1.5 rounded-lg bg-white/5 px-2.5 py-1.5 text-xs text-white/60 outline-none transition-colors hover:bg-white/10'>
                                         <SpeakerHighIcon className='h-3 w-3 shrink-0 text-white/40' weight='fill' />
-                                        <span className='max-w-[120px] truncate'>{selectedOutputLabel}</span>
+                                        <span>{selectedOutputLabel}</span>
                                         <CaretDownIcon className='h-3 w-3 shrink-0 opacity-50' />
                                     </button>
                                 </DropdownMenuTrigger>
@@ -476,41 +487,40 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
                     </div>
                 )}
 
-                {sessionMessages.length > 0 && (
-                    <div
-                        ref={transcriptRef}
-                        className='z-10 flex max-h-40 w-full max-w-sm flex-col gap-2 overflow-y-auto px-6'
+                <div className={`z-10 flex flex-col items-center ${sessionMessages.length > 0 ? 'pb-4 pt-10' : 'flex-1 justify-center'}`}>
+                    <button
+                        onClick={handleToggle}
+                        disabled={isTranscribing || isStreaming || hasNoInput}
+                        className='relative cursor-pointer transition-transform hover:scale-105 disabled:cursor-not-allowed disabled:opacity-60'
+                        style={{ width: 120, height: 120 }}
                     >
-                        {sessionMessages.map((msg) => (
-                            <div
-                                key={msg.id}
-                                className={`text-xs ${
-                                    msg.role === 'user'
-                                        ? 'self-end text-right text-white/70'
-                                        : 'self-start text-white/50'
-                                }`}
-                            >
-                                <p className='line-clamp-2'>
-                                    {msg.content}
-                                </p>
-                            </div>
-                        ))}
-                    </div>
-                )}
-
-                <button
-                    onClick={handleToggle}
-                    disabled={isTranscribing || isStreaming || hasNoInput}
-                    className='z-10 cursor-pointer transition-transform hover:scale-105 disabled:cursor-not-allowed disabled:opacity-60'
-                >
-                    <VoiceOrb intensity={intensity} size={120} />
-                </button>
-
-                <div className='z-10 pb-8'>
-                    <p className='text-sm text-zinc-400'>
+                        <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2'>
+                            <VoiceOrb intensity={intensity} size={120} />
+                        </div>
+                    </button>
+                    <p className='mt-6 text-sm text-zinc-400'>
                         {statusLabel}
                     </p>
                 </div>
+
+                {sessionMessages.length > 0 && (
+                    <div
+                        ref={transcriptRef}
+                        className='z-10 flex-1 space-y-3 overflow-y-auto px-4 pb-4 pt-6'
+                    >
+                        {sessionMessages.map((msg) => (
+                            <ChatBubble
+                                key={msg.id}
+                                message={msg}
+                                onSpeak={speak}
+                                onStop={stopSpeech}
+                                isSpeaking={ttsActiveMessageId === msg.id}
+                                isLoading={ttsLoadingMessageId === msg.id}
+                            />
+                        ))}
+                        <ChatTypingIndicator state={typingIndicator} />
+                    </div>
+                )}
             </motion.div>
         </AnimatePresence>
     )

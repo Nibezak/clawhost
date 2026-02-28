@@ -10,7 +10,7 @@ import type { GatewayConnectionState } from '@/ts/Types'
 
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { clawStatus } from '@openclaw/shared'
+import { clawStatus, userRole } from '@openclaw/shared'
 import { t } from '@openclaw/i18n'
 import { ListIcon, XIcon, GearSixIcon, ArrowSquareOutIcon } from '@phosphor-icons/react'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
@@ -487,7 +487,7 @@ const ChatView: FC<ChatViewProps> = ({
                                                     activeClaw.status === clawStatus.off
                                                 }
                                                 isScheduledForDeletion={!!activeClaw.deletionScheduledAt}
-                                                isAdmin={profile?.role === 'admin'}
+                                                isAdmin={profile?.role === userRole.admin}
                                                 compact
                                             />
                                         )}

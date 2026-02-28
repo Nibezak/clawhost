@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { useQueryClient } from '@tanstack/react-query'
 import { t } from '@openclaw/i18n'
+import { userRole } from '@openclaw/shared'
 import { useAuth } from '@/lib/auth'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
 import { api, getLocale, ROUTES } from '@/lib'
@@ -576,7 +577,7 @@ const Account: FC = (): ReactNode => {
                             </div>
                         )}
 
-                        {!isLocal && profile?.role === 'admin' && (
+                        {!isLocal && profile?.role === userRole.admin && (
                             <div className='border-border bg-foreground/5 mt-6 rounded-xl border p-8 backdrop-blur-sm'>
                                 <div className='mb-6'>
                                     <h2 className='text-lg font-medium'>

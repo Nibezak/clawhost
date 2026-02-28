@@ -941,7 +941,9 @@ const en = {
             'Refactoring of the playground feature structure and simplifications',
         upcomingReleaseFeature8:
             'Feature requests automatically managed and published by OpenClaw agents',
-        release11Date: 'February 27, 2026',
+        upcomingReleaseFeature9:
+            'Voice Mode to interact with the OpenClaw agents hosted on ClawHost',
+        release11Date: 'February 28, 2026',
         release11Title: 'Text-to-Speech, Terminal, Chat Tabs & File Explorer',
         release11Description:
             'Listen to agent responses with text-to-speech, interact with your VPS directly via terminal, navigate chats faster with sidebar view tabs, and explore files with the improved file explorer.',
@@ -955,6 +957,8 @@ const en = {
             'File explorer improvements with search bar to search through files',
         release11Feature5:
             'Fixed message timestamps not reflecting real time',
+        release11Dropped1:
+            'Dropped feature requests for simplification',
         release10Date: 'February 23, 2026',
         release10Title: 'Feature Requests, File Explorer & Bug Fixes',
         release10Description:
@@ -1241,7 +1245,7 @@ const en = {
         chatVoiceInput: 'Voice input',
         chatVoiceListening: 'Listening...',
         chatVoiceNotSupported: 'Voice input is not supported in this browser.',
-        chatVoiceMode: 'Voice mode',
+        chatVoiceMode: 'Voice Mode',
         chatVoiceModeTapToSpeak: 'Tap to start speaking',
         chatVoiceModeListening: 'Listening...',
         chatVoiceModeClose: 'End voice mode',

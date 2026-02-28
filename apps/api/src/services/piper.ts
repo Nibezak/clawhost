@@ -3,10 +3,11 @@ import type { PiperSynthesisResult } from '@/ts/Interfaces'
 import { execFile } from 'child_process'
 import { readFileSync } from 'fs'
 import path from 'path'
+import { fileURLToPath } from 'url'
 
 const PIPER_BINARY = process.env.PIPER_BINARY || 'piper'
 const MODELS_DIR = path.resolve(
-    process.env.PIPER_MODELS_DIR || path.join(__dirname, '..', '..', '..', 'ai', 'models')
+    process.env.PIPER_MODELS_DIR || path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'ai', 'models')
 )
 
 const getModelConfig = (voice: string): { sampleRate: number; channels: number } => {
