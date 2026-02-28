@@ -1,5 +1,8 @@
 import type { Context } from 'hono'
-import type { GithubEmailEntry, ResolveCredentialConflictBody } from '@/ts/Interfaces'
+import type {
+    GithubEmailEntry,
+    ResolveCredentialConflictBody
+} from '@/ts/Interfaces'
 
 import { eq, sql } from 'drizzle-orm'
 import { auth } from '@/services/firebase'
@@ -27,9 +30,7 @@ const verifyGithubToken = async (accessToken: string) => {
 
     if (!email && emailsRes.ok) {
         const emails = await emailsRes.json()
-        const primary = emails.find(
-            (e: GithubEmailEntry) => e.primary
-        )
+        const primary = emails.find((e: GithubEmailEntry) => e.primary)
         email = primary?.email
     }
 

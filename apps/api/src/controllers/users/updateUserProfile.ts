@@ -2,6 +2,7 @@ import type { UpdateProfileBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
+import { inputValidation } from '@openclaw/shared'
 import { db } from '@/db'
 import { users } from '@/db/schema'
 import { ok, fail } from '@/lib/response'
@@ -12,7 +13,7 @@ const updateUserProfile = async (c: AuthenticatedContext) => {
         const userId = c.get('userId')
         const { name } = await c.req.json<UpdateProfileBody>()
 
-        if (name !== undefined && name.length > 100) {
+        if (name !== undefined && name.length > inputValidation.USER_NAME.MAX) {
             return fail(c, t('api.nameTooLong'), 400)
         }
 

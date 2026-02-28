@@ -1,20 +1,24 @@
-import type { CacheEntry, CloudProvider } from '@/ts/Interfaces'
+import type { CloudProvider } from '@/ts/Interfaces'
 import type { ProviderType } from '@/ts/Types'
 
 import hetzner from '@/services/hetzner'
 import digitalocean from '@/services/digitalocean'
 import vultr from '@/services/vultr'
+import cache from '@/services/provider/cache'
 
 const CACHE_TTL = 5 * 60 * 1000
+const SERVERS_CACHE_TTL = 10 * 1000
 
-const cache = new Map<string, CacheEntry<unknown>>()
-
-function cached<T>(key: string, fn: () => Promise<T>): Promise<T> {
+const cached = <T>(
+    key: string,
+    fn: () => Promise<T>,
+    ttl = CACHE_TTL
+): Promise<T> => {
     const entry = cache.get(key)
     if (entry && Date.now() < entry.expiry)
         return Promise.resolve(entry.data as T)
     return fn().then((data) => {
-        cache.set(key, { data, expiry: Date.now() + CACHE_TTL })
+        cache.set(key, { data, expiry: Date.now() + ttl })
         return data
     })
 }
@@ -38,6 +42,18 @@ const getProvider = (provider: ProviderType): CloudProvider => {
 
     const wrapped: CloudProvider = {
         ...p,
+        getServer: (serverId: string) =>
+            cached(
+                `${provider}:server:${serverId}`,
+                () => p.getServer(serverId),
+                SERVERS_CACHE_TTL
+            ),
+        getServers: () =>
+            cached(
+                `${provider}:servers`,
+                () => p.getServers(),
+                SERVERS_CACHE_TTL
+            ),
         getServerTypes: () =>
             cached(`${provider}:serverTypes`, () => p.getServerTypes()),
         getLocations: () =>

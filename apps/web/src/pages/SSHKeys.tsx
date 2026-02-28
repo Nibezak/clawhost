@@ -616,9 +616,7 @@ const SSHKeys: FC = (): ReactNode => {
     })
 
     const localDisplayName =
-        profile?.name ||
-        cachedProfile?.name ||
-        t('account.noNameSet')
+        profile?.name || cachedProfile?.name || t('account.noNameSet')
     const dropdownFooterLinks = useMemo(() => {
         if (!isLocal) return undefined
         const BASE_URL = 'https://clawhost.cloud'

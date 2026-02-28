@@ -28,6 +28,7 @@
         "api",
         "scripts",
         "app",
+        "instrumentation.ts",
         "next-env.d.ts",
         ".next/types/**/*.ts"
     ],

@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 
-function generatePassword(length = 16): string {
+const generatePassword = (length = 16): string => {
     const chars =
         'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*'
     const mask = 127

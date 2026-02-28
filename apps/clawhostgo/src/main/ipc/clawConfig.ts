@@ -304,7 +304,10 @@ const registerClawConfigHandlers = (): void => {
                 Record<string, unknown>
             >
 
-            const skillsMap = new Map<string, { name: string; enabled: boolean; description?: string }>()
+            const skillsMap = new Map<
+                string,
+                { name: string; enabled: boolean; description?: string }
+            >()
 
             if (claw.version) {
                 const skillsDir = path.join(
@@ -314,14 +317,27 @@ const registerClawConfigHandlers = (): void => {
                     'skills'
                 )
                 if (fs.existsSync(skillsDir)) {
-                    for (const entry of fs.readdirSync(skillsDir, { withFileTypes: true })) {
+                    for (const entry of fs.readdirSync(skillsDir, {
+                        withFileTypes: true
+                    })) {
                         if (!entry.isDirectory()) continue
                         let description: string | undefined
-                        const skillMdPath = path.join(skillsDir, entry.name, 'SKILL.md')
+                        const skillMdPath = path.join(
+                            skillsDir,
+                            entry.name,
+                            'SKILL.md'
+                        )
                         if (fs.existsSync(skillMdPath)) {
-                            const lines = fs.readFileSync(skillMdPath, 'utf-8').split('\n')
+                            const lines = fs
+                                .readFileSync(skillMdPath, 'utf-8')
+                                .split('\n')
                             description = lines
-                                .filter((l) => !l.startsWith('#') && l.trim() !== '' && !l.startsWith('---'))
+                                .filter(
+                                    (l) =>
+                                        !l.startsWith('#') &&
+                                        l.trim() !== '' &&
+                                        !l.startsWith('---')
+                                )
                                 .at(0)
                                 ?.trim()
                         }
@@ -413,8 +429,12 @@ const registerClawConfigHandlers = (): void => {
             )
 
             if (index !== -1) {
-                const current = ((list[index].skills || []) as Array<unknown>).map(
-                    (s) => (typeof s === 'string' ? s : String((s as Record<string, unknown>).name || s))
+                const current = (
+                    (list[index].skills || []) as Array<unknown>
+                ).map((s) =>
+                    typeof s === 'string'
+                        ? s
+                        : String((s as Record<string, unknown>).name || s)
                 )
                 if (data.action === 'install') {
                     if (!current.includes(data.skillName)) {

@@ -273,16 +273,6 @@ const LandingFooter: FC = (): ReactNode => {
                             </li>
                             <li>
                                 <Link
-                                    to={ROUTES.FEATURE_REQUESTS}
-                                    className={pageClass(
-                                        ROUTES.FEATURE_REQUESTS
-                                    )}
-                                >
-                                    {t('footer.featureRequests')}
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
                                     to={ROUTES.PRIVACY}
                                     className={pageClass(ROUTES.PRIVACY)}
                                 >

@@ -5,6 +5,7 @@ import ClawDiagnosticsContent from '@/components/dashboard/ClawDiagnosticsConten
 import ClawDiagnosticsDialog from '@/components/dashboard/ClawDiagnosticsDialog'
 import ClawLogsContent from '@/components/dashboard/ClawLogsContent'
 import ClawLogsDialog from '@/components/dashboard/ClawLogsDialog'
+import ClawTerminalContent from '@/components/dashboard/ClawTerminalContent'
 import CopyableField from '@/components/dashboard/CopyableField'
 import CreateClawModal from '@/components/dashboard/CreateClawModal'
 import LocalCreateClawModal from '@/components/dashboard/LocalCreateClawModal'
@@ -17,6 +18,7 @@ export {
     ClawDiagnosticsDialog,
     ClawLogsContent,
     ClawLogsDialog,
+    ClawTerminalContent,
     CopyableField,
     CreateClawModal,
     LocalCreateClawModal

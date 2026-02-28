@@ -9,6 +9,8 @@ import CreateClawModal from '@/components/CreateClawModal'
 import GridBackground from '@/components/GridBackground'
 import ProviderIcon from '@/components/ProviderIcon'
 import StatusBadge from '@/components/StatusBadge'
+import VoiceChatModal from '@/components/VoiceChatModal'
+import VoiceOrb from '@/components/VoiceOrb'
 
 export {
     BillingOrderItem,
@@ -21,5 +23,7 @@ export {
     CreateClawModal,
     GridBackground,
     ProviderIcon,
-    StatusBadge
+    StatusBadge,
+    VoiceChatModal,
+    VoiceOrb
 }

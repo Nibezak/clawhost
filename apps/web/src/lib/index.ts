@@ -10,6 +10,7 @@ import LANGUAGES from '@/lib/languages'
 import getBaseDomain from '@/lib/getBaseDomain'
 import getLocale from '@/lib/getLocale'
 import TRUNCATE_LENGTHS from '@/lib/truncateLengths'
+import fireConfetti from '@/lib/fireConfetti'
 
 export {
     api,
@@ -23,5 +24,6 @@ export {
     LANGUAGES,
     getBaseDomain,
     getLocale,
-    TRUNCATE_LENGTHS
+    TRUNCATE_LENGTHS,
+    fireConfetti
 }

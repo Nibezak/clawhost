@@ -68,6 +68,7 @@ export default tseslint.config(
         },
         rules: {
             ...reactHooks.configs.recommended.rules,
+            'react-hooks/exhaustive-deps': 'off',
             'react-refresh/only-export-components': [
                 'warn',
                 { allowConstantExport: true }
@@ -80,7 +81,8 @@ export default tseslint.config(
             'react-hooks': reactHooks
         },
         rules: {
-            ...reactHooks.configs.recommended.rules
+            ...reactHooks.configs.recommended.rules,
+            'react-hooks/exhaustive-deps': 'off'
         }
     },
     {
@@ -91,6 +93,7 @@ export default tseslint.config(
         },
         rules: {
             ...reactHooks.configs.recommended.rules,
+            'react-hooks/exhaustive-deps': 'off',
             'react-refresh/only-export-components': [
                 'warn',
                 { allowConstantExport: true }

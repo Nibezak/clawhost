@@ -14,10 +14,7 @@ const cancelPendingClaw = async (c: AuthenticatedContext) => {
         const result = await db
             .delete(pendingClaws)
             .where(
-                and(
-                    eq(pendingClaws.id, id),
-                    eq(pendingClaws.userId, userId)
-                )
+                and(eq(pendingClaws.id, id), eq(pendingClaws.userId, userId))
             )
             .returning()
 

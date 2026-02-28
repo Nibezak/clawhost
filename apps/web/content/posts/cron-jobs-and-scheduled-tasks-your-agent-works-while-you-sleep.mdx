@@ -1,16 +1,17 @@
 ---
 title: Cron Jobs and Scheduled Tasks — Your Agent Works While You Sleep
 slug: cron-jobs-and-scheduled-tasks-your-agent-works-while-you-sleep
-description: 'Automate repetitive tasks with OpenClaw''s cron scheduler. Set it and
-  forget it: email digests, health checks, reports—running 24/7.'
+description:
+    "Automate repetitive tasks with OpenClaw's cron scheduler. Set it and
+    forget it: email digests, health checks, reports—running 24/7."
 author: ClawHost
 publishedAt: '2026-02-26'
 tags:
-- openclaw
-- ' cron'
-- ' automation'
-- ' scheduling'
-- ' tasks'
+    - openclaw
+    - ' cron'
+    - ' automation'
+    - ' scheduling'
+    - ' tasks'
 coverImage: /cron-jobs-and-scheduled-tasks-your-agent-works-while-you-sleep.webp
 ---
 
@@ -60,24 +61,25 @@ The difference: OpenClaw tasks understand context, adapt to failures, and use AI
 
 ```javascript
 const task = {
-  schedule: "0 6 * * *", // 6 AM daily
-  steps: [
-    "Extract new support tickets from Zendesk",
-    "Summarize customer sentiment and top issues",
-    "Pull sales pipeline changes from Salesforce",
-    "Compare to 30-day trend",
-    "Extract deployment metrics from GitHub Actions",
-    "Compile into single report",
-    "Send to team Slack channel"
-  ]
-};
+    schedule: '0 6 * * *', // 6 AM daily
+    steps: [
+        'Extract new support tickets from Zendesk',
+        'Summarize customer sentiment and top issues',
+        'Pull sales pipeline changes from Salesforce',
+        'Compare to 30-day trend',
+        'Extract deployment metrics from GitHub Actions',
+        'Compile into single report',
+        'Send to team Slack channel'
+    ]
+}
 
-openclaw.schedule(task);
+openclaw.schedule(task)
 ```
 
 **Result**: Every morning at 6 AM, before your team arrives, they have context on what happened overnight and what needs attention.
 
-**Real impact**: 
+**Real impact**:
+
 - Saves 45 minutes daily per person = 3.75 hours per 5-person team per week
 - Team starts day informed instead of playing catch-up
 - Trends visible (is support volume rising? Are deployments getting faster?)
@@ -91,27 +93,28 @@ openclaw.schedule(task);
 
 ```javascript
 const backup = {
-  schedule: "0 2 * * *", // 2 AM daily
-  steps: [
-    "Connect to primary database",
-    "Export customer data, transactions, configs",
-    "Compress backup",
-    "Upload to S3 with redundancy",
-    "Verify backup integrity",
-    "Sync data to read replicas",
-    "Run integrity checks",
-    "Log results and alert on failure"
-  ],
-  onSuccess: "Send confirmation email to ops@company.com",
-  onFailure: "Trigger PagerDuty alert immediately"
-};
+    schedule: '0 2 * * *', // 2 AM daily
+    steps: [
+        'Connect to primary database',
+        'Export customer data, transactions, configs',
+        'Compress backup',
+        'Upload to S3 with redundancy',
+        'Verify backup integrity',
+        'Sync data to read replicas',
+        'Run integrity checks',
+        'Log results and alert on failure'
+    ],
+    onSuccess: 'Send confirmation email to ops@company.com',
+    onFailure: 'Trigger PagerDuty alert immediately'
+}
 
-openclaw.schedule(backup);
+openclaw.schedule(backup)
 ```
 
 **Result**: Every night at 2 AM, your data is backed up, verified, and synchronized.
 
 **Real impact**:
+
 - Never miss a backup window
 - Off-peak processing (2 AM) means zero impact on daytime performance
 - Automated verification catches issues immediately
@@ -125,23 +128,24 @@ openclaw.schedule(backup);
 
 ```javascript
 const competitive_intel = {
-  schedule: "0 8 * * 5", // 8 AM Friday
-  task: "Monitor competitor sites",
-  steps: [
-    "Visit top 10 competitors' websites",
-    "Extract: new product announcements, pricing changes, hiring posts",
-    "Compare to last week's data",
-    "Highlight changes >5%",
-    "Research announcements via Google News and press releases",
-    "Compile into report with analysis",
-    "Send to product and sales teams"
-  ]
-};
+    schedule: '0 8 * * 5', // 8 AM Friday
+    task: 'Monitor competitor sites',
+    steps: [
+        "Visit top 10 competitors' websites",
+        'Extract: new product announcements, pricing changes, hiring posts',
+        "Compare to last week's data",
+        'Highlight changes >5%',
+        'Research announcements via Google News and press releases',
+        'Compile into report with analysis',
+        'Send to product and sales teams'
+    ]
+}
 ```
 
 **Result**: Every Friday morning, your team has fresh competitive intelligence without lifting a finger.
 
 **Real impact**:
+
 - Consistent intelligence (same time, same rigor every week)
 - Early warning on competitor moves (new features, price cuts)
 - Better strategic decisions based on trends, not surprises
@@ -155,28 +159,29 @@ const competitive_intel = {
 
 ```javascript
 const publish_articles = {
-  schedule: "0 * * * *", // Every hour
-  steps: [
-    "Check article queue (articles with published: false)",
-    "Pick next article",
-    "Generate cover image",
-    "Convert to MDX format",
-    "Validate frontmatter and links",
-    "Build HTML from markdown",
-    "Deploy to CDN",
-    "Update registry (published: true)",
-    "Post to social media",
-    "Verify live on website"
-  ],
-  onFailure: "Log issue, move to failed queue, continue with next"
-};
+    schedule: '0 * * * *', // Every hour
+    steps: [
+        'Check article queue (articles with published: false)',
+        'Pick next article',
+        'Generate cover image',
+        'Convert to MDX format',
+        'Validate frontmatter and links',
+        'Build HTML from markdown',
+        'Deploy to CDN',
+        'Update registry (published: true)',
+        'Post to social media',
+        'Verify live on website'
+    ],
+    onFailure: 'Log issue, move to failed queue, continue with next'
+}
 
-openclaw.schedule(publish_articles);
+openclaw.schedule(publish_articles)
 ```
 
 **Result**: One article publishes automatically every hour. 86 articles = 86 hours = 3.5 days to clear the queue.
 
 **Real impact**:
+
 - Consistent publishing cadence
 - No manual work per article
 - Errors caught automatically (invalid frontmatter, broken links)
@@ -191,24 +196,25 @@ openclaw.schedule(publish_articles);
 
 ```javascript
 const monthly_billing = {
-  schedule: "0 0 1 * *", // 1st of month at midnight
-  steps: [
-    "Query database for active subscriptions",
-    "Generate invoices for each customer",
-    "Process payments via Stripe",
-    "Handle failures (retry failed charges, notify customers)",
-    "Generate revenue reports by tier, region, cohort",
-    "Identify churning customers for retention campaigns",
-    "Email invoices to customers",
-    "Update accounting system with transactions",
-    "Generate financial statements for leadership"
-  ]
-};
+    schedule: '0 0 1 * *', // 1st of month at midnight
+    steps: [
+        'Query database for active subscriptions',
+        'Generate invoices for each customer',
+        'Process payments via Stripe',
+        'Handle failures (retry failed charges, notify customers)',
+        'Generate revenue reports by tier, region, cohort',
+        'Identify churning customers for retention campaigns',
+        'Email invoices to customers',
+        'Update accounting system with transactions',
+        'Generate financial statements for leadership'
+    ]
+}
 ```
 
 **Result**: First of the month, billing is processed, reports are generated, and accounting is updated automatically.
 
 **Real impact**:
+
 - Zero manual billing work
 - Consistent invoice timing
 - Automatic retry for failed charges
@@ -223,19 +229,19 @@ Sometimes you want one task to trigger another:
 
 ```javascript
 const workflow = {
-  task1: {
-    schedule: "0 9 * * 1", // Monday 9 AM
-    action: "Generate weekly report"
-  },
-  task2: {
-    trigger: "task1_completes",
-    action: "Email report to stakeholders"
-  },
-  task3: {
-    trigger: "task2_completes",
-    action: "Post key metrics to Slack"
-  }
-};
+    task1: {
+        schedule: '0 9 * * 1', // Monday 9 AM
+        action: 'Generate weekly report'
+    },
+    task2: {
+        trigger: 'task1_completes',
+        action: 'Email report to stakeholders'
+    },
+    task3: {
+        trigger: 'task2_completes',
+        action: 'Post key metrics to Slack'
+    }
+}
 ```
 
 This ensures tasks run in sequence, with each waiting for the previous to complete.
@@ -246,10 +252,10 @@ Run tasks based on conditions:
 
 ```javascript
 const conditional_task = {
-  schedule: "0 6 * * *", // Daily at 6 AM
-  condition: "IF (unread_emails > 100) OR (high_priority_tickets > 5)",
-  action: "Send urgent summary to team lead"
-};
+    schedule: '0 6 * * *', // Daily at 6 AM
+    condition: 'IF (unread_emails > 100) OR (high_priority_tickets > 5)',
+    action: 'Send urgent summary to team lead'
+}
 ```
 
 Only run if conditions are met. Useful for alerts that should only trigger in specific situations.
@@ -258,18 +264,18 @@ Only run if conditions are met. Useful for alerts that should only trigger in sp
 
 ```javascript
 const reliable_task = {
-  schedule: "0 3 * * *",
-  action: "Backup database",
-  retry: {
-    attempts: 3,
-    delaySeconds: 300 // 5 minutes between retries
-  },
-  onFailure: {
-    notify: ["ops@company.com"],
-    escalate: "after 3 failed attempts",
-    channel: "pagerduty"
-  }
-};
+    schedule: '0 3 * * *',
+    action: 'Backup database',
+    retry: {
+        attempts: 3,
+        delaySeconds: 300 // 5 minutes between retries
+    },
+    onFailure: {
+        notify: ['ops@company.com'],
+        escalate: 'after 3 failed attempts',
+        channel: 'pagerduty'
+    }
+}
 ```
 
 If a task fails, retry automatically. After all retries fail, escalate to on-call team.
@@ -278,14 +284,14 @@ If a task fails, retry automatically. After all retries fail, escalate to on-cal
 
 Different tasks need different cadences:
 
-| Task | Frequency | Rationale |
-|------|-----------|-----------|
-| Email digest | Daily (6-9 AM) | Team reviews once per day |
-| Database backup | Nightly (2-3 AM) | Off-peak, predictable recovery point |
-| Competitive intelligence | Weekly (Friday AM) | Strategic reviews happen Friday |
-| Support ticket summary | Every 2 hours | High-volume, need frequent updates |
-| Monthly reports | Monthly (1st) | Financial/accounting cycles |
-| Health checks | Every 5 minutes | Monitoring requires frequent checks |
+| Task                     | Frequency          | Rationale                            |
+| ------------------------ | ------------------ | ------------------------------------ |
+| Email digest             | Daily (6-9 AM)     | Team reviews once per day            |
+| Database backup          | Nightly (2-3 AM)   | Off-peak, predictable recovery point |
+| Competitive intelligence | Weekly (Friday AM) | Strategic reviews happen Friday      |
+| Support ticket summary   | Every 2 hours      | High-volume, need frequent updates   |
+| Monthly reports          | Monthly (1st)      | Financial/accounting cycles          |
+| Health checks            | Every 5 minutes    | Monitoring requires frequent checks  |
 
 **Key principle**: Schedule based on when the task adds value, not just "whenever it's convenient."
 
@@ -294,12 +300,14 @@ Different tasks need different cadences:
 Scheduling affects both performance and cost:
 
 **Optimal approach**:
+
 - Batch tasks together (one large task every hour is better than many small tasks every minute)
 - Off-peak scheduling (2-4 AM for heavy processing)
 - Stagger tasks (don't run 10 tasks simultaneously if you can spread them)
 - Monitor resource usage (CPU, memory, API calls)
 
 **Cost optimization**:
+
 ```javascript
 // ❌ Bad: Monitoring every 5 minutes, small task
 schedule: "*/5 * * * *", // Runs 288 times per day
@@ -316,18 +324,19 @@ Scheduled tasks need visibility:
 
 ```javascript
 const monitored_task = {
-  schedule: "0 9 * * *",
-  action: "Generate report",
-  monitors: {
-    execution_time: { alert_if: "exceeds 5 minutes" },
-    success_rate: { alert_if: "below 95% this month" },
-    data_quality: { alert_if: "rows processed < expected" }
-  },
-  dashboard: true // Visible on OpenClaw dashboard
-};
+    schedule: '0 9 * * *',
+    action: 'Generate report',
+    monitors: {
+        execution_time: { alert_if: 'exceeds 5 minutes' },
+        success_rate: { alert_if: 'below 95% this month' },
+        data_quality: { alert_if: 'rows processed < expected' }
+    },
+    dashboard: true // Visible on OpenClaw dashboard
+}
 ```
 
 **What to monitor**:
+
 - Execution time (is the task getting slower?)
 - Success rate (how often does it fail?)
 - Data quality (are results what we expect?)
@@ -340,7 +349,7 @@ When a scheduled task fails, you need to understand why:
 
 ```javascript
 // View task execution history
-openclaw.task.history('weekly-report');
+openclaw.task.history('weekly-report')
 
 // See last 5 executions
 // {
@@ -355,12 +364,13 @@ openclaw.task.history('weekly-report');
 // }
 
 // Re-run a failed task manually
-openclaw.task.retry('weekly-report', 'exec_12345');
+openclaw.task.retry('weekly-report', 'exec_12345')
 ```
 
 ## Best Practices for Scheduled Tasks
 
 **Do:**
+
 - Start with manual execution first, then schedule (test thoroughly)
 - Log everything (you'll need logs when debugging)
 - Use off-peak hours for heavy processing
@@ -370,6 +380,7 @@ openclaw.task.retry('weekly-report', 'exec_12345');
 - Document the schedule clearly (why does this run at 2 AM?)
 
 **Don't:**
+
 - Schedule critical tasks at unpredictable times (stick to UTC)
 - Ignore failures (set up alerts)
 - Pack too many tasks into one time slot

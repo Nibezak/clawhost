@@ -2,18 +2,16 @@ import type { FC, ReactNode } from 'react'
 import type {
     ChatSidebarClawHeaderProps,
     ClawCardActions,
-    ElectronWindow,
     ExportRateLimitError
 } from '@/ts/Interfaces'
 
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
-import { clawProvider, clawStatus } from '@openclaw/shared'
+import { clawStatus, userRole } from '@openclaw/shared'
 import { ClockIcon } from '@phosphor-icons/react'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import { useUIStore } from '@/lib/store'
-import { getBaseDomain, getLocale } from '@/lib'
-import { generateSlug } from '@/lib/claw-utils'
+import { getLocale } from '@/lib'
 import { ClawAvatar } from '@/components'
 import {
     useStartClaw,
@@ -38,9 +36,12 @@ import {
 
 const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
     claw,
+    agentCount,
+    isLoadingAgents,
     isReachable: _isReachable,
     isSelected,
     statusConfig,
+    readOnly,
     onOpenClawSettings,
     onCreateAgent: _onCreateAgent
 }): ReactNode => {
@@ -100,7 +101,10 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
             if (res.rootPassword) {
                 const command = `sshpass -p '${res.rootPassword}' ssh -o StrictHostKeyChecking=no root@${claw.ip}`
                 navigator.clipboard.writeText(command)
-                showToast(t('dashboard.sshCommandWithPasswordCopied'), 'success')
+                showToast(
+                    t('dashboard.sshCommandWithPasswordCopied'),
+                    'success'
+                )
             } else {
                 copySSHWithKey()
             }
@@ -224,7 +228,7 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
         <>
             <div
                 onClick={() => onOpenClawSettings(claw.id)}
-                className={`group/header relative mb-1 flex w-full cursor-pointer items-center gap-3 rounded-lg px-2.5 py-1.5 text-left transition-colors ${
+                className={`group/header relative mb-1.5 flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors ${
                     isSelected ? 'bg-foreground/10' : 'hover:bg-foreground/5'
                 }`}
             >
@@ -271,20 +275,14 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                                         weight='fill'
                                     />
                                     <span className='text-muted-foreground truncate text-[11px]'>
-                                        {t(
-                                            'dashboard.scheduledDeletionShort',
-                                            {
-                                                date: new Date(
-                                                    claw.deletionScheduledAt!
-                                                ).toLocaleDateString(
-                                                    getLocale(),
-                                                    {
-                                                        month: 'short',
-                                                        day: 'numeric'
-                                                    }
-                                                )
-                                            }
-                                        )}
+                                        {t('dashboard.scheduledDeletionShort', {
+                                            date: new Date(
+                                                claw.deletionScheduledAt!
+                                            ).toLocaleDateString(getLocale(), {
+                                                month: 'short',
+                                                day: 'numeric'
+                                            })
+                                        })}
                                     </span>
                                 </div>
                             </TooltipTrigger>
@@ -292,97 +290,88 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                                 <p>{t('dashboard.scheduledForDeletion')}</p>
                             </TooltipContent>
                         </Tooltip>
-                    ) : claw.status !== clawStatus.configuring && claw.status !== clawStatus.awaitingPayment ? (
-                        claw.provider === clawProvider.local && claw.subdomain ? (
-                            <button
-                                type='button'
-                                onClick={(e) => {
-                                    e.stopPropagation()
-                                    const url = `https://${claw.subdomain}.clawhost${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`
-                                    const eApi = (window as unknown as ElectronWindow).electronAPI
-                                    if (eApi?.openExternal) {
-                                        eApi.openExternal(url)
-                                    } else {
-                                        window.open(url, '_blank')
-                                    }
-                                }}
-                                className='text-muted-foreground hover:text-foreground/80 block truncate text-[11px] transition-colors'
-                            >
-                                {claw.subdomain}.clawhost
-                            </button>
-                        ) : (
-                            <a
-                                href={`https://${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                onClick={(e) => e.stopPropagation()}
-                                className='text-muted-foreground hover:text-foreground/80 block truncate text-[11px] transition-colors'
-                            >
-                                {claw.subdomain || generateSlug(claw.id)}.
-                                {getBaseDomain()}
-                            </a>
-                        )
-                    ) : (
+                    ) : claw.status === clawStatus.configuring ||
+                      claw.status === clawStatus.awaitingPayment ? (
                         <p className='text-muted-foreground truncate text-[11px]'>
                             {statusConfig.label}
                         </p>
+                    ) : isLoadingAgents ? (
+                        <p className='text-muted-foreground truncate text-[11px]'>
+                            {t('playground.loadingAgents')}
+                        </p>
+                    ) : (
+                        <p className='text-muted-foreground truncate text-[11px]'>
+                            {agentCount === 1
+                                ? t('playground.agentCount', {
+                                      count: String(agentCount)
+                                  })
+                                : t('playground.agentCountPlural', {
+                                      count: String(agentCount)
+                                  })}
+                        </p>
                     )}
                 </div>
-                <div
-                    className='flex shrink-0 items-center gap-1'
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <div>
-                        <ClawCardDropdownMenu
-                            claw={claw}
-                            actions={actions}
-                            isLoading={isMutating}
-                            hasActionItems={hasActionItems}
-                            isScheduledForDeletion={isScheduledForDeletion}
-                            isAdmin={profile?.role === 'admin'}
-                            compact
-                        />
+                {!readOnly && (
+                    <div
+                        className='flex shrink-0 items-center gap-1'
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div>
+                            <ClawCardDropdownMenu
+                                claw={claw}
+                                actions={actions}
+                                isLoading={isMutating}
+                                hasActionItems={hasActionItems}
+                                isScheduledForDeletion={isScheduledForDeletion}
+                                isAdmin={profile?.role === userRole.admin}
+                                compact
+                            />
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
-            <ClawCardDialogs
-                clawName={claw.name}
-                showDeleteModal={showDeleteModal}
-                setShowDeleteModal={setShowDeleteModal}
-                showStopModal={showStopModal}
-                setShowStopModal={setShowStopModal}
-                showRestartModal={showRestartModal}
-                setShowRestartModal={setShowRestartModal}
-                showHardDeleteModal={showHardDeleteModal}
-                setShowHardDeleteModal={setShowHardDeleteModal}
-                onDelete={() => deleteMutation.mutate(claw.id)}
-                onStop={() => stopMutation.mutate(claw.id)}
-                onRestart={() => restartMutation.mutate(claw.id)}
-                onHardDelete={() => hardDeleteMutation.mutate(claw.id)}
-                isDeletePending={deleteMutation.isPending}
-                isStopPending={stopMutation.isPending}
-                isRestartPending={restartMutation.isPending}
-                isHardDeletePending={hardDeleteMutation.isPending}
-                showReinstallModal={showReinstallModal}
-                setShowReinstallModal={setShowReinstallModal}
-                onReinstall={handleReinstall}
-                isReinstallPending={reinstallMutation.isPending}
-            />
-            <ClawDiagnosticsDialog
-                clawId={claw.id}
-                open={showDiagnostics}
-                onOpenChange={setShowDiagnostics}
-            />
-            <ClawLogsDialog
-                clawId={claw.id}
-                open={showLogs}
-                onOpenChange={setShowLogs}
-            />
-            <ClawConfigDialog
-                clawId={claw.id}
-                open={showConfig}
-                onOpenChange={setShowConfig}
-            />
+            {!readOnly && (
+                <>
+                    <ClawCardDialogs
+                        clawName={claw.name}
+                        showDeleteModal={showDeleteModal}
+                        setShowDeleteModal={setShowDeleteModal}
+                        showStopModal={showStopModal}
+                        setShowStopModal={setShowStopModal}
+                        showRestartModal={showRestartModal}
+                        setShowRestartModal={setShowRestartModal}
+                        showHardDeleteModal={showHardDeleteModal}
+                        setShowHardDeleteModal={setShowHardDeleteModal}
+                        onDelete={() => deleteMutation.mutate(claw.id)}
+                        onStop={() => stopMutation.mutate(claw.id)}
+                        onRestart={() => restartMutation.mutate(claw.id)}
+                        onHardDelete={() => hardDeleteMutation.mutate(claw.id)}
+                        isDeletePending={deleteMutation.isPending}
+                        isStopPending={stopMutation.isPending}
+                        isRestartPending={restartMutation.isPending}
+                        isHardDeletePending={hardDeleteMutation.isPending}
+                        showReinstallModal={showReinstallModal}
+                        setShowReinstallModal={setShowReinstallModal}
+                        onReinstall={handleReinstall}
+                        isReinstallPending={reinstallMutation.isPending}
+                    />
+                    <ClawDiagnosticsDialog
+                        clawId={claw.id}
+                        open={showDiagnostics}
+                        onOpenChange={setShowDiagnostics}
+                    />
+                    <ClawLogsDialog
+                        clawId={claw.id}
+                        open={showLogs}
+                        onOpenChange={setShowLogs}
+                    />
+                    <ClawConfigDialog
+                        clawId={claw.id}
+                        open={showConfig}
+                        onOpenChange={setShowConfig}
+                    />
+                </>
+            )}
         </>
     )
 }

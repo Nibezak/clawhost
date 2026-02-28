@@ -29,7 +29,7 @@ import {
 } from '@phosphor-icons/react'
 import { PanelPlaceholder, TruncateTooltip } from '@/components'
 import { Skeleton } from '@/components/ui'
-import { api } from '@/lib'
+import { api, getLocale } from '@/lib'
 import { useUIStore } from '@/lib/store'
 
 const PAGE_SIZE = 50
@@ -277,6 +277,7 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                 agentQueryKey,
                 (old) => {
                     if (!old) return { skills: [{ name }] }
+                    if (old.skills.some((s) => s.name === name)) return old
                     return { skills: [...old.skills, { name }] }
                 }
             )
@@ -629,7 +630,9 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                                                         {t(
                                                             'playground.clawHubDownloads',
                                                             {
-                                                                count: skill.downloads.toLocaleString()
+                                                                count: skill.downloads.toLocaleString(
+                                                                    getLocale()
+                                                                )
                                                             }
                                                         )}
                                                     </span>

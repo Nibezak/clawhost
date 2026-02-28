@@ -1,5 +1,9 @@
 import type { FC, ReactNode } from 'react'
-import type { UserDropdownProps, FooterLink, ElectronWindow } from '@/ts/Interfaces'
+import type {
+    UserDropdownProps,
+    FooterLink,
+    ElectronWindow
+} from '@/ts/Interfaces'
 
 import { useNavigate, useLocation } from 'react-router-dom'
 import { t } from '@openclaw/i18n'

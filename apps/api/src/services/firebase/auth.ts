@@ -1,5 +1,7 @@
+import type { Auth } from 'firebase-admin/auth'
+
 import { initializeApp, cert, getApps } from 'firebase-admin/app'
-import { getAuth, type Auth } from 'firebase-admin/auth'
+import { getAuth } from 'firebase-admin/auth'
 
 let _auth: Auth
 

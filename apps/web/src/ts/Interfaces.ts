@@ -10,8 +10,6 @@ import type {
     ClawAvatarSize,
     ClawStatus,
     DashboardTab,
-    FeatureRequestPlatform,
-    FeatureRequestStatus,
     GatewayConnectionState,
     Language,
     PlaygroundAgentDetailTab,
@@ -19,6 +17,8 @@ import type {
     ProviderType,
     ThemeMode,
     ClawFileType,
+    ChatSidebarViewMode,
+    ChatTypingIndicator,
     CompareFeatureStatus,
     ToastType,
     UserRole
@@ -171,6 +171,8 @@ export interface PreferencesState {
     setLanguage: (language: Language) => void
     openLinksWindowed: boolean
     setOpenLinksWindowed: (value: boolean) => void
+    chatSidebarView: ChatSidebarViewMode
+    setChatSidebarView: (view: ChatSidebarViewMode) => void
 }
 
 export interface CachedProfile {
@@ -608,6 +610,11 @@ export interface ClawLogsContentProps {
     mockLogs?: string
 }
 
+export interface ClawTerminalContentProps {
+    clawId: string
+    enabled: boolean
+}
+
 export interface ClawDiagnosticsContentProps {
     clawId: string
     enabled: boolean
@@ -667,6 +674,8 @@ export interface PlaygroundAgentNodeData {
     clawName: string
     clawId: string
     isSelected: boolean
+    subdomain: string | null
+    gatewayToken: string | null
 }
 
 export interface PlaygroundClawNodeProps {
@@ -757,8 +766,9 @@ export interface DeleteAgentData {
 }
 
 export interface CreateAgentModalProps {
-    clawId: string
-    clawName: string
+    clawId?: string
+    clawName?: string
+    clawsWithAgents?: ClawWithAgents[]
     open: boolean
     onOpenChange: (open: boolean) => void
 }
@@ -882,6 +892,7 @@ export interface UseAgentChatReturn {
     connectionState: GatewayConnectionState
     isLoading: boolean
     isStreaming: boolean
+    typingIndicator: ChatTypingIndicator
     sendMessage: (
         text: string,
         attachments?: ChatAttachment[],
@@ -911,6 +922,31 @@ export interface AgentChatProps {
 
 export interface ChatBubbleProps {
     message: ChatMessage
+    onSpeak?: (messageId: string, text: string) => void
+    onStop?: () => void
+    isSpeaking?: boolean
+    isLoading?: boolean
+}
+
+export interface ChatTypingIndicatorProps {
+    state: ChatTypingIndicator
+}
+
+export interface UseTextToSpeechReturn {
+    activeMessageId: string | null
+    loadingMessageId: string | null
+    speak: (messageId: string, text: string) => void
+    stop: () => void
+    setOutputDeviceId: (deviceId: string | null) => void
+}
+
+export interface ChatSpeechButtonProps {
+    messageId: string
+    text: string
+    isSpeaking: boolean
+    isLoading: boolean
+    onSpeak: (messageId: string, text: string) => void
+    onStop: () => void
 }
 
 export interface ChatInputAttachment {
@@ -925,6 +961,7 @@ export interface ChatInputHandle {
 export interface ChatInputProps {
     isConnected: boolean
     isStreaming: boolean
+    isProcessing: boolean
     onSend: (
         text: string,
         attachments?: ChatAttachment[],
@@ -932,6 +969,25 @@ export interface ChatInputProps {
     ) => void
     onAbort: () => void
     allowAttach?: boolean
+    onVoiceMode?: () => void
+}
+
+export interface VoiceModeOverlayProps {
+    onClose: () => void
+    messages: ChatMessage[]
+    sendMessage: (text: string) => void
+    isStreaming: boolean
+    typingIndicator: ChatTypingIndicator
+    speak: (messageId: string, text: string) => void
+    stopSpeech: () => void
+    ttsActiveMessageId: string | null
+    ttsLoadingMessageId: string | null
+    setOutputDeviceId: (deviceId: string | null) => void
+}
+
+export interface VoiceOrbProps {
+    intensity: number
+    size?: number
 }
 
 export interface ChatMarkdownProps {
@@ -1112,6 +1168,7 @@ export interface ChatSidebarItemProps {
     isLast: boolean
     isChecking?: boolean
     connectionState?: GatewayConnectionState
+    readOnly?: boolean
     onClick: () => void
     onConfigure: () => void
 }
@@ -1131,13 +1188,54 @@ export interface ClawWithAgents {
 export interface ChatSidebarProps {
     clawsWithAgents: ClawWithAgents[]
     selectedAgent: ChatSelectedAgent | null
+    configAgent: ChatSelectedAgent | null
     selectedClawId: string | null
     activeConnectionState?: GatewayConnectionState
+    readOnly?: boolean
     onAgentSelect: (selection: ChatSelectedAgent) => void
     onConfigureAgent: (agentId: string, clawId: string) => void
     onCreateAgent: (clawId: string, clawName: string) => void
     onOpenClawSettings: (clawId: string) => void
     onClose?: () => void
+}
+
+export interface ChatSidebarTreeViewProps {
+    clawsWithAgents: ClawWithAgents[]
+    selectedAgent: ChatSelectedAgent | null
+    selectedClawId: string | null
+    activeConnectionState?: GatewayConnectionState
+    readOnly?: boolean
+    onAgentClick: (agentId: string, clawId: string) => void
+    onConfigureAgent: (agentId: string, clawId: string) => void
+    onCreateAgent: (clawId: string, clawName: string) => void
+    onOpenClawSettings: (clawId: string) => void
+}
+
+export interface ChatSidebarListViewProps {
+    clawsWithAgents: ClawWithAgents[]
+    selectedAgent: ChatSelectedAgent | null
+    configAgent: ChatSelectedAgent | null
+    activeConnectionState?: GatewayConnectionState
+    readOnly?: boolean
+    onAgentClick: (agentId: string, clawId: string) => void
+    onConfigureAgent: (agentId: string, clawId: string) => void
+}
+
+export interface ChatSidebarListItemProps {
+    agentId: string
+    agentName: string
+    agentModel: string | null
+    agentStatus: string
+    clawId: string
+    clawName: string
+    clawSubdomain: string | null
+    clawGatewayToken: string | null
+    isReachable: boolean
+    isActive: boolean
+    activeConnectionState?: GatewayConnectionState
+    readOnly?: boolean
+    onClick: () => void
+    onConfigure: () => void
 }
 
 export interface ChatSidebarAgentListProps {
@@ -1147,6 +1245,7 @@ export interface ChatSidebarAgentListProps {
     isReachable: boolean
     selectedAgent: ChatSelectedAgent | null
     activeConnectionState?: GatewayConnectionState
+    readOnly?: boolean
     onAgentClick: (agentId: string, clawId: string) => void
     onConfigureAgent: (agentId: string, clawId: string) => void
     onCreateAgent: (clawId: string, clawName: string) => void
@@ -1154,9 +1253,12 @@ export interface ChatSidebarAgentListProps {
 
 export interface ChatSidebarClawHeaderProps {
     claw: Claw
+    agentCount: number
+    isLoadingAgents: boolean
     isReachable: boolean
     isSelected: boolean
     statusConfig: StatusConfig
+    readOnly?: boolean
     onOpenClawSettings: (clawId: string) => void
     onCreateAgent: (clawId: string, clawName: string) => void
 }
@@ -1207,6 +1309,11 @@ export interface PlaygroundBindingsContentProps {
     agentId: string
 }
 
+export interface CompareData {
+    competitors: CompareCompetitor[]
+    categories: CompareCategory[]
+}
+
 export interface CompareCompetitor {
     id: string
     nameKey: string
@@ -1229,59 +1336,22 @@ export interface CompareCategory {
     features: CompareFeature[]
 }
 
-export interface FeatureRequest {
-    id: string
-    title: string
-    description: string
-    status: FeatureRequestStatus
-    platforms: FeatureRequestPlatform[]
-    upvoteCount: number
-    userId: string
-    hasUpvoted: boolean
-}
-
-export interface FeatureRequestsListResponse {
-    items: FeatureRequest[]
-    total: number
-}
-
-export interface CreateFeatureRequestData {
-    title: string
-    description: string
-    platforms: FeatureRequestPlatform[]
-}
-
-export interface UpdateFeatureRequestStatusData {
-    status: FeatureRequestStatus
-}
-
-export interface EditFeatureRequestData {
-    title?: string
-    description?: string
-    status?: FeatureRequestStatus
-    platforms?: FeatureRequestPlatform[]
-}
-
-export interface FeatureRequestCardProps {
-    featureRequest: FeatureRequest
-    isAuthenticated: boolean
-    isAdmin: boolean
-    isDeleting: boolean
-    onUpvote: (id: string) => void
-    onEdit: (featureRequest: FeatureRequest) => void
-    onDelete: (id: string) => void
-}
-
-export interface FeatureRequestStatusBadgeProps {
-    status: FeatureRequestStatus
-}
-
 export interface ElectronAPI {
     isDesktop?: boolean
     openExternal: (url: string) => Promise<void>
     openWindowed: (url: string) => Promise<void>
     getDnsStatus: () => Promise<boolean>
     setupDns: () => Promise<boolean>
+}
+
+export interface ScrollToBottomButtonProps {
+    visible: boolean
+    onClick: () => void
+    className?: string
+}
+
+export interface UseScrollToBottomOptions {
+    threshold?: number
 }
 
 export interface ElectronWindow {
@@ -1294,4 +1364,44 @@ export interface RenameClawMutationParams extends RenameClawData {
 
 export interface UpdateClawSubdomainMutationParams extends UpdateClawSubdomainData {
     id: string
+}
+
+export interface SelectContextValue {
+    value: string
+    onValueChange: (value: string) => void
+    displayText: string
+    setDisplayText: (text: string) => void
+}
+
+export interface SelectProps {
+    value: string
+    onValueChange: (value: string) => void
+    children: ReactNode
+    disabled?: boolean
+    displayValue?: string
+}
+
+export interface SelectTriggerProps {
+    placeholder?: string
+    className?: string
+    icon?: ReactNode
+    disabled?: boolean
+}
+
+export interface SelectContentProps {
+    children: ReactNode
+    className?: string
+    align?: 'start' | 'center' | 'end'
+}
+
+export interface SelectItemProps {
+    value: string
+    children: ReactNode
+    className?: string
+}
+
+export interface SelectGroupProps {
+    label: string
+    children: ReactNode
+    isLast?: boolean
 }

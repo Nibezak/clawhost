@@ -33,12 +33,6 @@ const Footer: FC = (): ReactNode => {
                         >
                             {t('footer.changelog')}
                         </Link>
-                        <Link
-                            to={ROUTES.FEATURE_REQUESTS}
-                            className='text-muted-foreground hover:text-foreground text-sm transition-colors'
-                        >
-                            {t('footer.featureRequests')}
-                        </Link>
                         <a
                             href={SUPPORT_EMAIL}
                             className='text-muted-foreground hover:text-foreground text-sm transition-colors'

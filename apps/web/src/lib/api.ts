@@ -5,9 +5,6 @@ import type {
     BillingInvoiceResponse,
     Claw,
     ClawCredentialsResponse,
-    CreateFeatureRequestData,
-    FeatureRequest,
-    FeatureRequestsListResponse,
     RenameClawData,
     UpdateClawSubdomainData,
     ClawAgentsResponse,
@@ -38,8 +35,6 @@ import type {
     UpdateAgentConfigData,
     UpdateAgentSkillsData,
     UpdateClawChannelsData,
-    EditFeatureRequestData,
-    UpdateFeatureRequestStatusData,
     WhatsAppPairResponse,
     WhatsAppPairStatusResponse,
     BrowseClawHubData,
@@ -59,7 +54,6 @@ import type {
     VerifyOtpResponse,
     VolumePricing
 } from '@/ts/Interfaces'
-import type { FeatureRequestSortBy } from '@/ts/Types'
 
 import { RequestClient } from '@openclaw/shared'
 import { signOut } from 'firebase/auth'
@@ -285,30 +279,7 @@ const api = {
             `/users/me/billing/${orderId}/invoice`
         ),
     getCustomerPortal: () =>
-        client.post<CustomerPortalResponse>('/users/me/billing/portal'),
-
-    getFeatureRequests: (sort?: FeatureRequestSortBy) =>
-        client.get<FeatureRequestsListResponse>(
-            `/feature-requests${sort ? `?sort=${sort}` : ''}`
-        ),
-    getFeatureRequestsPublic: (sort?: FeatureRequestSortBy) =>
-        publicClient.get<FeatureRequestsListResponse>(
-            `/feature-requests${sort ? `?sort=${sort}` : ''}`
-        ),
-    createFeatureRequest: (data: CreateFeatureRequestData) =>
-        client.post<FeatureRequest>('/feature-requests', data),
-    upvoteFeatureRequest: (id: string) =>
-        client.post<{ upvoteCount: number; hasUpvoted: boolean }>(
-            `/feature-requests/${id}/upvote`
-        ),
-    editFeatureRequest: (id: string, data: EditFeatureRequestData) =>
-        client.put<void>(`/feature-requests/${id}`, data),
-    updateFeatureRequestStatus: (
-        id: string,
-        data: UpdateFeatureRequestStatusData
-    ) => client.put<void>(`/feature-requests/${id}/status`, data),
-    deleteFeatureRequest: (id: string) =>
-        client.delete<void>(`/feature-requests/${id}`)
+        client.post<CustomerPortalResponse>('/users/me/billing/portal')
 }
 
 export default api

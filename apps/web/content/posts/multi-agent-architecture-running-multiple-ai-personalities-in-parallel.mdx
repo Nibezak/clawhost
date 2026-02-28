@@ -1,14 +1,15 @@
 ---
 title: Multi-Agent Architecture — Running Multiple AI Personaliti
 slug: multi-agent-architecture-running-multiple-ai-personalities-in-parallel
-description: Scale beyond one agent. Learn how to orchestrate multiple OpenClaw instances,
-  each with unique personalities and specializations.
+description:
+    Scale beyond one agent. Learn how to orchestrate multiple OpenClaw instances,
+    each with unique personalities and specializations.
 author: ClawHost
 publishedAt: '2026-02-26'
 tags:
-- openclaw
-- tutorial
-- automation
+    - openclaw
+    - tutorial
+    - automation
 coverImage: /multi-agent-architecture-running-multiple-ai-personalities-in-parallel.webp
 ---
 
@@ -29,15 +30,15 @@ A single OpenClaw agent can do many things:
 ```javascript
 // One agent, many responsibilities
 agent.task = {
-  steps: [
-    "Check email for customer inquiries",
-    "Extract customer details",
-    "Query database for order history",
-    "Process refunds if needed",
-    "Write follow-up emails",
-    "Update CRM"
-  ]
-};
+    steps: [
+        'Check email for customer inquiries',
+        'Extract customer details',
+        'Query database for order history',
+        'Process refunds if needed',
+        'Write follow-up emails',
+        'Update CRM'
+    ]
+}
 ```
 
 This works for simpler workflows, but it has limitations:
@@ -116,48 +117,52 @@ Here's how multiple agents orchestrate in a real customer support scenario:
 **Trigger**: Incoming customer email arrives
 
 **Step 1: Email Agent activates**
+
 ```javascript
 emailAgent.process({
-  input: "Customer email about order not received",
-  output: {
-    customer_id: "12345",
-    intent: "delivery_inquiry",
-    order_id: "ORD-789",
-    sentiment: "concerned",
-    priority: "high"
-  }
-});
+    input: 'Customer email about order not received',
+    output: {
+        customer_id: '12345',
+        intent: 'delivery_inquiry',
+        order_id: 'ORD-789',
+        sentiment: 'concerned',
+        priority: 'high'
+    }
+})
 ```
 
 **Step 2: CRM Agent activates**
+
 ```javascript
 // While email agent works, CRM agent also activates
 // Triggered by event: customer_email_received
 crmAgent.process({
-  input: { customer_id: "12345" },
-  output: {
-    account_status: "active",
-    lifetime_value: "$2000",
-    previous_issues: 0,
-    loyalty_tier: "gold"
-  }
-});
+    input: { customer_id: '12345' },
+    output: {
+        account_status: 'active',
+        lifetime_value: '$2000',
+        previous_issues: 0,
+        loyalty_tier: 'gold'
+    }
+})
 ```
 
 **Step 3: Order Agent activates**
+
 ```javascript
 orderAgent.process({
-  input: { order_id: "ORD-789" },
-  output: {
-    status: "shipped",
-    tracking_number: "12345TRACK",
-    last_update: "5 days ago",
-    estimated_delivery: "2 days overdue"
-  }
-});
+    input: { order_id: 'ORD-789' },
+    output: {
+        status: 'shipped',
+        tracking_number: '12345TRACK',
+        last_update: '5 days ago',
+        estimated_delivery: '2 days overdue'
+    }
+})
 ```
 
 **Step 4: Decision Agent makes call**
+
 ```javascript
 // Data from three agents converges
 decisionAgent.process({
@@ -168,17 +173,18 @@ decisionAgent.process({
 ```
 
 **Step 5: Writer Agent acts**
+
 ```javascript
 writerAgent.process({
-  input: {
-    decision: "authorization_replacement",
-    customer_name: "Sarah Chen",
-    loyalty_tier: "gold"
-  },
-  output: {
-    email: "Hi Sarah, We've located your order and will send a replacement immediately..."
-  }
-});
+    input: {
+        decision: 'authorization_replacement',
+        customer_name: 'Sarah Chen',
+        loyalty_tier: 'gold'
+    },
+    output: {
+        email: "Hi Sarah, We've located your order and will send a replacement immediately..."
+    }
+})
 ```
 
 **Result**: In parallel, four agents worked on different aspects. A request that would take a human 15 minutes (find customer, look up order, apply policy, write response) happened in seconds.
@@ -199,11 +205,15 @@ A ────────► B ────────► C
 
 ```javascript
 workflow = {
-  steps: [
-    { agent: "parseAgent", action: "extract_email_intent" },
-    { trigger: "parseAgent.done", agent: "responseAgent", action: "generate_response" }
-  ]
-};
+    steps: [
+        { agent: 'parseAgent', action: 'extract_email_intent' },
+        {
+            trigger: 'parseAgent.done',
+            agent: 'responseAgent',
+            action: 'generate_response'
+        }
+    ]
+}
 ```
 
 ### 2. Parallel Pattern
@@ -224,13 +234,13 @@ Start             ► Merge
 
 ```javascript
 workflow = {
-  parallel: [
-    { agent: "refundAgent", action: "process" },
-    { agent: "crmAgent", action: "update_record" },
-    { agent: "sentimentAgent", action: "analyze" }
-  ],
-  merge: "when_all_complete"
-};
+    parallel: [
+        { agent: 'refundAgent', action: 'process' },
+        { agent: 'crmAgent', action: 'update_record' },
+        { agent: 'sentimentAgent', action: 'analyze' }
+    ],
+    merge: 'when_all_complete'
+}
 ```
 
 ### 3. Conditional Pattern
@@ -249,14 +259,14 @@ A ────┤                   ├──► Next
 
 ```javascript
 workflow = {
-  agent: "classificationAgent",
-  output: { reason: "damaged_goods" },
-  routes: {
-    damaged_goods: "expeditedRefundAgent",
-    lost_package: "carriercomplaintAgent",
-    wrong_item: "swapFulfillmentAgent"
-  }
-};
+    agent: 'classificationAgent',
+    output: { reason: 'damaged_goods' },
+    routes: {
+        damaged_goods: 'expeditedRefundAgent',
+        lost_package: 'carriercomplaintAgent',
+        wrong_item: 'swapFulfillmentAgent'
+    }
+}
 ```
 
 ### 4. Hub-and-Spoke Pattern
@@ -277,14 +287,14 @@ Central ─┼─► Specialist B
 
 ```javascript
 workflow = {
-  coordinator: "approvalCoordinator",
-  reviews: [
-    { agent: "complianceAgent", check: "regulatory_approval" },
-    { agent: "riskAgent", check: "fraud_detection" },
-    { agent: "financeAgent", check: "budget_availability" }
-  ],
-  decision: "approve if all_agents agree"
-};
+    coordinator: 'approvalCoordinator',
+    reviews: [
+        { agent: 'complianceAgent', check: 'regulatory_approval' },
+        { agent: 'riskAgent', check: 'fraud_detection' },
+        { agent: 'financeAgent', check: 'budget_availability' }
+    ],
+    decision: 'approve if all_agents agree'
+}
 ```
 
 ## Building Your First Multi-Agent System
@@ -295,22 +305,22 @@ Start by identifying what each agent needs to be good at:
 
 ```javascript
 const agents = {
-  research: {
-    name: "Research Specialist",
-    skills: ["web browsing", "data extraction", "analysis"],
-    personality: "thorough, detail-oriented"
-  },
-  decision: {
-    name: "Decision Maker",
-    skills: ["evaluation", "comparison", "judgment"],
-    personality: "pragmatic, focused on outcomes"
-  },
-  execution: {
-    name: "Execution Agent",
-    skills: ["automation", "API integration", "error handling"],
-    personality: "reliable, persistent"
-  }
-};
+    research: {
+        name: 'Research Specialist',
+        skills: ['web browsing', 'data extraction', 'analysis'],
+        personality: 'thorough, detail-oriented'
+    },
+    decision: {
+        name: 'Decision Maker',
+        skills: ['evaluation', 'comparison', 'judgment'],
+        personality: 'pragmatic, focused on outcomes'
+    },
+    execution: {
+        name: 'Execution Agent',
+        skills: ['automation', 'API integration', 'error handling'],
+        personality: 'reliable, persistent'
+    }
+}
 ```
 
 ### Step 2: Define Data Formats
@@ -329,7 +339,7 @@ const schemas = {
     }],
     timestamp: ISO8601
   },
-  
+
   decision_output: {
     recommendation: string,
     reasoning: string,
@@ -346,21 +356,21 @@ Start with two agents. Get them working well. Then add more:
 ```javascript
 // Phase 1: Two agents, simple communication
 const v1 = {
-  agents: ["research", "decision"],
-  flow: "research.output → decision.input"
-};
+    agents: ['research', 'decision'],
+    flow: 'research.output → decision.input'
+}
 
 // Phase 2: Add execution
 const v2 = {
-  agents: ["research", "decision", "execution"],
-  flow: "research → decision → execution"
-};
+    agents: ['research', 'decision', 'execution'],
+    flow: 'research → decision → execution'
+}
 
 // Phase 3: Add parallelization
 const v3 = {
-  agents: ["research", "decision", "execution", "notification"],
-  flow: "research → decision, execution, and notification in parallel"
-};
+    agents: ['research', 'decision', 'execution', 'notification'],
+    flow: 'research → decision, execution, and notification in parallel'
+}
 ```
 
 ### Step 4: Implement Error Handling
@@ -369,17 +379,17 @@ Multi-agent systems need thoughtful error handling:
 
 ```javascript
 agent.configure({
-  on_agent_failure: {
-    research_fails: "skip and proceed with previous data",
-    decision_fails: "escalate to human",
-    execution_fails: "retry 3 times, then alert"
-  },
-  timeouts: {
-    research: 60000,       // 60 seconds
-    decision: 30000,       // 30 seconds
-    execution: 120000      // 120 seconds
-  }
-});
+    on_agent_failure: {
+        research_fails: 'skip and proceed with previous data',
+        decision_fails: 'escalate to human',
+        execution_fails: 'retry 3 times, then alert'
+    },
+    timeouts: {
+        research: 60000, // 60 seconds
+        decision: 30000, // 30 seconds
+        execution: 120000 // 120 seconds
+    }
+})
 ```
 
 ## Advanced Patterns
@@ -412,13 +422,13 @@ Some systems choose agents dynamically based on task:
 ```javascript
 const taskRouter = {
   input: "new customer support ticket",
-  
+
   evaluate: {
     complexity: analyze_ticket(ticket),
     required_skills: extract_required_skills(ticket),
     time_budget: customer_tier_to_speed(ticket)
   },
-  
+
   select_agents: {
     if (complexity == "high"): ["research_deep", "decision_expert", "execution_careful"],
     if (complexity == "medium"): ["research_basic", "decision_standard", "execution_standard"],
@@ -433,16 +443,16 @@ Agents that can diagnose and fix each other:
 
 ```javascript
 const selfHealing = {
-  healthAgent: {
-    monitors: ["all_other_agents"],
-    checks: ["response_time", "error_rate", "output_quality"],
-    action: {
-      if_agent_slow: "route work to parallel agent",
-      if_agent_failing: "isolate and alert engineer",
-      if_quality_drops: "require human review"
+    healthAgent: {
+        monitors: ['all_other_agents'],
+        checks: ['response_time', 'error_rate', 'output_quality'],
+        action: {
+            if_agent_slow: 'route work to parallel agent',
+            if_agent_failing: 'isolate and alert engineer',
+            if_quality_drops: 'require human review'
+        }
     }
-  }
-};
+}
 ```
 
 ## Real-World Deployment: E-Commerce Example
@@ -465,29 +475,29 @@ Let's build a complete multi-agent e-commerce system:
 
 ```javascript
 ecommerceWorkflow = {
-  parallel_phase_1: [
-    // Product agent works
-    { agent: "product", action: "get_variants" },
-    // Pricing agent works
-    { agent: "pricing", action: "calculate_final_price" },
-    // Inventory agent reserves stock
-    { agent: "inventory", action: "reserve_items" }
-  ],
-  
-  sequential_phase_2: [
-    // Fraud check (must happen before payment)
-    { agent: "fraud", action: "evaluate_risk", threshold: 0.1 },
-    // Only if approved by fraud agent
-    { agent: "payment", action: "charge_card" }
-  ],
-  
-  parallel_phase_3: [
-    // Now that payment succeeded
-    { agent: "inventory", action: "confirm_reservation" },
-    { agent: "shipping", action: "create_shipment" },
-    { agent: "notification", action: "send_confirmation" }
-  ]
-};
+    parallel_phase_1: [
+        // Product agent works
+        { agent: 'product', action: 'get_variants' },
+        // Pricing agent works
+        { agent: 'pricing', action: 'calculate_final_price' },
+        // Inventory agent reserves stock
+        { agent: 'inventory', action: 'reserve_items' }
+    ],
+
+    sequential_phase_2: [
+        // Fraud check (must happen before payment)
+        { agent: 'fraud', action: 'evaluate_risk', threshold: 0.1 },
+        // Only if approved by fraud agent
+        { agent: 'payment', action: 'charge_card' }
+    ],
+
+    parallel_phase_3: [
+        // Now that payment succeeded
+        { agent: 'inventory', action: 'confirm_reservation' },
+        { agent: 'shipping', action: 'create_shipment' },
+        { agent: 'notification', action: 'send_confirmation' }
+    ]
+}
 ```
 
 **Result**: Complex workflow that used to require many engineers to coordinate now orchestrates automatically. Each agent can improve independently.
@@ -507,21 +517,21 @@ Multiple agents need more compute than one:
 
 ```javascript
 resource_estimate = {
-  single_agent: {
-    cpu: "2 cores",
-    memory: "2GB",
-    concurrent: 10
-  },
-  
-  four_agents: {
-    cpu: "8 cores",
-    memory: "8GB",
-    concurrent: 40
-  },
-  
-  // But ROI is there: 4x more capability
-  throughput_multiplier: 3.5  // Not quite 4x due to overhead
-};
+    single_agent: {
+        cpu: '2 cores',
+        memory: '2GB',
+        concurrent: 10
+    },
+
+    four_agents: {
+        cpu: '8 cores',
+        memory: '8GB',
+        concurrent: 40
+    },
+
+    // But ROI is there: 4x more capability
+    throughput_multiplier: 3.5 // Not quite 4x due to overhead
+}
 ```
 
 ### Debugging Multi-Agent Systems
@@ -529,6 +539,7 @@ resource_estimate = {
 Complexity increases debugging difficulty:
 
 **Best practices**:
+
 - Log every agent transition
 - Store message history for replay
 - Implement agent health checks
@@ -537,17 +548,18 @@ Complexity increases debugging difficulty:
 
 ```javascript
 logging = {
-  agent_state_changes: true,
-  message_content: true,
-  decision_reasoning: true,
-  error_stack_traces: true,
-  export_format: "structured logs for analysis"
-};
+    agent_state_changes: true,
+    message_content: true,
+    decision_reasoning: true,
+    error_stack_traces: true,
+    export_format: 'structured logs for analysis'
+}
 ```
 
 ## When Multi-Agent Systems Are Worth It
 
 **Good fits**:
+
 - Complex workflows with independent substeps
 - Tasks requiring different expertise
 - High-volume processing (parallelization saves time)
@@ -555,6 +567,7 @@ logging = {
 - Enterprise applications (specialization, responsibility clarity)
 
 **Overkill for**:
+
 - Simple sequential tasks
 - Small-scale operations
 - Low-complexity processes

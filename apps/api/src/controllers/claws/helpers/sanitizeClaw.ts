@@ -1,6 +1,6 @@
-function sanitizeClaw<T extends Record<string, unknown>>(
+const sanitizeClaw = <T extends Record<string, unknown>>(
     claw: T
-): Omit<T, 'rootPassword'> & { hasRootPassword: boolean } {
+): Omit<T, 'rootPassword'> & { hasRootPassword: boolean } => {
     const { rootPassword, ...safe } = claw as T & { rootPassword?: unknown }
     return {
         ...safe,

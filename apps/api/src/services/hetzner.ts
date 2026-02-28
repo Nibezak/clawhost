@@ -23,7 +23,7 @@ import type {
 
 import { RequestClient } from '@openclaw/shared'
 
-function getClient() {
+const getClient = () => {
     const token = process.env.HETZNER_API_TOKEN
     if (!token) {
         throw new Error('HETZNER_API_TOKEN is not set')

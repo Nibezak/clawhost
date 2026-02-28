@@ -1,16 +1,17 @@
 ---
 title: Self-Hosting OpenClaw — Running Your Own AI Agent on a VPS
 slug: self-hosting-openclaw-running-your-own-ai-agent-on-a-vps
-description: Complete control over your AI. Learn how to self-host OpenClaw on a VPS,
-  maintain your data, and avoid dependency on third parties.
+description:
+    Complete control over your AI. Learn how to self-host OpenClaw on a VPS,
+    maintain your data, and avoid dependency on third parties.
 author: ClawHost
 publishedAt: '2026-02-26'
 tags:
-- openclaw
-- ' self-hosting'
-- ' vps'
-- ' deployment'
-- ' privacy'
+    - openclaw
+    - ' self-hosting'
+    - ' vps'
+    - ' deployment'
+    - ' privacy'
 coverImage: /self-hosting-openclaw-running-your-own-ai-agent-on-a-vps.webp
 ---
 
@@ -114,18 +115,19 @@ Self-hosting satisfies these requirements.
 
 Self-hosting isn't free of costs:
 
-| Aspect | Self-Hosted | Cloud (ClawHost) |
-|--------|-------------|------------------|
-| **Setup effort** | High | Low |
-| **Maintenance burden** | High | None |
-| **Uptime responsibility** | Yours | ClawHost's |
-| **Scaling complexity** | Complex | Simple |
-| **Upfront cost** | Low-medium | Medium |
-| **Ongoing cost** | Medium-high | Monthly/pay-as-you-go |
-| **Data privacy** | Complete | ClawHost-managed |
-| **Customization** | Unlimited | Limited |
+| Aspect                    | Self-Hosted | Cloud (ClawHost)      |
+| ------------------------- | ----------- | --------------------- |
+| **Setup effort**          | High        | Low                   |
+| **Maintenance burden**    | High        | None                  |
+| **Uptime responsibility** | Yours       | ClawHost's            |
+| **Scaling complexity**    | Complex     | Simple                |
+| **Upfront cost**          | Low-medium  | Medium                |
+| **Ongoing cost**          | Medium-high | Monthly/pay-as-you-go |
+| **Data privacy**          | Complete    | ClawHost-managed      |
+| **Customization**         | Unlimited   | Limited               |
 
 Self-hosting is best if you have:
+
 - Technical expertise
 - Significant usage
 - Privacy/compliance requirements
@@ -137,17 +139,18 @@ Self-hosting is best if you have:
 
 Popular options:
 
-| Provider | Cost | Specs | Notes |
-|----------|------|-------|-------|
-| **DigitalOcean** | $6-40/month | 1-8 CPU, 1-32GB RAM | Simple, great for beginners |
-| **Hetzner** | €4-50/month | 1-8 CPU, 2-32GB RAM | Very affordable, Europe-based |
-| **Vultr** | $2.50-60/month | 1-16 CPU, 512MB-64GB RAM | Global availability |
-| **Linode** | $5-200/month | 1-32 CPU, 1-192GB RAM | Good for larger deployments |
-| **AWS** | Variable | Flexible | Most expensive, most powerful |
+| Provider         | Cost           | Specs                    | Notes                         |
+| ---------------- | -------------- | ------------------------ | ----------------------------- |
+| **DigitalOcean** | $6-40/month    | 1-8 CPU, 1-32GB RAM      | Simple, great for beginners   |
+| **Hetzner**      | €4-50/month    | 1-8 CPU, 2-32GB RAM      | Very affordable, Europe-based |
+| **Vultr**        | $2.50-60/month | 1-16 CPU, 512MB-64GB RAM | Global availability           |
+| **Linode**       | $5-200/month   | 1-32 CPU, 1-192GB RAM    | Good for larger deployments   |
+| **AWS**          | Variable       | Flexible                 | Most expensive, most powerful |
 
 **Recommendation for starting**: DigitalOcean or Hetzner. Both are affordable, easy to use, and have good documentation.
 
 **Minimum specs**:
+
 - 2 CPU cores
 - 4GB RAM minimum (8GB recommended)
 - 50GB SSD storage
@@ -201,6 +204,7 @@ nano .env
 ```
 
 In `.env`, set:
+
 ```bash
 # Database connection
 DATABASE_URL=postgres://user:password@localhost:5432/openclaw
@@ -225,6 +229,7 @@ sudo -u postgres psql
 ```
 
 In the PostgreSQL prompt:
+
 ```sql
 CREATE USER openclaw WITH PASSWORD 'secure-password-here';
 CREATE DATABASE openclaw OWNER openclaw;
@@ -233,6 +238,7 @@ GRANT ALL PRIVILEGES ON DATABASE openclaw TO openclaw;
 ```
 
 Then run migrations:
+
 ```bash
 npm run migrate
 ```
@@ -242,40 +248,40 @@ npm run migrate
 Create a configuration file `agents/my-agent.yml`:
 
 ```yaml
-name: "My First Agent"
-type: "general"
+name: 'My First Agent'
+type: 'general'
 
 capabilities:
-  - email
-  - browser
-  - file_operations
-  - code_execution
+    - email
+    - browser
+    - file_operations
+    - code_execution
 
 permissions:
-  email:
-    read: true
-    send: true
-    folders: ["inbox", "sent"]
-  
-  browser:
-    enabled: true
-    max_requests: 100_per_day
-  
-  file_operations:
-    enabled: true
-    allowed_paths:
-      - "/home/openclaw/data"
-      - "/home/openclaw/documents"
+    email:
+        read: true
+        send: true
+        folders: ['inbox', 'sent']
+
+    browser:
+        enabled: true
+        max_requests: 100_per_day
+
+    file_operations:
+        enabled: true
+        allowed_paths:
+            - '/home/openclaw/data'
+            - '/home/openclaw/documents'
 
 model:
-  provider: "openai"
-  model: "gpt-4"
-  temperature: 0.7
+    provider: 'openai'
+    model: 'gpt-4'
+    temperature: 0.7
 
 memory:
-  type: "file_based"
-  path: "/home/openclaw/memory"
-  retention_days: 365
+    type: 'file_based'
+    path: '/home/openclaw/memory'
+    retention_days: 365
 ```
 
 ### Step 6: Start the Gateway
@@ -338,6 +344,7 @@ server {
 ```
 
 Enable it:
+
 ```bash
 sudo ln -s /etc/nginx/sites-available/openclaw /etc/nginx/sites-enabled/
 sudo nginx -t
@@ -370,6 +377,7 @@ WantedBy=multi-user.target
 ```
 
 Enable it:
+
 ```bash
 sudo systemctl enable openclaw
 sudo systemctl start openclaw
@@ -510,6 +518,7 @@ sudo systemctl enable unattended-upgrades
 ## Troubleshooting Common Issues
 
 ### Issue: "Connection refused" to Gateway
+
 ```bash
 # Check if Gateway is running
 ps aux | grep gateway
@@ -522,6 +531,7 @@ sudo netstat -tlnp | grep 3000
 ```
 
 ### Issue: Database connection failures
+
 ```bash
 # Test PostgreSQL
 psql -U openclaw -d openclaw
@@ -532,6 +542,7 @@ sudo systemctl restart postgresql
 ```
 
 ### Issue: Agent tasks timing out
+
 ```bash
 # Increase timeout in .env
 AGENT_TASK_TIMEOUT=60000  # 60 seconds
@@ -564,6 +575,7 @@ For heavy usage, self-hosting breaks even or saves money.
 ## When Self-Hosting Makes Sense
 
 **Good fit for**:
+
 - Organizations with heavy agent usage (>500M tokens/month)
 - Regulated industries (healthcare, finance, government)
 - Privacy-sensitive data
@@ -571,6 +583,7 @@ For heavy usage, self-hosting breaks even or saves money.
 - Long-term commitment (3+ years)
 
 **Not a good fit for**:
+
 - Small projects or experiments
 - Organizations without technical staff
 - Applications requiring 99.99% uptime

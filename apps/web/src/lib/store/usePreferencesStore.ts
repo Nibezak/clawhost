@@ -6,7 +6,7 @@ import { setLanguage as setI18nLanguage } from '@openclaw/i18n'
 import DASHBOARD_TABS from '@/lib/dashboardTabs'
 import THEMES from '@/lib/themes'
 import LANGUAGES from '@/lib/languages'
-import { STORAGE_KEYS } from '@/lib/storageKeys'
+import STORAGE_KEYS from '@/lib/storageKeys'
 
 const VALID_TABS = new Set<string>(Object.values(DASHBOARD_TABS))
 
@@ -25,7 +25,9 @@ const usePreferencesStore = create<PreferencesState>()(
                 set({ language })
             },
             openLinksWindowed: false,
-            setOpenLinksWindowed: (value) => set({ openLinksWindowed: value })
+            setOpenLinksWindowed: (value) => set({ openLinksWindowed: value }),
+            chatSidebarView: 'tree',
+            setChatSidebarView: (view) => set({ chatSidebarView: view })
         }),
         {
             name: STORAGE_KEYS.PREFERENCES,
@@ -43,9 +45,12 @@ const usePreferencesStore = create<PreferencesState>()(
                 if (version < 4) {
                     state.openLinksWindowed = state.openLinksWindowed ?? false
                 }
+                if (version < 5) {
+                    state.chatSidebarView = state.chatSidebarView || 'tree'
+                }
                 return state
             },
-            version: 4
+            version: 5
         }
     )
 )

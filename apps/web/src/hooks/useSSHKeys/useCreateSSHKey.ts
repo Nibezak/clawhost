@@ -11,9 +11,11 @@ const useCreateSSHKey = () => {
     return useMutation({
         mutationFn: (data: CreateSSHKeyData) => api.createSSHKey(data),
         onSuccess: (newKey) => {
-            queryClient.setQueryData<SSHKey[]>(SSH_KEYS_QUERY_KEY, (old) =>
-                old ? [...old, newKey] : [newKey]
-            )
+            queryClient.setQueryData<SSHKey[]>(SSH_KEYS_QUERY_KEY, (old) => {
+                if (!old) return [newKey]
+                if (old.some((k) => k.id === newKey.id)) return old
+                return [...old, newKey]
+            })
             queryClient.invalidateQueries({ queryKey: USER_STATS_QUERY_KEY })
         }
     })

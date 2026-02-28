@@ -21,7 +21,7 @@ import type {
 
 import { RequestClient, clawStatus } from '@openclaw/shared'
 
-function getClient() {
+const getClient = () => {
     const token = process.env.DIGITALOCEAN_API_TOKEN
     if (!token) {
         throw new Error('DIGITALOCEAN_API_TOKEN is not set')
@@ -36,12 +36,14 @@ function getClient() {
     })
 }
 
-function getPublicIp(droplet: DigitalOceanDropletResponse['droplet']): string {
+const getPublicIp = (
+    droplet: DigitalOceanDropletResponse['droplet']
+): string => {
     const v4 = droplet.networks.v4.find((n) => n.type === 'public')
     return v4?.ip_address || ''
 }
 
-function mapStatus(doStatus: string): string {
+const mapStatus = (doStatus: string): string => {
     const statusMap: Record<string, string> = {
         new: clawStatus.initializing,
         active: clawStatus.running,

@@ -17,8 +17,7 @@ export type {
     ThemeMode,
     ToastType,
     ClawFileType,
-    FeatureRequestSortBy,
-    FeatureRequestStatus,
+    ChatSidebarViewMode,
     UserRole
 } from '@/ts/Types'
 
@@ -86,12 +85,16 @@ export type {
     AgentChatProps,
     ChatAbortParams,
     ChatBubbleProps,
+    UseTextToSpeechReturn,
+    ChatSpeechButtonProps,
     ChatEmptyStateProps,
     ChatEventPayload,
     ChatHistoryParams,
     ChatHistoryEntry,
     ChatInputProps,
     ChatMessage,
+    VoiceModeOverlayProps,
+    VoiceOrbProps,
     ChatSendParams,
     ChatStatusBarProps,
     GatewayPendingRequest,
@@ -105,14 +108,9 @@ export type {
     BrowseClawHubData,
     ClawHubSkillActionData,
     ClawHubUpdateData,
+    CompareData,
     CompareCompetitor,
     CompareFeatureValue,
     CompareFeature,
-    CompareCategory,
-    CreateFeatureRequestData,
-    FeatureRequest,
-    FeatureRequestCardProps,
-    FeatureRequestsListResponse,
-    FeatureRequestStatusBadgeProps,
-    UpdateFeatureRequestStatusData
+    CompareCategory
 } from '@/ts/Interfaces'

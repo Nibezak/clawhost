@@ -33,10 +33,13 @@ ClawHost is an open-source, self-hostable cloud hosting platform that lets anyon
 - **Dedicated VPS** — Real servers with full root access, not shared containers
 - **Agent Playground** — Visual canvas for managing AI agents with drag-and-drop workflows
 - **Chat Interface** — Real-time WebSocket chat with your OpenClaw agents
-- **Channel Integrations** — Connect Telegram, Discord, Slack, Signal, and WhatsApp
+- **Browser Terminal** — Full SSH terminal access directly from the dashboard via WebSocket
+- **Text-to-Speech** — Local TTS synthesis with Piper for reading agent responses aloud
+- **Channel Integrations** — Connect Telegram, Discord, Slack, Signal, and WhatsApp (with in-app QR pairing)
 - **Skills & ClawHub** — Browse, install, and manage skills from the ClawHub marketplace
 - **Diagnostics & Logs** — Monitor server health, view logs, and repair instances
 - **File & Env Management** — Edit configuration files and environment variables remotely
+- **Version Management** — View installed OpenClaw version, browse available versions, and upgrade
 - **Automatic SSL** — HTTPS via Let's Encrypt, configured automatically
 - **DNS Management** — Automatic subdomain creation via Cloudflare
 - **SSH Key Management** — Store and assign keys for passwordless access across all providers
@@ -77,6 +80,8 @@ clawhost/
 | **Authentication**      | [Firebase](https://firebase.google.com) (OTP email, Google, GitHub)                                                             |
 | **Server Provisioning** | [Hetzner Cloud](https://docs.hetzner.cloud), [DigitalOcean](https://docs.digitalocean.com), [Vultr](https://www.vultr.com/api/) |
 | **Remote Management**   | SSH2 for remote command execution, file management, and diagnostics                                                             |
+| **Browser Terminal**    | [xterm.js](https://xtermjs.org) with WebSocket proxy over SSH2                                                                  |
+| **Text-to-Speech**      | [Piper](https://github.com/rhasspy/piper) for local neural TTS synthesis                                                        |
 | **DNS**                 | [Cloudflare API](https://developers.cloudflare.com/api)                                                                         |
 | **Billing**             | [Polar.sh](https://polar.sh)                                                                                                    |
 | **Email**               | [Resend](https://resend.com) with React Email                                                                                   |
@@ -169,7 +174,12 @@ FROM_EMAIL=OpenClaw <noreply@yourdomain.com>
 
 # Server
 PORT=2222
+WS_PORT=2223
 CLIENT=localhost:1111
+
+# Text-to-Speech (optional — required only for TTS feature)
+PIPER_BINARY=piper
+PIPER_MODELS_DIR=/path/to/piper/models
 ```
 
 **Web** — create `apps/web/.env`:
@@ -177,6 +187,9 @@ CLIENT=localhost:1111
 ```bash
 # API
 VITE_API_URL=/api
+VITE_API_PORT=2222
+VITE_WS_PORT=2223
+VITE_PORT=1111
 
 # Firebase Client SDK
 VITE_FIREBASE_API_KEY=AIza...
@@ -268,6 +281,20 @@ All three sign-in methods (OTP, Google, GitHub) are always displayed in the UI, 
 
 </details>
 
+<details>
+<summary><strong>Piper TTS (optional)</strong></summary>
+
+Text-to-speech is powered by [Piper](https://github.com/rhasspy/piper), a fast local neural TTS engine. This is optional — the platform works without it, but the chat speech feature will be unavailable.
+
+1. Download the Piper binary for your platform from the [Piper releases](https://github.com/rhasspy/piper/releases)
+2. Download voice model `.onnx` files and their `.onnx.json` configs from [Piper voices](https://github.com/rhasspy/piper/blob/master/VOICES.md)
+3. Place models in a directory (e.g., `ai/models/`)
+4. Set environment variables:
+    - `PIPER_BINARY` — path to the piper binary (defaults to `piper` on PATH)
+    - `PIPER_MODELS_DIR` — path to the models directory (defaults to `ai/models/` relative to the API)
+
+</details>
+
 ### 4. Initialize Database
 
 ```bash
@@ -282,12 +309,13 @@ pnpm dev
 
 This starts both apps:
 
-| App | URL                   |
-| --- | --------------------- |
-| Web | http://localhost:1111 |
-| API | http://localhost:2222 |
+| App       | URL                   |
+| --------- | --------------------- |
+| Web       | http://localhost:1111 |
+| API       | http://localhost:2222 |
+| WebSocket | ws://localhost:2223   |
 
-The web dev server proxies `/api` requests to the API server automatically.
+The web dev server proxies `/api` requests to the API and `/ws` requests to the WebSocket server automatically.
 
 ## Scripts
 
@@ -333,25 +361,37 @@ pnpm --filter api email:dev    # Preview email templates at localhost:3333
 | `GET`  | `/api/plans/locations`      | List available regions            |
 | `GET`  | `/api/plans/volume-pricing` | Get volume pricing                |
 | `GET`  | `/api/plans/availability`   | Check plan availability           |
+| `GET`  | `/api/clawhub/skills`       | Browse ClawHub skills marketplace |
 
 ### Protected Endpoints (Bearer token required)
 
+**AI (Text-to-Speech)**
+
+| Method | Endpoint         | Description                     |
+| ------ | ---------------- | ------------------------------- |
+| `POST` | `/api/ai/tts`    | Generate speech audio from text |
+| `GET`  | `/api/ai/voices` | List available TTS voices       |
+
 **Claws (Server Instances)**
 
-| Method   | Endpoint                         | Description                   |
-| -------- | -------------------------------- | ----------------------------- |
-| `GET`    | `/api/claws`                     | List user's claws             |
-| `GET`    | `/api/claws/:id`                 | Get a specific claw           |
-| `POST`   | `/api/claws`                     | Create a claw (direct)        |
-| `POST`   | `/api/claws/purchase`            | Initiate paid claw purchase   |
-| `POST`   | `/api/claws/:id/sync`            | Sync claw with cloud provider |
-| `POST`   | `/api/claws/:id/start`           | Start a claw                  |
-| `POST`   | `/api/claws/:id/stop`            | Stop a claw                   |
-| `POST`   | `/api/claws/:id/restart`         | Restart a claw                |
-| `POST`   | `/api/claws/:id/cancel-deletion` | Cancel scheduled deletion     |
-| `DELETE` | `/api/claws/:id`                 | Delete a claw                 |
-| `GET`    | `/api/claws/:id/export`          | Export claw configuration     |
-| `POST`   | `/api/claws/:id/version`         | Get OpenClaw version          |
+| Method   | Endpoint                         | Description                    |
+| -------- | -------------------------------- | ------------------------------ |
+| `GET`    | `/api/claws`                     | List user's claws              |
+| `GET`    | `/api/claws/:id`                 | Get a specific claw            |
+| `POST`   | `/api/claws`                     | Create a claw (direct)         |
+| `POST`   | `/api/claws/purchase`            | Initiate paid claw purchase    |
+| `DELETE` | `/api/claws/pending/:id`         | Cancel a pending claw          |
+| `POST`   | `/api/claws/:id/sync`            | Sync claw with cloud provider  |
+| `POST`   | `/api/claws/:id/start`           | Start a claw                   |
+| `POST`   | `/api/claws/:id/stop`            | Stop a claw                    |
+| `POST`   | `/api/claws/:id/restart`         | Restart a claw                 |
+| `PATCH`  | `/api/claws/:id`                 | Rename a claw                  |
+| `POST`   | `/api/claws/:id/cancel-deletion` | Cancel scheduled deletion      |
+| `DELETE` | `/api/claws/:id`                 | Delete a claw                  |
+| `GET`    | `/api/claws/:id/export`          | Export claw configuration      |
+| `POST`   | `/api/claws/:id/credentials`     | Get claw credentials           |
+| `POST`   | `/api/claws/:id/version`         | Get installed OpenClaw version |
+| `POST`   | `/api/claws/:id/versions`        | List available versions        |
 
 **Claw Diagnostics**
 
@@ -372,10 +412,19 @@ pnpm --filter api email:dev    # Preview email templates at localhost:3333
 
 **Claw Channels**
 
-| Method | Endpoint                  | Description                  |
-| ------ | ------------------------- | ---------------------------- |
-| `POST` | `/api/claws/:id/channels` | Get configured channels      |
-| `PUT`  | `/api/claws/:id/channels` | Update channel configuration |
+| Method | Endpoint                                       | Description                  |
+| ------ | ---------------------------------------------- | ---------------------------- |
+| `POST` | `/api/claws/:id/channels`                      | Get configured channels      |
+| `PUT`  | `/api/claws/:id/channels`                      | Update channel configuration |
+| `POST` | `/api/claws/:id/channels/whatsapp/pair`        | Start WhatsApp QR pairing    |
+| `POST` | `/api/claws/:id/channels/whatsapp/pair-status` | Check WhatsApp pair status   |
+
+**Claw Bindings**
+
+| Method | Endpoint                  | Description          |
+| ------ | ------------------------- | -------------------- |
+| `POST` | `/api/claws/:id/bindings` | Get claw bindings    |
+| `PUT`  | `/api/claws/:id/bindings` | Update claw bindings |
 
 **Claw Skills**
 
@@ -390,7 +439,7 @@ pnpm --filter api email:dev    # Preview email templates at localhost:3333
 
 | Method | Endpoint                           | Description                 |
 | ------ | ---------------------------------- | --------------------------- |
-| `POST` | `/api/claws/:id/clawhub/search`    | Search ClawHub skills       |
+| `GET`  | `/api/claws/:id/clawhub/skills`    | Browse ClawHub skills       |
 | `POST` | `/api/claws/:id/clawhub/installed` | List installed skills       |
 | `POST` | `/api/claws/:id/clawhub/install`   | Install a skill             |
 | `POST` | `/api/claws/:id/clawhub/remove`    | Remove a skill              |
@@ -409,12 +458,13 @@ pnpm --filter api email:dev    # Preview email templates at localhost:3333
 
 **Admin Endpoints**
 
-| Method | Endpoint                            | Description                     |
-| ------ | ----------------------------------- | ------------------------------- |
-| `GET`  | `/api/claws/admin`                  | List all claws (admin only)     |
-| `POST` | `/api/claws/:id/hard-delete`        | Permanently delete (admin only) |
-| `POST` | `/api/claws/:id/diagnostics/repair` | Repair instance (admin only)    |
-| `POST` | `/api/claws/:id/reinstall`          | Reinstall OS (admin only)       |
+| Method | Endpoint                            | Description                           |
+| ------ | ----------------------------------- | ------------------------------------- |
+| `GET`  | `/api/claws/admin`                  | List all claws (admin only)           |
+| `POST` | `/api/claws/:id/hard-delete`        | Permanently delete (admin only)       |
+| `POST` | `/api/claws/:id/diagnostics/repair` | Repair instance (admin only)          |
+| `POST` | `/api/claws/:id/reinstall`          | Reinstall OS (admin only)             |
+| `POST` | `/api/claws/:id/install-version`    | Install specific version (admin only) |
 
 **SSH Keys**
 
@@ -436,6 +486,12 @@ pnpm --filter api email:dev    # Preview email templates at localhost:3333
 | `POST`   | `/api/users/me/billing/portal`           | Open Polar billing portal           |
 | `POST`   | `/api/users/me/auth/:method`             | Connect auth method (Google/GitHub) |
 | `DELETE` | `/api/users/me/auth/:method`             | Disconnect auth method              |
+
+**WebSocket**
+
+| Protocol    | Endpoint                        | Description               |
+| ----------- | ------------------------------- | ------------------------- |
+| `WebSocket` | `/ws/claws/:id/terminal?token=` | Live SSH terminal session |
 
 ### Webhooks
 
@@ -460,12 +516,12 @@ pnpm build
 
 ### API
 
-The API runs as a Hono.js application on Node.js:
+The API runs as a Hono.js application on Node.js with a separate WebSocket server for terminal access:
 
 ```bash
 cd apps/api
 pnpm build
-pnpm start    # Starts on port 2222
+pnpm start    # HTTP on PORT (default 2222), WebSocket on WS_PORT (default 2223)
 ```
 
 ## How It Works
@@ -487,7 +543,7 @@ The `scripts/cloud-init.yaml` template configures every new instance with:
 - UFW firewall (ports 22, 80, 443)
 - systemd service for automatic OpenClaw startup
 
-Once provisioned, users can manage their claws through the dashboard — configuring agents, channels, skills, environment variables, and files all remotely via SSH.
+Once provisioned, users can manage their claws through the dashboard — configuring agents, channels, skills, environment variables, and files all remotely via SSH. A browser-based terminal provides direct shell access via WebSocket, and text-to-speech lets users listen to agent responses.
 
 ## Customization
 

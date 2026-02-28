@@ -1,6 +1,5 @@
 import type {
     ClawFileType,
-    FeatureRequestStatus,
     ProviderType,
     SubscriptionStatus,
     WebhookEventType
@@ -984,39 +983,6 @@ export interface RootLayoutProps {
     children: React.ReactNode
 }
 
-export interface CreateFeatureRequestBody {
-    title: string
-    description: string
-    platforms: string[]
-}
-
-export interface UpdateFeatureRequestStatusBody {
-    status: FeatureRequestStatus
-}
-
-export interface EditFeatureRequestBody {
-    title?: string
-    description?: string
-    status?: FeatureRequestStatus
-    platforms?: string[]
-}
-
-export interface FeatureRequestResponse {
-    id: string
-    title: string
-    description: string
-    status: FeatureRequestStatus
-    platforms: string[]
-    upvoteCount: number
-    userId: string
-    hasUpvoted: boolean
-}
-
-export interface FeatureRequestsListResponse {
-    items: FeatureRequestResponse[]
-    total: number
-}
-
 export interface ClawBindingEntry {
     agentId: string
     match: { channel: string }
@@ -1030,4 +996,27 @@ export interface ClawBindingAgent {
 export interface GithubEmailEntry {
     primary: boolean
     email: string
+}
+
+export interface GenerateSpeechBody {
+    text: string
+    voice?: string
+}
+
+export interface PiperVoice {
+    id: string
+    name: string
+    gender: string
+    quality: string
+}
+
+export interface PiperModelConfig {
+    sampleRate: number
+    channels: number
+}
+
+export interface PiperSynthesisResult {
+    audio: Buffer
+    sampleRate: number
+    channels: number
 }

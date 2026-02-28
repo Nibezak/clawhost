@@ -10,7 +10,6 @@ const getLegalLinks = (): FooterLink[] => [
     { label: t('footer.termsOfService'), href: ROUTES.TERMS },
     { label: t('footer.compare'), href: ROUTES.COMPARE },
     { label: t('footer.changelog'), href: ROUTES.CHANGELOG },
-    { label: t('footer.featureRequests'), href: ROUTES.FEATURE_REQUESTS },
     { label: t('footer.getInTouch'), href: `mailto:${SUPPORT_EMAIL}` }
 ]
 

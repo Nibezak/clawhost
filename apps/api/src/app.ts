@@ -10,9 +10,9 @@ import { users } from '@/db/schema'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 import {
+    aiRoutes,
     authRoutes,
     clawsRoutes,
-    featureRequestsRoutes,
     plansRoutes,
     sshKeysRoutes,
     usersRoutes,
@@ -55,16 +55,24 @@ app.get('/', (c) => ok(c, null, t('api.healthOk')))
 app.route('/auth', authRoutes)
 app.route('/plans', plansRoutes)
 app.route('/webhooks', webhooksRoutes)
-app.route('/feature-requests', featureRequestsRoutes)
-
 app.get('/clawhub/skills', async (c) => {
     try {
         const result = await browseSkills({
             query: c.req.query('query') || undefined,
-            limit: c.req.query('limit') ? Number(c.req.query('limit')) : undefined,
+            limit: c.req.query('limit')
+                ? Number(c.req.query('limit'))
+                : undefined,
             cursor: c.req.query('cursor') || undefined
         })
-        return ok(c, { skills: result.skills, nextCursor: result.nextCursor, hasMore: result.hasMore }, t('api.clawHubSearchSuccess'))
+        return ok(
+            c,
+            {
+                skills: result.skills,
+                nextCursor: result.nextCursor,
+                hasMore: result.hasMore
+            },
+            t('api.clawHubSearchSuccess')
+        )
     } catch {
         return fail(c, t('api.clawHubSearchFailed'), 500)
     }
@@ -141,6 +149,7 @@ app.use('/*', async (c, next) => {
     }
 })
 
+app.route('/ai', aiRoutes)
 app.route('/claws', clawsRoutes)
 app.route('/ssh-keys', sshKeysRoutes)
 app.route('/users', usersRoutes)

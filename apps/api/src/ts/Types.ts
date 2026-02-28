@@ -31,7 +31,9 @@ export type WebhookEventType =
 
 export type AuthMethod = 'email' | 'google' | 'github'
 
-export type UserRole = 'user' | 'admin'
+import type { userRole } from '@openclaw/shared'
+
+export type UserRole = (typeof userRole)[keyof typeof userRole]
 
 export type Environment = 'development' | 'production'
 
@@ -44,12 +46,4 @@ export type ClawFileType =
     | 'text'
     | 'unknown'
 
-export type FeatureRequestStatus =
-    | 'awaiting_approval'
-    | 'requested'
-    | 'marked_for_implementation'
-    | 'implemented'
-
-export type FeatureRequestPlatform = 'desktop' | 'mobile' | 'web'
-
-export type FeatureRequestSortBy = 'newest' | 'upvotes'
+export type PiperVoiceQuality = 'low' | 'medium' | 'high'

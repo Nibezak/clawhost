@@ -5,9 +5,9 @@ description: Master the openclaw.json file. Learn every configuration option and
 author: ClawHost
 publishedAt: '2026-02-26'
 tags:
-- openclaw
-- tutorial
-- automation
+    - openclaw
+    - tutorial
+    - automation
 coverImage: /openclaw-s-configuration-system-openclaw-json-explained.webp
 ---
 
@@ -21,12 +21,12 @@ The configuration file has several major sections, each controlling a different 
 
 ```json
 {
-  "version": "1.0",
-  "agents": {},
-  "gateway": {},
-  "tools": {},
-  "logging": {},
-  "security": {}
+    "version": "1.0",
+    "agents": {},
+    "gateway": {},
+    "tools": {},
+    "logging": {},
+    "security": {}
 }
 ```
 
@@ -184,11 +184,11 @@ Never hardcode API keys, passwords, or tokens in openclaw.json. Instead, use env
 
 ```json
 {
-  "tools": {
-    "api-service": {
-      "api_key": "${API_KEY}"
+    "tools": {
+        "api-service": {
+            "api_key": "${API_KEY}"
+        }
     }
-  }
 }
 ```
 
@@ -214,16 +214,16 @@ OPENAI_API_KEY=your-openai-key
 
 ```json
 {
-  "gateway": {
-    "log_level": "debug",
-    "rate_limit": 1000
-  },
-  "agents": {
-    "dev-agent": {
-      "model": "claude-3-5-sonnet",
-      "temperature": 0.8
+    "gateway": {
+        "log_level": "debug",
+        "rate_limit": 1000
+    },
+    "agents": {
+        "dev-agent": {
+            "model": "claude-3-5-sonnet",
+            "temperature": 0.8
+        }
     }
-  }
 }
 ```
 
@@ -231,19 +231,19 @@ OPENAI_API_KEY=your-openai-key
 
 ```json
 {
-  "gateway": {
-    "log_level": "warn",
-    "rate_limit": 10,
-    "https_only": true
-  },
-  "security": {
-    "authentication": {
-      "enabled": true
+    "gateway": {
+        "log_level": "warn",
+        "rate_limit": 10,
+        "https_only": true
     },
-    "encryption": {
-      "enabled": true
+    "security": {
+        "authentication": {
+            "enabled": true
+        },
+        "encryption": {
+            "enabled": true
+        }
     }
-  }
 }
 ```
 
@@ -251,19 +251,19 @@ OPENAI_API_KEY=your-openai-key
 
 ```json
 {
-  "gateway": {
-    "max_concurrent_sessions": 100,
-    "database": {
-      "type": "postgresql",
-      "connection_pool": 50
+    "gateway": {
+        "max_concurrent_sessions": 100,
+        "database": {
+            "type": "postgresql",
+            "connection_pool": 50
+        }
+    },
+    "agents": {
+        "auto-responder": {
+            "max_tokens": 2000,
+            "temperature": 0.3
+        }
     }
-  },
-  "agents": {
-    "auto-responder": {
-      "max_tokens": 2000,
-      "temperature": 0.3
-    }
-  }
 }
 ```
 

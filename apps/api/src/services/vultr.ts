@@ -20,7 +20,7 @@ import type {
 
 import { RequestClient, clawStatus } from '@openclaw/shared'
 
-function getClient() {
+const getClient = () => {
     const token = process.env.VULTR_API_TOKEN
     if (!token) {
         throw new Error('VULTR_API_TOKEN is not set')
@@ -35,7 +35,7 @@ function getClient() {
     })
 }
 
-function mapStatus(vultrStatus: string): string {
+const mapStatus = (vultrStatus: string): string => {
     const statusMap: Record<string, string> = {
         active: clawStatus.running,
         pending: clawStatus.initializing,
@@ -44,6 +44,31 @@ function mapStatus(vultrStatus: string): string {
         halted: clawStatus.off
     }
     return statusMap[vultrStatus] || vultrStatus
+}
+
+const planNames: Record<string, string> = {
+    'vc2-1c-1gb': 'VC11',
+    'vc2-1c-2gb': 'VC12',
+    'vc2-2c-2gb': 'VC21',
+    'vc2-2c-4gb': 'VC22',
+    'vc2-4c-8gb': 'VC41',
+    'vc2-6c-16gb': 'VC61',
+    'vc2-8c-32gb': 'VC81',
+    'vc2-16c-64gb': 'VC161',
+    'vhp-1c-1gb-amd': 'VA11',
+    'vhp-1c-2gb-amd': 'VA12',
+    'vhp-2c-2gb-amd': 'VA21',
+    'vhp-2c-4gb-amd': 'VA22',
+    'vhp-4c-8gb-amd': 'VA41',
+    'vhp-4c-12gb-amd': 'VA42',
+    'vhp-8c-16gb-amd': 'VA81',
+    'vhp-12c-24gb-amd': 'VA121',
+    'vhf-1c-2gb': 'VF11',
+    'vhf-2c-4gb': 'VF21',
+    'vhf-3c-8gb': 'VF31',
+    'vhf-4c-16gb': 'VF41',
+    'vhf-8c-32gb': 'VF81',
+    'vhf-12c-48gb': 'VF121'
 }
 
 const UBUNTU_2404_OS_ID = 2284
@@ -162,7 +187,8 @@ const vultr: CloudProvider = {
             const memGb = p.ram / 1024
             return {
                 name: p.id,
-                description: p.id.toUpperCase().replace(/-/g, ' '),
+                description:
+                    planNames[p.id] || p.id.toUpperCase().replace(/-/g, ' '),
                 cores: p.vcpu_count,
                 memory: memGb,
                 disk: p.disk,

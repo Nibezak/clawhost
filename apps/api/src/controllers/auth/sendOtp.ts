@@ -3,6 +3,7 @@ import type { SendOtpBody } from '@/ts/Interfaces'
 
 import crypto from 'crypto'
 import { eq } from 'drizzle-orm'
+import { inputValidation } from '@openclaw/shared'
 import { getResend, FROM_EMAIL } from '@/services/resend'
 import { db } from '@/db'
 import { otpCodes, users } from '@/db/schema'
@@ -41,7 +42,10 @@ const sendOtp = async (c: Context) => {
             return fail(c, t('api.emailRequired'), 400)
         }
 
-        if (!EMAIL_REGEX.test(email) || email.length > 320) {
+        if (
+            !EMAIL_REGEX.test(email) ||
+            email.length > inputValidation.EMAIL.MAX
+        ) {
             return fail(c, t('api.invalidEmailFormat'), 400)
         }
 

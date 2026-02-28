@@ -7,22 +7,18 @@ import type {
     ProviderType
 } from '@/ts/Types'
 
-import {
-    useState,
-    useEffect,
-    useMemo,
-    useCallback,
-    useRef
-} from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { t } from '@openclaw/i18n'
+import { userRole } from '@openclaw/shared'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
 import {
     ROUTES,
     DASHBOARD_TABS,
     AGENT_DETAIL_TABS,
-    CLAW_DETAIL_TABS
+    CLAW_DETAIL_TABS,
+    fireConfetti
 } from '@/lib'
 import {
     useClaws,
@@ -128,7 +124,7 @@ const Dashboard: FC = (): ReactNode => {
         enabled: !!user,
         staleTime: 1000 * 60 * 5
     })
-    const isAdmin = profile?.role === 'admin'
+    const isAdmin = profile?.role === userRole.admin
     const adminMode = !!isAdmin && adminModeRaw
 
     const [dnsSetup, setDnsSetup] = useState<boolean | null>(null)
@@ -163,7 +159,9 @@ const Dashboard: FC = (): ReactNode => {
     const displayName =
         profile?.name ||
         cachedProfile?.name ||
-        (isLocal ? t('account.noNameSet') : (user?.email || cachedProfile?.email || ''))
+        (isLocal
+            ? t('account.noNameSet')
+            : user?.email || cachedProfile?.email || '')
 
     const dropdownFooterLinks = useMemo(() => {
         if (!isLocal) return undefined
@@ -183,6 +181,7 @@ const Dashboard: FC = (): ReactNode => {
     useEffect(() => {
         if (awaitingClaw) {
             showToast(t('dashboard.paymentSuccess'), 'success')
+            fireConfetti()
         }
     }, [])
 
@@ -255,6 +254,7 @@ const Dashboard: FC = (): ReactNode => {
         ]
         const validClawTabs: PlaygroundDetailTab[] = [
             CLAW_DETAIL_TABS.INFO,
+            CLAW_DETAIL_TABS.TERMINAL,
             CLAW_DETAIL_TABS.VARIABLES,
             CLAW_DETAIL_TABS.LOGS,
             CLAW_DETAIL_TABS.DIAGNOSTICS,
@@ -399,7 +399,12 @@ const Dashboard: FC = (): ReactNode => {
 
     const { plans: hetznerPlans } = usePlans('hetzner')
     const { plans: digitaloceanPlans } = usePlans('digitalocean')
-    const plans = [...(hetznerPlans || []), ...(digitaloceanPlans || [])]
+    const { plans: vultrPlans } = usePlans('vultr')
+    const plans = [
+        ...(hetznerPlans || []),
+        ...(digitaloceanPlans || []),
+        ...(vultrPlans || [])
+    ]
     const { data: locations } = useLocations()
     const { data: sshKeys } = useSSHKeys()
     const { data: volumePricing } = useVolumePricing()
@@ -450,8 +455,16 @@ const Dashboard: FC = (): ReactNode => {
         !isLoading &&
         !activeIsError &&
         displayedClaws.length === 0
+    const chatHasContent =
+        dashboardTab === DASHBOARD_TABS.CHAT &&
+        !isLoading &&
+        !activeIsError &&
+        displayedClaws.length > 0
     const showFullBackground =
-        dashboardTab === DASHBOARD_TABS.PLAYGROUND || chatEmpty
+        dashboardTab === DASHBOARD_TABS.PLAYGROUND ||
+        chatEmpty ||
+        activeIsError ||
+        isLoading
 
     return (
         <motion.div
@@ -464,7 +477,7 @@ const Dashboard: FC = (): ReactNode => {
                 <div className='playground-grid pointer-events-none fixed inset-0 opacity-50' />
             )}
             <div
-                className={`playground-gradient pointer-events-none fixed inset-0 ${isLocal || (dashboardTab === DASHBOARD_TABS.CHAT && !chatEmpty) ? 'opacity-30' : ''}`}
+                className={`playground-gradient pointer-events-none fixed inset-0 ${isLocal || chatHasContent ? 'opacity-30' : ''}`}
             />
             <PageTitle
                 title={
@@ -573,7 +586,9 @@ const Dashboard: FC = (): ReactNode => {
                         hideSSHKeys={!!isLocal}
                         hideSignOut={!!isLocal}
                         footerLinks={dropdownFooterLinks}
-                        openLinksWindowed={isLocal ? openLinksWindowed : undefined}
+                        openLinksWindowed={
+                            isLocal ? openLinksWindowed : undefined
+                        }
                     />
                 </div>
             </div>
@@ -800,10 +815,10 @@ const Dashboard: FC = (): ReactNode => {
                 />
             )}
 
-            {showCreate && !isLocal && plans.length > 0 && locations && (
+            {showCreate && !isLocal && plans.length > 0 && (
                 <CreateClawModal
                     plans={plans}
-                    locations={locations}
+                    locations={locations || []}
                     sshKeys={sshKeys || []}
                     volumePricing={volumePricing}
                     planAvailability={planAvailability}

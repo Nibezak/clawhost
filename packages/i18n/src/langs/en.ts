@@ -24,7 +24,8 @@ const en = {
         closeNotification: 'Close notification',
         beta: 'Beta',
         brandName: 'ClawHost',
-        legalEmail: 'legal@clawhost.cloud'
+        legalEmail: 'legal@clawhost.cloud',
+        scrollToBottom: 'Scroll to Bottom'
     },
     setup: {
         welcomeTitle: 'Welcome to ClawHost Go',
@@ -78,7 +79,6 @@ const en = {
         faq: 'Questions',
         blog: 'Blog',
         changelog: 'Changelog',
-        featureRequests: 'Feature Requests',
         compare: 'Full Comparison',
         legalAndMore: 'Others',
         documentation: 'Documentation',
@@ -101,8 +101,8 @@ const en = {
         failedToUpdateProfile: 'Failed to update profile!',
         failedToAddSSHKey: 'Failed to add SSH key!',
         failedToCreateClaw: 'Failed to create claw!',
-        failedToLoadLocations: 'Failed to load locations. Please try again.',
-        failedToLoadPlans: 'Failed to load plans. Please try again.',
+        failedToLoadLocations: 'Failed to load locations. Please try again!',
+        failedToLoadPlans: 'Failed to load plans. Please try again!',
         invalidPlan: 'Invalid plan selected!',
         invalidLocation: 'Please select a location!',
         failedToGenerateKeyPair:
@@ -117,7 +117,7 @@ const en = {
     api: {
         missingRequiredFields: 'Missing required fields!',
         clawNotFound: 'Claw not found!',
-        clawRenamed: 'Claw renamed successfully!',
+        clawRenamed: 'Claw renamed successfully.',
         invalidClawName: 'Claw name must be between 1 and 50 characters!',
         userNotFound: 'User not found!',
         sshKeyNotFound: 'SSH key not found!',
@@ -176,16 +176,16 @@ const en = {
         failedToFetchVolumePricing: 'Failed to fetch volume pricing!',
         failedToFetchPlanAvailability: 'Failed to fetch plan availability!',
         failedToSendEmail: 'Failed to send email!',
-        failedToGetVersion: 'Failed to get version.',
-        failedToGetVersions: 'Failed to get versions.',
-        failedToInstallVersion: 'Failed to install version.',
+        failedToGetVersion: 'Failed to get version!',
+        failedToGetVersions: 'Failed to get versions!',
+        failedToInstallVersion: 'Failed to install version!',
         installVersionSuccess: 'Version installed successfully.',
-        invalidVersion: 'Invalid version format.',
-        outdatedVersion: 'This version is outdated and cannot be installed.',
+        invalidVersion: 'Invalid version format!',
+        outdatedVersion: 'This version is outdated and cannot be installed!',
         failedToGetDiagnostics: 'Failed to connect to the instance!',
         failedToGetDiagnosticsDescription:
             'Could not retrieve diagnostics. The instance may be offline or starting up.',
-        failedToGetLogs: 'Failed to load logs.',
+        failedToGetLogs: 'Failed to load logs!',
         failedToGetLogsDescription:
             'Could not retrieve logs for this instance. Please try again later.',
         failedToRepairClaw: 'Failed to repair the instance!',
@@ -199,7 +199,7 @@ const en = {
         failedToExportClaw: 'Failed to export claw data!',
         clawNotReady: 'Claw is not ready for export!',
         exportRateLimited:
-            'This claw was exported recently. Please wait before exporting again.',
+            'This claw was exported recently. Please wait before exporting again!',
         failedToListFiles: 'Failed to list instance files!',
         failedToReadFile: 'Failed to read file!',
         failedToUpdateFile: 'Failed to save file!',
@@ -207,13 +207,13 @@ const en = {
         fileNotEditable: 'This file type cannot be edited!',
         invalidJsonConfig: 'Invalid JSON!',
         fileSaveSuccess: 'File saved.',
-        rateLimitExceeded: 'Please wait before requesting another code.',
+        rateLimitExceeded: 'Please wait before requesting another code!',
         otpExpiredOrNotFound:
-            'Code expired or not found. Please request a new one.',
+            'Code expired or not found. Please request a new one!',
         otpMaxAttemptsReached:
-            'Too many failed attempts. Please request a new code.',
-        otpInvalidCode: 'Invalid code. Please try again.',
-        internalServerError: 'An internal error occurred.',
+            'Too many failed attempts. Please request a new code!',
+        otpInvalidCode: 'Invalid code. Please try again!',
+        internalServerError: 'An internal error occurred!',
         invalidCredentials: 'Invalid credentials!',
         accountLinked: 'Account linked successfully.',
         webhookProcessingFailed: 'Webhook processing failed!',
@@ -315,38 +315,10 @@ const en = {
         authMethodDisconnected: 'Auth method disconnected successfully.',
         failedToConnectAuthMethod: 'Failed to connect auth method!',
         failedToDisconnectAuthMethod: 'Failed to disconnect auth method!',
-        featureRequestsFetched: 'Feature requests fetched successfully.',
-        featureRequestCreated: 'Feature request created successfully.',
-        featureRequestUpvoted: 'Feature request vote updated.',
-        featureRequestStatusUpdated: 'Feature request status updated.',
-        featureRequestDeleted: 'Feature request deleted.',
-        failedToCreateFeatureRequest: 'Failed to create feature request!',
-        failedToUpvoteFeatureRequest: 'Failed to update vote!',
-        failedToUpdateFeatureRequestStatus:
-            'Failed to update feature request status!',
-        failedToDeleteFeatureRequest: 'Failed to delete feature request!',
-        featureRequestNotFound: 'Feature request not found!',
-        featureRequestLimitReached:
-            'You have reached the maximum of {{limit}} open feature requests!',
-        featureRequestTotalLimitReached:
-            'The feature request board is full ({{limit}} requests). Please wait for existing requests to be resolved!',
-        featureRequestTitleRequired: 'Title is required!',
-        featureRequestDescriptionRequired: 'Description is required!',
-        featureRequestTitleTooShort:
-            'Title must be at least {{min}} characters!',
-        featureRequestTitleTooLong: 'Title must be {{max}} characters or less!',
-        featureRequestDescriptionTooShort:
-            'Description must be at least {{min}} characters!',
-        featureRequestDescriptionTooLong:
-            'Description must be {{max}} characters or less!',
-        featureRequestInvalidStatus: 'Invalid status!',
-        featureRequestUpdated: 'Feature request updated.',
-        failedToUpdateFeatureRequest: 'Failed to update feature request!',
-        noChangesProvided: 'No changes provided!',
-        platformRequired: 'At least one platform is required!',
-        invalidPlatform: 'Invalid platform value!',
-        featureRequestImplementationLimitReached:
-            'This user already has {{limit}} feature requests in progress!'
+        textRequired: 'Text is required!',
+        voiceNotFound: 'Voice model not found!',
+        ttsGenerationFailed: 'Failed to generate speech!',
+        voicesFetched: 'Voices fetched successfully.'
     },
     emails: {
         otpSubject: 'Your ClawHost sign-in code',
@@ -445,7 +417,8 @@ const en = {
         settingsDescription: 'Manage your dashboard preferences.',
         showAllClaws: 'Show all claws from all users',
         openLinksWindowed: 'Open links in a windowed view',
-        openLinksWindowedDescription: 'When enabled, external links open inside the app instead of the system browser.'
+        openLinksWindowedDescription:
+            'When enabled, external links open inside the app instead of the system browser.'
     },
     billing: {
         title: 'Billing',
@@ -561,13 +534,10 @@ const en = {
         diagnosticsMemory: 'Memory',
         logsDescription:
             'Latest 100 lines of your gateway log, auto-refreshing.',
-        scrollToBottom: 'Scroll to new Logs',
         fileExplorer: 'File Explorer',
         fileExplorerRoot: 'openclaw',
         fileExplorerDescription:
-            'Browse and edit OpenClaw configuration files on your instance.',
-        fileExplorerWarning:
-            'Incorrect changes may break your instance. Edit with care.',
+            'Browse and edit your OpenClaw config files. Wrong changes can break your instance.',
         fileExplorerSelectFile: 'Select a file to view its contents.',
         fileExplorerReadOnly: 'Read-only',
         fileExplorerSave: 'Save',
@@ -575,6 +545,8 @@ const en = {
         fileExplorerInvalidJson:
             'Invalid JSON. Please fix syntax errors before saving.',
         fileExplorerNoFiles: 'No files found',
+        fileExplorerSearchFiles: 'Search files...',
+        fileExplorerNoSearchResults: 'No matching files.',
         updateInstance: 'Update Instance',
         updateInstanceSuccess: 'Instance updated successfully.',
         updateInstanceFailed: 'Failed to update instance!',
@@ -588,6 +560,7 @@ const en = {
             'This will reinstall OpenClaw and reset all configurations on this instance. Your data and server will be preserved, but all services will be restarted. Continue?',
         reinstallInstanceSuccess: 'Instance reinstalled successfully.',
         reinstallInstanceFailed: 'Failed to reinstall instance!',
+        openControlPanel: 'Open Control Panel',
         exportData: 'Export Claw (.zip)',
         exportStarted: 'Preparing export, this may take a moment...',
         exportFailed: 'Failed to export claw data!',
@@ -597,7 +570,8 @@ const en = {
         configuringTooltip:
             'This might take some time. It depends on OpenClaw, the server location, and Cloudflare DNS.',
         paymentSuccess: 'Your claw is being created and configured.',
-        dnsSetupBanner: 'Set up local DNS to access your claws via subdomain.clawhost.',
+        dnsSetupBanner:
+            'Set up local DNS to access your claws via subdomain.clawhost.',
         dnsSetupButton: 'Set Up DNS',
         dnsSetupSuccess: 'DNS resolver configured successfully.',
         dnsSetupError: 'Failed to configure DNS resolver!',
@@ -640,7 +614,9 @@ const en = {
         openSidebar: 'Open sidebar',
         clawNotReady: 'Claw is not ready yet',
         notConfigured: 'Not configured',
-        addAgent: 'Add agent'
+        addAgent: 'Add agent',
+        viewTree: 'Tree view',
+        viewList: 'List view'
     },
     createClaw: {
         title: 'Deploy OpenClaw',
@@ -660,6 +636,7 @@ const en = {
         locationUnavailableForPlan: 'Unavailable',
         plan: 'Server',
         planUnavailable: 'Unavailable',
+        providerUnavailable: 'This provider is currently unavailable.',
         providerAtCapacity:
             'Due to high demand, we have temporarily run out of servers from this provider. We are actively working to resolve this.',
         advancedOptions: 'Advanced Optional Options',
@@ -795,9 +772,9 @@ const en = {
         globalLocations: 'Global Locations',
         globalLocationsDescription:
             'Deploy OpenClaw across 30+ global regions on Hetzner, DigitalOcean, or Vultr and choose the location closest to you.',
-        fullSshAccess: 'Full SSH Access',
+        fullSshAccess: 'Direct SSH Access',
         fullSshAccessDescription:
-            'Full root access to your server. You own it, so install anything and customize everything.',
+            'Access your server terminal directly from the platform. No external SSH clients needed.',
         secure: 'Secure',
         secureDescription:
             'Protected by default from SSL vulnerabilities, malware, and common security threats.',
@@ -807,9 +784,27 @@ const en = {
         customSubdomains: 'Online Access',
         customSubdomainsDescription:
             'Forget local networks. Access your OpenClaw securely from anywhere with a subdomain.',
-        autoUpdates: 'Auto-Updates',
+        autoUpdates: 'Version Control',
         autoUpdatesDescription:
-            'Forget updates and security patches. The server and OpenClaw are automatically kept up to date.',
+            'Switch to any OpenClaw version with a single click. Always stay up to date or roll back when needed.',
+        openclawControl: 'OpenClaw Control',
+        openclawControlDescription:
+            'Access the native OpenClaw panel directly from ClawHost. Full editing access to everything OpenClaw offers.',
+        clawHostControl: 'ClawHost Control',
+        clawHostControlDescription:
+            'Manage files, updates, channels, variables, skills, and more configuration options directly from the platform.',
+        skillsMarketplace: '5,000+ Skills',
+        skillsMarketplaceDescription:
+            'Browse and install from over 5,000 ready-made skills with a single click. Extend your OpenClaw instantly.',
+        directChat: 'Direct Chat',
+        directChatDescription:
+            'Chat with your AI agents directly from the platform. No need for external tools or interfaces.',
+        multipleAgents: 'Multiple Agents',
+        multipleAgentsDescription:
+            'Run and manage multiple AI agents on a single instance. Each with its own configuration and purpose.',
+        multipleClaws: 'Multiple Claws',
+        multipleClawsDescription:
+            'Deploy and manage multiple OpenClaw instances from a single dashboard. Scale as you grow.',
         testimonials: 'Testimonials',
         whatPeopleSay: 'What People Are Saying',
         testimonialsDescription:
@@ -911,6 +906,12 @@ const en = {
         comparisonProvidersOthers: 'Single provider only',
         comparisonSocialsUs: 'Social media presence',
         comparisonSocialsOthers: 'No social media',
+        comparisonChatUs: 'Chat directly with your Claw',
+        comparisonChatOthers: 'Chat only through channels',
+        comparisonVersionUs: 'One-click version switching',
+        comparisonVersionOthers: 'Manual updates only',
+        comparisonTerminalUs: 'Built-in web terminal',
+        comparisonTerminalOthers: 'SSH client required',
         seeFullComparison: 'See Full Comparison',
         comparisonCtaText:
             'We compare against SimpleClaw, MyClaw.ai and more — feature by feature.',
@@ -939,7 +940,8 @@ const en = {
         noPosts: 'No Posts Yet',
         noPostsDescription: 'Blog posts are coming soon. Check back later.',
         ctaTitle: 'Deploy OpenClaw with One Click',
-        ctaDescription: 'Get a dedicated server with OpenClaw pre-installed. Full root access, global locations, and ready in minutes. You own it at all times. Starting from $10.',
+        ctaDescription:
+            'Get a dedicated server with OpenClaw pre-installed. Full root access, global locations, and ready in minutes. You own it at all times. Starting from $10.',
         ctaDeploy: 'Deploy OpenClaw',
         ctaGitHub: 'View on GitHub'
     },
@@ -967,6 +969,21 @@ const en = {
             'Refactoring of the playground feature structure and simplifications',
         upcomingReleaseFeature8:
             'Feature requests automatically managed and published by OpenClaw agents',
+        upcomingReleaseFeature9:
+            'Voice Mode to interact with the OpenClaw agents hosted on ClawHost',
+        release11Date: 'February 28, 2026',
+        release11Title: 'Text-to-Speech, Terminal, Chat Tabs & File Explorer',
+        release11Description:
+            'Listen to agent responses with text-to-speech, interact with your VPS directly via terminal, navigate chats faster with sidebar view tabs, and explore files with the improved file explorer.',
+        release11Feature1: 'Text-to-speech on agent messages in the playground',
+        release11Feature2:
+            'Terminal to interact with your VPS instances directly from the dashboard',
+        release11Feature3:
+            'Chat sidebar view tabs for easy access and navigation',
+        release11Feature4:
+            'File explorer improvements with search bar to search through files',
+        release11Feature5: 'Fixed message timestamps not reflecting real time',
+        release11Dropped1: 'Dropped feature requests for simplification',
         release10Date: 'February 23, 2026',
         release10Title: 'Feature Requests, File Explorer & Bug Fixes',
         release10Description:
@@ -1096,12 +1113,12 @@ const en = {
         subtitle: 'Agent topology across your infrastructure',
         noClawsYet: 'No Claws',
         noClawsDescription: 'Deploy your first Claw to interact with it.',
-        loadingAgents: 'Agents',
+        loadingAgents: 'Loading agents',
         unreachable: 'Unreachable',
         offline: 'Offline',
         noAgents: 'No agents',
-        agentCount: '{{count}} agent',
-        agentCountPlural: '{{count}} agents',
+        agentCount: '{{count}} Agent',
+        agentCountPlural: '{{count}} Agents',
         agentModel: 'Model',
         zoomLabel: '{{percent}}%',
         fitView: 'Center',
@@ -1112,7 +1129,13 @@ const en = {
         tabInfo: 'Info',
         tabLogs: 'Logs',
         tabDiagnostics: 'Health',
-        tabDisabledConfiguring: 'Available once the instance finishes configuring.',
+        tabTerminal: 'Terminal',
+        terminalConnecting: 'Connecting to terminal...',
+        terminalDisconnected: 'Terminal disconnected.',
+        terminalError: 'Failed to connect to terminal!',
+        terminalReconnect: 'Reconnect',
+        tabDisabledConfiguring:
+            'Available once the instance finishes configuring.',
         tabDisabledAwaitingPayment: 'Available once the payment is processed.',
         loadingTip1:
             'Did you know that you could run multiple agents within one OpenClaw?',
@@ -1168,11 +1191,17 @@ const en = {
         variablesDeleteDescription:
             'Are you sure you want to delete {{key}}? This will immediately remove it from the instance.',
         variablesDeleteConfirm: 'Delete',
-        variablesDontAskAgain: "Don't ask again when deleting variables this session",
+        variablesDontAskAgain:
+            "Don't ask again when deleting variables this session",
         variablesDeleted: 'Variable deleted.',
-        variablesOperationPending: 'Disabled while a previous operation completes.',
+        variablesOperationPending:
+            'Disabled while a previous operation completes.',
         addAgentTitle: 'Add Agent',
         addAgentDescription: 'Add a new agent to {{clawName}}.',
+        addAgentDescriptionNoClaw:
+            'Select a claw and configure your new agent.',
+        addAgentSelectClaw: 'Claw',
+        addAgentSelectClawPlaceholder: 'Select a claw',
         addAgentName: 'Name',
         addAgentNamePlaceholder: 'Enter agent name',
         addAgentModel: 'Model',
@@ -1208,16 +1237,27 @@ const en = {
         chatInputDisabled: 'Connect to chat with this agent',
         chatSend: 'Send',
         chatAbort: 'Stop',
+        chatStopProcess: 'Stop process',
+        chatThinking: 'Thinking',
         chatLoadingHistory: 'Loading messages...',
         chatNoMessages: 'No messages yet.',
         chatNoMessagesDescription:
             'Send a message to start a conversation with this agent.',
         chatErrorMessage: 'An error occurred while generating a response.',
         chatAbortedMessage: 'Response was stopped.',
+        chatPlaySpeech: 'Read aloud',
+        chatReplaySpeech: 'Replay',
+        chatStopSpeech: 'Stop',
+        chatSpeechFailed: 'Failed to generate speech!',
         chatReadOnlyPlaceholder: 'Chat available on your own Claws.',
         chatReadOnlyUser: 'Hello! Can you help me set up a Node.js project?',
         chatReadOnlyAssistant:
             'Of course! I can help you initialize a new Node.js project. Would you like me to create a package.json with some common dependencies?',
+        chatReadOnlyReply:
+            'This is a preview! Deploy your own OpenClaw with one click and start chatting with your AI agents in minutes!',
+        chatReadOnlyUser2: 'Can you run the test suite and check for failures?',
+        chatReadOnlyAssistant2:
+            "Sure! I'll run all tests now. 3 passed, 0 failed. Everything looks good — all assertions are passing.",
         chatConnectionFailed: 'Failed to connect to this agent.',
         chatConnectionFailedDescription:
             'Make sure the Claw is running and reachable.',
@@ -1234,11 +1274,28 @@ const en = {
         chatVoiceInput: 'Voice input',
         chatVoiceListening: 'Listening...',
         chatVoiceNotSupported: 'Voice input is not supported in this browser.',
+        chatVoiceMode: 'Voice Mode',
+        chatVoiceModeTapToSpeak: 'Tap to start speaking',
+        chatVoiceModeListening: 'Listening...',
+        chatVoiceModeClose: 'End voice mode',
+        chatVoiceModeTranscribing: 'Transcribing...',
+        chatVoiceModeThinking: 'Thinking...',
+        chatVoiceModeResponding: 'Responding...',
+        chatVoiceModePreparing: 'Preparing speech...',
+        chatVoiceModeSpeaking: 'Speaking...',
+        chatVoiceModeInputDevice: 'Microphone',
+        chatVoiceModeOutputDevice: 'Speaker',
+        chatVoiceModeNotSupported:
+            'Voice recognition is not supported in this browser.',
+        chatVoiceModeNoMicrophone:
+            'No microphone detected. Connect one to use voice mode.',
+        chatVoiceModeNoSpeaker:
+            'No speaker detected. Connect one to use voice mode.',
         chatAttachmentNotSupported:
             'This file type is not supported. Use images, PDFs, or text files.',
         chatNoPreview: 'No preview available.',
         chatDownloadFile: 'Download file',
-        chatScrollToBottom: 'Scroll to Bottom',
+        chatCopyMessage: 'Copy message',
         tabChannels: 'Channels',
         channelsDescription:
             'Configure messaging channels for this instance. Messages are routed to agents via bindings.',
@@ -1329,13 +1386,13 @@ const en = {
             'Search and install skills from the ClawHub marketplace.',
         clawHubInstall: 'Install',
         clawHubInstalled: 'Skill installed from ClawHub.',
-        clawHubInstallFailed: 'Failed to install skill from ClawHub.',
+        clawHubInstallFailed: 'Failed to install skill from ClawHub!',
         clawHubRemove: 'Remove',
         clawHubRemoved: 'ClawHub skill removed.',
-        clawHubRemoveFailed: 'Failed to remove ClawHub skill.',
+        clawHubRemoveFailed: 'Failed to remove ClawHub skill!',
         clawHubUpdate: 'Update',
         clawHubUpdated: 'Skill updated from ClawHub.',
-        clawHubUpdateFailed: 'Failed to update ClawHub skill.',
+        clawHubUpdateFailed: 'Failed to update ClawHub skill!',
         clawHubUpdateAvailable: 'v{{version}} available',
         clawHubBy: 'by {{author}}',
         clawHubDownloads: '{{count}} downloads',
@@ -1347,7 +1404,8 @@ const en = {
         versionsSearch: 'Search versions...',
         versionsEmpty: 'No versions found',
         versionsEmptyDescription: 'No versions match your search.',
-        versionsErrorDescription: 'Failed to load versions. Please check your connection and try again.',
+        versionsErrorDescription:
+            'Failed to load versions. Please check your connection and try again.',
         versionsChangelog: 'View changelogs on npm',
         versionCurrent: 'Current',
         versionLatest: 'Latest',
@@ -1358,6 +1416,9 @@ const en = {
         versionDownloads: '{{count}} downloads',
         versionChangelog: 'Changelog',
         versionOutdated: 'Outdated',
+        versionInstallConfirmTitle: 'Install Version {{version}}',
+        versionInstallConfirmDescription:
+            'Switching versions may cause unexpected behavior or require additional manual configuration, especially for newer versions that have not been fully verified yet. Are you sure you want to proceed?',
         settingsName: 'Name',
         settingsNamePlaceholder: 'Enter claw name',
         settingsNameDescription: 'Letters, numbers, and dashes only.',
@@ -1527,7 +1588,15 @@ const en = {
         loadMore: 'Load More',
         chatWithYourClaw: 'Chat with your Claw',
         deployClaw: 'Deploy Claw',
-        deployYourFirstClaw: 'Deploy your first Claw'
+        deployYourFirstClaw: 'Deploy your first Claw',
+        voiceMode: 'Voice Mode',
+        voiceListening: 'Listening...',
+        voiceTapToSpeak: 'Tap the orb to start'
+    },
+    announcement: {
+        title: 'Service Notice',
+        message:
+            '{{providers}} deployments are temporarily unavailable. Existing claws are running normally.'
     },
     productHunt: {
         liveOn: 'Live on',
@@ -1536,70 +1605,6 @@ const en = {
         discount: '10% off',
         yourFirstMonth: 'your first month',
         upvoteNow: 'Upvote Us'
-    },
-    featureRequests: {
-        title: 'Feature Requests',
-        description: 'Vote on features and suggest new ones.',
-        subtitle:
-            'Help shape the future of OpenClaw by requesting and upvoting features.',
-        submitRequest: 'Submit Request',
-        noRequestsYet: 'No Feature Requests',
-        noRequestsDescription: 'No feature requests have been submitted yet. Be the first to share your ideas.',
-        statusAwaitingApproval: 'Awaiting Approval',
-        statusRequested: 'Requested',
-        statusMarkedForImplementation: 'Marked for Implementation',
-        statusImplemented: 'Implemented',
-        sortByUpvotes: 'Most Upvoted',
-        sortByNewest: 'Newest',
-        sortByStatus: 'By Status',
-        upvote: 'Upvote',
-        upvoted: 'Upvoted',
-        signInToUpvote: 'Sign in to upvote.',
-        signInToSubmit: 'Sign in to submit a request.',
-        requestedBy: 'Requested by',
-        submitModalTitle: 'Submit a Feature Request',
-        submitModalDescription:
-            'Describe the feature you would like to see. Our AI agents will review and implement approved requests.',
-        featureTitle: 'Title',
-        featureTitlePlaceholder: 'Feature title',
-        featureTitleMinLength: 'Title must be at least {{min}} characters.',
-        featureTitleMaxLength: 'Title must be {{max}} characters or less.',
-        featureDescription: 'Description',
-        featureDescriptionPlaceholder:
-            'Describe the feature you want, the problem it solves, and how you envision it working.',
-        featureDescriptionMinLength:
-            'Description must be at least {{min}} characters.',
-        featureDescriptionMaxLength:
-            'Description must be {{max}} characters or less.',
-        submitting: 'Submitting...',
-        submitted: 'Feature request submitted.',
-        failedToSubmit: 'Failed to submit feature request!',
-        requestLimitReached:
-            'You have reached the maximum of {{limit}} open requests.',
-        agentBannerTitle: 'Powered by OpenClaw Agents',
-        agentBannerDescription:
-            'Feature requests are reviewed and built by OpenClaw agents hosted on ClawHost. Upvote the features you want most.',
-        changeStatus: 'Change Status',
-        deleteRequest: 'Delete Request',
-        deleteConfirmation:
-            'Are you sure you want to delete this feature request?',
-        statusUpdated: 'Feature request status updated.',
-        failedToUpdateStatus: 'Failed to update status!',
-        deleted: 'Feature request deleted.',
-        failedToDelete: 'Failed to delete feature request!',
-        upvoteToggled: 'Vote updated.',
-        failedToUpvote: 'Failed to update vote!',
-        editModalTitle: 'Edit Feature Request',
-        editModalDescription: 'Update the feature request details and status.',
-        updated: 'Feature request updated.',
-        failedToUpdate: 'Failed to update feature request!',
-        status: 'Status',
-        dontAskAgain: "Don't ask again when deleting requests this session",
-        platforms: 'Platforms',
-        platformDesktop: 'Desktop',
-        platformMobile: 'Mobile',
-        platformWeb: 'Web',
-        platformRequired: 'Select at least one platform'
     },
     compare: {
         title: 'Full Comparison',
@@ -1611,6 +1616,7 @@ const en = {
         competitorClawHost: 'ClawHost',
         competitorSimpleClaw: 'SimpleClaw',
         competitorMyClawAi: 'MyClaw.ai',
+        competitorQuickClaw: 'QuickClaw',
         categoryInfrastructure: 'Infrastructure',
         categoryPricing: 'Pricing & Billing',
         categoryDeployment: 'Deployment & Setup',
@@ -1651,10 +1657,14 @@ const en = {
         featureMultiLanguage: 'Multi-language UI',
         featureMobileApp: 'Mobile app',
         featureDesktopApp: 'Desktop app',
+        featureDirectChat: 'Direct chat',
+        featureOneClickVersion: 'One-click version switch',
+        featureWebTerminal: 'Web terminal access',
         featureSocials: 'Social media',
         dedicatedVps: 'Dedicated VPS',
         sharedContainers: 'Shared containers',
         isolatedContainers: 'Isolated containers',
+        cloudWorkspaces: 'Cloud workspaces',
         threeProviders: 'Hetzner, DigitalOcean, Vultr',
         singleProvider: 'Single provider',
         fullyDedicated: 'Fully dedicated',
@@ -1669,9 +1679,11 @@ const en = {
         clearSpecsPricing: 'Clear specs & pricing',
         unclearPricing: 'Unclear pricing',
         fixedTiers: '3 fixed tiers',
+        creditBased: 'Credit-based',
         minutes: 'Minutes',
         underOneMinute: 'Under 1 minute',
         thirtySeconds: '30 seconds',
+        instant: 'Instant',
         noneRequired: 'None',
         minimal: 'Minimal',
         unlimited: 'Unlimited',
@@ -1681,6 +1693,7 @@ const en = {
         allChannels: 'WhatsApp, Telegram, Discord, Slack, Signal',
         telegramDiscord: 'Telegram, Discord',
         discordGithubSlack: 'Discord, GitHub, Slack',
+        appOnly: 'App only',
         fullConfig: 'Full configuration',
         limitedConfig: 'Limited',
         zipExport: 'ZIP export',
@@ -1692,16 +1705,22 @@ const en = {
         notIncluded: 'Not included',
         managed: 'Managed',
         manual: 'Manual',
+        appStore: 'App Store',
         liveMonitoring: 'Live monitoring',
         liveLogs: 'Live logs',
         oneClickRepair: 'One-click repair',
         emailGithub: 'Email, GitHub',
         communityOnly: 'Community only',
+        appSupport: 'App support',
         prioritySupport: '24/7 support (Pro+)',
         fourLanguages: '4 languages',
         englishOnly: 'English only',
         available: 'Available',
         comingSoon: 'Coming soon',
+        iosMacOs: 'iOS & macOS',
+        macOsOnly: 'macOS only',
+        builtInChat: 'Built-in',
+        builtInTerminal: 'No SSH needed',
         notAvailable: 'Not available',
         disclaimer: 'Something changed or wrong? Email us at',
         disclaimerOr: 'or open a pull request on',

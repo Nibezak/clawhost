@@ -7,7 +7,7 @@ import type {
 
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
-import { clawStatus, clawProvider } from '@openclaw/shared'
+import { clawStatus, clawProvider, userRole } from '@openclaw/shared'
 import { useUIStore } from '@/lib/store'
 import { getLocale, getBaseDomain, TRUNCATE_LENGTHS } from '@/lib'
 import {
@@ -122,7 +122,10 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
             if (res.rootPassword) {
                 const command = `sshpass -p '${res.rootPassword}' ssh -o StrictHostKeyChecking=no root@${claw.ip}`
                 navigator.clipboard.writeText(command)
-                showToast(t('dashboard.sshCommandWithPasswordCopied'), 'success')
+                showToast(
+                    t('dashboard.sshCommandWithPasswordCopied'),
+                    'success'
+                )
             } else {
                 copySSHWithKey()
             }
@@ -309,7 +312,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                                     isScheduledForDeletion={
                                         isScheduledForDeletion
                                     }
-                                    isAdmin={profile?.role === 'admin'}
+                                    isAdmin={profile?.role === userRole.admin}
                                     compact
                                 />
                             </div>
@@ -348,17 +351,18 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
 
                 <div className='px-4 py-3'>
                     {claw.status === clawStatus.running &&
-                        agentCount > 0 && (
-                        claw.provider === clawProvider.local && claw.subdomain ? (
+                        agentCount > 0 &&
+                        (claw.provider === clawProvider.local &&
+                        claw.subdomain ? (
                             <p className='text-muted-foreground mb-2 truncate text-xs'>
                                 {claw.subdomain}.clawhost
                             </p>
                         ) : claw.provider !== clawProvider.local ? (
                             <p className='text-muted-foreground mb-2 truncate text-xs'>
-                                {claw.subdomain || generateSlug(claw.id)}.{getBaseDomain()}
+                                {claw.subdomain || generateSlug(claw.id)}.
+                                {getBaseDomain()}
                             </p>
-                        ) : null
-                    )}
+                        ) : null)}
 
                     <div className='flex items-center gap-2'>
                         {isLoadingAgents ? (

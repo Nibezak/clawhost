@@ -6,4 +6,12 @@ import reverseProxy from '@/main/services/reverseProxy'
 import dnsResolver from '@/main/services/dnsResolver'
 import certManager from '@/main/services/certManager'
 
-export { configStore, processManager, versionManager, nodeBinary, reverseProxy, dnsResolver, certManager }
+export {
+    configStore,
+    processManager,
+    versionManager,
+    nodeBinary,
+    reverseProxy,
+    dnsResolver,
+    certManager
+}

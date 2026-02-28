@@ -2,13 +2,12 @@ import type { CreateSSHKeyBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq, count } from 'drizzle-orm'
+import { inputValidation } from '@openclaw/shared'
 import { db } from '@/db'
 import { sshKeys } from '@/db/schema'
 import { getProvider } from '@/services/provider'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
-
-const MAX_SSH_KEYS_PER_ACCOUNT = 50
 
 const createSSHKey = async (c: AuthenticatedContext) => {
     try {
@@ -19,7 +18,10 @@ const createSSHKey = async (c: AuthenticatedContext) => {
             return fail(c, t('api.nameAndKeyRequired'), 400)
         }
 
-        if (name.length > 100 || publicKey.length > 10000) {
+        if (
+            name.length > inputValidation.SSH_KEY_NAME.MAX ||
+            publicKey.length > inputValidation.SSH_KEY_PUBLIC_KEY.MAX
+        ) {
             return fail(c, t('api.inputTooLong'), 400)
         }
 
@@ -28,7 +30,7 @@ const createSSHKey = async (c: AuthenticatedContext) => {
             .from(sshKeys)
             .where(eq(sshKeys.userId, userId))
 
-        if (keyCount >= MAX_SSH_KEYS_PER_ACCOUNT) {
+        if (keyCount >= inputValidation.SSH_KEYS_PER_ACCOUNT.MAX) {
             return fail(c, t('api.sshKeyLimitReached'), 400)
         }
 

@@ -14,6 +14,7 @@ const ChatSidebarAgentList: FC<ChatSidebarAgentListProps> = ({
     isReachable,
     selectedAgent,
     activeConnectionState,
+    readOnly,
     onAgentClick,
     onConfigureAgent,
     onCreateAgent
@@ -65,35 +66,43 @@ const ChatSidebarAgentList: FC<ChatSidebarAgentListProps> = ({
 
     return (
         <div>
-            {agents.map((agent) => {
+            {agents.map((agent, index) => {
                 const isActiveAgent =
                     selectedAgent?.agentId === agent.id &&
                     selectedAgent?.clawId === claw.id
+                const showAddAgent = isReachable && !readOnly
+                const isLastItem = !showAddAgent && index === agents.length - 1
 
                 return (
                     <ChatSidebarItem
                         key={agent.id}
                         agent={agent}
                         isActive={isActiveAgent}
-                        isLast={false}
-                        isChecking={gatewayState === 'connecting' || gatewayState === 'authenticating'}
+                        isLast={isLastItem}
+                        isChecking={
+                            !readOnly &&
+                            (gatewayState === 'connecting' ||
+                                gatewayState === 'authenticating')
+                        }
+                        readOnly={readOnly}
                         connectionState={
-                            isActiveAgent
-                                ? activeConnectionState
-                                : gatewayState === 'connected'
+                            readOnly
+                                ? undefined
+                                : isActiveAgent
+                                  ? activeConnectionState
+                                  : gatewayState === 'connected'
                                     ? 'connected'
-                                    : gatewayState === 'error' || gatewayState === 'disconnected'
-                                        ? 'disconnected'
-                                        : undefined
+                                    : gatewayState === 'error' ||
+                                        gatewayState === 'disconnected'
+                                      ? 'disconnected'
+                                      : undefined
                         }
                         onClick={() => onAgentClick(agent.id, claw.id)}
-                        onConfigure={() =>
-                            onConfigureAgent(agent.id, claw.id)
-                        }
+                        onConfigure={() => onConfigureAgent(agent.id, claw.id)}
                     />
                 )
             })}
-            {isReachable && (
+            {isReachable && !readOnly && (
                 <div className='relative flex py-0.5'>
                     <div className='relative ml-[19px] flex w-7 shrink-0 justify-start'>
                         <div className='bg-border absolute -top-1 left-0 h-[calc(18px+4px)] w-px' />
@@ -104,10 +113,7 @@ const ChatSidebarAgentList: FC<ChatSidebarAgentListProps> = ({
                         className='text-muted-foreground hover:bg-foreground/5 hover:text-foreground flex min-w-0 flex-1 items-center gap-2.5 rounded-lg px-2 py-2 text-left transition-colors'
                     >
                         <div className='border-border flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-dashed'>
-                            <PlusIcon
-                                className='h-3 w-3'
-                                weight='bold'
-                            />
+                            <PlusIcon className='h-3 w-3' weight='bold' />
                         </div>
                         <span className='text-[13px]'>
                             {t('chat.addAgent')}
