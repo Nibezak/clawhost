@@ -29,7 +29,11 @@ const stopClaw = async (c: AuthenticatedContext) => {
             await getProvider(claw.provider as ProviderType).stopServer(
                 claw.providerServerId
             )
-            updateCachedServerStatus(claw.provider as ProviderType, claw.providerServerId, clawStatus.stopping)
+            updateCachedServerStatus(
+                claw.provider as ProviderType,
+                claw.providerServerId,
+                clawStatus.stopping
+            )
         } catch {
             await db
                 .update(claws)

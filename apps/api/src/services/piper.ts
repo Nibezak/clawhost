@@ -1,4 +1,4 @@
-import type { PiperSynthesisResult } from '@/ts/Interfaces'
+import type { PiperModelConfig, PiperSynthesisResult } from '@/ts/Interfaces'
 
 import { execFile } from 'child_process'
 import { readFileSync } from 'fs'
@@ -7,10 +7,18 @@ import { fileURLToPath } from 'url'
 
 const PIPER_BINARY = process.env.PIPER_BINARY || 'piper'
 const MODELS_DIR = path.resolve(
-    process.env.PIPER_MODELS_DIR || path.join(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'ai', 'models')
+    process.env.PIPER_MODELS_DIR ||
+        path.join(
+            path.dirname(fileURLToPath(import.meta.url)),
+            '..',
+            '..',
+            '..',
+            'ai',
+            'models'
+        )
 )
 
-const getModelConfig = (voice: string): { sampleRate: number; channels: number } => {
+const getModelConfig = (voice: string): PiperModelConfig => {
     const configPath = path.join(MODELS_DIR, `${voice}.onnx.json`)
     const config = JSON.parse(readFileSync(configPath, 'utf-8'))
     return {
@@ -19,7 +27,11 @@ const getModelConfig = (voice: string): { sampleRate: number; channels: number }
     }
 }
 
-const createWavHeader = (pcmLength: number, sampleRate: number, channels: number): Buffer => {
+const createWavHeader = (
+    pcmLength: number,
+    sampleRate: number,
+    channels: number
+): Buffer => {
     const bitsPerSample = 16
     const byteRate = sampleRate * channels * (bitsPerSample / 8)
     const blockAlign = channels * (bitsPerSample / 8)
@@ -42,7 +54,10 @@ const createWavHeader = (pcmLength: number, sampleRate: number, channels: number
     return header
 }
 
-const synthesize = (text: string, voice: string): Promise<PiperSynthesisResult> => {
+const synthesize = (
+    text: string,
+    voice: string
+): Promise<PiperSynthesisResult> => {
     const modelPath = path.join(MODELS_DIR, `${voice}.onnx`)
     const { sampleRate, channels } = getModelConfig(voice)
 

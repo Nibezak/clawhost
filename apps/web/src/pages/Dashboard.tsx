@@ -7,13 +7,7 @@ import type {
     ProviderType
 } from '@/ts/Types'
 
-import {
-    useState,
-    useEffect,
-    useMemo,
-    useCallback,
-    useRef
-} from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { t } from '@openclaw/i18n'
@@ -165,7 +159,9 @@ const Dashboard: FC = (): ReactNode => {
     const displayName =
         profile?.name ||
         cachedProfile?.name ||
-        (isLocal ? t('account.noNameSet') : (user?.email || cachedProfile?.email || ''))
+        (isLocal
+            ? t('account.noNameSet')
+            : user?.email || cachedProfile?.email || '')
 
     const dropdownFooterLinks = useMemo(() => {
         if (!isLocal) return undefined
@@ -404,7 +400,11 @@ const Dashboard: FC = (): ReactNode => {
     const { plans: hetznerPlans } = usePlans('hetzner')
     const { plans: digitaloceanPlans } = usePlans('digitalocean')
     const { plans: vultrPlans } = usePlans('vultr')
-    const plans = [...(hetznerPlans || []), ...(digitaloceanPlans || []), ...(vultrPlans || [])]
+    const plans = [
+        ...(hetznerPlans || []),
+        ...(digitaloceanPlans || []),
+        ...(vultrPlans || [])
+    ]
     const { data: locations } = useLocations()
     const { data: sshKeys } = useSSHKeys()
     const { data: volumePricing } = useVolumePricing()
@@ -461,7 +461,10 @@ const Dashboard: FC = (): ReactNode => {
         !activeIsError &&
         displayedClaws.length > 0
     const showFullBackground =
-        dashboardTab === DASHBOARD_TABS.PLAYGROUND || chatEmpty || activeIsError || isLoading
+        dashboardTab === DASHBOARD_TABS.PLAYGROUND ||
+        chatEmpty ||
+        activeIsError ||
+        isLoading
 
     return (
         <motion.div
@@ -583,7 +586,9 @@ const Dashboard: FC = (): ReactNode => {
                         hideSSHKeys={!!isLocal}
                         hideSignOut={!!isLocal}
                         footerLinks={dropdownFooterLinks}
-                        openLinksWindowed={isLocal ? openLinksWindowed : undefined}
+                        openLinksWindowed={
+                            isLocal ? openLinksWindowed : undefined
+                        }
                     />
                 </div>
             </div>

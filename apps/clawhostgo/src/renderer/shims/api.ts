@@ -59,7 +59,8 @@ const api = {
     restartClaw: (id: string) => invoke('restartClaw', id),
     deleteClaw: (id: string) => invoke('deleteClaw', id),
     renameClaw: (id: string, data: unknown) => invoke('renameClaw', id, data),
-    updateClawSubdomain: (id: string, data: unknown) => invoke('updateClawSubdomain', id, data),
+    updateClawSubdomain: (id: string, data: unknown) =>
+        invoke('updateClawSubdomain', id, data),
     cancelDeletion: (id: string) => invoke('cancelDeletion', id),
     hardDeleteClaw: (id: string) => invoke('hardDeleteClaw', id),
     getClawDiagnostics: (id: string) => invoke('getClawDiagnostics', id),

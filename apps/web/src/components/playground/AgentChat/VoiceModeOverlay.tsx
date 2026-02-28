@@ -30,11 +30,15 @@ const gridStyle = {
         'linear-gradient(90deg, rgba(239,83,80,0.06) 1px, transparent 1px)'
     ].join(', '),
     backgroundSize: '20px 20px',
-    maskImage: 'linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%)',
-    WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%)'
+    maskImage:
+        'linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%)',
+    WebkitMaskImage:
+        'linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%)'
 }
 
-const supportsOutputSelection = typeof HTMLMediaElement !== 'undefined' && 'setSinkId' in HTMLMediaElement.prototype
+const supportsOutputSelection =
+    typeof HTMLMediaElement !== 'undefined' &&
+    'setSinkId' in HTMLMediaElement.prototype
 
 const SILENCE_THRESHOLD = 8
 const SILENCE_TIMEOUT = 2000
@@ -84,11 +88,13 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
 
     const refreshDevices = useCallback(async () => {
         try {
-            await navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-                stream.getTracks().forEach((track) => track.stop())
-            })
+            await navigator.mediaDevices
+                .getUserMedia({ audio: true })
+                .then((stream) => {
+                    stream.getTracks().forEach((track) => track.stop())
+                })
         } catch {
-            // noop
+            /* empty */
         }
 
         try {
@@ -103,11 +109,12 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
                 return inputs[0]?.deviceId || ''
             })
             setSelectedOutputId((prev) => {
-                if (prev && outputs.find((d) => d.deviceId === prev)) return prev
+                if (prev && outputs.find((d) => d.deviceId === prev))
+                    return prev
                 return outputs[0]?.deviceId || ''
             })
         } catch {
-            // noop
+            /* empty */
         }
     }, [])
 
@@ -118,7 +125,8 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
     useEffect(() => {
         const handler = () => refreshDevices()
         navigator.mediaDevices.addEventListener('devicechange', handler)
-        return () => navigator.mediaDevices.removeEventListener('devicechange', handler)
+        return () =>
+            navigator.mediaDevices.removeEventListener('devicechange', handler)
     }, [refreshDevices])
 
     useEffect(() => {
@@ -148,7 +156,9 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
                 mediaRecorderRef.current = null
                 setIsRecording(false)
 
-                const blob = new Blob(chunksRef.current, { type: recorder.mimeType })
+                const blob = new Blob(chunksRef.current, {
+                    type: recorder.mimeType
+                })
                 chunksRef.current = []
 
                 if (blob.size === 0 || !hadSpeechRef.current) {
@@ -161,7 +171,9 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
 
                 try {
                     const ctx = new AudioContext({ sampleRate: 16000 })
-                    const buf = await ctx.decodeAudioData(await blob.arrayBuffer())
+                    const buf = await ctx.decodeAudioData(
+                        await blob.arrayBuffer()
+                    )
                     const data = buf.getChannelData(0)
                     await ctx.close()
 
@@ -174,7 +186,7 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
                         sendMessageRef.current(text)
                     }
                 } catch {
-                    // transcription failed
+                    /* empty */
                 } finally {
                     setIsTranscribing(false)
                     stoppingRef.current = false
@@ -192,7 +204,9 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
         if (stoppingRef.current || hasNoInput) return
 
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: true
+            })
             streamRef.current = stream
 
             const recorder = new MediaRecorder(stream)
@@ -217,7 +231,7 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
 
             getTranscriber()
         } catch {
-            // mic access denied
+            /* empty */
         }
     }, [hasNoInput])
 
@@ -246,7 +260,10 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
             } else if (hadSpeechRef.current) {
                 if (!silenceStartRef.current) {
                     silenceStartRef.current = Date.now()
-                } else if (Date.now() - silenceStartRef.current > SILENCE_TIMEOUT) {
+                } else if (
+                    Date.now() - silenceStartRef.current >
+                    SILENCE_TIMEOUT
+                ) {
                     stopAndTranscribe()
                     return
                 }
@@ -261,10 +278,11 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
 
     useEffect(() => {
         if (!isRecording && !isTranscribing && !isStreaming) {
-            const hasActivity = typingIndicator === 'thinking'
-                || typingIndicator === 'writing'
-                || !!ttsLoadingMessageId
-                || !!ttsActiveMessageId
+            const hasActivity =
+                typingIndicator === 'thinking' ||
+                typingIndicator === 'writing' ||
+                !!ttsLoadingMessageId ||
+                !!ttsActiveMessageId
 
             if (!hasActivity) {
                 setIntensity(0)
@@ -292,14 +310,33 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
             rafRef.current = requestAnimationFrame(tick)
             return () => cancelAnimationFrame(rafRef.current)
         }
-    }, [isRecording, isTranscribing, isStreaming, typingIndicator, ttsActiveMessageId, ttsLoadingMessageId])
+    }, [
+        isRecording,
+        isTranscribing,
+        isStreaming,
+        typingIndicator,
+        ttsActiveMessageId,
+        ttsLoadingMessageId
+    ])
 
     useEffect(() => {
-        if (prevTtsActiveRef.current && !ttsActiveMessageId && !isRecording && !isTranscribing && !isStreaming) {
+        if (
+            prevTtsActiveRef.current &&
+            !ttsActiveMessageId &&
+            !isRecording &&
+            !isTranscribing &&
+            !isStreaming
+        ) {
             startRecording()
         }
         prevTtsActiveRef.current = ttsActiveMessageId
-    }, [ttsActiveMessageId, isRecording, isTranscribing, isStreaming, startRecording])
+    }, [
+        ttsActiveMessageId,
+        isRecording,
+        isTranscribing,
+        isStreaming,
+        startRecording
+    ])
 
     useEffect(() => {
         if (sessionMessages.length === 0) return
@@ -324,7 +361,10 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
     useEffect(() => {
         return () => {
             cancelAnimationFrame(rafRef.current)
-            if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+            if (
+                mediaRecorderRef.current &&
+                mediaRecorderRef.current.state !== 'inactive'
+            ) {
                 mediaRecorderRef.current.stop()
                 streamRef.current?.getTracks().forEach((track) => track.stop())
             }
@@ -341,11 +381,21 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
         } else {
             startRecording()
         }
-    }, [isRecording, isTranscribing, isStreaming, hasNoInput, startRecording, stopAndTranscribe])
+    }, [
+        isRecording,
+        isTranscribing,
+        isStreaming,
+        hasNoInput,
+        startRecording,
+        stopAndTranscribe
+    ])
 
     const handleClose = useCallback(() => {
         cancelAnimationFrame(rafRef.current)
-        if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+        if (
+            mediaRecorderRef.current &&
+            mediaRecorderRef.current.state !== 'inactive'
+        ) {
             mediaRecorderRef.current.stop()
             streamRef.current?.getTracks().forEach((track) => track.stop())
         }
@@ -362,13 +412,13 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
         label.length > max ? label.slice(0, max) + '...' : label
 
     const selectedInputLabel = truncateLabel(
-        inputDevices.find((d) => d.deviceId === selectedInputId)?.label
-            || t('playground.chatVoiceModeInputDevice'),
+        inputDevices.find((d) => d.deviceId === selectedInputId)?.label ||
+            t('playground.chatVoiceModeInputDevice'),
         12
     )
     const selectedOutputLabel = truncateLabel(
-        outputDevices.find((d) => d.deviceId === selectedOutputId)?.label
-            || t('playground.chatVoiceModeOutputDevice'),
+        outputDevices.find((d) => d.deviceId === selectedOutputId)?.label ||
+            t('playground.chatVoiceModeOutputDevice'),
         12
     )
 
@@ -376,8 +426,10 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
         if (hasNoInput) return t('playground.chatVoiceModeNoMicrophone')
         if (isRecording) return t('playground.chatVoiceModeListening')
         if (isTranscribing) return t('playground.chatVoiceModeTranscribing')
-        if (typingIndicator === 'thinking') return t('playground.chatVoiceModeThinking')
-        if (typingIndicator === 'writing' || isStreaming) return t('playground.chatVoiceModeResponding')
+        if (typingIndicator === 'thinking')
+            return t('playground.chatVoiceModeThinking')
+        if (typingIndicator === 'writing' || isStreaming)
+            return t('playground.chatVoiceModeResponding')
         if (ttsLoadingMessageId) return t('playground.chatVoiceModePreparing')
         if (ttsActiveMessageId) return t('playground.chatVoiceModeSpeaking')
         return t('playground.chatVoiceModeTapToSpeak')
@@ -395,7 +447,8 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
                 <div
                     className='pointer-events-none absolute inset-0'
                     style={{
-                        background: 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(239,83,80,0.12), transparent)'
+                        background:
+                            'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(239,83,80,0.12), transparent)'
                     }}
                 />
                 <div
@@ -415,25 +468,45 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <button className='flex items-center gap-1.5 rounded-lg bg-white/5 px-2.5 py-1.5 text-xs text-white/60 outline-none transition-colors hover:bg-white/10'>
-                                    <MicrophoneIcon className='h-3 w-3 shrink-0 text-white/40' weight='fill' />
+                                    <MicrophoneIcon
+                                        className='h-3 w-3 shrink-0 text-white/40'
+                                        weight='fill'
+                                    />
                                     <span>{selectedInputLabel}</span>
                                     <CaretDownIcon className='h-3 w-3 shrink-0 opacity-50' />
                                 </button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align='end' className='max-w-[240px]'>
-                                <DropdownMenuRadioGroup value={selectedInputId} onValueChange={setSelectedInputId}>
+                            <DropdownMenuContent
+                                align='end'
+                                className='max-w-[240px]'
+                            >
+                                <DropdownMenuRadioGroup
+                                    value={selectedInputId}
+                                    onValueChange={setSelectedInputId}
+                                >
                                     {inputDevices.map((d) => (
-                                        <DropdownMenuRadioItem key={d.deviceId} value={d.deviceId}>
+                                        <DropdownMenuRadioItem
+                                            key={d.deviceId}
+                                            value={d.deviceId}
+                                        >
                                             <span className='truncate'>
-                                                {d.label || t('playground.chatVoiceModeInputDevice')}
+                                                {d.label ||
+                                                    t(
+                                                        'playground.chatVoiceModeInputDevice'
+                                                    )}
                                             </span>
                                         </DropdownMenuRadioItem>
                                     ))}
                                 </DropdownMenuRadioGroup>
                                 {inputDevices.length === 0 && (
                                     <div className='text-muted-foreground flex items-center gap-2 px-2.5 py-2 text-xs'>
-                                        <WarningIcon className='h-3.5 w-3.5 shrink-0 text-[#ef5350]' weight='fill' />
-                                        {t('playground.chatVoiceModeNoMicrophone')}
+                                        <WarningIcon
+                                            className='h-3.5 w-3.5 shrink-0 text-[#ef5350]'
+                                            weight='fill'
+                                        />
+                                        {t(
+                                            'playground.chatVoiceModeNoMicrophone'
+                                        )}
                                     </div>
                                 )}
                             </DropdownMenuContent>
@@ -442,25 +515,45 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <button className='flex items-center gap-1.5 rounded-lg bg-white/5 px-2.5 py-1.5 text-xs text-white/60 outline-none transition-colors hover:bg-white/10'>
-                                        <SpeakerHighIcon className='h-3 w-3 shrink-0 text-white/40' weight='fill' />
+                                        <SpeakerHighIcon
+                                            className='h-3 w-3 shrink-0 text-white/40'
+                                            weight='fill'
+                                        />
                                         <span>{selectedOutputLabel}</span>
                                         <CaretDownIcon className='h-3 w-3 shrink-0 opacity-50' />
                                     </button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align='end' className='max-w-[240px]'>
-                                    <DropdownMenuRadioGroup value={selectedOutputId} onValueChange={setSelectedOutputId}>
+                                <DropdownMenuContent
+                                    align='end'
+                                    className='max-w-[240px]'
+                                >
+                                    <DropdownMenuRadioGroup
+                                        value={selectedOutputId}
+                                        onValueChange={setSelectedOutputId}
+                                    >
                                         {outputDevices.map((d) => (
-                                            <DropdownMenuRadioItem key={d.deviceId} value={d.deviceId}>
+                                            <DropdownMenuRadioItem
+                                                key={d.deviceId}
+                                                value={d.deviceId}
+                                            >
                                                 <span className='truncate'>
-                                                    {d.label || t('playground.chatVoiceModeOutputDevice')}
+                                                    {d.label ||
+                                                        t(
+                                                            'playground.chatVoiceModeOutputDevice'
+                                                        )}
                                                 </span>
                                             </DropdownMenuRadioItem>
                                         ))}
                                     </DropdownMenuRadioGroup>
                                     {outputDevices.length === 0 && (
                                         <div className='text-muted-foreground flex items-center gap-2 px-2.5 py-2 text-xs'>
-                                            <WarningIcon className='h-3.5 w-3.5 shrink-0 text-[#ef5350]' weight='fill' />
-                                            {t('playground.chatVoiceModeNoSpeaker')}
+                                            <WarningIcon
+                                                className='h-3.5 w-3.5 shrink-0 text-[#ef5350]'
+                                                weight='fill'
+                                            />
+                                            {t(
+                                                'playground.chatVoiceModeNoSpeaker'
+                                            )}
                                         </div>
                                     )}
                                 </DropdownMenuContent>
@@ -478,7 +571,10 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
 
                 {(hasNoInput || hasNoOutput) && (
                     <div className='z-10 flex w-full items-center gap-2 bg-[#ef5350]/10 px-5 py-2'>
-                        <WarningIcon className='h-4 w-4 shrink-0 text-[#ef5350]' weight='fill' />
+                        <WarningIcon
+                            className='h-4 w-4 shrink-0 text-[#ef5350]'
+                            weight='fill'
+                        />
                         <p className='text-xs text-[#ef5350]/80'>
                             {hasNoInput
                                 ? t('playground.chatVoiceModeNoMicrophone')
@@ -487,7 +583,9 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
                     </div>
                 )}
 
-                <div className={`z-10 flex flex-col items-center ${sessionMessages.length > 0 ? 'pb-4 pt-10' : 'flex-1 justify-center'}`}>
+                <div
+                    className={`z-10 flex flex-col items-center ${sessionMessages.length > 0 ? 'pb-4 pt-10' : 'flex-1 justify-center'}`}
+                >
                     <button
                         onClick={handleToggle}
                         disabled={isTranscribing || isStreaming || hasNoInput}
@@ -498,9 +596,7 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
                             <VoiceOrb intensity={intensity} size={120} />
                         </div>
                     </button>
-                    <p className='mt-6 text-sm text-zinc-400'>
-                        {statusLabel}
-                    </p>
+                    <p className='mt-6 text-sm text-zinc-400'>{statusLabel}</p>
                 </div>
 
                 {sessionMessages.length > 0 && (

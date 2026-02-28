@@ -10,8 +10,13 @@ const setupTerminalSocket = (server: Server) => {
 
     server.on('upgrade', async (request, socket, head) => {
         try {
-            const url = new URL(request.url || '', `http://${request.headers.host}`)
-            const match = url.pathname.match(/^(?:\/ws)?\/claws\/([^/]+)\/terminal$/)
+            const url = new URL(
+                request.url || '',
+                `http://${request.headers.host}`
+            )
+            const match = url.pathname.match(
+                /^(?:\/ws)?\/claws\/([^/]+)\/terminal$/
+            )
 
             if (!match) {
                 socket.destroy()
@@ -76,17 +81,21 @@ const handleConnection = (ws: WebSocket, ip: string, password: string) => {
                 })
 
                 ws.on('message', (msg: Buffer | string) => {
-                    const str = typeof msg === 'string' ? msg : msg.toString('utf-8')
+                    const str =
+                        typeof msg === 'string' ? msg : msg.toString('utf-8')
 
                     if (str[0] === '{') {
                         try {
                             const parsed = JSON.parse(str)
-                            if (parsed.type === 'resize' && parsed.cols && parsed.rows) {
+                            if (
+                                parsed.type === 'resize' &&
+                                parsed.cols &&
+                                parsed.rows
+                            ) {
                                 stream.setWindow(parsed.rows, parsed.cols, 0, 0)
                                 return
                             }
-                        } catch {
-                        }
+                        } catch {}
                     }
 
                     stream.write(str)

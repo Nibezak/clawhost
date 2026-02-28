@@ -8,7 +8,7 @@ function sanitizeYAML(content: string): string {
     sanitized = sanitized.replace(/\u2014/g, '-')
 
     sanitized = sanitized.replace(/[\u201C\u201D]/g, '"')
-    sanitized = sanitized.replace(/[\u2018\u2019]/g, '\'')
+    sanitized = sanitized.replace(/[\u2018\u2019]/g, "'")
 
     // eslint-disable-next-line no-control-regex
     sanitized = sanitized.replace(/[^\x00-\x7F\n\r\t ]/g, '')

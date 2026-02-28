@@ -475,9 +475,7 @@ const Login: FC = (): ReactNode => {
                             onClick={() => handleVerifyOtp(code.join(''))}
                             size='lg'
                             className='w-full gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90'
-                            disabled={
-                                !!loadingMethod || !isCodeComplete
-                            }
+                            disabled={!!loadingMethod || !isCodeComplete}
                         >
                             {loadingMethod === 'email' && (
                                 <CircleNotchIcon className='h-4 w-4 animate-spin' />

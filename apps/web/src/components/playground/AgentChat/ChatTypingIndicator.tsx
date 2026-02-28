@@ -4,7 +4,9 @@ import type { ChatTypingIndicatorProps } from '@/ts/Interfaces'
 import { BrainIcon } from '@phosphor-icons/react'
 import { t } from '@openclaw/i18n'
 
-const ChatTypingIndicator: FC<ChatTypingIndicatorProps> = ({ state }): ReactNode => {
+const ChatTypingIndicator: FC<ChatTypingIndicatorProps> = ({
+    state
+}): ReactNode => {
     if (!state) return null
 
     return (
@@ -12,8 +14,13 @@ const ChatTypingIndicator: FC<ChatTypingIndicatorProps> = ({ state }): ReactNode
             <div className='bg-foreground/5 flex items-center gap-1.5 rounded-2xl rounded-bl-md px-4 py-3'>
                 {state === 'thinking' ? (
                     <>
-                        <BrainIcon className='text-foreground/40 h-4 w-4 animate-pulse' weight='duotone' />
-                        <span className='text-foreground/40 animate-pulse text-xs'>{t('playground.chatThinking')}</span>
+                        <BrainIcon
+                            className='text-foreground/40 h-4 w-4 animate-pulse'
+                            weight='duotone'
+                        />
+                        <span className='text-foreground/40 animate-pulse text-xs'>
+                            {t('playground.chatThinking')}
+                        </span>
                     </>
                 ) : (
                     <>

@@ -4,7 +4,13 @@ import type { CompareFeatureValue } from '@/ts/Interfaces'
 
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { BlogCTA, Header, LandingFooter, PageBackground, PageTitle } from '@/components'
+import {
+    BlogCTA,
+    Header,
+    LandingFooter,
+    PageBackground,
+    PageTitle
+} from '@/components'
 import { PATHS, getBaseDomain } from '@/lib'
 import { getCompareData } from '@/data'
 import { GITHUB_REPO_URL } from '@/hooks'

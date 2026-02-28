@@ -290,8 +290,8 @@ Text-to-speech is powered by [Piper](https://github.com/rhasspy/piper), a fast l
 2. Download voice model `.onnx` files and their `.onnx.json` configs from [Piper voices](https://github.com/rhasspy/piper/blob/master/VOICES.md)
 3. Place models in a directory (e.g., `ai/models/`)
 4. Set environment variables:
-   - `PIPER_BINARY` — path to the piper binary (defaults to `piper` on PATH)
-   - `PIPER_MODELS_DIR` — path to the models directory (defaults to `ai/models/` relative to the API)
+    - `PIPER_BINARY` — path to the piper binary (defaults to `piper` on PATH)
+    - `PIPER_MODELS_DIR` — path to the models directory (defaults to `ai/models/` relative to the API)
 
 </details>
 
@@ -309,11 +309,11 @@ pnpm dev
 
 This starts both apps:
 
-| App       | URL                      |
-| --------- | ------------------------ |
-| Web       | http://localhost:1111    |
-| API       | http://localhost:2222    |
-| WebSocket | ws://localhost:2223      |
+| App       | URL                   |
+| --------- | --------------------- |
+| Web       | http://localhost:1111 |
+| API       | http://localhost:2222 |
+| WebSocket | ws://localhost:2223   |
 
 The web dev server proxies `/api` requests to the API and `/ws` requests to the WebSocket server automatically.
 
@@ -367,31 +367,31 @@ pnpm --filter api email:dev    # Preview email templates at localhost:3333
 
 **AI (Text-to-Speech)**
 
-| Method | Endpoint         | Description                    |
-| ------ | ---------------- | ------------------------------ |
+| Method | Endpoint         | Description                     |
+| ------ | ---------------- | ------------------------------- |
 | `POST` | `/api/ai/tts`    | Generate speech audio from text |
 | `GET`  | `/api/ai/voices` | List available TTS voices       |
 
 **Claws (Server Instances)**
 
-| Method   | Endpoint                         | Description                   |
-| -------- | -------------------------------- | ----------------------------- |
-| `GET`    | `/api/claws`                     | List user's claws             |
-| `GET`    | `/api/claws/:id`                 | Get a specific claw           |
-| `POST`   | `/api/claws`                     | Create a claw (direct)        |
-| `POST`   | `/api/claws/purchase`            | Initiate paid claw purchase   |
-| `DELETE` | `/api/claws/pending/:id`         | Cancel a pending claw         |
-| `POST`   | `/api/claws/:id/sync`            | Sync claw with cloud provider |
-| `POST`   | `/api/claws/:id/start`           | Start a claw                  |
-| `POST`   | `/api/claws/:id/stop`            | Stop a claw                   |
-| `POST`   | `/api/claws/:id/restart`         | Restart a claw                |
-| `PATCH`  | `/api/claws/:id`                 | Rename a claw                 |
-| `POST`   | `/api/claws/:id/cancel-deletion` | Cancel scheduled deletion     |
-| `DELETE` | `/api/claws/:id`                 | Delete a claw                 |
-| `GET`    | `/api/claws/:id/export`          | Export claw configuration     |
-| `POST`   | `/api/claws/:id/credentials`     | Get claw credentials          |
+| Method   | Endpoint                         | Description                    |
+| -------- | -------------------------------- | ------------------------------ |
+| `GET`    | `/api/claws`                     | List user's claws              |
+| `GET`    | `/api/claws/:id`                 | Get a specific claw            |
+| `POST`   | `/api/claws`                     | Create a claw (direct)         |
+| `POST`   | `/api/claws/purchase`            | Initiate paid claw purchase    |
+| `DELETE` | `/api/claws/pending/:id`         | Cancel a pending claw          |
+| `POST`   | `/api/claws/:id/sync`            | Sync claw with cloud provider  |
+| `POST`   | `/api/claws/:id/start`           | Start a claw                   |
+| `POST`   | `/api/claws/:id/stop`            | Stop a claw                    |
+| `POST`   | `/api/claws/:id/restart`         | Restart a claw                 |
+| `PATCH`  | `/api/claws/:id`                 | Rename a claw                  |
+| `POST`   | `/api/claws/:id/cancel-deletion` | Cancel scheduled deletion      |
+| `DELETE` | `/api/claws/:id`                 | Delete a claw                  |
+| `GET`    | `/api/claws/:id/export`          | Export claw configuration      |
+| `POST`   | `/api/claws/:id/credentials`     | Get claw credentials           |
 | `POST`   | `/api/claws/:id/version`         | Get installed OpenClaw version |
-| `POST`   | `/api/claws/:id/versions`        | List available versions       |
+| `POST`   | `/api/claws/:id/versions`        | List available versions        |
 
 **Claw Diagnostics**
 
@@ -412,19 +412,19 @@ pnpm --filter api email:dev    # Preview email templates at localhost:3333
 
 **Claw Channels**
 
-| Method | Endpoint                                     | Description                  |
-| ------ | -------------------------------------------- | ---------------------------- |
-| `POST` | `/api/claws/:id/channels`                    | Get configured channels      |
-| `PUT`  | `/api/claws/:id/channels`                    | Update channel configuration |
-| `POST` | `/api/claws/:id/channels/whatsapp/pair`      | Start WhatsApp QR pairing    |
-| `POST` | `/api/claws/:id/channels/whatsapp/pair-status` | Check WhatsApp pair status |
+| Method | Endpoint                                       | Description                  |
+| ------ | ---------------------------------------------- | ---------------------------- |
+| `POST` | `/api/claws/:id/channels`                      | Get configured channels      |
+| `PUT`  | `/api/claws/:id/channels`                      | Update channel configuration |
+| `POST` | `/api/claws/:id/channels/whatsapp/pair`        | Start WhatsApp QR pairing    |
+| `POST` | `/api/claws/:id/channels/whatsapp/pair-status` | Check WhatsApp pair status   |
 
 **Claw Bindings**
 
-| Method | Endpoint                   | Description          |
-| ------ | -------------------------- | -------------------- |
-| `POST` | `/api/claws/:id/bindings`  | Get claw bindings    |
-| `PUT`  | `/api/claws/:id/bindings`  | Update claw bindings |
+| Method | Endpoint                  | Description          |
+| ------ | ------------------------- | -------------------- |
+| `POST` | `/api/claws/:id/bindings` | Get claw bindings    |
+| `PUT`  | `/api/claws/:id/bindings` | Update claw bindings |
 
 **Claw Skills**
 
@@ -458,12 +458,12 @@ pnpm --filter api email:dev    # Preview email templates at localhost:3333
 
 **Admin Endpoints**
 
-| Method | Endpoint                            | Description                          |
-| ------ | ----------------------------------- | ------------------------------------ |
-| `GET`  | `/api/claws/admin`                  | List all claws (admin only)          |
-| `POST` | `/api/claws/:id/hard-delete`        | Permanently delete (admin only)      |
-| `POST` | `/api/claws/:id/diagnostics/repair` | Repair instance (admin only)         |
-| `POST` | `/api/claws/:id/reinstall`          | Reinstall OS (admin only)            |
+| Method | Endpoint                            | Description                           |
+| ------ | ----------------------------------- | ------------------------------------- |
+| `GET`  | `/api/claws/admin`                  | List all claws (admin only)           |
+| `POST` | `/api/claws/:id/hard-delete`        | Permanently delete (admin only)       |
+| `POST` | `/api/claws/:id/diagnostics/repair` | Repair instance (admin only)          |
+| `POST` | `/api/claws/:id/reinstall`          | Reinstall OS (admin only)             |
 | `POST` | `/api/claws/:id/install-version`    | Install specific version (admin only) |
 
 **SSH Keys**
@@ -489,9 +489,9 @@ pnpm --filter api email:dev    # Preview email templates at localhost:3333
 
 **WebSocket**
 
-| Protocol    | Endpoint                        | Description                     |
-| ----------- | ------------------------------- | ------------------------------- |
-| `WebSocket` | `/ws/claws/:id/terminal?token=` | Live SSH terminal session       |
+| Protocol    | Endpoint                        | Description               |
+| ----------- | ------------------------------- | ------------------------- |
+| `WebSocket` | `/ws/claws/:id/terminal?token=` | Live SSH terminal session |
 
 ### Webhooks
 

@@ -127,7 +127,10 @@ const isDnsSetup = (): boolean => {
     try {
         if (!fs.existsSync(RESOLVER_PATH)) return false
         const content = fs.readFileSync(RESOLVER_PATH, 'utf-8')
-        return content.includes('port 15353') && content.includes('nameserver 127.0.0.1')
+        return (
+            content.includes('port 15353') &&
+            content.includes('nameserver 127.0.0.1')
+        )
     } catch {
         return false
     }
@@ -143,9 +146,14 @@ const ensurePortRedirect = (): void => {
     ].join('\n')
     const tmpScript = path.join(os.tmpdir(), 'clawhost-pf.sh')
     fs.writeFileSync(tmpScript, script, { mode: 0o755 })
-    exec(`osascript -e 'do shell script "${tmpScript}" with administrator privileges'`, () => {
-        try { fs.unlinkSync(tmpScript) } catch {}
-    })
+    exec(
+        `osascript -e 'do shell script "${tmpScript}" with administrator privileges'`,
+        () => {
+            try {
+                fs.unlinkSync(tmpScript)
+            } catch {}
+        }
+    )
 }
 
 const setupResolver = (): Promise<boolean> => {
@@ -181,11 +189,22 @@ const setupResolver = (): Promise<boolean> => {
         ].join('\n')
         const tmpScript = path.join(os.tmpdir(), 'clawhost-dns-setup.sh')
         fs.writeFileSync(tmpScript, script, { mode: 0o755 })
-        exec(`osascript -e 'do shell script "${tmpScript}" with administrator privileges'`, (err) => {
-            try { fs.unlinkSync(tmpScript) } catch {}
-            resolve(!err)
-        })
+        exec(
+            `osascript -e 'do shell script "${tmpScript}" with administrator privileges'`,
+            (err) => {
+                try {
+                    fs.unlinkSync(tmpScript)
+                } catch {}
+                resolve(!err)
+            }
+        )
     })
 }
 
-export default { startDns, stopDns, isDnsSetup, setupResolver, ensurePortRedirect }
+export default {
+    startDns,
+    stopDns,
+    isDnsSetup,
+    setupResolver,
+    ensurePortRedirect
+}

@@ -51,10 +51,7 @@ const VoiceChatModal: FC<VoiceChatModalProps> = ({
                     </Text>
                 </View>
 
-                <Pressable
-                    style={styles.orbContainer}
-                    onPress={handleToggle}
-                >
+                <Pressable style={styles.orbContainer} onPress={handleToggle}>
                     <VoiceOrb intensity={intensity} size={140} />
                 </Pressable>
 
@@ -64,7 +61,12 @@ const VoiceChatModal: FC<VoiceChatModalProps> = ({
                         : t('mobile.voiceTapToSpeak')}
                 </Text>
 
-                <View style={[styles.footer, { paddingBottom: insets.bottom + 16 }]}>
+                <View
+                    style={[
+                        styles.footer,
+                        { paddingBottom: insets.bottom + 16 }
+                    ]}
+                >
                     <Pressable style={styles.closeButton} onPress={handleClose}>
                         <X size={24} color={COLORS.white} weight='bold' />
                     </Pressable>

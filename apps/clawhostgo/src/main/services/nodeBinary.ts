@@ -53,10 +53,16 @@ const downloadNode = (): boolean => {
         execSync(`curl -fsSL "${url}" -o "${tmpFile}"`, { timeout: 120000 })
         execSync(`tar -xzf "${tmpFile}" -C "${tmpDir}"`, { timeout: 60000 })
 
-        const extracted = path.join(tmpDir, `node-v${NODE_VERSION}-${os}-${arch}`)
+        const extracted = path.join(
+            tmpDir,
+            `node-v${NODE_VERSION}-${os}-${arch}`
+        )
 
         fs.mkdirSync(path.join(nodeDir, 'bin'), { recursive: true })
-        fs.copyFileSync(path.join(extracted, 'bin', 'node'), path.join(nodeDir, 'bin', 'node'))
+        fs.copyFileSync(
+            path.join(extracted, 'bin', 'node'),
+            path.join(nodeDir, 'bin', 'node')
+        )
         fs.chmodSync(path.join(nodeDir, 'bin', 'node'), 0o755)
 
         const npmSrc = path.join(extracted, 'lib', 'node_modules', 'npm')
@@ -82,7 +88,9 @@ const getNodeBinaryPath = (): string => {
 
     if (!app.isPackaged) {
         try {
-            const systemNode = execSync('which node', { encoding: 'utf-8' }).trim()
+            const systemNode = execSync('which node', {
+                encoding: 'utf-8'
+            }).trim()
             return systemNode
         } catch {
             return process.execPath

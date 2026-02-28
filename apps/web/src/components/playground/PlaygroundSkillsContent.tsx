@@ -630,7 +630,9 @@ const PlaygroundSkillsContent: FC<PlaygroundSkillsContentProps> = ({
                                                         {t(
                                                             'playground.clawHubDownloads',
                                                             {
-                                                                count: skill.downloads.toLocaleString(getLocale())
+                                                                count: skill.downloads.toLocaleString(
+                                                                    getLocale()
+                                                                )
                                                             }
                                                         )}
                                                     </span>

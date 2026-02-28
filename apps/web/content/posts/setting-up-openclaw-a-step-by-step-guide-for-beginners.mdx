@@ -1,14 +1,15 @@
 ---
 title: Setting Up OpenClaw — A Step-by-Step Guide for Beginners
 slug: setting-up-openclaw-a-step-by-step-guide-for-beginners
-description: Your complete guide to installing and configuring OpenClaw. From download
-  to first message, everything a beginner needs to know.
+description:
+    Your complete guide to installing and configuring OpenClaw. From download
+    to first message, everything a beginner needs to know.
 author: ClawHost
 publishedAt: '2026-02-26'
 tags:
-- openclaw
-- tutorial
-- automation
+    - openclaw
+    - tutorial
+    - automation
 coverImage: /setting-up-openclaw-a-step-by-step-guide-for-beginners.webp
 ---
 
@@ -25,6 +26,7 @@ No deep technical knowledge required. If you can use a terminal and copy-paste c
 Use ClawHost, the managed hosting platform:
 
 **Pros**:
+
 - One-click deployment
 - No server management
 - Automatic backups
@@ -32,6 +34,7 @@ Use ClawHost, the managed hosting platform:
 - Updates handled for you
 
 **Cons**:
+
 - Monthly cost ($20-200 depending on plan)
 - Data on ClawHost's servers (though encrypted)
 
@@ -42,12 +45,14 @@ Use ClawHost, the managed hosting platform:
 Install OpenClaw on your own server or laptop:
 
 **Pros**:
+
 - Free (after initial setup)
 - Complete data privacy
 - Full customization
 - No dependencies on external services
 
 **Cons**:
+
 - Requires technical setup
 - You manage servers and updates
 - Requires some upkeep
@@ -72,11 +77,11 @@ Name: Your Name
 
 Plans available:
 
-| Plan | Cost | Agents | Compute |
-|------|------|--------|---------|
-| Starter | $20/month | 1 | Small |
-| Professional | $60/month | 5 | Medium |
-| Enterprise | Custom | Unlimited | Large |
+| Plan         | Cost      | Agents    | Compute |
+| ------------ | --------- | --------- | ------- |
+| Starter      | $20/month | 1         | Small   |
+| Professional | $60/month | 5         | Medium  |
+| Enterprise   | Custom    | Unlimited | Large   |
 
 For starting: choose **Starter**.
 
@@ -91,6 +96,7 @@ Capabilities: (checkboxes for email, browser, etc.)
 ```
 
 Select these capabilities:
+
 - ✅ Browser Automation
 - ✅ File Operations
 - ✅ Code Execution
@@ -260,7 +266,7 @@ npm run task "What's the weather like right now?"
 The agent will think for a moment, then respond:
 
 ```
-Agent: "I don't have access to real-time weather data, 
+Agent: "I don't have access to real-time weather data,
 but I can help you search for it online if you'd like."
 ```
 
@@ -273,11 +279,12 @@ Now try something more useful:
 ### Task: Get Information About a Topic
 
 ```bash
-npm run task "Research the top 5 AI agents being developed in 2026. 
+npm run task "Research the top 5 AI agents being developed in 2026.
 Focus on capabilities and who's funding them."
 ```
 
 The agent will:
+
 1. Understand the request
 2. Browse the web for information
 3. Compile findings
@@ -300,7 +307,7 @@ The agent creates the file. Check your project folder.
 ### Task: Write Code
 
 ```bash
-npm run task "Write a Python script that generates 10 random numbers 
+npm run task "Write a Python script that generates 10 random numbers
 between 1 and 100 and calculates their average."
 ```
 
@@ -312,28 +319,28 @@ You probably want to customize your agent. Create a file called `my-agent.config
 
 ```json
 {
-  "name": "My Personal Assistant",
-  "type": "general",
-  
-  "capabilities": {
-    "browser": true,
-    "code_execution": true,
-    "file_operations": true,
-    "email": true,
-    "calendar": true
-  },
-  
-  "preferences": {
-    "response_style": "professional",
-    "verbosity": "concise",
-    "language": "English"
-  },
-  
-  "limits": {
-    "max_api_calls_per_task": 10,
-    "max_file_size_mb": 100,
-    "timeout_seconds": 300
-  }
+    "name": "My Personal Assistant",
+    "type": "general",
+
+    "capabilities": {
+        "browser": true,
+        "code_execution": true,
+        "file_operations": true,
+        "email": true,
+        "calendar": true
+    },
+
+    "preferences": {
+        "response_style": "professional",
+        "verbosity": "concise",
+        "language": "English"
+    },
+
+    "limits": {
+        "max_api_calls_per_task": 10,
+        "max_file_size_mb": 100,
+        "timeout_seconds": 300
+    }
 }
 ```
 
@@ -416,6 +423,7 @@ npm run schedule "Every morning at 9 AM, send me a summary of yesterday's emails
 ### 4. Set Up Integrations
 
 Connect OpenClaw to:
+
 - Slack (message your agent from Slack)
 - Telegram (message your agent from Telegram)
 - Discord (use agent in Discord servers)
@@ -434,7 +442,7 @@ When you're ready to leave this running 24/7, deploy to a VPS:
 
 ```
 Problem: You're getting authentication errors
-Solution: 
+Solution:
 1. Copy your API key again carefully (no extra spaces)
 2. Paste it in .env
 3. Save the file

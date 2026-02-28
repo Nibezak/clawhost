@@ -10,7 +10,9 @@ const BASE_URL = import.meta.env.VITE_API_URL || '/api'
 const useTextToSpeech = (): UseTextToSpeechReturn => {
     const { showToast } = useUIStore()
     const [activeMessageId, setActiveMessageId] = useState<string | null>(null)
-    const [loadingMessageId, setLoadingMessageId] = useState<string | null>(null)
+    const [loadingMessageId, setLoadingMessageId] = useState<string | null>(
+        null
+    )
     const audioRef = useRef<HTMLAudioElement | null>(null)
     const abortRef = useRef<AbortController | null>(null)
     const cacheRef = useRef<Map<string, string>>(new Map())

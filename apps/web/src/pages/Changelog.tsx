@@ -2,7 +2,13 @@ import type { FC, ReactNode } from 'react'
 
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { BlogCTA, Header, LandingFooter, PageBackground, PageTitle } from '@/components'
+import {
+    BlogCTA,
+    Header,
+    LandingFooter,
+    PageBackground,
+    PageTitle
+} from '@/components'
 import { PATHS, getBaseDomain } from '@/lib'
 import { CheckIcon, CircleIcon, XIcon } from '@phosphor-icons/react'
 
@@ -147,7 +153,10 @@ const Changelog: FC = (): ReactNode => {
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <XIcon className='h-4 w-4 flex-shrink-0 text-red-600 dark:text-red-400' weight='bold' />
+                                    <XIcon
+                                        className='h-4 w-4 flex-shrink-0 text-red-600 dark:text-red-400'
+                                        weight='bold'
+                                    />
                                     <span className='text-foreground text-sm'>
                                         {t('changelog.release11Dropped1')}
                                     </span>

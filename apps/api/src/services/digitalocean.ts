@@ -36,7 +36,9 @@ const getClient = () => {
     })
 }
 
-const getPublicIp = (droplet: DigitalOceanDropletResponse['droplet']): string => {
+const getPublicIp = (
+    droplet: DigitalOceanDropletResponse['droplet']
+): string => {
     const v4 = droplet.networks.v4.find((n) => n.type === 'public')
     return v4?.ip_address || ''
 }

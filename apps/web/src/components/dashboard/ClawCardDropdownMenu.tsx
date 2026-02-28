@@ -85,10 +85,12 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                     <>
                         <DropdownMenuItem
                             onClick={() => {
-                                const subdomain = claw.subdomain || generateSlug(claw.id)
-                                const domain = claw.provider === clawProvider.local
-                                    ? `${subdomain}.clawhost`
-                                    : `${subdomain}.${getBaseDomain()}`
+                                const subdomain =
+                                    claw.subdomain || generateSlug(claw.id)
+                                const domain =
+                                    claw.provider === clawProvider.local
+                                        ? `${subdomain}.clawhost`
+                                        : `${subdomain}.${getBaseDomain()}`
                                 const url = `https://${domain}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`
                                 window.open(url, '_blank')
                             }}
@@ -121,9 +123,7 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                             {t('dashboard.connect')}
                         </DropdownMenuItem>
                         {claw.hasRootPassword && (
-                            <DropdownMenuItem
-                                onClick={actions.onCopyPassword}
-                            >
+                            <DropdownMenuItem onClick={actions.onCopyPassword}>
                                 <CopyIcon className='mr-2 h-4 w-4' />
                                 {t('dashboard.copyPassword')}
                             </DropdownMenuItem>

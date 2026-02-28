@@ -1668,8 +1668,28 @@ const Landing: FC = (): ReactNode => {
                                         <div className='flex items-center gap-3'>
                                             <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400' />
                                             <span className='text-foreground'>
+                                                {t('landing.comparisonChatUs')}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td className='px-6 py-4'>
+                                        <div className='flex items-center gap-3'>
+                                            <XIcon className='h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-400' />
+                                            <span className='text-muted-foreground'>
                                                 {t(
-                                                    'landing.comparisonSocialsUs'
+                                                    'landing.comparisonChatOthers'
+                                                )}
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className='px-6 py-4'>
+                                        <div className='flex items-center gap-3'>
+                                            <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                            <span className='text-foreground'>
+                                                {t(
+                                                    'landing.comparisonVersionUs'
                                                 )}
                                             </span>
                                         </div>
@@ -1679,7 +1699,29 @@ const Landing: FC = (): ReactNode => {
                                             <XIcon className='h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-400' />
                                             <span className='text-muted-foreground'>
                                                 {t(
-                                                    'landing.comparisonSocialsOthers'
+                                                    'landing.comparisonVersionOthers'
+                                                )}
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr className='bg-foreground/[0.01]'>
+                                    <td className='px-6 py-4'>
+                                        <div className='flex items-center gap-3'>
+                                            <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                            <span className='text-foreground'>
+                                                {t(
+                                                    'landing.comparisonTerminalUs'
+                                                )}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td className='px-6 py-4'>
+                                        <div className='flex items-center gap-3'>
+                                            <XIcon className='h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-400' />
+                                            <span className='text-muted-foreground'>
+                                                {t(
+                                                    'landing.comparisonTerminalOthers'
                                                 )}
                                             </span>
                                         </div>

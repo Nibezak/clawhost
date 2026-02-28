@@ -1010,6 +1010,11 @@ export interface PiperVoice {
     quality: string
 }
 
+export interface PiperModelConfig {
+    sampleRate: number
+    channels: number
+}
+
 export interface PiperSynthesisResult {
     audio: Buffer
     sampleRate: number

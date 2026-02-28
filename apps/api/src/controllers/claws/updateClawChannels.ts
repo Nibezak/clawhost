@@ -92,9 +92,10 @@ const updateClawChannels = async (c: AuthenticatedContext) => {
                 const trimmed = output.trim()
                 const jsonStart = trimmed.indexOf('{')
                 const jsonEnd = trimmed.lastIndexOf('}')
-                const jsonStr = jsonStart >= 0 && jsonEnd > jsonStart
-                    ? trimmed.substring(jsonStart, jsonEnd + 1)
-                    : '{}'
+                const jsonStr =
+                    jsonStart >= 0 && jsonEnd > jsonStart
+                        ? trimmed.substring(jsonStart, jsonEnd + 1)
+                        : '{}'
                 config = JSON.parse(jsonStr)
             } catch {
                 config = {}
@@ -102,7 +103,10 @@ const updateClawChannels = async (c: AuthenticatedContext) => {
 
             applyToolsDefaults(config)
 
-            const agents = (config.agents || { defaults: {}, list: [] }) as Record<string, unknown>
+            const agents = (config.agents || {
+                defaults: {},
+                list: []
+            }) as Record<string, unknown>
             const defaults = (agents.defaults || {}) as Record<string, unknown>
             defaults.sandbox = { mode: 'off' }
             agents.defaults = defaults

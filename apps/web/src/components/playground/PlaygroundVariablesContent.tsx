@@ -370,15 +370,21 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
                                                     onClick={() =>
                                                         handleRemoveVar(index)
                                                     }
-                                                    disabled={saveMutation.isPending || deleteMutation.isPending}
+                                                    disabled={
+                                                        saveMutation.isPending ||
+                                                        deleteMutation.isPending
+                                                    }
                                                     className='text-muted-foreground rounded p-1 transition-colors disabled:cursor-default disabled:opacity-50 [&:not(:disabled)]:hover:text-red-600 dark:[&:not(:disabled)]:hover:text-red-400'
                                                 >
                                                     <TrashIcon className='h-3.5 w-3.5' />
                                                 </button>
                                             </TooltipTrigger>
                                             <TooltipContent>
-                                                {saveMutation.isPending || deleteMutation.isPending
-                                                    ? t('playground.variablesOperationPending')
+                                                {saveMutation.isPending ||
+                                                deleteMutation.isPending
+                                                    ? t(
+                                                          'playground.variablesOperationPending'
+                                                      )
                                                     : t('common.delete')}
                                             </TooltipContent>
                                         </Tooltip>
@@ -438,7 +444,9 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
                 ) : (
                     <button
                         onClick={handleAddVar}
-                        disabled={saveMutation.isPending || deleteMutation.isPending}
+                        disabled={
+                            saveMutation.isPending || deleteMutation.isPending
+                        }
                         className='border-border text-muted-foreground hover:border-border hover:text-muted-foreground flex w-full items-center justify-center gap-1 rounded-lg border border-dashed py-2 text-[11px] transition-colors disabled:cursor-default disabled:opacity-50'
                     >
                         <PlusIcon className='h-3 w-3' />

@@ -2,7 +2,11 @@ import type { CreateClawAgentBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import executeSSH from '@/services/ssh'
-import { applyToolsDefaults, findUserClaw, validateEnvVars } from '@/controllers/claws/helpers'
+import {
+    applyToolsDefaults,
+    findUserClaw,
+    validateEnvVars
+} from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 

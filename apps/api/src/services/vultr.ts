@@ -187,7 +187,8 @@ const vultr: CloudProvider = {
             const memGb = p.ram / 1024
             return {
                 name: p.id,
-                description: planNames[p.id] || p.id.toUpperCase().replace(/-/g, ' '),
+                description:
+                    planNames[p.id] || p.id.toUpperCase().replace(/-/g, ' '),
                 cores: p.vcpu_count,
                 memory: memGb,
                 disk: p.disk,

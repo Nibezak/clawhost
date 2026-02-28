@@ -79,21 +79,26 @@ const ChatSidebarAgentList: FC<ChatSidebarAgentListProps> = ({
                         agent={agent}
                         isActive={isActiveAgent}
                         isLast={isLastItem}
-                        isChecking={!readOnly && (gatewayState === 'connecting' || gatewayState === 'authenticating')}
-                        readOnly={readOnly}
-                        connectionState={readOnly ? undefined : (
-                            isActiveAgent
-                                ? activeConnectionState
-                                : gatewayState === 'connected'
-                                    ? 'connected'
-                                    : gatewayState === 'error' || gatewayState === 'disconnected'
-                                        ? 'disconnected'
-                                        : undefined
-                        )}
-                        onClick={() => onAgentClick(agent.id, claw.id)}
-                        onConfigure={() =>
-                            onConfigureAgent(agent.id, claw.id)
+                        isChecking={
+                            !readOnly &&
+                            (gatewayState === 'connecting' ||
+                                gatewayState === 'authenticating')
                         }
+                        readOnly={readOnly}
+                        connectionState={
+                            readOnly
+                                ? undefined
+                                : isActiveAgent
+                                  ? activeConnectionState
+                                  : gatewayState === 'connected'
+                                    ? 'connected'
+                                    : gatewayState === 'error' ||
+                                        gatewayState === 'disconnected'
+                                      ? 'disconnected'
+                                      : undefined
+                        }
+                        onClick={() => onAgentClick(agent.id, claw.id)}
+                        onConfigure={() => onConfigureAgent(agent.id, claw.id)}
                     />
                 )
             })}
@@ -108,10 +113,7 @@ const ChatSidebarAgentList: FC<ChatSidebarAgentListProps> = ({
                         className='text-muted-foreground hover:bg-foreground/5 hover:text-foreground flex min-w-0 flex-1 items-center gap-2.5 rounded-lg px-2 py-2 text-left transition-colors'
                     >
                         <div className='border-border flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-dashed'>
-                            <PlusIcon
-                                className='h-3 w-3'
-                                weight='bold'
-                            />
+                            <PlusIcon className='h-3 w-3' weight='bold' />
                         </div>
                         <span className='text-[13px]'>
                             {t('chat.addAgent')}

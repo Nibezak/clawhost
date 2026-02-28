@@ -108,6 +108,7 @@ export type {
     BrowseClawHubData,
     ClawHubSkillActionData,
     ClawHubUpdateData,
+    CompareData,
     CompareCompetitor,
     CompareFeatureValue,
     CompareFeature,

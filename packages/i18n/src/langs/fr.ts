@@ -456,7 +456,8 @@ const fr: Translations = {
         settingsDescription: 'Gérez les préférences de votre tableau de bord.',
         showAllClaws: 'Afficher tous les claws de tous les utilisateurs',
         openLinksWindowed: 'Ouvrir les liens dans une vue fenêtrée',
-        openLinksWindowedDescription: 'Lorsque cette option est activée, les liens externes s\'ouvrent dans l\'application au lieu du navigateur système.'
+        openLinksWindowedDescription:
+            "Lorsque cette option est activée, les liens externes s'ouvrent dans l'application au lieu du navigateur système."
     },
     billing: {
         title: 'Facturation',
@@ -618,7 +619,8 @@ const fr: Translations = {
             "Cela peut prendre un certain temps. Cela dépend d'OpenClaw, de l'emplacement du serveur et du DNS Cloudflare.",
         paymentSuccess:
             'Votre claw est en cours de création et de configuration.',
-        dnsSetupBanner: 'Configurez le DNS local pour accéder à vos claws via sous-domaine.clawhost.',
+        dnsSetupBanner:
+            'Configurez le DNS local pour accéder à vos claws via sous-domaine.clawhost.',
         dnsSetupButton: 'Configurer DNS',
         dnsSetupSuccess: 'Résolveur DNS configuré avec succès.',
         dnsSetupError: 'Échec de la configuration du résolveur DNS !',
@@ -962,6 +964,12 @@ const fr: Translations = {
         comparisonProvidersOthers: 'Un seul fournisseur',
         comparisonSocialsUs: 'Présence sur les réseaux sociaux',
         comparisonSocialsOthers: 'Pas de réseaux sociaux',
+        comparisonChatUs: 'Chattez directement avec votre Claw',
+        comparisonChatOthers: 'Chat uniquement via les canaux',
+        comparisonVersionUs: 'Changement de version en un clic',
+        comparisonVersionOthers: 'Mises à jour manuelles uniquement',
+        comparisonTerminalUs: 'Terminal web intégré',
+        comparisonTerminalOthers: 'Client SSH requis',
         seeFullComparison: 'Voir la comparaison complète',
         comparisonCtaText:
             'Nous comparons avec SimpleClaw, MyClaw.ai et plus — fonctionnalité par fonctionnalité.',
@@ -991,7 +999,8 @@ const fr: Translations = {
         noPostsDescription:
             'Les articles de blog arrivent bientôt. Revenez plus tard.',
         ctaTitle: 'Déployez OpenClaw en un clic',
-        ctaDescription: 'Obtenez un serveur dédié avec OpenClaw préinstallé. Accès root complet, emplacements mondiaux et prêt en quelques minutes. Vous en êtes propriétaire à tout moment. À partir de 10 $.',
+        ctaDescription:
+            'Obtenez un serveur dédié avec OpenClaw préinstallé. Accès root complet, emplacements mondiaux et prêt en quelques minutes. Vous en êtes propriétaire à tout moment. À partir de 10 $.',
         ctaDeploy: 'Déployer OpenClaw',
         ctaGitHub: 'Voir sur GitHub'
     },
@@ -1023,9 +1032,10 @@ const fr: Translations = {
         upcomingReleaseFeature9:
             'Mode vocal pour interagir avec les agents OpenClaw hébergés sur ClawHost',
         release11Date: '28 février 2026',
-        release11Title: 'Synthèse vocale, terminal, onglets de chat & explorateur de fichiers',
+        release11Title:
+            'Synthèse vocale, terminal, onglets de chat & explorateur de fichiers',
         release11Description:
-            'Écoutez les réponses des agents avec la synthèse vocale, interagissez avec votre VPS directement via le terminal, naviguez plus rapidement dans les chats avec les onglets de la barre latérale, et explorez les fichiers avec l\'explorateur amélioré.',
+            "Écoutez les réponses des agents avec la synthèse vocale, interagissez avec votre VPS directement via le terminal, naviguez plus rapidement dans les chats avec les onglets de la barre latérale, et explorez les fichiers avec l'explorateur amélioré.",
         release11Feature1:
             'Synthèse vocale sur les messages des agents dans le playground',
         release11Feature2:
@@ -1033,15 +1043,16 @@ const fr: Translations = {
         release11Feature3:
             'Onglets de vue de la barre latérale du chat pour un accès et une navigation faciles',
         release11Feature4:
-            'Améliorations de l\'explorateur de fichiers avec barre de recherche pour chercher dans les fichiers',
+            "Améliorations de l'explorateur de fichiers avec barre de recherche pour chercher dans les fichiers",
         release11Feature5:
             'Correction des horodatages des messages ne reflétant pas le temps réel',
         release11Dropped1:
             'Suppression des demandes de fonctionnalités pour simplification',
         release10Date: '22 février 2026',
-        release10Title: 'Demandes de fonctionnalités, explorateur de fichiers & corrections',
+        release10Title:
+            'Demandes de fonctionnalités, explorateur de fichiers & corrections',
         release10Description:
-            'Demandes de fonctionnalités communautaires, support élargi de l\'édition de fichiers et diverses corrections.',
+            "Demandes de fonctionnalités communautaires, support élargi de l'édition de fichiers et diverses corrections.",
         release10Feature1:
             'Demandes de fonctionnalités automatiquement gérées et publiées par les agents OpenClaw',
         release10Feature2:
@@ -1051,7 +1062,7 @@ const fr: Translations = {
         release10Feature4:
             'Plusieurs améliorations et corrections de bugs sur la plateforme',
         release10Feature5:
-            'Les fichiers TypeScript, Markdown et texte brut sont maintenant modifiables dans l\'explorateur de fichiers',
+            "Les fichiers TypeScript, Markdown et texte brut sont maintenant modifiables dans l'explorateur de fichiers",
         release9Date: '21 février 2026',
         release9Title: 'Comparaisons, refactorisation du playground & plus',
         release9Description:
@@ -1193,7 +1204,8 @@ const fr: Translations = {
         terminalDisconnected: 'Terminal déconnecté.',
         terminalError: 'Échec de connexion au terminal !',
         terminalReconnect: 'Reconnecter',
-        tabDisabledConfiguring: 'Disponible une fois la configuration de l\'instance terminée.',
+        tabDisabledConfiguring:
+            "Disponible une fois la configuration de l'instance terminée.",
         tabDisabledAwaitingPayment: 'Disponible une fois le paiement traité.',
         loadingTip1:
             "Saviez-vous que vous pouvez exécuter plusieurs agents au sein d'un même OpenClaw ?",
@@ -1254,12 +1266,15 @@ const fr: Translations = {
         variablesDeleteDescription:
             "Êtes-vous sûr de vouloir supprimer {{key}} ? Cela la supprimera immédiatement de l'instance.",
         variablesDeleteConfirm: 'Supprimer',
-        variablesDontAskAgain: 'Ne plus demander lors de la suppression de variables cette session',
+        variablesDontAskAgain:
+            'Ne plus demander lors de la suppression de variables cette session',
         variablesDeleted: 'Variable supprimée.',
-        variablesOperationPending: "Désactivé pendant qu'une opération précédente se termine.",
+        variablesOperationPending:
+            "Désactivé pendant qu'une opération précédente se termine.",
         addAgentTitle: 'Ajouter un agent',
         addAgentDescription: 'Ajouter un nouvel agent à {{clawName}}.',
-        addAgentDescriptionNoClaw: 'Sélectionnez un claw et configurez votre nouvel agent.',
+        addAgentDescriptionNoClaw:
+            'Sélectionnez un claw et configurez votre nouvel agent.',
         addAgentSelectClaw: 'Claw',
         addAgentSelectClawPlaceholder: 'Sélectionnez un claw',
         addAgentName: 'Nom',
@@ -1278,7 +1293,8 @@ const fr: Translations = {
         deleteAgentDescription:
             'Êtes-vous sûr de vouloir supprimer l\'agent "{{agentName}}" ? Cette action est irréversible. Les variables d\'environnement ne seront pas supprimées.',
         deleteAgentConfirm: 'Supprimer',
-        agentDontAskAgain: 'Ne plus demander lors de la suppression d\'agents cette session',
+        agentDontAskAgain:
+            "Ne plus demander lors de la suppression d'agents cette session",
         deleteAgentDeleting: 'Suppression...',
         deleteAgentSuccess: 'Agent supprimé avec succès.',
         deleteAgentFailed: "Échec de la suppression de l'agent !",
@@ -1318,7 +1334,8 @@ const fr: Translations = {
             'Bien sûr ! Je peux vous aider à initialiser un nouveau projet Node.js. Souhaitez-vous que je crée un package.json avec quelques dépendances courantes ?',
         chatReadOnlyReply:
             'Ceci est un aperçu ! Déployez votre propre OpenClaw en un clic et commencez à discuter avec vos agents IA en quelques minutes !',
-        chatReadOnlyUser2: 'Pouvez-vous exécuter la suite de tests et vérifier les échecs ?',
+        chatReadOnlyUser2:
+            'Pouvez-vous exécuter la suite de tests et vérifier les échecs ?',
         chatReadOnlyAssistant2:
             'Bien sûr ! Je lance tous les tests maintenant. 3 réussis, 0 échoués. Tout est bon — toutes les assertions passent.',
         chatConnectionFailed: 'Échec de la connexion à cet agent !',
@@ -1349,9 +1366,12 @@ const fr: Translations = {
         chatVoiceModeSpeaking: 'Parle...',
         chatVoiceModeInputDevice: 'Microphone',
         chatVoiceModeOutputDevice: 'Haut-parleur',
-        chatVoiceModeNotSupported: "La reconnaissance vocale n'est pas supportée dans ce navigateur.",
-        chatVoiceModeNoMicrophone: 'Aucun microphone détecté. Connectez-en un pour utiliser le mode vocal.',
-        chatVoiceModeNoSpeaker: 'Aucun haut-parleur détecté. Connectez-en un pour utiliser le mode vocal.',
+        chatVoiceModeNotSupported:
+            "La reconnaissance vocale n'est pas supportée dans ce navigateur.",
+        chatVoiceModeNoMicrophone:
+            'Aucun microphone détecté. Connectez-en un pour utiliser le mode vocal.',
+        chatVoiceModeNoSpeaker:
+            'Aucun haut-parleur détecté. Connectez-en un pour utiliser le mode vocal.',
         chatAttachmentNotSupported:
             "Ce type de fichier n'est pas supporté. Utilisez des images, PDF ou fichiers texte !",
         chatNoPreview: 'Aucun aperçu disponible.',
@@ -1470,7 +1490,8 @@ const fr: Translations = {
         versionsEmpty: 'Aucune version trouvée',
         versionsEmptyDescription:
             'Aucune version ne correspond à votre recherche.',
-        versionsErrorDescription: 'Impossible de charger les versions. Veuillez vérifier votre connexion et réessayer !',
+        versionsErrorDescription:
+            'Impossible de charger les versions. Veuillez vérifier votre connexion et réessayer !',
         versionsChangelog: 'Voir les changelogs sur npm',
         versionCurrent: 'Actuelle',
         versionLatest: 'Dernière',
@@ -1482,14 +1503,17 @@ const fr: Translations = {
         versionChangelog: 'Changelog',
         versionOutdated: 'Obsolète',
         versionInstallConfirmTitle: 'Installer la version {{version}}',
-        versionInstallConfirmDescription: 'Le changement de version peut provoquer un comportement inattendu ou nécessiter une configuration manuelle supplémentaire, notamment pour les versions plus récentes qui n\'ont pas encore été entièrement vérifiées. Voulez-vous continuer ?',
+        versionInstallConfirmDescription:
+            "Le changement de version peut provoquer un comportement inattendu ou nécessiter une configuration manuelle supplémentaire, notamment pour les versions plus récentes qui n'ont pas encore été entièrement vérifiées. Voulez-vous continuer ?",
         settingsName: 'Nom',
         settingsNamePlaceholder: 'Entrez le nom du claw',
         settingsNameDescription: 'Lettres, chiffres et tirets uniquement.',
         subdomain: 'Sous-domaine',
         subdomainPlaceholder: 'Entrez le sous-domaine',
-        subdomainDescription: 'Lettres minuscules et chiffres, 3-20 caractères.',
-        subdomainInvalid: 'Utilisez 3-20 lettres minuscules et chiffres uniquement !',
+        subdomainDescription:
+            'Lettres minuscules et chiffres, 3-20 caractères.',
+        subdomainInvalid:
+            'Utilisez 3-20 lettres minuscules et chiffres uniquement !',
         subdomainUpdated: 'Sous-domaine mis à jour avec succès.',
         subdomainUpdateFailed: 'Échec de la mise à jour du sous-domaine !',
         subdomainInUse: 'Ce sous-domaine est utilisé par un autre claw !',
@@ -1664,7 +1688,8 @@ const fr: Translations = {
     },
     announcement: {
         title: 'Avis de service',
-        message: 'Les déploiements {{providers}} sont temporairement indisponibles. Les claws existants fonctionnent normalement.'
+        message:
+            'Les déploiements {{providers}} sont temporairement indisponibles. Les claws existants fonctionnent normalement.'
     },
     productHunt: {
         liveOn: 'En direct sur',
@@ -1725,6 +1750,9 @@ const fr: Translations = {
         featureMultiLanguage: 'Interface multilingue',
         featureMobileApp: 'Application mobile',
         featureDesktopApp: 'Application de bureau',
+        featureDirectChat: 'Chat direct',
+        featureOneClickVersion: 'Changement de version en un clic',
+        featureWebTerminal: 'Terminal web',
         featureSocials: 'Réseaux sociaux',
         dedicatedVps: 'VPS dédié',
         sharedContainers: 'Conteneurs partagés',
@@ -1784,6 +1812,8 @@ const fr: Translations = {
         comingSoon: 'Bientôt disponible',
         iosMacOs: 'iOS & macOS',
         macOsOnly: 'macOS uniquement',
+        builtInChat: 'Intégré',
+        builtInTerminal: 'Sans SSH',
         notAvailable: 'Non disponible',
         disclaimer: 'Quelque chose a changé ou est incorrect ? Écrivez-nous à',
         disclaimerOr: 'ou ouvrez une pull request sur',

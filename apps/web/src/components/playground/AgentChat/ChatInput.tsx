@@ -30,11 +30,7 @@ import {
     WaveformIcon
 } from '@phosphor-icons/react'
 import { useSpeechRecognition } from '@/hooks'
-import {
-    Tooltip,
-    TooltipTrigger,
-    TooltipContent
-} from '@/components/ui'
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
 const DOCUMENT_TYPES = ['application/pdf', 'text/plain']
@@ -44,7 +40,15 @@ const ChatInputInner: ForwardRefRenderFunction<
     ChatInputHandle,
     ChatInputProps
 > = (
-    { isConnected, isStreaming, isProcessing, onSend, onAbort, allowAttach, onVoiceMode },
+    {
+        isConnected,
+        isStreaming,
+        isProcessing,
+        onSend,
+        onAbort,
+        allowAttach,
+        onVoiceMode
+    },
     ref
 ): ReactNode => {
     const [input, setInput] = useState('')
@@ -253,7 +257,10 @@ const ChatInputInner: ForwardRefRenderFunction<
                                     onClick={onVoiceMode}
                                     className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white transition-opacity hover:opacity-90'
                                 >
-                                    <WaveformIcon className='h-4 w-4' weight='bold' />
+                                    <WaveformIcon
+                                        className='h-4 w-4'
+                                        weight='bold'
+                                    />
                                 </button>
                             </TooltipTrigger>
                             <TooltipContent side='top'>
@@ -312,7 +319,10 @@ const ChatInputInner: ForwardRefRenderFunction<
                                 onClick={onAbort}
                                 className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#ef5350] text-white transition-colors hover:bg-[#e53935]'
                             >
-                                <StopCircleIcon className='h-5 w-5' weight='bold' />
+                                <StopCircleIcon
+                                    className='h-5 w-5'
+                                    weight='bold'
+                                />
                             </button>
                         </TooltipTrigger>
                         <TooltipContent side='top'>

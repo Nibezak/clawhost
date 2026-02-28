@@ -194,9 +194,15 @@ const ChatBubble: FC<ChatBubbleProps> = ({
                                 className='bg-background/80 absolute right-2.5 top-2.5 rounded-md p-1.5 opacity-0 shadow-sm backdrop-blur-sm transition-opacity group-hover:opacity-100'
                             >
                                 {copied ? (
-                                    <CheckIcon className='text-foreground/70 h-3 w-3' weight='bold' />
+                                    <CheckIcon
+                                        className='text-foreground/70 h-3 w-3'
+                                        weight='bold'
+                                    />
                                 ) : (
-                                    <CopyIcon className='text-foreground/70 hover:text-foreground h-3 w-3 transition-colors' weight='bold' />
+                                    <CopyIcon
+                                        className='text-foreground/70 hover:text-foreground h-3 w-3 transition-colors'
+                                        weight='bold'
+                                    />
                                 )}
                             </button>
                         )}
@@ -263,7 +269,7 @@ const ChatBubble: FC<ChatBubbleProps> = ({
     return (
         <>
             <div className='flex flex-col items-start gap-1'>
-                <div className='group relative min-w-0 max-w-[85%] rounded-2xl rounded-bl-md bg-foreground/5 px-3.5 py-2.5'>
+                <div className='bg-foreground/5 group relative min-w-0 max-w-[85%] rounded-2xl rounded-bl-md px-3.5 py-2.5'>
                     {message.status === 'complete' && message.content && (
                         <button
                             onClick={copyMessage}
@@ -271,9 +277,15 @@ const ChatBubble: FC<ChatBubbleProps> = ({
                             className='bg-background/80 absolute right-2.5 top-2.5 rounded-md p-1.5 opacity-0 shadow-sm backdrop-blur-sm transition-opacity group-hover:opacity-100'
                         >
                             {copied ? (
-                                <CheckIcon className='text-muted-foreground h-3 w-3' weight='bold' />
+                                <CheckIcon
+                                    className='text-muted-foreground h-3 w-3'
+                                    weight='bold'
+                                />
                             ) : (
-                                <CopyIcon className='text-muted-foreground hover:text-foreground h-3 w-3 transition-colors' weight='bold' />
+                                <CopyIcon
+                                    className='text-muted-foreground hover:text-foreground h-3 w-3 transition-colors'
+                                    weight='bold'
+                                />
                             )}
                         </button>
                     )}

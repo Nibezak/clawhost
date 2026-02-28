@@ -101,7 +101,10 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
             if (res.rootPassword) {
                 const command = `sshpass -p '${res.rootPassword}' ssh -o StrictHostKeyChecking=no root@${claw.ip}`
                 navigator.clipboard.writeText(command)
-                showToast(t('dashboard.sshCommandWithPasswordCopied'), 'success')
+                showToast(
+                    t('dashboard.sshCommandWithPasswordCopied'),
+                    'success'
+                )
             } else {
                 copySSHWithKey()
             }
@@ -272,20 +275,14 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                                         weight='fill'
                                     />
                                     <span className='text-muted-foreground truncate text-[11px]'>
-                                        {t(
-                                            'dashboard.scheduledDeletionShort',
-                                            {
-                                                date: new Date(
-                                                    claw.deletionScheduledAt!
-                                                ).toLocaleDateString(
-                                                    getLocale(),
-                                                    {
-                                                        month: 'short',
-                                                        day: 'numeric'
-                                                    }
-                                                )
-                                            }
-                                        )}
+                                        {t('dashboard.scheduledDeletionShort', {
+                                            date: new Date(
+                                                claw.deletionScheduledAt!
+                                            ).toLocaleDateString(getLocale(), {
+                                                month: 'short',
+                                                day: 'numeric'
+                                            })
+                                        })}
                                     </span>
                                 </div>
                             </TooltipTrigger>
@@ -293,7 +290,8 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                                 <p>{t('dashboard.scheduledForDeletion')}</p>
                             </TooltipContent>
                         </Tooltip>
-                    ) : claw.status === clawStatus.configuring || claw.status === clawStatus.awaitingPayment ? (
+                    ) : claw.status === clawStatus.configuring ||
+                      claw.status === clawStatus.awaitingPayment ? (
                         <p className='text-muted-foreground truncate text-[11px]'>
                             {statusConfig.label}
                         </p>
@@ -304,8 +302,12 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                     ) : (
                         <p className='text-muted-foreground truncate text-[11px]'>
                             {agentCount === 1
-                                ? t('playground.agentCount', { count: String(agentCount) })
-                                : t('playground.agentCountPlural', { count: String(agentCount) })}
+                                ? t('playground.agentCount', {
+                                      count: String(agentCount)
+                                  })
+                                : t('playground.agentCountPlural', {
+                                      count: String(agentCount)
+                                  })}
                         </p>
                     )}
                 </div>

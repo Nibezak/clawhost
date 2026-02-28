@@ -447,7 +447,8 @@ const de: Translations = {
         settingsDescription: 'Verwalte deine Dashboard-Einstellungen.',
         showAllClaws: 'Alle Claws aller Benutzer anzeigen',
         openLinksWindowed: 'Links in einer Fensteransicht öffnen',
-        openLinksWindowedDescription: 'Wenn aktiviert, werden externe Links in der App statt im Systembrowser geöffnet.'
+        openLinksWindowedDescription:
+            'Wenn aktiviert, werden externe Links in der App statt im Systembrowser geöffnet.'
     },
     billing: {
         title: 'Abrechnung',
@@ -608,7 +609,8 @@ const de: Translations = {
         configuringTooltip:
             'Dies kann einige Zeit dauern. Es hängt von OpenClaw, dem Serverstandort und Cloudflare DNS ab.',
         paymentSuccess: 'Dein Claw wird erstellt und konfiguriert.',
-        dnsSetupBanner: 'Richte lokales DNS ein, um auf deine Claws über subdomain.clawhost zuzugreifen.',
+        dnsSetupBanner:
+            'Richte lokales DNS ein, um auf deine Claws über subdomain.clawhost zuzugreifen.',
         dnsSetupButton: 'DNS einrichten',
         dnsSetupSuccess: 'DNS-Resolver erfolgreich konfiguriert.',
         dnsSetupError: 'DNS-Resolver konnte nicht konfiguriert werden!',
@@ -950,6 +952,12 @@ const de: Translations = {
         comparisonProvidersOthers: 'Nur ein einzelner Anbieter',
         comparisonSocialsUs: 'Präsenz in sozialen Medien',
         comparisonSocialsOthers: 'Keine sozialen Medien',
+        comparisonChatUs: 'Direkt mit deinem Claw chatten',
+        comparisonChatOthers: 'Chat nur über Kanäle',
+        comparisonVersionUs: 'Versionswechsel mit einem Klick',
+        comparisonVersionOthers: 'Nur manuelle Updates',
+        comparisonTerminalUs: 'Integriertes Web-Terminal',
+        comparisonTerminalOthers: 'SSH-Client erforderlich',
         seeFullComparison: 'Vollständigen Vergleich anzeigen',
         comparisonCtaText:
             'Wir vergleichen mit SimpleClaw, MyClaw.ai und mehr — Funktion für Funktion.',
@@ -979,7 +987,8 @@ const de: Translations = {
         noPostsDescription:
             'Blogbeiträge kommen bald. Schau später noch einmal vorbei.',
         ctaTitle: 'Deploye OpenClaw mit einem Klick',
-        ctaDescription: 'Erhalte einen dedizierten Server mit vorinstalliertem OpenClaw. Voller Root-Zugriff, globale Standorte und in Minuten bereit. Er gehört dir jederzeit. Ab 10 $.',
+        ctaDescription:
+            'Erhalte einen dedizierten Server mit vorinstalliertem OpenClaw. Voller Root-Zugriff, globale Standorte und in Minuten bereit. Er gehört dir jederzeit. Ab 10 $.',
         ctaDeploy: 'OpenClaw deployen',
         ctaGitHub: 'Auf GitHub ansehen'
     },
@@ -1024,8 +1033,7 @@ const de: Translations = {
             'Verbesserungen am Datei-Explorer mit Suchleiste zum Durchsuchen von Dateien',
         release11Feature5:
             'Behebung von Nachrichtenzeitstempeln, die nicht in Echtzeit angezeigt wurden',
-        release11Dropped1:
-            'Feature-Anfragen zur Vereinfachung entfernt',
+        release11Dropped1: 'Feature-Anfragen zur Vereinfachung entfernt',
         release10Date: '22. Februar 2026',
         release10Title: 'Feature-Anfragen, Datei-Explorer & Fehlerbehebungen',
         release10Description:
@@ -1178,8 +1186,10 @@ const de: Translations = {
         terminalDisconnected: 'Terminal getrennt.',
         terminalError: 'Verbindung zum Terminal fehlgeschlagen!',
         terminalReconnect: 'Erneut verbinden',
-        tabDisabledConfiguring: 'Verfügbar, sobald die Instanz fertig konfiguriert ist.',
-        tabDisabledAwaitingPayment: 'Verfügbar, sobald die Zahlung verarbeitet wurde.',
+        tabDisabledConfiguring:
+            'Verfügbar, sobald die Instanz fertig konfiguriert ist.',
+        tabDisabledAwaitingPayment:
+            'Verfügbar, sobald die Zahlung verarbeitet wurde.',
         loadingTip1:
             'Wusstest du, dass du mehrere Agenten in einem OpenClaw betreiben kannst?',
         loadingTip2: 'Wusstest du, dass OpenClaw Open Source ist?',
@@ -1237,12 +1247,15 @@ const de: Translations = {
         variablesDeleteDescription:
             'Bist du sicher, dass du {{key}} löschen möchtest? Dies entfernt sie sofort von der Instanz.',
         variablesDeleteConfirm: 'Löschen',
-        variablesDontAskAgain: 'Beim Löschen von Variablen in dieser Sitzung nicht mehr fragen',
+        variablesDontAskAgain:
+            'Beim Löschen von Variablen in dieser Sitzung nicht mehr fragen',
         variablesDeleted: 'Variable gelöscht.',
-        variablesOperationPending: 'Deaktiviert, bis ein vorheriger Vorgang abgeschlossen ist.',
+        variablesOperationPending:
+            'Deaktiviert, bis ein vorheriger Vorgang abgeschlossen ist.',
         addAgentTitle: 'Agent hinzufügen',
         addAgentDescription: 'Füge einen neuen Agenten zu {{clawName}} hinzu.',
-        addAgentDescriptionNoClaw: 'Wähle einen Claw aus und konfiguriere deinen neuen Agenten.',
+        addAgentDescriptionNoClaw:
+            'Wähle einen Claw aus und konfiguriere deinen neuen Agenten.',
         addAgentSelectClaw: 'Claw',
         addAgentSelectClawPlaceholder: 'Claw auswählen',
         addAgentName: 'Name',
@@ -1261,7 +1274,8 @@ const de: Translations = {
         deleteAgentDescription:
             'Bist du sicher, dass du den Agenten „{{agentName}}" löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden. Umgebungsvariablen werden nicht entfernt.',
         deleteAgentConfirm: 'Löschen',
-        agentDontAskAgain: 'Beim Löschen von Agenten in dieser Sitzung nicht mehr fragen',
+        agentDontAskAgain:
+            'Beim Löschen von Agenten in dieser Sitzung nicht mehr fragen',
         deleteAgentDeleting: 'Wird gelöscht...',
         deleteAgentSuccess: 'Agent erfolgreich gelöscht.',
         deleteAgentFailed: 'Agent konnte nicht gelöscht werden!',
@@ -1302,7 +1316,8 @@ const de: Translations = {
             'Natürlich! Ich kann dir helfen, ein neues Node.js-Projekt zu initialisieren. Soll ich eine package.json mit einigen gängigen Abhängigkeiten erstellen?',
         chatReadOnlyReply:
             'Dies ist eine Vorschau! Stelle dein eigenes OpenClaw mit einem Klick bereit und chatte in wenigen Minuten mit deinen KI-Agenten!',
-        chatReadOnlyUser2: 'Kannst du die Testsuite ausführen und auf Fehler prüfen?',
+        chatReadOnlyUser2:
+            'Kannst du die Testsuite ausführen und auf Fehler prüfen?',
         chatReadOnlyAssistant2:
             'Klar! Ich führe jetzt alle Tests aus. 3 bestanden, 0 fehlgeschlagen. Alles in Ordnung — alle Assertions bestehen.',
         chatConnectionFailed: 'Verbindung zu diesem Agenten fehlgeschlagen!',
@@ -1333,9 +1348,12 @@ const de: Translations = {
         chatVoiceModeSpeaking: 'Sprechen...',
         chatVoiceModeInputDevice: 'Mikrofon',
         chatVoiceModeOutputDevice: 'Lautsprecher',
-        chatVoiceModeNotSupported: 'Spracherkennung wird in diesem Browser nicht unterstützt.',
-        chatVoiceModeNoMicrophone: 'Kein Mikrofon erkannt. Verbinde eines, um den Sprachmodus zu verwenden.',
-        chatVoiceModeNoSpeaker: 'Kein Lautsprecher erkannt. Verbinde einen, um den Sprachmodus zu verwenden.',
+        chatVoiceModeNotSupported:
+            'Spracherkennung wird in diesem Browser nicht unterstützt.',
+        chatVoiceModeNoMicrophone:
+            'Kein Mikrofon erkannt. Verbinde eines, um den Sprachmodus zu verwenden.',
+        chatVoiceModeNoSpeaker:
+            'Kein Lautsprecher erkannt. Verbinde einen, um den Sprachmodus zu verwenden.',
         chatAttachmentNotSupported:
             'Dieser Dateityp wird nicht unterstützt. Verwende Bilder, PDFs oder Textdateien!',
         chatNoPreview: 'Keine Vorschau verfügbar.',
@@ -1453,7 +1471,8 @@ const de: Translations = {
         versionsEmpty: 'Keine Versionen gefunden',
         versionsEmptyDescription:
             'Keine Versionen stimmen mit Ihrer Suche überein.',
-        versionsErrorDescription: 'Versionen konnten nicht geladen werden. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut!',
+        versionsErrorDescription:
+            'Versionen konnten nicht geladen werden. Bitte überprüfen Sie Ihre Verbindung und versuchen Sie es erneut!',
         versionsChangelog: 'Changelogs auf npm ansehen',
         versionCurrent: 'Aktuell',
         versionLatest: 'Neueste',
@@ -1465,7 +1484,8 @@ const de: Translations = {
         versionChangelog: 'Changelog',
         versionOutdated: 'Veraltet',
         versionInstallConfirmTitle: 'Version {{version}} installieren',
-        versionInstallConfirmDescription: 'Ein Versionswechsel kann unerwartetes Verhalten verursachen oder zusätzliche manuelle Konfiguration erfordern, insbesondere bei neueren Versionen, die noch nicht vollständig überprüft wurden. Möchten Sie fortfahren?',
+        versionInstallConfirmDescription:
+            'Ein Versionswechsel kann unerwartetes Verhalten verursachen oder zusätzliche manuelle Konfiguration erfordern, insbesondere bei neueren Versionen, die noch nicht vollständig überprüft wurden. Möchten Sie fortfahren?',
         settingsName: 'Name',
         settingsNamePlaceholder: 'Claw-Name eingeben',
         settingsNameDescription: 'Nur Buchstaben, Zahlen und Bindestriche.',
@@ -1475,7 +1495,8 @@ const de: Translations = {
         subdomainInvalid: 'Nur 3-20 Kleinbuchstaben und Zahlen verwenden!',
         subdomainUpdated: 'Subdomain erfolgreich aktualisiert.',
         subdomainUpdateFailed: 'Subdomain konnte nicht aktualisiert werden!',
-        subdomainInUse: 'Diese Subdomain wird bereits von einem anderen Claw verwendet!',
+        subdomainInUse:
+            'Diese Subdomain wird bereits von einem anderen Claw verwendet!',
         settingsSave: 'Speichern',
         settingsSaving: 'Speichern...'
     },
@@ -1648,7 +1669,8 @@ const de: Translations = {
     },
     announcement: {
         title: 'Servicehinweis',
-        message: '{{providers}}-Bereitstellungen sind vorübergehend nicht verfügbar. Bestehende Claws laufen normal.'
+        message:
+            '{{providers}}-Bereitstellungen sind vorübergehend nicht verfügbar. Bestehende Claws laufen normal.'
     },
     productHunt: {
         liveOn: 'Live auf',
@@ -1709,6 +1731,9 @@ const de: Translations = {
         featureMultiLanguage: 'Mehrsprachige Oberfläche',
         featureMobileApp: 'Mobile App',
         featureDesktopApp: 'Desktop-App',
+        featureDirectChat: 'Direkter Chat',
+        featureOneClickVersion: 'Versionswechsel mit einem Klick',
+        featureWebTerminal: 'Web-Terminal',
         featureSocials: 'Soziale Medien',
         dedicatedVps: 'Dedizierter VPS',
         sharedContainers: 'Geteilte Container',
@@ -1768,6 +1793,8 @@ const de: Translations = {
         comingSoon: 'Demnächst verfügbar',
         iosMacOs: 'iOS & macOS',
         macOsOnly: 'Nur macOS',
+        builtInChat: 'Integriert',
+        builtInTerminal: 'Kein SSH nötig',
         notAvailable: 'Nicht verfügbar',
         disclaimer: 'Etwas geändert oder falsch? Schreib uns an',
         disclaimerOr: 'oder öffne einen Pull Request auf',

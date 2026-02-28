@@ -7,4 +7,11 @@ import userRole from './userRole'
 
 export type { ApiEnvelope, RequestOptions, RequestConfig } from './types'
 
-export { RequestClient, clawProvider, clawStatus, inputValidation, OPENCLAW_VERSION, userRole }
+export {
+    RequestClient,
+    clawProvider,
+    clawStatus,
+    inputValidation,
+    OPENCLAW_VERSION,
+    userRole
+}

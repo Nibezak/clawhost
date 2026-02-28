@@ -29,11 +29,17 @@ const VoiceOrb: FC<VoiceOrbProps> = ({ intensity, size = 140 }): ReactNode => {
                 style={{
                     width: size * 3,
                     height: size * 3,
-                    background: 'radial-gradient(circle, rgba(239,83,80,0.12) 0%, rgba(198,40,40,0.06) 40%, transparent 70%)',
+                    background:
+                        'radial-gradient(circle, rgba(239,83,80,0.12) 0%, rgba(198,40,40,0.06) 40%, transparent 70%)',
                     filter: 'blur(40px)'
                 }}
                 animate={{ scale: ring4Scale, opacity: ring4Opacity }}
-                transition={{ type: 'spring', stiffness: 80, damping: 6, mass: 1.0 }}
+                transition={{
+                    type: 'spring',
+                    stiffness: 80,
+                    damping: 6,
+                    mass: 1.0
+                }}
             />
 
             <motion.div
@@ -41,11 +47,17 @@ const VoiceOrb: FC<VoiceOrbProps> = ({ intensity, size = 140 }): ReactNode => {
                 style={{
                     width: size * 2.4,
                     height: size * 2.4,
-                    background: 'radial-gradient(circle, rgba(239,83,80,0.2) 0%, rgba(198,40,40,0.1) 40%, transparent 70%)',
+                    background:
+                        'radial-gradient(circle, rgba(239,83,80,0.2) 0%, rgba(198,40,40,0.1) 40%, transparent 70%)',
                     filter: 'blur(30px)'
                 }}
                 animate={{ scale: ring3Scale, opacity: ring3Opacity }}
-                transition={{ type: 'spring', stiffness: 100, damping: 7, mass: 0.8 }}
+                transition={{
+                    type: 'spring',
+                    stiffness: 100,
+                    damping: 7,
+                    mass: 0.8
+                }}
             />
 
             <motion.div
@@ -53,11 +65,17 @@ const VoiceOrb: FC<VoiceOrbProps> = ({ intensity, size = 140 }): ReactNode => {
                 style={{
                     width: size * 1.8,
                     height: size * 1.8,
-                    background: 'radial-gradient(circle, rgba(239,83,80,0.3) 0%, rgba(239,83,80,0.12) 50%, transparent 70%)',
+                    background:
+                        'radial-gradient(circle, rgba(239,83,80,0.3) 0%, rgba(239,83,80,0.12) 50%, transparent 70%)',
                     filter: 'blur(20px)'
                 }}
                 animate={{ scale: ring2Scale, opacity: ring2Opacity }}
-                transition={{ type: 'spring', stiffness: 130, damping: 9, mass: 0.6 }}
+                transition={{
+                    type: 'spring',
+                    stiffness: 130,
+                    damping: 9,
+                    mass: 0.6
+                }}
             />
 
             <motion.div
@@ -65,11 +83,17 @@ const VoiceOrb: FC<VoiceOrbProps> = ({ intensity, size = 140 }): ReactNode => {
                 style={{
                     width: size * 1.3,
                     height: size * 1.3,
-                    background: 'radial-gradient(circle, rgba(239,83,80,0.35) 0%, rgba(239,83,80,0.15) 50%, transparent 70%)',
+                    background:
+                        'radial-gradient(circle, rgba(239,83,80,0.35) 0%, rgba(239,83,80,0.15) 50%, transparent 70%)',
                     filter: 'blur(12px)'
                 }}
                 animate={{ scale: ring1Scale, opacity: ring1Opacity }}
-                transition={{ type: 'spring', stiffness: 180, damping: 11, mass: 0.4 }}
+                transition={{
+                    type: 'spring',
+                    stiffness: 180,
+                    damping: 11,
+                    mass: 0.4
+                }}
             />
 
             <motion.div
@@ -77,11 +101,17 @@ const VoiceOrb: FC<VoiceOrbProps> = ({ intensity, size = 140 }): ReactNode => {
                 style={{
                     width: size,
                     height: size,
-                    background: 'radial-gradient(circle at 35% 35%, #ff6f61 0%, #ef5350 40%, #c62828 100%)',
+                    background:
+                        'radial-gradient(circle at 35% 35%, #ff6f61 0%, #ef5350 40%, #c62828 100%)',
                     boxShadow: `0 0 ${glowSpread}px rgba(239,83,80,${glowAlpha}), 0 0 ${glowSpread * 2}px rgba(198,40,40,${glowAlpha * 0.4}), 0 0 ${glowSpread * 3}px rgba(239,83,80,${glowAlpha * 0.2}), inset 0 -8px 24px rgba(0,0,0,0.2), inset 0 4px 12px rgba(255,255,255,0.15)`
                 }}
                 animate={{ scale: coreScale }}
-                transition={{ type: 'spring', stiffness: 300, damping: 15, mass: 0.3 }}
+                transition={{
+                    type: 'spring',
+                    stiffness: 300,
+                    damping: 15,
+                    mass: 0.3
+                }}
             >
                 <svg
                     viewBox='0 0 120 120'

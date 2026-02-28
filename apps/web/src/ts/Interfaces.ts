@@ -1309,6 +1309,11 @@ export interface PlaygroundBindingsContentProps {
     agentId: string
 }
 
+export interface CompareData {
+    competitors: CompareCompetitor[]
+    categories: CompareCategory[]
+}
+
 export interface CompareCompetitor {
     id: string
     nameKey: string

@@ -59,10 +59,20 @@ app.get('/clawhub/skills', async (c) => {
     try {
         const result = await browseSkills({
             query: c.req.query('query') || undefined,
-            limit: c.req.query('limit') ? Number(c.req.query('limit')) : undefined,
+            limit: c.req.query('limit')
+                ? Number(c.req.query('limit'))
+                : undefined,
             cursor: c.req.query('cursor') || undefined
         })
-        return ok(c, { skills: result.skills, nextCursor: result.nextCursor, hasMore: result.hasMore }, t('api.clawHubSearchSuccess'))
+        return ok(
+            c,
+            {
+                skills: result.skills,
+                nextCursor: result.nextCursor,
+                hasMore: result.hasMore
+            },
+            t('api.clawHubSearchSuccess')
+        )
     } catch {
         return fail(c, t('api.clawHubSearchFailed'), 500)
     }

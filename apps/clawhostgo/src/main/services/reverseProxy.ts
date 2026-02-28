@@ -22,7 +22,10 @@ const resolvePort = (subdomain: string): number | null => {
     return claw ? claw.port : null
 }
 
-const handleRequest = (req: http.IncomingMessage, res: http.ServerResponse): void => {
+const handleRequest = (
+    req: http.IncomingMessage,
+    res: http.ServerResponse
+): void => {
     const subdomain = extractSubdomain(req.headers.host)
     if (!subdomain) {
         res.writeHead(404)
@@ -59,7 +62,11 @@ const handleRequest = (req: http.IncomingMessage, res: http.ServerResponse): voi
     req.pipe(proxyReq)
 }
 
-const handleUpgrade = (req: http.IncomingMessage, socket: net.Socket, head: Buffer): void => {
+const handleUpgrade = (
+    req: http.IncomingMessage,
+    socket: net.Socket,
+    head: Buffer
+): void => {
     const subdomain = extractSubdomain(req.headers.host)
     if (!subdomain) {
         socket.destroy()

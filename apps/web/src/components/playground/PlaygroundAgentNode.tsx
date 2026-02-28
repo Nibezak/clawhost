@@ -30,7 +30,10 @@ const PlaygroundAgentNode: FC<PlaygroundAgentNodeProps> = ({
 
     const status = useMemo(() => {
         if (subdomain && gatewayToken) {
-            if (gatewayState === 'connecting' || gatewayState === 'authenticating') {
+            if (
+                gatewayState === 'connecting' ||
+                gatewayState === 'authenticating'
+            ) {
                 return {
                     color: 'bg-orange-500',
                     bgColor: 'bg-orange-500/10',

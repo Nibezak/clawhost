@@ -12,7 +12,12 @@ import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { clawStatus, userRole } from '@openclaw/shared'
 import { t } from '@openclaw/i18n'
-import { ListIcon, XIcon, GearSixIcon, ArrowSquareOutIcon } from '@phosphor-icons/react'
+import {
+    ListIcon,
+    XIcon,
+    GearSixIcon,
+    ArrowSquareOutIcon
+} from '@phosphor-icons/react'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
 import { ClawAvatar } from '@/components'
 import { getBaseDomain, api } from '@/lib'
@@ -67,7 +72,9 @@ const ChatView: FC<ChatViewProps> = ({
     const [settingsClawId, setSettingsClawId] = useState<string | null>(
         initialSettingsClawId || null
     )
-    const [configAgent, setConfigAgent] = useState<ChatSelectedAgent | null>(null)
+    const [configAgent, setConfigAgent] = useState<ChatSelectedAgent | null>(
+        null
+    )
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
     const [activeConnectionState, setActiveConnectionState] =
         useState<GatewayConnectionState>('disconnected')
@@ -183,7 +190,10 @@ const ChatView: FC<ChatViewProps> = ({
 
     const handleConfigureAgent = useCallback(
         (agentId: string, clawId: string) => {
-            if (configAgent?.agentId === agentId && configAgent?.clawId === clawId) {
+            if (
+                configAgent?.agentId === agentId &&
+                configAgent?.clawId === clawId
+            ) {
                 setConfigAgent(null)
                 return
             }
@@ -257,7 +267,10 @@ const ChatView: FC<ChatViewProps> = ({
                 if (res.rootPassword) {
                     const command = `sshpass -p '${res.rootPassword}' ssh -o StrictHostKeyChecking=no root@${claw.ip}`
                     navigator.clipboard.writeText(command)
-                    showToast(t('dashboard.sshCommandWithPasswordCopied'), 'success')
+                    showToast(
+                        t('dashboard.sshCommandWithPasswordCopied'),
+                        'success'
+                    )
                 } else {
                     copySSHWithKey()
                 }
@@ -292,9 +305,19 @@ const ChatView: FC<ChatViewProps> = ({
             } catch (err) {
                 const retryAfter = (err as ExportRateLimitError).retryAfter
                 if (retryAfter && retryAfter > 30) {
-                    showToast(t('dashboard.exportRateLimited', { minutes: String(Math.ceil(retryAfter / 60)) }), 'warning')
+                    showToast(
+                        t('dashboard.exportRateLimited', {
+                            minutes: String(Math.ceil(retryAfter / 60))
+                        }),
+                        'warning'
+                    )
                 } else if (retryAfter && retryAfter > 0) {
-                    showToast(t('dashboard.exportRateLimitedSeconds', { seconds: String(retryAfter) }), 'warning')
+                    showToast(
+                        t('dashboard.exportRateLimitedSeconds', {
+                            seconds: String(retryAfter)
+                        }),
+                        'warning'
+                    )
                 } else {
                     showToast(t('dashboard.exportFailed'), 'error')
                 }
@@ -310,8 +333,12 @@ const ChatView: FC<ChatViewProps> = ({
                         const message =
                             err instanceof Error
                                 ? err.message
-                                : typeof err === 'object' && err !== null && 'message' in err
-                                  ? String((err as { message: unknown }).message)
+                                : typeof err === 'object' &&
+                                    err !== null &&
+                                    'message' in err
+                                  ? String(
+                                        (err as { message: unknown }).message
+                                    )
                                   : t('dashboard.startFailed')
                         showToast(message, 'error')
                     }
@@ -326,11 +353,18 @@ const ChatView: FC<ChatViewProps> = ({
             onShowConfig: () => setShowConfigDialog(true),
             onUpdateInstance: () =>
                 repairMutation.mutate(claw.id, {
-                    onSuccess: () => showToast(t('dashboard.updateInstanceSuccess'), 'success'),
-                    onError: () => showToast(t('dashboard.updateInstanceFailed'), 'error')
+                    onSuccess: () =>
+                        showToast(
+                            t('dashboard.updateInstanceSuccess'),
+                            'success'
+                        ),
+                    onError: () =>
+                        showToast(t('dashboard.updateInstanceFailed'), 'error')
                 }),
             onShowReinstallModal: () => setShowReinstallModal(true),
-            onCopySSH: claw.hasRootPassword ? copySSHWithPassword : copySSHWithKey,
+            onCopySSH: claw.hasRootPassword
+                ? copySSHWithPassword
+                : copySSHWithKey,
             onCopySSHWithKey: copySSHWithKey,
             onCopySSHWithPassword: copySSHWithPassword,
             onCopyPassword: copyPassword,
@@ -338,9 +372,18 @@ const ChatView: FC<ChatViewProps> = ({
             onResumeCheckout: () => {
                 if (claw.checkoutUrl) window.open(claw.checkoutUrl, '_blank')
             },
-            onCancelPending: () => cancelPendingMutation.mutate(claw.id.replace('pending-', ''))
+            onCancelPending: () =>
+                cancelPendingMutation.mutate(claw.id.replace('pending-', ''))
         }
-    }, [headerDropdownClaw, showToast, startMutation, cancelDeletionMutation, repairMutation, reinstallMutation, cancelPendingMutation])
+    }, [
+        headerDropdownClaw,
+        showToast,
+        startMutation,
+        cancelDeletionMutation,
+        repairMutation,
+        reinstallMutation,
+        cancelPendingMutation
+    ])
 
     return (
         <div className='relative flex h-full w-full overflow-hidden'>
@@ -461,13 +504,17 @@ const ChatView: FC<ChatViewProps> = ({
                                             onClick={(e) => e.stopPropagation()}
                                         >
                                             <ArrowSquareOutIcon className='h-2.5 w-2.5 shrink-0' />
-                                            {activeClaw.subdomain || generateSlug(activeClaw.id)}.{getBaseDomain()}
+                                            {activeClaw.subdomain ||
+                                                generateSlug(activeClaw.id)}
+                                            .{getBaseDomain()}
                                         </a>
                                     </div>
                                     <div className='flex shrink-0 items-center gap-1'>
                                         <button
                                             onClick={() =>
-                                                handleOpenClawSettings(activeClaw.id)
+                                                handleOpenClawSettings(
+                                                    activeClaw.id
+                                                )
                                             }
                                             className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-md p-1.5 transition-colors'
                                         >
@@ -482,12 +529,20 @@ const ChatView: FC<ChatViewProps> = ({
                                                 actions={headerClawActions}
                                                 isLoading={isMutating}
                                                 hasActionItems={
-                                                    activeClaw.status === clawStatus.running ||
-                                                    activeClaw.status === clawStatus.stopped ||
-                                                    activeClaw.status === clawStatus.off
+                                                    activeClaw.status ===
+                                                        clawStatus.running ||
+                                                    activeClaw.status ===
+                                                        clawStatus.stopped ||
+                                                    activeClaw.status ===
+                                                        clawStatus.off
                                                 }
-                                                isScheduledForDeletion={!!activeClaw.deletionScheduledAt}
-                                                isAdmin={profile?.role === userRole.admin}
+                                                isScheduledForDeletion={
+                                                    !!activeClaw.deletionScheduledAt
+                                                }
+                                                isAdmin={
+                                                    profile?.role ===
+                                                    userRole.admin
+                                                }
                                                 compact
                                             />
                                         )}
@@ -524,8 +579,12 @@ const ChatView: FC<ChatViewProps> = ({
                                                 clawId={configClaw.id}
                                                 clawName={configClaw.name}
                                                 isOnlyAgent={configIsOnlyAgent}
-                                                onClose={() => setConfigAgent(null)}
-                                                gatewayToken={configClaw.gatewayToken}
+                                                onClose={() =>
+                                                    setConfigAgent(null)
+                                                }
+                                                gatewayToken={
+                                                    configClaw.gatewayToken
+                                                }
                                                 subdomain={configClaw.subdomain}
                                                 initialTab={initialAgentTab}
                                                 onTabChange={onAgentTabChange}
@@ -553,10 +612,18 @@ const ChatView: FC<ChatViewProps> = ({
                         setShowRestartModal={setShowRestartModal}
                         showHardDeleteModal={showHardDeleteModal}
                         setShowHardDeleteModal={setShowHardDeleteModal}
-                        onDelete={() => deleteMutation.mutate(headerDropdownClaw.id)}
-                        onStop={() => stopMutation.mutate(headerDropdownClaw.id)}
-                        onRestart={() => restartMutation.mutate(headerDropdownClaw.id)}
-                        onHardDelete={() => hardDeleteMutation.mutate(headerDropdownClaw.id)}
+                        onDelete={() =>
+                            deleteMutation.mutate(headerDropdownClaw.id)
+                        }
+                        onStop={() =>
+                            stopMutation.mutate(headerDropdownClaw.id)
+                        }
+                        onRestart={() =>
+                            restartMutation.mutate(headerDropdownClaw.id)
+                        }
+                        onHardDelete={() =>
+                            hardDeleteMutation.mutate(headerDropdownClaw.id)
+                        }
                         isDeletePending={deleteMutation.isPending}
                         isStopPending={stopMutation.isPending}
                         isRestartPending={restartMutation.isPending}
@@ -565,8 +632,16 @@ const ChatView: FC<ChatViewProps> = ({
                         setShowReinstallModal={setShowReinstallModal}
                         onReinstall={() =>
                             reinstallMutation.mutate(headerDropdownClaw.id, {
-                                onSuccess: () => showToast(t('dashboard.reinstallInstanceSuccess'), 'success'),
-                                onError: () => showToast(t('dashboard.reinstallInstanceFailed'), 'error')
+                                onSuccess: () =>
+                                    showToast(
+                                        t('dashboard.reinstallInstanceSuccess'),
+                                        'success'
+                                    ),
+                                onError: () =>
+                                    showToast(
+                                        t('dashboard.reinstallInstanceFailed'),
+                                        'error'
+                                    )
                             })
                         }
                         isReinstallPending={reinstallMutation.isPending}

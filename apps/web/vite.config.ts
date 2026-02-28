@@ -15,7 +15,11 @@ export default defineConfig(({ mode }) => {
         plugins: [
             viteMdxSanitize(),
             mdx({
-                remarkPlugins: [remarkGfm, remarkFrontmatter, remarkMdxFrontmatter]
+                remarkPlugins: [
+                    remarkGfm,
+                    remarkFrontmatter,
+                    remarkMdxFrontmatter
+                ]
             }),
             react()
         ],

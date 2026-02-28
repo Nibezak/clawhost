@@ -38,9 +38,10 @@ const getClawBindings = async (c: AuthenticatedContext) => {
                 const trimmed = output.trim()
                 const jsonStart = trimmed.indexOf('{')
                 const jsonEnd = trimmed.lastIndexOf('}')
-                const jsonStr = jsonStart >= 0 && jsonEnd > jsonStart
-                    ? trimmed.substring(jsonStart, jsonEnd + 1)
-                    : '{}'
+                const jsonStr =
+                    jsonStart >= 0 && jsonEnd > jsonStart
+                        ? trimmed.substring(jsonStart, jsonEnd + 1)
+                        : '{}'
                 const config = JSON.parse(jsonStr)
                 bindings = Array.isArray(config?.bindings)
                     ? config.bindings

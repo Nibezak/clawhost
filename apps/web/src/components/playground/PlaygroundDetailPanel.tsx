@@ -127,12 +127,16 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
     const isTabDisabled = useCallback(
         (tabId: PlaygroundDetailTab) =>
             (isConfiguring && CONFIGURING_DISABLED_TABS.includes(tabId)) ||
-            (isAwaitingPayment && AWAITING_PAYMENT_DISABLED_TABS.includes(tabId)),
+            (isAwaitingPayment &&
+                AWAITING_PAYMENT_DISABLED_TABS.includes(tabId)),
         [isConfiguring, isAwaitingPayment]
     )
     const getDisabledTooltip = useCallback(
         (tabId: PlaygroundDetailTab) => {
-            if (isAwaitingPayment && AWAITING_PAYMENT_DISABLED_TABS.includes(tabId))
+            if (
+                isAwaitingPayment &&
+                AWAITING_PAYMENT_DISABLED_TABS.includes(tabId)
+            )
                 return t('playground.tabDisabledAwaitingPayment')
             return t('playground.tabDisabledConfiguring')
         },
@@ -167,7 +171,9 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
     const [, setRenderKey] = useState(0)
     const [settingsName, setSettingsName] = useState(claw.name)
     const [settingsNameError, setSettingsNameError] = useState('')
-    const [settingsSubdomain, setSettingsSubdomain] = useState(claw.subdomain || '')
+    const [settingsSubdomain, setSettingsSubdomain] = useState(
+        claw.subdomain || ''
+    )
     const [settingsSubdomainError, setSettingsSubdomainError] = useState('')
     const renameMutation = useRenameClaw()
     const subdomainMutation = useUpdateClawSubdomain()
@@ -203,7 +209,8 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
     }, [])
 
     const nameHasChanges = settingsName.trim() !== claw.name
-    const subdomainHasChanges = settingsSubdomain.trim() !== (claw.subdomain || '')
+    const subdomainHasChanges =
+        settingsSubdomain.trim() !== (claw.subdomain || '')
     const settingsHasChanges = nameHasChanges || subdomainHasChanges
 
     const handleSettingsSave = useCallback(() => {
@@ -228,7 +235,11 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
             )
         }
 
-        if (subdomainHasChanges && trimmedSubdomain && trimmedSubdomain !== (claw.subdomain || '')) {
+        if (
+            subdomainHasChanges &&
+            trimmedSubdomain &&
+            trimmedSubdomain !== (claw.subdomain || '')
+        ) {
             if (!/^[a-z0-9]{3,20}$/.test(trimmedSubdomain)) {
                 setSettingsSubdomainError(t('playground.subdomainInvalid'))
                 return
@@ -241,13 +252,26 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                     },
                     onError: (err) => {
                         const raw = err instanceof Error ? err.message : ''
-                        const message = raw.includes('already in use') ? t('playground.subdomainInUse') : t('playground.subdomainUpdateFailed')
+                        const message = raw.includes('already in use')
+                            ? t('playground.subdomainInUse')
+                            : t('playground.subdomainUpdateFailed')
                         showToast(message, 'error')
                     }
                 }
             )
         }
-    }, [settingsName, settingsSubdomain, claw.name, claw.subdomain, claw.id, nameHasChanges, subdomainHasChanges, renameMutation, subdomainMutation, showToast])
+    }, [
+        settingsName,
+        settingsSubdomain,
+        claw.name,
+        claw.subdomain,
+        claw.id,
+        nameHasChanges,
+        subdomainHasChanges,
+        renameMutation,
+        subdomainMutation,
+        showToast
+    ])
 
     const plan = plans.find((p) => p.id === claw.planId)
     const monthlyPrice = plan ? plan.priceMonthly : null
@@ -263,16 +287,35 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
     const queryClient = useQueryClient()
     const versionQuery = useClawVersion(
         claw.id,
-        isInfoTab && !readOnly && !!claw.ip && !isConfiguring && !isAwaitingPayment
+        isInfoTab &&
+            !readOnly &&
+            !!claw.ip &&
+            !isConfiguring &&
+            !isAwaitingPayment
     )
     useEffect(() => {
-        if (isInfoTab && !readOnly && claw.ip && !isConfiguring && !isAwaitingPayment) {
+        if (
+            isInfoTab &&
+            !readOnly &&
+            claw.ip &&
+            !isConfiguring &&
+            !isAwaitingPayment
+        ) {
             queryClient.resetQueries({
                 queryKey: ['claw-version', claw.id]
             })
         }
-    }, [isInfoTab, readOnly, claw.ip, claw.id, queryClient, isConfiguring, isAwaitingPayment])
-    const showVersion = !isConfiguring && !isAwaitingPayment && (readOnly || !!claw.ip)
+    }, [
+        isInfoTab,
+        readOnly,
+        claw.ip,
+        claw.id,
+        queryClient,
+        isConfiguring,
+        isAwaitingPayment
+    ])
+    const showVersion =
+        !isConfiguring && !isAwaitingPayment && (readOnly || !!claw.ip)
     const versionLoading = !readOnly && versionQuery.isPending
     const versionDisplay = useMemo(() => {
         if (readOnly) return OPENCLAW_VERSION
@@ -350,7 +393,9 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                         type='button'
                                         onClick={() => {
                                             const url = `https://${claw.subdomain}.clawhost${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`
-                                            const eApi = (window as unknown as ElectronWindow).electronAPI
+                                            const eApi = (
+                                                window as unknown as ElectronWindow
+                                            ).electronAPI
                                             if (eApi?.openExternal) {
                                                 eApi.openExternal(url)
                                             } else {
@@ -380,14 +425,16 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                         const tabButton = (
                             <button
                                 key={tab.id}
-                                onClick={() => !disabled && setActiveTab(tab.id)}
+                                onClick={() =>
+                                    !disabled && setActiveTab(tab.id)
+                                }
                                 disabled={disabled}
                                 className={`flex items-center justify-center gap-1.5 border-b-2 px-3 py-2 text-xs font-medium transition-colors ${fullScreen ? 'flex-1' : 'shrink-0'} ${
                                     disabled
                                         ? 'text-muted-foreground/40 cursor-not-allowed border-transparent'
                                         : activeTab === tab.id
-                                            ? 'text-foreground border-[#ef5350]'
-                                            : 'text-muted-foreground hover:text-foreground/80 border-transparent'
+                                          ? 'text-foreground border-[#ef5350]'
+                                          : 'text-muted-foreground hover:text-foreground/80 border-transparent'
                                 }`}
                             >
                                 <tab.icon className='h-3.5 w-3.5' />
@@ -430,12 +477,13 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                     />
                                 )}
 
-                                {claw.provider === clawProvider.local && claw.port && (
-                                    <CopyableField
-                                        label={t('dashboard.port')}
-                                        value={String(claw.port)}
-                                    />
-                                )}
+                                {claw.provider === clawProvider.local &&
+                                    claw.port && (
+                                        <CopyableField
+                                            label={t('dashboard.port')}
+                                            value={String(claw.port)}
+                                        />
+                                    )}
 
                                 {showVersion && versionLoading && (
                                     <div className='bg-foreground/5 rounded-lg px-3 py-2'>
@@ -710,7 +758,9 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                                         handleSettingsSave()
                                                     }
                                                 }}
-                                                placeholder={t('playground.subdomainPlaceholder')}
+                                                placeholder={t(
+                                                    'playground.subdomainPlaceholder'
+                                                )}
                                                 className={`bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-l-md border border-r-0 px-3 py-2 text-sm outline-none transition-colors focus:border-[#ef5350]/50 ${
                                                     settingsSubdomainError
                                                         ? 'border-red-500/50'
@@ -727,7 +777,9 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                             </p>
                                         ) : (
                                             <p className='text-muted-foreground mt-1.5 text-[11px]'>
-                                                {t('playground.subdomainDescription')}
+                                                {t(
+                                                    'playground.subdomainDescription'
+                                                )}
                                             </p>
                                         )}
                                     </div>
@@ -744,7 +796,8 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                     }
                                     className='flex w-full items-center justify-center gap-2 rounded-lg bg-[#ef5350] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
                                 >
-                                    {(renameMutation.isPending || subdomainMutation.isPending) && (
+                                    {(renameMutation.isPending ||
+                                        subdomainMutation.isPending) && (
                                         <CircleNotchIcon className='h-4 w-4 animate-spin' />
                                     )}
                                     {t('playground.settingsSave')}

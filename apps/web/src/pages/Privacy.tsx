@@ -3,7 +3,13 @@ import type { FC, ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { LEGAL_EMAIL } from '@/lib/links'
-import { BlogCTA, Header, LandingFooter, PageBackground, PageTitle } from '@/components'
+import {
+    BlogCTA,
+    Header,
+    LandingFooter,
+    PageBackground,
+    PageTitle
+} from '@/components'
 import { PATHS, getBaseDomain } from '@/lib'
 
 const Privacy: FC = (): ReactNode => {

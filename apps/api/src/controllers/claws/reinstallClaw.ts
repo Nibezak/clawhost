@@ -7,7 +7,10 @@ import { claws } from '@/db/schema'
 import executeSSH from '@/services/ssh'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
-import { applyToolsDefaults, OPENCLAW_VERSION } from '@/controllers/claws/helpers'
+import {
+    applyToolsDefaults,
+    OPENCLAW_VERSION
+} from '@/controllers/claws/helpers'
 
 const reinstallClaw = async (c: AuthenticatedContext) => {
     try {
@@ -40,9 +43,10 @@ const reinstallClaw = async (c: AuthenticatedContext) => {
         try {
             const jsonStart = existingOutput.indexOf('{')
             const jsonEnd = existingOutput.lastIndexOf('}')
-            const jsonStr = jsonStart >= 0 && jsonEnd > jsonStart
-                ? existingOutput.substring(jsonStart, jsonEnd + 1)
-                : '{}'
+            const jsonStr =
+                jsonStart >= 0 && jsonEnd > jsonStart
+                    ? existingOutput.substring(jsonStart, jsonEnd + 1)
+                    : '{}'
             config = JSON.parse(jsonStr)
         } catch {
             config = {}

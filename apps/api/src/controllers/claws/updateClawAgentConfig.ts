@@ -2,7 +2,11 @@ import type { UpdateAgentConfigBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import executeSSH from '@/services/ssh'
-import { applyToolsDefaults, findUserClaw, validateEnvVars } from '@/controllers/claws/helpers'
+import {
+    applyToolsDefaults,
+    findUserClaw,
+    validateEnvVars
+} from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
@@ -45,9 +49,10 @@ const updateClawAgentConfig = async (c: AuthenticatedContext) => {
             try {
                 const jsonStart = configOutput.indexOf('{')
                 const jsonEnd = configOutput.lastIndexOf('}')
-                const jsonStr = jsonStart >= 0 && jsonEnd > jsonStart
-                    ? configOutput.substring(jsonStart, jsonEnd + 1)
-                    : '{}'
+                const jsonStr =
+                    jsonStart >= 0 && jsonEnd > jsonStart
+                        ? configOutput.substring(jsonStart, jsonEnd + 1)
+                        : '{}'
                 config = JSON.parse(jsonStr)
             } catch {
                 config = {}
@@ -106,9 +111,11 @@ const updateClawAgentConfig = async (c: AuthenticatedContext) => {
                 }
             }
 
-            const validModel = body.model && /^[a-zA-Z0-9_-]+\/[a-zA-Z0-9._-]+$/.test(body.model)
-                ? body.model
-                : undefined
+            const validModel =
+                body.model &&
+                /^[a-zA-Z0-9_-]+\/[a-zA-Z0-9._-]+$/.test(body.model)
+                    ? body.model
+                    : undefined
 
             if (agentIndex >= 0) {
                 if (body.name !== undefined) {

@@ -1,9 +1,6 @@
-import type { CompareCompetitor, CompareCategory } from '@/ts/Interfaces'
+import type { CompareData } from '@/ts/Interfaces'
 
-const getCompareData = (): {
-    competitors: CompareCompetitor[]
-    categories: CompareCategory[]
-} => ({
+const getCompareData = (): CompareData => ({
     competitors: [
         {
             id: 'clawhost',
@@ -346,6 +343,45 @@ const getCompareData = (): {
                             status: 'partial',
                             detailKey: 'compare.limitedConfig'
                         },
+                        quickclaw: { status: 'no' }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureDirectChat',
+                    values: {
+                        clawhost: {
+                            status: 'yes',
+                            detailKey: 'compare.builtInChat'
+                        },
+                        simpleclaw: { status: 'no' },
+                        myclawai: {
+                            status: 'partial',
+                            detailKey: 'compare.appOnly'
+                        },
+                        quickclaw: {
+                            status: 'partial',
+                            detailKey: 'compare.appOnly'
+                        }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureOneClickVersion',
+                    values: {
+                        clawhost: { status: 'yes' },
+                        simpleclaw: { status: 'no' },
+                        myclawai: { status: 'no' },
+                        quickclaw: { status: 'no' }
+                    }
+                },
+                {
+                    nameKey: 'compare.featureWebTerminal',
+                    values: {
+                        clawhost: {
+                            status: 'yes',
+                            detailKey: 'compare.builtInTerminal'
+                        },
+                        simpleclaw: { status: 'no' },
+                        myclawai: { status: 'no' },
                         quickclaw: { status: 'no' }
                     }
                 }

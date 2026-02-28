@@ -41,7 +41,14 @@ const VoiceOrb: FC<VoiceOrbProps> = ({ intensity, size = 160 }): ReactNode => {
                 useNativeDriver: true
             })
         ]).start()
-    }, [intensity, coreScale, ring1Scale, ring2Scale, ring1Opacity, ring2Opacity])
+    }, [
+        intensity,
+        coreScale,
+        ring1Scale,
+        ring2Scale,
+        ring1Opacity,
+        ring2Opacity
+    ])
 
     const glowSize = size * 2
 

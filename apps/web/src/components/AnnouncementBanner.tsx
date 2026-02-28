@@ -15,23 +15,22 @@ const providerLabels: Record<string, string> = {
 }
 
 const AnnouncementBanner: FC = (): ReactNode => {
-    const {
-        plans: hetznerPlans,
-        isLoading: hetznerLoading
-    } = usePlans(clawProvider.hetzner)
-    const {
-        plans: digitaloceanPlans,
-        isLoading: digitaloceanLoading
-    } = usePlans(clawProvider.digitalocean)
-    const {
-        plans: vultrPlans,
-        isLoading: vultrLoading
-    } = usePlans(clawProvider.vultr)
+    const { plans: hetznerPlans, isLoading: hetznerLoading } = usePlans(
+        clawProvider.hetzner
+    )
+    const { plans: digitaloceanPlans, isLoading: digitaloceanLoading } =
+        usePlans(clawProvider.digitalocean)
+    const { plans: vultrPlans, isLoading: vultrLoading } = usePlans(
+        clawProvider.vultr
+    )
 
     const isProviderUnavailable = (p: ProviderType): boolean => {
-        if (p === clawProvider.hetzner) return !hetznerLoading && !hetznerPlans?.length
-        if (p === clawProvider.digitalocean) return !digitaloceanLoading && !digitaloceanPlans?.length
-        if (p === clawProvider.vultr) return !vultrLoading && !vultrPlans?.length
+        if (p === clawProvider.hetzner)
+            return !hetznerLoading && !hetznerPlans?.length
+        if (p === clawProvider.digitalocean)
+            return !digitaloceanLoading && !digitaloceanPlans?.length
+        if (p === clawProvider.vultr)
+            return !vultrLoading && !vultrPlans?.length
         return false
     }
 
@@ -45,7 +44,8 @@ const AnnouncementBanner: FC = (): ReactNode => {
 
     const { phBannerVisible } = useUIStore()
 
-    const visible = !allLoading && !phBannerVisible && unavailableProviders.length > 0
+    const visible =
+        !allLoading && !phBannerVisible && unavailableProviders.length > 0
 
     const providersText = unavailableProviders
         .map((p) => providerLabels[p])
@@ -79,7 +79,9 @@ const AnnouncementBanner: FC = (): ReactNode => {
                                     {' \u2002—\u2002 '}
                                 </span>
                                 <span className='text-foreground/60'>
-                                    {t('announcement.message', { providers: providersText })}
+                                    {t('announcement.message', {
+                                        providers: providersText
+                                    })}
                                 </span>
                             </p>
                         </div>

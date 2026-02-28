@@ -15,7 +15,8 @@ const VALIDITY_DAYS = 825
 
 const isCaValid = (): boolean => {
     try {
-        if (!fs.existsSync(CA_CERT_PATH) || !fs.existsSync(CA_KEY_PATH)) return false
+        if (!fs.existsSync(CA_CERT_PATH) || !fs.existsSync(CA_KEY_PATH))
+            return false
         const caPem = fs.readFileSync(CA_CERT_PATH, 'utf-8')
         const cert = forge.pki.certificateFromPem(caPem)
         const threshold = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
@@ -31,7 +32,9 @@ const generateCa = (): void => {
     caCert.publicKey = caKeys.publicKey
     caCert.serialNumber = forge.util.bytesToHex(forge.random.getBytesSync(16))
     caCert.validity.notBefore = new Date()
-    caCert.validity.notAfter = new Date(Date.now() + VALIDITY_DAYS * 24 * 60 * 60 * 1000)
+    caCert.validity.notAfter = new Date(
+        Date.now() + VALIDITY_DAYS * 24 * 60 * 60 * 1000
+    )
     caCert.setSubject([{ name: 'commonName', value: 'ClawHost Local CA' }])
     caCert.setIssuer([{ name: 'commonName', value: 'ClawHost Local CA' }])
     caCert.setExtensions([
@@ -55,15 +58,22 @@ const generateServerCert = (subdomains: string[]): void => {
     const caKey = forge.pki.privateKeyFromPem(caKeyPem)
     const caCert = forge.pki.certificateFromPem(caCertPem)
 
-    const altNames = subdomains.map((s) => ({ type: 2, value: `${s}.clawhost` }))
+    const altNames = subdomains.map((s) => ({
+        type: 2,
+        value: `${s}.clawhost`
+    }))
     altNames.push({ type: 2, value: 'clawhost' })
 
     const serverKeys = forge.pki.rsa.generateKeyPair(2048)
     const serverCert = forge.pki.createCertificate()
     serverCert.publicKey = serverKeys.publicKey
-    serverCert.serialNumber = forge.util.bytesToHex(forge.random.getBytesSync(16))
+    serverCert.serialNumber = forge.util.bytesToHex(
+        forge.random.getBytesSync(16)
+    )
     serverCert.validity.notBefore = new Date()
-    serverCert.validity.notAfter = new Date(Date.now() + VALIDITY_DAYS * 24 * 60 * 60 * 1000)
+    serverCert.validity.notAfter = new Date(
+        Date.now() + VALIDITY_DAYS * 24 * 60 * 60 * 1000
+    )
     serverCert.setSubject([{ name: 'commonName', value: 'clawhost' }])
     serverCert.setIssuer(caCert.subject.attributes)
     serverCert.setExtensions([
@@ -74,7 +84,10 @@ const generateServerCert = (subdomains: string[]): void => {
     ])
     serverCert.sign(caKey, forge.md.sha256.create())
 
-    fs.writeFileSync(SERVER_KEY_PATH, forge.pki.privateKeyToPem(serverKeys.privateKey))
+    fs.writeFileSync(
+        SERVER_KEY_PATH,
+        forge.pki.privateKeyToPem(serverKeys.privateKey)
+    )
     fs.writeFileSync(SERVER_CERT_PATH, forge.pki.certificateToPem(serverCert))
 }
 
@@ -106,7 +119,11 @@ const regenerateServerCert = (): boolean => {
 }
 
 const getCertPaths = (): CertPaths | null => {
-    if (!fs.existsSync(SERVER_KEY_PATH) || !fs.existsSync(SERVER_CERT_PATH) || !fs.existsSync(CA_CERT_PATH)) {
+    if (
+        !fs.existsSync(SERVER_KEY_PATH) ||
+        !fs.existsSync(SERVER_CERT_PATH) ||
+        !fs.existsSync(CA_CERT_PATH)
+    ) {
         return null
     }
     return { key: SERVER_KEY_PATH, cert: SERVER_CERT_PATH, ca: CA_CERT_PATH }
@@ -114,4 +131,10 @@ const getCertPaths = (): CertPaths | null => {
 
 const getCaCertPath = (): string => CA_CERT_PATH
 
-export default { ensureCerts, regenerateServerCert, getCertPaths, getCaCertPath, isCaValid }
+export default {
+    ensureCerts,
+    regenerateServerCert,
+    getCertPaths,
+    getCaCertPath,
+    isCaValid
+}

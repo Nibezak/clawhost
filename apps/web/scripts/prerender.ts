@@ -173,7 +173,7 @@ const staticPages: { path: string; meta: PrerenderMeta }[] = [
             type: 'website',
             image: `${SITE_URL}/og-image.webp`
         }
-    },
+    }
 ]
 
 for (const page of staticPages) {

@@ -3,7 +3,11 @@ import type { ChatSidebarProps } from '@/ts/Interfaces'
 
 import { useCallback } from 'react'
 import { t } from '@openclaw/i18n'
-import { RobotIcon, TreeStructureIcon, ListBulletsIcon } from '@phosphor-icons/react'
+import {
+    RobotIcon,
+    TreeStructureIcon,
+    ListBulletsIcon
+} from '@phosphor-icons/react'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import { usePreferencesStore } from '@/lib/store'
 import ChatSidebarTreeView from '@/components/chat/ChatSidebarTreeView'
@@ -76,7 +80,11 @@ const ChatSidebar: FC<ChatSidebarProps> = ({
                             >
                                 <TreeStructureIcon
                                     className='h-3.5 w-3.5'
-                                    weight={chatSidebarView === 'tree' ? 'fill' : 'regular'}
+                                    weight={
+                                        chatSidebarView === 'tree'
+                                            ? 'fill'
+                                            : 'regular'
+                                    }
                                 />
                             </button>
                         </TooltipTrigger>
@@ -96,7 +104,11 @@ const ChatSidebar: FC<ChatSidebarProps> = ({
                             >
                                 <ListBulletsIcon
                                     className='h-3.5 w-3.5'
-                                    weight={chatSidebarView === 'list' ? 'fill' : 'regular'}
+                                    weight={
+                                        chatSidebarView === 'list'
+                                            ? 'fill'
+                                            : 'regular'
+                                    }
                                 />
                             </button>
                         </TooltipTrigger>

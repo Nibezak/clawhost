@@ -143,7 +143,10 @@ const ChatSidebarListItem: FC<ChatSidebarListItemProps> = ({
                         break
                 }
             }
-            if (gatewayState === 'connecting' || gatewayState === 'authenticating') {
+            if (
+                gatewayState === 'connecting' ||
+                gatewayState === 'authenticating'
+            ) {
                 return {
                     color: 'bg-orange-500',
                     label: t('dashboard.status.checking'),
@@ -182,10 +185,7 @@ const ChatSidebarListItem: FC<ChatSidebarListItemProps> = ({
         >
             <div className='relative shrink-0'>
                 <div className='bg-foreground/5 flex h-8 w-8 items-center justify-center rounded-lg'>
-                    <AndroidLogoIcon
-                        className='h-4 w-4'
-                        weight='fill'
-                    />
+                    <AndroidLogoIcon className='h-4 w-4' weight='fill' />
                 </div>
                 <Tooltip>
                     <TooltipTrigger asChild>

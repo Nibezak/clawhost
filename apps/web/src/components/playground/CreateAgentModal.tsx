@@ -266,7 +266,9 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                     <DialogTitle>{t('playground.addAgentTitle')}</DialogTitle>
                     <DialogDescription>
                         {pickedClawName
-                            ? t('playground.addAgentDescription', { clawName: pickedClawName })
+                            ? t('playground.addAgentDescription', {
+                                  clawName: pickedClawName
+                              })
                             : t('playground.addAgentDescriptionNoClaw')}
                     </DialogDescription>
                 </DialogHeader>
@@ -286,7 +288,9 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                                 displayValue={pickedClawName || undefined}
                             >
                                 <SelectTrigger
-                                    placeholder={t('playground.addAgentSelectClawPlaceholder')}
+                                    placeholder={t(
+                                        'playground.addAgentSelectClawPlaceholder'
+                                    )}
                                     className='border-border bg-foreground/5 text-foreground h-9 text-sm'
                                 />
                                 <SelectContent className='max-h-[300px] overflow-y-auto'>
@@ -471,7 +475,11 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                     </button>
                     <button
                         onClick={handleSubmit}
-                        disabled={!!nameError || createMutation.isPending || (needsClawPicker && !pickedClawId)}
+                        disabled={
+                            !!nameError ||
+                            createMutation.isPending ||
+                            (needsClawPicker && !pickedClawId)
+                        }
                         className='flex items-center gap-2 rounded-lg bg-[#ef5350] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
                     >
                         {createMutation.isPending && (

@@ -417,7 +417,8 @@ const en = {
         settingsDescription: 'Manage your dashboard preferences.',
         showAllClaws: 'Show all claws from all users',
         openLinksWindowed: 'Open links in a windowed view',
-        openLinksWindowedDescription: 'When enabled, external links open inside the app instead of the system browser.'
+        openLinksWindowedDescription:
+            'When enabled, external links open inside the app instead of the system browser.'
     },
     billing: {
         title: 'Billing',
@@ -569,7 +570,8 @@ const en = {
         configuringTooltip:
             'This might take some time. It depends on OpenClaw, the server location, and Cloudflare DNS.',
         paymentSuccess: 'Your claw is being created and configured.',
-        dnsSetupBanner: 'Set up local DNS to access your claws via subdomain.clawhost.',
+        dnsSetupBanner:
+            'Set up local DNS to access your claws via subdomain.clawhost.',
         dnsSetupButton: 'Set Up DNS',
         dnsSetupSuccess: 'DNS resolver configured successfully.',
         dnsSetupError: 'Failed to configure DNS resolver!',
@@ -904,6 +906,12 @@ const en = {
         comparisonProvidersOthers: 'Single provider only',
         comparisonSocialsUs: 'Social media presence',
         comparisonSocialsOthers: 'No social media',
+        comparisonChatUs: 'Chat directly with your Claw',
+        comparisonChatOthers: 'Chat only through channels',
+        comparisonVersionUs: 'One-click version switching',
+        comparisonVersionOthers: 'Manual updates only',
+        comparisonTerminalUs: 'Built-in web terminal',
+        comparisonTerminalOthers: 'SSH client required',
         seeFullComparison: 'See Full Comparison',
         comparisonCtaText:
             'We compare against SimpleClaw, MyClaw.ai and more — feature by feature.',
@@ -932,7 +940,8 @@ const en = {
         noPosts: 'No Posts Yet',
         noPostsDescription: 'Blog posts are coming soon. Check back later.',
         ctaTitle: 'Deploy OpenClaw with One Click',
-        ctaDescription: 'Get a dedicated server with OpenClaw pre-installed. Full root access, global locations, and ready in minutes. You own it at all times. Starting from $10.',
+        ctaDescription:
+            'Get a dedicated server with OpenClaw pre-installed. Full root access, global locations, and ready in minutes. You own it at all times. Starting from $10.',
         ctaDeploy: 'Deploy OpenClaw',
         ctaGitHub: 'View on GitHub'
     },
@@ -966,18 +975,15 @@ const en = {
         release11Title: 'Text-to-Speech, Terminal, Chat Tabs & File Explorer',
         release11Description:
             'Listen to agent responses with text-to-speech, interact with your VPS directly via terminal, navigate chats faster with sidebar view tabs, and explore files with the improved file explorer.',
-        release11Feature1:
-            'Text-to-speech on agent messages in the playground',
+        release11Feature1: 'Text-to-speech on agent messages in the playground',
         release11Feature2:
             'Terminal to interact with your VPS instances directly from the dashboard',
         release11Feature3:
             'Chat sidebar view tabs for easy access and navigation',
         release11Feature4:
             'File explorer improvements with search bar to search through files',
-        release11Feature5:
-            'Fixed message timestamps not reflecting real time',
-        release11Dropped1:
-            'Dropped feature requests for simplification',
+        release11Feature5: 'Fixed message timestamps not reflecting real time',
+        release11Dropped1: 'Dropped feature requests for simplification',
         release10Date: 'February 23, 2026',
         release10Title: 'Feature Requests, File Explorer & Bug Fixes',
         release10Description:
@@ -1128,7 +1134,8 @@ const en = {
         terminalDisconnected: 'Terminal disconnected.',
         terminalError: 'Failed to connect to terminal!',
         terminalReconnect: 'Reconnect',
-        tabDisabledConfiguring: 'Available once the instance finishes configuring.',
+        tabDisabledConfiguring:
+            'Available once the instance finishes configuring.',
         tabDisabledAwaitingPayment: 'Available once the payment is processed.',
         loadingTip1:
             'Did you know that you could run multiple agents within one OpenClaw?',
@@ -1184,12 +1191,15 @@ const en = {
         variablesDeleteDescription:
             'Are you sure you want to delete {{key}}? This will immediately remove it from the instance.',
         variablesDeleteConfirm: 'Delete',
-        variablesDontAskAgain: "Don't ask again when deleting variables this session",
+        variablesDontAskAgain:
+            "Don't ask again when deleting variables this session",
         variablesDeleted: 'Variable deleted.',
-        variablesOperationPending: 'Disabled while a previous operation completes.',
+        variablesOperationPending:
+            'Disabled while a previous operation completes.',
         addAgentTitle: 'Add Agent',
         addAgentDescription: 'Add a new agent to {{clawName}}.',
-        addAgentDescriptionNoClaw: 'Select a claw and configure your new agent.',
+        addAgentDescriptionNoClaw:
+            'Select a claw and configure your new agent.',
         addAgentSelectClaw: 'Claw',
         addAgentSelectClawPlaceholder: 'Select a claw',
         addAgentName: 'Name',
@@ -1247,7 +1257,7 @@ const en = {
             'This is a preview! Deploy your own OpenClaw with one click and start chatting with your AI agents in minutes!',
         chatReadOnlyUser2: 'Can you run the test suite and check for failures?',
         chatReadOnlyAssistant2:
-            'Sure! I\'ll run all tests now. 3 passed, 0 failed. Everything looks good — all assertions are passing.',
+            "Sure! I'll run all tests now. 3 passed, 0 failed. Everything looks good — all assertions are passing.",
         chatConnectionFailed: 'Failed to connect to this agent.',
         chatConnectionFailedDescription:
             'Make sure the Claw is running and reachable.',
@@ -1275,9 +1285,12 @@ const en = {
         chatVoiceModeSpeaking: 'Speaking...',
         chatVoiceModeInputDevice: 'Microphone',
         chatVoiceModeOutputDevice: 'Speaker',
-        chatVoiceModeNotSupported: 'Voice recognition is not supported in this browser.',
-        chatVoiceModeNoMicrophone: 'No microphone detected. Connect one to use voice mode.',
-        chatVoiceModeNoSpeaker: 'No speaker detected. Connect one to use voice mode.',
+        chatVoiceModeNotSupported:
+            'Voice recognition is not supported in this browser.',
+        chatVoiceModeNoMicrophone:
+            'No microphone detected. Connect one to use voice mode.',
+        chatVoiceModeNoSpeaker:
+            'No speaker detected. Connect one to use voice mode.',
         chatAttachmentNotSupported:
             'This file type is not supported. Use images, PDFs, or text files.',
         chatNoPreview: 'No preview available.',
@@ -1391,7 +1404,8 @@ const en = {
         versionsSearch: 'Search versions...',
         versionsEmpty: 'No versions found',
         versionsEmptyDescription: 'No versions match your search.',
-        versionsErrorDescription: 'Failed to load versions. Please check your connection and try again.',
+        versionsErrorDescription:
+            'Failed to load versions. Please check your connection and try again.',
         versionsChangelog: 'View changelogs on npm',
         versionCurrent: 'Current',
         versionLatest: 'Latest',
@@ -1403,7 +1417,8 @@ const en = {
         versionChangelog: 'Changelog',
         versionOutdated: 'Outdated',
         versionInstallConfirmTitle: 'Install Version {{version}}',
-        versionInstallConfirmDescription: 'Switching versions may cause unexpected behavior or require additional manual configuration, especially for newer versions that have not been fully verified yet. Are you sure you want to proceed?',
+        versionInstallConfirmDescription:
+            'Switching versions may cause unexpected behavior or require additional manual configuration, especially for newer versions that have not been fully verified yet. Are you sure you want to proceed?',
         settingsName: 'Name',
         settingsNamePlaceholder: 'Enter claw name',
         settingsNameDescription: 'Letters, numbers, and dashes only.',
@@ -1580,7 +1595,8 @@ const en = {
     },
     announcement: {
         title: 'Service Notice',
-        message: '{{providers}} deployments are temporarily unavailable. Existing claws are running normally.'
+        message:
+            '{{providers}} deployments are temporarily unavailable. Existing claws are running normally.'
     },
     productHunt: {
         liveOn: 'Live on',
@@ -1641,6 +1657,9 @@ const en = {
         featureMultiLanguage: 'Multi-language UI',
         featureMobileApp: 'Mobile app',
         featureDesktopApp: 'Desktop app',
+        featureDirectChat: 'Direct chat',
+        featureOneClickVersion: 'One-click version switch',
+        featureWebTerminal: 'Web terminal access',
         featureSocials: 'Social media',
         dedicatedVps: 'Dedicated VPS',
         sharedContainers: 'Shared containers',
@@ -1700,6 +1719,8 @@ const en = {
         comingSoon: 'Coming soon',
         iosMacOs: 'iOS & macOS',
         macOsOnly: 'macOS only',
+        builtInChat: 'Built-in',
+        builtInTerminal: 'No SSH needed',
         notAvailable: 'Not available',
         disclaimer: 'Something changed or wrong? Email us at',
         disclaimerOr: 'or open a pull request on',

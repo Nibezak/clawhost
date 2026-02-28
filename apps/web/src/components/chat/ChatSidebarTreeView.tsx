@@ -21,43 +21,40 @@ const ChatSidebarTreeView: FC<ChatSidebarTreeViewProps> = ({
 
     return (
         <>
-            {clawsWithAgents.map(
-                ({ claw, agents, isLoading, isReachable }) => {
-                    const status =
-                        statusConfigs[claw.status] || statusConfigs.unknown
+            {clawsWithAgents.map(({ claw, agents, isLoading, isReachable }) => {
+                const status =
+                    statusConfigs[claw.status] || statusConfigs.unknown
 
-                    return (
-                        <div key={claw.id} className='mb-3 last:mb-0'>
-                            <ChatSidebarClawHeader
-                                claw={claw}
-                                agentCount={agents.length}
-                                isLoadingAgents={isLoading}
-                                isReachable={isReachable}
-                                isSelected={
-                                    selectedClawId === claw.id &&
-                                    !selectedAgent
-                                }
-                                statusConfig={status}
-                                readOnly={readOnly}
-                                onOpenClawSettings={onOpenClawSettings}
-                                onCreateAgent={onCreateAgent}
-                            />
-                            <ChatSidebarAgentList
-                                claw={claw}
-                                agents={agents}
-                                isLoading={isLoading}
-                                isReachable={isReachable}
-                                selectedAgent={selectedAgent}
-                                activeConnectionState={activeConnectionState}
-                                readOnly={readOnly}
-                                onAgentClick={onAgentClick}
-                                onConfigureAgent={onConfigureAgent}
-                                onCreateAgent={onCreateAgent}
-                            />
-                        </div>
-                    )
-                }
-            )}
+                return (
+                    <div key={claw.id} className='mb-3 last:mb-0'>
+                        <ChatSidebarClawHeader
+                            claw={claw}
+                            agentCount={agents.length}
+                            isLoadingAgents={isLoading}
+                            isReachable={isReachable}
+                            isSelected={
+                                selectedClawId === claw.id && !selectedAgent
+                            }
+                            statusConfig={status}
+                            readOnly={readOnly}
+                            onOpenClawSettings={onOpenClawSettings}
+                            onCreateAgent={onCreateAgent}
+                        />
+                        <ChatSidebarAgentList
+                            claw={claw}
+                            agents={agents}
+                            isLoading={isLoading}
+                            isReachable={isReachable}
+                            selectedAgent={selectedAgent}
+                            activeConnectionState={activeConnectionState}
+                            readOnly={readOnly}
+                            onAgentClick={onAgentClick}
+                            onConfigureAgent={onConfigureAgent}
+                            onCreateAgent={onCreateAgent}
+                        />
+                    </div>
+                )
+            })}
         </>
     )
 }

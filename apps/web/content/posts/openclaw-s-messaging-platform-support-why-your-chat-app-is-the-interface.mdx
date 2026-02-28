@@ -1,14 +1,15 @@
 ---
-title: 'OpenClaw''s Messaging Platform Support — Why Your Chat App '
+title: "OpenClaw's Messaging Platform Support — Why Your Chat App "
 slug: openclaw-s-messaging-platform-support-why-your-chat-app-is-the-interface
-description: OpenClaw integrates with WhatsApp, Telegram, Discord, Signal, and more.
-  Learn how your favorite chat app becomes your AI agent's primary interface.
+description:
+    OpenClaw integrates with WhatsApp, Telegram, Discord, Signal, and more.
+    Learn how your favorite chat app becomes your AI agent's primary interface.
 author: ClawHost
 publishedAt: '2026-02-26'
 tags:
-- openclaw
-- tutorial
-- automation
+    - openclaw
+    - tutorial
+    - automation
 coverImage: /openclaw-s-messaging-platform-support-why-your-chat-app-is-the-interface.webp
 ---
 
@@ -25,6 +26,7 @@ OpenClaw understands this. It doesn't force you to learn a proprietary interface
 OpenClaw integrates with the major messaging platforms:
 
 **Fully Supported**:
+
 - **Telegram** - DMs, groups, channels
 - **Discord** - DMs, servers, channels
 - **Slack** - DMs, channels
@@ -32,6 +34,7 @@ OpenClaw integrates with the major messaging platforms:
 - **Signal** - Private messaging
 
 **Coming Soon**:
+
 - **Microsoft Teams**
 - **Matrix/Element**
 
@@ -42,6 +45,7 @@ This is fundamentally different from proprietary AI products that lock you into 
 ### 1. You Already Have These Apps
 
 The average professional uses:
+
 - Email (not everyone, but most)
 - Slack or Teams (at work)
 - Telegram or WhatsApp (personal)
@@ -83,12 +87,14 @@ This is more natural than synchronous web interface conversations.
 ### Telegram
 
 **Why it's perfect for agents**:
+
 - Global reach (works in countries where Slack doesn't)
 - Simple API
 - Personal and group usage
 - Minimal corporate overhead
 
 **OpenClaw Telegram features**:
+
 ```
 /start                      # Begin interaction
 /help                       # List commands
@@ -104,12 +110,14 @@ This is more natural than synchronous web interface conversations.
 ### Discord
 
 **Why it's perfect for agents**:
+
 - Community-native (agents become part of teams)
 - Channel-based organization
 - Bot ecosystem is mature
 - Gaming and hobby communities already use it
 
 **OpenClaw Discord features**:
+
 ```
 Direct message: Private 1-on-1 conversation
 Server channels: Team-wide agent use
@@ -119,6 +127,7 @@ Scheduled posts: Agent sends daily/weekly reports
 ```
 
 **Real use case**: Game development team uses OpenClaw agent in Discord to:
+
 - Track bug reports posted in #bugs channel
 - Summarize GitHub issues automatically
 - Ping developers when relevant issues appear
@@ -128,12 +137,14 @@ Scheduled posts: Agent sends daily/weekly reports
 ### Slack
 
 **Why it's perfect for agents**:
+
 - Native in most enterprises
 - Workflow builder integration
 - App ecosystem is mature
 - Premium paid feature (companies already invest in Slack)
 
 **OpenClaw Slack features**:
+
 ```
 DM conversations: Private agent chats
 Channel mentions: @agent in any channel
@@ -144,6 +155,7 @@ Blocks: Rich interactive messages
 ```
 
 **Real use case**: Customer success team uses OpenClaw in Slack to:
+
 - Respond to customer inquiries in #customer-questions
 - Track support tickets
 - Route urgent issues to available staff
@@ -153,12 +165,14 @@ Blocks: Rich interactive messages
 ### WhatsApp
 
 **Why it's perfect for agents**:
+
 - Ubiquitous in non-US markets
 - Personal device, always with you
 - Simple interface
 - WhatsApp Business API for organizations
 
 **OpenClaw WhatsApp features**:
+
 ```
 Text: Simple text interactions
 Media: Send/receive documents, images
@@ -168,6 +182,7 @@ Status: Messages delivered, read receipts
 ```
 
 **Real use case**: Sales team in Brazil uses WhatsApp to:
+
 - Send proposals to clients
 - Answer client questions
 - Schedule meetings
@@ -179,11 +194,13 @@ The agent works on WhatsApp because that's how Brazilians communicate profession
 ### Signal
 
 **Why it's perfect for agents**:
+
 - Maximum privacy (end-to-end encrypted)
 - No corporate tracking
 - Growing adoption among privacy-conscious users
 
 **OpenClaw Signal features**:
+
 ```
 Encrypted messages: All conversation private
 Group chats: Team coordination with privacy
@@ -192,6 +209,7 @@ Self-destructing messages: Auto-delete for sensitive info
 ```
 
 **Real use case**: Journalists, activists, and privacy-conscious professionals use OpenClaw over Signal for:
+
 - Research on sensitive topics
 - Organizing without tracking
 - Confidential analysis
@@ -221,6 +239,7 @@ OpenClaw uses adapters to translate between platforms:
 ```
 
 Each adapter:
+
 1. **Receives messages** from the platform
 2. **Translates format** into OpenClaw's format
 3. **Sends to agent** for processing
@@ -229,36 +248,37 @@ Each adapter:
 6. **Sends response** to the user
 
 **Code example**:
+
 ```javascript
 // Slack adapter
 slack_adapter.on_message = (user_id, message, context) => {
-  // Translate Slack message to OpenClaw format
-  const normalized = {
-    platform: "slack",
-    user_id: user_id,
-    channel: context.channel,
-    message: message,
-    context: {
-      thread_id: context.thread_id,
-      team: context.team_id
+    // Translate Slack message to OpenClaw format
+    const normalized = {
+        platform: 'slack',
+        user_id: user_id,
+        channel: context.channel,
+        message: message,
+        context: {
+            thread_id: context.thread_id,
+            team: context.team_id
+        }
     }
-  };
-  
-  // Send to agent
-  agent.process(normalized);
-  
-  // Agent responds
-  agent.on_response = (response) => {
-    // Translate response back to Slack format
-    if (response.type === "text") {
-      slack.send_message(channel, response.text);
-    } else if (response.type === "file") {
-      slack.upload_file(channel, response.file);
-    } else if (response.type === "blocks") {
-      slack.send_blocks(channel, response.blocks);
+
+    // Send to agent
+    agent.process(normalized)
+
+    // Agent responds
+    agent.on_response = (response) => {
+        // Translate response back to Slack format
+        if (response.type === 'text') {
+            slack.send_message(channel, response.text)
+        } else if (response.type === 'file') {
+            slack.upload_file(channel, response.file)
+        } else if (response.type === 'blocks') {
+            slack.send_blocks(channel, response.blocks)
+        }
     }
-  };
-};
+}
 ```
 
 ### Unified Conversation Model
@@ -293,16 +313,16 @@ The agent sees the same structure regardless of platform.
 
 ### Platform Strengths and Weaknesses
 
-| Aspect | Telegram | Discord | Slack | WhatsApp | Signal |
-|--------|----------|---------|-------|----------|--------|
-| **Global reach** | Excellent | Good | Limited (Western) | Excellent | Growing |
-| **Enterprise adoption** | Low | Medium | High | High | Low |
-| **Bot API** | Simple | Mature | Mature | Restricted | Limited |
-| **Cost** | Free | Free | $12+/user/month | Free | Free |
-| **Encryption** | MTProto | No | No | End-to-end | End-to-end |
-| **Offline functionality** | Limited | No | Web/App | Yes | App only |
-| **Media support** | Good | Excellent | Good | Good | Good |
-| **Integrations** | Limited | Excellent | Excellent | Medium | Limited |
+| Aspect                    | Telegram  | Discord   | Slack             | WhatsApp   | Signal     |
+| ------------------------- | --------- | --------- | ----------------- | ---------- | ---------- |
+| **Global reach**          | Excellent | Good      | Limited (Western) | Excellent  | Growing    |
+| **Enterprise adoption**   | Low       | Medium    | High              | High       | Low        |
+| **Bot API**               | Simple    | Mature    | Mature            | Restricted | Limited    |
+| **Cost**                  | Free      | Free      | $12+/user/month   | Free       | Free       |
+| **Encryption**            | MTProto   | No        | No                | End-to-end | End-to-end |
+| **Offline functionality** | Limited   | No        | Web/App           | Yes        | App only   |
+| **Media support**         | Good      | Excellent | Good              | Good       | Good       |
+| **Integrations**          | Limited   | Excellent | Excellent         | Medium     | Limited    |
 
 ### Rate Limiting and API Quotas
 
@@ -310,24 +330,24 @@ Each platform has different limitations:
 
 ```javascript
 rate_limits = {
-  telegram: {
-    messages_per_second: 30,
-    max_message_length: 4096,
-    file_size_limit: "50 MB"
-  },
-  
-  slack: {
-    messages_per_second: 1,  // Strict
-    max_message_length: 40000,
-    blocks_per_message: 50
-  },
-  
-  discord: {
-    messages_per_second: 10,
-    max_message_length: 2000,
-    file_size_limit: "25 MB"
-  }
-};
+    telegram: {
+        messages_per_second: 30,
+        max_message_length: 4096,
+        file_size_limit: '50 MB'
+    },
+
+    slack: {
+        messages_per_second: 1, // Strict
+        max_message_length: 40000,
+        blocks_per_message: 50
+    },
+
+    discord: {
+        messages_per_second: 10,
+        max_message_length: 2000,
+        file_size_limit: '25 MB'
+    }
+}
 ```
 
 OpenClaw adapters handle these limits transparently.
@@ -338,30 +358,30 @@ Different platforms have different privacy models:
 
 ```javascript
 privacy_models = {
-  telegram: {
-    encryption: "optional (MTProto)",
-    data_retention: "indefinite",
-    user_control: "high"
-  },
-  
-  slack: {
-    encryption: "in transit only",
-    data_retention: "indefinite (paid plan)",
-    user_control: "medium"
-  },
-  
-  whatsapp: {
-    encryption: "end-to-end default",
-    data_retention: "chat ephemeral",
-    user_control: "high"
-  },
-  
-  signal: {
-    encryption: "end-to-end default",
-    data_retention: "configurable",
-    user_control: "very high"
-  }
-};
+    telegram: {
+        encryption: 'optional (MTProto)',
+        data_retention: 'indefinite',
+        user_control: 'high'
+    },
+
+    slack: {
+        encryption: 'in transit only',
+        data_retention: 'indefinite (paid plan)',
+        user_control: 'medium'
+    },
+
+    whatsapp: {
+        encryption: 'end-to-end default',
+        data_retention: 'chat ephemeral',
+        user_control: 'high'
+    },
+
+    signal: {
+        encryption: 'end-to-end default',
+        data_retention: 'configurable',
+        user_control: 'very high'
+    }
+}
 ```
 
 Choose platforms based on privacy needs.
@@ -382,6 +402,7 @@ Workflow:
 ```
 
 **Benefits**:
+
 - Work happens in existing Slack
 - No new tools to learn
 - Automatic record-keeping
@@ -399,6 +420,7 @@ Executive uses OpenClaw on WhatsApp for personal scheduling:
 ```
 
 **Benefits**:
+
 - Always with you (your phone)
 - Doesn't require work email
 - Quick interaction
@@ -418,6 +440,7 @@ Game development team coordinates through Discord:
 ```
 
 **Benefits**:
+
 - Integrated with team communication
 - Automatic issue tracking
 - No separate bug system needed
@@ -444,24 +467,24 @@ Agent can adapt tone to platform:
 
 ```javascript
 personality = {
-  telegram: {
-    tone: "casual",        // Friends use Telegram
-    format: "concise",     // Mobile-first
-    emojis: true
-  },
-  
-  slack: {
-    tone: "professional",  // Work communication
-    format: "structured",  // Desktop/mobile both
-    threads: "preferred"
-  },
-  
-  signal: {
-    tone: "confidential",  // Privacy users
-    format: "careful",     // Sensitive data
-    context_retention: "minimal"
-  }
-};
+    telegram: {
+        tone: 'casual', // Friends use Telegram
+        format: 'concise', // Mobile-first
+        emojis: true
+    },
+
+    slack: {
+        tone: 'professional', // Work communication
+        format: 'structured', // Desktop/mobile both
+        threads: 'preferred'
+    },
+
+    signal: {
+        tone: 'confidential', // Privacy users
+        format: 'careful', // Sensitive data
+        context_retention: 'minimal'
+    }
+}
 ```
 
 ## The Future: Omnichannel Agents

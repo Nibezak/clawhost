@@ -29,7 +29,11 @@ const restartClaw = async (c: AuthenticatedContext) => {
             await getProvider(claw.provider as ProviderType).restartServer(
                 claw.providerServerId
             )
-            updateCachedServerStatus(claw.provider as ProviderType, claw.providerServerId, clawStatus.restarting)
+            updateCachedServerStatus(
+                claw.provider as ProviderType,
+                claw.providerServerId,
+                clawStatus.restarting
+            )
         } catch {
             await db
                 .update(claws)

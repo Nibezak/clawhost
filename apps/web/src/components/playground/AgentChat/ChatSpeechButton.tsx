@@ -20,7 +20,10 @@ const ChatSpeechButton: FC<ChatSpeechButtonProps> = ({
     if (isLoading) {
         return (
             <span className='text-muted-foreground'>
-                <CircleNotchIcon className='h-3 w-3 animate-spin' weight='bold' />
+                <CircleNotchIcon
+                    className='h-3 w-3 animate-spin'
+                    weight='bold'
+                />
             </span>
         )
     }
@@ -33,7 +36,10 @@ const ChatSpeechButton: FC<ChatSpeechButtonProps> = ({
                     title={t('playground.chatReplaySpeech')}
                     className='text-muted-foreground hover:text-foreground transition-colors'
                 >
-                    <ArrowCounterClockwiseIcon className='h-3 w-3' weight='bold' />
+                    <ArrowCounterClockwiseIcon
+                        className='h-3 w-3'
+                        weight='bold'
+                    />
                 </button>
                 <button
                     onClick={() => onStop()}

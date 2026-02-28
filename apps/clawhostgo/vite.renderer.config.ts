@@ -17,10 +17,7 @@ export default defineConfig({
     },
     server: {
         watch: {
-            ignored: [
-                '!**/packages/i18n/**',
-                '!**/packages/shared/**'
-            ]
+            ignored: ['!**/packages/i18n/**', '!**/packages/shared/**']
         }
     },
     resolve: {

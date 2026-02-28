@@ -9,7 +9,8 @@ import { t } from '@openclaw/i18n'
 
 const DEFAULT_VOICE = 'en_US-ryan-high'
 const MODELS_DIR = path.resolve(
-    process.env.PIPER_MODELS_DIR || path.join(__dirname, '..', '..', '..', 'ai', 'models')
+    process.env.PIPER_MODELS_DIR ||
+        path.join(__dirname, '..', '..', '..', 'ai', 'models')
 )
 
 const generateSpeech = async (c: AuthenticatedContext) => {

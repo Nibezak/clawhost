@@ -58,7 +58,13 @@ const AgentChat: FC<AgentChatProps> = ({
         isAtBottomRef
     } = useScrollToBottom()
     const chatInputRef = useRef<ChatInputHandle>(null)
-    const { activeMessageId, loadingMessageId, speak, stop, setOutputDeviceId } = useTextToSpeech()
+    const {
+        activeMessageId,
+        loadingMessageId,
+        speak,
+        stop,
+        setOutputDeviceId
+    } = useTextToSpeech()
     const [isDragging, setIsDragging] = useState(false)
     const [voiceModeOpen, setVoiceModeOpen] = useState(false)
     const { data: profile, isLoading: isProfileLoading } = useProfile()
@@ -132,30 +138,38 @@ const AgentChat: FC<AgentChatProps> = ({
         }
     }, [])
 
-    const getInitialMessages = useCallback(
-        (id: string, name?: string) => {
-            if (!readOnlyChatStore[id]) {
-                const now = new Date().toLocaleTimeString(getLocale(), { hour: '2-digit', minute: '2-digit' })
-                const isAlt = name && name.toLowerCase().includes('test')
-                readOnlyChatStore[id] = [
-                    {
-                        role: 'user',
-                        text: t(isAlt ? 'playground.chatReadOnlyUser2' : 'playground.chatReadOnlyUser'),
-                        time: now
-                    },
-                    {
-                        role: 'assistant',
-                        text: t(isAlt ? 'playground.chatReadOnlyAssistant2' : 'playground.chatReadOnlyAssistant'),
-                        time: now
-                    }
-                ]
-            }
-            return readOnlyChatStore[id]
-        },
-        []
-    )
-    const [readOnlyMessages, setReadOnlyMessages] = useState(
-        () => getInitialMessages(agentId, agentName)
+    const getInitialMessages = useCallback((id: string, name?: string) => {
+        if (!readOnlyChatStore[id]) {
+            const now = new Date().toLocaleTimeString(getLocale(), {
+                hour: '2-digit',
+                minute: '2-digit'
+            })
+            const isAlt = name && name.toLowerCase().includes('test')
+            readOnlyChatStore[id] = [
+                {
+                    role: 'user',
+                    text: t(
+                        isAlt
+                            ? 'playground.chatReadOnlyUser2'
+                            : 'playground.chatReadOnlyUser'
+                    ),
+                    time: now
+                },
+                {
+                    role: 'assistant',
+                    text: t(
+                        isAlt
+                            ? 'playground.chatReadOnlyAssistant2'
+                            : 'playground.chatReadOnlyAssistant'
+                    ),
+                    time: now
+                }
+            ]
+        }
+        return readOnlyChatStore[id]
+    }, [])
+    const [readOnlyMessages, setReadOnlyMessages] = useState(() =>
+        getInitialMessages(agentId, agentName)
     )
     const [readOnlyInput, setReadOnlyInput] = useState('')
     const [readOnlyTyping, setReadOnlyTyping] = useState(false)
@@ -174,8 +188,14 @@ const AgentChat: FC<AgentChatProps> = ({
     const handleReadOnlySend = useCallback(() => {
         const text = readOnlyInput.trim()
         if (!text || readOnlyTyping) return
-        const now = new Date().toLocaleTimeString(getLocale(), { hour: '2-digit', minute: '2-digit' })
-        setReadOnlyMessages((prev) => [...prev, { role: 'user', text, time: now }])
+        const now = new Date().toLocaleTimeString(getLocale(), {
+            hour: '2-digit',
+            minute: '2-digit'
+        })
+        setReadOnlyMessages((prev) => [
+            ...prev,
+            { role: 'user', text, time: now }
+        ])
         setReadOnlyInput('')
         setReadOnlyTyping(true)
         requestAnimationFrame(() => {
@@ -185,10 +205,17 @@ const AgentChat: FC<AgentChatProps> = ({
             })
         })
         setTimeout(() => {
-            const replyTime = new Date().toLocaleTimeString(getLocale(), { hour: '2-digit', minute: '2-digit' })
+            const replyTime = new Date().toLocaleTimeString(getLocale(), {
+                hour: '2-digit',
+                minute: '2-digit'
+            })
             setReadOnlyMessages((prev) => [
                 ...prev,
-                { role: 'assistant', text: t('playground.chatReadOnlyReply'), time: replyTime }
+                {
+                    role: 'assistant',
+                    text: t('playground.chatReadOnlyReply'),
+                    time: replyTime
+                }
             ])
             setReadOnlyTyping(false)
             requestAnimationFrame(() => {
@@ -234,7 +261,9 @@ const AgentChat: FC<AgentChatProps> = ({
                             </span>
                         </div>
                     ))}
-                    <ChatTypingIndicator state={readOnlyTyping ? 'writing' : null} />
+                    <ChatTypingIndicator
+                        state={readOnlyTyping ? 'writing' : null}
+                    />
                 </div>
                 <div className='bg-background border-border border-t p-3'>
                     <form
@@ -247,9 +276,7 @@ const AgentChat: FC<AgentChatProps> = ({
                         <input
                             value={readOnlyInput}
                             onChange={(e) => setReadOnlyInput(e.target.value)}
-                            placeholder={t(
-                                'playground.chatInputPlaceholder'
-                            )}
+                            placeholder={t('playground.chatInputPlaceholder')}
                             className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground flex-1 rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-[#ef5350]/50'
                         />
                         <button
@@ -326,7 +353,9 @@ const AgentChat: FC<AgentChatProps> = ({
                     onSend={handleSend}
                     onAbort={abortResponse}
                     allowAttach
-                    onVoiceMode={isAdmin ? () => setVoiceModeOpen(true) : undefined}
+                    onVoiceMode={
+                        isAdmin ? () => setVoiceModeOpen(true) : undefined
+                    }
                 />
             </div>
         )

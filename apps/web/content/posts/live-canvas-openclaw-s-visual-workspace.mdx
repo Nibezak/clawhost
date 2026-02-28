@@ -1,14 +1,15 @@
 ---
 title: Live Canvas — OpenClaw's Visual Workspace
 slug: live-canvas-openclaw-s-visual-workspace
-description: 'Meet Canvas: OpenClaw''s visual playground. Render anything in real-time,
-  from data visualizations to interactive dashboards.'
+description:
+    "Meet Canvas: OpenClaw's visual playground. Render anything in real-time,
+    from data visualizations to interactive dashboards."
 author: ClawHost
 publishedAt: '2026-02-26'
 tags:
-- openclaw
-- tutorial
-- automation
+    - openclaw
+    - tutorial
+    - automation
 coverImage: /live-canvas-openclaw-s-visual-workspace.webp
 ---
 
@@ -137,6 +138,7 @@ Dashboard Canvas
 Agent task: "Research our top 5 competitors"
 
 Live Canvas shows (in real-time):
+
 1. Competitor names as they're found
 2. Pricing table as data is extracted
 3. Feature comparison matrix building
@@ -149,6 +151,7 @@ You watch the research happen, not just see the final report.
 Agent task: "Review this pull request for security issues"
 
 Live Canvas shows:
+
 1. Code file being examined
 2. Potential issues highlighted as found
 3. Risk severity color-coded
@@ -161,6 +164,7 @@ You see the review logic, not just the verdict.
 Agent task: "Analyze Q1 sales data"
 
 Live Canvas shows:
+
 1. Dataset being loaded
 2. Charts rendering as calculations complete
 3. Anomalies highlighted
@@ -189,20 +193,20 @@ User Interaction (sends back to agent)
 
 ```javascript
 // Agent code
-const canvas = new LiveCanvas();
+const canvas = new LiveCanvas()
 
 canvas.createTable({
-  title: "Competitor Analysis",
-  columns: ["Company", "Price", "Features"],
-  rows: [] // starts empty
-});
+    title: 'Competitor Analysis',
+    columns: ['Company', 'Price', 'Features'],
+    rows: [] // starts empty
+})
 
 // As agent finds data:
 canvas.addTableRow({
-  Company: "Competitor A",
-  Price: "$99/month",
-  Features: "5 core features"
-});
+    Company: 'Competitor A',
+    Price: '$99/month',
+    Features: '5 core features'
+})
 
 // Canvas updates instantly in user's browser
 ```
@@ -219,6 +223,7 @@ canvas.addTableRow({
 ### Research & Analysis
 
 Agent researches a topic while you watch:
+
 - Web scraping with live data display
 - Analysis with real-time visualization
 - Report building as sections complete
@@ -226,6 +231,7 @@ Agent researches a topic while you watch:
 ### Code & Development
 
 Agent reviews or generates code:
+
 - Syntax-highlighted code with line numbers
 - Error highlighting
 - Test results as they run
@@ -234,6 +240,7 @@ Agent reviews or generates code:
 ### Data Processing
 
 Agent works with large datasets:
+
 - Progress indication (20% complete)
 - Intermediate results displayed
 - Final dashboard with metrics
@@ -242,6 +249,7 @@ Agent works with large datasets:
 ### Business Operations
 
 Agent handles complex workflows:
+
 - Customer service ticket flow
 - Approval workflow with status
 - Project timeline with milestones
@@ -252,6 +260,7 @@ Agent handles complex workflows:
 ### Scenario: Agent finds 50 security issues in code
 
 **Text-only approach:**
+
 ```
 Agent: "Found 50 security issues:
 1. SQL injection in line 245
@@ -267,6 +276,7 @@ Medium: 15
 You have to read everything. Hard to prioritize.
 
 **Live Canvas approach:**
+
 ```
 Dashboard shows:
 - 15 critical issues (RED)
@@ -307,17 +317,17 @@ Agent automatically uses Live Canvas for rich output.
 ### Integrate Into Your App
 
 ```javascript
-import { LiveCanvas } from 'openclaw-sdk';
+import { LiveCanvas } from 'openclaw-sdk'
 
 const canvas = new LiveCanvas({
-  agentId: 'my-agent',
-  onUpdate: (state) => {
-    console.log('Canvas updated:', state);
-    renderCanvas(state);
-  }
-});
+    agentId: 'my-agent',
+    onUpdate: (state) => {
+        console.log('Canvas updated:', state)
+        renderCanvas(state)
+    }
+})
 
-canvas.connect();
+canvas.connect()
 ```
 
 ## Advanced Features
@@ -335,6 +345,7 @@ npm run canvas:replay research-session-2026-02-27
 ```
 
 Useful for:
+
 - Auditing agent decisions
 - Sharing findings with team
 - Training and demos
@@ -355,6 +366,7 @@ Anyone can interact (click, filter, drill-down)
 ```
 
 Great for:
+
 - Team reviews
 - Client presentations
 - Collaborative analysis
@@ -367,11 +379,11 @@ Build specialized components:
 ```javascript
 // Custom component for your domain
 class SalesOpportunitiesCanvas extends LiveCanvas {
-  renderOpportunities(opps) {
-    // Render with custom styling
-    // Add domain-specific interactions
-    // Integrate with your systems
-  }
+    renderOpportunities(opps) {
+        // Render with custom styling
+        // Add domain-specific interactions
+        // Integrate with your systems
+    }
 }
 ```
 

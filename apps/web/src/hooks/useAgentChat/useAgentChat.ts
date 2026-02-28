@@ -27,7 +27,8 @@ const useAgentChat = ({
         useState<GatewayConnectionState>('disconnected')
     const [isLoading, setIsLoading] = useState(true)
     const [isStreaming, setIsStreaming] = useState(false)
-    const [typingIndicator, setTypingIndicator] = useState<ChatTypingIndicator>(null)
+    const [typingIndicator, setTypingIndicator] =
+        useState<ChatTypingIndicator>(null)
     const clientRef = useRef<ReturnType<typeof SharedGateway.acquire> | null>(
         null
     )
