@@ -1,47 +1,34 @@
 import type { Plugin } from 'vite'
 
-import fs from 'fs'
+function sanitizeFrontmatter(raw: string): string {
+    let fm = raw
 
-function sanitizeYAML(content: string): string {
-    let sanitized = content
-
-    sanitized = sanitized.replace(/\u2014/g, '-')
-
-    sanitized = sanitized.replace(/[\u201C\u201D]/g, '"')
-    sanitized = sanitized.replace(/[\u2018\u2019]/g, "'")
+    fm = fm.replace(/\u2014/g, '-')
+    fm = fm.replace(/[\u201C\u201D]/g, '"')
+    fm = fm.replace(/[\u2018\u2019]/g, "'")
 
     // eslint-disable-next-line no-control-regex
-    sanitized = sanitized.replace(/[^\x00-\x7F\n\r\t ]/g, '')
+    fm = fm.replace(/[^\x00-\x7F\n\r\t ]/g, '')
 
-    const frontmatterMatch = sanitized.match(/^---\n([\s\S]*?)\n---/)
-    if (frontmatterMatch) {
-        let frontmatter = frontmatterMatch[1]
-
-        frontmatter = frontmatter
-            .split('\n')
-            .map((line: string) => {
-                if (line.match(/^\s*-\s+['"`]/)) {
-                    const match = line.match(/^\s*(-\s+)['"`]\s*(.+?)\s*['"`]/)
-                    if (match) {
-                        return `${match[1]}${match[2]}`
-                    }
+    fm = fm
+        .split('\n')
+        .map((line: string) => {
+            if (line.match(/^\s*-\s+['"`]/)) {
+                const match = line.match(/^(\s*-\s+)['"`]\s*(.+?)\s*['"`]/)
+                if (match) {
+                    return `${match[1]}${match[2]}`
                 }
+            }
 
-                if (/^\s*\d+\s*:/.test(line)) {
-                    return '# ' + line
-                }
+            if (/^\s*\d+\s*:/.test(line)) {
+                return '# ' + line
+            }
 
-                return line
-            })
-            .join('\n')
+            return line
+        })
+        .join('\n')
 
-        sanitized = sanitized.replace(
-            /^---\n[\s\S]*?\n---/,
-            `---\n${frontmatter}\n---`
-        )
-    }
-
-    return sanitized
+    return fm
 }
 
 function escapeProseLine(line: string): string {
@@ -73,26 +60,33 @@ function escapeSegment(text: string): string {
         .replace(/\}/g, '&#125;')
 }
 
-function escapeJsxInBody(content: string): string {
-    const lines = content.split('\n')
-    let inFrontmatter = false
+function sanitizeMdx(content: string): string {
+    const frontmatterMatch = content.match(/^(---\n)([\s\S]*?)(\n---)([\s\S]*)$/)
+
+    let body: string
+    let header: string
+
+    if (frontmatterMatch) {
+        const sanitizedFm = sanitizeFrontmatter(frontmatterMatch[2])
+        header = `${frontmatterMatch[1]}${sanitizedFm}${frontmatterMatch[3]}`
+        body = frontmatterMatch[4]
+    } else {
+        header = ''
+        body = content
+    }
+
+    const lines = body.split('\n')
     let inCodeBlock = false
     const result: string[] = []
 
     for (const line of lines) {
-        if (line.trim() === '---' && !inCodeBlock) {
-            inFrontmatter = !inFrontmatter
-            result.push(line)
-            continue
-        }
-
         if (line.trim().startsWith('```')) {
             inCodeBlock = !inCodeBlock
             result.push(line)
             continue
         }
 
-        if (inFrontmatter || inCodeBlock) {
+        if (inCodeBlock) {
             result.push(line)
             continue
         }
@@ -100,7 +94,7 @@ function escapeJsxInBody(content: string): string {
         result.push(escapeProseLine(line))
     }
 
-    return result.join('\n')
+    return header + result.join('\n')
 }
 
 const viteMdxSanitize = (): Plugin => {
@@ -108,24 +102,14 @@ const viteMdxSanitize = (): Plugin => {
         name: 'vite-mdx-sanitize',
         enforce: 'pre',
 
-        async load(id: string) {
-            if (!id.endsWith('.mdx')) {
+        transform(code: string, id: string) {
+            if (!id.split('?')[0].endsWith('.mdx')) {
                 return null
             }
 
-            try {
-                const content = fs.readFileSync(id, 'utf-8')
-
-                let sanitized = sanitizeYAML(content)
-                sanitized = escapeJsxInBody(sanitized)
-
-                return {
-                    code: sanitized,
-                    map: null
-                }
-            } catch (error) {
-                console.error(`Error loading MDX file ${id}:`, error)
-                return null
+            return {
+                code: sanitizeMdx(code),
+                map: null
             }
         }
     }

@@ -15,22 +15,29 @@ const providerLabels: Record<string, string> = {
 }
 
 const AnnouncementBanner: FC = (): ReactNode => {
-    const { plans: hetznerPlans, isLoading: hetznerLoading } = usePlans(
-        clawProvider.hetzner
-    )
-    const { plans: digitaloceanPlans, isLoading: digitaloceanLoading } =
-        usePlans(clawProvider.digitalocean)
-    const { plans: vultrPlans, isLoading: vultrLoading } = usePlans(
-        clawProvider.vultr
-    )
+    const {
+        plans: hetznerPlans,
+        isLoading: hetznerLoading,
+        atCapacity: hetznerAtCapacity
+    } = usePlans(clawProvider.hetzner)
+    const {
+        plans: digitaloceanPlans,
+        isLoading: digitaloceanLoading,
+        atCapacity: digitaloceanAtCapacity
+    } = usePlans(clawProvider.digitalocean)
+    const {
+        plans: vultrPlans,
+        isLoading: vultrLoading,
+        atCapacity: vultrAtCapacity
+    } = usePlans(clawProvider.vultr)
 
     const isProviderUnavailable = (p: ProviderType): boolean => {
         if (p === clawProvider.hetzner)
-            return !hetznerLoading && !hetznerPlans?.length
+            return !hetznerLoading && (!hetznerPlans?.length || hetznerAtCapacity)
         if (p === clawProvider.digitalocean)
-            return !digitaloceanLoading && !digitaloceanPlans?.length
+            return !digitaloceanLoading && (!digitaloceanPlans?.length || digitaloceanAtCapacity)
         if (p === clawProvider.vultr)
-            return !vultrLoading && !vultrPlans?.length
+            return !vultrLoading && (!vultrPlans?.length || vultrAtCapacity)
         return false
     }
 
