@@ -9,6 +9,7 @@ import { useAuth } from '@/lib/auth'
 import { useProfile } from '@/hooks'
 import { Button, Skeleton } from '@/components/ui'
 import {
+    AnnouncementBanner,
     LanguageSelector,
     Logo,
     ProductHuntBanner,
@@ -72,6 +73,7 @@ const Header: FC<HeaderProps> = ({
                           : 'border-b border-transparent bg-transparent'
                 }`}
             >
+                <AnnouncementBanner />
                 <ProductHuntBanner />
                 <div className='mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4'>
                     <Logo />

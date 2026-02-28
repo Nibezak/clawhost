@@ -6,7 +6,9 @@ const useLocations = (provider?: string) => {
     return useQuery({
         queryKey: [...LOCATIONS_QUERY_KEY, provider || 'hetzner'],
         queryFn: () => api.getLocations(provider),
-        staleTime: Infinity
+        staleTime: 10_000,
+        refetchInterval: 10_000,
+        retry: false
     })
 }
 

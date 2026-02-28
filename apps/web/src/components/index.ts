@@ -1,3 +1,4 @@
+import AnnouncementBanner from '@/components/AnnouncementBanner'
 import ActionButton from '@/components/ActionButton'
 import BlogCard from '@/components/BlogCard'
 import BlogCTA from '@/components/BlogCTA'
@@ -29,6 +30,7 @@ import TruncateTooltip from '@/components/TruncateTooltip'
 import UserDropdown from '@/components/UserDropdown'
 
 export {
+    AnnouncementBanner,
     ActionButton,
     BlogCard,
     BlogCTA,

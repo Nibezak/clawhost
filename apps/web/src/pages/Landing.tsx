@@ -7,7 +7,14 @@ import { useState, useEffect, useRef, useMemo } from 'react'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { clawProvider } from '@openclaw/shared'
-import { Button, Badge } from '@/components/ui'
+import {
+    Button,
+    Badge,
+    Tooltip,
+    TooltipTrigger,
+    TooltipContent,
+    TooltipProvider
+} from '@/components/ui'
 import {
     PageTitle,
     Header,
@@ -52,12 +59,17 @@ import {
     QuotesIcon,
     CreditCardIcon,
     LinkIcon,
-    ArrowsClockwiseIcon,
     XIcon,
     PlayCircleIcon,
     ArrowRightIcon,
     ChatCircleDotsIcon,
-    GraphIcon
+    GraphIcon,
+    SlidersHorizontalIcon,
+    GearSixIcon,
+    PuzzlePieceIcon,
+    UsersThreeIcon,
+    StackIcon,
+    GitBranchIcon
 } from '@phosphor-icons/react'
 
 const getTestimonials = (): Testimonial[] => [
@@ -128,10 +140,56 @@ const Landing: FC = (): ReactNode => {
     const { phBannerVisible } = useUIStore()
     const showTutorialBadge = true
     const [videoOpen, setVideoOpen] = useState(false)
-    const [pricingProvider, setPricingProvider] = useState<ProviderType>(
+    const { plans: hetznerPlans, isLoading: hetznerLoading } = usePlans(
         clawProvider.hetzner
     )
-    const { plans, isLoading: plansLoading } = usePlans(pricingProvider)
+    const { plans: digitaloceanPlans, isLoading: digitaloceanLoading } =
+        usePlans(clawProvider.digitalocean)
+    const { plans: vultrPlans, isLoading: vultrLoading } = usePlans(
+        clawProvider.vultr
+    )
+
+    const isProviderUnavailable = (p: ProviderType): boolean => {
+        if (p === clawProvider.hetzner)
+            return !hetznerLoading && !hetznerPlans?.length
+        if (p === clawProvider.digitalocean)
+            return !digitaloceanLoading && !digitaloceanPlans?.length
+        if (p === clawProvider.vultr)
+            return !vultrLoading && !vultrPlans?.length
+        return false
+    }
+
+    const allDoneLoading =
+        !hetznerLoading && !digitaloceanLoading && !vultrLoading
+
+    const autoProvider: ProviderType = hetznerPlans?.length
+        ? clawProvider.hetzner
+        : digitaloceanPlans?.length
+          ? clawProvider.digitalocean
+          : vultrPlans?.length
+            ? clawProvider.vultr
+            : clawProvider.hetzner
+
+    const [userSelectedProvider, setUserSelectedProvider] =
+        useState<ProviderType | null>(null)
+
+    const pricingProvider =
+        userSelectedProvider && !isProviderUnavailable(userSelectedProvider)
+            ? userSelectedProvider
+            : autoProvider
+
+    const providerPlansMap: Record<string, typeof hetznerPlans> = {
+        [clawProvider.hetzner]: hetznerPlans,
+        [clawProvider.digitalocean]: digitaloceanPlans,
+        [clawProvider.vultr]: vultrPlans
+    }
+    const providerLoadingMap: Record<string, boolean> = {
+        [clawProvider.hetzner]: hetznerLoading,
+        [clawProvider.digitalocean]: digitaloceanLoading,
+        [clawProvider.vultr]: vultrLoading
+    }
+    const plans = providerPlansMap[pricingProvider]
+    const plansLoading = providerLoadingMap[pricingProvider]
 
     const [openFaq, setOpenFaq] = useState<number | null>(null)
     const [activeSection, setActiveSection] = useState('')
@@ -202,14 +260,24 @@ const Landing: FC = (): ReactNode => {
         return { ...demoPlaygroundData, nodes, edges, agentsByClawId }
     }, [isMobile])
 
-    const [demoPreviewTab, setDemoPreviewTab] = useState<DashboardTab>(DASHBOARD_TABS.CHAT)
+    const [demoPreviewTab, setDemoPreviewTab] = useState<DashboardTab>(
+        DASHBOARD_TABS.CHAT
+    )
     const [demoClawId, setDemoClawId] = useState<string | null>(null)
     const [demoAgentId, setDemoAgentId] = useState<string | null>(null)
     const [demoAgentClawId, setDemoAgentClawId] = useState<string | null>(null)
-    const [demoChatAgentId, setDemoChatAgentId] = useState<string | null>('agent-1a')
-    const [demoChatSettingsClawId, setDemoChatSettingsClawId] = useState<string | null>(null)
-    const [demoChatConfigAgentId, setDemoChatConfigAgentId] = useState<string | null>(null)
-    const [demoChatConfigClawId, setDemoChatConfigClawId] = useState<string | null>(null)
+    const [demoChatAgentId, setDemoChatAgentId] = useState<string | null>(
+        'agent-1a'
+    )
+    const [demoChatSettingsClawId, setDemoChatSettingsClawId] = useState<
+        string | null
+    >(null)
+    const [demoChatConfigAgentId, setDemoChatConfigAgentId] = useState<
+        string | null
+    >(null)
+    const [demoChatConfigClawId, setDemoChatConfigClawId] = useState<
+        string | null
+    >(null)
 
     const demoClaw = demoClawId
         ? mobileDemoData.claws.find((c) => c.id === demoClawId) || null
@@ -245,16 +313,19 @@ const Landing: FC = (): ReactNode => {
     }, [mobileDemoData])
 
     const demoChatSettingsClaw = demoChatSettingsClawId
-        ? mobileDemoData.claws.find((c) => c.id === demoChatSettingsClawId) || null
+        ? mobileDemoData.claws.find((c) => c.id === demoChatSettingsClawId) ||
+          null
         : null
     const demoChatConfigClaw = demoChatConfigClawId
-        ? mobileDemoData.claws.find((c) => c.id === demoChatConfigClawId) || null
+        ? mobileDemoData.claws.find((c) => c.id === demoChatConfigClawId) ||
+          null
         : null
     const demoChatConfigAgentList = demoChatConfigClaw
         ? mobileDemoData.agentsByClawId[demoChatConfigClaw.id] || []
         : []
     const demoChatConfigAgent = demoChatConfigAgentId
-        ? demoChatConfigAgentList.find((a) => a.id === demoChatConfigAgentId) || null
+        ? demoChatConfigAgentList.find((a) => a.id === demoChatConfigAgentId) ||
+          null
         : null
 
     useEffect(() => {
@@ -525,24 +596,40 @@ const Landing: FC = (): ReactNode => {
                             </div>
                             <div className='border-border flex items-center rounded-lg border p-0.5'>
                                 <button
-                                    onClick={() => setDemoPreviewTab(DASHBOARD_TABS.CHAT)}
+                                    onClick={() =>
+                                        setDemoPreviewTab(DASHBOARD_TABS.CHAT)
+                                    }
                                     className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${demoPreviewTab === DASHBOARD_TABS.CHAT ? 'bg-foreground/10 text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                                 >
                                     <ChatCircleDotsIcon
                                         className='h-3.5 w-3.5'
-                                        weight={demoPreviewTab === DASHBOARD_TABS.CHAT ? 'fill' : 'regular'}
+                                        weight={
+                                            demoPreviewTab ===
+                                            DASHBOARD_TABS.CHAT
+                                                ? 'fill'
+                                                : 'regular'
+                                        }
                                     />
                                     <span className='hidden sm:inline'>
                                         {t('dashboard.chatTab')}
                                     </span>
                                 </button>
                                 <button
-                                    onClick={() => setDemoPreviewTab(DASHBOARD_TABS.PLAYGROUND)}
+                                    onClick={() =>
+                                        setDemoPreviewTab(
+                                            DASHBOARD_TABS.PLAYGROUND
+                                        )
+                                    }
                                     className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${demoPreviewTab === DASHBOARD_TABS.PLAYGROUND ? 'bg-foreground/10 text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
                                 >
                                     <GraphIcon
                                         className='h-3.5 w-3.5'
-                                        weight={demoPreviewTab === DASHBOARD_TABS.PLAYGROUND ? 'fill' : 'regular'}
+                                        weight={
+                                            demoPreviewTab ===
+                                            DASHBOARD_TABS.PLAYGROUND
+                                                ? 'fill'
+                                                : 'regular'
+                                        }
                                     />
                                     <span className='hidden sm:inline'>
                                         {t('dashboard.playgroundTab')}
@@ -585,7 +672,9 @@ const Landing: FC = (): ReactNode => {
                                                 setDemoAgentId(null)
                                                 setDemoAgentClawId(null)
                                             }}
-                                            panelOpen={!!demoClaw || !!demoAgent}
+                                            panelOpen={
+                                                !!demoClaw || !!demoAgent
+                                            }
                                             selectedClawId={demoClawId}
                                             selectedAgentId={demoAgentId}
                                         />
@@ -610,7 +699,9 @@ const Landing: FC = (): ReactNode => {
                                             agent={demoAgent}
                                             clawId={demoAgentClaw.id}
                                             clawName={demoAgentClaw.name}
-                                            isOnlyAgent={demoAgentList.length <= 1}
+                                            isOnlyAgent={
+                                                demoAgentList.length <= 1
+                                            }
                                             onClose={() => {
                                                 setDemoAgentId(null)
                                                 setDemoAgentClawId(null)
@@ -625,13 +716,23 @@ const Landing: FC = (): ReactNode => {
                                 <div className='playground-grid pointer-events-none absolute inset-0 opacity-50' />
                                 <ChatSidebar
                                     clawsWithAgents={demoChatClawsWithAgents}
-                                    selectedAgent={demoChatAgentId && demoChatClaw ? { agentId: demoChatAgentId, clawId: demoChatClaw.id } : null}
+                                    selectedAgent={
+                                        demoChatAgentId && demoChatClaw
+                                            ? {
+                                                  agentId: demoChatAgentId,
+                                                  clawId: demoChatClaw.id
+                                              }
+                                            : null
+                                    }
                                     configAgent={null}
                                     selectedClawId={demoChatSettingsClawId}
                                     readOnly
                                     onAgentSelect={(selection) => {
                                         setDemoChatAgentId(
-                                            demoChatAgentId === selection.agentId ? null : selection.agentId
+                                            demoChatAgentId ===
+                                                selection.agentId
+                                                ? null
+                                                : selection.agentId
                                         )
                                         setDemoChatSettingsClawId(null)
                                         setDemoChatConfigAgentId(null)
@@ -645,7 +746,9 @@ const Landing: FC = (): ReactNode => {
                                     onCreateAgent={() => {}}
                                     onOpenClawSettings={(clawId) => {
                                         setDemoChatSettingsClawId(
-                                            demoChatSettingsClawId === clawId ? null : clawId
+                                            demoChatSettingsClawId === clawId
+                                                ? null
+                                                : clawId
                                         )
                                         setDemoChatAgentId(null)
                                         setDemoChatConfigAgentId(null)
@@ -654,13 +757,18 @@ const Landing: FC = (): ReactNode => {
                                 />
                                 <div className='relative flex min-h-0 min-w-0 flex-1 translate-x-0 overflow-hidden'>
                                     <div className='min-w-0 flex-1'>
-                                        {demoChatSettingsClaw && !demoChatAgentId ? (
+                                        {demoChatSettingsClaw &&
+                                        !demoChatAgentId ? (
                                             <PlaygroundDetailPanel
                                                 key={`chat-settings-${demoChatSettingsClaw.id}`}
                                                 claw={demoChatSettingsClaw}
                                                 plans={[]}
                                                 sshKeys={[]}
-                                                onClose={() => setDemoChatSettingsClawId(null)}
+                                                onClose={() =>
+                                                    setDemoChatSettingsClawId(
+                                                        null
+                                                    )
+                                                }
                                                 readOnly
                                                 fullScreen
                                             />
@@ -680,22 +788,34 @@ const Landing: FC = (): ReactNode => {
                                         )}
                                     </div>
                                     <AnimatePresence>
-                                        {demoChatConfigAgent && demoChatConfigClaw && (
-                                            <PlaygroundAgentDetailPanel
-                                                key={`chat-config-${demoChatConfigAgent.id}`}
-                                                agent={demoChatConfigAgent}
-                                                clawId={demoChatConfigClaw.id}
-                                                clawName={demoChatConfigClaw.name}
-                                                isOnlyAgent={demoChatConfigAgentList.length <= 1}
-                                                onClose={() => {
-                                                    setDemoChatConfigAgentId(null)
-                                                    setDemoChatConfigClawId(null)
-                                                }}
-                                                readOnly
-                                                hideChatTab
-                                                initialTab='configuration'
-                                            />
-                                        )}
+                                        {demoChatConfigAgent &&
+                                            demoChatConfigClaw && (
+                                                <PlaygroundAgentDetailPanel
+                                                    key={`chat-config-${demoChatConfigAgent.id}`}
+                                                    agent={demoChatConfigAgent}
+                                                    clawId={
+                                                        demoChatConfigClaw.id
+                                                    }
+                                                    clawName={
+                                                        demoChatConfigClaw.name
+                                                    }
+                                                    isOnlyAgent={
+                                                        demoChatConfigAgentList.length <=
+                                                        1
+                                                    }
+                                                    onClose={() => {
+                                                        setDemoChatConfigAgentId(
+                                                            null
+                                                        )
+                                                        setDemoChatConfigClawId(
+                                                            null
+                                                        )
+                                                    }}
+                                                    readOnly
+                                                    hideChatTab
+                                                    initialTab='configuration'
+                                                />
+                                            )}
                                     </AnimatePresence>
                                 </div>
                             </div>
@@ -838,9 +958,49 @@ const Landing: FC = (): ReactNode => {
                                 description: t('landing.secureDescription')
                             },
                             {
-                                icon: ArrowsClockwiseIcon,
+                                icon: GitBranchIcon,
                                 title: t('landing.autoUpdates'),
                                 description: t('landing.autoUpdatesDescription')
+                            },
+                            {
+                                icon: SlidersHorizontalIcon,
+                                title: t('landing.openclawControl'),
+                                description: t(
+                                    'landing.openclawControlDescription'
+                                )
+                            },
+                            {
+                                icon: GearSixIcon,
+                                title: t('landing.clawHostControl'),
+                                description: t(
+                                    'landing.clawHostControlDescription'
+                                )
+                            },
+                            {
+                                icon: PuzzlePieceIcon,
+                                title: t('landing.skillsMarketplace'),
+                                description: t(
+                                    'landing.skillsMarketplaceDescription'
+                                )
+                            },
+                            {
+                                icon: ChatCircleDotsIcon,
+                                title: t('landing.directChat'),
+                                description: t('landing.directChatDescription')
+                            },
+                            {
+                                icon: UsersThreeIcon,
+                                title: t('landing.multipleAgents'),
+                                description: t(
+                                    'landing.multipleAgentsDescription'
+                                )
+                            },
+                            {
+                                icon: StackIcon,
+                                title: t('landing.multipleClaws'),
+                                description: t(
+                                    'landing.multipleClawsDescription'
+                                )
                             }
                         ].map((feature, i) => (
                             <div
@@ -932,63 +1092,83 @@ const Landing: FC = (): ReactNode => {
                         </p>
 
                         <div className='mt-8 flex justify-center'>
-                            <div className='border-border bg-foreground/5 flex rounded-lg border p-1'>
-                                <button
-                                    onClick={() =>
-                                        setPricingProvider(clawProvider.hetzner)
-                                    }
-                                    className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition ${
-                                        pricingProvider === clawProvider.hetzner
-                                            ? 'bg-foreground/10 text-foreground shadow-sm'
-                                            : 'text-muted-foreground hover:text-foreground'
-                                    }`}
-                                >
-                                    <ProviderIcon
-                                        provider={clawProvider.hetzner}
-                                        className='h-4 w-4'
-                                    />
-                                    {t('createClaw.providerHetzner')}
-                                </button>
-                                <button
-                                    onClick={() =>
-                                        setPricingProvider(
-                                            clawProvider.digitalocean
+                            <TooltipProvider delayDuration={200}>
+                                <div className='border-border bg-foreground/5 flex rounded-lg border p-1'>
+                                    {(
+                                        [
+                                            {
+                                                key: clawProvider.hetzner,
+                                                label: t(
+                                                    'createClaw.providerHetzner'
+                                                )
+                                            },
+                                            {
+                                                key: clawProvider.digitalocean,
+                                                label: t(
+                                                    'createClaw.providerDigitalOcean'
+                                                )
+                                            },
+                                            {
+                                                key: clawProvider.vultr,
+                                                label: t(
+                                                    'createClaw.providerVultr'
+                                                )
+                                            }
+                                        ] as {
+                                            key: ProviderType
+                                            label: string
+                                        }[]
+                                    ).map((p) => {
+                                        const unavailable =
+                                            isProviderUnavailable(p.key)
+                                        const btn = (
+                                            <button
+                                                disabled={unavailable}
+                                                onClick={() =>
+                                                    setUserSelectedProvider(
+                                                        p.key
+                                                    )
+                                                }
+                                                className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition ${
+                                                    unavailable
+                                                        ? 'cursor-not-allowed opacity-50'
+                                                        : pricingProvider ===
+                                                            p.key
+                                                          ? 'bg-foreground/10 text-foreground shadow-sm'
+                                                          : 'text-muted-foreground hover:text-foreground'
+                                                }`}
+                                            >
+                                                <ProviderIcon
+                                                    provider={p.key}
+                                                    className='h-4 w-4'
+                                                />
+                                                {p.label}
+                                            </button>
                                         )
-                                    }
-                                    className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition ${
-                                        pricingProvider ===
-                                        clawProvider.digitalocean
-                                            ? 'bg-foreground/10 text-foreground shadow-sm'
-                                            : 'text-muted-foreground hover:text-foreground'
-                                    }`}
-                                >
-                                    <ProviderIcon
-                                        provider={clawProvider.digitalocean}
-                                        className='h-4 w-4'
-                                    />
-                                    {t('createClaw.providerDigitalOcean')}
-                                </button>
-                                <button
-                                    onClick={() =>
-                                        setPricingProvider(clawProvider.vultr)
-                                    }
-                                    className={`flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition ${
-                                        pricingProvider === clawProvider.vultr
-                                            ? 'bg-foreground/10 text-foreground shadow-sm'
-                                            : 'text-muted-foreground hover:text-foreground'
-                                    }`}
-                                >
-                                    <ProviderIcon
-                                        provider={clawProvider.vultr}
-                                        className='h-4 w-4'
-                                    />
-                                    {t('createClaw.providerVultr')}
-                                </button>
-                            </div>
+
+                                        if (unavailable) {
+                                            return (
+                                                <Tooltip key={p.key}>
+                                                    <TooltipTrigger asChild>
+                                                        <div>{btn}</div>
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        {t(
+                                                            'createClaw.providerUnavailable'
+                                                        )}
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            )
+                                        }
+
+                                        return <div key={p.key}>{btn}</div>
+                                    })}
+                                </div>
+                            </TooltipProvider>
                         </div>
                     </div>
 
-                    {plansLoading ? (
+                    {plansLoading || (!allDoneLoading && !plans?.length) ? (
                         <PlansSkeleton />
                     ) : plans && plans.length > 0 ? (
                         <>

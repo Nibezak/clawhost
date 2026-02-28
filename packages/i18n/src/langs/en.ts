@@ -634,6 +634,7 @@ const en = {
         locationUnavailableForPlan: 'Unavailable',
         plan: 'Server',
         planUnavailable: 'Unavailable',
+        providerUnavailable: 'This provider is currently unavailable.',
         providerAtCapacity:
             'Due to high demand, we have temporarily run out of servers from this provider. We are actively working to resolve this.',
         advancedOptions: 'Advanced Optional Options',
@@ -769,9 +770,9 @@ const en = {
         globalLocations: 'Global Locations',
         globalLocationsDescription:
             'Deploy OpenClaw across 30+ global regions on Hetzner, DigitalOcean, or Vultr and choose the location closest to you.',
-        fullSshAccess: 'Full SSH Access',
+        fullSshAccess: 'Direct SSH Access',
         fullSshAccessDescription:
-            'Full root access to your server. You own it, so install anything and customize everything.',
+            'Access your server terminal directly from the platform. No external SSH clients needed.',
         secure: 'Secure',
         secureDescription:
             'Protected by default from SSL vulnerabilities, malware, and common security threats.',
@@ -781,9 +782,27 @@ const en = {
         customSubdomains: 'Online Access',
         customSubdomainsDescription:
             'Forget local networks. Access your OpenClaw securely from anywhere with a subdomain.',
-        autoUpdates: 'Auto-Updates',
+        autoUpdates: 'Version Control',
         autoUpdatesDescription:
-            'Forget updates and security patches. The server and OpenClaw are automatically kept up to date.',
+            'Switch to any OpenClaw version with a single click. Always stay up to date or roll back when needed.',
+        openclawControl: 'OpenClaw Control',
+        openclawControlDescription:
+            'Access the native OpenClaw panel directly from ClawHost. Full editing access to everything OpenClaw offers.',
+        clawHostControl: 'ClawHost Control',
+        clawHostControlDescription:
+            'Manage files, updates, channels, variables, skills, and more configuration options directly from the platform.',
+        skillsMarketplace: '5,000+ Skills',
+        skillsMarketplaceDescription:
+            'Browse and install from over 5,000 ready-made skills with a single click. Extend your OpenClaw instantly.',
+        directChat: 'Direct Chat',
+        directChatDescription:
+            'Chat with your AI agents directly from the platform. No need for external tools or interfaces.',
+        multipleAgents: 'Multiple Agents',
+        multipleAgentsDescription:
+            'Run and manage multiple AI agents on a single instance. Each with its own configuration and purpose.',
+        multipleClaws: 'Multiple Claws',
+        multipleClawsDescription:
+            'Deploy and manage multiple OpenClaw instances from a single dashboard. Scale as you grow.',
         testimonials: 'Testimonials',
         whatPeopleSay: 'What People Are Saying',
         testimonialsDescription:
@@ -1558,6 +1577,10 @@ const en = {
         voiceMode: 'Voice Mode',
         voiceListening: 'Listening...',
         voiceTapToSpeak: 'Tap the orb to start'
+    },
+    announcement: {
+        title: 'Service Notice',
+        message: '{{providers}} deployments are temporarily unavailable. Existing claws are running normally.'
     },
     productHunt: {
         liveOn: 'Live on',

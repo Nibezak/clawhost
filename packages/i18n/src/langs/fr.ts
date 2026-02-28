@@ -687,6 +687,7 @@ const fr: Translations = {
         locationUnavailableForPlan: 'Indisponible',
         plan: 'Serveur',
         planUnavailable: 'Indisponible',
+        providerUnavailable: 'Ce fournisseur est actuellement indisponible.',
         providerAtCapacity:
             "En raison d'une forte demande, nous sommes temporairement à court de serveurs chez ce fournisseur. Nous travaillons activement à résoudre ce problème.",
         advancedOptions: 'Options avancées facultatives',
@@ -825,9 +826,9 @@ const fr: Translations = {
         globalLocations: 'Emplacements mondiaux',
         globalLocationsDescription:
             "Déployez OpenClaw dans plus de 30 régions mondiales sur Hetzner, DigitalOcean ou Vultr et choisissez l'emplacement le plus proche de vous.",
-        fullSshAccess: 'Accès SSH complet',
+        fullSshAccess: 'Accès SSH direct',
         fullSshAccessDescription:
-            'Accès root complet à votre serveur. Vous en êtes propriétaire, installez ce que vous voulez et personnalisez tout.',
+            'Accédez au terminal de votre serveur directement depuis la plateforme. Aucun client SSH externe nécessaire.',
         secure: 'Sécurisé',
         secureDescription:
             'Protégé par défaut contre les vulnérabilités SSL, les logiciels malveillants et les menaces de sécurité courantes.',
@@ -837,9 +838,27 @@ const fr: Translations = {
         customSubdomains: 'Accès en ligne',
         customSubdomainsDescription:
             "Oubliez les réseaux locaux. Accédez à votre OpenClaw en toute sécurité depuis n'importe où avec un sous-domaine.",
-        autoUpdates: 'Mises à jour automatiques',
+        autoUpdates: 'Contrôle de version',
         autoUpdatesDescription:
-            'Oubliez les mises à jour et les correctifs de sécurité. Le serveur et OpenClaw sont automatiquement maintenus à jour.',
+            "Passez à n'importe quelle version d'OpenClaw en un seul clic. Restez toujours à jour ou revenez en arrière si nécessaire.",
+        openclawControl: 'Contrôle OpenClaw',
+        openclawControlDescription:
+            "Accédez au panneau natif d'OpenClaw directement depuis ClawHost. Accès complet en édition à tout ce qu'OpenClaw offre.",
+        clawHostControl: 'Contrôle ClawHost',
+        clawHostControlDescription:
+            'Gérez les fichiers, mises à jour, canaux, variables, compétences et plus de configurations directement depuis la plateforme.',
+        skillsMarketplace: '5 000+ compétences',
+        skillsMarketplaceDescription:
+            "Parcourez et installez plus de 5 000 compétences prêtes à l'emploi en un seul clic. Étendez votre OpenClaw instantanément.",
+        directChat: 'Chat direct',
+        directChatDescription:
+            "Discutez avec vos agents IA directement depuis la plateforme. Pas besoin d'outils ou d'interfaces externes.",
+        multipleAgents: 'Agents multiples',
+        multipleAgentsDescription:
+            'Exécutez et gérez plusieurs agents IA sur une seule instance. Chacun avec sa propre configuration et son propre objectif.',
+        multipleClaws: 'Claws multiples',
+        multipleClawsDescription:
+            'Déployez et gérez plusieurs instances OpenClaw depuis un seul tableau de bord. Évoluez selon vos besoins.',
         testimonials: 'Témoignages',
         whatPeopleSay: 'Ce que les gens disent',
         testimonialsDescription:
@@ -1642,6 +1661,10 @@ const fr: Translations = {
         voiceMode: 'Mode vocal',
         voiceListening: 'Écoute en cours...',
         voiceTapToSpeak: "Appuyez sur l'orbe pour commencer"
+    },
+    announcement: {
+        title: 'Avis de service',
+        message: 'Les déploiements {{providers}} sont temporairement indisponibles. Les claws existants fonctionnent normalement.'
     },
     productHunt: {
         liveOn: 'En direct sur',

@@ -403,7 +403,8 @@ const Dashboard: FC = (): ReactNode => {
 
     const { plans: hetznerPlans } = usePlans('hetzner')
     const { plans: digitaloceanPlans } = usePlans('digitalocean')
-    const plans = [...(hetznerPlans || []), ...(digitaloceanPlans || [])]
+    const { plans: vultrPlans } = usePlans('vultr')
+    const plans = [...(hetznerPlans || []), ...(digitaloceanPlans || []), ...(vultrPlans || [])]
     const { data: locations } = useLocations()
     const { data: sshKeys } = useSSHKeys()
     const { data: volumePricing } = useVolumePricing()
@@ -809,10 +810,10 @@ const Dashboard: FC = (): ReactNode => {
                 />
             )}
 
-            {showCreate && !isLocal && plans.length > 0 && locations && (
+            {showCreate && !isLocal && plans.length > 0 && (
                 <CreateClawModal
                     plans={plans}
-                    locations={locations}
+                    locations={locations || []}
                     sshKeys={sshKeys || []}
                     volumePricing={volumePricing}
                     planAvailability={planAvailability}
