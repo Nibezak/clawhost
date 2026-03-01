@@ -9,6 +9,8 @@ import cache from '@/services/provider/cache'
 const CACHE_TTL = 5 * 60 * 1000
 const SERVERS_CACHE_TTL = 10 * 1000
 
+const inflight = new Map<string, Promise<unknown>>()
+
 const cached = <T>(
     key: string,
     fn: () => Promise<T>,
@@ -17,10 +19,23 @@ const cached = <T>(
     const entry = cache.get(key)
     if (entry && Date.now() < entry.expiry)
         return Promise.resolve(entry.data as T)
-    return fn().then((data) => {
-        cache.set(key, { data, expiry: Date.now() + ttl })
-        return data
-    })
+
+    const pending = inflight.get(key)
+    if (pending) return pending as Promise<T>
+
+    const promise = fn()
+        .then((data) => {
+            cache.set(key, { data, expiry: Date.now() + ttl })
+            inflight.delete(key)
+            return data
+        })
+        .catch((err) => {
+            inflight.delete(key)
+            throw err
+        })
+
+    inflight.set(key, promise)
+    return promise
 }
 
 const providers: Record<ProviderType, CloudProvider> = {

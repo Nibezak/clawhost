@@ -1,6 +1,6 @@
 import type { FC, ReactNode } from 'react'
-import type { ProviderType } from '@/ts/Types'
 
+import { useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { WarningIcon } from '@phosphor-icons/react'
 import { t } from '@openclaw/i18n'
@@ -31,28 +31,25 @@ const AnnouncementBanner: FC = (): ReactNode => {
         atCapacity: vultrAtCapacity
     } = usePlans(clawProvider.vultr)
 
-    const isProviderUnavailable = (p: ProviderType): boolean => {
-        if (p === clawProvider.hetzner)
-            return !hetznerLoading && (!hetznerPlans?.length || hetznerAtCapacity)
-        if (p === clawProvider.digitalocean)
-            return !digitaloceanLoading && (!digitaloceanPlans?.length || digitaloceanAtCapacity)
-        if (p === clawProvider.vultr)
-            return !vultrLoading && (!vultrPlans?.length || vultrAtCapacity)
-        return false
-    }
+    const lockedProviders = useRef(new Set<string>())
 
     const allLoading = hetznerLoading && digitaloceanLoading && vultrLoading
 
-    const unavailableProviders = [
-        clawProvider.hetzner,
-        clawProvider.digitalocean,
-        clawProvider.vultr
-    ].filter((p) => isProviderUnavailable(p))
+    if (!allLoading) {
+        if (!hetznerLoading && (!hetznerPlans?.length || hetznerAtCapacity))
+            lockedProviders.current.add(clawProvider.hetzner)
+        if (!digitaloceanLoading && (!digitaloceanPlans?.length || digitaloceanAtCapacity))
+            lockedProviders.current.add(clawProvider.digitalocean)
+        if (!vultrLoading && (!vultrPlans?.length || vultrAtCapacity))
+            lockedProviders.current.add(clawProvider.vultr)
+    }
 
     const { phBannerVisible } = useUIStore()
 
+    const unavailableProviders = Array.from(lockedProviders.current)
+
     const visible =
-        !allLoading && !phBannerVisible && unavailableProviders.length > 0
+        !phBannerVisible && unavailableProviders.length > 0
 
     const providersText = unavailableProviders
         .map((p) => providerLabels[p])

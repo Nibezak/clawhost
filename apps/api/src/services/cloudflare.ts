@@ -1,4 +1,4 @@
-import type { CloudflareDNSRecord, CloudflareDNSLookup } from '@/ts/Interfaces'
+import type { CacheEntry, CloudflareDNSRecord, CloudflareDNSLookup } from '@/ts/Interfaces'
 
 import Cloudflare from 'cloudflare'
 
@@ -19,6 +19,10 @@ const getZoneId = () => {
     return zoneId
 }
 
+const DNS_CACHE_TTL = 30_000
+const dnsCache = new Map<string, CacheEntry<CloudflareDNSLookup | null>>()
+const dnsInflight = new Map<string, Promise<CloudflareDNSLookup | null>>()
+
 const cloudflare = {
     async createDNSRecord(
         subdomain: string,
@@ -35,6 +39,8 @@ const cloudflare = {
             proxied: false,
             ttl: 60
         })
+
+        dnsCache.delete(subdomain)
 
         return {
             id: record.id!,
@@ -57,6 +63,8 @@ const cloudflare = {
             content: ip,
             ttl: 60
         })
+
+        dnsCache.delete(subdomain)
     },
 
     async deleteDNSRecord(recordId: string): Promise<void> {
@@ -71,23 +79,41 @@ const cloudflare = {
     async findDNSRecord(
         subdomain: string
     ): Promise<CloudflareDNSLookup | null> {
+        const entry = dnsCache.get(subdomain)
+        if (entry && Date.now() < entry.expiry) return entry.data
+
+        const pending = dnsInflight.get(subdomain)
+        if (pending) return pending
+
         const client = getClient()
         const zoneId = getZoneId()
         const fullName = `${subdomain}.clawhost.cloud`
 
-        const records = await client.dns.records.list({
-            zone_id: zoneId,
-            name: { exact: fullName },
-            type: 'A'
-        })
+        const promise = client.dns.records
+            .list({
+                zone_id: zoneId,
+                name: { exact: fullName },
+                type: 'A'
+            })
+            .then((records) => {
+                const record = records.result?.[0]
+                const result: CloudflareDNSLookup | null = record
+                    ? { id: record.id!, ip: record.content as string }
+                    : null
+                dnsCache.set(subdomain, {
+                    data: result,
+                    expiry: Date.now() + DNS_CACHE_TTL
+                })
+                dnsInflight.delete(subdomain)
+                return result
+            })
+            .catch((err) => {
+                dnsInflight.delete(subdomain)
+                throw err
+            })
 
-        const record = records.result?.[0]
-        if (!record) return null
-
-        return {
-            id: record.id!,
-            ip: record.content as string
-        }
+        dnsInflight.set(subdomain, promise)
+        return promise
     }
 }
 

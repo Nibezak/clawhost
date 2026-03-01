@@ -150,7 +150,9 @@ const getPlans = async (c: Context) => {
 
         const [serverTypes, servers] = await Promise.all([
             provider.getServerTypes(),
-            limit ? provider.getServers() : Promise.resolve(null)
+            limit
+                ? provider.getServers().catch(() => null)
+                : Promise.resolve(null)
         ])
 
         const atCapacity = servers && limit ? servers.size >= limit : false

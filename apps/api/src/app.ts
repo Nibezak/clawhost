@@ -1,3 +1,4 @@
+import type { CacheEntry } from '@/ts/Interfaces'
 import type { HonoEnv } from '@/ts/Types'
 
 import { Hono } from 'hono'
@@ -78,6 +79,9 @@ app.get('/clawhub/skills', async (c) => {
     }
 })
 
+const AUTH_CACHE_TTL = 5 * 60 * 1000
+const authCache = new Map<string, CacheEntry<string>>()
+
 app.use('/*', async (c, next) => {
     try {
         const authHeader = c.req.header('Authorization')
@@ -86,6 +90,13 @@ app.use('/*', async (c, next) => {
         }
 
         const token = authHeader.slice(7)
+
+        const cachedAuth = authCache.get(token)
+        if (cachedAuth && Date.now() < cachedAuth.expiry) {
+            c.set('userId', cachedAuth.data)
+            return next()
+        }
+
         const decoded = await verifyToken(token)
 
         if (!decoded) {
@@ -140,6 +151,11 @@ app.use('/*', async (c, next) => {
         } else {
             return fail(c, t('api.unauthorized'), 401)
         }
+
+        authCache.set(token, {
+            data: decoded.uid,
+            expiry: Date.now() + AUTH_CACHE_TTL
+        })
 
         c.set('userId', decoded.uid)
         return next()
