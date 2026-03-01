@@ -116,27 +116,27 @@ const fr: Translations = {
             'Impossible de charger les tarifs. Veuillez réessayer plus tard !',
         noPasswordAvailable: 'Aucun mot de passe disponible pour ce claw !',
         clawLimitReached:
-            'Vous avez atteint la limite de 50 claws. Veuillez contacter le support pour augmenter cette limite !',
+            'Vous avez atteint la limite de {{max}} claws. Veuillez contacter le support pour augmenter cette limite !',
         sshKeyLimitReached:
-            'Vous avez atteint la limite de 50 clés SSH. Veuillez contacter le support pour augmenter cette limite !'
+            'Vous avez atteint la limite de {{max}} clés SSH. Veuillez contacter le support pour augmenter cette limite !'
     },
     api: {
         missingRequiredFields: 'Champs obligatoires manquants !',
         clawNotFound: 'Claw introuvable !',
         clawRenamed: 'Claw renommé avec succès.',
         invalidClawName:
-            'Le nom du claw doit contenir entre 1 et 50 caractères !',
+            'Le nom du claw doit contenir entre 1 et {{max}} caractères !',
         userNotFound: 'Utilisateur introuvable !',
         sshKeyNotFound: 'Clé SSH introuvable !',
         pendingClawNotFound: 'Claw en attente introuvable !',
         clawNotScheduledForDeletion:
             "Ce claw n'est pas programmé pour la suppression !",
         clawLimitReached:
-            'Vous avez atteint la limite de 50 claws. Veuillez contacter le support pour augmenter cette limite !',
+            'Vous avez atteint la limite de {{max}} claws. Veuillez contacter le support pour augmenter cette limite !',
         sshKeyLimitReached:
-            'Vous avez atteint la limite de 50 clés SSH. Veuillez contacter le support pour augmenter cette limite !',
+            'Vous avez atteint la limite de {{max}} clés SSH. Veuillez contacter le support pour augmenter cette limite !',
         volumeSizeInvalid:
-            'La taille du volume doit être comprise entre 10 et 10240 Go !',
+            'La taille du volume doit être comprise entre {{min}} et {{max}} Go !',
         paymentNotConfigured:
             "Le paiement n'est pas configuré pour cette offre !",
         invalidSshKeyFormat: 'Format de clé publique SSH invalide !',
@@ -152,7 +152,7 @@ const fr: Translations = {
         fileTooLarge:
             'Le contenu du fichier dépasse la taille maximale autorisée !',
         nameAndKeyRequired: 'Le nom et la clé publique sont requis !',
-        nameTooLong: 'Le nom doit contenir 100 caractères ou moins !',
+        nameTooLong: 'Le nom doit contenir {{max}} caractères ou moins !',
         noBillingAccount: 'Aucun compte de facturation trouvé !',
         orderIdRequired: "L'identifiant de commande est requis !",
         orderNotFound: 'Commande introuvable !',
@@ -1511,9 +1511,9 @@ const fr: Translations = {
         subdomain: 'Sous-domaine',
         subdomainPlaceholder: 'Entrez le sous-domaine',
         subdomainDescription:
-            'Lettres minuscules et chiffres, 3-20 caractères.',
+            'Lettres minuscules et chiffres, {{min}}-{{max}} caractères.',
         subdomainInvalid:
-            'Utilisez 3-20 lettres minuscules et chiffres uniquement !',
+            'Utilisez {{min}}-{{max}} lettres minuscules et chiffres uniquement !',
         subdomainUpdated: 'Sous-domaine mis à jour avec succès.',
         subdomainUpdateFailed: 'Échec de la mise à jour du sous-domaine !',
         subdomainInUse: 'Ce sous-domaine est utilisé par un autre claw !',

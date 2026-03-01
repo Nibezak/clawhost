@@ -1,3 +1,10 @@
 {
+    "git": {
+        "deploymentEnabled": {
+            "Production": true,
+            "*": false
+        }
+    },
+    "cleanUrls": true,
     "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }

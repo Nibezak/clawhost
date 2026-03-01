@@ -183,7 +183,7 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
             (volumeSize < inputValidation.VOLUME_SIZE.MIN ||
                 volumeSize > inputValidation.VOLUME_SIZE.MAX)
         ) {
-            return fail(c, t('api.volumeSizeInvalid'), 400)
+            return fail(c, t('api.volumeSizeInvalid', { min: inputValidation.VOLUME_SIZE.MIN, max: inputValidation.VOLUME_SIZE.MAX }), 400)
         }
 
         const [clawCountResult, userResult, sshKeyResult] = await Promise.all([
@@ -207,7 +207,7 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
         ])
 
         if (clawCountResult[0].value >= inputValidation.CLAWS_PER_ACCOUNT.MAX) {
-            return fail(c, t('api.clawLimitReached'), 400)
+            return fail(c, t('api.clawLimitReached', { max: inputValidation.CLAWS_PER_ACCOUNT.MAX }), 400)
         }
 
         if (!userResult[0]) {

@@ -14,7 +14,7 @@ const updateUserProfile = async (c: AuthenticatedContext) => {
         const { name } = await c.req.json<UpdateProfileBody>()
 
         if (name !== undefined && name.length > inputValidation.USER_NAME.MAX) {
-            return fail(c, t('api.nameTooLong'), 400)
+            return fail(c, t('api.nameTooLong', { max: inputValidation.USER_NAME.MAX }), 400)
         }
 
         const updated = await db

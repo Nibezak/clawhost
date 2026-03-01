@@ -110,24 +110,24 @@ const en = {
         unableToLoadPricing: 'Unable to load pricing. Please try again later!',
         noPasswordAvailable: 'No password available for this claw!',
         clawLimitReached:
-            "You've reached the limit of 50 claws. Please contact support to increase this limit!",
+            "You've reached the limit of {{max}} claws. Please contact support to increase this limit!",
         sshKeyLimitReached:
-            "You've reached the limit of 50 SSH keys. Please contact support to increase this limit!"
+            "You've reached the limit of {{max}} SSH keys. Please contact support to increase this limit!"
     },
     api: {
         missingRequiredFields: 'Missing required fields!',
         clawNotFound: 'Claw not found!',
         clawRenamed: 'Claw renamed successfully.',
-        invalidClawName: 'Claw name must be between 1 and 50 characters!',
+        invalidClawName: 'Claw name must be between 1 and {{max}} characters!',
         userNotFound: 'User not found!',
         sshKeyNotFound: 'SSH key not found!',
         pendingClawNotFound: 'Pending claw not found!',
         clawNotScheduledForDeletion: 'Claw is not scheduled for deletion!',
         clawLimitReached:
-            "You've reached the limit of 50 claws. Please contact support to increase this limit!",
+            "You've reached the limit of {{max}} claws. Please contact support to increase this limit!",
         sshKeyLimitReached:
-            "You've reached the limit of 50 SSH keys. Please contact support to increase this limit!",
-        volumeSizeInvalid: 'Volume size must be between 10 and 10240 GB!',
+            "You've reached the limit of {{max}} SSH keys. Please contact support to increase this limit!",
+        volumeSizeInvalid: 'Volume size must be between {{min}} and {{max}} GB!',
         paymentNotConfigured: 'Payment not configured for this plan!',
         invalidSshKeyFormat: 'Invalid SSH public key format!',
         sshKeyInUse: 'This SSH key is currently in use by one or more claws!',
@@ -139,7 +139,7 @@ const en = {
         invalidRedirectUrl: 'Invalid redirect URL!',
         fileTooLarge: 'File content exceeds the maximum allowed size!',
         nameAndKeyRequired: 'Name and public key are required!',
-        nameTooLong: 'Name must be 100 characters or less!',
+        nameTooLong: 'Name must be {{max}} characters or less!',
         noBillingAccount: 'No billing account found!',
         orderIdRequired: 'Order ID is required!',
         orderNotFound: 'Order not found!',
@@ -1424,8 +1424,8 @@ const en = {
         settingsNameDescription: 'Letters, numbers, and dashes only.',
         subdomain: 'Subdomain',
         subdomainPlaceholder: 'Enter subdomain',
-        subdomainDescription: 'Lowercase letters and numbers, 3-20 characters.',
-        subdomainInvalid: 'Use 3-20 lowercase letters and numbers only.',
+        subdomainDescription: 'Lowercase letters and numbers, {{min}}-{{max}} characters.',
+        subdomainInvalid: 'Use {{min}}-{{max}} lowercase letters and numbers only.',
         subdomainUpdated: 'Subdomain updated successfully.',
         subdomainUpdateFailed: 'Failed to update subdomain!',
         subdomainInUse: 'This subdomain is used by another claw!',

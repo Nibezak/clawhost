@@ -38,7 +38,7 @@ const createClaw = async (c: AuthenticatedContext) => {
             volumeSize !== undefined &&
             (volumeSize < inputValidation.VOLUME_SIZE.MIN || volumeSize > inputValidation.VOLUME_SIZE.MAX)
         ) {
-            return fail(c, t('api.volumeSizeInvalid'), 400)
+            return fail(c, t('api.volumeSizeInvalid', { min: inputValidation.VOLUME_SIZE.MIN, max: inputValidation.VOLUME_SIZE.MAX }), 400)
         }
 
         const provider = getProvider(providerName || 'hetzner')
@@ -64,7 +64,7 @@ const createClaw = async (c: AuthenticatedContext) => {
         ])
 
         if (clawCountResult[0].value >= inputValidation.CLAWS_PER_ACCOUNT.MAX) {
-            return fail(c, t('api.clawLimitReached'), 400)
+            return fail(c, t('api.clawLimitReached', { max: inputValidation.CLAWS_PER_ACCOUNT.MAX }), 400)
         }
 
         const selectedPlan = serverTypes.find((st) => st.name === planId)

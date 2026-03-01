@@ -1037,3 +1037,16 @@ export interface NpmDownloadsResponse {
 export interface InstallVersionBody {
     version: string
 }
+
+export interface GithubUserResponse {
+    id: number
+    name?: string
+    login: string
+    email?: string
+}
+
+export interface GoogleUserinfoResponse {
+    email: string
+    sub: string
+    name?: string
+}

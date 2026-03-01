@@ -31,7 +31,7 @@ const createSSHKey = async (c: AuthenticatedContext) => {
             .where(eq(sshKeys.userId, userId))
 
         if (keyCount >= inputValidation.SSH_KEYS_PER_ACCOUNT.MAX) {
-            return fail(c, t('api.sshKeyLimitReached'), 400)
+            return fail(c, t('api.sshKeyLimitReached', { max: inputValidation.SSH_KEYS_PER_ACCOUNT.MAX }), 400)
         }
 
         if (!publicKey.startsWith('ssh-') && !publicKey.startsWith('ecdsa-')) {
