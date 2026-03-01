@@ -1,16 +1,23 @@
-[build]
+# fly.toml app configuration file generated for clawhost on 2026-03-01T04:09:19Z
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
-[env]
-  NODE_ENV = 'production'
-  PORT = '2222'
+app = 'clawhost'
+primary_region = 'iad'
+
+[build]
 
 [http_service]
   internal_port = 2222
   force_https = true
   auto_stop_machines = 'stop'
   auto_start_machines = true
-  min_machines_running = 1
+  min_machines_running = 0
+  processes = ['app']
 
 [[vm]]
-  size = 'shared-cpu-2x'
-  memory = '512mb'
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
+  memory_mb = 1024
