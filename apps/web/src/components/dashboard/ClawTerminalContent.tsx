@@ -146,8 +146,10 @@ const ClawTerminalContent: FC<ClawTerminalContentProps> = ({
         observer.observe(container)
         observerRef.current = observer
 
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
-        const wsUrl = `${protocol}//${window.location.host}/ws/claws/${clawId}/terminal?token=${encodeURIComponent(token)}`
+        const apiUrl = import.meta.env.VITE_API_URL || ''
+        const wsUrl = apiUrl.startsWith('http')
+            ? `${apiUrl.replace(/^http/, 'ws')}/claws/${clawId}/terminal?token=${encodeURIComponent(token)}`
+            : `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws/claws/${clawId}/terminal?token=${encodeURIComponent(token)}`
         const ws = new WebSocket(wsUrl)
         wsRef.current = ws
 
