@@ -33,7 +33,7 @@ const renameClaw = async (c: AuthenticatedContext) => {
 
         return ok(c, sanitizeClaw(updated), t('api.clawRenamed'))
     } catch {
-        return fail(c, t('api.missingRequiredFields'), 500)
+        return fail(c, t('api.internalServerError'), 500)
     }
 }
 
