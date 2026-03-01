@@ -1,6 +1,6 @@
 import type { FC, ReactNode } from 'react'
 import type { User, OAuthCredential } from 'firebase/auth'
-import type { AuthProviderProps, CachedProfile } from '@/ts/Interfaces'
+import type { AuthProviderProps, CachedProfile, FirebaseErrorLike } from '@/ts/Interfaces'
 
 import { useCallback, useEffect, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
@@ -117,7 +117,7 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
         try {
             await signInWithPopup(auth, new GoogleAuthProvider())
         } catch (error) {
-            const firebaseError = error as { code?: string }
+            const firebaseError = error as FirebaseErrorLike
             if (
                 firebaseError.code ===
                 'auth/account-exists-with-different-credential'
@@ -138,7 +138,7 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
         try {
             await signInWithPopup(auth, new GithubAuthProvider())
         } catch (error) {
-            const firebaseError = error as { code?: string }
+            const firebaseError = error as FirebaseErrorLike
             if (
                 firebaseError.code ===
                 'auth/account-exists-with-different-credential'

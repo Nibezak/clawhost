@@ -1,8 +1,10 @@
 {
-    "framework": "vite",
-    "outputDirectory": "dist",
-    "routes": [
-        { "handle": "filesystem" },
-        { "src": "/(.*)", "dest": "/index.html" }
-    ]
+    "git": {
+        "deploymentEnabled": {
+            "Production": true,
+            "*": false
+        }
+    },
+    "cleanUrls": true,
+    "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }

@@ -18,7 +18,7 @@ const renameClaw = async (c: AuthenticatedContext) => {
         const name = body.name?.trim()
 
         if (!name || name.length > inputValidation.CLAW_NAME.MAX) {
-            return fail(c, t('api.invalidClawName'), 400)
+            return fail(c, t('api.invalidClawName', { max: inputValidation.CLAW_NAME.MAX }), 400)
         }
 
         const claw = await findUserClaw(userId, id)

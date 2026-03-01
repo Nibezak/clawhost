@@ -1,6 +1,8 @@
 import type { Context } from 'hono'
 import type {
     GithubEmailEntry,
+    GithubUserResponse,
+    GoogleUserinfoResponse,
     ResolveCredentialConflictBody
 } from '@/ts/Interfaces'
 
@@ -23,13 +25,13 @@ const verifyGithubToken = async (accessToken: string) => {
 
     if (!userRes.ok) return null
 
-    const userData = await userRes.json()
+    const userData = await userRes.json() as GithubUserResponse
     const providerUid = String(userData.id)
     const displayName = userData.name || userData.login
     let email = userData.email
 
     if (!email && emailsRes.ok) {
-        const emails = await emailsRes.json()
+        const emails = await emailsRes.json() as GithubEmailEntry[]
         const primary = emails.find((e: GithubEmailEntry) => e.primary)
         email = primary?.email
     }
@@ -44,11 +46,11 @@ const verifyGoogleToken = async (accessToken: string) => {
 
     if (!res.ok) return null
 
-    const data = await res.json()
+    const data = await res.json() as GoogleUserinfoResponse
     return {
-        email: data.email as string,
-        providerUid: data.sub as string,
-        displayName: data.name as string | undefined
+        email: data.email,
+        providerUid: data.sub,
+        displayName: data.name
     }
 }
 

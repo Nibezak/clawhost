@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react'
-import type { ClawWithAgents, Faq, Testimonial } from '@/ts/Interfaces'
+import type { ClawWithAgents, Faq, ProviderOption, Testimonial } from '@/ts/Interfaces'
 import type { DashboardTab, ProviderType } from '@/ts/Types'
 
 import { Link, useLocation } from 'react-router-dom'
@@ -1114,10 +1114,7 @@ const Landing: FC = (): ReactNode => {
                                                     'createClaw.providerVultr'
                                                 )
                                             }
-                                        ] as {
-                                            key: ProviderType
-                                            label: string
-                                        }[]
+                                        ] as ProviderOption[]
                                     ).map((p) => {
                                         const unavailable =
                                             isProviderUnavailable(p.key)

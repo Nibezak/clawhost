@@ -2,6 +2,7 @@ import type { Context } from 'hono'
 import type { ProviderType } from '@/ts/Types'
 
 import { getProvider } from '@/services/provider'
+import { inputValidation } from '@openclaw/shared'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
@@ -16,8 +17,8 @@ const getVolumePricing = async (c: Context) => {
             {
                 pricePerGbMonthly:
                     Math.ceil(pricing.pricePerGbMonthly * 3 * 1000) / 1000,
-                minSize: 10,
-                maxSize: 10240
+                minSize: inputValidation.VOLUME_SIZE.MIN,
+                maxSize: inputValidation.VOLUME_SIZE.MAX
             },
             t('api.volumePricingFetched')
         )

@@ -53,8 +53,7 @@ const useSpeechRecognition = (
                     if (text) {
                         onTranscriptRef.current(text)
                     }
-                } catch (e) {
-                    console.error('Transcription failed:', e)
+                } catch {
                 } finally {
                     setIsTranscribing(false)
                     resolve()
@@ -85,8 +84,7 @@ const useSpeechRecognition = (
             setIsRecording(true)
 
             getTranscriber()
-        } catch (e) {
-            console.error('Microphone access denied:', e)
+        } catch {
         }
     }, [])
 

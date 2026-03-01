@@ -4,6 +4,7 @@ import type {
     ChatSelectedAgent,
     ClawCardActions,
     ClawWithAgents,
+    ErrorWithMessage,
     ExportRateLimitError
 } from '@/ts/Interfaces'
 import type { GatewayConnectionState } from '@/ts/Types'
@@ -337,7 +338,7 @@ const ChatView: FC<ChatViewProps> = ({
                                     err !== null &&
                                     'message' in err
                                   ? String(
-                                        (err as { message: unknown }).message
+                                        (err as ErrorWithMessage).message
                                     )
                                   : t('dashboard.startFailed')
                         showToast(message, 'error')

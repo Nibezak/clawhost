@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react'
-import type { CreateClawModalProps } from '@/ts/Interfaces'
+import type { CreateClawModalProps, ErrorResponse, ProviderOptionWithIcon } from '@/ts/Interfaces'
 import type { ProviderType } from '@/ts/Types'
 
 import { useState, useEffect } from 'react'
@@ -234,9 +234,9 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
             },
             {
                 onSuccess: (data) => {
-                    if ((data as unknown as { error?: string }).error) {
+                    if ((data as unknown as ErrorResponse).error) {
                         showToast(
-                            (data as unknown as { error: string }).error,
+                            (data as unknown as ErrorResponse).error as string,
                             'error'
                         )
                         return
@@ -376,11 +376,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                 </svg>
                                             )
                                         }
-                                    ] as {
-                                        key: ProviderType
-                                        label: string
-                                        icon: ReactNode
-                                    }[]
+                                    ] as ProviderOptionWithIcon[]
                                 ).map((p) => {
                                     const unavailable = isProviderUnavailable(
                                         p.key

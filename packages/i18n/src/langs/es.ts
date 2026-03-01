@@ -116,27 +116,27 @@ const es: Translations = {
             'No se pudieron cargar los precios. Por favor, intenta más tarde!',
         noPasswordAvailable: 'No hay contraseña disponible para este claw!',
         clawLimitReached:
-            'Has alcanzado el límite de 50 claws. Por favor, contacta a soporte para aumentar este límite!',
+            'Has alcanzado el límite de {{max}} claws. Por favor, contacta a soporte para aumentar este límite!',
         sshKeyLimitReached:
-            'Has alcanzado el límite de 50 claves SSH. Por favor, contacta a soporte para aumentar este límite!'
+            'Has alcanzado el límite de {{max}} claves SSH. Por favor, contacta a soporte para aumentar este límite!'
     },
     api: {
         missingRequiredFields: 'Faltan campos obligatorios!',
         clawNotFound: 'Claw no encontrado!',
         clawRenamed: 'Claw renombrado con éxito.',
         invalidClawName:
-            'El nombre del claw debe tener entre 1 y 50 caracteres!',
+            'El nombre del claw debe tener entre 1 y {{max}} caracteres!',
         userNotFound: 'Usuario no encontrado!',
         sshKeyNotFound: 'Clave SSH no encontrada!',
         pendingClawNotFound: 'Claw pendiente no encontrado!',
         clawNotScheduledForDeletion:
             'El claw no está programado para eliminación!',
         clawLimitReached:
-            'Has alcanzado el límite de 50 claws. Por favor, contacta a soporte para aumentar este límite!',
+            'Has alcanzado el límite de {{max}} claws. Por favor, contacta a soporte para aumentar este límite!',
         sshKeyLimitReached:
-            'Has alcanzado el límite de 50 claves SSH. Por favor, contacta a soporte para aumentar este límite!',
+            'Has alcanzado el límite de {{max}} claves SSH. Por favor, contacta a soporte para aumentar este límite!',
         volumeSizeInvalid:
-            'El tamaño del volumen debe ser entre 10 y 10240 GB!',
+            'El tamaño del volumen debe ser entre {{min}} y {{max}} GB!',
         paymentNotConfigured: 'El pago no está configurado para este plan!',
         invalidSshKeyFormat: 'Formato de clave pública SSH no válido!',
         sshKeyInUse:
@@ -150,7 +150,7 @@ const es: Translations = {
         fileTooLarge:
             'El contenido del archivo excede el tamaño máximo permitido!',
         nameAndKeyRequired: 'El nombre y la clave pública son obligatorios!',
-        nameTooLong: 'El nombre debe tener 100 caracteres o menos!',
+        nameTooLong: 'El nombre debe tener {{max}} caracteres o menos!',
         noBillingAccount: 'No se encontró cuenta de facturación!',
         orderIdRequired: 'El ID de orden es obligatorio!',
         orderNotFound: 'Orden no encontrada!',
@@ -1287,7 +1287,7 @@ const es: Translations = {
         chatConnecting: 'Conectando...',
         chatAuthenticating: 'Autenticando...',
         chatDisconnected: 'Desconectado',
-        chatError: 'Error de conexión',
+        chatError: 'Error de conexión!',
         chatConnected: 'Conectado',
         chatInputPlaceholder: 'Escribe un mensaje...',
         chatInputDisabled: 'Conéctate para chatear con este agente',
@@ -1486,8 +1486,8 @@ const es: Translations = {
         settingsNameDescription: 'Solo letras, números y guiones.',
         subdomain: 'Subdominio',
         subdomainPlaceholder: 'Ingresa el subdominio',
-        subdomainDescription: 'Letras minúsculas y números, 3-20 caracteres.',
-        subdomainInvalid: 'Usa solo 3-20 letras minúsculas y números!',
+        subdomainDescription: 'Letras minúsculas y números, {{min}}-{{max}} caracteres.',
+        subdomainInvalid: 'Usa solo {{min}}-{{max}} letras minúsculas y números!',
         subdomainUpdated: 'Subdominio actualizado exitosamente.',
         subdomainUpdateFailed: '¡Error al actualizar el subdominio!',
         subdomainInUse: '¡Este subdominio es usado por otro claw!',

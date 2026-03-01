@@ -116,26 +116,26 @@ const de: Translations = {
             'Preise konnten nicht geladen werden. Bitte versuche es später erneut!',
         noPasswordAvailable: 'Kein Passwort für diesen Claw verfügbar!',
         clawLimitReached:
-            'Du hast das Limit von 50 Claws erreicht. Bitte kontaktiere den Support, um dieses Limit zu erhöhen!',
+            'Du hast das Limit von {{max}} Claws erreicht. Bitte kontaktiere den Support, um dieses Limit zu erhöhen!',
         sshKeyLimitReached:
-            'Du hast das Limit von 50 SSH-Schlüsseln erreicht. Bitte kontaktiere den Support, um dieses Limit zu erhöhen!'
+            'Du hast das Limit von {{max}} SSH-Schlüsseln erreicht. Bitte kontaktiere den Support, um dieses Limit zu erhöhen!'
     },
     api: {
         missingRequiredFields: 'Pflichtfelder fehlen!',
         clawNotFound: 'Claw nicht gefunden!',
         clawRenamed: 'Claw erfolgreich umbenannt.',
         invalidClawName:
-            'Der Claw-Name muss zwischen 1 und 50 Zeichen lang sein!',
+            'Der Claw-Name muss zwischen 1 und {{max}} Zeichen lang sein!',
         userNotFound: 'Benutzer nicht gefunden!',
         sshKeyNotFound: 'SSH-Schlüssel nicht gefunden!',
         pendingClawNotFound: 'Ausstehender Claw nicht gefunden!',
         clawNotScheduledForDeletion: 'Claw ist nicht zur Löschung vorgemerkt!',
         clawLimitReached:
-            'Du hast das Limit von 50 Claws erreicht. Bitte kontaktiere den Support, um dieses Limit zu erhöhen!',
+            'Du hast das Limit von {{max}} Claws erreicht. Bitte kontaktiere den Support, um dieses Limit zu erhöhen!',
         sshKeyLimitReached:
-            'Du hast das Limit von 50 SSH-Schlüsseln erreicht. Bitte kontaktiere den Support, um dieses Limit zu erhöhen!',
+            'Du hast das Limit von {{max}} SSH-Schlüsseln erreicht. Bitte kontaktiere den Support, um dieses Limit zu erhöhen!',
         volumeSizeInvalid:
-            'Die Volumengröße muss zwischen 10 und 10240 GB liegen!',
+            'Die Volumengröße muss zwischen {{min}} und {{max}} GB liegen!',
         paymentNotConfigured: 'Zahlung ist für diesen Plan nicht konfiguriert!',
         invalidSshKeyFormat: 'Ungültiges SSH-Public-Key-Format!',
         sshKeyInUse:
@@ -149,7 +149,7 @@ const de: Translations = {
         fileTooLarge: 'Dateiinhalt überschreitet die maximal zulässige Größe!',
         nameAndKeyRequired:
             'Name und öffentlicher Schlüssel sind erforderlich!',
-        nameTooLong: 'Der Name darf maximal 100 Zeichen lang sein!',
+        nameTooLong: 'Der Name darf maximal {{max}} Zeichen lang sein!',
         noBillingAccount: 'Kein Abrechnungskonto gefunden!',
         orderIdRequired: 'Bestell-ID ist erforderlich!',
         orderNotFound: 'Bestellung nicht gefunden!',
@@ -375,7 +375,7 @@ const de: Translations = {
         resendIn: 'Erneut senden in {{seconds}}s',
         resendCode: 'Code erneut senden',
         changeEmail: 'E-Mail ändern',
-        invalidCode: 'Ungültiger Code',
+        invalidCode: 'Ungültiger Code!',
         invalidEmailFormat: 'Bitte geben Sie eine gültige E-Mail-Adresse ein!',
         plusAddressingNotAllowed:
             'Plus-Adressierung ist für die E-Mail-Anmeldung nicht erlaubt!',
@@ -1200,7 +1200,7 @@ const de: Translations = {
         tabSettings: 'Einstellungen',
         tabEnvs: 'Umgebungsvariablen',
         agentOnClaw: 'auf {{clawName}}',
-        cannotDeleteDefaultAgent: 'Standardagent kann nicht entfernt werden',
+        cannotDeleteDefaultAgent: 'Standardagent kann nicht entfernt werden!',
         configurationModel: 'Modell',
         configurationModelPlaceholder: 'Modell auswählen',
         configurationModelDescription:
@@ -1290,7 +1290,7 @@ const de: Translations = {
         chatConnecting: 'Verbindung wird hergestellt...',
         chatAuthenticating: 'Authentifizierung...',
         chatDisconnected: 'Getrennt',
-        chatError: 'Verbindungsfehler',
+        chatError: 'Verbindungsfehler!',
         chatConnected: 'Verbunden',
         chatInputPlaceholder: 'Nachricht eingeben...',
         chatInputDisabled: 'Verbinde dich, um mit diesem Agenten zu chatten',
@@ -1491,8 +1491,8 @@ const de: Translations = {
         settingsNameDescription: 'Nur Buchstaben, Zahlen und Bindestriche.',
         subdomain: 'Subdomain',
         subdomainPlaceholder: 'Subdomain eingeben',
-        subdomainDescription: 'Kleinbuchstaben und Zahlen, 3-20 Zeichen.',
-        subdomainInvalid: 'Nur 3-20 Kleinbuchstaben und Zahlen verwenden!',
+        subdomainDescription: 'Kleinbuchstaben und Zahlen, {{min}}-{{max}} Zeichen.',
+        subdomainInvalid: 'Nur {{min}}-{{max}} Kleinbuchstaben und Zahlen verwenden!',
         subdomainUpdated: 'Subdomain erfolgreich aktualisiert.',
         subdomainUpdateFailed: 'Subdomain konnte nicht aktualisiert werden!',
         subdomainInUse:
@@ -1654,7 +1654,7 @@ const de: Translations = {
         resendCode: 'Code erneut senden',
         resendIn: 'Erneut senden in {{seconds}}s',
         changeEmail: 'E-Mail ändern',
-        invalidCode: 'Ungültiger Code',
+        invalidCode: 'Ungültiger Code!',
         codeExpired: 'Code abgelaufen. Bitte fordere einen neuen an!',
         signingIn: 'Anmeldung...',
         signOut: 'Abmelden',

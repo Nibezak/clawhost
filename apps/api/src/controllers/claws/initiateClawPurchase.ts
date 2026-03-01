@@ -161,14 +161,13 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
             provider.getLocations()
         ])
 
-        const MIN_MEMORY_GB = 4
         const selectedPlan = serverTypes.find((st) => st.name === planId)
 
         if (!selectedPlan) {
             return fail(c, t('api.invalidPlan'), 400)
         }
 
-        if (selectedPlan.memory < MIN_MEMORY_GB) {
+        if (selectedPlan.memory < inputValidation.MIN_MEMORY_GB.MIN) {
             return fail(c, t('api.planBelowMinimumMemory'), 400)
         }
 
@@ -184,7 +183,7 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
             (volumeSize < inputValidation.VOLUME_SIZE.MIN ||
                 volumeSize > inputValidation.VOLUME_SIZE.MAX)
         ) {
-            return fail(c, t('api.volumeSizeInvalid'), 400)
+            return fail(c, t('api.volumeSizeInvalid', { min: inputValidation.VOLUME_SIZE.MIN, max: inputValidation.VOLUME_SIZE.MAX }), 400)
         }
 
         const [clawCountResult, userResult, sshKeyResult] = await Promise.all([
@@ -208,7 +207,7 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
         ])
 
         if (clawCountResult[0].value >= inputValidation.CLAWS_PER_ACCOUNT.MAX) {
-            return fail(c, t('api.clawLimitReached'), 400)
+            return fail(c, t('api.clawLimitReached', { max: inputValidation.CLAWS_PER_ACCOUNT.MAX }), 400)
         }
 
         if (!userResult[0]) {

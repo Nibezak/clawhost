@@ -5,7 +5,7 @@ import type {
 import type { ProviderType } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
-import { clawStatus } from '@openclaw/shared'
+import { clawStatus, inputValidation } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws, pendingClaws, sshKeys, volumes } from '@/db/schema'
 import { getProvider } from '@/services/provider'
@@ -46,8 +46,6 @@ export async function provisionClaw(
         const providerName = (pending.provider || 'hetzner') as ProviderType
         const provider = getProvider(providerName)
 
-        const MIN_MEMORY_GB = 4
-
         const [serverTypes, sshKeyResult] = await Promise.all([
             provider.getServerTypes(),
             pending.sshKeyId
@@ -63,7 +61,7 @@ export async function provisionClaw(
             (st) => st.name === pending.planId
         )
 
-        if (!selectedPlan || selectedPlan.memory < MIN_MEMORY_GB) {
+        if (!selectedPlan || selectedPlan.memory < inputValidation.MIN_MEMORY_GB.MIN) {
             return { success: false, error: t('api.planBelowMinimumMemory') }
         }
 
@@ -145,7 +143,7 @@ export async function provisionClaw(
                 .where(eq(claws.id, id))
         ])
 
-        if (pending.volumeSize && pending.volumeSize >= 10) {
+        if (pending.volumeSize && pending.volumeSize >= inputValidation.VOLUME_SIZE.MIN) {
             try {
                 const volumeId = crypto.randomUUID()
                 const providerVolume = await provider.createVolume(

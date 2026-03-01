@@ -146,11 +146,7 @@ const useAgentChat = ({
                     }
                     setIsLoading(false)
                 })
-                .catch((err: Error) => {
-                    console.error(
-                        '[useAgentChat] history load failed:',
-                        err.message
-                    )
+                .catch(() => {
                     if (mountedRef.current) setIsLoading(false)
                 })
         }
@@ -360,9 +356,7 @@ const useAgentChat = ({
                 }))
             }
 
-            clientRef.current.send('chat.send', params).catch((err: Error) => {
-                console.error('[useAgentChat] chat.send failed:', err.message)
-            })
+            clientRef.current.send('chat.send', params).catch(() => {})
         },
         []
     )

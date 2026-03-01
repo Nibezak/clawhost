@@ -11,7 +11,7 @@ import { useCallback, useState, useMemo, useEffect } from 'react'
 import CLAW_DETAIL_TABS from '@/lib/clawDetailTabs'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { clawProvider, clawStatus, OPENCLAW_VERSION } from '@openclaw/shared'
+import { clawProvider, clawStatus, inputValidation, OPENCLAW_VERSION } from '@openclaw/shared'
 import { getLocale, TRUNCATE_LENGTHS } from '@/lib'
 import {
     XIcon,
@@ -201,8 +201,9 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
 
     const handleSettingsSubdomainChange = useCallback((value: string) => {
         setSettingsSubdomain(value)
-        if (value.trim() && !/^[a-z0-9]{3,20}$/.test(value)) {
-            setSettingsSubdomainError(t('playground.subdomainInvalid'))
+        const subdomainRegex = new RegExp(`^[a-z0-9]{${inputValidation.SUBDOMAIN.MIN},${inputValidation.SUBDOMAIN.MAX}}$`)
+        if (value.trim() && !subdomainRegex.test(value)) {
+            setSettingsSubdomainError(t('playground.subdomainInvalid', { min: inputValidation.SUBDOMAIN.MIN, max: inputValidation.SUBDOMAIN.MAX }))
         } else {
             setSettingsSubdomainError('')
         }
@@ -240,8 +241,9 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
             trimmedSubdomain &&
             trimmedSubdomain !== (claw.subdomain || '')
         ) {
-            if (!/^[a-z0-9]{3,20}$/.test(trimmedSubdomain)) {
-                setSettingsSubdomainError(t('playground.subdomainInvalid'))
+            const subdomainRegex = new RegExp(`^[a-z0-9]{${inputValidation.SUBDOMAIN.MIN},${inputValidation.SUBDOMAIN.MAX}}$`)
+            if (!subdomainRegex.test(trimmedSubdomain)) {
+                setSettingsSubdomainError(t('playground.subdomainInvalid', { min: inputValidation.SUBDOMAIN.MIN, max: inputValidation.SUBDOMAIN.MAX }))
                 return
             }
             subdomainMutation.mutate(
@@ -778,7 +780,8 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                         ) : (
                                             <p className='text-muted-foreground mt-1.5 text-[11px]'>
                                                 {t(
-                                                    'playground.subdomainDescription'
+                                                    'playground.subdomainDescription',
+                                                    { min: inputValidation.SUBDOMAIN.MIN, max: inputValidation.SUBDOMAIN.MAX }
                                                 )}
                                             </p>
                                         )}

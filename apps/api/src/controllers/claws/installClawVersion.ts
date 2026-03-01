@@ -1,4 +1,5 @@
 import type { AuthenticatedContext } from '@/ts/Types'
+import type { InstallVersionBody, NpmRegistryTimeResponse } from '@/ts/Interfaces'
 
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
@@ -14,7 +15,7 @@ const NPM_REGISTRY_URL = 'https://registry.npmjs.org/openclaw'
 const installClawVersion = async (c: AuthenticatedContext) => {
     try {
         const id = c.req.param('id')
-        const { version } = await c.req.json<{ version: string }>()
+        const { version } = await c.req.json<InstallVersionBody>()
 
         if (!version || !VERSION_REGEX.test(version)) {
             return fail(c, t('api.invalidVersion'), 400)
@@ -25,9 +26,7 @@ const installClawVersion = async (c: AuthenticatedContext) => {
         })
 
         if (registryResponse.ok) {
-            const registry = (await registryResponse.json()) as {
-                time: Record<string, string>
-            }
+            const registry = (await registryResponse.json()) as NpmRegistryTimeResponse
             const publishedAt = registry.time?.[version]
             if (publishedAt && new Date(publishedAt) < OUTDATED_CUTOFF) {
                 return fail(c, t('api.outdatedVersion'), 400)

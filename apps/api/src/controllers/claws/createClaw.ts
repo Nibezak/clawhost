@@ -2,7 +2,7 @@ import type { CreateClawBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq, and, count } from 'drizzle-orm'
-import { clawStatus } from '@openclaw/shared'
+import { clawStatus, inputValidation } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws, sshKeys, volumes } from '@/db/schema'
 import { getProvider } from '@/services/provider'
@@ -36,9 +36,9 @@ const createClaw = async (c: AuthenticatedContext) => {
 
         if (
             volumeSize !== undefined &&
-            (volumeSize < 10 || volumeSize > 10240)
+            (volumeSize < inputValidation.VOLUME_SIZE.MIN || volumeSize > inputValidation.VOLUME_SIZE.MAX)
         ) {
-            return fail(c, t('api.volumeSizeInvalid'), 400)
+            return fail(c, t('api.volumeSizeInvalid', { min: inputValidation.VOLUME_SIZE.MIN, max: inputValidation.VOLUME_SIZE.MAX }), 400)
         }
 
         const provider = getProvider(providerName || 'hetzner')
@@ -63,19 +63,17 @@ const createClaw = async (c: AuthenticatedContext) => {
                 : Promise.resolve(null)
         ])
 
-        const MAX_CLAWS_PER_ACCOUNT = 50
-        if (clawCountResult[0].value >= MAX_CLAWS_PER_ACCOUNT) {
-            return fail(c, t('api.clawLimitReached'), 400)
+        if (clawCountResult[0].value >= inputValidation.CLAWS_PER_ACCOUNT.MAX) {
+            return fail(c, t('api.clawLimitReached', { max: inputValidation.CLAWS_PER_ACCOUNT.MAX }), 400)
         }
 
-        const MIN_MEMORY_GB = 4
         const selectedPlan = serverTypes.find((st) => st.name === planId)
 
         if (!selectedPlan) {
             return fail(c, t('api.invalidPlan'), 400)
         }
 
-        if (selectedPlan.memory < MIN_MEMORY_GB) {
+        if (selectedPlan.memory < inputValidation.MIN_MEMORY_GB.MIN) {
             return fail(c, t('api.planBelowMinimumMemory'), 400)
         }
 

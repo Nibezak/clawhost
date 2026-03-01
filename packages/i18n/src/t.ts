@@ -20,7 +20,7 @@ function getNestedValue(obj: unknown, path: string): string {
     return typeof current === 'string' ? current : path
 }
 
-function t(key: TranslationKey, params?: Record<string, string>): string {
+function t(key: TranslationKey, params?: Record<string, string | number>): string {
     const translations = state.languages[state.currentLanguage]
     let value = getNestedValue(translations, key)
 
@@ -28,7 +28,7 @@ function t(key: TranslationKey, params?: Record<string, string>): string {
         for (const [paramKey, paramValue] of Object.entries(params)) {
             value = value.replace(
                 new RegExp(`{{${paramKey}}}`, 'g'),
-                paramValue
+                String(paramValue)
             )
         }
     }
