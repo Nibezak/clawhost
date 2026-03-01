@@ -10,44 +10,55 @@ import getPolarClient from '@/lib/polar/getPolarClient'
 
 const SUB_CACHE_TTL = 60_000
 const subCache = new Map<string, CacheEntry<PolarSubscription>>()
+const subInflight = new Map<string, Promise<PolarSubscription | null>>()
 
 const subscriptions = {
     async get(subscriptionId: string): Promise<PolarSubscription | null> {
         const cached = subCache.get(subscriptionId)
         if (cached && Date.now() < cached.expiry) return cached.data
 
+        const pending = subInflight.get(subscriptionId)
+        if (pending) return pending
+
         const polar = getPolarClient()
 
-        try {
-            const sub = await polar.subscriptions.get({ id: subscriptionId })
-            const result: PolarSubscription = {
-                id: sub.id,
-                status: sub.status as SubscriptionStatus,
-                customerId: sub.customerId,
-                productId: sub.productId,
-                amount: sub.amount ?? 0,
-                currency: sub.currency ?? 'usd',
-                currentPeriodStart: sub.currentPeriodStart
-                    ? new Date(sub.currentPeriodStart)
-                    : undefined,
-                currentPeriodEnd: sub.currentPeriodEnd
-                    ? new Date(sub.currentPeriodEnd)
-                    : undefined,
-                cancelAtPeriodEnd: sub.cancelAtPeriodEnd ?? false,
-                canceledAt: sub.canceledAt
-                    ? new Date(sub.canceledAt)
-                    : undefined,
-                endedAt: sub.endedAt ? new Date(sub.endedAt) : undefined,
-                metadata: sub.metadata as Record<string, string> | undefined
-            }
-            subCache.set(subscriptionId, {
-                data: result,
-                expiry: Date.now() + SUB_CACHE_TTL
+        const promise = polar.subscriptions
+            .get({ id: subscriptionId })
+            .then((sub) => {
+                const result: PolarSubscription = {
+                    id: sub.id,
+                    status: sub.status as SubscriptionStatus,
+                    customerId: sub.customerId,
+                    productId: sub.productId,
+                    amount: sub.amount ?? 0,
+                    currency: sub.currency ?? 'usd',
+                    currentPeriodStart: sub.currentPeriodStart
+                        ? new Date(sub.currentPeriodStart)
+                        : undefined,
+                    currentPeriodEnd: sub.currentPeriodEnd
+                        ? new Date(sub.currentPeriodEnd)
+                        : undefined,
+                    cancelAtPeriodEnd: sub.cancelAtPeriodEnd ?? false,
+                    canceledAt: sub.canceledAt
+                        ? new Date(sub.canceledAt)
+                        : undefined,
+                    endedAt: sub.endedAt ? new Date(sub.endedAt) : undefined,
+                    metadata: sub.metadata as Record<string, string> | undefined
+                }
+                subCache.set(subscriptionId, {
+                    data: result,
+                    expiry: Date.now() + SUB_CACHE_TTL
+                })
+                subInflight.delete(subscriptionId)
+                return result as PolarSubscription | null
             })
-            return result
-        } catch {
-            return null
-        }
+            .catch(() => {
+                subInflight.delete(subscriptionId)
+                return null as PolarSubscription | null
+            })
+
+        subInflight.set(subscriptionId, promise)
+        return promise
     },
 
     async listByCustomer(customerId: string): Promise<PolarSubscription[]> {

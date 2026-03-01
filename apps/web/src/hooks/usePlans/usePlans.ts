@@ -6,6 +6,7 @@ const usePlans = (provider?: string) => {
     const query = useQuery({
         queryKey: [...PLANS_QUERY_KEY, provider || 'hetzner'],
         queryFn: () => api.getPlans(provider),
+        placeholderData: (previousData) => previousData,
         staleTime: 10_000,
         refetchInterval: 10_000,
         retry: false
