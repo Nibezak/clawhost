@@ -3,10 +3,12 @@ import type { GenerateSpeechBody } from '@/ts/Interfaces'
 
 import { existsSync } from 'fs'
 import path from 'path'
+import { fileURLToPath } from 'url'
 import synthesize from '@/services/piper'
 import { fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const DEFAULT_VOICE = 'en_US-ryan-high'
 const MODELS_DIR = path.resolve(
     process.env.PIPER_MODELS_DIR ||
