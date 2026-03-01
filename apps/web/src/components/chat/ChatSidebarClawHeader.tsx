@@ -2,6 +2,7 @@ import type { FC, ReactNode } from 'react'
 import type {
     ChatSidebarClawHeaderProps,
     ClawCardActions,
+    ErrorWithMessage,
     ExportRateLimitError
 } from '@/ts/Interfaces'
 
@@ -193,7 +194,7 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                             : typeof err === 'object' &&
                                 err !== null &&
                                 'message' in err
-                              ? String((err as { message: unknown }).message)
+                              ? String((err as ErrorWithMessage).message)
                               : t('dashboard.startFailed')
                     showToast(message, 'error')
                 }

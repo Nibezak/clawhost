@@ -3,6 +3,7 @@ import type { PlanConfig } from '@/ts/Interfaces'
 import type { ProviderType } from '@/ts/Types'
 
 import { getProvider } from '@/services/provider'
+import { inputValidation } from '@openclaw/shared'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
@@ -120,8 +121,6 @@ const vultrCustomPrices: Record<string, number> = {
     'vhf-12c-48gb': 500
 }
 
-const MIN_MEMORY_GB = 4
-
 const providerLimits: Partial<Record<ProviderType, number>> = {
     hetzner: 60
 }
@@ -161,7 +160,7 @@ const getPlans = async (c: Context) => {
             .filter(
                 (st) =>
                     config.prices[st.name] !== undefined &&
-                    st.memory >= MIN_MEMORY_GB
+                    st.memory >= inputValidation.MIN_MEMORY_GB.MIN
             )
             .map((st) => ({
                 id: st.name,

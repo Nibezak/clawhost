@@ -6,11 +6,10 @@ import { eq, and, gt, lt, sql } from 'drizzle-orm'
 import { auth } from '@/services/firebase'
 import { db } from '@/db'
 import { otpCodes, users } from '@/db/schema'
+import { inputValidation } from '@openclaw/shared'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 import { getClientIp, clearRateLimit } from '@/controllers/auth/rateLimit'
-
-const MAX_ATTEMPTS = 5
 
 const hashCode = (code: string): string => {
     return crypto.createHash('sha256').update(code).digest('hex')
@@ -42,7 +41,7 @@ const verifyOtp = async (c: Context) => {
             return fail(c, t('api.otpExpiredOrNotFound'), 401)
         }
 
-        if (record.attempts >= MAX_ATTEMPTS) {
+        if (record.attempts >= inputValidation.OTP_MAX_ATTEMPTS.MAX) {
             await db.delete(otpCodes).where(eq(otpCodes.id, record.id))
             return fail(c, t('api.otpMaxAttemptsReached'), 401)
         }
@@ -53,7 +52,7 @@ const verifyOtp = async (c: Context) => {
             .where(
                 and(
                     eq(otpCodes.id, record.id),
-                    lt(otpCodes.attempts, MAX_ATTEMPTS)
+                    lt(otpCodes.attempts, inputValidation.OTP_MAX_ATTEMPTS.MAX)
                 )
             )
             .returning({ attempts: otpCodes.attempts })
@@ -64,7 +63,7 @@ const verifyOtp = async (c: Context) => {
 
         const codeHash = hashCode(code)
         if (codeHash !== record.codeHash) {
-            const remaining = MAX_ATTEMPTS - updated[0].attempts
+            const remaining = inputValidation.OTP_MAX_ATTEMPTS.MAX - updated[0].attempts
             return fail(c, t('api.otpInvalidCode'), 401, {
                 attemptsRemaining: remaining
             })

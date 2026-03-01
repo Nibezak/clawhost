@@ -1307,8 +1307,8 @@ const en = {
         channelsWhatsAppScanInstructions:
             'Open WhatsApp > Settings > Linked Devices > Link a Device',
         channelsWhatsAppPaired: 'WhatsApp paired successfully.',
-        channelsWhatsAppPairFailed: 'Pairing failed. Please try again.',
-        channelsWhatsAppAlreadyPaired: 'WhatsApp is already paired.',
+        channelsWhatsAppPairFailed: 'Pairing failed. Please try again!',
+        channelsWhatsAppAlreadyPaired: 'WhatsApp is already paired!',
         channelsWhatsAppUnpair: 'Unpair',
         channelsWhatsAppUnsupported:
             'WhatsApp pairing is not available on this instance. Update OpenClaw to a newer version to enable it.',
@@ -1338,7 +1338,7 @@ const en = {
         channelsSaved: 'Channels updated successfully.',
         channelsSaveFailed: 'Failed to update channels!',
         channelsLoading: 'Loading channels...',
-        channelsLoadFailed: 'Failed to load channels.',
+        channelsLoadFailed: 'Failed to load channels!',
         channelsLoadFailedDescription:
             'Could not retrieve channel configuration. Please try again.',
         channelsNoChanges: 'No changes to save.',

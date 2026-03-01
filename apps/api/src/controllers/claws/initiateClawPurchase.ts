@@ -161,14 +161,13 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
             provider.getLocations()
         ])
 
-        const MIN_MEMORY_GB = 4
         const selectedPlan = serverTypes.find((st) => st.name === planId)
 
         if (!selectedPlan) {
             return fail(c, t('api.invalidPlan'), 400)
         }
 
-        if (selectedPlan.memory < MIN_MEMORY_GB) {
+        if (selectedPlan.memory < inputValidation.MIN_MEMORY_GB.MIN) {
             return fail(c, t('api.planBelowMinimumMemory'), 400)
         }
 

@@ -112,5 +112,12 @@ export type {
     CompareCompetitor,
     CompareFeatureValue,
     CompareFeature,
-    CompareCategory
+    CompareCategory,
+    EnvVar,
+    EnvVarValidationError,
+    FirebaseErrorLike,
+    ErrorWithMessage,
+    ErrorResponse,
+    ProviderOptionWithIcon,
+    ProviderOption
 } from '@/ts/Interfaces'

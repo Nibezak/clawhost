@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react'
-import type { PlaygroundVariablesContentProps } from '@/ts/Interfaces'
+import type { EnvVar, EnvVarValidationError, PlaygroundVariablesContentProps } from '@/ts/Interfaces'
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -39,9 +39,7 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
     clawId,
     mockEnvVars
 }): ReactNode => {
-    const [envVars, setEnvVars] = useState<
-        Array<{ key: string; value: string }>
-    >([])
+    const [envVars, setEnvVars] = useState<Array<EnvVar>>([])
     const [hasChanges, setHasChanges] = useState(false)
     const [showValues, setShowValues] = useState<Record<string, boolean>>({})
     const [copiedKey, setCopiedKey] = useState<string | null>(null)
@@ -54,7 +52,7 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
     const ENV_KEY_REGEX = /^[A-Za-z_][A-Za-z0-9_]*$/
 
     const errors = useMemo(() => {
-        const result: Array<{ key: string | null; value: string | null }> = []
+        const result: Array<EnvVarValidationError> = []
         const seenKeys = new Set<string>()
         envVars.forEach((envVar) => {
             const keyTrimmed = envVar.key.trim()
@@ -143,7 +141,7 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
     })
 
     const deleteMutation = useMutation({
-        mutationFn: (remaining: Array<{ key: string; value: string }>) => {
+        mutationFn: (remaining: Array<EnvVar>) => {
             const envVarsObj: Record<string, string> = {}
             remaining.forEach(({ key, value }) => {
                 if (key.trim()) {

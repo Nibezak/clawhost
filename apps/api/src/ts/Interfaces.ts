@@ -1020,3 +1020,20 @@ export interface PiperSynthesisResult {
     sampleRate: number
     channels: number
 }
+
+export interface NpmRegistryTimeResponse {
+    time: Record<string, string>
+}
+
+export interface NpmRegistryVersionsResponse {
+    'dist-tags': Record<string, string>
+    time: Record<string, string>
+}
+
+export interface NpmDownloadsResponse {
+    downloads: Record<string, number>
+}
+
+export interface InstallVersionBody {
+    version: string
+}

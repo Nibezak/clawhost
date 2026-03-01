@@ -1405,3 +1405,36 @@ export interface SelectGroupProps {
     children: ReactNode
     isLast?: boolean
 }
+
+export interface EnvVar {
+    key: string
+    value: string
+}
+
+export interface EnvVarValidationError {
+    key: string | null
+    value: string | null
+}
+
+export interface FirebaseErrorLike {
+    code?: string
+}
+
+export interface ErrorWithMessage {
+    message: unknown
+}
+
+export interface ErrorResponse {
+    error?: string
+}
+
+export interface ProviderOptionWithIcon {
+    key: ProviderType
+    label: string
+    icon: ReactNode
+}
+
+export interface ProviderOption {
+    key: ProviderType
+    label: string
+}
