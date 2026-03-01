@@ -382,7 +382,7 @@ const fr: Translations = {
         resendIn: 'Renvoyer dans {{seconds}}s',
         resendCode: 'Renvoyer le code',
         changeEmail: "Changer d'email",
-        invalidCode: 'Code invalide',
+        invalidCode: 'Code invalide !',
         invalidEmailFormat: 'Veuillez entrer une adresse email valide !',
         plusAddressingNotAllowed:
             "L'adressage avec le signe + n'est pas autorisé pour la connexion par email !",
@@ -1218,7 +1218,7 @@ const fr: Translations = {
         tabEnvs: 'Envs',
         agentOnClaw: 'sur {{clawName}}',
         cannotDeleteDefaultAgent:
-            "L'agent par défaut ne peut pas être supprimé",
+            "L'agent par défaut ne peut pas être supprimé !",
         configurationModel: 'Modèle',
         configurationModelPlaceholder: 'Sélectionnez un modèle',
         configurationModelDescription:
@@ -1308,7 +1308,7 @@ const fr: Translations = {
         chatConnecting: 'Connexion...',
         chatAuthenticating: 'Authentification...',
         chatDisconnected: 'Déconnecté',
-        chatError: 'Erreur de connexion',
+        chatError: 'Erreur de connexion !',
         chatConnected: 'Connecté',
         chatInputPlaceholder: 'Écrivez un message...',
         chatInputDisabled: 'Connectez-vous pour discuter avec cet agent',
@@ -1673,7 +1673,7 @@ const fr: Translations = {
         resendCode: 'Renvoyer le code',
         resendIn: 'Renvoyer dans {{seconds}}s',
         changeEmail: "Changer d'email",
-        invalidCode: 'Code invalide',
+        invalidCode: 'Code invalide !',
         codeExpired: 'Code expiré. Veuillez en demander un nouveau !',
         signingIn: 'Connexion en cours...',
         signOut: 'Se déconnecter',

@@ -1,7 +1,8 @@
-import type { clawStatus } from '@openclaw/shared'
+import type { clawStatus, userRole } from '@openclaw/shared'
 import type AGENT_DETAIL_TABS from '@/lib/agentDetailTabs'
 import type CLAW_DETAIL_TABS from '@/lib/clawDetailTabs'
 import type DASHBOARD_TABS from '@/lib/dashboardTabs'
+import type ROUTES from '@/lib/routes'
 import type THEMES from '@/lib/themes'
 import type LANGUAGES from '@/lib/languages'
 
@@ -14,8 +15,6 @@ export type ClawStatus = (typeof clawStatus)[keyof typeof clawStatus]
 export type CopiedFieldType = 'command' | 'private' | null
 
 export type SSHKeyModalMode = 'upload' | 'generate'
-
-import type { userRole } from '@openclaw/shared'
 
 export type UserRole = (typeof userRole)[keyof typeof userRole]
 
@@ -54,19 +53,7 @@ export type GatewayEventHandler = (payload: unknown) => void
 
 export type GatewayStateListener = (state: GatewayConnectionState) => void
 
-export type Route =
-    | '/'
-    | '/login'
-    | '/claws'
-    | '/ssh-keys'
-    | '/account'
-    | '/billing'
-    | '/terms'
-    | '/privacy'
-    | '/changelog'
-    | '/blog'
-    | '/blog/:slug'
-    | '/full-comparison'
+export type Route = (typeof ROUTES)[keyof typeof ROUTES]
 
 export type DashboardTab = (typeof DASHBOARD_TABS)[keyof typeof DASHBOARD_TABS]
 

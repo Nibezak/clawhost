@@ -1287,7 +1287,7 @@ const es: Translations = {
         chatConnecting: 'Conectando...',
         chatAuthenticating: 'Autenticando...',
         chatDisconnected: 'Desconectado',
-        chatError: 'Error de conexión',
+        chatError: 'Error de conexión!',
         chatConnected: 'Conectado',
         chatInputPlaceholder: 'Escribe un mensaje...',
         chatInputDisabled: 'Conéctate para chatear con este agente',

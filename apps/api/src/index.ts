@@ -8,7 +8,8 @@ const port = Number(process.env.PORT)
 
 const server = serve({
     fetch: app.fetch,
-    port
+    port,
+    hostname: '0.0.0.0'
 })
 
 setupTerminalSocket(server as Server)
