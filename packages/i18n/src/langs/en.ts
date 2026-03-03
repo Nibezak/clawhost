@@ -325,7 +325,15 @@ const en = {
         otpPreview: 'Your ClawHost sign-in code: {{code}}',
         otpHeading: 'Your sign-in code is:',
         otpExpiry:
-            'Code expires in 10 minutes. If this wasn’t you, ignore this email.'
+            'Code expires in 10 minutes. If this wasn’t you, ignore this email.',
+        changelogSubject: "What's New at ClawHost",
+        changelogPreview:
+            'Check out the latest updates to ClawHost: {{title}}',
+        changelogHeading: "What's New",
+        changelogButton: 'View Changelog',
+        changelogVisitButton: 'Visit ClawHost',
+        changelogFooter:
+            "You're receiving this because you have a ClawHost account."
     },
     auth: {
         signIn: 'Sign In',
@@ -461,7 +469,7 @@ const en = {
         newClaw: 'New Claw',
         noClawsYet: 'No Claws',
         noClawsDescription:
-            'No deployed claw was found. But you can deploy your first claw anytime starting from $10/m. Just AI it.',
+            'No deployed claw was found. But you can deploy your first claw anytime starting from $25/m. Just AI it.',
         deleteClaw: 'Delete Claw',
         deleteClawConfirmation: 'Are you sure you want to delete',
         deleteClawWarning:
@@ -917,7 +925,7 @@ const en = {
             'We compare against SimpleClaw, MyClaw.ai and more — feature by feature.',
         readyToOwnYourPrivacy: 'Ready to deploy OpenClaw?',
         ctaDescription:
-            'Get a dedicated server with OpenClaw pre-installed. Full root access, global locations, and ready in minutes. You own it at all times. Starting from $10.',
+            'Get a dedicated server with OpenClaw pre-installed. Full root access, global locations, and ready in minutes. You own it at all times. Starting from $25.',
         deployOpenClawNow: 'Deploy OpenClaw',
         selfHostInstead: 'Self Host Instead',
         noCreditCardRequired: 'Instant Setup',
@@ -941,7 +949,7 @@ const en = {
         noPostsDescription: 'Blog posts are coming soon. Check back later.',
         ctaTitle: 'Deploy OpenClaw with One Click',
         ctaDescription:
-            'Get a dedicated server with OpenClaw pre-installed. Full root access, global locations, and ready in minutes. You own it at all times. Starting from $10.',
+            'Get a dedicated server with OpenClaw pre-installed. Full root access, global locations, and ready in minutes. You own it at all times. Starting from $25.',
         ctaDeploy: 'Deploy OpenClaw',
         ctaGitHub: 'View on GitHub'
     },
@@ -1612,8 +1620,10 @@ const en = {
             'See how ClawHost compares to other OpenClaw hosting platforms.',
         badge: 'Comparison',
         feature: 'Platform',
-        lastUpdated: 'Last updated: February 2026',
+        compareWith: 'Compare with',
+        lastUpdated: 'Last updated: March 2026',
         competitorClawHost: 'ClawHost',
+        competitorLobsterFarm: 'LobsterFarm',
         competitorSimpleClaw: 'SimpleClaw',
         competitorMyClawAi: 'MyClaw.ai',
         competitorQuickClaw: 'QuickClaw',
@@ -1670,12 +1680,15 @@ const en = {
         fullyDedicated: 'Fully dedicated',
         shared: 'Shared',
         fullRootSsh: 'Full root + SSH',
+        sshOnRequest: 'SSH on request',
         noAccess: 'No access',
         thirtyPlusLocations: '30+ locations',
         limitedLocations: 'Limited',
-        fromTenMonth: 'From $10/mo',
+        fourLocations: '4 locations',
+        fromTwentyFiveMonth: 'From $25/mo',
         aboutFortyFourMonth: '~$44/mo avg',
         fromNineteenMonth: '$19–79/mo',
+        nineteenMonth: '$19/mo',
         clearSpecsPricing: 'Clear specs & pricing',
         unclearPricing: 'Unclear pricing',
         fixedTiers: '3 fixed tiers',
@@ -1693,10 +1706,12 @@ const en = {
         allChannels: 'WhatsApp, Telegram, Discord, Slack, Signal',
         telegramDiscord: 'Telegram, Discord',
         discordGithubSlack: 'Discord, GitHub, Slack',
+        telegramGmailWhatsapp: 'Telegram, Gmail, WhatsApp',
         appOnly: 'App only',
         fullConfig: 'Full configuration',
         limitedConfig: 'Limited',
         zipExport: 'ZIP export',
+        serverTransfer: 'Server transfer',
         noExport: 'No export',
         volumeStorage: 'Volume storage',
         noBackups: 'No backups',
@@ -1710,6 +1725,7 @@ const en = {
         liveLogs: 'Live logs',
         oneClickRepair: 'One-click repair',
         emailGithub: 'Email, GitHub',
+        humanSupport: 'Human support',
         communityOnly: 'Community only',
         appSupport: 'App support',
         prioritySupport: '24/7 support (Pro+)',
@@ -1719,6 +1735,7 @@ const en = {
         comingSoon: 'Coming soon',
         iosMacOs: 'iOS & macOS',
         macOsOnly: 'macOS only',
+        viaTelegram: 'Via Telegram',
         builtInChat: 'Built-in',
         builtInTerminal: 'No SSH needed',
         notAvailable: 'Not available',

@@ -18,6 +18,7 @@ const Terms: FC = (): ReactNode => {
             <PageTitle
                 title={t('terms.title')}
                 description={t('terms.description')}
+                image={`https://${getBaseDomain()}/tos-thumbnail.webp`}
                 url={`https://${getBaseDomain()}/${PATHS.TERMS}`}
             />
             <PageBackground />

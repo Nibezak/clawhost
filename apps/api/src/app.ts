@@ -35,7 +35,7 @@ app.use(
                   'http://localhost:1111'
               ]
             : ['https://clawhost.cloud', 'https://www.clawhost.cloud'],
-        allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         allowHeaders: ['Content-Type', 'Authorization'],
         maxAge: 86400
     })

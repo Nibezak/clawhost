@@ -594,6 +594,13 @@ export interface OtpCodeEmailProps {
     code: string
 }
 
+export interface ChangelogEmailProps {
+    title: string
+    description: string
+    features: string[]
+    date: string
+}
+
 export interface CreateSSHKeyBody {
     name: string
     publicKey: string

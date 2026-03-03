@@ -1,3 +1,3 @@
-const INSTAGRAM_URL = 'https://instagram.com/clawhost.cloud'
+const INSTAGRAM_URL = 'https://instagram.com/tryclawhost'
 
 export default INSTAGRAM_URL

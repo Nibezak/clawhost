@@ -127,6 +127,8 @@ const handleConnection = (ws: WebSocket, ip: string, password: string) => {
         username: 'root',
         password,
         readyTimeout: 10000,
+        keepaliveInterval: 15000,
+        keepaliveCountMax: 3,
         algorithms: {
             serverHostKey: ['ssh-ed25519', 'ssh-rsa', 'ecdsa-sha2-nistp256']
         }

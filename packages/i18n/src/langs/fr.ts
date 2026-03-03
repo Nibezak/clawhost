@@ -360,7 +360,15 @@ const fr: Translations = {
         otpPreview: 'Votre code de connexion ClawHost : {{code}}',
         otpHeading: 'Votre code de connexion est :',
         otpExpiry:
-            "Le code expire dans 10 minutes. Si ce n'était pas vous, ignorez cet email."
+            "Le code expire dans 10 minutes. Si ce n'était pas vous, ignorez cet email.",
+        changelogSubject: 'Les nouveautés de ClawHost',
+        changelogPreview:
+            'Découvrez les dernières mises à jour de ClawHost : {{title}}',
+        changelogHeading: 'Nouveautés',
+        changelogButton: 'Voir le changelog',
+        changelogVisitButton: 'Visiter ClawHost',
+        changelogFooter:
+            'Vous recevez cet email car vous avez un compte ClawHost.'
     },
     auth: {
         signIn: 'Se connecter',
@@ -503,7 +511,7 @@ const fr: Translations = {
         newClaw: 'Nouveau Claw',
         noClawsYet: 'Aucun Claw',
         noClawsDescription:
-            "Aucun claw déployé n'a été trouvé. Mais vous pouvez déployer votre premier claw à tout moment à partir de 10$/mois. Lancez-vous avec l'IA.",
+            "Aucun claw déployé n'a été trouvé. Mais vous pouvez déployer votre premier claw à tout moment à partir de 25$/mois. Lancez-vous avec l'IA.",
         deleteClaw: 'Supprimer le Claw',
         deleteClawConfirmation: 'Êtes-vous sûr de vouloir supprimer',
         deleteClawWarning:
@@ -975,7 +983,7 @@ const fr: Translations = {
             'Nous comparons avec SimpleClaw, MyClaw.ai et plus — fonctionnalité par fonctionnalité.',
         readyToOwnYourPrivacy: 'Prêt à déployer OpenClaw ?',
         ctaDescription:
-            'Obtenez un serveur dédié avec OpenClaw préinstallé. Accès root complet, emplacements mondiaux et prêt en quelques minutes. Vous en êtes propriétaire à tout moment. À partir de 10 $.',
+            'Obtenez un serveur dédié avec OpenClaw préinstallé. Accès root complet, emplacements mondiaux et prêt en quelques minutes. Vous en êtes propriétaire à tout moment. À partir de 25 $.',
         deployOpenClawNow: 'Déployer OpenClaw',
         selfHostInstead: 'Auto-héberger à la place',
         noCreditCardRequired: 'Installation instantanée',
@@ -1000,7 +1008,7 @@ const fr: Translations = {
             'Les articles de blog arrivent bientôt. Revenez plus tard.',
         ctaTitle: 'Déployez OpenClaw en un clic',
         ctaDescription:
-            'Obtenez un serveur dédié avec OpenClaw préinstallé. Accès root complet, emplacements mondiaux et prêt en quelques minutes. Vous en êtes propriétaire à tout moment. À partir de 10 $.',
+            'Obtenez un serveur dédié avec OpenClaw préinstallé. Accès root complet, emplacements mondiaux et prêt en quelques minutes. Vous en êtes propriétaire à tout moment. À partir de 25 $.',
         ctaDeploy: 'Déployer OpenClaw',
         ctaGitHub: 'Voir sur GitHub'
     },
@@ -1705,8 +1713,10 @@ const fr: Translations = {
             "Découvrez comment ClawHost se compare aux autres plateformes d'hébergement OpenClaw.",
         badge: 'Comparaison',
         feature: 'Plateforme',
-        lastUpdated: 'Dernière mise à jour : février 2026',
+        compareWith: 'Comparer avec',
+        lastUpdated: 'Dernière mise à jour : mars 2026',
         competitorClawHost: 'ClawHost',
+        competitorLobsterFarm: 'LobsterFarm',
         competitorSimpleClaw: 'SimpleClaw',
         competitorMyClawAi: 'MyClaw.ai',
         competitorQuickClaw: 'QuickClaw',
@@ -1763,12 +1773,15 @@ const fr: Translations = {
         fullyDedicated: 'Entièrement dédié',
         shared: 'Partagé',
         fullRootSsh: 'Root + SSH complet',
+        sshOnRequest: 'SSH sur demande',
         noAccess: "Pas d'accès",
         thirtyPlusLocations: '30+ emplacements',
         limitedLocations: 'Limité',
-        fromTenMonth: 'À partir de 10 $/mois',
+        fourLocations: '4 emplacements',
+        fromTwentyFiveMonth: 'À partir de 25 $/mois',
         aboutFortyFourMonth: '~44 $/mois en moyenne',
         fromNineteenMonth: '19–79 $/mois',
+        nineteenMonth: '19 $/mois',
         clearSpecsPricing: 'Spécifications et prix clairs',
         unclearPricing: 'Tarification floue',
         fixedTiers: '3 niveaux fixes',
@@ -1786,10 +1799,12 @@ const fr: Translations = {
         allChannels: 'WhatsApp, Telegram, Discord, Slack, Signal',
         telegramDiscord: 'Telegram, Discord',
         discordGithubSlack: 'Discord, GitHub, Slack',
+        telegramGmailWhatsapp: 'Telegram, Gmail, WhatsApp',
         appOnly: 'Application uniquement',
         fullConfig: 'Configuration complète',
         limitedConfig: 'Limitée',
         zipExport: 'Export ZIP',
+        serverTransfer: 'Transfert de serveur',
         noExport: "Pas d'export",
         volumeStorage: 'Stockage en volumes',
         noBackups: 'Pas de sauvegardes',
@@ -1803,6 +1818,7 @@ const fr: Translations = {
         liveLogs: 'Journaux en direct',
         oneClickRepair: 'Réparation en un clic',
         emailGithub: 'Email, GitHub',
+        humanSupport: 'Support humain',
         communityOnly: 'Communauté uniquement',
         appSupport: 'Support via application',
         prioritySupport: 'Support 24/7 (Pro+)',
@@ -1812,6 +1828,7 @@ const fr: Translations = {
         comingSoon: 'Bientôt disponible',
         iosMacOs: 'iOS & macOS',
         macOsOnly: 'macOS uniquement',
+        viaTelegram: 'Via Telegram',
         builtInChat: 'Intégré',
         builtInTerminal: 'Sans SSH',
         notAvailable: 'Non disponible',

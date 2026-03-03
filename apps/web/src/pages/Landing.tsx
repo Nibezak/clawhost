@@ -524,7 +524,7 @@ const Landing: FC = (): ReactNode => {
                         >
                             <div>
                                 <div className='font-clash text-foreground text-3xl font-bold md:text-4xl'>
-                                    $10{t('landing.perMonth')}
+                                    $25{t('landing.perMonth')}
                                 </div>
                                 <div className='text-muted-foreground text-sm'>
                                     {t('landing.startingPrice')}

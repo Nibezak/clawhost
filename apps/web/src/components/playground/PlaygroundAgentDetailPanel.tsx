@@ -211,7 +211,7 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
 
     useEffect(() => {
         if (configData) {
-            setAgentName(configData.agent.name || agent.name)
+            setAgentName(agent.name)
             setNameError(null)
 
             const model =

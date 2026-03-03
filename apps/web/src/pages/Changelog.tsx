@@ -18,6 +18,7 @@ const Changelog: FC = (): ReactNode => {
             <PageTitle
                 title={t('changelog.title')}
                 description={t('changelog.description')}
+                image={`https://${getBaseDomain()}/changelog-thumbnail.webp`}
                 url={`https://${getBaseDomain()}/${PATHS.CHANGELOG}`}
             />
             <PageBackground />

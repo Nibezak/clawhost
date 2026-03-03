@@ -1,3 +1,3 @@
-const TWITTER_URL = 'https://x.com/claw_host'
+const TWITTER_URL = 'https://x.com/tryclawhost'
 
 export default TWITTER_URL
