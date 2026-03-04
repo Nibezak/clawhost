@@ -112,7 +112,7 @@ const PlaygroundAgentNode: FC<PlaygroundAgentNodeProps> = ({
                     </span>
                 </div>
 
-                {agent.model && (
+                {typeof agent.model === 'string' && (
                     <div className='bg-foreground/5 mt-2 inline-flex rounded-md px-2 py-0.5'>
                         <span className='text-muted-foreground truncate text-[11px]'>
                             {agent.model}

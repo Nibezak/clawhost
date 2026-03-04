@@ -49,7 +49,7 @@ import {
     Skeleton,
     Checkbox
 } from '@/components/ui'
-import { api, TRUNCATE_LENGTHS } from '@/lib'
+import { api, TRUNCATE_LENGTHS, copyToClipboard } from '@/lib'
 import { useUIStore } from '@/lib/store'
 import { aiModels, validateAgentName } from '@/lib/claw-utils'
 import { PLAYGROUND_AGENTS_QUERY_KEY } from '@/hooks'
@@ -380,9 +380,9 @@ const PlaygroundAgentDetailPanel: FC<PlaygroundAgentDetailPanelProps> = ({
         [configData]
     )
 
-    const handleCopyApiKey = useCallback(() => {
+    const handleCopyApiKey = useCallback(async () => {
         if (apiKeyValue) {
-            navigator.clipboard.writeText(apiKeyValue)
+            await copyToClipboard(apiKeyValue)
             setCopied(true)
             setTimeout(() => setCopied(false), 2000)
         }

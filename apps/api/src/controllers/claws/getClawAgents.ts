@@ -14,7 +14,6 @@ const KNOWN_AGENT_STATUSES = new Set([
     'running',
     'stopped',
     'idle',
-    'off',
     'error',
     'crashed',
     'starting',

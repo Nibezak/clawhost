@@ -21,7 +21,15 @@ import type {
     DatacenterAvailability
 } from '@/ts/Interfaces'
 
-import { RequestClient } from '@openclaw/shared'
+import { RequestClient, clawStatus } from '@openclaw/shared'
+
+const mapStatus = (hetznerStatus: string): string => {
+    const statusMap: Record<string, string> = {
+        off: clawStatus.stopped,
+        init: clawStatus.initializing
+    }
+    return statusMap[hetznerStatus] || hetznerStatus
+}
 
 const getClient = () => {
     const token = process.env.HETZNER_API_TOKEN
@@ -82,7 +90,7 @@ const hetzner: CloudProvider = {
             `/servers/${serverId}`
         )
         return {
-            status: data.server.status,
+            status: mapStatus(data.server.status),
             ip: data.server.public_net.ipv4.ip
         }
     },
@@ -95,7 +103,7 @@ const hetzner: CloudProvider = {
 
         for (const server of first.servers) {
             result.set(String(server.id), {
-                status: server.status,
+                status: mapStatus(server.status),
                 ip: server.public_net.ipv4.ip
             })
         }
@@ -113,7 +121,7 @@ const hetzner: CloudProvider = {
             for (const data of remaining) {
                 for (const server of data.servers) {
                     result.set(String(server.id), {
-                        status: server.status,
+                        status: mapStatus(server.status),
                         ip: server.public_net.ipv4.ip
                     })
                 }

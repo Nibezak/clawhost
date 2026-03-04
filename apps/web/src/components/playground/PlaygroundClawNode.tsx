@@ -35,6 +35,7 @@ import {
 import {
     ClawCardDropdownMenu,
     ClawCardDialogs,
+    ClawCredentialsDialog,
     ClawDiagnosticsDialog,
     ClawLogsDialog,
     ClawConfigDialog
@@ -62,12 +63,10 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
     const status = statusConfigs[claw.status] || statusConfigs.unknown
 
     const isRunning = claw.status === clawStatus.running
-    const isOffline =
-        claw.status === clawStatus.stopped || claw.status === clawStatus.off
     const isUnreachable = claw.status === clawStatus.unreachable
+    const canShowAgents = isRunning || isUnreachable
 
     const { showToast } = useUIStore()
-    const [isCopyingCredentials, setIsCopyingCredentials] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showStopModal, setShowStopModal] = useState(false)
     const [showRestartModal, setShowRestartModal] = useState(false)
@@ -76,6 +75,9 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
     const [showLogs, setShowLogs] = useState(false)
     const [showConfig, setShowConfig] = useState(false)
     const [showReinstallModal, setShowReinstallModal] = useState(false)
+    const [showCredentials, setShowCredentials] = useState(false)
+    const [credentialsPassword, setCredentialsPassword] = useState<string | null>(null)
+    const [isFetchingCredentials, setIsFetchingCredentials] = useState(false)
     const [isExporting, setIsExporting] = useState(false)
     const [showAddAgent, setShowAddAgent] = useState(false)
 
@@ -102,57 +104,12 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
         reinstallMutation.isPending ||
         cancelPendingMutation.isPending ||
         isExporting ||
-        isCopyingCredentials
+        isFetchingCredentials
 
     const isScheduledForDeletion = !!claw.deletionScheduledAt
     const hasActionItems =
         claw.status === clawStatus.running ||
-        claw.status === clawStatus.stopped ||
-        claw.status === clawStatus.off
-
-    const copySSHWithKey = () => {
-        const command = `ssh root@${claw.ip}`
-        navigator.clipboard.writeText(command)
-        showToast(t('dashboard.sshCommandCopied'), 'success')
-    }
-
-    const copySSHWithPassword = async () => {
-        setIsCopyingCredentials(true)
-        try {
-            const res = await api.getClawCredentials(claw.id)
-            if (res.rootPassword) {
-                const command = `sshpass -p '${res.rootPassword}' ssh -o StrictHostKeyChecking=no root@${claw.ip}`
-                navigator.clipboard.writeText(command)
-                showToast(
-                    t('dashboard.sshCommandWithPasswordCopied'),
-                    'success'
-                )
-            } else {
-                copySSHWithKey()
-            }
-        } catch {
-            showToast(t('errors.noPasswordAvailable'), 'error')
-        } finally {
-            setIsCopyingCredentials(false)
-        }
-    }
-
-    const copyPassword = async () => {
-        setIsCopyingCredentials(true)
-        try {
-            const res = await api.getClawCredentials(claw.id)
-            if (!res.rootPassword) {
-                showToast(t('errors.noPasswordAvailable'), 'warning')
-                return
-            }
-            navigator.clipboard.writeText(res.rootPassword)
-            showToast(t('dashboard.passwordCopiedToClipboard'), 'success')
-        } catch {
-            showToast(t('errors.noPasswordAvailable'), 'error')
-        } finally {
-            setIsCopyingCredentials(false)
-        }
-    }
+        claw.status === clawStatus.stopped
 
     const handleUpdateInstance = () => {
         repairMutation.mutate(claw.id, {
@@ -205,6 +162,23 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
         })
     }
 
+    const handleShowCredentials = async () => {
+        setIsFetchingCredentials(true)
+        try {
+            if (claw.hasRootPassword) {
+                const res = await api.getClawCredentials(claw.id)
+                setCredentialsPassword(res.rootPassword || null)
+            } else {
+                setCredentialsPassword(null)
+            }
+            setShowCredentials(true)
+        } catch {
+            showToast(t('errors.noPasswordAvailable'), 'error')
+        } finally {
+            setIsFetchingCredentials(false)
+        }
+    }
+
     const actions: ClawCardActions = {
         onStart: () =>
             startMutation.mutate(claw.id, {
@@ -230,10 +204,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
         onShowConfig: () => setShowConfig(true),
         onUpdateInstance: handleUpdateInstance,
         onShowReinstallModal: () => setShowReinstallModal(true),
-        onCopySSH: claw.hasRootPassword ? copySSHWithPassword : copySSHWithKey,
-        onCopySSHWithKey: copySSHWithKey,
-        onCopySSHWithPassword: copySSHWithPassword,
-        onCopyPassword: copyPassword,
+        onShowCredentials: handleShowCredentials,
         onExport: handleExport,
         onResumeCheckout: () => {
             if (claw.checkoutUrl) {
@@ -252,7 +223,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                 className={`playground-node-enter bg-popover relative w-[280px] cursor-pointer rounded-xl border ${
                     isSelected
                         ? 'border-[#ef5350]/50 shadow-[0_0_20px_rgba(239,83,80,0.15)]'
-                        : isOffline || isUnreachable
+                        : !canShowAgents
                           ? 'border-border opacity-50'
                           : 'border-border'
                 } ${isRunning && !isSelected ? 'shadow-[0_0_30px_rgba(239,83,80,0.08)]' : ''}`}
@@ -317,124 +288,167 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                                     compact
                                 />
                             </div>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation()
-                                            if (!isLoadingAgents)
-                                                setShowAddAgent(true)
-                                        }}
-                                        onPointerDown={(e) =>
-                                            e.stopPropagation()
-                                        }
-                                        onMouseDown={(e) => e.stopPropagation()}
-                                        disabled={isLoadingAgents}
-                                        className={`shrink-0 rounded-md p-1 transition-colors ${
-                                            isLoadingAgents
-                                                ? 'text-muted-foreground/50 cursor-not-allowed'
-                                                : 'text-muted-foreground hover:bg-foreground/10 hover:text-foreground'
-                                        }`}
-                                    >
-                                        <PlusIcon
-                                            className='h-3.5 w-3.5'
-                                            weight='bold'
-                                        />
-                                    </button>
-                                </TooltipTrigger>
-                                <TooltipContent side='top'>
-                                    <p>{t('playground.addAgent')}</p>
-                                </TooltipContent>
-                            </Tooltip>
+                            {canShowAgents && (
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation()
+                                                if (!isLoadingAgents)
+                                                    setShowAddAgent(true)
+                                            }}
+                                            onPointerDown={(e) =>
+                                                e.stopPropagation()
+                                            }
+                                            onMouseDown={(e) =>
+                                                e.stopPropagation()
+                                            }
+                                            disabled={isLoadingAgents}
+                                            className={`shrink-0 rounded-md p-1 transition-colors ${
+                                                isLoadingAgents
+                                                    ? 'text-muted-foreground/50 cursor-not-allowed'
+                                                    : 'text-muted-foreground hover:bg-foreground/10 hover:text-foreground'
+                                            }`}
+                                        >
+                                            <PlusIcon
+                                                className='h-3.5 w-3.5'
+                                                weight='bold'
+                                            />
+                                        </button>
+                                    </TooltipTrigger>
+                                    <TooltipContent side='top'>
+                                        <p>{t('playground.addAgent')}</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            )}
                         </>
                     )}
                 </div>
 
-                <div className='px-4 py-3'>
-                    {claw.status === clawStatus.running &&
-                        agentCount > 0 &&
-                        (claw.provider === clawProvider.local &&
-                        claw.subdomain ? (
-                            <p className='text-muted-foreground mb-2 truncate text-xs'>
-                                {claw.subdomain}.clawhost
-                            </p>
-                        ) : claw.provider !== clawProvider.local ? (
-                            <p className='text-muted-foreground mb-2 truncate text-xs'>
-                                {claw.subdomain || generateSlug(claw.id)}.
-                                {getBaseDomain()}
-                            </p>
-                        ) : null)}
+                {canShowAgents && (
+                    <div className='px-4 py-3'>
+                        {claw.status === clawStatus.running &&
+                            agentCount > 0 &&
+                            (claw.provider === clawProvider.local &&
+                            claw.subdomain ? (
+                                <p className='text-muted-foreground mb-2 truncate text-xs'>
+                                    {claw.subdomain}.clawhost
+                                </p>
+                            ) : claw.provider !== clawProvider.local ? (
+                                <p className='text-muted-foreground mb-2 truncate text-xs'>
+                                    {claw.subdomain || generateSlug(claw.id)}.
+                                    {getBaseDomain()}
+                                </p>
+                            ) : null)}
 
-                    <div className='flex items-center gap-2'>
-                        {isLoadingAgents ? (
-                            <div className='bg-foreground/5 flex items-center gap-1.5 rounded-md px-2 py-1'>
-                                <div className='border-border border-t-foreground/40 h-3 w-3 animate-spin rounded-full border' />
-                                <span className='text-muted-foreground text-xs'>
-                                    {t('playground.loadingAgents')}
-                                </span>
-                            </div>
-                        ) : isOffline || isUnreachable ? (
-                            <div className='bg-muted-foreground/10 flex items-center gap-1.5 rounded-md px-2 py-1'>
-                                <span className='text-muted-foreground text-xs'>
-                                    {t('playground.offline')}
-                                </span>
-                            </div>
-                        ) : agentCount === 0 ? (
-                            <div className='bg-foreground/5 flex items-center gap-1.5 rounded-md px-2 py-1'>
-                                <span className='text-muted-foreground text-xs'>
-                                    {t('playground.noAgents')}
-                                </span>
-                            </div>
-                        ) : (
-                            <div className='flex items-center gap-1.5 rounded-md bg-[#ef5350]/10 px-2 py-1'>
-                                <AndroidLogoIcon
-                                    className='h-3 w-3 text-[#ef5350]'
-                                    weight='fill'
-                                />
-                                <span className='text-xs text-[#ef5350]'>
-                                    {agentCount === 1
-                                        ? t('playground.agentCount', {
-                                              count: String(agentCount)
-                                          })
-                                        : t('playground.agentCountPlural', {
-                                              count: String(agentCount)
-                                          })}
-                                </span>
-                            </div>
-                        )}
-                        {isScheduledForDeletion && (
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <div className='bg-muted-foreground/10 flex items-center gap-1.5 rounded-md px-2 py-1'>
-                                        <ClockIcon
-                                            className='text-muted-foreground h-3 w-3'
-                                            weight='fill'
-                                        />
-                                        <span className='text-muted-foreground text-xs'>
+                        <div className='flex items-center gap-2'>
+                            {isLoadingAgents ? (
+                                <div className='bg-foreground/5 flex items-center gap-1.5 rounded-md px-2 py-1'>
+                                    <div className='border-border border-t-foreground/40 h-3 w-3 animate-spin rounded-full border' />
+                                    <span className='text-muted-foreground text-xs'>
+                                        {t('playground.loadingAgents')}
+                                    </span>
+                                </div>
+                            ) : isUnreachable ? (
+                                <div className='bg-muted-foreground/10 flex items-center gap-1.5 rounded-md px-2 py-1'>
+                                    <span className='text-muted-foreground text-xs'>
+                                        {t('playground.offline')}
+                                    </span>
+                                </div>
+                            ) : agentCount === 0 ? (
+                                <div className='bg-foreground/5 flex items-center gap-1.5 rounded-md px-2 py-1'>
+                                    <span className='text-muted-foreground text-xs'>
+                                        {t('playground.noAgents')}
+                                    </span>
+                                </div>
+                            ) : (
+                                <div className='flex items-center gap-1.5 rounded-md bg-[#ef5350]/10 px-2 py-1'>
+                                    <AndroidLogoIcon
+                                        className='h-3 w-3 text-[#ef5350]'
+                                        weight='fill'
+                                    />
+                                    <span className='text-xs text-[#ef5350]'>
+                                        {agentCount === 1
+                                            ? t('playground.agentCount', {
+                                                  count: String(agentCount)
+                                              })
+                                            : t('playground.agentCountPlural', {
+                                                  count: String(agentCount)
+                                              })}
+                                    </span>
+                                </div>
+                            )}
+                            {isScheduledForDeletion && (
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <div className='bg-muted-foreground/10 flex items-center gap-1.5 rounded-md px-2 py-1'>
+                                            <ClockIcon
+                                                className='text-muted-foreground h-3 w-3'
+                                                weight='fill'
+                                            />
+                                            <span className='text-muted-foreground text-xs'>
+                                                {t(
+                                                    'dashboard.scheduledDeletionShort',
+                                                    {
+                                                        date: new Date(
+                                                            claw.deletionScheduledAt!
+                                                        ).toLocaleDateString(
+                                                            getLocale(),
+                                                            {
+                                                                month: 'short',
+                                                                day: 'numeric'
+                                                            }
+                                                        )
+                                                    }
+                                                )}
+                                            </span>
+                                        </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent side='top'>
+                                        <p>
                                             {t(
-                                                'dashboard.scheduledDeletionShort',
-                                                {
-                                                    date: new Date(
-                                                        claw.deletionScheduledAt!
-                                                    ).toLocaleDateString(
-                                                        getLocale(),
-                                                        {
-                                                            month: 'short',
-                                                            day: 'numeric'
-                                                        }
-                                                    )
-                                                }
+                                                'dashboard.scheduledForDeletion'
                                             )}
-                                        </span>
-                                    </div>
-                                </TooltipTrigger>
-                                <TooltipContent side='top'>
-                                    <p>{t('dashboard.scheduledForDeletion')}</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        )}
+                                        </p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            )}
+                        </div>
                     </div>
-                </div>
+                )}
+                {!canShowAgents && isScheduledForDeletion && (
+                    <div className='px-4 py-3'>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <div className='bg-muted-foreground/10 flex items-center gap-1.5 rounded-md px-2 py-1'>
+                                    <ClockIcon
+                                        className='text-muted-foreground h-3 w-3'
+                                        weight='fill'
+                                    />
+                                    <span className='text-muted-foreground text-xs'>
+                                        {t(
+                                            'dashboard.scheduledDeletionShort',
+                                            {
+                                                date: new Date(
+                                                    claw.deletionScheduledAt!
+                                                ).toLocaleDateString(
+                                                    getLocale(),
+                                                    {
+                                                        month: 'short',
+                                                        day: 'numeric'
+                                                    }
+                                                )
+                                            }
+                                        )}
+                                    </span>
+                                </div>
+                            </TooltipTrigger>
+                            <TooltipContent side='top'>
+                                <p>{t('dashboard.scheduledForDeletion')}</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </div>
+                )}
 
                 <Handle
                     type='source'
@@ -480,6 +494,12 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                 clawId={claw.id}
                 open={showConfig}
                 onOpenChange={setShowConfig}
+            />
+            <ClawCredentialsDialog
+                clawIp={claw.ip || ''}
+                rootPassword={credentialsPassword}
+                open={showCredentials}
+                onOpenChange={setShowCredentials}
             />
             <CreateAgentModal
                 clawId={claw.id}

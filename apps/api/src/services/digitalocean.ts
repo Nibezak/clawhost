@@ -47,7 +47,7 @@ const mapStatus = (doStatus: string): string => {
     const statusMap: Record<string, string> = {
         new: clawStatus.initializing,
         active: clawStatus.running,
-        off: clawStatus.off,
+        off: clawStatus.stopped,
         archive: clawStatus.stopped
     }
     return statusMap[doStatus] || doStatus

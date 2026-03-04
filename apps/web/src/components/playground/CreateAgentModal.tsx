@@ -28,7 +28,7 @@ import {
     TooltipTrigger,
     TooltipContent
 } from '@/components/ui'
-import { api } from '@/lib'
+import { api, copyToClipboard } from '@/lib'
 import { useUIStore } from '@/lib/store'
 import { aiModels, validateAgentName } from '@/lib/claw-utils'
 import { PLAYGROUND_AGENTS_QUERY_KEY } from '@/hooks'
@@ -115,9 +115,9 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
         setPickedClawId('')
     }, [])
 
-    const handleCopyApiKey = useCallback(() => {
+    const handleCopyApiKey = useCallback(async () => {
         if (existingKeyValue) {
-            navigator.clipboard.writeText(existingKeyValue)
+            await copyToClipboard(existingKeyValue)
             setCopied(true)
             setTimeout(() => setCopied(false), 2000)
         }

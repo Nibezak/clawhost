@@ -4,6 +4,7 @@ import type { CopyableFieldProps } from '@/ts/Interfaces'
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
 import { useUIStore } from '@/lib/store'
+import { copyToClipboard } from '@/lib'
 import {
     CheckIcon,
     CopyIcon,
@@ -21,8 +22,8 @@ const CopyableField: FC<CopyableFieldProps> = ({
     const [isRevealed, setIsRevealed] = useState(false)
     const { showToast } = useUIStore()
 
-    const handleCopy = () => {
-        navigator.clipboard.writeText(value)
+    const handleCopy = async () => {
+        await copyToClipboard(value)
         setIsCopied(true)
         showToast(t('common.copiedWithLabel', { label }), 'success')
         setTimeout(() => setIsCopied(false), 2000)

@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import { t } from '@openclaw/i18n'
 import { clawProvider } from '@openclaw/shared'
 import { useUIStore } from '@/lib/store'
+import { copyToClipboard } from '@/lib'
 import {
     usePurchaseClaw,
     usePlans,
@@ -759,8 +760,8 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                     type='button'
                                                     variant='ghost'
                                                     size='icon'
-                                                    onClick={() => {
-                                                        navigator.clipboard.writeText(
+                                                    onClick={async () => {
+                                                        await copyToClipboard(
                                                             password
                                                         )
                                                         showToast(

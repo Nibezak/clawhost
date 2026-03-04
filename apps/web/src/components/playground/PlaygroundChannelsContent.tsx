@@ -30,7 +30,7 @@ import {
     TooltipTrigger,
     TooltipContent
 } from '@/components/ui'
-import { api } from '@/lib'
+import { api, copyToClipboard } from '@/lib'
 import { useUIStore } from '@/lib/store'
 
 const CHANNEL_DEFINITIONS: ChannelDefinition[] = [
@@ -222,8 +222,8 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
     }, [])
 
     const copyField = useCallback(
-        (value: string) => {
-            navigator.clipboard.writeText(value)
+        async (value: string) => {
+            await copyToClipboard(value)
             showToast(t('common.copied'), 'success')
         },
         [showToast]

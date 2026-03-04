@@ -11,7 +11,7 @@ import {
     CopyIcon,
     CheckIcon
 } from '@phosphor-icons/react'
-import { getLocale } from '@/lib'
+import { getLocale, copyToClipboard } from '@/lib'
 import useUIStore from '@/lib/store/useUIStore'
 import ChatMarkdown from '@/components/playground/AgentChat/ChatMarkdown'
 import ChatLightbox from '@/components/playground/AgentChat/ChatLightbox'
@@ -62,8 +62,8 @@ const ChatBubble: FC<ChatBubbleProps> = ({
     const [copied, setCopied] = useState(false)
     const { showToast } = useUIStore()
 
-    const copyMessage = () => {
-        navigator.clipboard.writeText(message.content)
+    const copyMessage = async () => {
+        await copyToClipboard(message.content)
         showToast(t('common.copied'), 'success')
         setCopied(true)
         setTimeout(() => setCopied(false), 2000)

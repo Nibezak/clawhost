@@ -21,7 +21,6 @@ import {
     DotsThreeOutlineIcon,
     TerminalIcon,
     CircleNotchIcon,
-    CopyIcon,
     ClockCountdownIcon,
     FolderSimpleIcon,
     ArrowsClockwiseIcon,
@@ -71,8 +70,7 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                 )}
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end' collisionPadding={8}>
-                {(claw.status === clawStatus.stopped ||
-                    claw.status === clawStatus.off) && (
+                {claw.status === clawStatus.stopped && (
                     <DropdownMenuItem
                         onClick={actions.onStart}
                         disabled={isLoading}
@@ -118,16 +116,10 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                 {claw.provider !== clawProvider.local && claw.ip && (
                     <>
                         {hasActionItems && <DropdownMenuSeparator />}
-                        <DropdownMenuItem onClick={actions.onCopySSH}>
+                        <DropdownMenuItem onClick={actions.onShowCredentials}>
                             <TerminalIcon className='mr-2 h-4 w-4' />
-                            {t('dashboard.connect')}
+                            {t('dashboard.viewServerCredentials')}
                         </DropdownMenuItem>
-                        {claw.hasRootPassword && (
-                            <DropdownMenuItem onClick={actions.onCopyPassword}>
-                                <CopyIcon className='mr-2 h-4 w-4' />
-                                {t('dashboard.copyPassword')}
-                            </DropdownMenuItem>
-                        )}
                     </>
                 )}
                 {claw.ip && (

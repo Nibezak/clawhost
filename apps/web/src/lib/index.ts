@@ -11,6 +11,7 @@ import getBaseDomain from '@/lib/getBaseDomain'
 import getLocale from '@/lib/getLocale'
 import TRUNCATE_LENGTHS from '@/lib/truncateLengths'
 import fireConfetti from '@/lib/fireConfetti'
+import copyToClipboard from '@/lib/copyToClipboard'
 
 export {
     api,
@@ -25,5 +26,6 @@ export {
     getBaseDomain,
     getLocale,
     TRUNCATE_LENGTHS,
-    fireConfetti
+    fireConfetti,
+    copyToClipboard
 }
