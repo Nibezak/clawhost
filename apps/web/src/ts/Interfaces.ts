@@ -286,6 +286,9 @@ export interface PageTitleProps {
     type?: string
     noIndex?: boolean
     keywords?: string[]
+    publishedAt?: string
+    modifiedAt?: string
+    author?: string
 }
 
 export interface PageHeaderProps {

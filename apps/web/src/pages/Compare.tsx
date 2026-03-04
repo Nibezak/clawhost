@@ -8,6 +8,7 @@ import { t } from '@openclaw/i18n'
 import {
     BlogCTA,
     Header,
+    JsonLd,
     LandingFooter,
     PageBackground,
     PageTitle
@@ -75,6 +76,26 @@ const Compare: FC = (): ReactNode => {
                 description={t('compare.description')}
                 image={`https://${getBaseDomain()}/full-comparison-thumbnail.webp`}
                 url={`https://${getBaseDomain()}/${PATHS.COMPARE}`}
+            />
+            <JsonLd
+                data={{
+                    '@context': 'https://schema.org',
+                    '@type': 'BreadcrumbList',
+                    itemListElement: [
+                        {
+                            '@type': 'ListItem',
+                            position: 1,
+                            name: t('common.brandName'),
+                            item: `https://${getBaseDomain()}`
+                        },
+                        {
+                            '@type': 'ListItem',
+                            position: 2,
+                            name: t('compare.title'),
+                            item: `https://${getBaseDomain()}/${PATHS.COMPARE}`
+                        }
+                    ]
+                }}
             />
             <PageBackground />
             <Header />

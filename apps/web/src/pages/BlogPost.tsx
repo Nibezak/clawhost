@@ -55,6 +55,9 @@ const BlogPost: FC = (): ReactNode => {
                 url={postUrl}
                 type='article'
                 keywords={meta.tags}
+                publishedAt={meta.publishedAt}
+                modifiedAt={meta.updatedAt}
+                author={meta.author}
             />
             <JsonLd
                 data={{

@@ -28,6 +28,8 @@ const BlogCard: FC<BlogCardProps> = ({ post }): ReactNode => {
                             src={post.coverImage}
                             alt={post.title}
                             className='h-full w-full object-cover transition group-hover:scale-105'
+                            width={640}
+                            height={360}
                             loading='lazy'
                         />
                     ) : (

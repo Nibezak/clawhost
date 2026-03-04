@@ -35,7 +35,10 @@ const PageTitle: FC<PageTitleProps> = ({
     url,
     type,
     noIndex,
-    keywords
+    keywords,
+    publishedAt,
+    modifiedAt,
+    author
 }): ReactNode => {
     useEffect(() => {
         const fullTitle = `${title} - ${t('common.brandName')}`
@@ -75,15 +78,17 @@ const PageTitle: FC<PageTitleProps> = ({
     useEffect(() => {
         if (keywords && keywords.length > 0) {
             setMetaTag('name', 'keywords', keywords.join(', '))
-            document
-                .querySelectorAll('meta[property="article:tag"]')
-                .forEach((el) => el.remove())
-            keywords.forEach((tag) => {
-                const meta = document.createElement('meta')
-                meta.setAttribute('property', 'article:tag')
-                meta.content = tag
-                document.head.appendChild(meta)
-            })
+            if (type === 'article') {
+                document
+                    .querySelectorAll('meta[property="article:tag"]')
+                    .forEach((el) => el.remove())
+                keywords.forEach((tag) => {
+                    const meta = document.createElement('meta')
+                    meta.setAttribute('property', 'article:tag')
+                    meta.content = tag
+                    document.head.appendChild(meta)
+                })
+            }
         }
         return () => {
             document
@@ -92,7 +97,37 @@ const PageTitle: FC<PageTitleProps> = ({
             const kw = document.querySelector('meta[name="keywords"]')
             if (kw) kw.remove()
         }
-    }, [keywords])
+    }, [keywords, type])
+
+    useEffect(() => {
+        const tags: HTMLMetaElement[] = []
+        if (type === 'article') {
+            if (publishedAt) {
+                const meta = document.createElement('meta')
+                meta.setAttribute('property', 'article:published_time')
+                meta.content = publishedAt
+                document.head.appendChild(meta)
+                tags.push(meta)
+            }
+            if (modifiedAt) {
+                const meta = document.createElement('meta')
+                meta.setAttribute('property', 'article:modified_time')
+                meta.content = modifiedAt
+                document.head.appendChild(meta)
+                tags.push(meta)
+            }
+            if (author) {
+                const meta = document.createElement('meta')
+                meta.setAttribute('property', 'article:author')
+                meta.content = author
+                document.head.appendChild(meta)
+                tags.push(meta)
+            }
+        }
+        return () => {
+            tags.forEach((el) => el.remove())
+        }
+    }, [type, publishedAt, modifiedAt, author])
 
     useEffect(() => {
         if (noIndex) {

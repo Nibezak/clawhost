@@ -474,6 +474,8 @@ const Landing: FC = (): ReactNode => {
                                             src='https://img.youtube.com/vi/clawhost-tutorial/mqdefault.jpg'
                                             alt={t('landing.tutorialVideoThumbnail')}
                                             className='h-full w-full object-cover'
+                                            width={320}
+                                            height={180}
                                         />
                                         <div className='absolute inset-0 flex items-center justify-center bg-black/30'>
                                             <PlayCircleIcon className='h-3.5 w-3.5 text-white' />
