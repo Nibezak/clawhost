@@ -3,7 +3,6 @@ const clawStatus = {
     starting: 'starting',
     running: 'running',
     stopping: 'stopping',
-    off: 'off',
     stopped: 'stopped',
     deleting: 'deleting',
     migrating: 'migrating',

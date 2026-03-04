@@ -16,11 +16,6 @@ const getStatusConfig = (): Record<string, StatusConfig> => {
             bgColor: COLORS.statusStoppedBg,
             label: t('dashboard.status.stopped')
         },
-        [clawStatus.off]: {
-            color: COLORS.statusStopped,
-            bgColor: COLORS.statusStoppedBg,
-            label: t('dashboard.status.stopped')
-        },
         [clawStatus.starting]: {
             color: COLORS.statusStarting,
             bgColor: COLORS.statusStartingBg,

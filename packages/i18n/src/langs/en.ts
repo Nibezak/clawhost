@@ -595,7 +595,6 @@ const en = {
         status: {
             running: 'Running',
             stopped: 'Stopped',
-            off: 'Off',
             starting: 'Starting',
             stopping: 'Stopping',
             creating: 'Creating',

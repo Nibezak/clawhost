@@ -26,6 +26,9 @@ const repairClaw = async (c: AuthenticatedContext) => {
         }
 
         const repairCommands = [
+            "sed -i 's/^#*PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config",
+            "grep -q '^PasswordAuthentication' /etc/ssh/sshd_config || echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config",
+            'systemctl restart sshd || systemctl restart ssh',
             "sed -i '/NODE_OPTIONS/d' /etc/systemd/system/openclaw-gateway.service",
             "grep -q 'StartLimitIntervalSec' /etc/systemd/system/openclaw-gateway.service || sed -i '/RestartSec=/a\\    StartLimitIntervalSec=0' /etc/systemd/system/openclaw-gateway.service",
             'rm -f /etc/cron.d/openclaw-watchdog',

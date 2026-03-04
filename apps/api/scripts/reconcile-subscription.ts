@@ -168,8 +168,9 @@ const run = async () => {
     console.log('Claw record created, creating server...')
 
     try {
+        const serverName = `${clawName}-${id.slice(0, 8)}`.replace(/[^a-zA-Z0-9-]/g, '-')
         const server = await provider.createServer(
-            `${clawName}-${id.slice(0, 8)}`,
+            serverName,
             planId,
             location,
             rootPassword,

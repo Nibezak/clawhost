@@ -41,7 +41,7 @@ const mapStatus = (vultrStatus: string): string => {
         pending: clawStatus.initializing,
         suspended: clawStatus.stopped,
         resizing: clawStatus.migrating,
-        halted: clawStatus.off
+        halted: clawStatus.stopped
     }
     return statusMap[vultrStatus] || vultrStatus
 }

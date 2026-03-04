@@ -28,7 +28,7 @@ import {
     TooltipTrigger,
     TooltipContent
 } from '@/components/ui'
-import { api } from '@/lib'
+import { api, copyToClipboard } from '@/lib'
 import { useUIStore } from '@/lib/store'
 import { PanelPlaceholder } from '@/components'
 import { PLAYGROUND_AGENTS_QUERY_KEY } from '@/hooks'
@@ -219,8 +219,8 @@ const PlaygroundVariablesContent: FC<PlaygroundVariablesContentProps> = ({
         setShowValues((prev) => ({ ...prev, [key]: !prev[key] }))
     }, [])
 
-    const handleCopyValue = useCallback((key: string, value: string) => {
-        navigator.clipboard.writeText(value)
+    const handleCopyValue = useCallback(async (key: string, value: string) => {
+        await copyToClipboard(value)
         setCopiedKey(key)
         setTimeout(() => setCopiedKey(null), 2000)
     }, [])

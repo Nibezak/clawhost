@@ -21,7 +21,7 @@ import {
 } from '@phosphor-icons/react'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
 import { ClawAvatar } from '@/components'
-import { getBaseDomain, api } from '@/lib'
+import { getBaseDomain, api, copyToClipboard } from '@/lib'
 import { generateSlug } from '@/lib/claw-utils'
 import {
     useStartClaw,
@@ -255,9 +255,9 @@ const ChatView: FC<ChatViewProps> = ({
         if (!headerDropdownClaw) return null
         const claw = headerDropdownClaw
 
-        const copySSHWithKey = () => {
+        const copySSHWithKey = async () => {
             const command = `ssh root@${claw.ip}`
-            navigator.clipboard.writeText(command)
+            await copyToClipboard(command)
             showToast(t('dashboard.sshCommandCopied'), 'success')
         }
 
@@ -267,13 +267,13 @@ const ChatView: FC<ChatViewProps> = ({
                 const res = await api.getClawCredentials(claw.id)
                 if (res.rootPassword) {
                     const command = `sshpass -p '${res.rootPassword}' ssh -o StrictHostKeyChecking=no root@${claw.ip}`
-                    navigator.clipboard.writeText(command)
+                    await copyToClipboard(command)
                     showToast(
                         t('dashboard.sshCommandWithPasswordCopied'),
                         'success'
                     )
                 } else {
-                    copySSHWithKey()
+                    await copySSHWithKey()
                 }
             } catch {
                 showToast(t('errors.noPasswordAvailable'), 'error')
@@ -290,7 +290,7 @@ const ChatView: FC<ChatViewProps> = ({
                     showToast(t('errors.noPasswordAvailable'), 'warning')
                     return
                 }
-                navigator.clipboard.writeText(res.rootPassword)
+                await copyToClipboard(res.rootPassword)
                 showToast(t('dashboard.passwordCopiedToClipboard'), 'success')
             } catch {
                 showToast(t('errors.noPasswordAvailable'), 'error')
@@ -533,9 +533,7 @@ const ChatView: FC<ChatViewProps> = ({
                                                     activeClaw.status ===
                                                         clawStatus.running ||
                                                     activeClaw.status ===
-                                                        clawStatus.stopped ||
-                                                    activeClaw.status ===
-                                                        clawStatus.off
+                                                        clawStatus.stopped
                                                 }
                                                 isScheduledForDeletion={
                                                     !!activeClaw.deletionScheduledAt

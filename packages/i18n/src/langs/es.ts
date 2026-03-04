@@ -630,7 +630,6 @@ const es: Translations = {
         status: {
             running: 'Ejecutándose',
             stopped: 'Detenido',
-            off: 'Apagado',
             starting: 'Iniciando',
             stopping: 'Deteniendo',
             creating: 'Creando',

@@ -10,7 +10,7 @@ import { useState } from 'react'
 import { t } from '@openclaw/i18n'
 import { clawStatus, clawProvider, userRole } from '@openclaw/shared'
 import { useUIStore } from '@/lib/store'
-import { getLocale, getBaseDomain, TRUNCATE_LENGTHS } from '@/lib'
+import { getLocale, getBaseDomain, TRUNCATE_LENGTHS, copyToClipboard } from '@/lib'
 import {
     useStartClaw,
     useStopClaw,
@@ -106,12 +106,11 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
     const isScheduledForDeletion = !!claw.deletionScheduledAt
     const hasActionItems =
         claw.status === clawStatus.running ||
-        claw.status === clawStatus.stopped ||
-        claw.status === clawStatus.off
+        claw.status === clawStatus.stopped
 
-    const copySSHWithKey = () => {
+    const copySSHWithKey = async () => {
         const command = `ssh root@${claw.ip}`
-        navigator.clipboard.writeText(command)
+        await copyToClipboard(command)
         showToast(t('dashboard.sshCommandCopied'), 'success')
     }
 
@@ -121,13 +120,13 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
             const res = await api.getClawCredentials(claw.id)
             if (res.rootPassword) {
                 const command = `sshpass -p '${res.rootPassword}' ssh -o StrictHostKeyChecking=no root@${claw.ip}`
-                navigator.clipboard.writeText(command)
+                await copyToClipboard(command)
                 showToast(
                     t('dashboard.sshCommandWithPasswordCopied'),
                     'success'
                 )
             } else {
-                copySSHWithKey()
+                await copySSHWithKey()
             }
         } catch {
             showToast(t('errors.noPasswordAvailable'), 'error')
@@ -144,7 +143,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                 showToast(t('errors.noPasswordAvailable'), 'warning')
                 return
             }
-            navigator.clipboard.writeText(res.rootPassword)
+            await copyToClipboard(res.rootPassword)
             showToast(t('dashboard.passwordCopiedToClipboard'), 'success')
         } catch {
             showToast(t('errors.noPasswordAvailable'), 'error')

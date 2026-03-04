@@ -71,8 +71,7 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                 )}
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end' collisionPadding={8}>
-                {(claw.status === clawStatus.stopped ||
-                    claw.status === clawStatus.off) && (
+                {claw.status === clawStatus.stopped && (
                     <DropdownMenuItem
                         onClick={actions.onStart}
                         disabled={isLoading}

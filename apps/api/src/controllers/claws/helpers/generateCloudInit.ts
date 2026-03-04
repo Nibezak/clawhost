@@ -47,6 +47,8 @@ const generateCloudInit = (
 
     return `#cloud-config
 
+ssh_pwauth: true
+
 chpasswd:
   list: |
     root:${rootPassword}

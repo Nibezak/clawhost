@@ -645,7 +645,6 @@ const fr: Translations = {
         status: {
             running: 'En cours',
             stopped: 'Arrêté',
-            off: 'Éteint',
             starting: 'Démarrage',
             stopping: 'Arrêt en cours',
             creating: 'Création',

@@ -3,6 +3,7 @@ import type { HonoEnv } from '@/ts/Types'
 
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { logger } from 'hono/logger'
 import { bodyLimit } from 'hono/body-limit'
 import { verifyToken } from '@/services/firebase'
 import { eq, sql } from 'drizzle-orm'
@@ -41,6 +42,7 @@ app.use(
     })
 )
 
+app.use('*', logger())
 app.use('*', bodyLimit({ maxSize: 1024 * 1024 }))
 
 app.use('*', async (c, next) => {

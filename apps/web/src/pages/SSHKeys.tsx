@@ -11,7 +11,7 @@ import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
-import { ROUTES } from '@/lib'
+import { ROUTES, copyToClipboard as copyText } from '@/lib'
 import {
     useSSHKeys,
     useCreateSSHKey,
@@ -268,8 +268,8 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
         }
     }
 
-    const copyToClipboard = (text: string, type: 'command' | 'private') => {
-        navigator.clipboard.writeText(text)
+    const copyToClipboard = async (text: string, type: 'command' | 'private') => {
+        await copyText(text)
         setCopied(type)
         setTimeout(() => setCopied(null), 2000)
     }

@@ -111,8 +111,9 @@ export async function provisionClaw(
         let ip: string
 
         try {
+            const serverName = `${pending.name}-${id.slice(0, 8)}`.replace(/[^a-zA-Z0-9-]/g, '-')
             const server = await provider.createServer(
-                `${pending.name}-${id.slice(0, 8)}`,
+                serverName,
                 pending.planId,
                 pending.location,
                 pending.rootPassword || undefined,

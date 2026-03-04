@@ -14,7 +14,7 @@ import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 
 const transitionCompletedBy: Record<string, string[]> = {
-    [clawStatus.stopping]: [clawStatus.off, clawStatus.stopped],
+    [clawStatus.stopping]: [clawStatus.stopped],
     [clawStatus.starting]: [clawStatus.running],
     [clawStatus.creating]: [clawStatus.running],
     [clawStatus.initializing]: [clawStatus.running],

@@ -12,7 +12,7 @@ import { clawStatus, userRole } from '@openclaw/shared'
 import { ClockIcon } from '@phosphor-icons/react'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import { useUIStore } from '@/lib/store'
-import { getLocale } from '@/lib'
+import { getLocale, copyToClipboard } from '@/lib'
 import { ClawAvatar } from '@/components'
 import {
     useStartClaw,
@@ -86,12 +86,11 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
     const isScheduledForDeletion = !!claw.deletionScheduledAt
     const hasActionItems =
         claw.status === clawStatus.running ||
-        claw.status === clawStatus.stopped ||
-        claw.status === clawStatus.off
+        claw.status === clawStatus.stopped
 
-    const copySSHWithKey = () => {
+    const copySSHWithKey = async () => {
         const command = `ssh root@${claw.ip}`
-        navigator.clipboard.writeText(command)
+        await copyToClipboard(command)
         showToast(t('dashboard.sshCommandCopied'), 'success')
     }
 
@@ -101,13 +100,13 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
             const res = await api.getClawCredentials(claw.id)
             if (res.rootPassword) {
                 const command = `sshpass -p '${res.rootPassword}' ssh -o StrictHostKeyChecking=no root@${claw.ip}`
-                navigator.clipboard.writeText(command)
+                await copyToClipboard(command)
                 showToast(
                     t('dashboard.sshCommandWithPasswordCopied'),
                     'success'
                 )
             } else {
-                copySSHWithKey()
+                await copySSHWithKey()
             }
         } catch {
             showToast(t('errors.noPasswordAvailable'), 'error')
@@ -124,7 +123,7 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                 showToast(t('errors.noPasswordAvailable'), 'warning')
                 return
             }
-            navigator.clipboard.writeText(res.rootPassword)
+            await copyToClipboard(res.rootPassword)
             showToast(t('dashboard.passwordCopiedToClipboard'), 'success')
         } catch {
             showToast(t('errors.noPasswordAvailable'), 'error')
@@ -296,8 +295,7 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                         <p className='text-muted-foreground truncate text-[11px]'>
                             {statusConfig.label}
                         </p>
-                    ) : claw.status === clawStatus.stopped ||
-                      claw.status === clawStatus.off ? (
+                    ) : claw.status === clawStatus.stopped ? (
                         <p className='text-muted-foreground truncate text-[11px]'>
                             {statusConfig.label}
                         </p>
