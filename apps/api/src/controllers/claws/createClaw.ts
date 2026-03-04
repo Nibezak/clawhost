@@ -10,6 +10,7 @@ import cloudflare from '@/services/cloudflare'
 import {
     generateSlug,
     generatePassword,
+    generateServerName,
     generateCloudInit,
     generateToken,
     DOMAIN
@@ -103,7 +104,7 @@ const createClaw = async (c: AuthenticatedContext) => {
         )
 
         const { serverId, ip } = await provider.createServer(
-            `${name}-${id.slice(0, 8)}`,
+            generateServerName(name, id),
             planId,
             location,
             finalPassword,

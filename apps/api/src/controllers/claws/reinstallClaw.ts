@@ -12,6 +12,7 @@ import { ok, fail } from '@/lib/response'
 import {
     generateCloudInit,
     generatePassword,
+    generateServerName,
     generateToken,
     DOMAIN
 } from '@/controllers/claws/helpers'
@@ -101,7 +102,7 @@ const reinstallClaw = async (c: AuthenticatedContext) => {
         )
 
         const { serverId, ip } = await provider.createServer(
-            `${existing.name}-${id.slice(0, 8)}`,
+            generateServerName(existing.name, id),
             existing.planId,
             existing.location!,
             newPassword,

@@ -12,6 +12,7 @@ import { getProvider } from '@/services/provider'
 import cloudflare from '@/services/cloudflare'
 import {
     generateSlug,
+    generateServerName,
     generateToken,
     generateCloudInit,
     DOMAIN
@@ -111,7 +112,7 @@ export async function provisionClaw(
         let ip: string
 
         try {
-            const serverName = `${pending.name}-${id.slice(0, 8)}`.replace(/[^a-zA-Z0-9-]/g, '-')
+            const serverName = generateServerName(pending.name, id)
             const server = await provider.createServer(
                 serverName,
                 pending.planId,
