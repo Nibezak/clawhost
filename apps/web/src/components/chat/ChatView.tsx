@@ -113,12 +113,12 @@ const ChatView: FC<ChatViewProps> = ({
     const clawsWithAgents = useMemo((): ClawWithAgents[] => {
         return claws.map((claw, index) => {
             const query = agentQueries[index]
-            const agents = query?.data?.agents || []
-            const isLoading = query?.isLoading ?? true
             const isReachable =
                 (claw.status === clawStatus.running ||
                     claw.status === clawStatus.unreachable) &&
                 !!claw.ip
+            const agents = isReachable ? query?.data?.agents || [] : []
+            const isLoading = isReachable && (query?.isLoading ?? true)
             return { claw, agents, isLoading, isReachable }
         })
     }, [claws, agentQueries])

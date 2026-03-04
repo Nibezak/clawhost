@@ -17,7 +17,7 @@ const ChatSidebarItem: FC<ChatSidebarItemProps> = ({
     onClick,
     onConfigure
 }): ReactNode => {
-    const modelName = agent.model
+    const modelName = typeof agent.model === 'string'
         ? aiModels.find((m) => m.id === agent.model)?.name || agent.model
         : null
 

@@ -3,7 +3,7 @@ import type { ClawWithAgents, Faq, ProviderOption, Testimonial } from '@/ts/Inte
 import type { DashboardTab, ProviderType } from '@/ts/Types'
 
 import { Link, useLocation } from 'react-router-dom'
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { Fragment, useState, useEffect, useRef, useMemo } from 'react'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { clawProvider } from '@openclaw/shared'
@@ -1243,11 +1243,9 @@ const Landing: FC = (): ReactNode => {
                                                 tierLabel && index > 0
 
                                             return (
-                                                <>
+                                                <Fragment key={plan.id}>
                                                     {showTier && (
-                                                        <tr
-                                                            key={`tier-${plan.id}`}
-                                                        >
+                                                        <tr>
                                                             <td
                                                                 colSpan={6}
                                                                 className='px-4 pb-2 pt-6'
@@ -1259,7 +1257,6 @@ const Landing: FC = (): ReactNode => {
                                                         </tr>
                                                     )}
                                                     <tr
-                                                        key={plan.id}
                                                         className={`border-border border-b ${
                                                             isRecommended
                                                                 ? 'bg-[#ef5350]/5'
@@ -1330,7 +1327,7 @@ const Landing: FC = (): ReactNode => {
                                                             </Button>
                                                         </td>
                                                     </tr>
-                                                </>
+                                                </Fragment>
                                             )
                                         })}
                                     </tbody>

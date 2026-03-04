@@ -296,6 +296,11 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                         <p className='text-muted-foreground truncate text-[11px]'>
                             {statusConfig.label}
                         </p>
+                    ) : claw.status === clawStatus.stopped ||
+                      claw.status === clawStatus.off ? (
+                        <p className='text-muted-foreground truncate text-[11px]'>
+                            {statusConfig.label}
+                        </p>
                     ) : isLoadingAgents ? (
                         <p className='text-muted-foreground truncate text-[11px]'>
                             {t('playground.loadingAgents')}
