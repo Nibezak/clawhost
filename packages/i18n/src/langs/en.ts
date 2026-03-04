@@ -60,6 +60,7 @@ const en = {
         deploy: 'Deploy',
         deployOpenClaw: 'Deploy OpenClaw',
         mainNavigation: 'Main navigation',
+        footerNavigation: 'Footer navigation',
         toggleMenu: 'Toggle menu'
     },
     footer: {
@@ -537,7 +538,7 @@ const en = {
             'Remove memory limits, apply latest service configuration, and restart the gateway. This fixes most common issues.',
         diagnosticsRepairSuccess: 'Instance repaired successfully.',
         diagnosticsRepairFailed:
-            'Repair applied but gateway is not responding yet.',
+            'Repair applied but gateway is not responding yet!',
         diagnosticsLoading: 'Connecting to instance...',
         diagnosticsNoLogs:
             'No logs available. Start your instance to generate logs.',
@@ -741,6 +742,7 @@ const en = {
             'Deploy OpenClaw on your own VPS with one click. Self-hostable cloud hosting with full root access, global locations, and transparent pricing.',
         badge: 'OpenClaw Simplified',
         tutorialBadge: 'Watch. Deploy.',
+        tutorialVideoThumbnail: 'ClawHost tutorial video thumbnail',
         heroTitle1: 'Deploy OpenClaw.',
         heroTitle2: 'One click. Done.',
         heroDescription:

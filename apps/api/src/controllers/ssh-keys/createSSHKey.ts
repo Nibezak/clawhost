@@ -1,6 +1,7 @@
 import type { CreateSSHKeyBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
+import crypto from 'crypto'
 import { eq, count } from 'drizzle-orm'
 import { inputValidation } from '@openclaw/shared'
 import { db } from '@/db'

@@ -54,7 +54,8 @@ export const claws = pgTable(
     (table) => [
         index('claws_user_id_idx').on(table.userId),
         index('claws_polar_subscription_id_idx').on(table.polarSubscriptionId),
-        index('claws_subdomain_idx').on(table.subdomain)
+        index('claws_subdomain_idx').on(table.subdomain),
+        index('claws_deletion_scheduled_at_idx').on(table.deletionScheduledAt)
     ]
 )
 

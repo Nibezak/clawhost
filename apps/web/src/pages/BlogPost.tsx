@@ -119,41 +119,44 @@ const BlogPost: FC = (): ReactNode => {
                     {t('blog.backToBlog')}
                 </Link>
 
-                <h1 className='font-clash mb-4 text-4xl font-bold'>
-                    {meta.title}
-                </h1>
+                <article>
+                    <h1 className='font-clash mb-4 text-4xl font-bold'>
+                        {meta.title}
+                    </h1>
 
-                <div className='text-muted-foreground mb-8 flex items-center gap-4 text-sm'>
-                    <time
-                        dateTime={meta.publishedAt}
-                        className='flex items-center gap-1.5'
-                    >
-                        <CalendarBlankIcon className='h-4 w-4' />
-                        {formattedDate}
-                    </time>
-                    <span className='flex items-center gap-1.5'>
-                        <ClockIcon className='h-4 w-4' />
-                        {t('blog.readingTime', {
-                            minutes: String(meta.readingTime)
-                        })}
-                    </span>
-                </div>
-
-                {meta.coverImage && (
-                    <div className='border-border mb-12 overflow-hidden rounded-xl border'>
-                        <img
-                            src={meta.coverImage}
-                            alt={meta.title}
-                            className='aspect-[2/1] w-full object-cover'
-                            width={1200}
-                            height={600}
-                        />
+                    <div className='text-muted-foreground mb-8 flex items-center gap-4 text-sm'>
+                        <time
+                            dateTime={meta.publishedAt}
+                            className='flex items-center gap-1.5'
+                        >
+                            <CalendarBlankIcon className='h-4 w-4' />
+                            {formattedDate}
+                        </time>
+                        <span className='flex items-center gap-1.5'>
+                            <ClockIcon className='h-4 w-4' />
+                            {t('blog.readingTime', {
+                                minutes: String(meta.readingTime)
+                            })}
+                        </span>
                     </div>
-                )}
 
-                <div className='prose dark:prose-invert prose-sm prose-headings:font-clash prose-headings:font-semibold prose-h1:hidden prose-a:text-primary prose-a:no-underline hover:prose-a:underline max-w-none'>
-                    <Content />
-                </div>
+                    {meta.coverImage && (
+                        <div className='border-border mb-12 overflow-hidden rounded-xl border'>
+                            <img
+                                src={meta.coverImage}
+                                alt={meta.title}
+                                className='aspect-[2/1] w-full object-cover'
+                                width={1200}
+                                height={600}
+                                loading='lazy'
+                            />
+                        </div>
+                    )}
+
+                    <div className='prose dark:prose-invert prose-sm prose-headings:font-clash prose-headings:font-semibold prose-h1:hidden prose-a:text-primary prose-a:no-underline hover:prose-a:underline max-w-none'>
+                        <Content />
+                    </div>
+                </article>
 
                 <BlogCTA />
             </motion.main>

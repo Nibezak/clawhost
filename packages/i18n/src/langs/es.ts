@@ -62,6 +62,7 @@ const es: Translations = {
         deploy: 'Desplegar',
         deployOpenClaw: 'Desplegar OpenClaw',
         mainNavigation: 'Navegacion principal',
+        footerNavigation: 'Navegacion del pie de pagina',
         toggleMenu: 'Alternar menu'
     },
     footer: {
@@ -412,7 +413,7 @@ const es: Translations = {
         displayName: 'Nombre para mostrar',
         enterYourName: 'Ingresa tu nombre',
         emailAddress: 'Correo electrónico',
-        emailNotEditable: 'El correo no es editable. Contacta a soporte!',
+        emailNotEditable: 'El correo no es editable. Contacta con soporte!',
         profileUpdatedSuccessfully: 'Perfil actualizado exitosamente.',
         billingHistory: 'Historial de facturación',
         billingDescription: 'Tu historial de pagos y facturas',
@@ -710,7 +711,7 @@ const es: Translations = {
         selectLocationToContinue: 'Selecciona una ubicación para continuar',
         clawCreated: 'Claw creado.',
         assigning: 'Asignando...',
-        rootPasswordSaveThis: 'Contraseña root (guarda esto)',
+        rootPasswordSaveThis: 'Contraseña root (¡guarda esto!)',
         sshCommandUsingKey: 'Comando SSH (usando tu clave)',
         sshCommandWithPassword: 'Comando SSH (con contraseña)',
         passwordCopied: 'Contraseña copiada.',
@@ -779,6 +780,7 @@ const es: Translations = {
             'Despliega OpenClaw en tu propio VPS con un solo clic. Alojamiento en la nube auto-hospedable con acceso root completo, ubicaciones globales y precios transparentes.',
         badge: 'OpenClaw simplificado',
         tutorialBadge: 'Mira. Despliega.',
+        tutorialVideoThumbnail: 'Miniatura del video tutorial de ClawHost',
         heroTitle1: 'Despliega OpenClaw.',
         heroTitle2: 'Un clic. Listo.',
         heroDescription:

@@ -62,6 +62,7 @@ const de: Translations = {
         deploy: 'Deployen',
         deployOpenClaw: 'OpenClaw deployen',
         mainNavigation: 'Hauptnavigation',
+        footerNavigation: 'Fusszeilen-Navigation',
         toggleMenu: 'Menu umschalten'
     },
     footer: {
@@ -786,6 +787,7 @@ const de: Translations = {
             'Stelle OpenClaw mit einem Klick auf deinem eigenen VPS bereit. Selbst-hostbares Cloud-Hosting mit vollem Root-Zugriff, globalen Standorten und transparenten Preisen.',
         badge: 'OpenClaw vereinfacht',
         tutorialBadge: 'Anschauen. Deployen.',
+        tutorialVideoThumbnail: 'ClawHost Tutorial-Video Vorschaubild',
         heroTitle1: 'OpenClaw bereitstellen.',
         heroTitle2: 'Ein Klick. Fertig.',
         heroDescription:

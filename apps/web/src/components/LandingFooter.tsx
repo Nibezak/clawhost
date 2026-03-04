@@ -170,7 +170,7 @@ const LandingFooter: FC = (): ReactNode => {
                         </p>
                     </div>
 
-                    <div>
+                    <nav aria-label={t('footer.product')}>
                         <h4 className='font-clash text-foreground mb-4 font-semibold'>
                             {t('footer.product')}
                         </h4>
@@ -240,9 +240,9 @@ const LandingFooter: FC = (): ReactNode => {
                                 </Link>
                             </li>
                         </ul>
-                    </div>
+                    </nav>
 
-                    <div>
+                    <nav aria-label={t('footer.legalAndMore')}>
                         <h4 className='font-clash text-foreground mb-4 font-semibold'>
                             {t('footer.legalAndMore')}
                         </h4>
@@ -296,7 +296,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 </a>
                             </li>
                         </ul>
-                    </div>
+                    </nav>
                 </div>
             </div>
         </footer>

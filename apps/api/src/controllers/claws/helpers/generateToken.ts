@@ -1,3 +1,5 @@
+import crypto from 'crypto'
+
 const generateToken = (): string => {
     const array = new Uint8Array(32)
     crypto.getRandomValues(array)

@@ -16,7 +16,7 @@ const ok = <T>(
             code,
             version
         },
-        200
+        code as 200
     )
 }
 

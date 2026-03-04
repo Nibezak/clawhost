@@ -1,6 +1,7 @@
 import type { InitiateClawPurchaseBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext, ProviderType } from '@/ts/Types'
 
+import crypto from 'crypto'
 import { eq, and, count, lt } from 'drizzle-orm'
 import { inputValidation } from '@openclaw/shared'
 import { db } from '@/db'
