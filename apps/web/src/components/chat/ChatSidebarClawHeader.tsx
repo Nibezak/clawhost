@@ -12,7 +12,7 @@ import { clawStatus, userRole } from '@openclaw/shared'
 import { ClockIcon } from '@phosphor-icons/react'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import { useUIStore } from '@/lib/store'
-import { getLocale, copyToClipboard } from '@/lib'
+import { getLocale } from '@/lib'
 import { ClawAvatar } from '@/components'
 import {
     useStartClaw,
@@ -30,6 +30,7 @@ import { api, TRUNCATE_LENGTHS } from '@/lib'
 import {
     ClawCardDropdownMenu,
     ClawCardDialogs,
+    ClawCredentialsDialog,
     ClawDiagnosticsDialog,
     ClawLogsDialog,
     ClawConfigDialog
@@ -47,7 +48,6 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
     onCreateAgent: _onCreateAgent
 }): ReactNode => {
     const { showToast } = useUIStore()
-    const [isCopyingCredentials, setIsCopyingCredentials] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showStopModal, setShowStopModal] = useState(false)
     const [showRestartModal, setShowRestartModal] = useState(false)
@@ -56,6 +56,9 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
     const [showLogs, setShowLogs] = useState(false)
     const [showConfig, setShowConfig] = useState(false)
     const [showReinstallModal, setShowReinstallModal] = useState(false)
+    const [showCredentials, setShowCredentials] = useState(false)
+    const [credentialsPassword, setCredentialsPassword] = useState<string | null>(null)
+    const [isFetchingCredentials, setIsFetchingCredentials] = useState(false)
     const [isExporting, setIsExporting] = useState(false)
 
     const startMutation = useStartClaw()
@@ -81,56 +84,12 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
         reinstallMutation.isPending ||
         cancelPendingMutation.isPending ||
         isExporting ||
-        isCopyingCredentials
+        isFetchingCredentials
 
     const isScheduledForDeletion = !!claw.deletionScheduledAt
     const hasActionItems =
         claw.status === clawStatus.running ||
         claw.status === clawStatus.stopped
-
-    const copySSHWithKey = async () => {
-        const command = `ssh root@${claw.ip}`
-        await copyToClipboard(command)
-        showToast(t('dashboard.sshCommandCopied'), 'success')
-    }
-
-    const copySSHWithPassword = async () => {
-        setIsCopyingCredentials(true)
-        try {
-            const res = await api.getClawCredentials(claw.id)
-            if (res.rootPassword) {
-                const command = `sshpass -p '${res.rootPassword}' ssh -o StrictHostKeyChecking=no root@${claw.ip}`
-                await copyToClipboard(command)
-                showToast(
-                    t('dashboard.sshCommandWithPasswordCopied'),
-                    'success'
-                )
-            } else {
-                await copySSHWithKey()
-            }
-        } catch {
-            showToast(t('errors.noPasswordAvailable'), 'error')
-        } finally {
-            setIsCopyingCredentials(false)
-        }
-    }
-
-    const copyPassword = async () => {
-        setIsCopyingCredentials(true)
-        try {
-            const res = await api.getClawCredentials(claw.id)
-            if (!res.rootPassword) {
-                showToast(t('errors.noPasswordAvailable'), 'warning')
-                return
-            }
-            await copyToClipboard(res.rootPassword)
-            showToast(t('dashboard.passwordCopiedToClipboard'), 'success')
-        } catch {
-            showToast(t('errors.noPasswordAvailable'), 'error')
-        } finally {
-            setIsCopyingCredentials(false)
-        }
-    }
 
     const handleUpdateInstance = () => {
         repairMutation.mutate(claw.id, {
@@ -183,6 +142,23 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
         })
     }
 
+    const handleShowCredentials = async () => {
+        setIsFetchingCredentials(true)
+        try {
+            if (claw.hasRootPassword) {
+                const res = await api.getClawCredentials(claw.id)
+                setCredentialsPassword(res.rootPassword || null)
+            } else {
+                setCredentialsPassword(null)
+            }
+            setShowCredentials(true)
+        } catch {
+            showToast(t('errors.noPasswordAvailable'), 'error')
+        } finally {
+            setIsFetchingCredentials(false)
+        }
+    }
+
     const actions: ClawCardActions = {
         onStart: () =>
             startMutation.mutate(claw.id, {
@@ -208,10 +184,7 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
         onShowConfig: () => setShowConfig(true),
         onUpdateInstance: handleUpdateInstance,
         onShowReinstallModal: () => setShowReinstallModal(true),
-        onCopySSH: claw.hasRootPassword ? copySSHWithPassword : copySSHWithKey,
-        onCopySSHWithKey: copySSHWithKey,
-        onCopySSHWithPassword: copySSHWithPassword,
-        onCopyPassword: copyPassword,
+        onShowCredentials: handleShowCredentials,
         onExport: handleExport,
         onResumeCheckout: () => {
             if (claw.checkoutUrl) {
@@ -373,6 +346,12 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                         clawId={claw.id}
                         open={showConfig}
                         onOpenChange={setShowConfig}
+                    />
+                    <ClawCredentialsDialog
+                        clawIp={claw.ip || ''}
+                        rootPassword={credentialsPassword}
+                        open={showCredentials}
+                        onOpenChange={setShowCredentials}
                     />
                 </>
             )}

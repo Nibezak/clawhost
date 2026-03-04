@@ -21,7 +21,7 @@ import {
 } from '@phosphor-icons/react'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
 import { ClawAvatar } from '@/components'
-import { getBaseDomain, api, copyToClipboard } from '@/lib'
+import { getBaseDomain, api } from '@/lib'
 import { generateSlug } from '@/lib/claw-utils'
 import {
     useStartClaw,
@@ -41,6 +41,7 @@ import ChatSkeleton from '@/components/playground/AgentChat/ChatSkeleton'
 import {
     ClawCardDropdownMenu,
     ClawCardDialogs,
+    ClawCredentialsDialog,
     ClawDiagnosticsDialog,
     ClawLogsDialog,
     ClawConfigDialog
@@ -80,7 +81,6 @@ const ChatView: FC<ChatViewProps> = ({
     const [activeConnectionState, setActiveConnectionState] =
         useState<GatewayConnectionState>('disconnected')
     const isInitialMount = useRef(true)
-    const [isCopyingCredentials, setIsCopyingCredentials] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showStopModal, setShowStopModal] = useState(false)
     const [showRestartModal, setShowRestartModal] = useState(false)
@@ -89,6 +89,9 @@ const ChatView: FC<ChatViewProps> = ({
     const [showLogs, setShowLogs] = useState(false)
     const [showConfigDialog, setShowConfigDialog] = useState(false)
     const [showReinstallModal, setShowReinstallModal] = useState(false)
+    const [showCredentials, setShowCredentials] = useState(false)
+    const [credentialsPassword, setCredentialsPassword] = useState<string | null>(null)
+    const [isFetchingCredentials, setIsFetchingCredentials] = useState(false)
     const [isExporting, setIsExporting] = useState(false)
 
     const startMutation = useStartClaw()
@@ -249,55 +252,29 @@ const ChatView: FC<ChatViewProps> = ({
         reinstallMutation.isPending ||
         cancelPendingMutation.isPending ||
         isExporting ||
-        isCopyingCredentials
+        isFetchingCredentials
+
+    const handleShowCredentials = async () => {
+        if (!headerDropdownClaw) return
+        setIsFetchingCredentials(true)
+        try {
+            if (headerDropdownClaw.hasRootPassword) {
+                const res = await api.getClawCredentials(headerDropdownClaw.id)
+                setCredentialsPassword(res.rootPassword || null)
+            } else {
+                setCredentialsPassword(null)
+            }
+            setShowCredentials(true)
+        } catch {
+            showToast(t('errors.noPasswordAvailable'), 'error')
+        } finally {
+            setIsFetchingCredentials(false)
+        }
+    }
 
     const headerClawActions = useMemo((): ClawCardActions | null => {
         if (!headerDropdownClaw) return null
         const claw = headerDropdownClaw
-
-        const copySSHWithKey = async () => {
-            const command = `ssh root@${claw.ip}`
-            await copyToClipboard(command)
-            showToast(t('dashboard.sshCommandCopied'), 'success')
-        }
-
-        const copySSHWithPassword = async () => {
-            setIsCopyingCredentials(true)
-            try {
-                const res = await api.getClawCredentials(claw.id)
-                if (res.rootPassword) {
-                    const command = `sshpass -p '${res.rootPassword}' ssh -o StrictHostKeyChecking=no root@${claw.ip}`
-                    await copyToClipboard(command)
-                    showToast(
-                        t('dashboard.sshCommandWithPasswordCopied'),
-                        'success'
-                    )
-                } else {
-                    await copySSHWithKey()
-                }
-            } catch {
-                showToast(t('errors.noPasswordAvailable'), 'error')
-            } finally {
-                setIsCopyingCredentials(false)
-            }
-        }
-
-        const copyPassword = async () => {
-            setIsCopyingCredentials(true)
-            try {
-                const res = await api.getClawCredentials(claw.id)
-                if (!res.rootPassword) {
-                    showToast(t('errors.noPasswordAvailable'), 'warning')
-                    return
-                }
-                await copyToClipboard(res.rootPassword)
-                showToast(t('dashboard.passwordCopiedToClipboard'), 'success')
-            } catch {
-                showToast(t('errors.noPasswordAvailable'), 'error')
-            } finally {
-                setIsCopyingCredentials(false)
-            }
-        }
 
         const handleExport = async () => {
             setIsExporting(true)
@@ -363,12 +340,7 @@ const ChatView: FC<ChatViewProps> = ({
                         showToast(t('dashboard.updateInstanceFailed'), 'error')
                 }),
             onShowReinstallModal: () => setShowReinstallModal(true),
-            onCopySSH: claw.hasRootPassword
-                ? copySSHWithPassword
-                : copySSHWithKey,
-            onCopySSHWithKey: copySSHWithKey,
-            onCopySSHWithPassword: copySSHWithPassword,
-            onCopyPassword: copyPassword,
+            onShowCredentials: handleShowCredentials,
             onExport: handleExport,
             onResumeCheckout: () => {
                 if (claw.checkoutUrl) window.open(claw.checkoutUrl, '_blank')
@@ -659,6 +631,12 @@ const ChatView: FC<ChatViewProps> = ({
                         clawId={headerDropdownClaw.id}
                         open={showConfigDialog}
                         onOpenChange={setShowConfigDialog}
+                    />
+                    <ClawCredentialsDialog
+                        clawIp={headerDropdownClaw.ip || ''}
+                        rootPassword={credentialsPassword}
+                        open={showCredentials}
+                        onOpenChange={setShowCredentials}
                     />
                 </>
             )}

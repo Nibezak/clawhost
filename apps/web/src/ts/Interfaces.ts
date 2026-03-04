@@ -347,10 +347,7 @@ export interface ClawCardActions {
     onShowConfig: () => void
     onUpdateInstance: () => void
     onShowReinstallModal: () => void
-    onCopySSH: () => void
-    onCopySSHWithKey: () => void
-    onCopySSHWithPassword: () => void
-    onCopyPassword: () => void
+    onShowCredentials: () => void
     onExport: () => void
     onResumeCheckout: () => void
     onCancelPending: () => void
@@ -358,6 +355,13 @@ export interface ClawCardActions {
 
 export interface ExportRateLimitError extends Error {
     retryAfter: number
+}
+
+export interface ClawCredentialsDialogProps {
+    clawIp: string
+    rootPassword: string | null
+    open: boolean
+    onOpenChange: (open: boolean) => void
 }
 
 export interface ClawCardDropdownMenuProps {

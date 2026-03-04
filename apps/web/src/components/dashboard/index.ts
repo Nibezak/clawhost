@@ -1,6 +1,7 @@
 import ClawCardDialogs from '@/components/dashboard/ClawCardDialogs'
 import ClawCardDropdownMenu from '@/components/dashboard/ClawCardDropdownMenu'
 import ClawConfigDialog from '@/components/dashboard/ClawConfigDialog'
+import ClawCredentialsDialog from '@/components/dashboard/ClawCredentialsDialog'
 import ClawDiagnosticsContent from '@/components/dashboard/ClawDiagnosticsContent'
 import ClawDiagnosticsDialog from '@/components/dashboard/ClawDiagnosticsDialog'
 import ClawLogsContent from '@/components/dashboard/ClawLogsContent'
@@ -14,6 +15,7 @@ export {
     ClawCardDialogs,
     ClawCardDropdownMenu,
     ClawConfigDialog,
+    ClawCredentialsDialog,
     ClawDiagnosticsContent,
     ClawDiagnosticsDialog,
     ClawLogsContent,
