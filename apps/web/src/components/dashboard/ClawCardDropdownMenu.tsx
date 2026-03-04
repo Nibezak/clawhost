@@ -205,14 +205,28 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                         )}
                     </>
                 ) : (
-                    <DropdownMenuItem
-                        onClick={actions.onShowDeleteModal}
-                        disabled={isLoading}
-                        className='text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400'
-                    >
-                        <TrashIcon className='mr-2 h-4 w-4' />
-                        {t('dashboard.scheduleDeletion')}
-                    </DropdownMenuItem>
+                    <>
+                        {claw.status === clawStatus.creating && isAdmin && (
+                            <>
+                                <DropdownMenuItem
+                                    onClick={actions.onShowReinstallModal}
+                                    disabled={isLoading}
+                                >
+                                    <ArrowCounterClockwiseIcon className='mr-2 h-4 w-4' />
+                                    {t('dashboard.reinstallInstance')}
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                            </>
+                        )}
+                        <DropdownMenuItem
+                            onClick={actions.onShowDeleteModal}
+                            disabled={isLoading}
+                            className='text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400'
+                        >
+                            <TrashIcon className='mr-2 h-4 w-4' />
+                            {t('dashboard.scheduleDeletion')}
+                        </DropdownMenuItem>
+                    </>
                 )}
             </DropdownMenuContent>
         </DropdownMenu>

@@ -263,7 +263,8 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                                 <p>{t('dashboard.scheduledForDeletion')}</p>
                             </TooltipContent>
                         </Tooltip>
-                    ) : claw.status === clawStatus.configuring ||
+                    ) : claw.status === clawStatus.creating ||
+                      claw.status === clawStatus.configuring ||
                       claw.status === clawStatus.awaitingPayment ? (
                         <p className='text-muted-foreground truncate text-[11px]'>
                             {statusConfig.label}
