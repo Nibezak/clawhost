@@ -1676,7 +1676,7 @@ const es: Translations = {
     announcement: {
         title: 'Aviso de servicio',
         message:
-            'Los despliegues de {{providers}} no están disponibles temporalmente. Los claws existentes funcionan con normalidad.'
+            'Debido a la alta demanda, los despliegues de {{providers}} no están disponibles temporalmente. Los claws existentes funcionan con normalidad.'
     },
     productHunt: {
         liveOn: 'En vivo en',

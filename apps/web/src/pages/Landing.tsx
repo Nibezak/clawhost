@@ -140,12 +140,12 @@ const Landing: FC = (): ReactNode => {
     const { phBannerVisible } = useUIStore()
     const showTutorialBadge = true
     const [videoOpen, setVideoOpen] = useState(false)
-    const { plans: hetznerPlans, isLoading: hetznerLoading } = usePlans(
+    const { plans: hetznerPlans, isLoading: hetznerLoading, atCapacity: hetznerAtCapacity } = usePlans(
         clawProvider.hetzner
     )
-    const { plans: digitaloceanPlans, isLoading: digitaloceanLoading } =
+    const { plans: digitaloceanPlans, isLoading: digitaloceanLoading, atCapacity: digitaloceanAtCapacity } =
         usePlans(clawProvider.digitalocean)
-    const { plans: vultrPlans, isLoading: vultrLoading } = usePlans(
+    const { plans: vultrPlans, isLoading: vultrLoading, atCapacity: vultrAtCapacity } = usePlans(
         clawProvider.vultr
     )
 
@@ -158,6 +158,12 @@ const Landing: FC = (): ReactNode => {
             return !vultrLoading && !vultrPlans?.length
         return false
     }
+
+    const announcementVisible =
+        !phBannerVisible &&
+        ((!hetznerLoading && (!hetznerPlans?.length || hetznerAtCapacity)) ||
+        (!digitaloceanLoading && (!digitaloceanPlans?.length || digitaloceanAtCapacity)) ||
+        (!vultrLoading && (!vultrPlans?.length || vultrAtCapacity)))
 
     const allDoneLoading =
         !hetznerLoading && !digitaloceanLoading && !vultrLoading
@@ -428,7 +434,7 @@ const Landing: FC = (): ReactNode => {
             />
 
             <section
-                className={`relative overflow-hidden px-6 pb-16 ${phBannerVisible ? 'pt-44' : 'pt-32'}`}
+                className={`relative overflow-hidden px-6 pb-16 ${phBannerVisible ? 'pt-44' : announcementVisible ? 'pt-44' : 'pt-32'}`}
             >
                 <div className='landing-grid pointer-events-none' />
 

@@ -1682,7 +1682,7 @@ const de: Translations = {
     announcement: {
         title: 'Servicehinweis',
         message:
-            '{{providers}}-Bereitstellungen sind vorübergehend nicht verfügbar. Bestehende Claws laufen normal.'
+            'Aufgrund hoher Nachfrage sind {{providers}}-Bereitstellungen vorübergehend nicht verfügbar. Bestehende Claws laufen normal.'
     },
     productHunt: {
         liveOn: 'Live auf',

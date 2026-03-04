@@ -47,3 +47,5 @@ export type ClawFileType =
     | 'unknown'
 
 export type PiperVoiceQuality = 'low' | 'medium' | 'high'
+
+export type PolarPriceMap = Record<string, Record<string, number>>

@@ -484,12 +484,18 @@ export interface PolarProduct {
     isArchived: boolean
 }
 
+export interface PolarProductPrice {
+    priceAmount: number
+    priceCurrency: string
+}
+
 export interface PolarProductRaw {
     id: string
     name: string
     description?: string | null
     isRecurring: boolean
     isArchived: boolean
+    prices?: PolarProductPrice[]
 }
 
 export interface CreatePolarProductParams {
@@ -786,9 +792,8 @@ export interface RegionMeta {
     country: string
 }
 
-export interface PlanConfig {
+export interface PlanOrder {
     order: string[]
-    prices: Record<string, number>
 }
 
 export interface ChannelConfig {
