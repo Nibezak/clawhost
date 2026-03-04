@@ -1701,7 +1701,7 @@ const fr: Translations = {
     announcement: {
         title: 'Avis de service',
         message:
-            'Les déploiements {{providers}} sont temporairement indisponibles. Les claws existants fonctionnent normalement.'
+            'En raison de la forte demande, les déploiements {{providers}} sont temporairement indisponibles. Les claws existants fonctionnent normalement.'
     },
     productHunt: {
         liveOn: 'En direct sur',

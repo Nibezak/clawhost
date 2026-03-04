@@ -1608,7 +1608,7 @@ const en = {
     announcement: {
         title: 'Service Notice',
         message:
-            '{{providers}} deployments are temporarily unavailable. Existing claws are running normally.'
+            'Due to high demand, {{providers}} deployments are temporarily unavailable. Existing claws are running normally.'
     },
     productHunt: {
         liveOn: 'Live on',

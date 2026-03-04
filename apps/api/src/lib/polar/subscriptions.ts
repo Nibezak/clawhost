@@ -169,6 +169,45 @@ const subscriptions = {
         }
     },
 
+    async changeProduct(
+        subscriptionId: string,
+        productId: string
+    ): Promise<PolarSubscription | null> {
+        const polar = getPolarClient()
+
+        try {
+            const sub = await polar.subscriptions.update({
+                id: subscriptionId,
+                subscriptionUpdate: {
+                    productId
+                }
+            })
+            subCache.delete(subscriptionId)
+            return {
+                id: sub.id,
+                status: sub.status as SubscriptionStatus,
+                customerId: sub.customerId,
+                productId: sub.productId,
+                amount: sub.amount ?? 0,
+                currency: sub.currency ?? 'usd',
+                currentPeriodStart: sub.currentPeriodStart
+                    ? new Date(sub.currentPeriodStart)
+                    : undefined,
+                currentPeriodEnd: sub.currentPeriodEnd
+                    ? new Date(sub.currentPeriodEnd)
+                    : undefined,
+                cancelAtPeriodEnd: sub.cancelAtPeriodEnd ?? false,
+                canceledAt: sub.canceledAt
+                    ? new Date(sub.canceledAt)
+                    : undefined,
+                endedAt: sub.endedAt ? new Date(sub.endedAt) : undefined,
+                metadata: sub.metadata as Record<string, string> | undefined
+            }
+        } catch {
+            return null
+        }
+    },
+
     async revoke(subscriptionId: string): Promise<void> {
         const polar = getPolarClient()
         await polar.subscriptions.revoke({ id: subscriptionId })

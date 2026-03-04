@@ -79,7 +79,7 @@ const AnnouncementBanner: FC = (): ReactNode => {
                                         {t('announcement.title')}
                                     </span>
                                 </span>
-                                <span className='text-foreground/30 hidden sm:inline'>
+                                <span className='text-foreground/30'>
                                     {' \u2002—\u2002 '}
                                 </span>
                                 <span className='text-foreground/60'>
