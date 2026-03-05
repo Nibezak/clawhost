@@ -164,6 +164,7 @@ const es: Translations = {
         failedToDeleteClaw: 'Error al eliminar el claw!',
         failedToCreateClaw: 'Error al crear el claw!',
         invalidProvider: 'Proveedor no válido!',
+        providerNotAllowed: 'Este proveedor no está disponible cuando Hetzner está activo!',
         invalidPlan: 'Plan seleccionado no válido!',
         planBelowMinimumMemory:
             'Este plan no cumple con el requisito mínimo de memoria!',
@@ -686,6 +687,7 @@ const es: Translations = {
         plan: 'Servidor',
         planUnavailable: 'No disponible',
         providerUnavailable: 'Este proveedor no está disponible actualmente.',
+        providerDisabledHetznerRecommended: 'Deshabilitado — Hetzner es recomendado.',
         providerAtCapacity:
             'Debido a la alta demanda, temporalmente nos hemos quedado sin servidores de este proveedor. Estamos trabajando activamente para resolver esto!',
         advancedOptions: 'Opciones avanzadas opcionales',

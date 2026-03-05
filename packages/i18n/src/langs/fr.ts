@@ -166,6 +166,7 @@ const fr: Translations = {
         failedToDeleteClaw: 'Échec de la suppression du claw !',
         failedToCreateClaw: 'Échec de la création du claw !',
         invalidProvider: 'Fournisseur invalide !',
+        providerNotAllowed: 'Ce fournisseur n\'est pas disponible lorsque Hetzner est actif !',
         invalidPlan: 'Offre sélectionnée invalide !',
         planBelowMinimumMemory:
             'Cette offre ne satisfait pas la mémoire minimale requise !',
@@ -703,6 +704,7 @@ const fr: Translations = {
         plan: 'Serveur',
         planUnavailable: 'Indisponible',
         providerUnavailable: 'Ce fournisseur est actuellement indisponible.',
+        providerDisabledHetznerRecommended: 'Désactivé — Hetzner est recommandé.',
         providerAtCapacity:
             "En raison d'une forte demande, nous sommes temporairement à court de serveurs chez ce fournisseur. Nous travaillons activement à résoudre ce problème.",
         advancedOptions: 'Options avancées facultatives',

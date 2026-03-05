@@ -163,6 +163,7 @@ const de: Translations = {
         failedToDeleteClaw: 'Claw konnte nicht gelöscht werden!',
         failedToCreateClaw: 'Claw konnte nicht erstellt werden!',
         invalidProvider: 'Ungültiger Anbieter!',
+        providerNotAllowed: 'Dieser Anbieter ist nicht verfügbar, wenn Hetzner aktiv ist!',
         invalidPlan: 'Ungültiger Plan ausgewählt!',
         planBelowMinimumMemory:
             'Dieser Plan erfüllt nicht die Mindestanforderung an Arbeitsspeicher!',
@@ -693,6 +694,7 @@ const de: Translations = {
         plan: 'Server',
         planUnavailable: 'Nicht verfügbar',
         providerUnavailable: 'Dieser Anbieter ist derzeit nicht verfügbar.',
+        providerDisabledHetznerRecommended: 'Deaktiviert — Hetzner wird empfohlen.',
         providerAtCapacity:
             'Aufgrund hoher Nachfrage sind die Server dieses Anbieters vorübergehend ausgeschöpft. Wir arbeiten aktiv an einer Lösung.',
         advancedOptions: 'Erweiterte optionale Optionen',

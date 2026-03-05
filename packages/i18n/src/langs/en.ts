@@ -153,6 +153,7 @@ const en = {
         failedToDeleteClaw: 'Failed to delete claw!',
         failedToCreateClaw: 'Failed to create claw!',
         invalidProvider: 'Invalid provider!',
+        providerNotAllowed: 'This provider is not available when Hetzner is active!',
         invalidPlan: 'Invalid plan selected!',
         planBelowMinimumMemory:
             'This plan does not meet the minimum memory requirement!',
@@ -650,6 +651,7 @@ const en = {
         plan: 'Server',
         planUnavailable: 'Unavailable',
         providerUnavailable: 'This provider is currently unavailable.',
+        providerDisabledHetznerRecommended: 'Disabled — Hetzner is recommended.',
         providerAtCapacity:
             'Due to high demand, we have temporarily run out of servers from this provider. We are actively working to resolve this.',
         advancedOptions: 'Advanced Optional Options',

@@ -3,7 +3,7 @@ import type { AuthenticatedContext, ProviderType } from '@/ts/Types'
 
 import crypto from 'crypto'
 import { eq, and, count, lt } from 'drizzle-orm'
-import { inputValidation } from '@openclaw/shared'
+import { inputValidation, clawProvider } from '@openclaw/shared'
 import { db } from '@/db'
 import { users, sshKeys, claws, pendingClaws } from '@/db/schema'
 import { checkouts, customers } from '@/lib/polar'
@@ -154,9 +154,19 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
             return fail(c, t('api.invalidProvider'), 400)
         }
 
-        const provider = getProvider(
-            (providerName || 'hetzner') as ProviderType
-        )
+        const resolvedProvider = (providerName || clawProvider.hetzner) as ProviderType
+        if (resolvedProvider !== clawProvider.hetzner) {
+            try {
+                const hetznerService = getProvider(clawProvider.hetzner as ProviderType)
+                const hetznerTypes = await hetznerService.getServerTypes()
+                if (hetznerTypes.length > 0) {
+                    return fail(c, t('api.providerNotAllowed'), 400)
+                }
+            } catch {
+            }
+        }
+
+        const provider = getProvider(resolvedProvider)
         const [serverTypes, locations] = await Promise.all([
             provider.getServerTypes(),
             provider.getLocations()
