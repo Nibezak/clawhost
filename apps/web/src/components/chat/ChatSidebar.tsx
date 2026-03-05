@@ -63,7 +63,7 @@ const ChatSidebar: FC<ChatSidebarProps> = ({
 
     return (
         <div className='bg-background md:border-border relative z-10 flex h-full w-full shrink-0 flex-col md:w-[280px] md:border-r'>
-            <div className='border-border flex items-center justify-between border-b px-4 py-1'>
+            <div className='border-border hidden items-center justify-between border-b px-4 py-1 md:flex'>
                 <span className='text-foreground text-sm font-medium'>
                     {t('nav.claws')}
                 </span>

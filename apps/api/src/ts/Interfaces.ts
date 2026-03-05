@@ -1033,6 +1033,12 @@ export interface PiperSynthesisResult {
     channels: number
 }
 
+export interface PiperStreamResult {
+    child: import('child_process').ChildProcess
+    sampleRate: number
+    channels: number
+}
+
 export interface NpmRegistryTimeResponse {
     time: Record<string, string>
 }

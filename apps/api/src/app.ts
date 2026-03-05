@@ -38,6 +38,7 @@ app.use(
             : ['https://clawhost.cloud', 'https://www.clawhost.cloud'],
         allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         allowHeaders: ['Content-Type', 'Authorization'],
+        exposeHeaders: ['X-Sample-Rate', 'X-Channels', 'X-Audio-Format'],
         maxAge: 86400
     })
 )
