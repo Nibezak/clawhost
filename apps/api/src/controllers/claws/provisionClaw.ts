@@ -4,6 +4,7 @@ import type {
 } from '@/ts/Interfaces'
 import type { ProviderType } from '@/ts/Types'
 
+import crypto from 'crypto'
 import { eq } from 'drizzle-orm'
 import { clawStatus, inputValidation } from '@openclaw/shared'
 import { db } from '@/db'

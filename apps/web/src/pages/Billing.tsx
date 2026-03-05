@@ -196,6 +196,7 @@ const Billing: FC = (): ReactNode => {
             <PageTitle
                 title={t('billing.title')}
                 description={t('billing.description')}
+                noIndex
             />
             <PageBackground />
             <Header />

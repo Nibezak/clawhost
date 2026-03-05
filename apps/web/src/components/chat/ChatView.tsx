@@ -17,7 +17,9 @@ import {
     ListIcon,
     XIcon,
     GearSixIcon,
-    ArrowSquareOutIcon
+    ArrowSquareOutIcon,
+    TreeStructureIcon,
+    ListBulletsIcon
 } from '@phosphor-icons/react'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
 import { ClawAvatar } from '@/components'
@@ -70,6 +72,7 @@ const ChatView: FC<ChatViewProps> = ({
 }): ReactNode => {
     const { showToast } = useUIStore()
     const chatSidebarView = usePreferencesStore((s) => s.chatSidebarView)
+    const setChatSidebarView = usePreferencesStore((s) => s.setChatSidebarView)
 
     const [settingsClawId, setSettingsClawId] = useState<string | null>(
         initialSettingsClawId || null
@@ -236,7 +239,7 @@ const ChatView: FC<ChatViewProps> = ({
     const mobileLabel = useMemo(() => {
         if (activeAgent) return activeAgent.name
         if (settingsClaw) return settingsClaw.name
-        return t('chat.explorer')
+        return t('nav.claws')
     }, [activeAgent, settingsClaw])
 
     const headerDropdownClaw = activeClaw
@@ -376,7 +379,7 @@ const ChatView: FC<ChatViewProps> = ({
             </div>
             <div className='max-md:bg-background flex min-w-0 flex-1 flex-col max-md:relative max-md:z-10'>
                 {!(settingsClaw && !selectedAgent) && (
-                    <div className='bg-background flex items-center gap-2 px-4 py-2.5 md:hidden'>
+                    <div className='border-border bg-background flex items-center gap-2 border-b px-4 py-2.5 md:hidden'>
                         <button
                             onClick={() =>
                                 setMobileSidebarOpen(!mobileSidebarOpen)
@@ -393,7 +396,46 @@ const ChatView: FC<ChatViewProps> = ({
                         <span className='text-foreground/80 min-w-0 flex-1 truncate text-sm font-medium'>
                             {mobileLabel}
                         </span>
-                        {activeAgent && activeClaw && !mobileSidebarOpen && (
+                        {mobileSidebarOpen && (
+                            <div className='flex-1' />
+                        )}
+                        <div className='border-border flex shrink-0 items-center rounded-lg border p-0.5'>
+                                <button
+                                    onClick={() => setChatSidebarView('tree')}
+                                    className={`flex items-center justify-center rounded-md p-1.5 transition-colors ${
+                                        chatSidebarView === 'tree'
+                                            ? 'bg-foreground/10 text-foreground'
+                                            : 'text-muted-foreground hover:text-foreground'
+                                    }`}
+                                >
+                                    <TreeStructureIcon
+                                        className='h-3.5 w-3.5'
+                                        weight={
+                                            chatSidebarView === 'tree'
+                                                ? 'fill'
+                                                : 'regular'
+                                        }
+                                    />
+                                </button>
+                                <button
+                                    onClick={() => setChatSidebarView('list')}
+                                    className={`flex items-center justify-center rounded-md p-1.5 transition-colors ${
+                                        chatSidebarView === 'list'
+                                            ? 'bg-foreground/10 text-foreground'
+                                            : 'text-muted-foreground hover:text-foreground'
+                                    }`}
+                                >
+                                    <ListBulletsIcon
+                                        className='h-3.5 w-3.5'
+                                        weight={
+                                            chatSidebarView === 'list'
+                                                ? 'fill'
+                                                : 'regular'
+                                        }
+                                    />
+                                </button>
+                        </div>
+                        {activeAgent && activeClaw && !mobileSidebarOpen && chatSidebarView === 'tree' && (
                             <button
                                 onClick={() =>
                                     handleOpenClawSettings(activeClaw.id)

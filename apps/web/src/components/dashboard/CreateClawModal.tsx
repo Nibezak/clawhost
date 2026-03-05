@@ -65,13 +65,15 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
         clawProvider.vultr
     )
 
+    const hetznerAvailable = !hetznerLoading && !!hetznerPlans?.length
+
     const isProviderUnavailable = (p: ProviderType): boolean => {
         if (p === clawProvider.hetzner)
             return !hetznerLoading && !hetznerPlans?.length
         if (p === clawProvider.digitalocean)
-            return !digitaloceanLoading && !digitaloceanPlans?.length
+            return hetznerAvailable || (!digitaloceanLoading && !digitaloceanPlans?.length)
         if (p === clawProvider.vultr)
-            return !vultrLoading && !vultrPlans?.length
+            return hetznerAvailable || (!vultrLoading && !vultrPlans?.length)
         return false
     }
 
@@ -403,6 +405,9 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                     )
 
                                     if (unavailable) {
+                                        const isHetznerPreferred =
+                                            hetznerAvailable &&
+                                            p.key !== clawProvider.hetzner
                                         return (
                                             <Tooltip key={p.key}>
                                                 <TooltipTrigger asChild>
@@ -410,7 +415,9 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                 </TooltipTrigger>
                                                 <TooltipContent>
                                                     {t(
-                                                        'createClaw.providerUnavailable'
+                                                        isHetznerPreferred
+                                                            ? 'createClaw.providerDisabledHetznerRecommended'
+                                                            : 'createClaw.providerUnavailable'
                                                     )}
                                                 </TooltipContent>
                                             </Tooltip>

@@ -1,6 +1,6 @@
-import type { PiperModelConfig, PiperSynthesisResult } from '@/ts/Interfaces'
+import type { PiperModelConfig, PiperStreamResult } from '@/ts/Interfaces'
 
-import { execFile } from 'child_process'
+import { spawn } from 'child_process'
 import { readFileSync } from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -27,64 +27,25 @@ const getModelConfig = (voice: string): PiperModelConfig => {
     }
 }
 
-const createWavHeader = (
-    pcmLength: number,
-    sampleRate: number,
-    channels: number
-): Buffer => {
-    const bitsPerSample = 16
-    const byteRate = sampleRate * channels * (bitsPerSample / 8)
-    const blockAlign = channels * (bitsPerSample / 8)
-    const header = Buffer.alloc(44)
-
-    header.write('RIFF', 0)
-    header.writeUInt32LE(36 + pcmLength, 4)
-    header.write('WAVE', 8)
-    header.write('fmt ', 12)
-    header.writeUInt32LE(16, 16)
-    header.writeUInt16LE(1, 20)
-    header.writeUInt16LE(channels, 22)
-    header.writeUInt32LE(sampleRate, 24)
-    header.writeUInt32LE(byteRate, 28)
-    header.writeUInt16LE(blockAlign, 32)
-    header.writeUInt16LE(bitsPerSample, 34)
-    header.write('data', 36)
-    header.writeUInt32LE(pcmLength, 40)
-
-    return header
-}
-
-const synthesize = (
+const synthesizeStream = (
     text: string,
     voice: string
-): Promise<PiperSynthesisResult> => {
+): PiperStreamResult => {
     const modelPath = path.join(MODELS_DIR, `${voice}.onnx`)
     const { sampleRate, channels } = getModelConfig(voice)
 
-    return new Promise((resolve, reject) => {
-        const child = execFile(
-            PIPER_BINARY,
-            ['--model', modelPath, '--output-raw'],
-            { maxBuffer: 50 * 1024 * 1024, encoding: 'buffer' },
-            (error, stdout) => {
-                if (error) {
-                    reject(error)
-                    return
-                }
+    const child = spawn(
+        PIPER_BINARY,
+        ['--model', modelPath, '--output-raw'],
+        { stdio: ['pipe', 'pipe', 'pipe'] }
+    )
 
-                const pcm = stdout as unknown as Buffer
-                const header = createWavHeader(pcm.length, sampleRate, channels)
-                const audio = Buffer.concat([header, pcm])
+    if (child.stdin) {
+        child.stdin.write(text)
+        child.stdin.end()
+    }
 
-                resolve({ audio, sampleRate, channels })
-            }
-        )
-
-        if (child.stdin) {
-            child.stdin.write(text)
-            child.stdin.end()
-        }
-    })
+    return { child, sampleRate, channels }
 }
 
-export default synthesize
+export default synthesizeStream

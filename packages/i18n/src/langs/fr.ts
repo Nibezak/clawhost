@@ -62,6 +62,7 @@ const fr: Translations = {
         deploy: 'Déployer',
         deployOpenClaw: 'Déployer OpenClaw',
         mainNavigation: 'Navigation principale',
+        footerNavigation: 'Navigation du pied de page',
         toggleMenu: 'Ouvrir le menu'
     },
     footer: {
@@ -165,6 +166,7 @@ const fr: Translations = {
         failedToDeleteClaw: 'Échec de la suppression du claw !',
         failedToCreateClaw: 'Échec de la création du claw !',
         invalidProvider: 'Fournisseur invalide !',
+        providerNotAllowed: 'Ce fournisseur n\'est pas disponible lorsque Hetzner est actif !',
         invalidPlan: 'Offre sélectionnée invalide !',
         planBelowMinimumMemory:
             'Cette offre ne satisfait pas la mémoire minimale requise !',
@@ -702,6 +704,7 @@ const fr: Translations = {
         plan: 'Serveur',
         planUnavailable: 'Indisponible',
         providerUnavailable: 'Ce fournisseur est actuellement indisponible.',
+        providerDisabledHetznerRecommended: 'Désactivé — Hetzner est recommandé.',
         providerAtCapacity:
             "En raison d'une forte demande, nous sommes temporairement à court de serveurs chez ce fournisseur. Nous travaillons activement à résoudre ce problème.",
         advancedOptions: 'Options avancées facultatives',
@@ -796,6 +799,7 @@ const fr: Translations = {
             'Déployez OpenClaw sur votre propre VPS en un clic. Hébergement cloud auto-hébergeable avec accès root complet, emplacements mondiaux et tarifs transparents.',
         badge: 'OpenClaw simplifié',
         tutorialBadge: 'Regarde. Déploie.',
+        tutorialVideoThumbnail: 'Miniature de la vidéo tutoriel ClawHost',
         heroTitle1: 'Déployez OpenClaw.',
         heroTitle2: "Un clic. C'est fait.",
         heroDescription:

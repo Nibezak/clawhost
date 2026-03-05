@@ -433,6 +433,7 @@ const Landing: FC = (): ReactNode => {
                 activeSection={activeSection}
             />
 
+            <main>
             <section
                 className={`relative overflow-hidden px-6 pb-16 ${phBannerVisible ? 'pt-44' : announcementVisible ? 'pt-44' : 'pt-32'}`}
             >
@@ -471,8 +472,10 @@ const Landing: FC = (): ReactNode => {
                                     <div className='relative h-7 w-10 flex-shrink-0 overflow-hidden rounded-full'>
                                         <img
                                             src='https://img.youtube.com/vi/clawhost-tutorial/mqdefault.jpg'
-                                            alt=''
+                                            alt={t('landing.tutorialVideoThumbnail')}
                                             className='h-full w-full object-cover'
+                                            width={320}
+                                            height={180}
                                         />
                                         <div className='absolute inset-0 flex items-center justify-center bg-black/30'>
                                             <PlayCircleIcon className='h-3.5 w-3.5 text-white' />
@@ -1842,6 +1845,7 @@ const Landing: FC = (): ReactNode => {
                     </motion.div>
                 </div>
             </section>
+            </main>
 
             <LandingFooter />
 

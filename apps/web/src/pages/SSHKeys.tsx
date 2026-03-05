@@ -11,7 +11,7 @@ import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
-import { ROUTES, copyToClipboard as copyText } from '@/lib'
+import { ROUTES, copyToClipboard as copyText, getBaseDomain } from '@/lib'
 import {
     useSSHKeys,
     useCreateSSHKey,
@@ -619,7 +619,7 @@ const SSHKeys: FC = (): ReactNode => {
         profile?.name || cachedProfile?.name || t('account.noNameSet')
     const dropdownFooterLinks = useMemo(() => {
         if (!isLocal) return undefined
-        const BASE_URL = 'https://clawhost.cloud'
+        const BASE_URL = `https://${getBaseDomain()}`
         return [
             { label: t('footer.website'), href: BASE_URL, external: true },
             ...getLegalLinks().map((link) => ({
@@ -652,6 +652,7 @@ const SSHKeys: FC = (): ReactNode => {
             <PageTitle
                 title={t('sshKeys.title')}
                 description={t('sshKeys.description')}
+                noIndex
             />
             {!isLocal && <PageBackground />}
             {isLocal ? (

@@ -1,8 +1,9 @@
 import type { CreateClawBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
+import crypto from 'crypto'
 import { eq, and, count } from 'drizzle-orm'
-import { clawStatus, inputValidation } from '@openclaw/shared'
+import { clawStatus, clawProvider, inputValidation } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws, sshKeys, volumes } from '@/db/schema'
 import { getProvider } from '@/services/provider'
@@ -35,6 +36,23 @@ const createClaw = async (c: AuthenticatedContext) => {
             return fail(c, t('api.missingRequiredFields'), 400)
         }
 
+        const validProviders = [clawProvider.hetzner, clawProvider.digitalocean, clawProvider.vultr]
+        if (providerName && !validProviders.includes(providerName)) {
+            return fail(c, t('api.invalidProvider'), 400)
+        }
+
+        const resolvedProvider = providerName || clawProvider.hetzner
+        if (resolvedProvider !== clawProvider.hetzner) {
+            try {
+                const hetznerService = getProvider(clawProvider.hetzner)
+                const hetznerTypes = await hetznerService.getServerTypes()
+                if (hetznerTypes.length > 0) {
+                    return fail(c, t('api.providerNotAllowed'), 400)
+                }
+            } catch {
+            }
+        }
+
         if (
             volumeSize !== undefined &&
             (volumeSize < inputValidation.VOLUME_SIZE.MIN || volumeSize > inputValidation.VOLUME_SIZE.MAX)
@@ -42,7 +60,7 @@ const createClaw = async (c: AuthenticatedContext) => {
             return fail(c, t('api.volumeSizeInvalid', { min: inputValidation.VOLUME_SIZE.MIN, max: inputValidation.VOLUME_SIZE.MAX }), 400)
         }
 
-        const provider = getProvider(providerName || 'hetzner')
+        const provider = getProvider(resolvedProvider)
 
         const [clawCountResult, serverTypes, sshKeyResult] = await Promise.all([
             db
@@ -123,7 +141,7 @@ const createClaw = async (c: AuthenticatedContext) => {
                 id,
                 userId,
                 name,
-                provider: providerName || 'hetzner',
+                provider: resolvedProvider,
                 providerServerId: serverId.toString(),
                 status: clawStatus.configuring,
                 ip,
@@ -173,7 +191,7 @@ const createClaw = async (c: AuthenticatedContext) => {
             {
                 id,
                 name,
-                provider: providerName || 'hetzner',
+                provider: resolvedProvider,
                 status: clawStatus.configuring,
                 ip,
                 planId,

@@ -18,7 +18,8 @@ import {
     DASHBOARD_TABS,
     AGENT_DETAIL_TABS,
     CLAW_DETAIL_TABS,
-    fireConfetti
+    fireConfetti,
+    getBaseDomain
 } from '@/lib'
 import {
     useClaws,
@@ -165,7 +166,7 @@ const Dashboard: FC = (): ReactNode => {
 
     const dropdownFooterLinks = useMemo(() => {
         if (!isLocal) return undefined
-        const BASE_URL = 'https://clawhost.cloud'
+        const BASE_URL = `https://${getBaseDomain()}`
         return [
             { label: t('footer.website'), href: BASE_URL, external: true },
             ...getLegalLinks().map((link) => ({
@@ -488,6 +489,7 @@ const Dashboard: FC = (): ReactNode => {
                         ? t('dashboard.adminDescription')
                         : t('dashboard.description')
                 }
+                noIndex
             />
 
             <div className='border-border bg-background md:bg-background/80 relative z-10 flex items-center justify-between border-b px-6 py-3 md:backdrop-blur-xl'>

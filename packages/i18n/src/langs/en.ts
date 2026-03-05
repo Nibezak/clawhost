@@ -60,6 +60,7 @@ const en = {
         deploy: 'Deploy',
         deployOpenClaw: 'Deploy OpenClaw',
         mainNavigation: 'Main navigation',
+        footerNavigation: 'Footer navigation',
         toggleMenu: 'Toggle menu'
     },
     footer: {
@@ -152,6 +153,7 @@ const en = {
         failedToDeleteClaw: 'Failed to delete claw!',
         failedToCreateClaw: 'Failed to create claw!',
         invalidProvider: 'Invalid provider!',
+        providerNotAllowed: 'This provider is not available when Hetzner is active!',
         invalidPlan: 'Invalid plan selected!',
         planBelowMinimumMemory:
             'This plan does not meet the minimum memory requirement!',
@@ -537,7 +539,7 @@ const en = {
             'Remove memory limits, apply latest service configuration, and restart the gateway. This fixes most common issues.',
         diagnosticsRepairSuccess: 'Instance repaired successfully.',
         diagnosticsRepairFailed:
-            'Repair applied but gateway is not responding yet.',
+            'Repair applied but gateway is not responding yet!',
         diagnosticsLoading: 'Connecting to instance...',
         diagnosticsNoLogs:
             'No logs available. Start your instance to generate logs.',
@@ -649,6 +651,7 @@ const en = {
         plan: 'Server',
         planUnavailable: 'Unavailable',
         providerUnavailable: 'This provider is currently unavailable.',
+        providerDisabledHetznerRecommended: 'Disabled — Hetzner is recommended.',
         providerAtCapacity:
             'Due to high demand, we have temporarily run out of servers from this provider. We are actively working to resolve this.',
         advancedOptions: 'Advanced Optional Options',
@@ -741,6 +744,7 @@ const en = {
             'Deploy OpenClaw on your own VPS with one click. Self-hostable cloud hosting with full root access, global locations, and transparent pricing.',
         badge: 'OpenClaw Simplified',
         tutorialBadge: 'Watch. Deploy.',
+        tutorialVideoThumbnail: 'ClawHost tutorial video thumbnail',
         heroTitle1: 'Deploy OpenClaw.',
         heroTitle2: 'One click. Done.',
         heroDescription:

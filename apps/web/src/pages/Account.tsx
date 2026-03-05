@@ -8,7 +8,7 @@ import { t } from '@openclaw/i18n'
 import { userRole } from '@openclaw/shared'
 import { useAuth } from '@/lib/auth'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
-import { api, getLocale, ROUTES } from '@/lib'
+import { api, getBaseDomain, getLocale, ROUTES } from '@/lib'
 import { useProfile, useUpdateProfile, useUserStats } from '@/hooks'
 import { getLegalLinks } from '@/data'
 import {
@@ -176,7 +176,7 @@ const Account: FC = (): ReactNode => {
 
     const dropdownFooterLinks = useMemo(() => {
         if (!isLocal) return undefined
-        const BASE_URL = 'https://clawhost.cloud'
+        const BASE_URL = `https://${getBaseDomain()}`
         return [
             { label: t('footer.website'), href: BASE_URL, external: true },
             ...getLegalLinks().map((link) => ({
@@ -230,6 +230,7 @@ const Account: FC = (): ReactNode => {
             <PageTitle
                 title={t('account.title')}
                 description={t('account.description')}
+                noIndex
             />
             {!isLocal && <PageBackground />}
             {isLocal ? (
