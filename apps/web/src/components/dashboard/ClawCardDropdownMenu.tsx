@@ -136,22 +136,22 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                             </DropdownMenuItem>
                         )}
                         {claw.provider !== clawProvider.local && isAdmin && (
-                            <>
-                                <DropdownMenuItem
-                                    onClick={actions.onUpdateInstance}
-                                    disabled={isLoading}
-                                >
-                                    <ArrowsClockwiseIcon className='mr-2 h-4 w-4' />
-                                    {t('dashboard.updateInstance')}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={actions.onShowReinstallModal}
-                                    disabled={isLoading}
-                                >
-                                    <ArrowCounterClockwiseIcon className='mr-2 h-4 w-4' />
-                                    {t('dashboard.reinstallInstance')}
-                                </DropdownMenuItem>
-                            </>
+                            <DropdownMenuItem
+                                onClick={actions.onUpdateInstance}
+                                disabled={isLoading}
+                            >
+                                <ArrowsClockwiseIcon className='mr-2 h-4 w-4' />
+                                {t('dashboard.updateInstance')}
+                            </DropdownMenuItem>
+                        )}
+                        {claw.provider !== clawProvider.local && (
+                            <DropdownMenuItem
+                                onClick={actions.onShowReinstallModal}
+                                disabled={isLoading}
+                            >
+                                <ArrowCounterClockwiseIcon className='mr-2 h-4 w-4' />
+                                {t('dashboard.reinstallInstance')}
+                            </DropdownMenuItem>
                         )}
                     </>
                 )}
@@ -206,7 +206,7 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                     </>
                 ) : (
                     <>
-                        {claw.status === clawStatus.creating && isAdmin && (
+                        {claw.status === clawStatus.creating && !claw.id.startsWith('pending-') && (
                             <>
                                 <DropdownMenuItem
                                     onClick={actions.onShowReinstallModal}
@@ -224,7 +224,7 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                             className='text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400'
                         >
                             <TrashIcon className='mr-2 h-4 w-4' />
-                            {t('dashboard.scheduleDeletion')}
+                            {claw.id.startsWith('pending-') ? t('common.delete') : t('dashboard.scheduleDeletion')}
                         </DropdownMenuItem>
                     </>
                 )}

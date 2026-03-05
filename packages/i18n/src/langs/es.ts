@@ -209,6 +209,8 @@ const es: Translations = {
             'Reparación aplicada pero el gateway aún no responde. Puede necesitar más tiempo para iniciar!',
         failedToReinstallClaw: 'Error al reinstalar la instancia!',
         reinstallSuccess: 'Instancia reinstalada exitosamente.',
+        reinstallRateLimited: 'Solo puedes reinstalar una vez cada 24 horas. Contacta al equipo si necesitas que se restablezca.',
+        clawBusy: 'El claw está siendo aprovisionado o eliminado!',
         reinstallGatewayNotResponding:
             'Reinstalación completada pero el gateway aún no responde. Puede necesitar más tiempo para iniciar!',
         failedToExportClaw: 'Error al exportar los datos del claw!',
@@ -606,7 +608,7 @@ const es: Translations = {
         reinstallInstance: 'Reinstalar instancia',
         reinstallClaw: 'Reinstalar instancia',
         reinstallClawConfirmation:
-            'Esto reinstalará OpenClaw y restablecerá todas las configuraciones de esta instancia. Tus datos y servidor se conservarán, pero todos los servicios serán reiniciados. ¿Continuar?',
+            'Esto reinstalará completamente OpenClaw en esta instancia. Todas las configuraciones, agentes y datos serán restablecidos. Esta acción no se puede deshacer. ¿Continuar?',
         reinstallInstanceSuccess: 'Instancia reinstalada exitosamente.',
         reinstallInstanceFailed: 'Error al reinstalar la instancia!',
         openControlPanel: 'Abrir panel de control',

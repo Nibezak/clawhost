@@ -16,8 +16,13 @@ const generateCloudInit = (
                 mode: 'token',
                 token: gatewayToken
             },
+            remote: {
+                token: gatewayToken
+            },
             controlUi: {
-                allowInsecureAuth: true
+                allowInsecureAuth: true,
+                allowedOrigins: [`https://${fullDomain}`],
+                dangerouslyDisableDeviceAuth: true
             },
             trustedProxies: ['127.0.0.1', '::1']
         },

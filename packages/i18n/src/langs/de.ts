@@ -211,6 +211,8 @@ const de: Translations = {
             'Reparatur durchgeführt, aber das Gateway antwortet noch nicht. Es benötigt möglicherweise mehr Zeit zum Starten!',
         failedToReinstallClaw: 'Instanz konnte nicht neu installiert werden!',
         reinstallSuccess: 'Instanz erfolgreich neu installiert.',
+        reinstallRateLimited: 'Du kannst nur einmal alle 24 Stunden neu installieren. Kontaktiere das Team, wenn du dies zurücksetzen musst.',
+        clawBusy: 'Claw wird derzeit bereitgestellt oder gelöscht!',
         reinstallGatewayNotResponding:
             'Neuinstallation abgeschlossen, aber das Gateway antwortet noch nicht. Es benötigt möglicherweise mehr Zeit zum Starten!',
         failedToExportClaw: 'Claw-Daten konnten nicht exportiert werden!',
@@ -609,7 +611,7 @@ const de: Translations = {
         reinstallInstance: 'Instanz neu installieren',
         reinstallClaw: 'Instanz neu installieren',
         reinstallClawConfirmation:
-            'Dies installiert OpenClaw neu und setzt alle Konfigurationen auf dieser Instanz zurück. Deine Daten und dein Server bleiben erhalten, aber alle Dienste werden neu gestartet. Fortfahren?',
+            'Dies wird OpenClaw auf dieser Instanz vollständig neu installieren. Alle Konfigurationen, Agenten und Daten werden zurückgesetzt. Diese Aktion kann nicht rückgängig gemacht werden. Fortfahren?',
         reinstallInstanceSuccess: 'Instanz erfolgreich neu installiert.',
         reinstallInstanceFailed: 'Instanz konnte nicht neu installiert werden!',
         openControlPanel: 'Systemsteuerung öffnen',

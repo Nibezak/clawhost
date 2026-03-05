@@ -650,9 +650,9 @@ const ChatView: FC<ChatViewProps> = ({
                                         t('dashboard.reinstallInstanceSuccess'),
                                         'success'
                                     ),
-                                onError: () =>
+                                onError: (err: Error) =>
                                     showToast(
-                                        t('dashboard.reinstallInstanceFailed'),
+                                        err.message || t('dashboard.reinstallInstanceFailed'),
                                         'error'
                                     )
                             })

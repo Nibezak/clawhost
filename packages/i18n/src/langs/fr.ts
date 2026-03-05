@@ -214,6 +214,8 @@ const fr: Translations = {
             'Réparation appliquée mais la passerelle ne répond pas encore. Elle peut avoir besoin de plus de temps pour démarrer !',
         failedToReinstallClaw: "Échec de la réinstallation de l'instance !",
         reinstallSuccess: 'Instance réinstallée avec succès.',
+        reinstallRateLimited: "Vous ne pouvez réinstaller qu'une fois toutes les 24 heures. Veuillez contacter l'équipe si vous avez besoin de réinitialiser cela.",
+        clawBusy: 'Le claw est en cours de provisionnement ou de suppression !',
         reinstallGatewayNotResponding:
             'Réinstallation terminée mais la passerelle ne répond pas encore. Elle peut avoir besoin de plus de temps pour démarrer !',
         failedToExportClaw: "Échec de l'exportation des données du claw !",
@@ -618,7 +620,7 @@ const fr: Translations = {
         reinstallInstance: "Réinstaller l'instance",
         reinstallClaw: "Réinstaller l'instance",
         reinstallClawConfirmation:
-            'Cela réinstallera OpenClaw et réinitialisera toutes les configurations de cette instance. Vos données et votre serveur seront préservés, mais tous les services seront redémarrés. Continuer ?',
+            'Cela réinstallera complètement OpenClaw sur cette instance. Toutes les configurations, agents et données seront réinitialisés. Cette action est irréversible. Continuer ?',
         reinstallInstanceSuccess: 'Instance réinstallée avec succès.',
         reinstallInstanceFailed: "Échec de la réinstallation de l'instance !",
         openControlPanel: 'Ouvrir le panneau de contrôle',

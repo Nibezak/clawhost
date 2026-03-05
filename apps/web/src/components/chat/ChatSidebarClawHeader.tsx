@@ -136,8 +136,8 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
             onSuccess: () => {
                 showToast(t('dashboard.reinstallInstanceSuccess'), 'success')
             },
-            onError: () => {
-                showToast(t('dashboard.reinstallInstanceFailed'), 'error')
+            onError: (err: Error) => {
+                showToast(err.message || t('dashboard.reinstallInstanceFailed'), 'error')
             }
         })
     }

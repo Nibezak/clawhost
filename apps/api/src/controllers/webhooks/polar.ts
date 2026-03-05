@@ -21,6 +21,8 @@ const handlePolarWebhook = async (c: Context) => {
     try {
         const event = await parseWebhook(c)
 
+        console.log(event)
+
         if (!event) {
             return fail(c, t('api.invalidWebhook'), 400)
         }
@@ -46,11 +48,14 @@ const handlePolarWebhook = async (c: Context) => {
                     .where(eq(claws.polarSubscriptionId, data.id))
                     .limit(1)
 
+                console.log('eventEnv', eventEnv)
+
                 if (existingClaw[0]) {
                     return
                 }
 
                 const pendingClawId = data.metadata?.pendingClawId
+                console.log('pendingClawId', pendingClawId)
                 if (!pendingClawId) {
                     return
                 }
