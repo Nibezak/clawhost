@@ -47,6 +47,9 @@ export const claws = pgTable(
         deletionScheduledAt: timestamp('deletion_scheduled_at', {
             withTimezone: true
         }),
+        lastReinstalledAt: timestamp('last_reinstalled_at', {
+            withTimezone: true
+        }),
         createdAt: timestamp('created_at', { withTimezone: true })
             .defaultNow()
             .notNull()

@@ -55,7 +55,8 @@ const checkouts = {
                 currency: checkout.currency ?? 'usd',
                 metadata: checkout.metadata as
                     | Record<string, string>
-                    | undefined
+                    | undefined,
+                subscriptionId: checkout.subscriptionId ?? undefined
             }
             checkoutCache.set(checkoutId, {
                 data: result,

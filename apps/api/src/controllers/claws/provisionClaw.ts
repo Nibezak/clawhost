@@ -30,6 +30,8 @@ export async function provisionClaw(
             .where(eq(claws.polarSubscriptionId, params.subscriptionId))
             .limit(1)
 
+        console.log('existingClaw', existingClaw)
+
         if (existingClaw[0]) {
             return { success: true, clawId: existingClaw[0].id }
         }
@@ -38,6 +40,8 @@ export async function provisionClaw(
             .delete(pendingClaws)
             .where(eq(pendingClaws.id, params.pendingClawId))
             .returning()
+
+        console.log('claimed', claimed)
 
         if (!claimed[0]) {
             return { success: false, error: t('api.pendingClawNotFound') }
@@ -58,6 +62,8 @@ export async function provisionClaw(
                       .limit(1)
                 : Promise.resolve(null)
         ])
+
+        console.log(serverTypes, sshKeyResult)
 
         const selectedPlan = serverTypes.find(
             (st) => st.name === pending.planId

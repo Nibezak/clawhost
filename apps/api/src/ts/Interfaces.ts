@@ -397,6 +397,7 @@ export interface CheckoutSession {
     amount: number
     currency: string
     metadata?: Record<string, string>
+    subscriptionId?: string
 }
 
 export interface CreateCheckoutParams {

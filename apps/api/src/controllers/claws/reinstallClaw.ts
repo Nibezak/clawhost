@@ -2,7 +2,7 @@ import type { AuthenticatedContext } from '@/ts/Types'
 import type { ProviderType } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
-import { clawStatus, inputValidation } from '@openclaw/shared'
+import { clawStatus } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws, sshKeys, volumes } from '@/db/schema'
 import { getProvider } from '@/services/provider'
@@ -14,11 +14,15 @@ import {
     generatePassword,
     generateServerName,
     generateToken,
+    isAdmin,
     DOMAIN
 } from '@/controllers/claws/helpers'
 
+const REINSTALL_WINDOW = 86_400_000
+
 const reinstallClaw = async (c: AuthenticatedContext) => {
     try {
+        const userId = c.get('userId')
         const id = c.req.param('id')
         const claw = await db
             .select()
@@ -31,15 +35,26 @@ const reinstallClaw = async (c: AuthenticatedContext) => {
         }
 
         const existing = claw[0]
+
+        const nonReinstallableStatuses: string[] = [
+            clawStatus.creating,
+            clawStatus.deleting
+        ]
+
+        if (nonReinstallableStatuses.includes(existing.status)) {
+            return fail(c, t('api.clawBusy'), 400)
+        }
+
+        const admin = await isAdmin(userId)
+        if (!admin && existing.lastReinstalledAt) {
+            const elapsed = Date.now() - existing.lastReinstalledAt.getTime()
+            if (elapsed < REINSTALL_WINDOW) {
+                return fail(c, t('api.reinstallRateLimited'), 429)
+            }
+        }
+
         const providerName = (existing.provider || 'hetzner') as ProviderType
         const provider = getProvider(providerName)
-
-        const serverTypes = await provider.getServerTypes()
-        const selectedPlan = serverTypes.find((st) => st.name === existing.planId)
-
-        if (!selectedPlan || selectedPlan.memory < inputValidation.MIN_MEMORY_GB.MIN) {
-            return fail(c, t('api.invalidPlan'), 400)
-        }
 
         await db
             .update(claws)
@@ -124,7 +139,8 @@ const reinstallClaw = async (c: AuthenticatedContext) => {
                     status: clawStatus.configuring,
                     ip,
                     rootPassword: newPassword,
-                    gatewayToken: newGatewayToken
+                    gatewayToken: newGatewayToken,
+                    lastReinstalledAt: new Date()
                 })
                 .where(eq(claws.id, id))
         ])

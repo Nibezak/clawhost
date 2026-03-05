@@ -196,6 +196,8 @@ const en = {
             'Repair applied but gateway is not responding yet. It may need more time to start.',
         failedToReinstallClaw: 'Failed to reinstall the instance!',
         reinstallSuccess: 'Instance reinstalled successfully.',
+        reinstallRateLimited: 'You can only reinstall once every 24 hours. Please contact the team if you need this reset.',
+        clawBusy: 'Claw is currently being provisioned or deleted!',
         reinstallGatewayNotResponding:
             'Reinstall completed but gateway is not responding yet. It may need more time to start.',
         failedToExportClaw: 'Failed to export claw data!',
@@ -572,7 +574,7 @@ const en = {
         reinstallInstance: 'Reinstall Instance',
         reinstallClaw: 'Reinstall Instance',
         reinstallClawConfirmation:
-            'This will reinstall OpenClaw and reset all configurations on this instance. Your data and server will be preserved, but all services will be restarted. Continue?',
+            'This will completely reinstall OpenClaw on this instance. All configurations, agents, and data will be reset. This action cannot be undone. Continue?',
         reinstallInstanceSuccess: 'Instance reinstalled successfully.',
         reinstallInstanceFailed: 'Failed to reinstall instance!',
         openControlPanel: 'Open Control Panel',
