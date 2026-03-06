@@ -214,7 +214,7 @@ const fr: Translations = {
             'Réparation appliquée mais la passerelle ne répond pas encore. Elle peut avoir besoin de plus de temps pour démarrer !',
         failedToReinstallClaw: "Échec de la réinstallation de l'instance !",
         reinstallSuccess: 'Instance réinstallée avec succès.',
-        reinstallRateLimited: "Vous ne pouvez réinstaller qu'une fois toutes les 24 heures. Veuillez contacter l'équipe si vous avez besoin de réinitialiser cela.",
+        reinstallRateLimited: "Vous ne pouvez réinstaller qu'une fois toutes les 24 heures. Veuillez contacter l'équipe si vous souhaitez supprimer cette limite.",
         clawBusy: 'Le claw est en cours de provisionnement ou de suppression !',
         reinstallGatewayNotResponding:
             'Réinstallation terminée mais la passerelle ne répond pas encore. Elle peut avoir besoin de plus de temps pour démarrer !',
@@ -706,7 +706,7 @@ const fr: Translations = {
         plan: 'Serveur',
         planUnavailable: 'Indisponible',
         providerUnavailable: 'Ce fournisseur est actuellement indisponible.',
-        providerDisabledHetznerRecommended: 'Désactivé — Hetzner est recommandé.',
+        providerDisabledHetznerRecommended: 'Indisponible',
         providerAtCapacity:
             "En raison d'une forte demande, nous sommes temporairement à court de serveurs chez ce fournisseur. Nous travaillons activement à résoudre ce problème.",
         advancedOptions: 'Options avancées facultatives',
@@ -728,6 +728,7 @@ const fr: Translations = {
         totalMonthly: 'Total mensuel',
         creating: 'Création...',
         proceedToPayment: 'Payer {{amount}}$ pour déployer',
+        agreementNotice: 'En déployant, vous acceptez nos',
         selectServerToContinue: 'Sélectionnez un serveur pour continuer',
         selectLocationToContinue: 'Sélectionnez un emplacement pour continuer',
         clawCreated: 'Claw créé.',

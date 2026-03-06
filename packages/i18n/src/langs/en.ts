@@ -196,7 +196,7 @@ const en = {
             'Repair applied but gateway is not responding yet. It may need more time to start.',
         failedToReinstallClaw: 'Failed to reinstall the instance!',
         reinstallSuccess: 'Instance reinstalled successfully.',
-        reinstallRateLimited: 'You can only reinstall once every 24 hours. Please contact the team if you need this reset.',
+        reinstallRateLimited: 'You can only reinstall once every 24 hours. Please contact the team in case you want to remove this limit.',
         clawBusy: 'Claw is currently being provisioned or deleted!',
         reinstallGatewayNotResponding:
             'Reinstall completed but gateway is not responding yet. It may need more time to start.',
@@ -653,7 +653,7 @@ const en = {
         plan: 'Server',
         planUnavailable: 'Unavailable',
         providerUnavailable: 'This provider is currently unavailable.',
-        providerDisabledHetznerRecommended: 'Disabled — Hetzner is recommended.',
+        providerDisabledHetznerRecommended: 'Unavailable',
         providerAtCapacity:
             'Due to high demand, we have temporarily run out of servers from this provider. We are actively working to resolve this.',
         advancedOptions: 'Advanced Optional Options',
@@ -674,6 +674,7 @@ const en = {
         totalMonthly: 'Total monthly',
         creating: 'Creating...',
         proceedToPayment: 'Pay ${{amount}} to Deploy',
+        agreementNotice: 'By deploying, you agree to our',
         selectServerToContinue: 'Select a server to continue',
         selectLocationToContinue: 'Select a location to continue',
         clawCreated: 'Claw created.',

@@ -209,7 +209,7 @@ const es: Translations = {
             'Reparación aplicada pero el gateway aún no responde. Puede necesitar más tiempo para iniciar!',
         failedToReinstallClaw: 'Error al reinstalar la instancia!',
         reinstallSuccess: 'Instancia reinstalada exitosamente.',
-        reinstallRateLimited: 'Solo puedes reinstalar una vez cada 24 horas. Contacta al equipo si necesitas que se restablezca.',
+        reinstallRateLimited: 'Solo puedes reinstalar una vez cada 24 horas. Contacta al equipo si deseas eliminar este límite.',
         clawBusy: 'El claw está siendo aprovisionado o eliminado!',
         reinstallGatewayNotResponding:
             'Reinstalación completada pero el gateway aún no responde. Puede necesitar más tiempo para iniciar!',
@@ -689,7 +689,7 @@ const es: Translations = {
         plan: 'Servidor',
         planUnavailable: 'No disponible',
         providerUnavailable: 'Este proveedor no está disponible actualmente.',
-        providerDisabledHetznerRecommended: 'Deshabilitado — Hetzner es recomendado.',
+        providerDisabledHetznerRecommended: 'No disponible',
         providerAtCapacity:
             'Debido a la alta demanda, temporalmente nos hemos quedado sin servidores de este proveedor. Estamos trabajando activamente para resolver esto!',
         advancedOptions: 'Opciones avanzadas opcionales',
@@ -711,6 +711,7 @@ const es: Translations = {
         totalMonthly: 'Total mensual',
         creating: 'Creando...',
         proceedToPayment: 'Pagar ${{amount}} para desplegar',
+        agreementNotice: 'Al desplegar, aceptas nuestros',
         selectServerToContinue: 'Selecciona un servidor para continuar',
         selectLocationToContinue: 'Selecciona una ubicación para continuar',
         clawCreated: 'Claw creado.',

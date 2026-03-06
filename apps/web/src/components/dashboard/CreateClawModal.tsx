@@ -5,8 +5,9 @@ import type { ProviderType } from '@/ts/Types'
 import { useState, useEffect } from 'react'
 import { t } from '@openclaw/i18n'
 import { clawProvider } from '@openclaw/shared'
+import { Link } from 'react-router-dom'
 import { useUIStore } from '@/lib/store'
-import { copyToClipboard } from '@/lib'
+import { copyToClipboard, ROUTES } from '@/lib'
 import {
     usePurchaseClaw,
     usePlans,
@@ -29,7 +30,8 @@ import {
     TooltipTrigger,
     TooltipContent,
     TooltipProvider,
-    Skeleton
+    Skeleton,
+    Checkbox
 } from '@/components/ui'
 import {
     CircleNotchIcon,
@@ -159,6 +161,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     const [selectedSshKeyId, setSelectedSshKeyId] = useState<string>('')
     const [volumeSize, setVolumeSize] = useState<number>(0)
     const [showAdvanced, setShowAdvanced] = useState(false)
+    const [agreedToTerms, setAgreedToTerms] = useState(false)
     const { showToast } = useUIStore()
 
     const handleProviderChange = (newProvider: ProviderType) => {
@@ -1071,6 +1074,34 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                         </div>
                     )}
 
+                    <label className='flex cursor-pointer items-start gap-2'>
+                        <Checkbox
+                            checked={agreedToTerms}
+                            onCheckedChange={(checked) =>
+                                setAgreedToTerms(!!checked)
+                            }
+                            className='mt-0.5'
+                        />
+                        <span className='text-muted-foreground text-xs'>
+                            {t('createClaw.agreementNotice')}{' '}
+                            <Link
+                                to={ROUTES.TERMS}
+                                className='text-muted-foreground hover:text-foreground underline'
+                                target='_blank'
+                            >
+                                {t('auth.termsOfService')}
+                            </Link>{' '}
+                            {t('auth.andWord')}{' '}
+                            <Link
+                                to={ROUTES.PRIVACY}
+                                className='text-muted-foreground hover:text-foreground underline'
+                                target='_blank'
+                            >
+                                {t('auth.privacyPolicy')}
+                            </Link>
+                        </span>
+                    </label>
+
                     <div className='flex justify-end gap-3'>
                         <Button type='button' variant='ghost' onClick={onClose}>
                             {t('common.cancel')}
@@ -1081,7 +1112,8 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                 purchaseMutation.isPending ||
                                 !selectedPlan ||
                                 !location ||
-                                !!nameError
+                                !!nameError ||
+                                !agreedToTerms
                             }
                         >
                             {purchaseMutation.isPending && (

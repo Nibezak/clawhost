@@ -546,8 +546,7 @@ const Dashboard: FC = (): ReactNode => {
                 </div>
 
                 <div className='flex items-center gap-1.5 sm:gap-3'>
-                    {!adminMode &&
-                        !isLoading &&
+                    {!isLoading &&
                         displayedClaws &&
                         displayedClaws.length > 0 && (
                             <>
@@ -658,16 +657,8 @@ const Dashboard: FC = (): ReactNode => {
                                                       'playground.noClawsDescription'
                                                   )
                                         }
-                                        actionLabel={
-                                            adminMode
-                                                ? undefined
-                                                : t('nav.deployOpenClaw')
-                                        }
-                                        onAction={
-                                            adminMode
-                                                ? undefined
-                                                : () => setShowCreate(true)
-                                        }
+                                        actionLabel={t('nav.deployOpenClaw')}
+                                        onAction={() => setShowCreate(true)}
                                     />
                                 </div>
                             </div>
@@ -751,21 +742,8 @@ const Dashboard: FC = (): ReactNode => {
                                                               'playground.noClawsDescription'
                                                           )
                                                 }
-                                                actionLabel={
-                                                    adminMode
-                                                        ? undefined
-                                                        : t(
-                                                              'nav.deployOpenClaw'
-                                                          )
-                                                }
-                                                onAction={
-                                                    adminMode
-                                                        ? undefined
-                                                        : () =>
-                                                              setShowCreate(
-                                                                  true
-                                                              )
-                                                }
+                                                actionLabel={t('nav.deployOpenClaw')}
+                                                onAction={() => setShowCreate(true)}
                                             />
                                         </div>
                                     </div>
