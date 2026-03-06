@@ -4,6 +4,9 @@ import type {
     ChatHistoryEntry,
     ChatImageSource,
     ChatMessage,
+    GatewayHistoryResult,
+    GatewaySession,
+    GatewaySessionsResult,
     UseAgentChatParams,
     UseAgentChatReturn
 } from '@/ts/Interfaces'
@@ -72,25 +75,20 @@ const useAgentChat = ({
                 .send('sessions.list', {})
                 .then((result) => {
                     if (!mountedRef.current) return
-                    const raw = result as Record<string, unknown>
-                    const sessions = Array.isArray(raw)
+                    const raw = result as GatewaySessionsResult
+                    const sessions: GatewaySession[] = Array.isArray(raw)
                         ? raw
-                        : Array.isArray(
-                                (raw as Record<string, unknown>)?.sessions
-                            )
-                          ? ((raw as Record<string, unknown>).sessions as Array<
-                                Record<string, unknown>
-                            >)
+                        : Array.isArray(raw?.sessions)
+                          ? raw.sessions
                           : []
                     const agentPrefix = `agent:${agentId}:`
                     const agentSession = sessions.find((s) => {
-                        const key = ((s as Record<string, unknown>).key ||
-                            (s as Record<string, unknown>).sessionKey) as string
+                        const key = s.key || s.sessionKey
                         return key?.startsWith(agentPrefix)
-                    }) as Record<string, unknown> | undefined
+                    })
                     if (agentSession) {
-                        const resolved = (agentSession.key ||
-                            agentSession.sessionKey) as string | undefined
+                        const resolved =
+                            agentSession.key || agentSession.sessionKey
                         if (resolved) {
                             sessionKeyRef.current = resolved
                         }
@@ -102,16 +100,14 @@ const useAgentChat = ({
                 })
                 .then((result) => {
                     if (!mountedRef.current) return
-                    const raw = result as Record<string, unknown>
-                    const history = (
-                        Array.isArray(raw)
-                            ? raw
-                            : Array.isArray(raw?.messages)
-                              ? (raw.messages as ChatHistoryEntry[])
-                              : Array.isArray(raw?.history)
-                                ? (raw.history as ChatHistoryEntry[])
-                                : []
-                    ) as ChatHistoryEntry[]
+                    const raw = result as GatewayHistoryResult
+                    const history: ChatHistoryEntry[] = Array.isArray(raw)
+                        ? raw
+                        : Array.isArray(raw?.messages)
+                          ? raw.messages
+                          : Array.isArray(raw?.history)
+                            ? raw.history
+                            : []
                     if (history.length > 0) {
                         const loaded: ChatMessage[] = []
                         let lastTimestamp = new Date().toISOString()
@@ -172,8 +168,7 @@ const useAgentChat = ({
                 return
 
             const rawContent =
-                (event.message as Record<string, unknown>)?.content ??
-                event.message
+                (event.message as ChatHistoryEntry)?.content ?? event.message
             const text = extractText(rawContent)
             const images = extractImages(rawContent)
 

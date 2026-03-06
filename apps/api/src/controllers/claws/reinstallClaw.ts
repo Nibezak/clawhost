@@ -61,10 +61,16 @@ const reinstallClaw = async (c: AuthenticatedContext) => {
             .set({ status: clawStatus.creating })
             .where(eq(claws.id, id))
 
-        const clawVolumes = await db
-            .select()
-            .from(volumes)
-            .where(eq(volumes.clawId, id))
+        const [clawVolumes, sshKeyResult] = await Promise.all([
+            db.select().from(volumes).where(eq(volumes.clawId, id)),
+            existing.sshKeyId
+                ? db
+                      .select()
+                      .from(sshKeys)
+                      .where(eq(sshKeys.id, existing.sshKeyId))
+                      .limit(1)
+                : Promise.resolve(null)
+        ])
 
         await Promise.allSettled([
             ...clawVolumes
@@ -75,10 +81,10 @@ const reinstallClaw = async (c: AuthenticatedContext) => {
                 }),
             existing.subdomain
                 ? cloudflare
-                    .findDNSRecord(existing.subdomain)
-                    .then((rec) =>
-                        rec ? cloudflare.deleteDNSRecord(rec.id) : null
-                    )
+                      .findDNSRecord(existing.subdomain)
+                      .then((rec) =>
+                          rec ? cloudflare.deleteDNSRecord(rec.id) : null
+                      )
                 : Promise.resolve(),
             existing.providerServerId
                 ? provider.deleteServer(existing.providerServerId)
@@ -89,23 +95,15 @@ const reinstallClaw = async (c: AuthenticatedContext) => {
         const newGatewayToken = generateToken()
 
         let providerSshKeyIds: number[] | undefined
-        if (existing.sshKeyId) {
-            const sshKeyResult = await db
-                .select()
-                .from(sshKeys)
-                .where(eq(sshKeys.id, existing.sshKeyId))
-                .limit(1)
-
-            if (sshKeyResult[0]) {
-                const keyId =
-                    providerName === 'digitalocean'
-                        ? sshKeyResult[0].digitaloceanKeyId
-                        : providerName === 'vultr'
-                            ? sshKeyResult[0].vultrKeyId
-                            : sshKeyResult[0].providerKeyId
-                if (keyId) {
-                    providerSshKeyIds = [keyId]
-                }
+        if (sshKeyResult?.[0]) {
+            const keyId =
+                providerName === 'digitalocean'
+                    ? sshKeyResult[0].digitaloceanKeyId
+                    : providerName === 'vultr'
+                      ? sshKeyResult[0].vultrKeyId
+                      : sshKeyResult[0].providerKeyId
+            if (keyId) {
+                providerSshKeyIds = [keyId]
             }
         }
 
@@ -155,7 +153,10 @@ const reinstallClaw = async (c: AuthenticatedContext) => {
                 )
                 await db
                     .update(volumes)
-                    .set({ providerVolumeId: providerVolume.id, status: 'available' })
+                    .set({
+                        providerVolumeId: providerVolume.id,
+                        status: 'available'
+                    })
                     .where(eq(volumes.id, vol.id))
             } catch (volumeErr) {
                 console.error('Failed to recreate volume:', volumeErr)

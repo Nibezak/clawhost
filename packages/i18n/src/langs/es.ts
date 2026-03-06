@@ -86,7 +86,16 @@ const es: Translations = {
         legalAndMore: 'Otros',
         documentation: 'Documentación',
         productDescription:
-            'Infraestructura lista para producción con despliegue de OpenClaw en un clic, gestionado de principio a fin — construye, lanza y avanza más rápido con IA.'
+            'Infraestructura lista para producción con despliegue de OpenClaw en un clic, gestionado de principio a fin — construye, lanza y avanza más rápido con IA.',
+        downloadAndroid: 'Disponible en Google Play',
+        downloadIos: 'Descargar en el App Store',
+        ariaGithub: 'GitHub',
+        ariaX: 'X',
+        ariaFacebook: 'Facebook',
+        ariaInstagram: 'Instagram',
+        ariaThreads: 'Threads',
+        ariaYoutube: 'YouTube',
+        ariaTiktok: 'TikTok'
     },
     errors: {
         somethingWentWrong: '¡Algo salió mal!',
@@ -164,11 +173,13 @@ const es: Translations = {
         failedToDeleteClaw: 'Error al eliminar el claw!',
         failedToCreateClaw: 'Error al crear el claw!',
         invalidProvider: 'Proveedor no válido!',
-        providerNotAllowed: 'Este proveedor no está disponible cuando Hetzner está activo!',
+        providerNotAllowed:
+            'Este proveedor no está disponible cuando Hetzner está activo!',
         invalidPlan: 'Plan seleccionado no válido!',
         planBelowMinimumMemory:
             'Este plan no cumple con el requisito mínimo de memoria!',
         invalidLocation: 'Ubicación seleccionada no válida!',
+        planNotAvailableAtLocation: 'Este plan no está disponible en la ubicación seleccionada!',
         failedToSyncClaw: 'Error al sincronizar el estado del servidor!',
         failedToProvisionClaw: 'Error al aprovisionar el claw!',
         failedToInitiatePurchase: 'Error al iniciar la compra!',
@@ -209,7 +220,8 @@ const es: Translations = {
             'Reparación aplicada pero el gateway aún no responde. Puede necesitar más tiempo para iniciar!',
         failedToReinstallClaw: 'Error al reinstalar la instancia!',
         reinstallSuccess: 'Instancia reinstalada exitosamente.',
-        reinstallRateLimited: 'Solo puedes reinstalar una vez cada 24 horas. Contacta al equipo si necesitas que se restablezca.',
+        reinstallRateLimited:
+            'Solo puedes reinstalar una vez cada 24 horas. Contacta al equipo si deseas eliminar este límite.',
         clawBusy: 'El claw está siendo aprovisionado o eliminado!',
         reinstallGatewayNotResponding:
             'Reinstalación completada pero el gateway aún no responde. Puede necesitar más tiempo para iniciar!',
@@ -527,7 +539,8 @@ const es: Translations = {
         connect: 'Copiar comando SSH',
         viewServerCredentials: 'Ver credenciales del servidor',
         serverCredentials: 'Credenciales del servidor',
-        serverCredentialsDescription: 'Usa estas credenciales para conectarte a tu servidor por SSH.',
+        serverCredentialsDescription:
+            'Usa estas credenciales para conectarte a tu servidor por SSH.',
         sshCommand: 'Comando SSH',
         rootPassword: 'Contraseña root',
         sshCommandCopied: 'Comando SSH copiado.',
@@ -688,8 +701,9 @@ const es: Translations = {
         locationUnavailableForPlan: 'No disponible',
         plan: 'Servidor',
         planUnavailable: 'No disponible',
+        planUnavailableForLocation: 'No disponible en esta ubicación',
         providerUnavailable: 'Este proveedor no está disponible actualmente.',
-        providerDisabledHetznerRecommended: 'Deshabilitado — Hetzner es recomendado.',
+        providerDisabledHetznerRecommended: 'No disponible',
         providerAtCapacity:
             'Debido a la alta demanda, temporalmente nos hemos quedado sin servidores de este proveedor. Estamos trabajando activamente para resolver esto!',
         advancedOptions: 'Opciones avanzadas opcionales',
@@ -711,6 +725,7 @@ const es: Translations = {
         totalMonthly: 'Total mensual',
         creating: 'Creando...',
         proceedToPayment: 'Pagar ${{amount}} para desplegar',
+        agreementNotice: 'Al desplegar, aceptas nuestros',
         selectServerToContinue: 'Selecciona un servidor para continuar',
         selectLocationToContinue: 'Selecciona una ubicación para continuar',
         clawCreated: 'Claw creado.',
@@ -1030,7 +1045,9 @@ const es: Translations = {
         upcomingReleaseFeature8:
             'Solicitudes de funciones gestionadas y publicadas automáticamente por los agentes de OpenClaw',
         upcomingReleaseFeature9:
-            'Modo de voz para interactuar con los agentes de OpenClaw alojados en ClawHost',
+            'Modo de voz para interactuar con los agentes de OpenClaw alojados en ClawHost (Beta)',
+        upcomingReleaseFeature10:
+            'Reinstalar OpenClaw en tu instancia para empezar de cero, disponible una vez al día',
         release11Date: '28 de febrero de 2026',
         release11Title:
             'Texto a voz, terminal, pestañas de chat y explorador de archivos',
@@ -1504,8 +1521,10 @@ const es: Translations = {
         settingsNameDescription: 'Solo letras, números y guiones.',
         subdomain: 'Subdominio',
         subdomainPlaceholder: 'Ingresa el subdominio',
-        subdomainDescription: 'Letras minúsculas y números, {{min}}-{{max}} caracteres.',
-        subdomainInvalid: 'Usa solo {{min}}-{{max}} letras minúsculas y números!',
+        subdomainDescription:
+            'Letras minúsculas y números, {{min}}-{{max}} caracteres.',
+        subdomainInvalid:
+            'Usa solo {{min}}-{{max}} letras minúsculas y números!',
         subdomainUpdated: 'Subdominio actualizado exitosamente.',
         subdomainUpdateFailed: '¡Error al actualizar el subdominio!',
         subdomainInUse: '¡Este subdominio es usado por otro claw!',

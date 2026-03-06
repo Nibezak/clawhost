@@ -1,5 +1,9 @@
 import type { FC, ReactNode } from 'react'
-import type { EnvVar, EnvVarValidationError, PlaygroundVariablesContentProps } from '@/ts/Interfaces'
+import type {
+    EnvVar,
+    EnvVarValidationError,
+    PlaygroundVariablesContentProps
+} from '@/ts/Interfaces'
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'

@@ -53,6 +53,16 @@ interface UpdateProfileData {
     name?: string
 }
 
+interface NpmVersionEntry {
+    version: string
+    publishedAt: string
+    downloads: number
+}
+
+interface VersionEntry extends NpmVersionEntry {
+    installed: boolean
+}
+
 export type {
     ElectronAPI,
     LocalClawConfig,
@@ -61,5 +71,7 @@ export type {
     CreateClawData,
     RenameClawData,
     ReadClawFileData,
-    UpdateProfileData
+    UpdateProfileData,
+    NpmVersionEntry,
+    VersionEntry
 }

@@ -1,4 +1,9 @@
-import type { CacheEntry, PolarProductRaw, PolarItemsResult } from '@/ts/Interfaces'
+import type {
+    CacheEntry,
+    PolarItemsResult,
+    PolarProductMapping,
+    PolarProductRaw
+} from '@/ts/Interfaces'
 import type { PolarPriceMap } from '@/ts/Types'
 
 import getPolarClient from '@/lib/polar/getPolarClient'
@@ -10,8 +15,8 @@ let priceCache: CacheEntry<PolarPriceMap> | null = null
 
 const KNOWN_PROVIDERS = ['digitalocean', 'vultr']
 
-const parseEnvVarMapping = (): Map<string, { provider: string, planId: string }> => {
-    const mapping = new Map<string, { provider: string, planId: string }>()
+const parseEnvVarMapping = (): Map<string, PolarProductMapping> => {
+    const mapping = new Map<string, PolarProductMapping>()
 
     for (const [key, value] of Object.entries(process.env)) {
         if (!key.startsWith('POLAR_PRODUCT_') || !value?.trim()) continue
@@ -52,9 +57,10 @@ const fetchPricesFromPolar = async (): Promise<PolarPriceMap> => {
             limit: 100
         })
 
-        const batch = 'result' in result
-            ? (result.result as PolarItemsResult)
-            : (result as unknown as PolarItemsResult)
+        const batch =
+            'result' in result
+                ? (result.result as PolarItemsResult)
+                : (result as unknown as PolarItemsResult)
 
         const items = (batch.items || []) as PolarProductRaw[]
         if (items.length === 0) break

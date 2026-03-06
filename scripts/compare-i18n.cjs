@@ -8,7 +8,11 @@ function extractKeys(content) {
     for (const line of lines) {
         const trimmed = line.trim()
         const sectionMatch = trimmed.match(/^(\w+)\s*:\s*\{/)
-        if (sectionMatch && trimmed.indexOf("'") === -1 && trimmed.indexOf('`') === -1) {
+        if (
+            sectionMatch &&
+            trimmed.indexOf("'") === -1 &&
+            trimmed.indexOf('`') === -1
+        ) {
             stack.push(sectionMatch[1])
             continue
         }
@@ -34,13 +38,13 @@ const frKeys = extractKeys(fr)
 const esKeys = extractKeys(es)
 const deKeys = extractKeys(de)
 
-const missingFr = [...enKeys].filter(k => !frKeys.has(k)).sort()
-const missingEs = [...enKeys].filter(k => !esKeys.has(k)).sort()
-const missingDe = [...enKeys].filter(k => !deKeys.has(k)).sort()
+const missingFr = [...enKeys].filter((k) => !frKeys.has(k)).sort()
+const missingEs = [...enKeys].filter((k) => !esKeys.has(k)).sort()
+const missingDe = [...enKeys].filter((k) => !deKeys.has(k)).sort()
 
-const extraFr = [...frKeys].filter(k => !enKeys.has(k)).sort()
-const extraEs = [...esKeys].filter(k => !enKeys.has(k)).sort()
-const extraDe = [...deKeys].filter(k => !enKeys.has(k)).sort()
+const extraFr = [...frKeys].filter((k) => !enKeys.has(k)).sort()
+const extraEs = [...esKeys].filter((k) => !enKeys.has(k)).sort()
+const extraDe = [...deKeys].filter((k) => !enKeys.has(k)).sort()
 
 console.log('EN total keys:', enKeys.size)
 console.log('FR total keys:', frKeys.size)
@@ -48,19 +52,19 @@ console.log('ES total keys:', esKeys.size)
 console.log('DE total keys:', deKeys.size)
 console.log()
 console.log('MISSING FROM FR (' + missingFr.length + '):')
-missingFr.forEach(k => console.log('  ' + k))
+missingFr.forEach((k) => console.log('  ' + k))
 console.log()
 console.log('EXTRA IN FR (' + extraFr.length + '):')
-extraFr.forEach(k => console.log('  ' + k))
+extraFr.forEach((k) => console.log('  ' + k))
 console.log()
 console.log('MISSING FROM ES (' + missingEs.length + '):')
-missingEs.forEach(k => console.log('  ' + k))
+missingEs.forEach((k) => console.log('  ' + k))
 console.log()
 console.log('EXTRA IN ES (' + extraEs.length + '):')
-extraEs.forEach(k => console.log('  ' + k))
+extraEs.forEach((k) => console.log('  ' + k))
 console.log()
 console.log('MISSING FROM DE (' + missingDe.length + '):')
-missingDe.forEach(k => console.log('  ' + k))
+missingDe.forEach((k) => console.log('  ' + k))
 console.log()
 console.log('EXTRA IN DE (' + extraDe.length + '):')
-extraDe.forEach(k => console.log('  ' + k))
+extraDe.forEach((k) => console.log('  ' + k))

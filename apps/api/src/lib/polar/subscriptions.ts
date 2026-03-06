@@ -61,6 +61,22 @@ const subscriptions = {
         return promise
     },
 
+    async getMany(ids: string[]): Promise<Map<string, PolarSubscription>> {
+        const result = new Map<string, PolarSubscription>()
+        if (ids.length === 0) return result
+
+        const unique = [...new Set(ids)]
+        const results = await Promise.all(
+            unique.map((id) => this.get(id).then((sub) => ({ id, sub })))
+        )
+
+        for (const { id, sub } of results) {
+            if (sub) result.set(id, sub)
+        }
+
+        return result
+    },
+
     async listByCustomer(customerId: string): Promise<PolarSubscription[]> {
         const polar = getPolarClient()
 

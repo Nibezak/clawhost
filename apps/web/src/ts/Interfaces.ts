@@ -617,6 +617,11 @@ export interface ClawLogsContentProps {
     mockLogs?: string
 }
 
+export interface ParsedLogLine {
+    time: string | null
+    text: string
+}
+
 export interface ClawTerminalContentProps {
     clawId: string
     enabled: boolean
@@ -849,6 +854,22 @@ export interface ChatMessage {
     images?: ChatImageSource[]
 }
 
+export interface RawChatMessage {
+    content?: string | unknown[]
+    text?: string
+}
+
+export interface RawChatChoice {
+    message?: RawChatMessage
+    delta?: RawChatMessage
+}
+
+export interface RawChatContentObject {
+    content?: string | unknown[]
+    text?: string
+    choices?: RawChatChoice[]
+}
+
 export interface ChatEventPayload {
     runId: string
     sessionKey: string
@@ -912,6 +933,20 @@ export interface GatewayPendingRequest {
     resolve: (payload: unknown) => void
     reject: (error: Error) => void
     timer: ReturnType<typeof setTimeout>
+}
+
+export interface GatewaySession {
+    key?: string
+    sessionKey?: string
+}
+
+export interface GatewaySessionsResult {
+    sessions?: GatewaySession[]
+}
+
+export interface GatewayHistoryResult {
+    messages?: ChatHistoryEntry[]
+    history?: ChatHistoryEntry[]
 }
 
 export interface AgentChatProps {
@@ -1085,6 +1120,15 @@ export interface UpdateAgentSkillsData {
 
 export interface PlaygroundChannelsContentProps {
     clawId: string
+}
+
+export interface ChannelMetaEntry {
+    icon: ElementType
+    label: TranslationKey
+}
+
+export interface ChannelConfigWithApplicationId extends ChannelConfig {
+    applicationId?: string
 }
 
 export interface ChannelDefinition {
@@ -1444,4 +1488,18 @@ export interface ProviderOptionWithIcon {
 export interface ProviderOption {
     key: ProviderType
     label: string
+}
+
+export interface TranscriptionResult {
+    text: string
+}
+
+export interface AudioContextWithSinkId extends AudioContext {
+    setSinkId(id: string): Promise<void>
+}
+
+export interface SitemapRoute {
+    path: string
+    priority: string
+    changefreq: string
 }

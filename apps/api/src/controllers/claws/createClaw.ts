@@ -36,7 +36,11 @@ const createClaw = async (c: AuthenticatedContext) => {
             return fail(c, t('api.missingRequiredFields'), 400)
         }
 
-        const validProviders = [clawProvider.hetzner, clawProvider.digitalocean, clawProvider.vultr]
+        const validProviders = [
+            clawProvider.hetzner,
+            clawProvider.digitalocean,
+            clawProvider.vultr
+        ]
         if (providerName && !validProviders.includes(providerName)) {
             return fail(c, t('api.invalidProvider'), 400)
         }
@@ -49,15 +53,22 @@ const createClaw = async (c: AuthenticatedContext) => {
                 if (hetznerTypes.length > 0) {
                     return fail(c, t('api.providerNotAllowed'), 400)
                 }
-            } catch {
-            }
+            } catch {}
         }
 
         if (
             volumeSize !== undefined &&
-            (volumeSize < inputValidation.VOLUME_SIZE.MIN || volumeSize > inputValidation.VOLUME_SIZE.MAX)
+            (volumeSize < inputValidation.VOLUME_SIZE.MIN ||
+                volumeSize > inputValidation.VOLUME_SIZE.MAX)
         ) {
-            return fail(c, t('api.volumeSizeInvalid', { min: inputValidation.VOLUME_SIZE.MIN, max: inputValidation.VOLUME_SIZE.MAX }), 400)
+            return fail(
+                c,
+                t('api.volumeSizeInvalid', {
+                    min: inputValidation.VOLUME_SIZE.MIN,
+                    max: inputValidation.VOLUME_SIZE.MAX
+                }),
+                400
+            )
         }
 
         const provider = getProvider(resolvedProvider)
@@ -83,7 +94,13 @@ const createClaw = async (c: AuthenticatedContext) => {
         ])
 
         if (clawCountResult[0].value >= inputValidation.CLAWS_PER_ACCOUNT.MAX) {
-            return fail(c, t('api.clawLimitReached', { max: inputValidation.CLAWS_PER_ACCOUNT.MAX }), 400)
+            return fail(
+                c,
+                t('api.clawLimitReached', {
+                    max: inputValidation.CLAWS_PER_ACCOUNT.MAX
+                }),
+                400
+            )
         }
 
         const selectedPlan = serverTypes.find((st) => st.name === planId)

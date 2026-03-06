@@ -154,16 +154,18 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
             return fail(c, t('api.invalidProvider'), 400)
         }
 
-        const resolvedProvider = (providerName || clawProvider.hetzner) as ProviderType
+        const resolvedProvider = (providerName ||
+            clawProvider.hetzner) as ProviderType
         if (resolvedProvider !== clawProvider.hetzner) {
             try {
-                const hetznerService = getProvider(clawProvider.hetzner as ProviderType)
+                const hetznerService = getProvider(
+                    clawProvider.hetzner as ProviderType
+                )
                 const hetznerTypes = await hetznerService.getServerTypes()
                 if (hetznerTypes.length > 0) {
                     return fail(c, t('api.providerNotAllowed'), 400)
                 }
-            } catch {
-            }
+            } catch {}
         }
 
         const provider = getProvider(resolvedProvider)
@@ -187,6 +189,26 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
             return fail(c, t('api.invalidLocation'), 400)
         }
 
+        if (provider.getRawServerTypes && provider.getDatacenters) {
+            const [rawTypes, datacenters] = await Promise.all([
+                provider.getRawServerTypes(),
+                provider.getDatacenters()
+            ])
+            const serverTypeId = rawTypes.find(
+                (st) => st.name === planId
+            )?.id
+            if (serverTypeId) {
+                const available = datacenters.some(
+                    (dc) =>
+                        dc.locationName === location &&
+                        dc.availableServerTypeIds.includes(serverTypeId)
+                )
+                if (!available) {
+                    return fail(c, t('api.planNotAvailableAtLocation'), 400)
+                }
+            }
+        }
+
         const name = rawName || generateClawName()
 
         if (
@@ -194,7 +216,14 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
             (volumeSize < inputValidation.VOLUME_SIZE.MIN ||
                 volumeSize > inputValidation.VOLUME_SIZE.MAX)
         ) {
-            return fail(c, t('api.volumeSizeInvalid', { min: inputValidation.VOLUME_SIZE.MIN, max: inputValidation.VOLUME_SIZE.MAX }), 400)
+            return fail(
+                c,
+                t('api.volumeSizeInvalid', {
+                    min: inputValidation.VOLUME_SIZE.MIN,
+                    max: inputValidation.VOLUME_SIZE.MAX
+                }),
+                400
+            )
         }
 
         const [clawCountResult, userResult, sshKeyResult] = await Promise.all([
@@ -218,7 +247,13 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
         ])
 
         if (clawCountResult[0].value >= inputValidation.CLAWS_PER_ACCOUNT.MAX) {
-            return fail(c, t('api.clawLimitReached', { max: inputValidation.CLAWS_PER_ACCOUNT.MAX }), 400)
+            return fail(
+                c,
+                t('api.clawLimitReached', {
+                    max: inputValidation.CLAWS_PER_ACCOUNT.MAX
+                }),
+                400
+            )
         }
 
         if (!userResult[0]) {

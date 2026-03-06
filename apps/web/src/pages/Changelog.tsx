@@ -85,12 +85,17 @@ const Changelog: FC = (): ReactNode => {
                                     </span>
                                 </li>
                                 <li className='flex items-center gap-3'>
-                                    <CircleIcon
-                                        className='h-2.5 w-2.5 flex-shrink-0 text-amber-600 dark:text-amber-400'
-                                        weight='fill'
-                                    />
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
                                     <span className='text-foreground text-sm'>
                                         {t('changelog.upcomingReleaseFeature9')}
+                                    </span>
+                                </li>
+                                <li className='flex items-center gap-3'>
+                                    <CheckIcon className='h-4 w-4 flex-shrink-0 text-green-600 dark:text-green-400' />
+                                    <span className='text-foreground text-sm'>
+                                        {t(
+                                            'changelog.upcomingReleaseFeature10'
+                                        )}
                                     </span>
                                 </li>
                             </ul>

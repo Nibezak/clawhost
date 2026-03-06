@@ -1,6 +1,10 @@
 import type { FC, ReactNode } from 'react'
 import type { User, OAuthCredential } from 'firebase/auth'
-import type { AuthProviderProps, CachedProfile, FirebaseErrorLike } from '@/ts/Interfaces'
+import type {
+    AuthProviderProps,
+    CachedProfile,
+    FirebaseErrorLike
+} from '@/ts/Interfaces'
 
 import { useCallback, useEffect, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
@@ -57,10 +61,20 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
                 if (cached) setCachedProfile(cached)
 
                 try {
-                    const profile = await queryClient.fetchQuery({
-                        queryKey: ['profile'],
-                        queryFn: api.getProfile
-                    })
+                    const [profile] = await Promise.all([
+                        queryClient.fetchQuery({
+                            queryKey: ['profile'],
+                            queryFn: api.getProfile
+                        }),
+                        queryClient.prefetchQuery({
+                            queryKey: ['claws'],
+                            queryFn: () => api.getClaws()
+                        }),
+                        queryClient.prefetchQuery({
+                            queryKey: ['userStats'],
+                            queryFn: api.getUserStats
+                        })
+                    ])
                     const fresh: CachedProfile = {
                         email: profile.email,
                         name: profile.name
@@ -71,15 +85,6 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
                         JSON.stringify(fresh)
                     )
                 } catch {}
-
-                queryClient.prefetchQuery({
-                    queryKey: ['claws'],
-                    queryFn: () => api.getClaws()
-                })
-                queryClient.prefetchQuery({
-                    queryKey: ['userStats'],
-                    queryFn: api.getUserStats
-                })
             } else {
                 localStorage.removeItem(AUTH_STORAGE_KEY)
                 localStorage.removeItem(PROFILE_CACHE_KEY)

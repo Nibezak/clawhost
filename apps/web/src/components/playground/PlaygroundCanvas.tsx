@@ -1,5 +1,7 @@
 import type { FC, ReactNode } from 'react'
 import type {
+    PlaygroundAgentNodeData,
+    PlaygroundClawNodeData,
     PlaygroundCanvasProps,
     PlaygroundCanvasInnerProps
 } from '@/ts/Interfaces'
@@ -83,9 +85,9 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
                     return { ...node, data: { ...node.data, isSelected } }
                 }
                 if (node.type === 'agentNode') {
-                    const nodeData = node.data as Record<string, unknown>
-                    const agentObj = nodeData.agent as Record<string, unknown>
-                    const agentId = agentObj?.id as string
+                    const nodeData =
+                        node.data as unknown as PlaygroundAgentNodeData
+                    const agentId = nodeData.agent?.id as string
                     const clawId = nodeData.clawId as string
                     const isSelected =
                         curSelectedAgentId === agentId &&
@@ -126,23 +128,23 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
                     const isSelected =
                         selectedClawId === clawId && !selectedAgentId
                     if (
-                        (node.data as Record<string, unknown>).isSelected ===
-                        isSelected
+                        (node.data as unknown as PlaygroundClawNodeData)
+                            .isSelected === isSelected
                     )
                         return node
                     return { ...node, data: { ...node.data, isSelected } }
                 }
                 if (node.type === 'agentNode') {
-                    const nodeData = node.data as Record<string, unknown>
-                    const agentObj = nodeData.agent as Record<string, unknown>
-                    const agentId = agentObj?.id as string
+                    const nodeData =
+                        node.data as unknown as PlaygroundAgentNodeData
+                    const agentId = nodeData.agent?.id as string
                     const clawId = nodeData.clawId as string
                     const isSelected =
                         selectedAgentId === agentId &&
                         selectedAgentClawId === clawId
                     if (
-                        (node.data as Record<string, unknown>).isSelected ===
-                        isSelected
+                        (node.data as unknown as PlaygroundAgentNodeData)
+                            .isSelected === isSelected
                     )
                         return node
                     return { ...node, data: { ...node.data, isSelected } }
@@ -319,9 +321,8 @@ const PlaygroundCanvasInner: FC<PlaygroundCanvasInnerProps> = ({
                 onNodeClick(clawId)
             }
             if (node.type === 'agentNode' && onAgentClick) {
-                const nodeData = node.data as Record<string, unknown>
-                const agentObj = nodeData.agent as Record<string, unknown>
-                const agentId = agentObj?.id as string
+                const nodeData = node.data as unknown as PlaygroundAgentNodeData
+                const agentId = nodeData.agent?.id as string
                 const clawId = nodeData.clawId as string
                 if (agentId && clawId) {
                     onAgentClick(agentId, clawId)

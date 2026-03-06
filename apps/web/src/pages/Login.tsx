@@ -5,6 +5,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
+import { inputValidation } from '@openclaw/shared'
 import { useAuth } from '@/lib/auth'
 import { useUIStore } from '@/lib/store'
 import { ROUTES } from '@/lib'
@@ -88,7 +89,11 @@ const Login: FC = (): ReactNode => {
         if (loadingMethod || cooldown > 0) return
 
         const trimmed = email.trim()
-        if (!trimmed || !EMAIL_REGEX.test(trimmed) || trimmed.length > 320) {
+        if (
+            !trimmed ||
+            !EMAIL_REGEX.test(trimmed) ||
+            trimmed.length > inputValidation.EMAIL.MAX
+        ) {
             setEmailError(t('auth.invalidEmailFormat'))
             return
         }

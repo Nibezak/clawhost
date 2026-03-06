@@ -81,7 +81,9 @@ const ClawCredentialsDialog: FC<ClawCredentialsDialogProps> = ({
                                     )}
                                 </button>
                                 <button
-                                    onClick={() => handleCopy(sshCommand, 'ssh')}
+                                    onClick={() =>
+                                        handleCopy(sshCommand, 'ssh')
+                                    }
                                     className='text-muted-foreground hover:text-foreground rounded-md p-1 transition-colors'
                                 >
                                     {copiedField === 'ssh' ? (
@@ -95,7 +97,9 @@ const ClawCredentialsDialog: FC<ClawCredentialsDialogProps> = ({
                         <p className='break-all font-mono text-sm'>
                             {showSsh
                                 ? sshCommand
-                                : '\u2022'.repeat(Math.min(sshCommand.length, 40))}
+                                : '\u2022'.repeat(
+                                      Math.min(sshCommand.length, 40)
+                                  )}
                         </p>
                     </div>
                     {rootPassword && (
@@ -107,7 +111,9 @@ const ClawCredentialsDialog: FC<ClawCredentialsDialogProps> = ({
                                 </span>
                                 <div className='flex items-center gap-1'>
                                     <button
-                                        onClick={() => setShowPassword((p) => !p)}
+                                        onClick={() =>
+                                            setShowPassword((p) => !p)
+                                        }
                                         className='text-muted-foreground hover:text-foreground rounded-md p-1 transition-colors'
                                     >
                                         {showPassword ? (
@@ -117,7 +123,9 @@ const ClawCredentialsDialog: FC<ClawCredentialsDialogProps> = ({
                                         )}
                                     </button>
                                     <button
-                                        onClick={() => handleCopy(rootPassword, 'password')}
+                                        onClick={() =>
+                                            handleCopy(rootPassword, 'password')
+                                        }
                                         className='text-muted-foreground hover:text-foreground rounded-md p-1 transition-colors'
                                     >
                                         {copiedField === 'password' ? (
@@ -131,7 +139,9 @@ const ClawCredentialsDialog: FC<ClawCredentialsDialogProps> = ({
                             <p className='break-all font-mono text-sm'>
                                 {showPassword
                                     ? rootPassword
-                                    : '\u2022'.repeat(Math.min(rootPassword.length, 32))}
+                                    : '\u2022'.repeat(
+                                          Math.min(rootPassword.length, 32)
+                                      )}
                             </p>
                         </div>
                     )}

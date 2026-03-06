@@ -132,18 +132,23 @@ const getAdminClaws = async (c: AuthenticatedContext) => {
             .filter((c) => c.polarSubscriptionId)
             .map((c) => c.polarSubscriptionId!)
 
+        const subResults = await subscriptions.getMany(subIds)
+
         const subMap = new Map<string, BillingPeriod>()
-        await Promise.all(
-            subIds.map(async (id) => {
-                const sub = await subscriptions.get(id)
-                if (sub) {
-                    subMap.set(id, {
-                        start: sub.currentPeriodStart?.toISOString(),
-                        end: sub.currentPeriodEnd?.toISOString()
-                    })
-                }
+        for (const [id, sub] of subResults) {
+            subMap.set(id, {
+                start: sub.currentPeriodStart?.toISOString(),
+                end: sub.currentPeriodEnd?.toISOString()
             })
-        )
+        }
+
+        const volumeMap = new Map<string, typeof allVolumes>()
+        for (const v of allVolumes) {
+            if (!v.clawId) continue
+            const arr = volumeMap.get(v.clawId) || []
+            arr.push(v)
+            volumeMap.set(v.clawId, arr)
+        }
 
         const clawsWithVolumes = syncedClaws.map((claw) => {
             const billing = claw.polarSubscriptionId
@@ -152,7 +157,7 @@ const getAdminClaws = async (c: AuthenticatedContext) => {
             return {
                 ...claw,
                 ownerEmail: userMap.get(claw.userId) || null,
-                volumes: allVolumes.filter((v) => v.clawId === claw.id),
+                volumes: volumeMap.get(claw.id) || [],
                 currentPeriodStart: billing?.start || null,
                 currentPeriodEnd: billing?.end || null
             }

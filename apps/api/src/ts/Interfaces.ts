@@ -1,3 +1,4 @@
+import type { ChildProcess } from 'child_process'
 import type {
     ClawFileType,
     ProviderType,
@@ -740,6 +741,28 @@ export interface ClawAgentsResponse {
     reachable: boolean
 }
 
+export interface RawClawConfigAgent {
+    id?: string
+    name?: string
+    model?: string
+    status?: string
+    workspace?: string
+    directory?: string
+}
+
+export interface RawClawHubSkillItem {
+    slug?: string
+    name?: string
+    package?: string
+    id?: string
+    displayName?: string
+    version?: string
+    currentVersion?: string
+    hasUpdate?: boolean
+    updateAvailable?: boolean
+    latestVersion?: string
+}
+
 export interface UpdateClawEnvVarsBody {
     envVars: Record<string, string>
 }
@@ -955,6 +978,11 @@ export interface CacheEntry<T> {
     expiry: number
 }
 
+export interface AuthCacheData {
+    userId: string
+    isAdmin: boolean
+}
+
 export interface SkillsCacheEntry {
     data: ClawHubSearchResult[]
     expires: number
@@ -1035,7 +1063,7 @@ export interface PiperSynthesisResult {
 }
 
 export interface PiperStreamResult {
-    child: import('child_process').ChildProcess
+    child: ChildProcess
     sampleRate: number
     channels: number
 }
@@ -1068,4 +1096,9 @@ export interface GoogleUserinfoResponse {
     email: string
     sub: string
     name?: string
+}
+
+export interface PolarProductMapping {
+    provider: string
+    planId: string
 }

@@ -1,4 +1,8 @@
-import type { AgentIdBody, ClawHubInstalledSkill } from '@/ts/Interfaces'
+import type {
+    AgentIdBody,
+    ClawHubInstalledSkill,
+    RawClawHubSkillItem
+} from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import executeSSH from '@/services/ssh'
@@ -15,9 +19,7 @@ const normalizeSlug = (raw: string): string => {
     return trimmed.includes('/') ? trimmed.split('/').pop()! : trimmed
 }
 
-const normalizeSkill = (
-    item: Record<string, unknown>
-): ClawHubInstalledSkill => {
+const normalizeSkill = (item: RawClawHubSkillItem): ClawHubInstalledSkill => {
     const rawSlug = String(
         item.slug || item.name || item.package || item.id || ''
     )
@@ -92,9 +94,7 @@ const getClawHubInstalled = async (c: AuthenticatedContext) => {
                         ? trimmed.substring(start, end + 1)
                         : '[]'
                 const parsed = JSON.parse(jsonStr)
-                const rawItems: Record<string, unknown>[] = Array.isArray(
-                    parsed
-                )
+                const rawItems: RawClawHubSkillItem[] = Array.isArray(parsed)
                     ? parsed
                     : parsed.skills || []
                 skills = rawItems.map(normalizeSkill)

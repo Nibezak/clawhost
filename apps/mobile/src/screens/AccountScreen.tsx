@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Calendar, Key, ArrowSquareOut } from 'phosphor-react-native'
 import { t } from '@openclaw/i18n'
+import { inputValidation } from '@openclaw/shared'
 import { useAuth } from '@/lib/auth'
 import getLocale from '@/lib/getLocale'
 import api from '@/lib/api'
@@ -226,7 +227,7 @@ const AccountScreen: FC = (): ReactNode => {
                         onChangeText={handleNameChange}
                         placeholder={t('account.enterYourName')}
                         placeholderTextColor={COLORS.textDim}
-                        maxLength={100}
+                        maxLength={inputValidation.USER_NAME.MAX}
                         returnKeyType='done'
                         onSubmitEditing={handleSave}
                     />

@@ -22,7 +22,7 @@ const getCachedToken = async (
     if (!currentUser) return null
 
     tokenState.cachedToken = await currentUser.getIdToken(forceRefresh)
-    tokenState.tokenExpiry = Date.now() + 3500 * 1000
+    tokenState.tokenExpiry = Date.now() + 3300 * 1000
     return tokenState.cachedToken
 }
 

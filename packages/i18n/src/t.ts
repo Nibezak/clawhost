@@ -20,7 +20,10 @@ function getNestedValue(obj: unknown, path: string): string {
     return typeof current === 'string' ? current : path
 }
 
-function t(key: TranslationKey, params?: Record<string, string | number>): string {
+function t(
+    key: TranslationKey,
+    params?: Record<string, string | number>
+): string {
     const translations = state.languages[state.currentLanguage]
     let value = getNestedValue(translations, key)
 

@@ -1,12 +1,17 @@
 import type { FC, ReactNode } from 'react'
-import type { CreateClawModalProps, ErrorResponse, ProviderOptionWithIcon } from '@/ts/Interfaces'
+import type {
+    CreateClawModalProps,
+    ErrorResponse,
+    ProviderOptionWithIcon
+} from '@/ts/Interfaces'
 import type { ProviderType } from '@/ts/Types'
 
 import { useState, useEffect } from 'react'
 import { t } from '@openclaw/i18n'
 import { clawProvider } from '@openclaw/shared'
+import { Link } from 'react-router-dom'
 import { useUIStore } from '@/lib/store'
-import { copyToClipboard } from '@/lib'
+import { copyToClipboard, ROUTES } from '@/lib'
 import {
     usePurchaseClaw,
     usePlans,
@@ -29,7 +34,8 @@ import {
     TooltipTrigger,
     TooltipContent,
     TooltipProvider,
-    Skeleton
+    Skeleton,
+    Checkbox
 } from '@/components/ui'
 import {
     CircleNotchIcon,
@@ -71,7 +77,10 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
         if (p === clawProvider.hetzner)
             return !hetznerLoading && !hetznerPlans?.length
         if (p === clawProvider.digitalocean)
-            return hetznerAvailable || (!digitaloceanLoading && !digitaloceanPlans?.length)
+            return (
+                hetznerAvailable ||
+                (!digitaloceanLoading && !digitaloceanPlans?.length)
+            )
         if (p === clawProvider.vultr)
             return hetznerAvailable || (!vultrLoading && !vultrPlans?.length)
         return false
@@ -159,6 +168,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     const [selectedSshKeyId, setSelectedSshKeyId] = useState<string>('')
     const [volumeSize, setVolumeSize] = useState<number>(0)
     const [showAdvanced, setShowAdvanced] = useState(false)
+    const [agreedToTerms, setAgreedToTerms] = useState(false)
     const { showToast } = useUIStore()
 
     const handleProviderChange = (newProvider: ProviderType) => {
@@ -496,11 +506,37 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                     value={loc.id}
                                                     checked={isSelected}
                                                     disabled={isDisabled}
-                                                    onChange={(e) =>
-                                                        setLocation(
+                                                    onChange={(e) => {
+                                                        const newLocation =
                                                             e.target.value
+                                                        setLocation(
+                                                            newLocation
                                                         )
-                                                    }
+                                                        if (
+                                                            !isLocationAvailableForPlan(
+                                                                newLocation,
+                                                                planId
+                                                            )
+                                                        ) {
+                                                            const firstAvailable =
+                                                                plans.find(
+                                                                    (p) =>
+                                                                        !p.disabled &&
+                                                                        isPlanAvailable(
+                                                                            p.id
+                                                                        ) &&
+                                                                        isLocationAvailableForPlan(
+                                                                            newLocation,
+                                                                            p.id
+                                                                        )
+                                                                )
+                                                            if (firstAvailable) {
+                                                                setPlanId(
+                                                                    firstAvailable.id
+                                                                )
+                                                            }
+                                                        }
+                                                    }}
                                                     className='sr-only'
                                                 />
                                                 {locFlag && (
@@ -556,9 +592,16 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                 <div className='space-y-2'>
                                     {plans.map((plan, index) => {
                                         const isSelected = planId === plan.id
+                                        const unavailableForLocation =
+                                            location &&
+                                            !isLocationAvailableForPlan(
+                                                location,
+                                                plan.id
+                                            )
                                         const isDisabled =
                                             plan.disabled ||
-                                            !isPlanAvailable(plan.id)
+                                            !isPlanAvailable(plan.id) ||
+                                            !!unavailableForLocation
 
                                         const tierStarts: Record<
                                             string,
@@ -672,6 +715,14 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                             ) : null
 
                                         if (isDisabled) {
+                                            const tooltipText =
+                                                unavailableForLocation
+                                                    ? t(
+                                                          'createClaw.planUnavailableForLocation'
+                                                      )
+                                                    : t(
+                                                          'createClaw.planUnavailable'
+                                                      )
                                             return (
                                                 <>
                                                     {separator}
@@ -680,9 +731,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                             <div>{card}</div>
                                                         </TooltipTrigger>
                                                         <TooltipContent>
-                                                            {t(
-                                                                'createClaw.planUnavailable'
-                                                            )}
+                                                            {tooltipText}
                                                         </TooltipContent>
                                                     </Tooltip>
                                                 </>
@@ -1071,6 +1120,34 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                         </div>
                     )}
 
+                    <label className='flex cursor-pointer items-start gap-2'>
+                        <Checkbox
+                            checked={agreedToTerms}
+                            onCheckedChange={(checked) =>
+                                setAgreedToTerms(!!checked)
+                            }
+                            className='mt-0.5'
+                        />
+                        <span className='text-muted-foreground text-xs'>
+                            {t('createClaw.agreementNotice')}{' '}
+                            <Link
+                                to={ROUTES.TERMS}
+                                className='text-muted-foreground hover:text-foreground underline'
+                                target='_blank'
+                            >
+                                {t('auth.termsOfService')}
+                            </Link>{' '}
+                            {t('auth.andWord')}{' '}
+                            <Link
+                                to={ROUTES.PRIVACY}
+                                className='text-muted-foreground hover:text-foreground underline'
+                                target='_blank'
+                            >
+                                {t('auth.privacyPolicy')}
+                            </Link>
+                        </span>
+                    </label>
+
                     <div className='flex justify-end gap-3'>
                         <Button type='button' variant='ghost' onClick={onClose}>
                             {t('common.cancel')}
@@ -1081,7 +1158,8 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                 purchaseMutation.isPending ||
                                 !selectedPlan ||
                                 !location ||
-                                !!nameError
+                                !!nameError ||
+                                !agreedToTerms
                             }
                         >
                             {purchaseMutation.isPending && (

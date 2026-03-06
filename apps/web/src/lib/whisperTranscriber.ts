@@ -1,9 +1,10 @@
+import type { TranscriberFunction } from '@/ts/Types'
+
 import { pipeline } from '@huggingface/transformers'
 
 const WHISPER_MODEL = 'onnx-community/whisper-small'
 
-// @ts-ignore
-let transcriberPromise: ReturnType<typeof pipeline> | null = null
+let transcriberPromise: Promise<TranscriberFunction> | null = null
 
 const getTranscriber = () => {
     if (!transcriberPromise) {
@@ -14,7 +15,7 @@ const getTranscriber = () => {
                 dtype: 'q8',
                 device: 'wasm'
             }
-        )
+        ) as unknown as Promise<TranscriberFunction>
     }
     return transcriberPromise
 }

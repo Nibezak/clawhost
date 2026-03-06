@@ -9,9 +9,8 @@ import type {
 
 import { useRef, useState, useEffect, useCallback } from 'react'
 import { t } from '@openclaw/i18n'
-import { userRole } from '@openclaw/shared'
 import { GearSixIcon, PaperPlaneRightIcon } from '@phosphor-icons/react'
-import { useAgentChat, useScrollToBottom, useProfile } from '@/hooks'
+import { useAgentChat, useScrollToBottom } from '@/hooks'
 import useTextToSpeech from '@/hooks/useTextToSpeech'
 import { ScrollToBottomButton } from '@/components'
 import ChatBubble from '@/components/playground/AgentChat/ChatBubble'
@@ -67,8 +66,6 @@ const AgentChat: FC<AgentChatProps> = ({
     } = useTextToSpeech()
     const [isDragging, setIsDragging] = useState(false)
     const [voiceModeOpen, setVoiceModeOpen] = useState(false)
-    const { data: profile, isLoading: isProfileLoading } = useProfile()
-    const isAdmin = isProfileLoading || profile?.role === userRole.admin
     const dragCounterRef = useRef(0)
 
     const {
@@ -353,9 +350,7 @@ const AgentChat: FC<AgentChatProps> = ({
                     onSend={handleSend}
                     onAbort={abortResponse}
                     allowAttach
-                    onVoiceMode={
-                        isAdmin ? () => setVoiceModeOpen(true) : undefined
-                    }
+                    onVoiceMode={() => setVoiceModeOpen(true)}
                 />
             </div>
         )
@@ -426,7 +421,7 @@ const AgentChat: FC<AgentChatProps> = ({
                 onSend={handleSend}
                 onAbort={abortResponse}
                 allowAttach
-                onVoiceMode={isAdmin ? () => setVoiceModeOpen(true) : undefined}
+                onVoiceMode={() => setVoiceModeOpen(true)}
             />
 
             {voiceModeOpen && (

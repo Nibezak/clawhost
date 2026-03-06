@@ -25,13 +25,13 @@ const verifyGithubToken = async (accessToken: string) => {
 
     if (!userRes.ok) return null
 
-    const userData = await userRes.json() as GithubUserResponse
+    const userData = (await userRes.json()) as GithubUserResponse
     const providerUid = String(userData.id)
     const displayName = userData.name || userData.login
     let email = userData.email
 
     if (!email && emailsRes.ok) {
-        const emails = await emailsRes.json() as GithubEmailEntry[]
+        const emails = (await emailsRes.json()) as GithubEmailEntry[]
         const primary = emails.find((e: GithubEmailEntry) => e.primary)
         email = primary?.email
     }
@@ -46,7 +46,7 @@ const verifyGoogleToken = async (accessToken: string) => {
 
     if (!res.ok) return null
 
-    const data = await res.json() as GoogleUserinfoResponse
+    const data = (await res.json()) as GoogleUserinfoResponse
     return {
         email: data.email,
         providerUid: data.sub,
@@ -82,28 +82,29 @@ const resolveCredentialConflict = async (c: Context) => {
             return fail(c, t('api.userNotFound'), 404)
         }
 
-        try {
-            await auth().updateUser(existingUser.id, {
-                providerToLink: {
-                    providerId,
-                    uid: verified.providerUid,
-                    email: verified.email,
-                    displayName: verified.displayName
-                }
-            })
-        } catch {}
-
         const method = providerId === 'google.com' ? 'google' : 'github'
-        await db
-            .update(users)
-            .set({
-                authMethods: sql`CASE
-                    WHEN ${method} = ANY(COALESCE(${users.authMethods}, '{}'))
-                    THEN COALESCE(${users.authMethods}, '{}')
-                    ELSE array_append(COALESCE(${users.authMethods}, '{}'), ${method})
-                END`
-            })
-            .where(eq(users.id, existingUser.id))
+        await Promise.all([
+            auth()
+                .updateUser(existingUser.id, {
+                    providerToLink: {
+                        providerId,
+                        uid: verified.providerUid,
+                        email: verified.email,
+                        displayName: verified.displayName
+                    }
+                })
+                .catch(() => {}),
+            db
+                .update(users)
+                .set({
+                    authMethods: sql`CASE
+                        WHEN ${method} = ANY(COALESCE(${users.authMethods}, '{}'))
+                        THEN COALESCE(${users.authMethods}, '{}')
+                        ELSE array_append(COALESCE(${users.authMethods}, '{}'), ${method})
+                    END`
+                })
+                .where(eq(users.id, existingUser.id))
+        ])
 
         const customToken = await auth().createCustomToken(existingUser.id)
         return ok(c, { customToken }, t('api.accountLinked'))

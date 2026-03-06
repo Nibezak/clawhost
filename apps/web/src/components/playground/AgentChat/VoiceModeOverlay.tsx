@@ -178,9 +178,7 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
                     await ctx.close()
 
                     const transcriber = await getTranscriber()
-                    // @ts-ignore
                     const result = await transcriber(data)
-                    // @ts-ignore
                     const text = result.text?.trim()
                     if (text) {
                         sendMessageRef.current(text)
@@ -461,6 +459,9 @@ const VoiceModeOverlay: FC<VoiceModeOverlayProps> = ({
                         <WaveformIcon className='h-4 w-4 text-[#ef5350]' />
                         <span className='text-sm font-semibold text-white'>
                             {t('playground.chatVoiceMode')}
+                        </span>
+                        <span className='rounded-md bg-[#ef5350]/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#ef5350]'>
+                            {t('common.beta')}
                         </span>
                     </div>
 

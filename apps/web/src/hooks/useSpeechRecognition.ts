@@ -46,9 +46,7 @@ const useSpeechRecognition = (
                     await audioContext.close()
 
                     const transcriber = await getTranscriber()
-                    // @ts-ignore
                     const result = await transcriber(float32Data)
-                    // @ts-ignore
                     const text = result.text?.trim()
                     if (text) {
                         onTranscriptRef.current(text)
@@ -84,8 +82,7 @@ const useSpeechRecognition = (
             setIsRecording(true)
 
             getTranscriber()
-        } catch {
-        }
+        } catch {}
     }, [])
 
     const toggle = useCallback(() => {

@@ -128,9 +128,7 @@ const Compare: FC = (): ReactNode => {
                             ).nameKey as TranslationKey
                         )}
                     >
-                        <SelectTrigger
-                            placeholder={t('compare.compareWith')}
-                        />
+                        <SelectTrigger placeholder={t('compare.compareWith')} />
                         <SelectContent>
                             {otherCompetitors.map((competitor) => (
                                 <SelectItem

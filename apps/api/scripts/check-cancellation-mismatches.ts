@@ -2,11 +2,13 @@ import 'dotenv/config'
 
 import type { PolarSubscriptionRaw, PolarItemsResult } from '@/ts/Interfaces'
 
-import { isNotNull } from 'drizzle-orm'
+import { eq, isNotNull } from 'drizzle-orm'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import getPolarClient from '@/lib/polar/getPolarClient'
 import getPolarConfig from '@/lib/polar/getPolarConfig'
+
+const shouldFix = process.argv.includes('--fix')
 
 const run = async () => {
     const polar = getPolarClient()
@@ -26,9 +28,10 @@ const run = async () => {
             limit
         })
 
-        const data = 'result' in result
-            ? result.result
-            : (result as unknown as PolarItemsResult)
+        const data =
+            'result' in result
+                ? result.result
+                : (result as unknown as PolarItemsResult)
 
         const subs = (data.items || []) as PolarSubscriptionRaw[]
         allSubs.push(...subs)
@@ -43,10 +46,14 @@ const run = async () => {
 
     const pendingCancellation = allSubs.filter((s) => s.cancelAtPeriodEnd)
 
-    console.log(`${pendingCancellation.length} subscription(s) are set to cancel at period end\n`)
+    console.log(
+        `${pendingCancellation.length} subscription(s) are set to cancel at period end\n`
+    )
 
     if (pendingCancellation.length === 0) {
-        console.log('No mismatches possible — no subscriptions pending cancellation.')
+        console.log(
+            'No mismatches possible — no subscriptions pending cancellation.'
+        )
         return
     }
 
@@ -68,36 +75,55 @@ const run = async () => {
     )
 
     let mismatches = 0
+    let fixed = 0
 
     for (const sub of pendingCancellation) {
         const claw = clawBySubId.get(sub.id)
 
-        if (!claw) {
-            console.log(`  [ORPHAN] Subscription ${sub.id} has no matching claw`)
-            console.log(`    cancelAtPeriodEnd: true`)
-            console.log(`    currentPeriodEnd: ${sub.currentPeriodEnd || 'unknown'}`)
-            console.log()
-            mismatches++
-            continue
+        if (!claw) continue
+
+        const polarDate = sub.currentPeriodEnd
+            ? new Date(sub.currentPeriodEnd)
+            : null
+
+        if (!polarDate) continue
+
+        if (claw.deletionScheduledAt) continue
+
+        console.log(`  [MISMATCH] Claw "${claw.name}" (${claw.id})`)
+        console.log(`    Subscription: ${sub.id}`)
+        console.log(`    canceledAt: ${sub.canceledAt || 'not set'}`)
+        console.log(`    currentPeriodEnd: ${polarDate.toISOString()}`)
+        console.log(`    Claw subscriptionStatus: ${claw.subscriptionStatus}`)
+        console.log(`    Claw deletionScheduledAt: null`)
+
+        if (shouldFix) {
+            await db
+                .update(claws)
+                .set({
+                    deletionScheduledAt: polarDate,
+                    subscriptionStatus: 'canceled'
+                })
+                .where(eq(claws.id, claw.id))
+            console.log(`    ✓ Fixed: deletionScheduledAt → ${polarDate.toISOString()}, subscriptionStatus → canceled`)
+            fixed++
         }
 
-        if (!claw.deletionScheduledAt) {
-            console.log(`  [MISMATCH] Claw "${claw.name}" (${claw.id})`)
-            console.log(`    Subscription: ${sub.id}`)
-            console.log(`    cancelAtPeriodEnd: true`)
-            console.log(`    canceledAt: ${sub.canceledAt || 'not set'}`)
-            console.log(`    currentPeriodEnd: ${sub.currentPeriodEnd || 'unknown'}`)
-            console.log(`    Claw subscriptionStatus: ${claw.subscriptionStatus}`)
-            console.log(`    Claw deletionScheduledAt: null (SHOULD BE SET)`)
-            console.log()
-            mismatches++
-        }
+        console.log()
+        mismatches++
     }
 
     if (mismatches === 0) {
-        console.log('All subscriptions pending cancellation have matching claw deletion schedules.')
+        console.log(
+            'All subscriptions pending cancellation have matching claw deletion schedules.'
+        )
     } else {
         console.log(`Found ${mismatches} mismatch(es) that need attention.`)
+        if (shouldFix) {
+            console.log(`Fixed ${fixed} claw(s).`)
+        } else {
+            console.log('Run with --fix to update claws to match their subscriptions.')
+        }
     }
 }
 

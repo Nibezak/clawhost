@@ -109,11 +109,16 @@ const createClawAgent = async (c: AuthenticatedContext) => {
                 .replace(/[^a-z0-9]+/g, '-')
                 .replace(/^-|-$/g, '')}-${Date.now()}`
 
-            agentList.push({
+            const newAgent: Record<string, unknown> = {
                 id: agentId,
-                name: body.name,
-                model: body.model || null
-            })
+                name: body.name
+            }
+
+            if (body.model) {
+                newAgent.model = body.model
+            }
+
+            agentList.push(newAgent)
 
             const configJson = JSON.stringify(config, null, 4)
             const configB64 = Buffer.from(configJson).toString('base64')

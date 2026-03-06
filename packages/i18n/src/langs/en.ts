@@ -84,7 +84,16 @@ const en = {
         legalAndMore: 'Others',
         documentation: 'Documentation',
         productDescription:
-            'Production-ready infrastructure with one-click OpenClaw deployment, handled end to end — build, ship, and move faster with AI.'
+            'Production-ready infrastructure with one-click OpenClaw deployment, handled end to end — build, ship, and move faster with AI.',
+        downloadAndroid: 'Get it on Google Play',
+        downloadIos: 'Download on the App Store',
+        ariaGithub: 'GitHub',
+        ariaX: 'X',
+        ariaFacebook: 'Facebook',
+        ariaInstagram: 'Instagram',
+        ariaThreads: 'Threads',
+        ariaYoutube: 'YouTube',
+        ariaTiktok: 'TikTok'
     },
     errors: {
         somethingWentWrong: 'Something went wrong!',
@@ -128,7 +137,8 @@ const en = {
             "You've reached the limit of {{max}} claws. Please contact support to increase this limit!",
         sshKeyLimitReached:
             "You've reached the limit of {{max}} SSH keys. Please contact support to increase this limit!",
-        volumeSizeInvalid: 'Volume size must be between {{min}} and {{max}} GB!',
+        volumeSizeInvalid:
+            'Volume size must be between {{min}} and {{max}} GB!',
         paymentNotConfigured: 'Payment not configured for this plan!',
         invalidSshKeyFormat: 'Invalid SSH public key format!',
         sshKeyInUse: 'This SSH key is currently in use by one or more claws!',
@@ -153,11 +163,13 @@ const en = {
         failedToDeleteClaw: 'Failed to delete claw!',
         failedToCreateClaw: 'Failed to create claw!',
         invalidProvider: 'Invalid provider!',
-        providerNotAllowed: 'This provider is not available when Hetzner is active!',
+        providerNotAllowed:
+            'This provider is not available when Hetzner is active!',
         invalidPlan: 'Invalid plan selected!',
         planBelowMinimumMemory:
             'This plan does not meet the minimum memory requirement!',
         invalidLocation: 'Invalid location selected!',
+        planNotAvailableAtLocation: 'This plan is not available at the selected location!',
         failedToSyncClaw: 'Failed to sync server status!',
         failedToProvisionClaw: 'Failed to provision claw!',
         failedToInitiatePurchase: 'Failed to initiate purchase!',
@@ -196,7 +208,8 @@ const en = {
             'Repair applied but gateway is not responding yet. It may need more time to start.',
         failedToReinstallClaw: 'Failed to reinstall the instance!',
         reinstallSuccess: 'Instance reinstalled successfully.',
-        reinstallRateLimited: 'You can only reinstall once every 24 hours. Please contact the team if you need this reset.',
+        reinstallRateLimited:
+            'You can only reinstall once every 24 hours. Please contact the team in case you want to remove this limit.',
         clawBusy: 'Claw is currently being provisioned or deleted!',
         reinstallGatewayNotResponding:
             'Reinstall completed but gateway is not responding yet. It may need more time to start.',
@@ -331,8 +344,7 @@ const en = {
         otpExpiry:
             'Code expires in 10 minutes. If this wasn’t you, ignore this email.',
         changelogSubject: "What's New at ClawHost",
-        changelogPreview:
-            'Check out the latest updates to ClawHost: {{title}}',
+        changelogPreview: 'Check out the latest updates to ClawHost: {{title}}',
         changelogHeading: "What's New",
         changelogButton: 'View Changelog',
         changelogVisitButton: 'Visit ClawHost',
@@ -494,7 +506,8 @@ const en = {
         connect: 'Copy SSH Command',
         viewServerCredentials: 'View Server Credentials',
         serverCredentials: 'Server Credentials',
-        serverCredentialsDescription: 'Use these credentials to connect to your server via SSH.',
+        serverCredentialsDescription:
+            'Use these credentials to connect to your server via SSH.',
         sshCommand: 'SSH Command',
         rootPassword: 'Root Password',
         sshCommandCopied: 'SSH command copied.',
@@ -652,8 +665,9 @@ const en = {
         locationUnavailableForPlan: 'Unavailable',
         plan: 'Server',
         planUnavailable: 'Unavailable',
+        planUnavailableForLocation: 'Not available at this location',
         providerUnavailable: 'This provider is currently unavailable.',
-        providerDisabledHetznerRecommended: 'Disabled — Hetzner is recommended.',
+        providerDisabledHetznerRecommended: 'Unavailable',
         providerAtCapacity:
             'Due to high demand, we have temporarily run out of servers from this provider. We are actively working to resolve this.',
         advancedOptions: 'Advanced Optional Options',
@@ -674,6 +688,7 @@ const en = {
         totalMonthly: 'Total monthly',
         creating: 'Creating...',
         proceedToPayment: 'Pay ${{amount}} to Deploy',
+        agreementNotice: 'By deploying, you agree to our',
         selectServerToContinue: 'Select a server to continue',
         selectLocationToContinue: 'Select a location to continue',
         clawCreated: 'Claw created.',
@@ -988,7 +1003,9 @@ const en = {
         upcomingReleaseFeature8:
             'Feature requests automatically managed and published by OpenClaw agents',
         upcomingReleaseFeature9:
-            'Voice Mode to interact with the OpenClaw agents hosted on ClawHost',
+            'Voice Mode to interact with the OpenClaw agents hosted on ClawHost (Beta)',
+        upcomingReleaseFeature10:
+            'Reinstall OpenClaw on your instance to start fresh, available once per day',
         release11Date: 'February 28, 2026',
         release11Title: 'Text-to-Speech, Terminal, Chat Tabs & File Explorer',
         release11Description:
@@ -1442,8 +1459,10 @@ const en = {
         settingsNameDescription: 'Letters, numbers, and dashes only.',
         subdomain: 'Subdomain',
         subdomainPlaceholder: 'Enter subdomain',
-        subdomainDescription: 'Lowercase letters and numbers, {{min}}-{{max}} characters.',
-        subdomainInvalid: 'Use {{min}}-{{max}} lowercase letters and numbers only.',
+        subdomainDescription:
+            'Lowercase letters and numbers, {{min}}-{{max}} characters.',
+        subdomainInvalid:
+            'Use {{min}}-{{max}} lowercase letters and numbers only.',
         subdomainUpdated: 'Subdomain updated successfully.',
         subdomainUpdateFailed: 'Failed to update subdomain!',
         subdomainInUse: 'This subdomain is used by another claw!',
