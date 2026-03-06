@@ -11,19 +11,28 @@ const run = async () => {
     const newProductId = process.argv[4]
 
     if (!clawId || !newPlanId || !newProductId) {
-        console.error('Usage: tsx scripts/switch-plan.ts <claw-id> <new-plan-id> <new-polar-product-id>')
+        console.error(
+            'Usage: tsx scripts/switch-plan.ts <claw-id> <new-plan-id> <new-polar-product-id>'
+        )
         console.error('')
         console.error('  claw-id:              The claw ID to switch')
-        console.error('  new-plan-id:          The new server type name (e.g. cx22, cx32)')
-        console.error('  new-polar-product-id: The Polar product ID for the new plan')
+        console.error(
+            '  new-plan-id:          The new server type name (e.g. cx22, cx32)'
+        )
+        console.error(
+            '  new-polar-product-id: The Polar product ID for the new plan'
+        )
         process.exit(1)
     }
 
-    const [claw] = await db
-        .select()
-        .from(claws)
-        .where(eq(claws.id, clawId))
-        .limit(1)
+    const [[claw], product] = await Promise.all([
+        db
+            .select()
+            .from(claws)
+            .where(eq(claws.id, clawId))
+            .limit(1),
+        products.get(newProductId)
+    ])
 
     if (!claw) {
         console.error(`Claw "${clawId}" not found`)
@@ -35,18 +44,16 @@ const run = async () => {
         process.exit(1)
     }
 
+    if (!product) {
+        console.error(`Polar product "${newProductId}" not found`)
+        process.exit(1)
+    }
+
     console.log(`Claw: ${claw.name} (${claw.id})`)
     console.log(`Current plan: ${claw.planId}`)
     console.log(`Current Polar product: ${claw.polarProductId}`)
     console.log(`Subscription: ${claw.polarSubscriptionId}`)
     console.log('')
-
-    const product = await products.get(newProductId)
-
-    if (!product) {
-        console.error(`Polar product "${newProductId}" not found`)
-        process.exit(1)
-    }
 
     console.log(`New plan: ${newPlanId}`)
     console.log(`New Polar product: ${product.name} (${product.id})`)

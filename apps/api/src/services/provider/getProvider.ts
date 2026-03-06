@@ -55,6 +55,11 @@ const getProvider = (provider: ProviderType): CloudProvider => {
     const existing = wrappedProviders.get(provider)
     if (existing) return existing
 
+    const invalidateServer = (serverId: string) => {
+        cache.delete(`${provider}:servers`)
+        cache.delete(`${provider}:server:${serverId}`)
+    }
+
     const wrapped: CloudProvider = {
         ...p,
         getServer: (serverId: string) =>
@@ -78,7 +83,28 @@ const getProvider = (provider: ProviderType): CloudProvider => {
         getDatacenters: () =>
             cached(`${provider}:datacenters`, () => p.getDatacenters()),
         getVolumePricing: () =>
-            cached(`${provider}:volumePricing`, () => p.getVolumePricing())
+            cached(`${provider}:volumePricing`, () => p.getVolumePricing()),
+        createServer: async (...args) => {
+            const result = await p.createServer(...args)
+            cache.delete(`${provider}:servers`)
+            return result
+        },
+        startServer: async (serverId) => {
+            await p.startServer(serverId)
+            invalidateServer(serverId)
+        },
+        stopServer: async (serverId) => {
+            await p.stopServer(serverId)
+            invalidateServer(serverId)
+        },
+        restartServer: async (serverId) => {
+            await p.restartServer(serverId)
+            invalidateServer(serverId)
+        },
+        deleteServer: async (serverId) => {
+            await p.deleteServer(serverId)
+            invalidateServer(serverId)
+        }
     }
 
     wrappedProviders.set(provider, wrapped)

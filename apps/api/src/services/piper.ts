@@ -27,18 +27,13 @@ const getModelConfig = (voice: string): PiperModelConfig => {
     }
 }
 
-const synthesizeStream = (
-    text: string,
-    voice: string
-): PiperStreamResult => {
+const synthesizeStream = (text: string, voice: string): PiperStreamResult => {
     const modelPath = path.join(MODELS_DIR, `${voice}.onnx`)
     const { sampleRate, channels } = getModelConfig(voice)
 
-    const child = spawn(
-        PIPER_BINARY,
-        ['--model', modelPath, '--output-raw'],
-        { stdio: ['pipe', 'pipe', 'pipe'] }
-    )
+    const child = spawn(PIPER_BINARY, ['--model', modelPath, '--output-raw'], {
+        stdio: ['pipe', 'pipe', 'pipe']
+    })
 
     if (child.stdin) {
         child.stdin.write(text)

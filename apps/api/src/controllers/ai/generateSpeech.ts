@@ -31,7 +31,10 @@ const generateSpeech = async (c: AuthenticatedContext) => {
             return fail(c, t('api.voiceNotFound'), 400)
         }
 
-        const { child, sampleRate, channels } = synthesizeStream(body.text.trim(), voice)
+        const { child, sampleRate, channels } = synthesizeStream(
+            body.text.trim(),
+            voice
+        )
 
         c.header('Content-Type', 'application/octet-stream')
         c.header('X-Sample-Rate', String(sampleRate))

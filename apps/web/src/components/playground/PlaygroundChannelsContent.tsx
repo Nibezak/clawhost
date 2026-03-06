@@ -1,6 +1,7 @@
 import type { FC, ReactNode } from 'react'
 import type {
     ChannelConfig,
+    ChannelConfigWithApplicationId,
     ChannelDefinition,
     ClawChannelsResponse,
     PlaygroundChannelsContentProps,
@@ -184,7 +185,7 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
             const cleaned: Record<string, ChannelConfig> = {}
             for (const [key, config] of Object.entries(data.channels || {})) {
                 const { applicationId: _, ...rest } =
-                    config as ChannelConfig & { applicationId?: string }
+                    config as ChannelConfigWithApplicationId
                 cleaned[key] = rest
             }
             setChannels(cleaned)

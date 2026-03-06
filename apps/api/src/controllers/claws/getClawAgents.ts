@@ -1,4 +1,4 @@
-import type { ClawAgent } from '@/ts/Interfaces'
+import type { ClawAgent, RawClawConfigAgent } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
@@ -88,19 +88,14 @@ const getClawAgents = async (c: AuthenticatedContext) => {
                     ]
                 } else {
                     agents = agentList.map(
-                        (agent: Record<string, unknown>, index: number) => ({
-                            id: (agent.id as string) || `agent-${index}`,
+                        (agent: RawClawConfigAgent, index: number) => ({
+                            id: agent.id || `agent-${index}`,
                             name:
-                                (agent.name as string) ||
-                                (agent.id as string) ||
-                                `Agent ${index + 1}`,
-                            model:
-                                (agent.model as string) || defaultModel || null,
+                                agent.name || agent.id || `Agent ${index + 1}`,
+                            model: agent.model || defaultModel || null,
                             status: normalizeAgentStatus(agent.status),
                             directory:
-                                (agent.workspace as string) ||
-                                (agent.directory as string) ||
-                                null
+                                agent.workspace || agent.directory || null
                         })
                     )
                 }

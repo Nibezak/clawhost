@@ -22,14 +22,19 @@ const getClaw = async (c: AuthenticatedContext) => {
         if (sync && claw.providerServerId) {
             try {
                 const provider = getProvider(claw.provider as ProviderType)
-                const serverStatus = await provider.getServer(claw.providerServerId)
+                const serverStatus = await provider.getServer(
+                    claw.providerServerId
+                )
                 if (
                     serverStatus.status !== claw.status ||
                     serverStatus.ip !== claw.ip
                 ) {
                     await db
                         .update(claws)
-                        .set({ status: serverStatus.status, ip: serverStatus.ip })
+                        .set({
+                            status: serverStatus.status,
+                            ip: serverStatus.ip
+                        })
                         .where(eq(claws.id, id))
                     return ok(
                         c,

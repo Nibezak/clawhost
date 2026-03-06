@@ -93,7 +93,9 @@ const ChatView: FC<ChatViewProps> = ({
     const [showConfigDialog, setShowConfigDialog] = useState(false)
     const [showReinstallModal, setShowReinstallModal] = useState(false)
     const [showCredentials, setShowCredentials] = useState(false)
-    const [credentialsPassword, setCredentialsPassword] = useState<string | null>(null)
+    const [credentialsPassword, setCredentialsPassword] = useState<
+        string | null
+    >(null)
     const [isFetchingCredentials, setIsFetchingCredentials] = useState(false)
     const [isExporting, setIsExporting] = useState(false)
 
@@ -317,9 +319,7 @@ const ChatView: FC<ChatViewProps> = ({
                                 : typeof err === 'object' &&
                                     err !== null &&
                                     'message' in err
-                                  ? String(
-                                        (err as ErrorWithMessage).message
-                                    )
+                                  ? String((err as ErrorWithMessage).message)
                                   : t('dashboard.startFailed')
                         showToast(message, 'error')
                     }
@@ -396,58 +396,59 @@ const ChatView: FC<ChatViewProps> = ({
                         <span className='text-foreground/80 min-w-0 flex-1 truncate text-sm font-medium'>
                             {mobileLabel}
                         </span>
-                        {mobileSidebarOpen && (
-                            <div className='flex-1' />
-                        )}
+                        {mobileSidebarOpen && <div className='flex-1' />}
                         <div className='border-border flex shrink-0 items-center rounded-lg border p-0.5'>
-                                <button
-                                    onClick={() => setChatSidebarView('tree')}
-                                    className={`flex items-center justify-center rounded-md p-1.5 transition-colors ${
-                                        chatSidebarView === 'tree'
-                                            ? 'bg-foreground/10 text-foreground'
-                                            : 'text-muted-foreground hover:text-foreground'
-                                    }`}
-                                >
-                                    <TreeStructureIcon
-                                        className='h-3.5 w-3.5'
-                                        weight={
-                                            chatSidebarView === 'tree'
-                                                ? 'fill'
-                                                : 'regular'
-                                        }
-                                    />
-                                </button>
-                                <button
-                                    onClick={() => setChatSidebarView('list')}
-                                    className={`flex items-center justify-center rounded-md p-1.5 transition-colors ${
-                                        chatSidebarView === 'list'
-                                            ? 'bg-foreground/10 text-foreground'
-                                            : 'text-muted-foreground hover:text-foreground'
-                                    }`}
-                                >
-                                    <ListBulletsIcon
-                                        className='h-3.5 w-3.5'
-                                        weight={
-                                            chatSidebarView === 'list'
-                                                ? 'fill'
-                                                : 'regular'
-                                        }
-                                    />
-                                </button>
-                        </div>
-                        {activeAgent && activeClaw && !mobileSidebarOpen && chatSidebarView === 'tree' && (
                             <button
-                                onClick={() =>
-                                    handleOpenClawSettings(activeClaw.id)
-                                }
-                                className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground shrink-0 rounded-lg p-1.5 transition-colors'
+                                onClick={() => setChatSidebarView('tree')}
+                                className={`flex items-center justify-center rounded-md p-1.5 transition-colors ${
+                                    chatSidebarView === 'tree'
+                                        ? 'bg-foreground/10 text-foreground'
+                                        : 'text-muted-foreground hover:text-foreground'
+                                }`}
                             >
-                                <GearSixIcon
-                                    className='h-4 w-4'
-                                    weight='bold'
+                                <TreeStructureIcon
+                                    className='h-3.5 w-3.5'
+                                    weight={
+                                        chatSidebarView === 'tree'
+                                            ? 'fill'
+                                            : 'regular'
+                                    }
                                 />
                             </button>
-                        )}
+                            <button
+                                onClick={() => setChatSidebarView('list')}
+                                className={`flex items-center justify-center rounded-md p-1.5 transition-colors ${
+                                    chatSidebarView === 'list'
+                                        ? 'bg-foreground/10 text-foreground'
+                                        : 'text-muted-foreground hover:text-foreground'
+                                }`}
+                            >
+                                <ListBulletsIcon
+                                    className='h-3.5 w-3.5'
+                                    weight={
+                                        chatSidebarView === 'list'
+                                            ? 'fill'
+                                            : 'regular'
+                                    }
+                                />
+                            </button>
+                        </div>
+                        {activeAgent &&
+                            activeClaw &&
+                            !mobileSidebarOpen &&
+                            chatSidebarView === 'tree' && (
+                                <button
+                                    onClick={() =>
+                                        handleOpenClawSettings(activeClaw.id)
+                                    }
+                                    className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground shrink-0 rounded-lg p-1.5 transition-colors'
+                                >
+                                    <GearSixIcon
+                                        className='h-4 w-4'
+                                        weight='bold'
+                                    />
+                                </button>
+                            )}
                     </div>
                 )}
                 <div className='relative flex min-h-0 flex-1 flex-col'>
@@ -652,7 +653,10 @@ const ChatView: FC<ChatViewProps> = ({
                                     ),
                                 onError: (err: Error) =>
                                     showToast(
-                                        err.message || t('dashboard.reinstallInstanceFailed'),
+                                        err.message ||
+                                            t(
+                                                'dashboard.reinstallInstanceFailed'
+                                            ),
                                         'error'
                                     )
                             })

@@ -63,7 +63,8 @@ const verifyOtp = async (c: Context) => {
 
         const codeHash = hashCode(code)
         if (codeHash !== record.codeHash) {
-            const remaining = inputValidation.OTP_MAX_ATTEMPTS.MAX - updated[0].attempts
+            const remaining =
+                inputValidation.OTP_MAX_ATTEMPTS.MAX - updated[0].attempts
             return fail(c, t('api.otpInvalidCode'), 401, {
                 attemptsRemaining: remaining
             })
@@ -97,9 +98,11 @@ const verifyOtp = async (c: Context) => {
         const keysToClean = [`email:${normalizedEmail}`]
         const ip = getClientIp(c)
         if (ip) keysToClean.push(`ip:${ip}`)
-        await clearRateLimit(...keysToClean)
 
-        const customToken = await auth().createCustomToken(uid)
+        const [, customToken] = await Promise.all([
+            clearRateLimit(...keysToClean),
+            auth().createCustomToken(uid)
+        ])
         return ok(c, { customToken }, t('api.otpVerified'))
     } catch {
         return fail(c, t('api.internalServerError'), 500)

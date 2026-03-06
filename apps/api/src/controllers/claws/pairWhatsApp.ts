@@ -24,12 +24,20 @@ const pairWhatsApp = async (c: AuthenticatedContext) => {
         }
 
         try {
-            const credsCheck = await executeSSH(
-                claw.ip,
-                claw.rootPassword,
-                `ls ${CREDS_DIR}/*/creds.json 2>/dev/null && echo "HAS_CREDS" || echo "NO_CREDS"`,
-                5000
-            )
+            const [credsCheck, helpCheck] = await Promise.all([
+                executeSSH(
+                    claw.ip,
+                    claw.rootPassword,
+                    `ls ${CREDS_DIR}/*/creds.json 2>/dev/null && echo "HAS_CREDS" || echo "NO_CREDS"`,
+                    5000
+                ),
+                executeSSH(
+                    claw.ip,
+                    claw.rootPassword,
+                    'su - openclaw -c "openclaw channels login --help" 2>&1 || true',
+                    8000
+                )
+            ])
 
             if (credsCheck.includes('HAS_CREDS')) {
                 return ok(
@@ -38,13 +46,6 @@ const pairWhatsApp = async (c: AuthenticatedContext) => {
                     t('api.whatsappAlreadyPaired')
                 )
             }
-
-            const helpCheck = await executeSSH(
-                claw.ip,
-                claw.rootPassword,
-                'su - openclaw -c "openclaw channels login --help" 2>&1 || true',
-                8000
-            )
 
             const supportsWhatsApp =
                 helpCheck.includes('whatsapp') || helpCheck.includes('WhatsApp')

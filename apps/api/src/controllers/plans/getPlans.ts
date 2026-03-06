@@ -66,7 +66,7 @@ const vultrPlanOrder = [
 ]
 
 const providerLimits: Partial<Record<ProviderType, number>> = {
-    hetzner: 80
+    hetzner: 100
 }
 
 const planOrders: Record<ProviderType, PlanOrder> = {

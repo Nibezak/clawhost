@@ -2,7 +2,7 @@ import type { Context } from 'hono'
 
 export type ProviderType = 'hetzner' | 'digitalocean' | 'vultr'
 
-export type HonoEnv = { Variables: { userId: string } }
+export type HonoEnv = { Variables: { userId: string; isAdmin: boolean } }
 
 export type AuthenticatedContext = Context<HonoEnv>
 

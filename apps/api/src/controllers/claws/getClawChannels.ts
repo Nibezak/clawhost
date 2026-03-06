@@ -1,3 +1,4 @@
+import type { ChannelConfig } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import executeSSH from '@/services/ssh'
@@ -29,7 +30,7 @@ const getClawChannels = async (c: AuthenticatedContext) => {
                 5000
             )
 
-            let channels: Record<string, unknown> = {}
+            let channels: Record<string, ChannelConfig> = {}
 
             try {
                 const trimmed = output.trim()

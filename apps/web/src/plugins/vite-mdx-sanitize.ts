@@ -61,7 +61,9 @@ function escapeSegment(text: string): string {
 }
 
 function sanitizeMdx(content: string): string {
-    const frontmatterMatch = content.match(/^(---\n)([\s\S]*?)(\n---)([\s\S]*)$/)
+    const frontmatterMatch = content.match(
+        /^(---\n)([\s\S]*?)(\n---)([\s\S]*)$/
+    )
 
     let body: string
     let header: string

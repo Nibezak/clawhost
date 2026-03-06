@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react'
-import type { ClawLogsContentProps } from '@/ts/Interfaces'
+import type { ClawLogsContentProps, ParsedLogLine } from '@/ts/Interfaces'
 
 import { useEffect, useMemo, useRef } from 'react'
 import { t } from '@openclaw/i18n'
@@ -30,12 +30,12 @@ const ClawLogsContent: FC<ClawLogsContentProps> = ({
     const timestampRegex =
         /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?)\s*/
 
-    const parsedLines = useMemo(() => {
+    const parsedLines = useMemo((): ParsedLogLine[] => {
         if (!embedded || !logs.data?.logs) return []
         return logs.data.logs
             .split('\n')
             .filter((line) => line.trim())
-            .map((line) => {
+            .map((line): ParsedLogLine => {
                 const match = line.match(timestampRegex)
                 if (match) {
                     const raw = match[1]

@@ -26,9 +26,10 @@ const run = async () => {
             limit
         })
 
-        const data = 'result' in result
-            ? result.result
-            : (result as unknown as PolarItemsResult)
+        const data =
+            'result' in result
+                ? result.result
+                : (result as unknown as PolarItemsResult)
 
         const subs = (data.items || []) as PolarSubscriptionRaw[]
         allSubs.push(...subs)
@@ -74,7 +75,9 @@ const run = async () => {
     }
 
     console.log('To reconcile, run:')
-    console.log('  tsx scripts/reconcile-subscription.ts <subscription-id> [--provider hetzner|digitalocean|vultr]')
+    console.log(
+        '  tsx scripts/reconcile-subscription.ts <subscription-id> [--provider hetzner|digitalocean|vultr]'
+    )
 }
 
 run().catch((err) => {

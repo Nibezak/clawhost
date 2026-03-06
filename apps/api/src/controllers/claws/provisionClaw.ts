@@ -20,17 +20,15 @@ import {
 } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 
-export async function provisionClaw(
+const provisionClaw = async (
     params: ProvisionClawParams
-): Promise<ProvisionClawResponse> {
+): Promise<ProvisionClawResponse> => {
     try {
         const existingClaw = await db
             .select()
             .from(claws)
             .where(eq(claws.polarSubscriptionId, params.subscriptionId))
             .limit(1)
-
-        console.log('existingClaw', existingClaw)
 
         if (existingClaw[0]) {
             return { success: true, clawId: existingClaw[0].id }
@@ -40,8 +38,6 @@ export async function provisionClaw(
             .delete(pendingClaws)
             .where(eq(pendingClaws.id, params.pendingClawId))
             .returning()
-
-        console.log('claimed', claimed)
 
         if (!claimed[0]) {
             return { success: false, error: t('api.pendingClawNotFound') }
@@ -63,13 +59,14 @@ export async function provisionClaw(
                 : Promise.resolve(null)
         ])
 
-        console.log(serverTypes, sshKeyResult)
-
         const selectedPlan = serverTypes.find(
             (st) => st.name === pending.planId
         )
 
-        if (!selectedPlan || selectedPlan.memory < inputValidation.MIN_MEMORY_GB.MIN) {
+        if (
+            !selectedPlan ||
+            selectedPlan.memory < inputValidation.MIN_MEMORY_GB.MIN
+        ) {
             return { success: false, error: t('api.planBelowMinimumMemory') }
         }
 
@@ -152,7 +149,10 @@ export async function provisionClaw(
                 .where(eq(claws.id, id))
         ])
 
-        if (pending.volumeSize && pending.volumeSize >= inputValidation.VOLUME_SIZE.MIN) {
+        if (
+            pending.volumeSize &&
+            pending.volumeSize >= inputValidation.VOLUME_SIZE.MIN
+        ) {
             try {
                 const volumeId = crypto.randomUUID()
                 const providerVolume = await provider.createVolume(
@@ -186,3 +186,5 @@ export async function provisionClaw(
         }
     }
 }
+
+export default provisionClaw

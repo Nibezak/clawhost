@@ -268,7 +268,10 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
         }
     }
 
-    const copyToClipboard = async (text: string, type: 'command' | 'private') => {
+    const copyToClipboard = async (
+        text: string,
+        type: 'command' | 'private'
+    ) => {
         await copyText(text)
         setCopied(type)
         setTimeout(() => setCopied(null), 2000)

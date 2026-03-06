@@ -76,7 +76,9 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
     const [showConfig, setShowConfig] = useState(false)
     const [showReinstallModal, setShowReinstallModal] = useState(false)
     const [showCredentials, setShowCredentials] = useState(false)
-    const [credentialsPassword, setCredentialsPassword] = useState<string | null>(null)
+    const [credentialsPassword, setCredentialsPassword] = useState<
+        string | null
+    >(null)
     const [isFetchingCredentials, setIsFetchingCredentials] = useState(false)
     const [isExporting, setIsExporting] = useState(false)
     const [showAddAgent, setShowAddAgent] = useState(false)
@@ -108,8 +110,7 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
 
     const isScheduledForDeletion = !!claw.deletionScheduledAt
     const hasActionItems =
-        claw.status === clawStatus.running ||
-        claw.status === clawStatus.stopped
+        claw.status === clawStatus.running || claw.status === clawStatus.stopped
 
     const handleUpdateInstance = () => {
         repairMutation.mutate(claw.id, {
@@ -157,7 +158,10 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                 showToast(t('dashboard.reinstallInstanceSuccess'), 'success')
             },
             onError: (err: Error) => {
-                showToast(err.message || t('dashboard.reinstallInstanceFailed'), 'error')
+                showToast(
+                    err.message || t('dashboard.reinstallInstanceFailed'),
+                    'error'
+                )
             }
         })
     }
@@ -426,20 +430,14 @@ const PlaygroundClawNode: FC<PlaygroundClawNodeProps> = ({
                                         weight='fill'
                                     />
                                     <span className='text-muted-foreground text-xs'>
-                                        {t(
-                                            'dashboard.scheduledDeletionShort',
-                                            {
-                                                date: new Date(
-                                                    claw.deletionScheduledAt!
-                                                ).toLocaleDateString(
-                                                    getLocale(),
-                                                    {
-                                                        month: 'short',
-                                                        day: 'numeric'
-                                                    }
-                                                )
-                                            }
-                                        )}
+                                        {t('dashboard.scheduledDeletionShort', {
+                                            date: new Date(
+                                                claw.deletionScheduledAt!
+                                            ).toLocaleDateString(getLocale(), {
+                                                month: 'short',
+                                                day: 'numeric'
+                                            })
+                                        })}
                                     </span>
                                 </div>
                             </TooltipTrigger>

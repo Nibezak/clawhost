@@ -89,20 +89,26 @@ const getPlanAvailability = async (c: Context) => {
             nameToId.set(st.name, st.id)
         }
 
+        const locationsByType = new Map<number, Set<string>>()
+        for (const dc of datacenters) {
+            for (const typeId of dc.availableServerTypeIds) {
+                let locs = locationsByType.get(typeId)
+                if (!locs) {
+                    locs = new Set()
+                    locationsByType.set(typeId, locs)
+                }
+                locs.add(dc.locationName)
+            }
+        }
+
         const availability: Record<string, string[]> = {}
 
         for (const planName of Object.keys(customPrices)) {
             const serverTypeId = nameToId.get(planName)
             if (!serverTypeId) continue
-
-            const locations = new Set<string>()
-            for (const dc of datacenters) {
-                if (dc.availableServerTypeIds.includes(serverTypeId)) {
-                    locations.add(dc.locationName)
-                }
-            }
-
-            availability[planName] = Array.from(locations)
+            availability[planName] = Array.from(
+                locationsByType.get(serverTypeId) || []
+            )
         }
 
         return ok(c, availability, t('api.planAvailabilityFetched'))

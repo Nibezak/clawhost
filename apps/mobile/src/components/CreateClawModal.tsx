@@ -28,6 +28,7 @@ import {
 } from 'phosphor-react-native'
 import * as Clipboard from 'expo-clipboard'
 import { t } from '@openclaw/i18n'
+import { inputValidation } from '@openclaw/shared'
 import { useAuth } from '@/lib/auth'
 import {
     usePlans,
@@ -249,7 +250,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                             onChangeText={setName}
                             placeholder={t('createClaw.clawNamePlaceholder')}
                             placeholderTextColor={COLORS.textDim}
-                            maxLength={100}
+                            maxLength={inputValidation.CLAW_NAME.MAX}
                         />
                     </View>
 

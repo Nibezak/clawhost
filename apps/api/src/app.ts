@@ -1,4 +1,4 @@
-import type { CacheEntry } from '@/ts/Interfaces'
+import type { AuthCacheData, CacheEntry } from '@/ts/Interfaces'
 import type { HonoEnv } from '@/ts/Types'
 
 import { Hono } from 'hono'
@@ -83,7 +83,15 @@ app.get('/clawhub/skills', async (c) => {
 })
 
 const AUTH_CACHE_TTL = 5 * 60 * 1000
-const authCache = new Map<string, CacheEntry<string>>()
+const AUTH_CACHE_CLEANUP_INTERVAL = 10 * 60 * 1000
+const authCache = new Map<string, CacheEntry<AuthCacheData>>()
+
+setInterval(() => {
+    const now = Date.now()
+    for (const [key, entry] of authCache) {
+        if (now >= entry.expiry) authCache.delete(key)
+    }
+}, AUTH_CACHE_CLEANUP_INTERVAL)
 
 app.use('/*', async (c, next) => {
     try {
@@ -96,7 +104,8 @@ app.use('/*', async (c, next) => {
 
         const cachedAuth = authCache.get(token)
         if (cachedAuth && Date.now() < cachedAuth.expiry) {
-            c.set('userId', cachedAuth.data)
+            c.set('userId', cachedAuth.data.userId)
+            c.set('isAdmin', cachedAuth.data.isAdmin)
             return next()
         }
 
@@ -115,7 +124,7 @@ app.use('/*', async (c, next) => {
                   : 'email'
 
         const existingUser = await db
-            .select({ id: users.id })
+            .select({ id: users.id, role: users.role })
             .from(users)
             .where(eq(users.id, decoded.uid))
             .then((rows) => rows[0])
@@ -155,12 +164,15 @@ app.use('/*', async (c, next) => {
             return fail(c, t('api.unauthorized'), 401)
         }
 
+        const admin = existingUser?.role === 'admin'
+
         authCache.set(token, {
-            data: decoded.uid,
+            data: { userId: decoded.uid, isAdmin: admin },
             expiry: Date.now() + AUTH_CACHE_TTL
         })
 
         c.set('userId', decoded.uid)
+        c.set('isAdmin', admin)
         return next()
     } catch (err) {
         console.error('Auth middleware error:', err)

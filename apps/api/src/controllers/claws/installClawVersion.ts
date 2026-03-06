@@ -1,5 +1,8 @@
 import type { AuthenticatedContext } from '@/ts/Types'
-import type { InstallVersionBody, NpmRegistryTimeResponse } from '@/ts/Interfaces'
+import type {
+    InstallVersionBody,
+    NpmRegistryTimeResponse
+} from '@/ts/Interfaces'
 
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
@@ -21,23 +24,23 @@ const installClawVersion = async (c: AuthenticatedContext) => {
             return fail(c, t('api.invalidVersion'), 400)
         }
 
-        const registryResponse = await fetch(NPM_REGISTRY_URL, {
-            headers: { Accept: 'application/json' }
-        })
+        const [registryResponse, clawResult] = await Promise.all([
+            fetch(NPM_REGISTRY_URL, {
+                headers: { Accept: 'application/json' }
+            }),
+            db.select().from(claws).where(eq(claws.id, id)).limit(1)
+        ])
 
         if (registryResponse.ok) {
-            const registry = (await registryResponse.json()) as NpmRegistryTimeResponse
+            const registry =
+                (await registryResponse.json()) as NpmRegistryTimeResponse
             const publishedAt = registry.time?.[version]
             if (publishedAt && new Date(publishedAt) < OUTDATED_CUTOFF) {
                 return fail(c, t('api.outdatedVersion'), 400)
             }
         }
 
-        const claw = await db
-            .select()
-            .from(claws)
-            .where(eq(claws.id, id))
-            .limit(1)
+        const claw = clawResult
 
         if (!claw[0]) {
             return fail(c, t('api.clawNotFound'), 404)

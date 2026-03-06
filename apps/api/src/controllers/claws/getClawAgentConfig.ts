@@ -1,4 +1,4 @@
-import type { GetAgentConfigBody } from '@/ts/Interfaces'
+import type { GetAgentConfigBody, RawClawConfigAgent } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import executeSSH from '@/services/ssh'
@@ -54,14 +54,13 @@ const getClawAgentConfig = async (c: AuthenticatedContext) => {
 
                 const agentList = config?.agents?.list || []
                 const agent = agentList.find(
-                    (a: Record<string, unknown>) =>
-                        (a.id as string) === body.agentId ||
-                        (a.name as string) === body.agentId
+                    (a: RawClawConfigAgent) =>
+                        a.id === body.agentId || a.name === body.agentId
                 )
 
                 if (agent) {
-                    agentName = (agent.name as string) || body.agentId
-                    agentModel = (agent.model as string) || null
+                    agentName = agent.name || body.agentId
+                    agentModel = agent.model || null
                 }
             } catch {
                 agentModel = null

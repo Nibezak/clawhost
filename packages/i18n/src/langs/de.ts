@@ -86,7 +86,16 @@ const de: Translations = {
         legalAndMore: 'Sonstiges',
         documentation: 'Dokumentation',
         productDescription:
-            'Produktionsreife Infrastruktur mit OpenClaw-Bereitstellung per Klick, vollständig verwaltet – bauen, liefern und schneller vorankommen mit KI.'
+            'Produktionsreife Infrastruktur mit OpenClaw-Bereitstellung per Klick, vollständig verwaltet – bauen, liefern und schneller vorankommen mit KI.',
+        downloadAndroid: 'Jetzt bei Google Play',
+        downloadIos: 'Laden im App Store',
+        ariaGithub: 'GitHub',
+        ariaX: 'X',
+        ariaFacebook: 'Facebook',
+        ariaInstagram: 'Instagram',
+        ariaThreads: 'Threads',
+        ariaYoutube: 'YouTube',
+        ariaTiktok: 'TikTok'
     },
     errors: {
         somethingWentWrong: 'Etwas ist schiefgelaufen!',
@@ -163,11 +172,13 @@ const de: Translations = {
         failedToDeleteClaw: 'Claw konnte nicht gelöscht werden!',
         failedToCreateClaw: 'Claw konnte nicht erstellt werden!',
         invalidProvider: 'Ungültiger Anbieter!',
-        providerNotAllowed: 'Dieser Anbieter ist nicht verfügbar, wenn Hetzner aktiv ist!',
+        providerNotAllowed:
+            'Dieser Anbieter ist nicht verfügbar, wenn Hetzner aktiv ist!',
         invalidPlan: 'Ungültiger Plan ausgewählt!',
         planBelowMinimumMemory:
             'Dieser Plan erfüllt nicht die Mindestanforderung an Arbeitsspeicher!',
         invalidLocation: 'Ungültiger Standort ausgewählt!',
+        planNotAvailableAtLocation: 'Dieser Plan ist am ausgewählten Standort nicht verfügbar!',
         failedToSyncClaw: 'Serverstatus konnte nicht synchronisiert werden!',
         failedToProvisionClaw: 'Claw konnte nicht bereitgestellt werden!',
         failedToInitiatePurchase: 'Kauf konnte nicht eingeleitet werden!',
@@ -211,7 +222,8 @@ const de: Translations = {
             'Reparatur durchgeführt, aber das Gateway antwortet noch nicht. Es benötigt möglicherweise mehr Zeit zum Starten!',
         failedToReinstallClaw: 'Instanz konnte nicht neu installiert werden!',
         reinstallSuccess: 'Instanz erfolgreich neu installiert.',
-        reinstallRateLimited: 'Du kannst nur einmal alle 24 Stunden neu installieren. Kontaktiere das Team, falls du dieses Limit aufheben möchtest.',
+        reinstallRateLimited:
+            'Du kannst nur einmal alle 24 Stunden neu installieren. Kontaktiere das Team, falls du dieses Limit aufheben möchtest.',
         clawBusy: 'Claw wird derzeit bereitgestellt oder gelöscht!',
         reinstallGatewayNotResponding:
             'Neuinstallation abgeschlossen, aber das Gateway antwortet noch nicht. Es benötigt möglicherweise mehr Zeit zum Starten!',
@@ -527,7 +539,8 @@ const de: Translations = {
         connect: 'SSH-Befehl kopieren',
         viewServerCredentials: 'Server-Zugangsdaten anzeigen',
         serverCredentials: 'Server-Zugangsdaten',
-        serverCredentialsDescription: 'Verwende diese Zugangsdaten, um dich per SSH mit deinem Server zu verbinden.',
+        serverCredentialsDescription:
+            'Verwende diese Zugangsdaten, um dich per SSH mit deinem Server zu verbinden.',
         sshCommand: 'SSH-Befehl',
         rootPassword: 'Root-Passwort',
         sshCommandCopied: 'SSH-Befehl kopiert.',
@@ -695,6 +708,7 @@ const de: Translations = {
         locationUnavailableForPlan: 'Nicht verfügbar',
         plan: 'Server',
         planUnavailable: 'Nicht verfügbar',
+        planUnavailableForLocation: 'An diesem Standort nicht verfügbar',
         providerUnavailable: 'Dieser Anbieter ist derzeit nicht verfügbar.',
         providerDisabledHetznerRecommended: 'Nicht verfügbar',
         providerAtCapacity:
@@ -1037,7 +1051,9 @@ const de: Translations = {
         upcomingReleaseFeature8:
             'Feature-Anfragen automatisch verwaltet und veröffentlicht durch OpenClaw-Agenten',
         upcomingReleaseFeature9:
-            'Sprachmodus zur Interaktion mit den auf ClawHost gehosteten OpenClaw-Agenten',
+            'Sprachmodus zur Interaktion mit den auf ClawHost gehosteten OpenClaw-Agenten (Beta)',
+        upcomingReleaseFeature10:
+            'OpenClaw auf Ihrer Instanz neu installieren, um von vorne zu beginnen, einmal pro Tag verfügbar',
         release11Date: '28. Februar 2026',
         release11Title: 'Text-zu-Sprache, Terminal, Chat-Tabs & Datei-Explorer',
         release11Description:
@@ -1510,8 +1526,10 @@ const de: Translations = {
         settingsNameDescription: 'Nur Buchstaben, Zahlen und Bindestriche.',
         subdomain: 'Subdomain',
         subdomainPlaceholder: 'Subdomain eingeben',
-        subdomainDescription: 'Kleinbuchstaben und Zahlen, {{min}}-{{max}} Zeichen.',
-        subdomainInvalid: 'Nur {{min}}-{{max}} Kleinbuchstaben und Zahlen verwenden!',
+        subdomainDescription:
+            'Kleinbuchstaben und Zahlen, {{min}}-{{max}} Zeichen.',
+        subdomainInvalid:
+            'Nur {{min}}-{{max}} Kleinbuchstaben und Zahlen verwenden!',
         subdomainUpdated: 'Subdomain erfolgreich aktualisiert.',
         subdomainUpdateFailed: 'Subdomain konnte nicht aktualisiert werden!',
         subdomainInUse:

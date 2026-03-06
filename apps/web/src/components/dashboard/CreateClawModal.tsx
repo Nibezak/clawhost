@@ -1,5 +1,9 @@
 import type { FC, ReactNode } from 'react'
-import type { CreateClawModalProps, ErrorResponse, ProviderOptionWithIcon } from '@/ts/Interfaces'
+import type {
+    CreateClawModalProps,
+    ErrorResponse,
+    ProviderOptionWithIcon
+} from '@/ts/Interfaces'
 import type { ProviderType } from '@/ts/Types'
 
 import { useState, useEffect } from 'react'
@@ -73,7 +77,10 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
         if (p === clawProvider.hetzner)
             return !hetznerLoading && !hetznerPlans?.length
         if (p === clawProvider.digitalocean)
-            return hetznerAvailable || (!digitaloceanLoading && !digitaloceanPlans?.length)
+            return (
+                hetznerAvailable ||
+                (!digitaloceanLoading && !digitaloceanPlans?.length)
+            )
         if (p === clawProvider.vultr)
             return hetznerAvailable || (!vultrLoading && !vultrPlans?.length)
         return false
@@ -499,11 +506,37 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                     value={loc.id}
                                                     checked={isSelected}
                                                     disabled={isDisabled}
-                                                    onChange={(e) =>
-                                                        setLocation(
+                                                    onChange={(e) => {
+                                                        const newLocation =
                                                             e.target.value
+                                                        setLocation(
+                                                            newLocation
                                                         )
-                                                    }
+                                                        if (
+                                                            !isLocationAvailableForPlan(
+                                                                newLocation,
+                                                                planId
+                                                            )
+                                                        ) {
+                                                            const firstAvailable =
+                                                                plans.find(
+                                                                    (p) =>
+                                                                        !p.disabled &&
+                                                                        isPlanAvailable(
+                                                                            p.id
+                                                                        ) &&
+                                                                        isLocationAvailableForPlan(
+                                                                            newLocation,
+                                                                            p.id
+                                                                        )
+                                                                )
+                                                            if (firstAvailable) {
+                                                                setPlanId(
+                                                                    firstAvailable.id
+                                                                )
+                                                            }
+                                                        }
+                                                    }}
                                                     className='sr-only'
                                                 />
                                                 {locFlag && (
@@ -559,9 +592,16 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                 <div className='space-y-2'>
                                     {plans.map((plan, index) => {
                                         const isSelected = planId === plan.id
+                                        const unavailableForLocation =
+                                            location &&
+                                            !isLocationAvailableForPlan(
+                                                location,
+                                                plan.id
+                                            )
                                         const isDisabled =
                                             plan.disabled ||
-                                            !isPlanAvailable(plan.id)
+                                            !isPlanAvailable(plan.id) ||
+                                            !!unavailableForLocation
 
                                         const tierStarts: Record<
                                             string,
@@ -675,6 +715,14 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                             ) : null
 
                                         if (isDisabled) {
+                                            const tooltipText =
+                                                unavailableForLocation
+                                                    ? t(
+                                                          'createClaw.planUnavailableForLocation'
+                                                      )
+                                                    : t(
+                                                          'createClaw.planUnavailable'
+                                                      )
                                             return (
                                                 <>
                                                     {separator}
@@ -683,9 +731,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                             <div>{card}</div>
                                                         </TooltipTrigger>
                                                         <TooltipContent>
-                                                            {t(
-                                                                'createClaw.planUnavailable'
-                                                            )}
+                                                            {tooltipText}
                                                         </TooltipContent>
                                                     </Tooltip>
                                                 </>

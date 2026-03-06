@@ -18,7 +18,8 @@ export type {
     ToastType,
     ClawFileType,
     ChatSidebarViewMode,
-    UserRole
+    UserRole,
+    TranscriberFunction
 } from '@/ts/Types'
 
 export type {
@@ -58,6 +59,7 @@ export type {
     AuthContextType,
     ClawDiagnosticsContentProps,
     ClawLogsContentProps,
+    ParsedLogLine,
     CopyableFieldProps,
     CreateClawModalProps,
     CreateSSHKeyModalProps,
@@ -89,6 +91,9 @@ export type {
     ChatSpeechButtonProps,
     ChatEmptyStateProps,
     ChatEventPayload,
+    RawChatContentObject,
+    RawChatChoice,
+    RawChatMessage,
     ChatHistoryParams,
     ChatHistoryEntry,
     ChatInputProps,
@@ -98,6 +103,9 @@ export type {
     ChatSendParams,
     ChatStatusBarProps,
     GatewayPendingRequest,
+    GatewaySession,
+    GatewaySessionsResult,
+    GatewayHistoryResult,
     UseAgentChatParams,
     UseAgentChatReturn,
     ClawHubSearchResult,
@@ -119,5 +127,7 @@ export type {
     ErrorWithMessage,
     ErrorResponse,
     ProviderOptionWithIcon,
-    ProviderOption
+    ProviderOption,
+    TranscriptionResult,
+    AudioContextWithSinkId
 } from '@/ts/Interfaces'

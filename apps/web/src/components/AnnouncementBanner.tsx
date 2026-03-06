@@ -38,7 +38,10 @@ const AnnouncementBanner: FC = (): ReactNode => {
     if (!allLoading) {
         if (!hetznerLoading && (!hetznerPlans?.length || hetznerAtCapacity))
             lockedProviders.current.add(clawProvider.hetzner)
-        if (!digitaloceanLoading && (!digitaloceanPlans?.length || digitaloceanAtCapacity))
+        if (
+            !digitaloceanLoading &&
+            (!digitaloceanPlans?.length || digitaloceanAtCapacity)
+        )
             lockedProviders.current.add(clawProvider.digitalocean)
         if (!vultrLoading && (!vultrPlans?.length || vultrAtCapacity))
             lockedProviders.current.add(clawProvider.vultr)
@@ -48,8 +51,7 @@ const AnnouncementBanner: FC = (): ReactNode => {
 
     const unavailableProviders = Array.from(lockedProviders.current)
 
-    const visible =
-        !phBannerVisible && unavailableProviders.length > 0
+    const visible = !phBannerVisible && unavailableProviders.length > 0
 
     const providersText = unavailableProviders
         .map((p) => providerLabels[p])

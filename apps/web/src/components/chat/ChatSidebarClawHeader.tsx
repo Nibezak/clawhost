@@ -57,7 +57,9 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
     const [showConfig, setShowConfig] = useState(false)
     const [showReinstallModal, setShowReinstallModal] = useState(false)
     const [showCredentials, setShowCredentials] = useState(false)
-    const [credentialsPassword, setCredentialsPassword] = useState<string | null>(null)
+    const [credentialsPassword, setCredentialsPassword] = useState<
+        string | null
+    >(null)
     const [isFetchingCredentials, setIsFetchingCredentials] = useState(false)
     const [isExporting, setIsExporting] = useState(false)
 
@@ -88,8 +90,7 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
 
     const isScheduledForDeletion = !!claw.deletionScheduledAt
     const hasActionItems =
-        claw.status === clawStatus.running ||
-        claw.status === clawStatus.stopped
+        claw.status === clawStatus.running || claw.status === clawStatus.stopped
 
     const handleUpdateInstance = () => {
         repairMutation.mutate(claw.id, {
@@ -137,7 +138,10 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                 showToast(t('dashboard.reinstallInstanceSuccess'), 'success')
             },
             onError: (err: Error) => {
-                showToast(err.message || t('dashboard.reinstallInstanceFailed'), 'error')
+                showToast(
+                    err.message || t('dashboard.reinstallInstanceFailed'),
+                    'error'
+                )
             }
         })
     }

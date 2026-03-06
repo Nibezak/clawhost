@@ -86,7 +86,16 @@ const fr: Translations = {
         legalAndMore: 'Autres',
         documentation: 'Documentation',
         productDescription:
-            "Infrastructure prête pour la production avec déploiement OpenClaw en un clic, géré de bout en bout — construisez, livrez et avancez plus vite avec l'IA."
+            "Infrastructure prête pour la production avec déploiement OpenClaw en un clic, géré de bout en bout — construisez, livrez et avancez plus vite avec l'IA.",
+        downloadAndroid: 'Télécharger sur Google Play',
+        downloadIos: "Télécharger sur l'App Store",
+        ariaGithub: 'GitHub',
+        ariaX: 'X',
+        ariaFacebook: 'Facebook',
+        ariaInstagram: 'Instagram',
+        ariaThreads: 'Threads',
+        ariaYoutube: 'YouTube',
+        ariaTiktok: 'TikTok'
     },
     errors: {
         somethingWentWrong: 'Une erreur est survenue !',
@@ -166,11 +175,13 @@ const fr: Translations = {
         failedToDeleteClaw: 'Échec de la suppression du claw !',
         failedToCreateClaw: 'Échec de la création du claw !',
         invalidProvider: 'Fournisseur invalide !',
-        providerNotAllowed: 'Ce fournisseur n\'est pas disponible lorsque Hetzner est actif !',
+        providerNotAllowed:
+            "Ce fournisseur n'est pas disponible lorsque Hetzner est actif !",
         invalidPlan: 'Offre sélectionnée invalide !',
         planBelowMinimumMemory:
             'Cette offre ne satisfait pas la mémoire minimale requise !',
         invalidLocation: 'Emplacement sélectionné invalide !',
+        planNotAvailableAtLocation: 'Ce plan n\'est pas disponible à l\'emplacement sélectionné !',
         failedToSyncClaw: 'Échec de la synchronisation du statut du serveur !',
         failedToProvisionClaw: 'Échec du provisionnement du claw !',
         failedToInitiatePurchase: "Échec de l'initiation de l'achat !",
@@ -214,7 +225,8 @@ const fr: Translations = {
             'Réparation appliquée mais la passerelle ne répond pas encore. Elle peut avoir besoin de plus de temps pour démarrer !',
         failedToReinstallClaw: "Échec de la réinstallation de l'instance !",
         reinstallSuccess: 'Instance réinstallée avec succès.',
-        reinstallRateLimited: "Vous ne pouvez réinstaller qu'une fois toutes les 24 heures. Veuillez contacter l'équipe si vous souhaitez supprimer cette limite.",
+        reinstallRateLimited:
+            "Vous ne pouvez réinstaller qu'une fois toutes les 24 heures. Veuillez contacter l'équipe si vous souhaitez supprimer cette limite.",
         clawBusy: 'Le claw est en cours de provisionnement ou de suppression !',
         reinstallGatewayNotResponding:
             'Réinstallation terminée mais la passerelle ne répond pas encore. Elle peut avoir besoin de plus de temps pour démarrer !',
@@ -536,7 +548,8 @@ const fr: Translations = {
         connect: 'Copier la commande SSH',
         viewServerCredentials: 'Voir les identifiants du serveur',
         serverCredentials: 'Identifiants du serveur',
-        serverCredentialsDescription: 'Utilisez ces identifiants pour vous connecter à votre serveur via SSH.',
+        serverCredentialsDescription:
+            'Utilisez ces identifiants pour vous connecter à votre serveur via SSH.',
         sshCommand: 'Commande SSH',
         rootPassword: 'Mot de passe root',
         sshCommandCopied: 'Commande SSH copiée.',
@@ -705,6 +718,7 @@ const fr: Translations = {
         locationUnavailableForPlan: 'Indisponible',
         plan: 'Serveur',
         planUnavailable: 'Indisponible',
+        planUnavailableForLocation: 'Non disponible à cet emplacement',
         providerUnavailable: 'Ce fournisseur est actuellement indisponible.',
         providerDisabledHetznerRecommended: 'Indisponible',
         providerAtCapacity:
@@ -1049,7 +1063,9 @@ const fr: Translations = {
         upcomingReleaseFeature8:
             'Demandes de fonctionnalités automatiquement gérées et publiées par les agents OpenClaw',
         upcomingReleaseFeature9:
-            'Mode vocal pour interagir avec les agents OpenClaw hébergés sur ClawHost',
+            'Mode vocal pour interagir avec les agents OpenClaw hébergés sur ClawHost (Bêta)',
+        upcomingReleaseFeature10:
+            'Réinstaller OpenClaw sur votre instance pour repartir de zéro, disponible une fois par jour',
         release11Date: '28 février 2026',
         release11Title:
             'Synthèse vocale, terminal, onglets de chat & explorateur de fichiers',

@@ -1,4 +1,8 @@
-import type { CacheEntry, CloudflareDNSRecord, CloudflareDNSLookup } from '@/ts/Interfaces'
+import type {
+    CacheEntry,
+    CloudflareDNSRecord,
+    CloudflareDNSLookup
+} from '@/ts/Interfaces'
 
 import Cloudflare from 'cloudflare'
 

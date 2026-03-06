@@ -1,3 +1,4 @@
+import type { TranscriptionResult } from '@/ts/Interfaces'
 import type { clawStatus, userRole } from '@openclaw/shared'
 import type AGENT_DETAIL_TABS from '@/lib/agentDetailTabs'
 import type CLAW_DETAIL_TABS from '@/lib/clawDetailTabs'
@@ -73,3 +74,7 @@ export type ClawFileType =
 export type ChatSidebarViewMode = 'tree' | 'list'
 
 export type ChatTypingIndicator = 'thinking' | 'writing' | null
+
+export type TranscriberFunction = (
+    audio: Float32Array
+) => Promise<TranscriptionResult>

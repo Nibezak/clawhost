@@ -106,8 +106,9 @@ const vultr: CloudProvider = {
         let ip = data.instance.main_ip
 
         if (!ip || ip === '0.0.0.0') {
-            for (let i = 0; i < 30; i++) {
-                await new Promise((r) => setTimeout(r, 5000))
+            for (let i = 0; i < 20; i++) {
+                const delay = Math.min(2000 * Math.pow(2, i), 15000)
+                await new Promise((r) => setTimeout(r, delay))
                 try {
                     const poll = await getClient().get<VultrInstanceResponse>(
                         `/instances/${data.instance.id}`
@@ -139,24 +140,35 @@ const vultr: CloudProvider = {
 
     async getServers(): Promise<Map<string, ServerStatus>> {
         const result = new Map<string, ServerStatus>()
-        let cursor = ''
-        let hasMore = true
+        const first = await getClient().get<VultrInstancesResponse>(
+            '/instances?per_page=100'
+        )
 
-        while (hasMore) {
-            const url = cursor
-                ? `/instances?per_page=100&cursor=${cursor}`
-                : '/instances?per_page=100'
-            const data = await getClient().get<VultrInstancesResponse>(url)
+        for (const instance of first.instances) {
+            result.set(instance.id, {
+                status: mapStatus(instance.status),
+                ip: instance.main_ip
+            })
+        }
 
-            for (const instance of data.instances) {
-                result.set(instance.id, {
-                    status: mapStatus(instance.status),
-                    ip: instance.main_ip
-                })
+        const total = first.meta?.total || first.instances.length
+        const perPage = 100
+        const totalPages = Math.ceil(total / perPage)
+
+        if (totalPages > 1) {
+            let cursor = first.meta?.links?.next || ''
+            for (let page = 2; page <= totalPages && cursor; page++) {
+                const data = await getClient().get<VultrInstancesResponse>(
+                    `/instances?per_page=${perPage}&cursor=${cursor}`
+                )
+                for (const instance of data.instances) {
+                    result.set(instance.id, {
+                        status: mapStatus(instance.status),
+                        ip: instance.main_ip
+                    })
+                }
+                cursor = data.meta?.links?.next || ''
             }
-
-            cursor = data.meta?.links?.next || ''
-            hasMore = !!cursor
         }
 
         return result

@@ -742,8 +742,12 @@ const Dashboard: FC = (): ReactNode => {
                                                               'playground.noClawsDescription'
                                                           )
                                                 }
-                                                actionLabel={t('nav.deployOpenClaw')}
-                                                onAction={() => setShowCreate(true)}
+                                                actionLabel={t(
+                                                    'nav.deployOpenClaw'
+                                                )}
+                                                onAction={() =>
+                                                    setShowCreate(true)
+                                                }
                                             />
                                         </div>
                                     </div>

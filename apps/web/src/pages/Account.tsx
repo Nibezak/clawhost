@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { useQueryClient } from '@tanstack/react-query'
 import { t } from '@openclaw/i18n'
-import { userRole } from '@openclaw/shared'
+import { userRole, inputValidation } from '@openclaw/shared'
 import { useAuth } from '@/lib/auth'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
 import { api, getBaseDomain, getLocale, ROUTES } from '@/lib'
@@ -355,7 +355,9 @@ const Account: FC = (): ReactNode => {
                                             placeholder={t(
                                                 'account.enterYourName'
                                             )}
-                                            maxLength={100}
+                                            maxLength={
+                                                inputValidation.USER_NAME.MAX
+                                            }
                                         />
                                     </div>
 

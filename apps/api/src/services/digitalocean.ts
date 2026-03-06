@@ -86,8 +86,9 @@ const digitalocean: CloudProvider = {
         let ip = getPublicIp(data.droplet)
 
         if (!ip) {
-            for (let i = 0; i < 30; i++) {
-                await new Promise((r) => setTimeout(r, 5000))
+            for (let i = 0; i < 20; i++) {
+                const delay = Math.min(2000 * Math.pow(2, i), 15000)
+                await new Promise((r) => setTimeout(r, delay))
                 try {
                     const poll =
                         await getClient().get<DigitalOceanDropletResponse>(
@@ -120,21 +121,40 @@ const digitalocean: CloudProvider = {
 
     async getServers(): Promise<Map<string, ServerStatus>> {
         const result = new Map<string, ServerStatus>()
-        let page = 1
-        let hasMore = true
-        while (hasMore) {
-            const data = await getClient().get<DigitalOceanDropletsResponse>(
-                `/droplets?per_page=200&page=${page}`
-            )
-            for (const droplet of data.droplets) {
-                result.set(String(droplet.id), {
-                    status: mapStatus(droplet.status),
-                    ip: getPublicIp(droplet)
-                })
-            }
-            hasMore = data.links.pages?.next !== undefined
-            page++
+        const first = await getClient().get<DigitalOceanDropletsResponse>(
+            '/droplets?per_page=200&page=1'
+        )
+
+        for (const droplet of first.droplets) {
+            result.set(String(droplet.id), {
+                status: mapStatus(droplet.status),
+                ip: getPublicIp(droplet)
+            })
         }
+
+        const lastUrl = first.links.pages?.last
+        if (lastUrl) {
+            const match = lastUrl.match(/page=(\d+)/)
+            const lastPage = match ? parseInt(match[1], 10) : 1
+            if (lastPage > 1) {
+                const remaining = await Promise.all(
+                    Array.from({ length: lastPage - 1 }, (_, i) =>
+                        getClient().get<DigitalOceanDropletsResponse>(
+                            `/droplets?per_page=200&page=${i + 2}`
+                        )
+                    )
+                )
+                for (const data of remaining) {
+                    for (const droplet of data.droplets) {
+                        result.set(String(droplet.id), {
+                            status: mapStatus(droplet.status),
+                            ip: getPublicIp(droplet)
+                        })
+                    }
+                }
+            }
+        }
+
         return result
     },
 
