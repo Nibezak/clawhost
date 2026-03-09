@@ -206,6 +206,8 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
         await firebaseSignOut(auth)
     }, [])
 
+    const isLocal = document.documentElement.getAttribute('data-electron') === 'true'
+
     return (
         <AuthContext.Provider
             value={{
@@ -221,7 +223,8 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }): ReactNode => {
                 linkGithub,
                 unlinkGoogle,
                 unlinkGithub,
-                signOut
+                signOut,
+                isLocal
             }}
         >
             {children}

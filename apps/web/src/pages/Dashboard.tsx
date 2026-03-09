@@ -34,6 +34,7 @@ import {
     useProfile
 } from '@/hooks'
 import {
+    AnnouncementBanner,
     EmptyState,
     ErrorState,
     PageTitle,
@@ -474,6 +475,7 @@ const Dashboard: FC = (): ReactNode => {
             transition={{ duration: 0.2 }}
             className={`bg-background text-foreground fixed inset-0 flex flex-col ${showFullBackground && !isLocal ? 'playground-grid' : ''}`}
         >
+            <AnnouncementBanner />
             {isLocal && showFullBackground && (
                 <div className='playground-grid pointer-events-none fixed inset-0 opacity-50' />
             )}
@@ -494,7 +496,7 @@ const Dashboard: FC = (): ReactNode => {
 
             <div className='border-border bg-background md:bg-background/80 relative z-10 flex items-center justify-between border-b px-6 py-3 md:backdrop-blur-xl'>
                 <div className='flex items-center gap-3'>
-                    <Logo to={isLocal ? ROUTES.CLAWS : undefined} />
+                    <Logo />
                     <div className='border-border flex items-center rounded-lg border p-0.5'>
                         <button
                             onClick={() => setDashboardTab(DASHBOARD_TABS.CHAT)}

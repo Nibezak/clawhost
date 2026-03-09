@@ -49,8 +49,7 @@ const Header: FC<HeaderProps> = ({
     }, [mobileMenuOpen])
 
     const { data: profile } = useProfile({
-        enabled: !!user,
-        staleTime: 1000 * 60 * 5
+        enabled: !!user
     })
 
     const displayName =

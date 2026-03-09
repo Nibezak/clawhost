@@ -13,6 +13,8 @@ import HeroButtons from '@/components/HeroButtons'
 import JsonLd from '@/components/JsonLd'
 import LanguageSelector from '@/components/LanguageSelector'
 import LandingFooter from '@/components/LandingFooter'
+import LicenseCard from '@/components/LicenseCard'
+import LicenseRequired from '@/components/LicenseRequired'
 import Logo from '@/components/Logo'
 import PageBackground from '@/components/PageBackground'
 import PageHeader from '@/components/PageHeader'
@@ -45,6 +47,8 @@ export {
     JsonLd,
     LanguageSelector,
     LandingFooter,
+    LicenseCard,
+    LicenseRequired,
     Logo,
     PageBackground,
     PageHeader,

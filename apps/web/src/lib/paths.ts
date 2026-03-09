@@ -5,6 +5,7 @@ const PATHS = {
     SSH_KEYS: 'ssh-keys',
     ACCOUNT: 'account',
     BILLING: 'billing',
+    LICENSE: 'license',
     TERMS: 'terms',
     PRIVACY: 'privacy',
     CHANGELOG: 'changelog',

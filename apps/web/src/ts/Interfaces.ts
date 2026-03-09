@@ -108,7 +108,18 @@ export interface UserProfile {
     name: string | null
     role: UserRole
     authMethods: AuthMethod[]
+    hasLicense: boolean
     createdAt: string
+}
+
+export interface LicenseCheckoutResponse {
+    checkoutUrl: string
+}
+
+export interface LicenseCardProps {
+    hasLicense: boolean
+    isPurchasing: boolean
+    onPurchase: () => void
 }
 
 export interface UserStats {
@@ -418,6 +429,10 @@ export interface ProtectedRouteProps {
     children: ReactNode
 }
 
+export interface LicenseGateProps {
+    children: ReactNode
+}
+
 export interface AuthProviderProps {
     children: ReactNode
 }
@@ -642,6 +657,7 @@ export interface ClawFileExplorerDialogProps {
 export interface UseProfileOptions {
     enabled?: boolean
     staleTime?: number
+    refetchInterval?: number | false
 }
 
 export interface UseClawOptions {

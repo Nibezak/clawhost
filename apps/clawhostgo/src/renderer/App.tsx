@@ -6,8 +6,8 @@ import { AuthProvider } from '@/lib/auth'
 import { TooltipProvider } from '@/components/ui'
 import { useThemeEffect, useLanguageEffect } from '@/hooks'
 import { ROUTES } from '@/lib'
-import { ProtectedRoute } from '@/components'
-import Toast from '@/components/Toast'
+import { ProtectedRoute, Toast } from '@/components'
+import LicenseGate from '@electron/components/LicenseGate'
 
 const Login = lazy(() => import('@/pages/Login'))
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
@@ -39,7 +39,9 @@ const App: FC = (): ReactNode => {
                             path={ROUTES.SSH_KEYS}
                             element={
                                 <ProtectedRoute>
-                                    <SSHKeys />
+                                    <LicenseGate>
+                                        <SSHKeys />
+                                    </LicenseGate>
                                 </ProtectedRoute>
                             }
                         />
@@ -47,7 +49,9 @@ const App: FC = (): ReactNode => {
                             path={ROUTES.BILLING}
                             element={
                                 <ProtectedRoute>
-                                    <Billing />
+                                    <LicenseGate>
+                                        <Billing />
+                                    </LicenseGate>
                                 </ProtectedRoute>
                             }
                         />
@@ -55,7 +59,9 @@ const App: FC = (): ReactNode => {
                             path='*'
                             element={
                                 <ProtectedRoute>
-                                    <Dashboard />
+                                    <LicenseGate>
+                                        <Dashboard />
+                                    </LicenseGate>
                                 </ProtectedRoute>
                             }
                         />

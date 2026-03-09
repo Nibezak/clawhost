@@ -226,6 +226,13 @@ const api = {
     updateClawFile: (id: string, data: UpdateClawFileData) =>
         invoke('updateClawFile', id, data) as Promise<void>,
 
+    cancelPendingClaw: (_id: string) => Promise.resolve(),
+
+    purchaseLicense: () =>
+        Promise.reject(
+            new Error('Purchase from clawhost.cloud/account#license')
+        ),
+
     getSSHKeys: () => Promise.resolve([] as SSHKey[]),
     createSSHKey: (_data: CreateSSHKeyData) => Promise.resolve({} as SSHKey),
     deleteSSHKey: (_id: string) => Promise.resolve(),

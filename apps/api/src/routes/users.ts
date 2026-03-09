@@ -9,6 +9,7 @@ import {
     getOrderInvoice,
     getCustomerPortal,
     getUserStats,
+    purchaseLicense,
     updateUserProfile
 } from '@/controllers/users'
 
@@ -20,6 +21,7 @@ app.get('/me/billing', getBillingHistory)
 app.get('/me/billing/:orderId/invoice', getOrderInvoice)
 app.post('/me/billing/portal', getCustomerPortal)
 app.put('/me', updateUserProfile)
+app.post('/me/license/checkout', purchaseLicense)
 app.post('/me/auth/:method', connectAuthMethod)
 app.delete('/me/auth/:method', disconnectAuthMethod)
 

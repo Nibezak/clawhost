@@ -38,6 +38,7 @@ export default defineConfig(({ mode }) => {
             ]
         },
         build: {
+            sourcemap: 'hidden',
             rollupOptions: {
                 output: {
                     manualChunks: {
@@ -49,7 +50,16 @@ export default defineConfig(({ mode }) => {
                             '@codemirror/language',
                             '@codemirror/lang-json'
                         ],
-                        phosphor: ['@phosphor-icons/react']
+                        phosphor: ['@phosphor-icons/react'],
+                        firebase: [
+                            'firebase/app',
+                            'firebase/auth'
+                        ],
+                        tanstack: [
+                            '@tanstack/react-query',
+                            '@tanstack/react-query-persist-client',
+                            '@tanstack/query-sync-storage-persister'
+                        ]
                     }
                 }
             }

@@ -3,6 +3,7 @@ import {
     text,
     timestamp,
     integer,
+    boolean,
     index,
     unique
 } from 'drizzle-orm/pg-core'
@@ -14,6 +15,7 @@ export const users = pgTable('users', {
     name: text('name'),
     authMethods: text('auth_methods').array().default([]),
     polarCustomerId: text('polar_customer_id'),
+    hasLicense: boolean('has_license').notNull().default(false),
     role: text('role').notNull().default(userRole.user),
     createdAt: timestamp('created_at', { withTimezone: true })
         .defaultNow()

@@ -1,14 +1,13 @@
 import type { FC, ReactNode } from 'react'
 import type {
-    ClawWithAgents,
     Faq,
     ProviderOption,
     Testimonial
 } from '@/ts/Interfaces'
-import type { DashboardTab, ProviderType } from '@/ts/Types'
+import type { ProviderType } from '@/ts/Types'
 
+import { lazy, Suspense, Fragment, useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Fragment, useState, useEffect, useRef, useMemo } from 'react'
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { clawProvider } from '@openclaw/shared'
@@ -27,19 +26,10 @@ import {
     HeroButtons,
     ProviderIcon,
     PlansSkeleton,
-    JsonLd,
-    Logo
+    JsonLd
 } from '@/components'
-import { demoPlaygroundData } from '@/data'
-import {
-    PlaygroundCanvas,
-    PlaygroundDetailPanel,
-    PlaygroundAgentDetailPanel,
-    AgentChat
-} from '@/components/playground'
-import { ChatSidebar, ChatEmptyState } from '@/components/chat'
 import { useAuth } from '@/lib/auth'
-import { ROUTES, DASHBOARD_TABS, getBaseDomain } from '@/lib'
+import { ROUTES, getBaseDomain } from '@/lib'
 import {
     TWITTER_URL,
     FACEBOOK_URL,
@@ -68,7 +58,6 @@ import {
     PlayCircleIcon,
     ArrowRightIcon,
     ChatCircleDotsIcon,
-    GraphIcon,
     SlidersHorizontalIcon,
     GearSixIcon,
     PuzzlePieceIcon,
@@ -76,6 +65,8 @@ import {
     StackIcon,
     GitBranchIcon
 } from '@phosphor-icons/react'
+
+const LazyDemoPreview = lazy(() => import('@/components/LandingDemoPreview'))
 
 const getTestimonials = (): Testimonial[] => [
     {
@@ -224,16 +215,6 @@ const Landing: FC = (): ReactNode => {
         [0.92, 1.02, 1.02, 0.92]
     )
 
-    const [isMobile, setIsMobile] = useState(
-        typeof window !== 'undefined' && window.innerWidth < 768
-    )
-
-    useEffect(() => {
-        const handleResize = () => setIsMobile(window.innerWidth < 768)
-        window.addEventListener('resize', handleResize)
-        return () => window.removeEventListener('resize', handleResize)
-    }, [])
-
     useEffect(() => {
         if (!hash) return
         const id = hash.replace('#', '')
@@ -243,130 +224,29 @@ const Landing: FC = (): ReactNode => {
         }
     }, [hash])
 
-    const mobileDemoData = useMemo(() => {
-        if (!isMobile) return demoPlaygroundData
-        const keepAgentId = 'agent-1a'
-        const nodes = demoPlaygroundData.nodes
-            .filter((n) => {
-                if (n.type !== 'agentNode') return true
-                const data = n.data as Record<string, unknown>
-                const agent = data.agent as Record<string, unknown>
-                return agent?.id === keepAgentId
-            })
-            .map((n) => {
-                if (n.type === 'clawNode') {
-                    return {
-                        ...n,
-                        data: { ...n.data, agentCount: 1 },
-                        position: { x: 0, y: 0 }
-                    }
-                }
-                return { ...n, position: { x: 20, y: 170 } }
-            })
-        const nodeIds = new Set(nodes.map((n) => n.id))
-        const edges = demoPlaygroundData.edges.filter(
-            (e) => nodeIds.has(e.source) && nodeIds.has(e.target)
-        )
-        const agentsByClawId: Record<
-            string,
-            (typeof demoPlaygroundData.agentsByClawId)[string]
-        > = {}
-        for (const [clawId, agents] of Object.entries(
-            demoPlaygroundData.agentsByClawId
-        )) {
-            agentsByClawId[clawId] = agents.filter((a) => a.id === keepAgentId)
-        }
-        return { ...demoPlaygroundData, nodes, edges, agentsByClawId }
-    }, [isMobile])
-
-    const [demoPreviewTab, setDemoPreviewTab] = useState<DashboardTab>(
-        DASHBOARD_TABS.CHAT
-    )
-    const [demoClawId, setDemoClawId] = useState<string | null>(null)
-    const [demoAgentId, setDemoAgentId] = useState<string | null>(null)
-    const [demoAgentClawId, setDemoAgentClawId] = useState<string | null>(null)
-    const [demoChatAgentId, setDemoChatAgentId] = useState<string | null>(
-        'agent-1a'
-    )
-    const [demoChatSettingsClawId, setDemoChatSettingsClawId] = useState<
-        string | null
-    >(null)
-    const [demoChatConfigAgentId, setDemoChatConfigAgentId] = useState<
-        string | null
-    >(null)
-    const [demoChatConfigClawId, setDemoChatConfigClawId] = useState<
-        string | null
-    >(null)
-
-    const demoClaw = demoClawId
-        ? mobileDemoData.claws.find((c) => c.id === demoClawId) || null
-        : null
-
-    const demoAgentClaw = demoAgentClawId
-        ? mobileDemoData.claws.find((c) => c.id === demoAgentClawId) || null
-        : null
-
-    const demoAgentList = demoAgentClaw
-        ? mobileDemoData.agentsByClawId[demoAgentClaw.id] || []
-        : []
-
-    const demoAgent = demoAgentId
-        ? demoAgentList.find((a) => a.id === demoAgentId) || null
-        : null
-
-    const demoChatClaw = mobileDemoData.claws[0]
-    const demoChatAgents = demoChatClaw
-        ? mobileDemoData.agentsByClawId[demoChatClaw.id] || []
-        : []
-    const demoChatAgent = demoChatAgentId
-        ? demoChatAgents.find((a) => a.id === demoChatAgentId) || null
-        : null
-
-    const demoChatClawsWithAgents = useMemo((): ClawWithAgents[] => {
-        return mobileDemoData.claws.map((claw) => ({
-            claw,
-            agents: mobileDemoData.agentsByClawId[claw.id] || [],
-            isLoading: false,
-            isReachable: true
-        }))
-    }, [mobileDemoData])
-
-    const demoChatSettingsClaw = demoChatSettingsClawId
-        ? mobileDemoData.claws.find((c) => c.id === demoChatSettingsClawId) ||
-          null
-        : null
-    const demoChatConfigClaw = demoChatConfigClawId
-        ? mobileDemoData.claws.find((c) => c.id === demoChatConfigClawId) ||
-          null
-        : null
-    const demoChatConfigAgentList = demoChatConfigClaw
-        ? mobileDemoData.agentsByClawId[demoChatConfigClaw.id] || []
-        : []
-    const demoChatConfigAgent = demoChatConfigAgentId
-        ? demoChatConfigAgentList.find((a) => a.id === demoChatConfigAgentId) ||
-          null
-        : null
-
     useEffect(() => {
         const handleScroll = () => {
+            if (window.scrollY < 200) {
+                setActiveSection('')
+                return
+            }
             const sections = [
-                'how-it-works',
-                'features',
-                'testimonials',
-                'pricing',
+                'faq',
                 'comparison',
-                'faq'
+                'pricing',
+                'testimonials',
+                'features',
+                'how-it-works'
             ]
-            for (const section of sections.reverse()) {
+            for (const section of sections) {
                 const el = document.getElementById(section)
                 if (el && window.scrollY >= el.offsetTop - 100) {
                     setActiveSection(section)
                     break
                 }
             }
-            if (window.scrollY < 200) setActiveSection('')
         }
-        window.addEventListener('scroll', handleScroll)
+        window.addEventListener('scroll', handleScroll, { passive: true })
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
 
@@ -452,20 +332,10 @@ const Landing: FC = (): ReactNode => {
                 >
                     <div className='landing-grid pointer-events-none' />
 
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6 }}
-                        className='relative mx-auto max-w-6xl'
-                    >
+                    <div className='animate-hero-fade-in relative mx-auto max-w-6xl'>
                         <div className='flex flex-col items-center text-center'>
                             <div className='mb-8 flex flex-wrap items-center justify-center gap-3'>
-                                <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.1 }}
-                                    className='glow-border border-border bg-foreground/5 inline-flex items-center gap-2 rounded-full border px-4 py-2'
-                                >
+                                <div className='glow-border border-border bg-foreground/5 inline-flex items-center gap-2 rounded-full border px-4 py-2'>
                                     <SparkleIcon
                                         className='h-4 w-4 text-[#ef5350]'
                                         weight='fill'
@@ -473,13 +343,10 @@ const Landing: FC = (): ReactNode => {
                                     <span className='text-foreground/80 text-sm'>
                                         {t('landing.badge')}
                                     </span>
-                                </motion.div>
+                                </div>
                                 {showTutorialBadge && (
-                                    <motion.button
+                                    <button
                                         onClick={() => setVideoOpen(true)}
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: 0.15 }}
                                         className='glow-border border-border bg-foreground/5 hover:bg-foreground/10 hidden cursor-pointer items-center gap-2 rounded-full border py-1.5 pl-1.5 pr-4 transition-colors'
                                     >
                                         <div className='relative h-7 w-10 flex-shrink-0 overflow-hidden rounded-full'>
@@ -499,16 +366,11 @@ const Landing: FC = (): ReactNode => {
                                         <span className='text-foreground/80 text-sm'>
                                             {t('landing.tutorialBadge')}
                                         </span>
-                                    </motion.button>
+                                    </button>
                                 )}
                             </div>
 
-                            <motion.h1
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.2 }}
-                                className='font-clash mb-6 text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl lg:text-8xl'
-                            >
+                            <h1 className='font-clash mb-6 text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl lg:text-8xl'>
                                 <span className='from-foreground via-foreground to-muted-foreground bg-gradient-to-b bg-clip-text text-transparent'>
                                     {t('landing.heroTitle1')}
                                 </span>
@@ -516,36 +378,21 @@ const Landing: FC = (): ReactNode => {
                                 <span className='animate-gradient bg-gradient-to-r from-[#ef5350] via-[#ff7043] to-[#ffab91] bg-clip-text text-transparent'>
                                     {t('landing.heroTitle2')}
                                 </span>
-                            </motion.h1>
+                            </h1>
 
-                            <motion.p
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.3 }}
-                                className='text-muted-foreground mb-10 max-w-2xl text-lg leading-relaxed md:text-xl'
-                            >
+                            <p className='text-muted-foreground mb-10 max-w-2xl text-lg leading-relaxed md:text-xl'>
                                 {t('landing.heroDescription')}
-                            </motion.p>
+                            </p>
 
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.4 }}
-                                className='mb-16 flex flex-col gap-4 sm:flex-row'
-                            >
+                            <div className='mb-16 flex flex-col gap-4 sm:flex-row'>
                                 <HeroButtons
                                     deployLabel={t('nav.deployOpenClaw')}
                                     githubLabel={t('landing.selfHostInstead')}
                                     showStars={true}
                                 />
-                            </motion.div>
+                            </div>
 
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{ delay: 0.5 }}
-                                className='grid grid-cols-2 gap-6 text-center md:flex md:items-center md:gap-16'
-                            >
+                            <div className='grid grid-cols-2 gap-6 text-center md:flex md:items-center md:gap-16'>
                                 <div>
                                     <div className='font-clash text-foreground text-3xl font-bold md:text-4xl'>
                                         $25{t('landing.perMonth')}
@@ -581,9 +428,9 @@ const Landing: FC = (): ReactNode => {
                                         {t('landing.zeroConfig')}
                                     </div>
                                 </div>
-                            </motion.div>
+                            </div>
                         </div>
-                    </motion.div>
+                    </div>
                 </section>
 
                 <div ref={previewRef} className='mx-auto mb-32 max-w-6xl px-6'>
@@ -595,282 +442,19 @@ const Landing: FC = (): ReactNode => {
                         style={{ scale: previewScale }}
                         className='border-border bg-background flex h-[80vh] flex-col overflow-hidden rounded-2xl border'
                     >
-                        <div className='border-border from-muted to-muted/80 pointer-events-none flex items-center gap-3 border-b bg-gradient-to-b px-5 py-3'>
-                            <div className='flex items-center gap-2'>
-                                <div className='h-3 w-3 rounded-full bg-[#ff5f57] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
-                                <div className='h-3 w-3 rounded-full bg-[#febc2e] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
-                                <div className='h-3 w-3 rounded-full bg-[#28c840] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
+                        <Suspense fallback={
+                            <div className='flex flex-1 items-center justify-center'>
+                                <div className='border-border bg-muted/50 h-3 w-3 animate-pulse rounded-full' />
                             </div>
-                            <div className='flex flex-1 justify-center'>
-                                <div className='text-muted-foreground bg-foreground/10 flex items-center gap-2 rounded-lg px-4 py-1.5 text-xs'>
-                                    <LockIcon
-                                        className='h-3 w-3 text-green-500/70'
-                                        weight='fill'
-                                    />
-                                    <span>{getBaseDomain()}/claws</span>
-                                </div>
-                            </div>
-                            <div className='w-[56px]' />
-                        </div>
-
-                        <div className='border-border bg-background/80 flex items-center justify-between border-b px-4 py-2'>
-                            <div className='flex items-center gap-2'>
-                                <div className='-mr-4 origin-left scale-[0.85]'>
-                                    <Logo />
-                                </div>
-                                <div className='border-border flex items-center rounded-lg border p-0.5'>
-                                    <button
-                                        onClick={() =>
-                                            setDemoPreviewTab(
-                                                DASHBOARD_TABS.CHAT
-                                            )
-                                        }
-                                        className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${demoPreviewTab === DASHBOARD_TABS.CHAT ? 'bg-foreground/10 text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                                    >
-                                        <ChatCircleDotsIcon
-                                            className='h-3.5 w-3.5'
-                                            weight={
-                                                demoPreviewTab ===
-                                                DASHBOARD_TABS.CHAT
-                                                    ? 'fill'
-                                                    : 'regular'
-                                            }
-                                        />
-                                        <span className='hidden sm:inline'>
-                                            {t('dashboard.chatTab')}
-                                        </span>
-                                    </button>
-                                    <button
-                                        onClick={() =>
-                                            setDemoPreviewTab(
-                                                DASHBOARD_TABS.PLAYGROUND
-                                            )
-                                        }
-                                        className={`flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-colors ${demoPreviewTab === DASHBOARD_TABS.PLAYGROUND ? 'bg-foreground/10 text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                                    >
-                                        <GraphIcon
-                                            className='h-3.5 w-3.5'
-                                            weight={
-                                                demoPreviewTab ===
-                                                DASHBOARD_TABS.PLAYGROUND
-                                                    ? 'fill'
-                                                    : 'regular'
-                                            }
-                                        />
-                                        <span className='hidden sm:inline'>
-                                            {t('dashboard.playgroundTab')}
-                                        </span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className='flex flex-1 overflow-hidden'>
-                            {demoPreviewTab === DASHBOARD_TABS.PLAYGROUND ? (
-                                <div className='relative flex min-w-0 flex-1 overflow-hidden'>
-                                    <div className='relative min-w-0 flex-1'>
-                                        <div className='playground-grid h-full'>
-                                            <PlaygroundCanvas
-                                                initialNodes={
-                                                    mobileDemoData.nodes
-                                                }
-                                                initialEdges={
-                                                    mobileDemoData.edges
-                                                }
-                                                initialZoom={1.25}
-                                                allowPageScroll
-                                                onNodeClick={(clawId) => {
-                                                    setDemoAgentId(null)
-                                                    setDemoAgentClawId(null)
-                                                    setDemoClawId(
-                                                        demoClawId === clawId
-                                                            ? null
-                                                            : clawId
-                                                    )
-                                                }}
-                                                onAgentClick={(
-                                                    agentId,
-                                                    clawId
-                                                ) => {
-                                                    setDemoClawId(null)
-                                                    setDemoAgentId(
-                                                        demoAgentId === agentId
-                                                            ? null
-                                                            : agentId
-                                                    )
-                                                    setDemoAgentClawId(clawId)
-                                                }}
-                                                onPaneClick={() => {
-                                                    setDemoClawId(null)
-                                                    setDemoAgentId(null)
-                                                    setDemoAgentClawId(null)
-                                                }}
-                                                panelOpen={
-                                                    !!demoClaw || !!demoAgent
-                                                }
-                                                selectedClawId={demoClawId}
-                                                selectedAgentId={demoAgentId}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <AnimatePresence>
-                                        {demoClaw && (
-                                            <PlaygroundDetailPanel
-                                                key='detail-panel'
-                                                claw={demoClaw}
-                                                plans={[]}
-                                                sshKeys={[]}
-                                                onClose={() =>
-                                                    setDemoClawId(null)
-                                                }
-                                                readOnly
-                                            />
-                                        )}
-
-                                        {demoAgent && demoAgentClaw && (
-                                            <PlaygroundAgentDetailPanel
-                                                key='agent-panel'
-                                                agent={demoAgent}
-                                                clawId={demoAgentClaw.id}
-                                                clawName={demoAgentClaw.name}
-                                                isOnlyAgent={
-                                                    demoAgentList.length <= 1
-                                                }
-                                                onClose={() => {
-                                                    setDemoAgentId(null)
-                                                    setDemoAgentClawId(null)
-                                                }}
-                                                readOnly
-                                            />
-                                        )}
-                                    </AnimatePresence>
-                                </div>
-                            ) : (
-                                <div className='relative flex min-w-0 flex-1 overflow-hidden'>
-                                    <div className='playground-grid pointer-events-none absolute inset-0 opacity-50' />
-                                    <ChatSidebar
-                                        clawsWithAgents={
-                                            demoChatClawsWithAgents
-                                        }
-                                        selectedAgent={
-                                            demoChatAgentId && demoChatClaw
-                                                ? {
-                                                      agentId: demoChatAgentId,
-                                                      clawId: demoChatClaw.id
-                                                  }
-                                                : null
-                                        }
-                                        configAgent={null}
-                                        selectedClawId={demoChatSettingsClawId}
-                                        readOnly
-                                        onAgentSelect={(selection) => {
-                                            setDemoChatAgentId(
-                                                demoChatAgentId ===
-                                                    selection.agentId
-                                                    ? null
-                                                    : selection.agentId
-                                            )
-                                            setDemoChatSettingsClawId(null)
-                                            setDemoChatConfigAgentId(null)
-                                            setDemoChatConfigClawId(null)
-                                        }}
-                                        onConfigureAgent={(agentId, clawId) => {
-                                            setDemoChatConfigAgentId(agentId)
-                                            setDemoChatConfigClawId(clawId)
-                                            setDemoChatSettingsClawId(null)
-                                        }}
-                                        onCreateAgent={() => {}}
-                                        onOpenClawSettings={(clawId) => {
-                                            setDemoChatSettingsClawId(
-                                                demoChatSettingsClawId ===
-                                                    clawId
-                                                    ? null
-                                                    : clawId
-                                            )
-                                            setDemoChatAgentId(null)
-                                            setDemoChatConfigAgentId(null)
-                                            setDemoChatConfigClawId(null)
-                                        }}
-                                    />
-                                    <div className='relative flex min-h-0 min-w-0 flex-1 translate-x-0 overflow-hidden'>
-                                        <div className='min-w-0 flex-1'>
-                                            {demoChatSettingsClaw &&
-                                            !demoChatAgentId ? (
-                                                <PlaygroundDetailPanel
-                                                    key={`chat-settings-${demoChatSettingsClaw.id}`}
-                                                    claw={demoChatSettingsClaw}
-                                                    plans={[]}
-                                                    sshKeys={[]}
-                                                    onClose={() =>
-                                                        setDemoChatSettingsClawId(
-                                                            null
-                                                        )
-                                                    }
-                                                    readOnly
-                                                    fullScreen
-                                                />
-                                            ) : demoChatAgent ? (
-                                                <AgentChat
-                                                    key={demoChatAgent.id}
-                                                    agentId={demoChatAgent.id}
-                                                    agentName={
-                                                        demoChatAgent.name
-                                                    }
-                                                    clawId={demoChatClaw.id}
-                                                    subdomain={null}
-                                                    gatewayToken={null}
-                                                    agentModel={
-                                                        demoChatAgent.model
-                                                    }
-                                                    readOnly
-                                                />
-                                            ) : (
-                                                <ChatEmptyState />
-                                            )}
-                                        </div>
-                                        <AnimatePresence>
-                                            {demoChatConfigAgent &&
-                                                demoChatConfigClaw && (
-                                                    <PlaygroundAgentDetailPanel
-                                                        key={`chat-config-${demoChatConfigAgent.id}`}
-                                                        agent={
-                                                            demoChatConfigAgent
-                                                        }
-                                                        clawId={
-                                                            demoChatConfigClaw.id
-                                                        }
-                                                        clawName={
-                                                            demoChatConfigClaw.name
-                                                        }
-                                                        isOnlyAgent={
-                                                            demoChatConfigAgentList.length <=
-                                                            1
-                                                        }
-                                                        onClose={() => {
-                                                            setDemoChatConfigAgentId(
-                                                                null
-                                                            )
-                                                            setDemoChatConfigClawId(
-                                                                null
-                                                            )
-                                                        }}
-                                                        readOnly
-                                                        hideChatTab
-                                                        initialTab='configuration'
-                                                    />
-                                                )}
-                                        </AnimatePresence>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                        }>
+                            <LazyDemoPreview />
+                        </Suspense>
                     </motion.div>
                 </div>
 
                 <section
                     id='how-it-works'
-                    className='border-border relative scroll-mt-20 border-t px-6 py-24'
+                    className='border-border relative scroll-mt-24 border-t px-6 py-24'
                 >
                     <div className='mx-auto max-w-6xl'>
                         <div className='mb-16 text-center'>
@@ -935,7 +519,7 @@ const Landing: FC = (): ReactNode => {
 
                 <section
                     id='features'
-                    className='border-border relative scroll-mt-20 border-t px-6 py-24'
+                    className='cv-auto border-border relative scroll-mt-24 border-t px-6 py-24'
                 >
                     <div className='mx-auto max-w-6xl'>
                         <div className='mb-16 text-center'>
@@ -1078,7 +662,7 @@ const Landing: FC = (): ReactNode => {
 
                 <section
                     id='testimonials'
-                    className='border-border relative scroll-mt-20 border-t px-6 py-24'
+                    className='cv-auto border-border relative scroll-mt-24 border-t px-6 py-24'
                 >
                     <div className='mx-auto max-w-6xl'>
                         <div className='mb-16 text-center'>
@@ -1130,7 +714,7 @@ const Landing: FC = (): ReactNode => {
 
                 <section
                     id='pricing'
-                    className='border-border relative scroll-mt-20 border-t px-6 py-24'
+                    className='cv-auto border-border relative scroll-mt-24 border-t px-6 py-24'
                 >
                     <div className='mx-auto max-w-6xl'>
                         <div className='mb-16 text-center'>
@@ -1378,6 +962,11 @@ const Landing: FC = (): ReactNode => {
                                                                                 ? `${ROUTES.CLAWS}?plan=${plan.id}&provider=${pricingProvider}`
                                                                                 : `${ROUTES.LOGIN}?plan=${plan.id}&provider=${pricingProvider}`
                                                                         }
+                                                                        aria-label={
+                                                                            user
+                                                                                ? t('landing.deployPlanLabel', { plan: plan.name })
+                                                                                : t('landing.selectPlanLabel', { plan: plan.name })
+                                                                        }
                                                                     >
                                                                         {user
                                                                             ? t(
@@ -1448,7 +1037,7 @@ const Landing: FC = (): ReactNode => {
 
                 <section
                     id='comparison'
-                    className='border-border relative scroll-mt-20 border-t px-6 py-24'
+                    className='cv-auto border-border relative scroll-mt-24 border-t px-6 py-24'
                 >
                     <div className='mx-auto max-w-3xl'>
                         <div className='mb-16 text-center'>
@@ -1820,7 +1409,7 @@ const Landing: FC = (): ReactNode => {
 
                 <section
                     id='faq'
-                    className='border-border relative scroll-mt-20 border-t px-6 py-24'
+                    className='cv-auto border-border relative scroll-mt-24 border-t px-6 py-24'
                 >
                     <div className='mx-auto max-w-3xl'>
                         <div className='mb-16 text-center'>
@@ -1892,30 +1481,21 @@ const Landing: FC = (): ReactNode => {
 
                 <section className='border-border relative border-t px-6 py-32'>
                     <div className='mx-auto max-w-4xl text-center'>
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6 }}
-                        >
-                            <h2 className='font-clash mb-6 text-4xl font-bold md:text-6xl'>
-                                <span className='from-foreground to-foreground/80 bg-gradient-to-b bg-clip-text text-transparent'>
-                                    {t('landing.readyToOwnYourPrivacy')}
-                                </span>
+                        <div className='border-border/50 rounded-2xl border bg-gradient-to-b from-white/[0.03] to-transparent px-6 py-12'>
+                            <h2 className='font-clash mb-4 text-3xl font-bold'>
+                                {t('blog.ctaTitle')}
                             </h2>
-                            <p className='text-muted-foreground mx-auto mb-10 max-w-2xl text-xl'>
-                                {t('landing.ctaDescription')}
+                            <p className='text-muted-foreground mx-auto mb-8 max-w-xl text-base'>
+                                {t('blog.ctaDescription')}
                             </p>
-
                             <div className='flex flex-col items-center justify-center gap-4 sm:flex-row'>
                                 <HeroButtons
-                                    deployLabel={t('landing.deployOpenClawNow')}
-                                    githubLabel={t('landing.selfHostInstead')}
+                                    deployLabel={t('blog.ctaDeploy')}
+                                    githubLabel={t('blog.ctaGitHub')}
                                     showStars={true}
-                                    large
                                 />
                             </div>
-                        </motion.div>
+                        </div>
                     </div>
                 </section>
             </main>

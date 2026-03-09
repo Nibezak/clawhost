@@ -9,9 +9,10 @@ const Logo: FC<LogoProps> = ({ to }): ReactNode => {
     const destination = to || ROUTES.HOME
     const { pathname, hash, search } = useLocation()
     const navigate = useNavigate()
+    const isSamePage = pathname === destination
 
     const handleClick = (e: React.MouseEvent) => {
-        if (pathname === destination) {
+        if (isSamePage) {
             e.preventDefault()
             if (hash || search) navigate(destination, { replace: true })
             window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -106,7 +107,7 @@ const Logo: FC<LogoProps> = ({ to }): ReactNode => {
         <Link
             to={destination}
             onClick={handleClick}
-            className='flex items-center gap-2 transition hover:opacity-80'
+            className={`flex items-center gap-2 ${isSamePage ? 'pointer-events-none' : 'transition hover:opacity-80'}`}
             aria-label={t('common.brandName')}
         >
             {svg}

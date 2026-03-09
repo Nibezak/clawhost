@@ -9,7 +9,8 @@ const useProfile = (options?: UseProfileOptions) => {
         queryKey: PROFILE_QUERY_KEY,
         queryFn: api.getProfile,
         enabled: options?.enabled ?? true,
-        staleTime: options?.staleTime ?? Infinity
+        staleTime: options?.staleTime ?? Infinity,
+        refetchInterval: options?.refetchInterval ?? false
     })
 }
 

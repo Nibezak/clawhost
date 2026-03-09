@@ -33,7 +33,8 @@ app.use(
             ? [
                   'https://clawhost.cloud',
                   'https://www.clawhost.cloud',
-                  'http://localhost:1111'
+                  'http://localhost:1111',
+                  'http://localhost:3333'
               ]
             : ['https://clawhost.cloud', 'https://www.clawhost.cloud'],
         allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],

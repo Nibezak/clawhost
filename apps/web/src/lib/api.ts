@@ -48,6 +48,7 @@ import type {
     UpdateClawEnvVarsData,
     UpdateClawFileData,
     UpdateClawSkillsData,
+    LicenseCheckoutResponse,
     UpdateProfileData,
     UserProfile,
     UserStats,
@@ -279,7 +280,9 @@ const api = {
             `/users/me/billing/${orderId}/invoice`
         ),
     getCustomerPortal: () =>
-        client.post<CustomerPortalResponse>('/users/me/billing/portal')
+        client.post<CustomerPortalResponse>('/users/me/billing/portal'),
+    purchaseLicense: () =>
+        client.post<LicenseCheckoutResponse>('/users/me/license/checkout')
 }
 
 export default api
