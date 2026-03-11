@@ -1,15 +1,10 @@
+import type { VersionEntry, NpmVersionEntry } from '@/ts/Interfaces'
+
 import { execFile } from 'child_process'
 import fs from 'fs'
 import path from 'path'
 import configStore from '@/main/services/configStore'
 import nodeBinary from '@/main/services/nodeBinary'
-
-interface VersionEntry {
-    version: string
-    publishedAt: string
-    downloads: number
-    installed: boolean
-}
 
 const listInstalled = (): string[] => {
     const versionsDir = path.join(configStore.getBaseDir(), 'versions')
@@ -100,11 +95,9 @@ const getAvailableVersions = (): Promise<VersionEntry[]> => {
                     return
                 }
                 try {
-                    const versions = JSON.parse(stdout.trim()) as Array<{
-                        version: string
-                        publishedAt: string
-                        downloads: number
-                    }>
+                    const versions = JSON.parse(
+                        stdout.trim()
+                    ) as NpmVersionEntry[]
                     const installed = new Set(listInstalled())
                     resolve(
                         versions.map((v) => ({

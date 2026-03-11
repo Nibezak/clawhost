@@ -2,9 +2,23 @@ import type { FC, ReactNode } from 'react'
 import type { TranslationKey } from '@openclaw/i18n'
 import type { CompareFeatureValue } from '@/ts/Interfaces'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
-import { BlogCTA, Header, LandingFooter, PageBackground, PageTitle } from '@/components'
+import {
+    BlogCTA,
+    Header,
+    JsonLd,
+    LandingFooter,
+    PageBackground,
+    PageTitle
+} from '@/components'
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger
+} from '@/components/ui/select'
 import { PATHS, getBaseDomain } from '@/lib'
 import { getCompareData } from '@/data'
 import { GITHUB_REPO_URL } from '@/hooks'
@@ -13,6 +27,11 @@ import { CheckIcon, XIcon, MinusIcon } from '@phosphor-icons/react'
 const Compare: FC = (): ReactNode => {
     const { competitors, categories } = getCompareData()
     const colSpan = competitors.length + 1
+    const clawhost = competitors.find((c) => c.highlighted)!
+    const otherCompetitors = competitors.filter((c) => !c.highlighted)
+    const [selectedCompetitorId, setSelectedCompetitorId] = useState(
+        otherCompetitors[0].id
+    )
 
     const renderStatusIcon = (value: CompareFeatureValue): ReactNode => {
         if (value.status === 'yes') {
@@ -39,12 +58,44 @@ const Compare: FC = (): ReactNode => {
         )
     }
 
+    const renderValue = (value: CompareFeatureValue): ReactNode => (
+        <div className='flex flex-col items-center gap-1'>
+            {renderStatusIcon(value)}
+            {value.detailKey && (
+                <span className='text-muted-foreground text-center text-xs'>
+                    {t(value.detailKey as TranslationKey)}
+                </span>
+            )}
+        </div>
+    )
+
     return (
         <div className='bg-background text-foreground relative flex min-h-screen flex-col'>
             <PageTitle
                 title={t('compare.title')}
                 description={t('compare.description')}
+                image={`https://${getBaseDomain()}/full-comparison-thumbnail.webp`}
                 url={`https://${getBaseDomain()}/${PATHS.COMPARE}`}
+            />
+            <JsonLd
+                data={{
+                    '@context': 'https://schema.org',
+                    '@type': 'BreadcrumbList',
+                    itemListElement: [
+                        {
+                            '@type': 'ListItem',
+                            position: 1,
+                            name: t('common.brandName'),
+                            item: `https://${getBaseDomain()}`
+                        },
+                        {
+                            '@type': 'ListItem',
+                            position: 2,
+                            name: t('compare.title'),
+                            item: `https://${getBaseDomain()}/${PATHS.COMPARE}`
+                        }
+                    ]
+                }}
             />
             <PageBackground />
             <Header />
@@ -62,7 +113,107 @@ const Compare: FC = (): ReactNode => {
                     {t('compare.description')}
                 </p>
 
-                <div className='border-border overflow-x-auto rounded-xl border'>
+                <div className='mb-6 lg:hidden'>
+                    <label className='text-muted-foreground mb-2 block text-sm'>
+                        {t('compare.compareWith')}
+                    </label>
+                    <Select
+                        value={selectedCompetitorId}
+                        onValueChange={setSelectedCompetitorId}
+                        displayValue={t(
+                            (
+                                otherCompetitors.find(
+                                    (c) => c.id === selectedCompetitorId
+                                ) || otherCompetitors[0]
+                            ).nameKey as TranslationKey
+                        )}
+                    >
+                        <SelectTrigger placeholder={t('compare.compareWith')} />
+                        <SelectContent>
+                            {otherCompetitors.map((competitor) => (
+                                <SelectItem
+                                    key={competitor.id}
+                                    value={competitor.id}
+                                >
+                                    {t(competitor.nameKey as TranslationKey)}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                <div className='border-border overflow-hidden rounded-xl border lg:hidden'>
+                    <table className='w-full'>
+                        <thead>
+                            <tr className='border-border border-b'>
+                                <th className='text-foreground px-4 py-3 text-left text-sm font-semibold'>
+                                    {t('compare.feature')}
+                                </th>
+                                <th className='text-foreground px-4 py-3 text-center text-sm font-semibold'>
+                                    {t(clawhost.nameKey as TranslationKey)}
+                                </th>
+                                <th className='text-foreground px-4 py-3 text-center text-sm font-semibold'>
+                                    {t(
+                                        (
+                                            otherCompetitors.find(
+                                                (c) =>
+                                                    c.id ===
+                                                    selectedCompetitorId
+                                            ) || otherCompetitors[0]
+                                        ).nameKey as TranslationKey
+                                    )}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className='divide-border divide-y'>
+                            {categories.map((category) => (
+                                <>
+                                    <tr key={`m-cat-${category.id}`}>
+                                        <td
+                                            colSpan={3}
+                                            className='bg-foreground/[0.03] px-4 py-3'
+                                        >
+                                            <span className='text-foreground text-sm font-semibold'>
+                                                {t(
+                                                    category.nameKey as TranslationKey
+                                                )}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {category.features.map(
+                                        (feature, featureIndex) => (
+                                            <tr
+                                                key={`m-${category.id}-${featureIndex}`}
+                                            >
+                                                <td className='text-foreground px-4 py-3 text-sm'>
+                                                    {t(
+                                                        feature.nameKey as TranslationKey
+                                                    )}
+                                                </td>
+                                                <td className='px-4 py-3'>
+                                                    {renderValue(
+                                                        feature.values[
+                                                            clawhost.id
+                                                        ]
+                                                    )}
+                                                </td>
+                                                <td className='px-4 py-3'>
+                                                    {renderValue(
+                                                        feature.values[
+                                                            selectedCompetitorId
+                                                        ]
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        )
+                                    )}
+                                </>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div className='border-border hidden overflow-x-auto rounded-xl border lg:block'>
                     <table className='w-full min-w-[700px]'>
                         <thead>
                             <tr className='border-border border-b'>
@@ -100,7 +251,6 @@ const Compare: FC = (): ReactNode => {
                                         (feature, featureIndex) => (
                                             <tr
                                                 key={`${category.id}-${featureIndex}`}
-                                                className=''
                                             >
                                                 <td className='text-foreground px-6 py-4 text-sm'>
                                                     {t(
@@ -108,33 +258,19 @@ const Compare: FC = (): ReactNode => {
                                                     )}
                                                 </td>
                                                 {competitors.map(
-                                                    (competitor) => {
-                                                        const value =
-                                                            feature.values[
-                                                                competitor.id
-                                                            ]
-                                                        return (
-                                                            <td
-                                                                key={
-                                                                    competitor.id
-                                                                }
-                                                                className='px-6 py-4'
-                                                            >
-                                                                <div className='flex flex-col items-center gap-1'>
-                                                                    {renderStatusIcon(
-                                                                        value
-                                                                    )}
-                                                                    {value.detailKey && (
-                                                                        <span className='text-muted-foreground text-center text-xs'>
-                                                                            {t(
-                                                                                value.detailKey as TranslationKey
-                                                                            )}
-                                                                        </span>
-                                                                    )}
-                                                                </div>
-                                                            </td>
-                                                        )
-                                                    }
+                                                    (competitor) => (
+                                                        <td
+                                                            key={competitor.id}
+                                                            className='px-6 py-4'
+                                                        >
+                                                            {renderValue(
+                                                                feature.values[
+                                                                    competitor
+                                                                        .id
+                                                                ]
+                                                            )}
+                                                        </td>
+                                                    )
                                                 )}
                                             </tr>
                                         )

@@ -1,6 +1,6 @@
+import type { ChildProcess } from 'child_process'
 import type {
     ClawFileType,
-    FeatureRequestStatus,
     ProviderType,
     SubscriptionStatus,
     WebhookEventType
@@ -398,6 +398,7 @@ export interface CheckoutSession {
     amount: number
     currency: string
     metadata?: Record<string, string>
+    subscriptionId?: string
 }
 
 export interface CreateCheckoutParams {
@@ -485,12 +486,18 @@ export interface PolarProduct {
     isArchived: boolean
 }
 
+export interface PolarProductPrice {
+    priceAmount: number
+    priceCurrency: string
+}
+
 export interface PolarProductRaw {
     id: string
     name: string
     description?: string | null
     isRecurring: boolean
     isArchived: boolean
+    prices?: PolarProductPrice[]
 }
 
 export interface CreatePolarProductParams {
@@ -593,6 +600,13 @@ export interface ResolveCredentialConflictBody {
 
 export interface OtpCodeEmailProps {
     code: string
+}
+
+export interface ChangelogEmailProps {
+    title: string
+    description: string
+    features: string[]
+    date: string
 }
 
 export interface CreateSSHKeyBody {
@@ -727,6 +741,28 @@ export interface ClawAgentsResponse {
     reachable: boolean
 }
 
+export interface RawClawConfigAgent {
+    id?: string
+    name?: string
+    model?: string
+    status?: string
+    workspace?: string
+    directory?: string
+}
+
+export interface RawClawHubSkillItem {
+    slug?: string
+    name?: string
+    package?: string
+    id?: string
+    displayName?: string
+    version?: string
+    currentVersion?: string
+    hasUpdate?: boolean
+    updateAvailable?: boolean
+    latestVersion?: string
+}
+
 export interface UpdateClawEnvVarsBody {
     envVars: Record<string, string>
 }
@@ -780,9 +816,8 @@ export interface RegionMeta {
     country: string
 }
 
-export interface PlanConfig {
+export interface PlanOrder {
     order: string[]
-    prices: Record<string, number>
 }
 
 export interface ChannelConfig {
@@ -943,6 +978,11 @@ export interface CacheEntry<T> {
     expiry: number
 }
 
+export interface AuthCacheData {
+    userId: string
+    isAdmin: boolean
+}
+
 export interface SkillsCacheEntry {
     data: ClawHubSearchResult[]
     expires: number
@@ -984,39 +1024,6 @@ export interface RootLayoutProps {
     children: React.ReactNode
 }
 
-export interface CreateFeatureRequestBody {
-    title: string
-    description: string
-    platforms: string[]
-}
-
-export interface UpdateFeatureRequestStatusBody {
-    status: FeatureRequestStatus
-}
-
-export interface EditFeatureRequestBody {
-    title?: string
-    description?: string
-    status?: FeatureRequestStatus
-    platforms?: string[]
-}
-
-export interface FeatureRequestResponse {
-    id: string
-    title: string
-    description: string
-    status: FeatureRequestStatus
-    platforms: string[]
-    upvoteCount: number
-    userId: string
-    hasUpvoted: boolean
-}
-
-export interface FeatureRequestsListResponse {
-    items: FeatureRequestResponse[]
-    total: number
-}
-
 export interface ClawBindingEntry {
     agentId: string
     match: { channel: string }
@@ -1030,4 +1037,68 @@ export interface ClawBindingAgent {
 export interface GithubEmailEntry {
     primary: boolean
     email: string
+}
+
+export interface GenerateSpeechBody {
+    text: string
+    voice?: string
+}
+
+export interface PiperVoice {
+    id: string
+    name: string
+    gender: string
+    quality: string
+}
+
+export interface PiperModelConfig {
+    sampleRate: number
+    channels: number
+}
+
+export interface PiperSynthesisResult {
+    audio: Buffer
+    sampleRate: number
+    channels: number
+}
+
+export interface PiperStreamResult {
+    child: ChildProcess
+    sampleRate: number
+    channels: number
+}
+
+export interface NpmRegistryTimeResponse {
+    time: Record<string, string>
+}
+
+export interface NpmRegistryVersionsResponse {
+    'dist-tags': Record<string, string>
+    time: Record<string, string>
+}
+
+export interface NpmDownloadsResponse {
+    downloads: Record<string, number>
+}
+
+export interface InstallVersionBody {
+    version: string
+}
+
+export interface GithubUserResponse {
+    id: number
+    name?: string
+    login: string
+    email?: string
+}
+
+export interface GoogleUserinfoResponse {
+    email: string
+    sub: string
+    name?: string
+}
+
+export interface PolarProductMapping {
+    provider: string
+    planId: string
 }

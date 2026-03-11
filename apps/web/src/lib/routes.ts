@@ -12,8 +12,7 @@ const ROUTES = {
     CHANGELOG: `/${PATHS.CHANGELOG}`,
     BLOG: `/${PATHS.BLOG}`,
     BLOG_POST: `/${PATHS.BLOG}/:slug`,
-    COMPARE: `/${PATHS.COMPARE}`,
-    FEATURE_REQUESTS: `/${PATHS.FEATURE_REQUESTS}`
+    COMPARE: `/${PATHS.COMPARE}`
 } as const
 
 export default ROUTES

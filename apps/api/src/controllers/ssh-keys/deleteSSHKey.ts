@@ -76,9 +76,10 @@ const deleteSSHKey = async (c: AuthenticatedContext) => {
                     )
             )
         }
-        await Promise.all(providerDeletions)
-
-        await db.delete(sshKeys).where(eq(sshKeys.id, id))
+        await Promise.all([
+            ...providerDeletions,
+            db.delete(sshKeys).where(eq(sshKeys.id, id))
+        ])
 
         return ok(c, null, t('api.sshKeyDeleted'))
     } catch {

@@ -1,7 +1,9 @@
+import type { AuthCacheData, CacheEntry } from '@/ts/Interfaces'
 import type { HonoEnv } from '@/ts/Types'
 
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { logger } from 'hono/logger'
 import { bodyLimit } from 'hono/body-limit'
 import { verifyToken } from '@/services/firebase'
 import { eq, sql } from 'drizzle-orm'
@@ -10,9 +12,9 @@ import { users } from '@/db/schema'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 import {
+    aiRoutes,
     authRoutes,
     clawsRoutes,
-    featureRequestsRoutes,
     plansRoutes,
     sshKeysRoutes,
     usersRoutes,
@@ -34,12 +36,14 @@ app.use(
                   'http://localhost:1111'
               ]
             : ['https://clawhost.cloud', 'https://www.clawhost.cloud'],
-        allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
         allowHeaders: ['Content-Type', 'Authorization'],
+        exposeHeaders: ['X-Sample-Rate', 'X-Channels', 'X-Audio-Format'],
         maxAge: 86400
     })
 )
 
+app.use('*', logger())
 app.use('*', bodyLimit({ maxSize: 1024 * 1024 }))
 
 app.use('*', async (c, next) => {
@@ -55,20 +59,39 @@ app.get('/', (c) => ok(c, null, t('api.healthOk')))
 app.route('/auth', authRoutes)
 app.route('/plans', plansRoutes)
 app.route('/webhooks', webhooksRoutes)
-app.route('/feature-requests', featureRequestsRoutes)
-
 app.get('/clawhub/skills', async (c) => {
     try {
         const result = await browseSkills({
             query: c.req.query('query') || undefined,
-            limit: c.req.query('limit') ? Number(c.req.query('limit')) : undefined,
+            limit: c.req.query('limit')
+                ? Number(c.req.query('limit'))
+                : undefined,
             cursor: c.req.query('cursor') || undefined
         })
-        return ok(c, { skills: result.skills, nextCursor: result.nextCursor, hasMore: result.hasMore }, t('api.clawHubSearchSuccess'))
+        return ok(
+            c,
+            {
+                skills: result.skills,
+                nextCursor: result.nextCursor,
+                hasMore: result.hasMore
+            },
+            t('api.clawHubSearchSuccess')
+        )
     } catch {
         return fail(c, t('api.clawHubSearchFailed'), 500)
     }
 })
+
+const AUTH_CACHE_TTL = 5 * 60 * 1000
+const AUTH_CACHE_CLEANUP_INTERVAL = 10 * 60 * 1000
+const authCache = new Map<string, CacheEntry<AuthCacheData>>()
+
+setInterval(() => {
+    const now = Date.now()
+    for (const [key, entry] of authCache) {
+        if (now >= entry.expiry) authCache.delete(key)
+    }
+}, AUTH_CACHE_CLEANUP_INTERVAL)
 
 app.use('/*', async (c, next) => {
     try {
@@ -78,6 +101,14 @@ app.use('/*', async (c, next) => {
         }
 
         const token = authHeader.slice(7)
+
+        const cachedAuth = authCache.get(token)
+        if (cachedAuth && Date.now() < cachedAuth.expiry) {
+            c.set('userId', cachedAuth.data.userId)
+            c.set('isAdmin', cachedAuth.data.isAdmin)
+            return next()
+        }
+
         const decoded = await verifyToken(token)
 
         if (!decoded) {
@@ -93,7 +124,7 @@ app.use('/*', async (c, next) => {
                   : 'email'
 
         const existingUser = await db
-            .select({ id: users.id })
+            .select({ id: users.id, role: users.role })
             .from(users)
             .where(eq(users.id, decoded.uid))
             .then((rows) => rows[0])
@@ -133,7 +164,15 @@ app.use('/*', async (c, next) => {
             return fail(c, t('api.unauthorized'), 401)
         }
 
+        const admin = existingUser?.role === 'admin'
+
+        authCache.set(token, {
+            data: { userId: decoded.uid, isAdmin: admin },
+            expiry: Date.now() + AUTH_CACHE_TTL
+        })
+
         c.set('userId', decoded.uid)
+        c.set('isAdmin', admin)
         return next()
     } catch (err) {
         console.error('Auth middleware error:', err)
@@ -141,6 +180,7 @@ app.use('/*', async (c, next) => {
     }
 })
 
+app.route('/ai', aiRoutes)
 app.route('/claws', clawsRoutes)
 app.route('/ssh-keys', sshKeysRoutes)
 app.route('/users', usersRoutes)

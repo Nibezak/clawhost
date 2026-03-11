@@ -1,1 +1,0 @@
-ALTER TABLE "feature_requests" ADD COLUMN "platforms" text[] DEFAULT '{}';

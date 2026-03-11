@@ -2,7 +2,7 @@ import type { UpdateClawBindingsBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import executeSSH from '@/services/ssh'
-import { findUserClaw } from '@/controllers/claws/helpers'
+import { applyToolsDefaults, findUserClaw } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
@@ -63,13 +63,25 @@ const updateClawBindings = async (c: AuthenticatedContext) => {
                 const trimmed = output.trim()
                 const jsonStart = trimmed.indexOf('{')
                 const jsonEnd = trimmed.lastIndexOf('}')
-                const jsonStr = jsonStart >= 0 && jsonEnd > jsonStart
-                    ? trimmed.substring(jsonStart, jsonEnd + 1)
-                    : '{}'
+                const jsonStr =
+                    jsonStart >= 0 && jsonEnd > jsonStart
+                        ? trimmed.substring(jsonStart, jsonEnd + 1)
+                        : '{}'
                 config = JSON.parse(jsonStr)
             } catch {
                 config = {}
             }
+
+            applyToolsDefaults(config)
+
+            const agents = (config.agents || {
+                defaults: {},
+                list: []
+            }) as Record<string, unknown>
+            const defaults = (agents.defaults || {}) as Record<string, unknown>
+            defaults.sandbox = { mode: 'off' }
+            agents.defaults = defaults
+            config.agents = agents
 
             config.bindings = body.bindings
 

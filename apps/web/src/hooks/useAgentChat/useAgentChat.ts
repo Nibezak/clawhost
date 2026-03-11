@@ -4,15 +4,19 @@ import type {
     ChatHistoryEntry,
     ChatImageSource,
     ChatMessage,
+    GatewayHistoryResult,
+    GatewaySession,
+    GatewaySessionsResult,
     UseAgentChatParams,
     UseAgentChatReturn
 } from '@/ts/Interfaces'
-import type { GatewayConnectionState } from '@/ts/Types'
+import type { ChatTypingIndicator, GatewayConnectionState } from '@/ts/Types'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { SharedGateway } from '@/lib/gateway'
 import extractText from '@/hooks/useAgentChat/extractText'
 import extractImages from '@/hooks/useAgentChat/extractImages'
+import extractTimestamp from '@/hooks/useAgentChat/extractTimestamp'
 import stripMetadata from '@/hooks/useAgentChat/stripMetadata'
 
 const useAgentChat = ({
@@ -26,6 +30,8 @@ const useAgentChat = ({
         useState<GatewayConnectionState>('disconnected')
     const [isLoading, setIsLoading] = useState(true)
     const [isStreaming, setIsStreaming] = useState(false)
+    const [typingIndicator, setTypingIndicator] =
+        useState<ChatTypingIndicator>(null)
     const clientRef = useRef<ReturnType<typeof SharedGateway.acquire> | null>(
         null
     )
@@ -69,25 +75,20 @@ const useAgentChat = ({
                 .send('sessions.list', {})
                 .then((result) => {
                     if (!mountedRef.current) return
-                    const raw = result as Record<string, unknown>
-                    const sessions = Array.isArray(raw)
+                    const raw = result as GatewaySessionsResult
+                    const sessions: GatewaySession[] = Array.isArray(raw)
                         ? raw
-                        : Array.isArray(
-                                (raw as Record<string, unknown>)?.sessions
-                            )
-                          ? ((raw as Record<string, unknown>).sessions as Array<
-                                Record<string, unknown>
-                            >)
+                        : Array.isArray(raw?.sessions)
+                          ? raw.sessions
                           : []
                     const agentPrefix = `agent:${agentId}:`
                     const agentSession = sessions.find((s) => {
-                        const key = ((s as Record<string, unknown>).key ||
-                            (s as Record<string, unknown>).sessionKey) as string
+                        const key = s.key || s.sessionKey
                         return key?.startsWith(agentPrefix)
-                    }) as Record<string, unknown> | undefined
+                    })
                     if (agentSession) {
-                        const resolved = (agentSession.key ||
-                            agentSession.sessionKey) as string | undefined
+                        const resolved =
+                            agentSession.key || agentSession.sessionKey
                         if (resolved) {
                             sessionKeyRef.current = resolved
                         }
@@ -99,18 +100,17 @@ const useAgentChat = ({
                 })
                 .then((result) => {
                     if (!mountedRef.current) return
-                    const raw = result as Record<string, unknown>
-                    const history = (
-                        Array.isArray(raw)
-                            ? raw
-                            : Array.isArray(raw?.messages)
-                              ? (raw.messages as ChatHistoryEntry[])
-                              : Array.isArray(raw?.history)
-                                ? (raw.history as ChatHistoryEntry[])
-                                : []
-                    ) as ChatHistoryEntry[]
+                    const raw = result as GatewayHistoryResult
+                    const history: ChatHistoryEntry[] = Array.isArray(raw)
+                        ? raw
+                        : Array.isArray(raw?.messages)
+                          ? raw.messages
+                          : Array.isArray(raw?.history)
+                            ? raw.history
+                            : []
                     if (history.length > 0) {
                         const loaded: ChatMessage[] = []
+                        let lastTimestamp = new Date().toISOString()
                         for (let i = 0; i < history.length; i++) {
                             const msg = history[i]
                             if (
@@ -121,13 +121,17 @@ const useAgentChat = ({
                             const isUser = msg.role === 'user'
                             const text = extractText(msg.content)
                             if (!text.trim()) continue
+                            if (isUser) {
+                                const extracted = extractTimestamp(text)
+                                if (extracted) lastTimestamp = extracted
+                            }
                             const images = extractImages(msg.content)
                             loaded.push({
                                 id: `history-${i}`,
                                 role: isUser ? 'user' : 'assistant',
                                 content: isUser ? stripMetadata(text) : text,
                                 status: 'complete' as const,
-                                timestamp: new Date().toISOString(),
+                                timestamp: lastTimestamp,
                                 images:
                                     images && images.length > 0
                                         ? images
@@ -138,11 +142,7 @@ const useAgentChat = ({
                     }
                     setIsLoading(false)
                 })
-                .catch((err: Error) => {
-                    console.error(
-                        '[useAgentChat] history load failed:',
-                        err.message
-                    )
+                .catch(() => {
                     if (mountedRef.current) setIsLoading(false)
                 })
         }
@@ -168,8 +168,7 @@ const useAgentChat = ({
                 return
 
             const rawContent =
-                (event.message as Record<string, unknown>)?.content ??
-                event.message
+                (event.message as ChatHistoryEntry)?.content ?? event.message
             const text = extractText(rawContent)
             const images = extractImages(rawContent)
 
@@ -179,6 +178,7 @@ const useAgentChat = ({
                         currentRunIdRef.current =
                             event.runId || crypto.randomUUID()
                         setIsStreaming(true)
+                        setTypingIndicator('writing')
                         streamBufferRef.current = text
                         streamImagesRef.current =
                             images.length > 0 ? images : undefined
@@ -235,6 +235,7 @@ const useAgentChat = ({
                     streamBufferRef.current = ''
                     streamImagesRef.current = []
                     setIsStreaming(false)
+                    setTypingIndicator(null)
                 }
             } else if (event.state === 'error') {
                 if (rafRef.current) {
@@ -256,6 +257,7 @@ const useAgentChat = ({
                 streamBufferRef.current = ''
                 streamImagesRef.current = []
                 setIsStreaming(false)
+                setTypingIndicator(null)
             } else if (event.state === 'aborted') {
                 if (rafRef.current) {
                     cancelAnimationFrame(rafRef.current)
@@ -281,6 +283,7 @@ const useAgentChat = ({
                 streamBufferRef.current = ''
                 streamImagesRef.current = []
                 setIsStreaming(false)
+                setTypingIndicator(null)
             }
         }
 
@@ -328,6 +331,7 @@ const useAgentChat = ({
             }
 
             setMessages((prev) => [...prev, userMessage])
+            setTypingIndicator('thinking')
             streamBufferRef.current = ''
             currentRunIdRef.current = null
 
@@ -347,22 +351,23 @@ const useAgentChat = ({
                 }))
             }
 
-            clientRef.current.send('chat.send', params).catch((err: Error) => {
-                console.error('[useAgentChat] chat.send failed:', err.message)
-            })
+            clientRef.current.send('chat.send', params).catch(() => {})
         },
         []
     )
 
     const abortResponse = useCallback(() => {
-        if (!clientRef.current || !currentRunIdRef.current) return
+        if (!clientRef.current) return
 
-        clientRef.current
-            .send('chat.abort', {
-                sessionKey: sessionKeyRef.current,
-                runId: currentRunIdRef.current
-            })
-            .catch(() => {})
+        const params: Record<string, string> = {
+            sessionKey: sessionKeyRef.current
+        }
+        if (currentRunIdRef.current) {
+            params.runId = currentRunIdRef.current
+        }
+
+        clientRef.current.send('chat.abort', params).catch(() => {})
+        setTypingIndicator(null)
     }, [])
 
     return {
@@ -370,6 +375,7 @@ const useAgentChat = ({
         connectionState,
         isLoading,
         isStreaming,
+        typingIndicator,
         sendMessage,
         abortResponse
     }

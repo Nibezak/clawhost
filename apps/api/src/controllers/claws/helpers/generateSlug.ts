@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 
-function generateSlug(id: string): string {
+const generateSlug = (id: string): string => {
     const chars = 'abcdefghjkmnpqrstuvwxyz23456789'
     const hash = crypto.createHash('sha256').update(id).digest()
     let slug = ''

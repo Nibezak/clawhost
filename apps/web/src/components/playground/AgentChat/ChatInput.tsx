@@ -23,12 +23,14 @@ import {
 import { t } from '@openclaw/i18n'
 import {
     PaperPlaneRightIcon,
-    StopIcon,
+    StopCircleIcon,
     PaperclipIcon,
     XIcon,
-    MicrophoneIcon
+    MicrophoneIcon,
+    WaveformIcon
 } from '@phosphor-icons/react'
 import { useSpeechRecognition } from '@/hooks'
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 
 const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
 const DOCUMENT_TYPES = ['application/pdf', 'text/plain']
@@ -38,7 +40,15 @@ const ChatInputInner: ForwardRefRenderFunction<
     ChatInputHandle,
     ChatInputProps
 > = (
-    { isConnected, isStreaming, onSend, onAbort, allowAttach },
+    {
+        isConnected,
+        isStreaming,
+        isProcessing,
+        onSend,
+        onAbort,
+        allowAttach,
+        onVoiceMode
+    },
     ref
 ): ReactNode => {
     const [input, setInput] = useState('')
@@ -207,7 +217,7 @@ const ChatInputInner: ForwardRefRenderFunction<
     }, [])
 
     return (
-        <div className='border-border border-t p-3'>
+        <div className='bg-background border-border border-t p-3'>
             {attachments.length > 0 && (
                 <div className='mb-2 flex flex-wrap gap-2'>
                     {attachments.map((att, idx) => (
@@ -239,6 +249,27 @@ const ChatInputInner: ForwardRefRenderFunction<
                 </div>
             )}
             <div className='flex items-end gap-2'>
+                {onVoiceMode && (
+                    <>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <button
+                                    onClick={onVoiceMode}
+                                    className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white transition-opacity hover:opacity-90'
+                                >
+                                    <WaveformIcon
+                                        className='h-4 w-4'
+                                        weight='bold'
+                                    />
+                                </button>
+                            </TooltipTrigger>
+                            <TooltipContent side='top'>
+                                <p>{t('playground.chatVoiceMode')}</p>
+                            </TooltipContent>
+                        </Tooltip>
+                        <div className='bg-border mx-0.5 h-6 w-px shrink-0 self-center' />
+                    </>
+                )}
                 <button
                     onClick={handleAttachClick}
                     disabled={!allowAttach}
@@ -281,13 +312,23 @@ const ChatInputInner: ForwardRefRenderFunction<
                     placeholder={t('playground.chatInputPlaceholder')}
                     className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground flex-1 resize-none rounded-lg border px-3 py-2 text-sm outline-none transition-colors focus:border-[#ef5350]/50'
                 />
-                {isStreaming ? (
-                    <button
-                        onClick={onAbort}
-                        className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-yellow-600 text-white transition-colors hover:bg-yellow-700'
-                    >
-                        <StopIcon className='h-4 w-4' weight='bold' />
-                    </button>
+                {isStreaming || isProcessing ? (
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <button
+                                onClick={onAbort}
+                                className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#ef5350] text-white transition-colors hover:bg-[#e53935]'
+                            >
+                                <StopCircleIcon
+                                    className='h-5 w-5'
+                                    weight='bold'
+                                />
+                            </button>
+                        </TooltipTrigger>
+                        <TooltipContent side='top'>
+                            <p>{t('playground.chatStopProcess')}</p>
+                        </TooltipContent>
+                    </Tooltip>
                 ) : (
                     <button
                         onClick={handleSend}

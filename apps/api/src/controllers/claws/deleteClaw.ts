@@ -1,9 +1,9 @@
 import type { AuthenticatedContext, ProviderType } from '@/ts/Types'
 
-import { eq } from 'drizzle-orm'
+import { eq, and } from 'drizzle-orm'
 import { db } from '@/db'
-import { claws } from '@/db/schema'
-import { subscriptions } from '@/lib/polar'
+import { claws, pendingClaws } from '@/db/schema'
+import { subscriptions, checkouts } from '@/lib/polar'
 import {
     cleanupClaw,
     findUserClaw,
@@ -16,6 +16,36 @@ const deleteClaw = async (c: AuthenticatedContext) => {
     try {
         const userId = c.get('userId')
         const id = c.req.param('id')
+
+        if (id.startsWith('pending-')) {
+            const pendingId = id.replace('pending-', '')
+            const result = await db
+                .delete(pendingClaws)
+                .where(
+                    and(
+                        eq(pendingClaws.id, pendingId),
+                        eq(pendingClaws.userId, userId)
+                    )
+                )
+                .returning()
+
+            if (!result[0]) {
+                return fail(c, t('api.pendingClawNotFound'), 404)
+            }
+
+            const pending = result[0]
+            try {
+                const checkout = await checkouts.get(pending.checkoutId)
+                if (checkout?.subscriptionId) {
+                    await subscriptions.revoke(checkout.subscriptionId)
+                }
+            } catch (subErr) {
+                console.error('Failed to revoke pending subscription:', subErr)
+            }
+
+            return ok(c, { scheduled: false }, t('api.clawDeleted'))
+        }
+
         const claw = await findUserClaw(userId, id)
 
         if (!claw) {

@@ -1,6 +1,7 @@
 import type { FC, ReactNode } from 'react'
 import type {
     ChannelConfig,
+    ChannelConfigWithApplicationId,
     ChannelDefinition,
     ClawChannelsResponse,
     PlaygroundChannelsContentProps,
@@ -30,7 +31,7 @@ import {
     TooltipTrigger,
     TooltipContent
 } from '@/components/ui'
-import { api } from '@/lib'
+import { api, copyToClipboard } from '@/lib'
 import { useUIStore } from '@/lib/store'
 
 const CHANNEL_DEFINITIONS: ChannelDefinition[] = [
@@ -184,7 +185,7 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
             const cleaned: Record<string, ChannelConfig> = {}
             for (const [key, config] of Object.entries(data.channels || {})) {
                 const { applicationId: _, ...rest } =
-                    config as ChannelConfig & { applicationId?: string }
+                    config as ChannelConfigWithApplicationId
                 cleaned[key] = rest
             }
             setChannels(cleaned)
@@ -222,8 +223,8 @@ const PlaygroundChannelsContent: FC<PlaygroundChannelsContentProps> = ({
     }, [])
 
     const copyField = useCallback(
-        (value: string) => {
-            navigator.clipboard.writeText(value)
+        async (value: string) => {
+            await copyToClipboard(value)
             showToast(t('common.copied'), 'success')
         },
         [showToast]

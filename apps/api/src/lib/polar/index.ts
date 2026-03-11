@@ -5,6 +5,7 @@ import checkouts from '@/lib/polar/checkouts'
 import subscriptions from '@/lib/polar/subscriptions'
 import products from '@/lib/polar/products'
 import orders from '@/lib/polar/orders'
+import getPlanPrices from '@/lib/polar/prices'
 import {
     parseWebhook,
     handleWebhook,
@@ -19,6 +20,7 @@ export {
     subscriptions,
     products,
     orders,
+    getPlanPrices,
     parseWebhook,
     handleWebhook,
     verifyWebhookSignature

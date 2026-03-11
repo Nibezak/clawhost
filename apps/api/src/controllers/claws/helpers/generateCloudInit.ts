@@ -1,11 +1,12 @@
+import applyToolsDefaults from '@/controllers/claws/helpers/applyToolsDefaults'
 import OPENCLAW_VERSION from '@/controllers/claws/helpers/openclawVersion'
 
-export default function generateCloudInit(
+const generateCloudInit = (
     rootPassword: string,
     subdomain: string,
     domain: string,
     gatewayToken: string
-): string {
+): string => {
     const fullDomain = `${subdomain}.${domain}`
 
     const config: Record<string, unknown> = {
@@ -15,8 +16,13 @@ export default function generateCloudInit(
                 mode: 'token',
                 token: gatewayToken
             },
+            remote: {
+                token: gatewayToken
+            },
             controlUi: {
-                allowInsecureAuth: true
+                allowInsecureAuth: true,
+                allowedOrigins: [`https://${fullDomain}`],
+                dangerouslyDisableDeviceAuth: true
             },
             trustedProxies: ['127.0.0.1', '::1']
         },
@@ -31,10 +37,6 @@ export default function generateCloudInit(
             restart: true,
             bash: true
         },
-        tools: {
-            profile: 'full',
-            elevated: { enabled: true }
-        },
         browser: {
             enabled: true,
             executablePath: '/usr/bin/google-chrome-stable',
@@ -43,11 +45,14 @@ export default function generateCloudInit(
         }
     }
 
+    applyToolsDefaults(config)
     config.agents = { defaults: { sandbox: { mode: 'off' } } }
 
     const configJson = JSON.stringify(config, null, 2).replace(/\n/g, '\n    ')
 
     return `#cloud-config
+
+ssh_pwauth: true
 
 chpasswd:
   list: |
@@ -214,3 +219,5 @@ runcmd:
 final_message: "OpenClaw instance ready! Access dashboard at https://${fullDomain}/"
 `
 }
+
+export default generateCloudInit

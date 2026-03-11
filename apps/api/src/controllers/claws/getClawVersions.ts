@@ -1,4 +1,8 @@
 import type { AuthenticatedContext } from '@/ts/Types'
+import type {
+    NpmRegistryVersionsResponse,
+    NpmDownloadsResponse
+} from '@/ts/Interfaces'
 
 import executeSSH from '@/services/ssh'
 import { findUserClaw } from '@/controllers/claws/helpers'
@@ -41,16 +45,13 @@ const getClawVersions = async (c: AuthenticatedContext) => {
             return fail(c, t('api.failedToGetVersions'), 502)
         }
 
-        const registry = (await registryResponse.json()) as {
-            'dist-tags': Record<string, string>
-            time: Record<string, string>
-        }
+        const registry =
+            (await registryResponse.json()) as NpmRegistryVersionsResponse
 
         let downloadCounts: Record<string, number> = {}
         if (downloadsResponse?.ok) {
-            const downloadsData = (await downloadsResponse.json()) as {
-                downloads: Record<string, number>
-            }
+            const downloadsData =
+                (await downloadsResponse.json()) as NpmDownloadsResponse
             downloadCounts = downloadsData.downloads || {}
         }
 

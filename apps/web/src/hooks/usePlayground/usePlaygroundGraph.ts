@@ -4,6 +4,7 @@ import type { Claw, ClawAgentsResponse } from '@/ts/Interfaces'
 
 import { useMemo } from 'react'
 import dagre from 'dagre'
+import { clawStatus } from '@openclaw/shared'
 
 const CLAW_NODE_WIDTH = 280
 const CLAW_NODE_HEIGHT = 140
@@ -30,9 +31,12 @@ const usePlaygroundGraph = (
 
         claws.forEach((claw, index) => {
             const query = agentQueries[index]
-            const agentsData = query?.data
+            const canShowAgents =
+                claw.status === clawStatus.running ||
+                claw.status === clawStatus.unreachable
+            const agentsData = canShowAgents ? query?.data : undefined
             const agents = agentsData?.agents || []
-            const isLoading = query?.isLoading ?? false
+            const isLoading = canShowAgents && (query?.isLoading ?? false)
 
             const clawNodeId = `claw-${claw.id}`
 
@@ -70,7 +74,9 @@ const usePlaygroundGraph = (
                         agent,
                         clawName: claw.name,
                         clawId: claw.id,
-                        isSelected: false
+                        isSelected: false,
+                        subdomain: claw.subdomain,
+                        gatewayToken: claw.gatewayToken
                     } as Record<string, unknown>,
                     draggable: false
                 })

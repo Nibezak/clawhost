@@ -1,13 +1,19 @@
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { rateLimits } from '@/db/schema'
-
-const RATE_LIMIT_WINDOW = 60_000
+import memoryCache from '@/controllers/auth/rateLimit/memoryCache'
 
 const checkRateLimit = async (
     key: string,
-    windowMs: number = RATE_LIMIT_WINDOW
+    windowMs: number = 60_000
 ): Promise<number> => {
+    const cached = memoryCache.get(key)
+    if (cached !== undefined) {
+        const elapsed = Date.now() - cached
+        if (elapsed >= windowMs) return 0
+        return Math.ceil((windowMs - elapsed) / 1000)
+    }
+
     const record = await db
         .select()
         .from(rateLimits)
@@ -15,7 +21,11 @@ const checkRateLimit = async (
         .then((rows) => rows[0])
 
     if (!record) return 0
-    const elapsed = Date.now() - record.lastSentAt.getTime()
+
+    const ts = record.lastSentAt.getTime()
+    memoryCache.set(key, ts)
+
+    const elapsed = Date.now() - ts
     if (elapsed >= windowMs) return 0
     return Math.ceil((windowMs - elapsed) / 1000)
 }

@@ -11,7 +11,15 @@ import {
     ArrowSquareOutIcon
 } from '@phosphor-icons/react'
 import { ClawMascot, PanelPlaceholder } from '@/components'
-import { Skeleton } from '@/components/ui'
+import {
+    Button,
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    Skeleton
+} from '@/components/ui'
 import { api, getLocale } from '@/lib'
 import { useUIStore } from '@/lib/store'
 
@@ -25,6 +33,7 @@ const PlaygroundVersionsContent: FC<PlaygroundVersionsContentProps> = ({
     const [installingVersion, setInstallingVersion] = useState<string | null>(
         null
     )
+    const [confirmVersion, setConfirmVersion] = useState<string | null>(null)
     const { showToast } = useUIStore()
     const queryClient = useQueryClient()
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -84,195 +93,240 @@ const PlaygroundVersionsContent: FC<PlaygroundVersionsContentProps> = ({
     }, [versionsData?.versions, debouncedSearch])
 
     const handleInstall = (version: string) => {
-        setInstallingVersion(version)
-        installMutation.mutate(version)
+        setConfirmVersion(version)
+    }
+
+    const handleConfirmInstall = () => {
+        if (!confirmVersion) return
+        setInstallingVersion(confirmVersion)
+        installMutation.mutate(confirmVersion)
+        setConfirmVersion(null)
     }
 
     const hasItems = isLoading || filteredVersions.length > 0
 
     return (
-        <div
-            ref={scrollRef}
-            className='flex h-full flex-col overflow-y-auto px-5 pb-5'
-        >
-            <div className='bg-background sticky top-0 z-10 pb-3 pt-5'>
-                <div className='relative'>
-                    <MagnifyingGlassIcon className='text-muted-foreground absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2' />
-                    <input
-                        type='text'
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder={t('playground.versionsSearch')}
-                        className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border py-2 pl-8 pr-3 text-xs outline-none transition-colors focus:border-[#ef5350]/50'
-                    />
+        <>
+            <div
+                ref={scrollRef}
+                className='flex h-full flex-col overflow-y-auto px-5 pb-5'
+            >
+                <div className='bg-background sticky top-0 z-10 pb-3 pt-5'>
+                    <div className='relative'>
+                        <MagnifyingGlassIcon className='text-muted-foreground absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2' />
+                        <input
+                            type='text'
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder={t('playground.versionsSearch')}
+                            className='border-border bg-foreground/5 text-foreground placeholder:text-muted-foreground w-full rounded-md border py-2 pl-8 pr-3 text-xs outline-none transition-colors focus:border-[#ef5350]/50'
+                        />
+                    </div>
+                </div>
+
+                <div className='flex min-h-0 flex-1 flex-col'>
+                    {hasItems ? (
+                        <div className='space-y-1.5 pb-3'>
+                            {isLoading &&
+                                Array.from({ length: 12 }).map((_, i) => (
+                                    <Skeleton
+                                        key={`ver-skel-${i}`}
+                                        className='h-14 w-full rounded-lg'
+                                    />
+                                ))}
+
+                            {!isLoading &&
+                                filteredVersions.map((entry) => {
+                                    const isCurrent =
+                                        versionsData?.currentVersion ===
+                                        entry.version
+                                    const isLatest =
+                                        versionsData?.latestVersion ===
+                                        entry.version
+                                    const isInstalling =
+                                        installingVersion === entry.version
+                                    const isOutdated =
+                                        new Date(entry.publishedAt) <
+                                        new Date('2026-02-01')
+
+                                    return (
+                                        <div
+                                            key={entry.version}
+                                            className={`border-border flex items-center justify-between rounded-lg border px-3 py-2.5 transition-colors ${
+                                                isCurrent
+                                                    ? 'bg-foreground/[0.06]'
+                                                    : 'bg-foreground/[0.02]'
+                                            }`}
+                                        >
+                                            <div className='min-w-0 flex-1'>
+                                                <div className='flex items-center gap-2'>
+                                                    <ClawMascot className='h-3 w-3 shrink-0' />
+                                                    <span className='text-foreground text-xs font-medium'>
+                                                        {entry.version}
+                                                    </span>
+                                                    {isCurrent && (
+                                                        <span className='rounded bg-green-500/20 px-1.5 py-0.5 text-[10px] font-medium text-green-400'>
+                                                            {t(
+                                                                'playground.versionCurrent'
+                                                            )}
+                                                        </span>
+                                                    )}
+                                                    {isLatest && (
+                                                        <span className='rounded bg-blue-500/20 px-1.5 py-0.5 text-[10px] font-medium text-blue-400'>
+                                                            {t(
+                                                                'playground.versionLatest'
+                                                            )}
+                                                        </span>
+                                                    )}
+                                                    {isOutdated && (
+                                                        <span className='rounded bg-yellow-500/20 px-1.5 py-0.5 text-[10px] font-medium text-yellow-400'>
+                                                            {t(
+                                                                'playground.versionOutdated'
+                                                            )}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <div className='mt-0.5 flex items-center gap-2'>
+                                                    <span className='text-muted-foreground text-[10px]'>
+                                                        {new Date(
+                                                            entry.publishedAt
+                                                        ).toLocaleDateString(
+                                                            getLocale(),
+                                                            {
+                                                                year: 'numeric',
+                                                                month: 'short',
+                                                                day: 'numeric'
+                                                            }
+                                                        )}
+                                                    </span>
+                                                    <span className='text-muted-foreground text-[10px]'>
+                                                        ·
+                                                    </span>
+                                                    <span className='text-muted-foreground text-[10px]'>
+                                                        {t(
+                                                            'playground.versionDownloads',
+                                                            {
+                                                                count: new Intl.NumberFormat(
+                                                                    getLocale()
+                                                                ).format(
+                                                                    entry.downloads
+                                                                )
+                                                            }
+                                                        )}
+                                                    </span>
+                                                    <span className='text-muted-foreground text-[10px]'>
+                                                        ·
+                                                    </span>
+                                                    <a
+                                                        href={`${CHANGELOG_BASE_URL}${entry.version}`}
+                                                        target='_blank'
+                                                        rel='noopener noreferrer'
+                                                        onClick={(e) =>
+                                                            e.stopPropagation()
+                                                        }
+                                                        className='text-muted-foreground hover:text-foreground flex items-center gap-0.5 text-[10px] transition-colors'
+                                                    >
+                                                        <ArrowSquareOutIcon className='h-2.5 w-2.5' />
+                                                        {t(
+                                                            'playground.versionChangelog'
+                                                        )}
+                                                    </a>
+                                                </div>
+                                            </div>
+
+                                            {!isCurrent && (
+                                                <button
+                                                    onClick={() =>
+                                                        handleInstall(
+                                                            entry.version
+                                                        )
+                                                    }
+                                                    disabled={
+                                                        isOutdated ||
+                                                        installingVersion !==
+                                                            null
+                                                    }
+                                                    className='bg-foreground/5 text-foreground/80 hover:bg-foreground/10 ml-3 flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50'
+                                                >
+                                                    {isInstalling ? (
+                                                        <>
+                                                            <CircleNotchIcon className='h-3 w-3 animate-spin' />
+                                                            {t(
+                                                                'playground.versionInstalling'
+                                                            )}
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <DownloadSimpleIcon className='h-3 w-3' />
+                                                            {t(
+                                                                'playground.versionInstall'
+                                                            )}
+                                                        </>
+                                                    )}
+                                                </button>
+                                            )}
+                                        </div>
+                                    )
+                                })}
+                        </div>
+                    ) : (
+                        <div className='flex flex-1 items-center justify-center'>
+                            {isError ? (
+                                <PanelPlaceholder
+                                    icon={<ClawMascot className='h-5 w-5' />}
+                                    title={t('playground.versionsEmpty')}
+                                    description={t(
+                                        'playground.versionsErrorDescription'
+                                    )}
+                                />
+                            ) : (
+                                <PanelPlaceholder
+                                    icon={<ClawMascot className='h-5 w-5' />}
+                                    title={t('playground.versionsEmpty')}
+                                    description={t(
+                                        'playground.versionsEmptyDescription'
+                                    )}
+                                />
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
 
-            <div className='flex min-h-0 flex-1 flex-col'>
-                {hasItems ? (
-                    <div className='space-y-1.5 pb-3'>
-                        {isLoading &&
-                            Array.from({ length: 12 }).map((_, i) => (
-                                <Skeleton
-                                    key={`ver-skel-${i}`}
-                                    className='h-14 w-full rounded-lg'
-                                />
-                            ))}
-
-                        {!isLoading &&
-                            filteredVersions.map((entry) => {
-                                const isCurrent =
-                                    versionsData?.currentVersion ===
-                                    entry.version
-                                const isLatest =
-                                    versionsData?.latestVersion ===
-                                    entry.version
-                                const isInstalling =
-                                    installingVersion === entry.version
-                                const isOutdated =
-                                    new Date(entry.publishedAt) <
-                                    new Date('2026-02-01')
-
-                                return (
-                                    <div
-                                        key={entry.version}
-                                        className={`border-border flex items-center justify-between rounded-lg border px-3 py-2.5 transition-colors ${
-                                            isCurrent
-                                                ? 'bg-foreground/[0.06]'
-                                                : 'bg-foreground/[0.02]'
-                                        }`}
-                                    >
-                                        <div className='min-w-0 flex-1'>
-                                            <div className='flex items-center gap-2'>
-                                                <ClawMascot className='h-3 w-3 shrink-0' />
-                                                <span className='text-foreground text-xs font-medium'>
-                                                    {entry.version}
-                                                </span>
-                                                {isCurrent && (
-                                                    <span className='rounded bg-green-500/20 px-1.5 py-0.5 text-[10px] font-medium text-green-400'>
-                                                        {t(
-                                                            'playground.versionCurrent'
-                                                        )}
-                                                    </span>
-                                                )}
-                                                {isLatest && (
-                                                    <span className='rounded bg-blue-500/20 px-1.5 py-0.5 text-[10px] font-medium text-blue-400'>
-                                                        {t(
-                                                            'playground.versionLatest'
-                                                        )}
-                                                    </span>
-                                                )}
-                                                {isOutdated && (
-                                                    <span className='rounded bg-yellow-500/20 px-1.5 py-0.5 text-[10px] font-medium text-yellow-400'>
-                                                        {t(
-                                                            'playground.versionOutdated'
-                                                        )}
-                                                    </span>
-                                                )}
-                                            </div>
-                                            <div className='mt-0.5 flex items-center gap-2'>
-                                                <span className='text-muted-foreground text-[10px]'>
-                                                    {new Date(
-                                                        entry.publishedAt
-                                                    ).toLocaleDateString(
-                                                        getLocale(),
-                                                        {
-                                                            year: 'numeric',
-                                                            month: 'short',
-                                                            day: 'numeric'
-                                                        }
-                                                    )}
-                                                </span>
-                                                <span className='text-muted-foreground text-[10px]'>
-                                                    ·
-                                                </span>
-                                                <span className='text-muted-foreground text-[10px]'>
-                                                    {t(
-                                                        'playground.versionDownloads',
-                                                        {
-                                                            count: new Intl.NumberFormat(
-                                                                getLocale()
-                                                            ).format(
-                                                                entry.downloads
-                                                            )
-                                                        }
-                                                    )}
-                                                </span>
-                                                <span className='text-muted-foreground text-[10px]'>
-                                                    ·
-                                                </span>
-                                                <a
-                                                    href={`${CHANGELOG_BASE_URL}${entry.version}`}
-                                                    target='_blank'
-                                                    rel='noopener noreferrer'
-                                                    onClick={(e) =>
-                                                        e.stopPropagation()
-                                                    }
-                                                    className='text-muted-foreground hover:text-foreground flex items-center gap-0.5 text-[10px] transition-colors'
-                                                >
-                                                    <ArrowSquareOutIcon className='h-2.5 w-2.5' />
-                                                    {t(
-                                                        'playground.versionChangelog'
-                                                    )}
-                                                </a>
-                                            </div>
-                                        </div>
-
-                                        {!isCurrent && (
-                                            <button
-                                                onClick={() =>
-                                                    handleInstall(entry.version)
-                                                }
-                                                disabled={
-                                                    isOutdated ||
-                                                    installingVersion !== null
-                                                }
-                                                className='bg-foreground/5 text-foreground/80 hover:bg-foreground/10 ml-3 flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50'
-                                            >
-                                                {isInstalling ? (
-                                                    <>
-                                                        <CircleNotchIcon className='h-3 w-3 animate-spin' />
-                                                        {t(
-                                                            'playground.versionInstalling'
-                                                        )}
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <DownloadSimpleIcon className='h-3 w-3' />
-                                                        {t(
-                                                            'playground.versionInstall'
-                                                        )}
-                                                    </>
-                                                )}
-                                            </button>
-                                        )}
-                                    </div>
-                                )
+            <Dialog
+                open={confirmVersion !== null}
+                onOpenChange={(open) => {
+                    if (!open) setConfirmVersion(null)
+                }}
+            >
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>
+                            {t('playground.versionInstallConfirmTitle', {
+                                version: confirmVersion ?? ''
                             })}
+                        </DialogTitle>
+                        <DialogDescription>
+                            {t('playground.versionInstallConfirmDescription')}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className='mt-4 flex justify-end gap-3'>
+                        <Button
+                            variant='outline'
+                            onClick={() => setConfirmVersion(null)}
+                        >
+                            {t('common.cancel')}
+                        </Button>
+                        <Button
+                            variant='destructive'
+                            onClick={handleConfirmInstall}
+                        >
+                            {t('playground.versionInstall')}
+                        </Button>
                     </div>
-                ) : (
-                    <div className='flex flex-1 items-center justify-center'>
-                        {isError ? (
-                            <PanelPlaceholder
-                                icon={<ClawMascot className='h-5 w-5' />}
-                                title={t('playground.versionsEmpty')}
-                                description={t(
-                                    'playground.versionsErrorDescription'
-                                )}
-                            />
-                        ) : (
-                            <PanelPlaceholder
-                                icon={<ClawMascot className='h-5 w-5' />}
-                                title={t('playground.versionsEmpty')}
-                                description={t(
-                                    'playground.versionsEmptyDescription'
-                                )}
-                            />
-                        )}
-                    </div>
-                )}
-            </div>
-        </div>
+                </DialogContent>
+            </Dialog>
+        </>
     )
 }
 

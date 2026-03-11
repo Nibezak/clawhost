@@ -2,7 +2,7 @@ import type { Context } from 'hono'
 
 export type ProviderType = 'hetzner' | 'digitalocean' | 'vultr'
 
-export type HonoEnv = { Variables: { userId: string } }
+export type HonoEnv = { Variables: { userId: string; isAdmin: boolean } }
 
 export type AuthenticatedContext = Context<HonoEnv>
 
@@ -31,7 +31,9 @@ export type WebhookEventType =
 
 export type AuthMethod = 'email' | 'google' | 'github'
 
-export type UserRole = 'user' | 'admin'
+import type { userRole } from '@openclaw/shared'
+
+export type UserRole = (typeof userRole)[keyof typeof userRole]
 
 export type Environment = 'development' | 'production'
 
@@ -44,12 +46,6 @@ export type ClawFileType =
     | 'text'
     | 'unknown'
 
-export type FeatureRequestStatus =
-    | 'awaiting_approval'
-    | 'requested'
-    | 'marked_for_implementation'
-    | 'implemented'
+export type PiperVoiceQuality = 'low' | 'medium' | 'high'
 
-export type FeatureRequestPlatform = 'desktop' | 'mobile' | 'web'
-
-export type FeatureRequestSortBy = 'newest' | 'upvotes'
+export type PolarPriceMap = Record<string, Record<string, number>>

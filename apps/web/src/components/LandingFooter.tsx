@@ -86,7 +86,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 href={GITHUB_REPO_URL}
                                 target='_blank'
                                 rel='noopener noreferrer'
-                                aria-label='GitHub'
+                                aria-label={t('footer.ariaGithub')}
                                 className='bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-lg p-2 transition'
                             >
                                 <GithubLogoIcon
@@ -98,7 +98,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 href={TWITTER_URL}
                                 target='_blank'
                                 rel='noopener noreferrer'
-                                aria-label='X'
+                                aria-label={t('footer.ariaX')}
                                 className='bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-lg p-2 transition'
                             >
                                 <XLogoIcon className='h-5 w-5' weight='fill' />
@@ -107,7 +107,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 href={FACEBOOK_URL}
                                 target='_blank'
                                 rel='noopener noreferrer'
-                                aria-label='Facebook'
+                                aria-label={t('footer.ariaFacebook')}
                                 className='bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-lg p-2 transition'
                             >
                                 <FacebookLogoIcon
@@ -119,7 +119,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 href={INSTAGRAM_URL}
                                 target='_blank'
                                 rel='noopener noreferrer'
-                                aria-label='Instagram'
+                                aria-label={t('footer.ariaInstagram')}
                                 className='bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-lg p-2 transition'
                             >
                                 <InstagramLogoIcon
@@ -131,7 +131,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 href={THREADS_URL}
                                 target='_blank'
                                 rel='noopener noreferrer'
-                                aria-label='Threads'
+                                aria-label={t('footer.ariaThreads')}
                                 className='bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-lg p-2 transition'
                             >
                                 <ThreadsLogoIcon
@@ -143,7 +143,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 href={YOUTUBE_URL}
                                 target='_blank'
                                 rel='noopener noreferrer'
-                                aria-label='YouTube'
+                                aria-label={t('footer.ariaYoutube')}
                                 className='bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-lg p-2 transition'
                             >
                                 <YoutubeLogoIcon
@@ -155,12 +155,50 @@ const LandingFooter: FC = (): ReactNode => {
                                 href={TIKTOK_URL}
                                 target='_blank'
                                 rel='noopener noreferrer'
-                                aria-label='TikTok'
+                                aria-label={t('footer.ariaTiktok')}
                                 className='bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-lg p-2 transition'
                             >
                                 <TiktokLogoIcon
                                     className='h-5 w-5'
                                     weight='fill'
+                                />
+                            </a>
+                        </div>
+                        <div className='mt-5 hidden items-center gap-3'>
+                            <a
+                                href='#'
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                aria-label={t('footer.downloadAndroid')}
+                                className='opacity-80 transition hover:opacity-100'
+                            >
+                                <img
+                                    src='/badges/google-play-dark.svg'
+                                    alt={t('footer.downloadAndroid')}
+                                    className='hidden h-10 dark:block'
+                                />
+                                <img
+                                    src='/badges/google-play-light.svg'
+                                    alt={t('footer.downloadAndroid')}
+                                    className='block h-10 dark:hidden'
+                                />
+                            </a>
+                            <a
+                                href='#'
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                aria-label={t('footer.downloadIos')}
+                                className='opacity-80 transition hover:opacity-100'
+                            >
+                                <img
+                                    src='/badges/app-store-light.svg'
+                                    alt={t('footer.downloadIos')}
+                                    className='block h-10 dark:hidden'
+                                />
+                                <img
+                                    src='/badges/app-store-dark.svg'
+                                    alt={t('footer.downloadIos')}
+                                    className='hidden h-10 dark:block'
                                 />
                             </a>
                         </div>
@@ -170,7 +208,7 @@ const LandingFooter: FC = (): ReactNode => {
                         </p>
                     </div>
 
-                    <div>
+                    <nav aria-label={t('footer.product')}>
                         <h4 className='font-clash text-foreground mb-4 font-semibold'>
                             {t('footer.product')}
                         </h4>
@@ -240,9 +278,9 @@ const LandingFooter: FC = (): ReactNode => {
                                 </Link>
                             </li>
                         </ul>
-                    </div>
+                    </nav>
 
-                    <div>
+                    <nav aria-label={t('footer.legalAndMore')}>
                         <h4 className='font-clash text-foreground mb-4 font-semibold'>
                             {t('footer.legalAndMore')}
                         </h4>
@@ -273,16 +311,6 @@ const LandingFooter: FC = (): ReactNode => {
                             </li>
                             <li>
                                 <Link
-                                    to={ROUTES.FEATURE_REQUESTS}
-                                    className={pageClass(
-                                        ROUTES.FEATURE_REQUESTS
-                                    )}
-                                >
-                                    {t('footer.featureRequests')}
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
                                     to={ROUTES.PRIVACY}
                                     className={pageClass(ROUTES.PRIVACY)}
                                 >
@@ -306,7 +334,7 @@ const LandingFooter: FC = (): ReactNode => {
                                 </a>
                             </li>
                         </ul>
-                    </div>
+                    </nav>
                 </div>
             </div>
         </footer>

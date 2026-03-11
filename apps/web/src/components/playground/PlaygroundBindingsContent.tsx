@@ -1,10 +1,9 @@
-import type { ElementType, FC, ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 import type {
     Binding,
-    ChannelConfig,
+    ChannelMetaEntry,
     PlaygroundBindingsContentProps
 } from '@/ts/Interfaces'
-import type { TranslationKey } from '@openclaw/i18n'
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -23,10 +22,7 @@ import { Skeleton } from '@/components/ui'
 import { api } from '@/lib'
 import { useUIStore } from '@/lib/store'
 
-const CHANNEL_META: Record<
-    string,
-    { icon: ElementType; label: TranslationKey }
-> = {
+const CHANNEL_META: Record<string, ChannelMetaEntry> = {
     whatsapp: { icon: WhatsappLogoIcon, label: 'playground.channelsWhatsApp' },
     telegram: { icon: TelegramLogoIcon, label: 'playground.channelsTelegram' },
     discord: { icon: DiscordLogoIcon, label: 'playground.channelsDiscord' },
@@ -60,8 +56,8 @@ const PlaygroundBindingsContent: FC<PlaygroundBindingsContentProps> = ({
     const enabledChannels = useMemo(() => {
         if (!query.data) return []
         return Object.entries(query.data.channels)
-            .filter(([, config]: [string, ChannelConfig]) => config.enabled)
-            .map(([key]: [string, ChannelConfig]) => key)
+            .filter(([, config]) => config.enabled)
+            .map(([key]) => key)
     }, [query.data])
 
     const toggleChannel = useCallback(

@@ -14,38 +14,34 @@ const Footer: FC = (): ReactNode => {
                         &copy; {new Date().getFullYear()}{' '}
                         {t('footer.copyright')}
                     </p>
-                    <div className='flex items-center gap-6'>
-                        <Link
-                            to={ROUTES.TERMS}
-                            className='text-muted-foreground hover:text-foreground text-sm transition-colors'
-                        >
-                            {t('footer.termsOfService')}
-                        </Link>
-                        <Link
-                            to={ROUTES.PRIVACY}
-                            className='text-muted-foreground hover:text-foreground text-sm transition-colors'
-                        >
-                            {t('footer.privacyPolicy')}
-                        </Link>
-                        <Link
-                            to={ROUTES.CHANGELOG}
-                            className='text-muted-foreground hover:text-foreground text-sm transition-colors'
-                        >
-                            {t('footer.changelog')}
-                        </Link>
-                        <Link
-                            to={ROUTES.FEATURE_REQUESTS}
-                            className='text-muted-foreground hover:text-foreground text-sm transition-colors'
-                        >
-                            {t('footer.featureRequests')}
-                        </Link>
-                        <a
-                            href={SUPPORT_EMAIL}
-                            className='text-muted-foreground hover:text-foreground text-sm transition-colors'
-                        >
-                            {t('footer.getInTouch')}
-                        </a>
-                    </div>
+                    <nav aria-label={t('nav.footerNavigation')}>
+                        <div className='flex items-center gap-6'>
+                            <Link
+                                to={ROUTES.TERMS}
+                                className='text-muted-foreground hover:text-foreground text-sm transition-colors'
+                            >
+                                {t('footer.termsOfService')}
+                            </Link>
+                            <Link
+                                to={ROUTES.PRIVACY}
+                                className='text-muted-foreground hover:text-foreground text-sm transition-colors'
+                            >
+                                {t('footer.privacyPolicy')}
+                            </Link>
+                            <Link
+                                to={ROUTES.CHANGELOG}
+                                className='text-muted-foreground hover:text-foreground text-sm transition-colors'
+                            >
+                                {t('footer.changelog')}
+                            </Link>
+                            <a
+                                href={SUPPORT_EMAIL}
+                                className='text-muted-foreground hover:text-foreground text-sm transition-colors'
+                            >
+                                {t('footer.getInTouch')}
+                            </a>
+                        </div>
+                    </nav>
                 </div>
             </div>
         </footer>

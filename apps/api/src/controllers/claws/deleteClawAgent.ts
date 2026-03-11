@@ -2,7 +2,7 @@ import type { DeleteClawAgentBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import executeSSH from '@/services/ssh'
-import { findUserClaw } from '@/controllers/claws/helpers'
+import { applyToolsDefaults, findUserClaw } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
@@ -52,17 +52,17 @@ const deleteClawAgent = async (c: AuthenticatedContext) => {
             commands.bash = true
             config.commands = commands
 
-            const tools = (config.tools || {}) as Record<string, unknown>
-            if (!tools.elevated) {
-                tools.elevated = { enabled: true }
-            }
-            config.tools = tools
+            applyToolsDefaults(config)
 
             if (!config.agents) {
                 return fail(c, t('api.agentDeleteFailed'), 404)
             }
 
             const agents = config.agents as Record<string, unknown>
+            const defaults = (agents.defaults || {}) as Record<string, unknown>
+            defaults.sandbox = { mode: 'off' }
+            agents.defaults = defaults
+
             const agentList = (agents.list || []) as Record<string, unknown>[]
 
             const agentIndex = agentList.findIndex(

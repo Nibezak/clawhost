@@ -1,3 +1,4 @@
+import type { ChannelConfig } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import executeSSH from '@/services/ssh'
@@ -29,15 +30,16 @@ const getClawChannels = async (c: AuthenticatedContext) => {
                 5000
             )
 
-            let channels: Record<string, unknown> = {}
+            let channels: Record<string, ChannelConfig> = {}
 
             try {
                 const trimmed = output.trim()
                 const jsonStart = trimmed.indexOf('{')
                 const jsonEnd = trimmed.lastIndexOf('}')
-                const jsonStr = jsonStart >= 0 && jsonEnd > jsonStart
-                    ? trimmed.substring(jsonStart, jsonEnd + 1)
-                    : '{}'
+                const jsonStr =
+                    jsonStart >= 0 && jsonEnd > jsonStart
+                        ? trimmed.substring(jsonStart, jsonEnd + 1)
+                        : '{}'
                 const config = JSON.parse(jsonStr)
                 channels = config?.channels || {}
             } catch {

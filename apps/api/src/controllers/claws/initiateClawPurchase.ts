@@ -1,7 +1,9 @@
 import type { InitiateClawPurchaseBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext, ProviderType } from '@/ts/Types'
 
+import crypto from 'crypto'
 import { eq, and, count, lt } from 'drizzle-orm'
+import { inputValidation, clawProvider } from '@openclaw/shared'
 import { db } from '@/db'
 import { users, sshKeys, claws, pendingClaws } from '@/db/schema'
 import { checkouts, customers } from '@/lib/polar'
@@ -82,7 +84,7 @@ const CLEANUP_INTERVAL = 60 * 60 * 1000
 
 let namePool: string[] = []
 
-function shufflePool() {
+const shufflePool = () => {
     namePool = []
     for (const adj of adjectives) {
         for (const noun of nouns) {
@@ -95,17 +97,17 @@ function shufflePool() {
     }
 }
 
-function generateClawName(): string {
+const generateClawName = (): string => {
     if (namePool.length === 0) {
         shufflePool()
     }
     return namePool.pop()!
 }
 
-function getPolarProductId(
+const getPolarProductId = (
     providerName: string,
     planId: string
-): string | null {
+): string | null => {
     const prefix =
         providerName === 'hetzner' ? '' : `${providerName.toUpperCase()}_`
     const envKey = `POLAR_PRODUCT_${prefix}${planId.toUpperCase().replace(/-/g, '_')}`
@@ -152,22 +154,33 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
             return fail(c, t('api.invalidProvider'), 400)
         }
 
-        const provider = getProvider(
-            (providerName || 'hetzner') as ProviderType
-        )
+        const resolvedProvider = (providerName ||
+            clawProvider.hetzner) as ProviderType
+        if (resolvedProvider !== clawProvider.hetzner) {
+            try {
+                const hetznerService = getProvider(
+                    clawProvider.hetzner as ProviderType
+                )
+                const hetznerTypes = await hetznerService.getServerTypes()
+                if (hetznerTypes.length > 0) {
+                    return fail(c, t('api.providerNotAllowed'), 400)
+                }
+            } catch {}
+        }
+
+        const provider = getProvider(resolvedProvider)
         const [serverTypes, locations] = await Promise.all([
             provider.getServerTypes(),
             provider.getLocations()
         ])
 
-        const MIN_MEMORY_GB = 4
         const selectedPlan = serverTypes.find((st) => st.name === planId)
 
         if (!selectedPlan) {
             return fail(c, t('api.invalidPlan'), 400)
         }
 
-        if (selectedPlan.memory < MIN_MEMORY_GB) {
+        if (selectedPlan.memory < inputValidation.MIN_MEMORY_GB.MIN) {
             return fail(c, t('api.planBelowMinimumMemory'), 400)
         }
 
@@ -176,13 +189,41 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
             return fail(c, t('api.invalidLocation'), 400)
         }
 
+        if (provider.getRawServerTypes && provider.getDatacenters) {
+            const [rawTypes, datacenters] = await Promise.all([
+                provider.getRawServerTypes(),
+                provider.getDatacenters()
+            ])
+            const serverTypeId = rawTypes.find(
+                (st) => st.name === planId
+            )?.id
+            if (serverTypeId) {
+                const available = datacenters.some(
+                    (dc) =>
+                        dc.locationName === location &&
+                        dc.availableServerTypeIds.includes(serverTypeId)
+                )
+                if (!available) {
+                    return fail(c, t('api.planNotAvailableAtLocation'), 400)
+                }
+            }
+        }
+
         const name = rawName || generateClawName()
 
         if (
             volumeSize !== undefined &&
-            (volumeSize < 10 || volumeSize > 10240)
+            (volumeSize < inputValidation.VOLUME_SIZE.MIN ||
+                volumeSize > inputValidation.VOLUME_SIZE.MAX)
         ) {
-            return fail(c, t('api.volumeSizeInvalid'), 400)
+            return fail(
+                c,
+                t('api.volumeSizeInvalid', {
+                    min: inputValidation.VOLUME_SIZE.MIN,
+                    max: inputValidation.VOLUME_SIZE.MAX
+                }),
+                400
+            )
         }
 
         const [clawCountResult, userResult, sshKeyResult] = await Promise.all([
@@ -205,9 +246,14 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
                 : Promise.resolve(null)
         ])
 
-        const MAX_CLAWS_PER_ACCOUNT = 50
-        if (clawCountResult[0].value >= MAX_CLAWS_PER_ACCOUNT) {
-            return fail(c, t('api.clawLimitReached'), 400)
+        if (clawCountResult[0].value >= inputValidation.CLAWS_PER_ACCOUNT.MAX) {
+            return fail(
+                c,
+                t('api.clawLimitReached', {
+                    max: inputValidation.CLAWS_PER_ACCOUNT.MAX
+                }),
+                400
+            )
         }
 
         if (!userResult[0]) {

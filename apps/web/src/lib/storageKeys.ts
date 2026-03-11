@@ -6,4 +6,4 @@ const STORAGE_KEYS = {
     PH_BANNER_DISMISSED: 'ch-ph-banner-dismissed'
 } as const
 
-export { STORAGE_KEYS }
+export default STORAGE_KEYS

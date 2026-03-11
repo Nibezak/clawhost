@@ -224,3 +224,14 @@ export interface CreateClawModalProps {
     visible: boolean
     onClose: () => void
 }
+
+export interface VoiceOrbProps {
+    intensity: number
+    size?: number
+}
+
+export interface VoiceChatModalProps {
+    visible: boolean
+    clawName: string
+    onClose: () => void
+}

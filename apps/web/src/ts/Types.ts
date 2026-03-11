@@ -1,7 +1,9 @@
-import type { clawStatus } from '@openclaw/shared'
+import type { TranscriptionResult } from '@/ts/Interfaces'
+import type { clawStatus, userRole } from '@openclaw/shared'
 import type AGENT_DETAIL_TABS from '@/lib/agentDetailTabs'
 import type CLAW_DETAIL_TABS from '@/lib/clawDetailTabs'
 import type DASHBOARD_TABS from '@/lib/dashboardTabs'
+import type ROUTES from '@/lib/routes'
 import type THEMES from '@/lib/themes'
 import type LANGUAGES from '@/lib/languages'
 
@@ -15,7 +17,7 @@ export type CopiedFieldType = 'command' | 'private' | null
 
 export type SSHKeyModalMode = 'upload' | 'generate'
 
-export type UserRole = 'user' | 'admin'
+export type UserRole = (typeof userRole)[keyof typeof userRole]
 
 export type AuthMethod = 'email' | 'google' | 'github'
 
@@ -52,20 +54,7 @@ export type GatewayEventHandler = (payload: unknown) => void
 
 export type GatewayStateListener = (state: GatewayConnectionState) => void
 
-export type Route =
-    | '/'
-    | '/login'
-    | '/claws'
-    | '/ssh-keys'
-    | '/account'
-    | '/billing'
-    | '/terms'
-    | '/privacy'
-    | '/changelog'
-    | '/blog'
-    | '/blog/:slug'
-    | '/full-comparison'
-    | '/feature-requests'
+export type Route = (typeof ROUTES)[keyof typeof ROUTES]
 
 export type DashboardTab = (typeof DASHBOARD_TABS)[keyof typeof DASHBOARD_TABS]
 
@@ -82,12 +71,10 @@ export type ClawFileType =
     | 'text'
     | 'unknown'
 
-export type FeatureRequestStatus =
-    | 'awaiting_approval'
-    | 'requested'
-    | 'marked_for_implementation'
-    | 'implemented'
+export type ChatSidebarViewMode = 'tree' | 'list'
 
-export type FeatureRequestPlatform = 'desktop' | 'mobile' | 'web'
+export type ChatTypingIndicator = 'thinking' | 'writing' | null
 
-export type FeatureRequestSortBy = 'newest' | 'upvotes'
+export type TranscriberFunction = (
+    audio: Float32Array
+) => Promise<TranscriptionResult>

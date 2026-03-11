@@ -2,7 +2,11 @@ import type { CreateClawAgentBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import executeSSH from '@/services/ssh'
-import { findUserClaw, validateEnvVars } from '@/controllers/claws/helpers'
+import {
+    applyToolsDefaults,
+    findUserClaw,
+    validateEnvVars
+} from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 import { ok, fail } from '@/lib/response'
 
@@ -57,17 +61,17 @@ const createClawAgent = async (c: AuthenticatedContext) => {
             commands.bash = true
             config.commands = commands
 
-            const tools = (config.tools || {}) as Record<string, unknown>
-            if (!tools.elevated) {
-                tools.elevated = { enabled: true }
-            }
-            config.tools = tools
+            applyToolsDefaults(config)
 
             if (!config.agents) {
                 config.agents = { defaults: {}, list: [] }
             }
 
             const agents = config.agents as Record<string, unknown>
+            const defaults = (agents.defaults || {}) as Record<string, unknown>
+            defaults.sandbox = { mode: 'off' }
+            agents.defaults = defaults
+
             if (!agents.list) {
                 agents.list = []
             }
@@ -105,11 +109,16 @@ const createClawAgent = async (c: AuthenticatedContext) => {
                 .replace(/[^a-z0-9]+/g, '-')
                 .replace(/^-|-$/g, '')}-${Date.now()}`
 
-            agentList.push({
+            const newAgent: Record<string, unknown> = {
                 id: agentId,
-                name: body.name,
-                model: body.model || null
-            })
+                name: body.name
+            }
+
+            if (body.model) {
+                newAgent.model = body.model
+            }
+
+            agentList.push(newAgent)
 
             const configJson = JSON.stringify(config, null, 4)
             const configB64 = Buffer.from(configJson).toString('base64')

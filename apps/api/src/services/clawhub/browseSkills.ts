@@ -7,7 +7,7 @@ import type {
     SkillsCacheEntry
 } from '@/ts/Interfaces'
 
-import { RequestClient } from '@openclaw/shared'
+import { RequestClient, inputValidation } from '@openclaw/shared'
 
 const CACHE_TTL = 60 * 60 * 1000
 
@@ -60,7 +60,7 @@ const fetchAllSkills = async (): Promise<ClawHubSearchResult[]> => {
 const browseSkills = async (
     params: BrowseClawHubSkillsParams
 ): Promise<ClawHubBrowseResultPage> => {
-    const limit = params.limit || 50
+    const limit = params.limit || inputValidation.SKILLS_DEFAULT_LIMIT.DEFAULT
     const offset = params.cursor ? Number(params.cursor) : 0
     const query = (params.query || '').trim()
 

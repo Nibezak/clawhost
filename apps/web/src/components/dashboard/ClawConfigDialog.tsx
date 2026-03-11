@@ -16,7 +16,7 @@ import {
 import {
     CircleNotchIcon,
     FloppyDiskIcon,
-    WarningIcon,
+    MagnifyingGlassIcon,
     FileIcon,
     FileJsIcon,
     FileTsIcon,
@@ -126,8 +126,7 @@ const getLanguageExtension = (fileType: ClawFileType) => {
 const getFileIcon = (fileType: ClawFileType, className: string): ReactNode => {
     if (fileType === 'json' || fileType === 'javascript')
         return <FileJsIcon className={className} />
-    if (fileType === 'typescript')
-        return <FileTsIcon className={className} />
+    if (fileType === 'typescript') return <FileTsIcon className={className} />
     if (fileType === 'markdown') return <FileMdIcon className={className} />
     if (fileType === 'yaml' || fileType === 'text')
         return <FileTextIcon className={className} />
@@ -163,6 +162,7 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
     const [selectedPath, setSelectedPath] = useState('')
     const [editedContent, setEditedContent] = useState('')
     const [jsonError, setJsonError] = useState(false)
+    const [searchQuery, setSearchQuery] = useState('')
 
     const selectedFile = files.data?.files.find((f) => f.path === selectedPath)
     const fileType = selectedFile?.fileType ?? 'unknown'
@@ -180,6 +180,7 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
             setSelectedPath('')
             setEditedContent('')
             setJsonError(false)
+            setSearchQuery('')
             updateFile.reset()
             queryClient.removeQueries({
                 queryKey: ['claw-files', clawId]
@@ -218,10 +219,16 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
     )
 
     const currentContent = fileContent.data?.content
+    const formattedOriginal =
+        currentContent !== undefined
+            ? handleContentLoaded(currentContent, fileType)
+            : ''
     const displayContent =
         currentContent !== undefined && editedContent === ''
-            ? handleContentLoaded(currentContent, fileType)
+            ? formattedOriginal
             : editedContent
+    const hasUnsavedChanges =
+        editedContent !== '' && editedContent !== formattedOriginal
 
     const handleChange = useCallback((value: string) => {
         setEditedContent(value)
@@ -256,6 +263,10 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
             { id: clawId, data: { path: selectedPath, content } },
             {
                 onSuccess: () => {
+                    setEditedContent('')
+                    queryClient.invalidateQueries({
+                        queryKey: ['claw-file', clawId, selectedPath]
+                    })
                     showToast(t('dashboard.fileExplorerSaved'), 'success')
                 },
                 onError: (err) => {
@@ -273,8 +284,15 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
         return langExt ? [langExt, editorStyles] : [editorStyles]
     }, [fileType])
 
-    const groupedFiles = files.data?.files.reduce<
-        Record<string, typeof files.data.files>
+    const filteredFiles = files.data?.files.filter((file) =>
+        searchQuery === ''
+            ? true
+            : file.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              file.path.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+
+    const groupedFiles = filteredFiles?.reduce<
+        Record<string, typeof filteredFiles>
     >((acc, file) => {
         const parts = file.path.split('/')
         const dir = parts.length > 1 ? parts.slice(0, -1).join('/') : ''
@@ -300,216 +318,256 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className='bg-muted text-muted-foreground mt-2 flex max-w-lg items-start gap-2 rounded-md p-3 text-xs'>
-                    <WarningIcon className='mt-0.5 h-3.5 w-3.5 shrink-0' />
-                    {t('dashboard.fileExplorerWarning')}
-                </div>
-
                 <div className='flex h-[530px] gap-3 overflow-hidden pt-3'>
-                    <div className='border-border bg-muted w-56 shrink-0 overflow-y-auto rounded-md border'>
-                        {files.isPending && (
-                            <div className='p-3'>
-                                <div className='flex items-center gap-1.5 py-1.5'>
-                                    <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
-                                    <Skeleton className='h-3 w-16 rounded' />
-                                </div>
-                                <div className='ml-[19px]'>
-                                    <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
-                                        <div className='flex items-center gap-1.5'>
-                                            <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
-                                            <Skeleton className='h-3 w-24 rounded' />
-                                        </div>
-                                    </div>
-                                    <div className='border-muted-foreground/20 border-l'>
-                                        <div className='ml-[19px]'>
-                                            <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
-                                                <div className='flex items-center gap-1.5'>
-                                                    <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
-                                                    <Skeleton className='h-3 w-16 rounded' />
-                                                </div>
-                                            </div>
-                                            <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
-                                                <div className='flex items-center gap-1.5'>
-                                                    <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
-                                                    <Skeleton className='h-3 w-20 rounded' />
-                                                </div>
-                                            </div>
-                                            <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
-                                                <div className='flex items-center gap-1.5'>
-                                                    <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
-                                                    <Skeleton className='h-3 w-14 rounded' />
-                                                </div>
-                                            </div>
-                                            <div className="before:border-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:border-b before:border-l before:content-['']">
-                                                <div className='flex items-center gap-1.5'>
-                                                    <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
-                                                    <Skeleton className='h-3 w-24 rounded' />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
-                                        <div className='flex items-center gap-1.5'>
-                                            <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
-                                            <Skeleton className='h-3 w-14 rounded' />
-                                        </div>
-                                    </div>
-                                    <div className='border-muted-foreground/20 border-l'>
-                                        <div className='ml-[19px]'>
-                                            <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
-                                                <div className='flex items-center gap-1.5'>
-                                                    <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
-                                                    <Skeleton className='h-3 w-16 rounded' />
-                                                </div>
-                                            </div>
-                                            <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
-                                                <div className='flex items-center gap-1.5'>
-                                                    <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
-                                                    <Skeleton className='h-3 w-20 rounded' />
-                                                </div>
-                                            </div>
-                                            <div className="before:border-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:border-b before:border-l before:content-['']">
-                                                <div className='flex items-center gap-1.5'>
-                                                    <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
-                                                    <Skeleton className='h-3 w-12 rounded' />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
-                                        <div className='flex items-center gap-1.5'>
-                                            <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
-                                            <Skeleton className='h-3 w-20 rounded' />
-                                        </div>
-                                    </div>
-                                    <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
-                                        <div className='flex items-center gap-1.5'>
-                                            <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
-                                            <Skeleton className='h-3 w-16 rounded' />
-                                        </div>
-                                    </div>
-                                    <div className="before:border-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:border-b before:border-l before:content-['']">
-                                        <div className='flex items-center gap-1.5'>
-                                            <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
-                                            <Skeleton className='h-3 w-24 rounded' />
-                                        </div>
-                                    </div>
+                    <div className='border-border bg-muted flex w-56 shrink-0 flex-col overflow-hidden rounded-md border'>
+                        {files.data && files.data.files.length > 0 && (
+                            <div className='shrink-0 p-2'>
+                                <div className='relative'>
+                                    <MagnifyingGlassIcon className='text-muted-foreground absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2' />
+                                    <input
+                                        type='text'
+                                        value={searchQuery}
+                                        onChange={(e) =>
+                                            setSearchQuery(e.target.value)
+                                        }
+                                        placeholder={t(
+                                            'dashboard.fileExplorerSearchFiles'
+                                        )}
+                                        className='border-border bg-background text-foreground placeholder:text-muted-foreground w-full rounded-md border py-1.5 pl-7 pr-2 text-xs outline-none transition-colors focus:border-[#ef5350]/50'
+                                    />
                                 </div>
                             </div>
                         )}
-                        {files.isError && (
-                            <div className='p-3 text-xs text-red-600 dark:text-red-400'>
-                                {files.error?.message ||
-                                    t('api.failedToListFiles')}
-                            </div>
-                        )}
-                        {files.data && files.data.files.length === 0 && (
-                            <div className='text-muted-foreground p-3 text-xs'>
-                                {t('dashboard.fileExplorerNoFiles')}
-                            </div>
-                        )}
-                        {groupedFiles && (
-                            <>
-                                <div className='text-muted-foreground flex items-center gap-1.5 px-3 pb-1 pt-2 text-xs font-medium'>
-                                    <FolderOpenIcon className='h-3.5 w-3.5 shrink-0' />
-                                    {t('dashboard.fileExplorerRoot')}
-                                </div>
-                                <div className='ml-[19px]'>
-                                    {folders.map(([dir, dirFiles], index) => {
-                                        const isLastRootChild =
-                                            index === folders.length - 1 &&
-                                            rootFiles.length === 0
-                                        return (
-                                            <div key={dir}>
-                                                <div
-                                                    className={`text-muted-foreground relative flex items-center gap-1.5 py-1.5 pl-5 pr-3 text-xs font-medium ${
-                                                        isLastRootChild
-                                                            ? "before:border-muted-foreground/20 before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:border-b before:border-l before:content-['']"
-                                                            : "before:bg-muted-foreground/20 after:bg-muted-foreground/20 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']"
-                                                    }`}
-                                                >
-                                                    <FolderOpenIcon className='h-3.5 w-3.5 shrink-0' />
-                                                    {dir}
+                        <div className='flex flex-1 flex-col overflow-y-auto'>
+                            {files.isPending && (
+                                <div className='p-3'>
+                                    <div className='flex items-center gap-1.5 py-1.5'>
+                                        <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
+                                        <Skeleton className='h-3 w-16 rounded' />
+                                    </div>
+                                    <div className='ml-[19px]'>
+                                        <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
+                                            <div className='flex items-center gap-1.5'>
+                                                <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
+                                                <Skeleton className='h-3 w-24 rounded' />
+                                            </div>
+                                        </div>
+                                        <div className='border-muted-foreground/20 border-l'>
+                                            <div className='ml-[19px]'>
+                                                <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
+                                                    <div className='flex items-center gap-1.5'>
+                                                        <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
+                                                        <Skeleton className='h-3 w-16 rounded' />
+                                                    </div>
                                                 </div>
-                                                <div
-                                                    className={
-                                                        !isLastRootChild
-                                                            ? 'border-muted-foreground/20 border-l'
-                                                            : ''
-                                                    }
-                                                >
-                                                    <div className='ml-[19px]'>
-                                                        {dirFiles.map(
-                                                            (file, fi) => (
-                                                                <button
-                                                                    key={
-                                                                        file.path
-                                                                    }
-                                                                    onClick={() =>
-                                                                        handleSelectFile(
-                                                                            file.path
-                                                                        )
-                                                                    }
-                                                                    className={`relative flex w-full items-center gap-2 py-1.5 pl-5 pr-3 text-left text-xs transition-colors ${
-                                                                        fi ===
-                                                                        dirFiles.length -
-                                                                            1
-                                                                            ? "before:border-muted-foreground/20 before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:border-b before:border-l before:content-['']"
-                                                                            : "before:bg-muted-foreground/20 after:bg-muted-foreground/20 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']"
-                                                                    } ${
-                                                                        selectedPath ===
-                                                                        file.path
-                                                                            ? 'bg-muted text-foreground'
-                                                                            : 'text-muted-foreground hover:bg-muted hover:text-foreground/80'
-                                                                    }`}
-                                                                >
-                                                                    {getFileIcon(
-                                                                        file.fileType,
-                                                                        getFileIconColor(
-                                                                            file.fileType
-                                                                        )
-                                                                    )}
-                                                                    <span className='truncate'>
-                                                                        {
-                                                                            file.name
-                                                                        }
-                                                                    </span>
-                                                                </button>
-                                                            )
-                                                        )}
+                                                <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
+                                                    <div className='flex items-center gap-1.5'>
+                                                        <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
+                                                        <Skeleton className='h-3 w-20 rounded' />
+                                                    </div>
+                                                </div>
+                                                <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
+                                                    <div className='flex items-center gap-1.5'>
+                                                        <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
+                                                        <Skeleton className='h-3 w-14 rounded' />
+                                                    </div>
+                                                </div>
+                                                <div className="before:border-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:border-b before:border-l before:content-['']">
+                                                    <div className='flex items-center gap-1.5'>
+                                                        <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
+                                                        <Skeleton className='h-3 w-24 rounded' />
                                                     </div>
                                                 </div>
                                             </div>
-                                        )
-                                    })}
-                                    {rootFiles.map((file, index) => (
-                                        <button
-                                            key={file.path}
-                                            onClick={() =>
-                                                handleSelectFile(file.path)
-                                            }
-                                            className={`relative flex w-full items-center gap-2 py-1.5 pl-5 pr-3 text-left text-xs transition-colors ${
-                                                index === rootFiles.length - 1
-                                                    ? "before:border-muted-foreground/20 before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:border-b before:border-l before:content-['']"
-                                                    : "before:bg-muted-foreground/20 after:bg-muted-foreground/20 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']"
-                                            } ${
-                                                selectedPath === file.path
-                                                    ? 'bg-muted text-foreground'
-                                                    : 'text-muted-foreground hover:bg-muted hover:text-foreground/80'
-                                            }`}
-                                        >
-                                            {getFileIcon(
-                                                file.fileType,
-                                                getFileIconColor(file.fileType)
-                                            )}
-                                            <span className='truncate'>
-                                                {file.name}
-                                            </span>
-                                        </button>
-                                    ))}
+                                        </div>
+                                        <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
+                                            <div className='flex items-center gap-1.5'>
+                                                <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
+                                                <Skeleton className='h-3 w-14 rounded' />
+                                            </div>
+                                        </div>
+                                        <div className='border-muted-foreground/20 border-l'>
+                                            <div className='ml-[19px]'>
+                                                <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
+                                                    <div className='flex items-center gap-1.5'>
+                                                        <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
+                                                        <Skeleton className='h-3 w-16 rounded' />
+                                                    </div>
+                                                </div>
+                                                <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
+                                                    <div className='flex items-center gap-1.5'>
+                                                        <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
+                                                        <Skeleton className='h-3 w-20 rounded' />
+                                                    </div>
+                                                </div>
+                                                <div className="before:border-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:border-b before:border-l before:content-['']">
+                                                    <div className='flex items-center gap-1.5'>
+                                                        <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
+                                                        <Skeleton className='h-3 w-12 rounded' />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
+                                            <div className='flex items-center gap-1.5'>
+                                                <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
+                                                <Skeleton className='h-3 w-20 rounded' />
+                                            </div>
+                                        </div>
+                                        <div className="before:bg-muted-foreground/20 after:bg-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']">
+                                            <div className='flex items-center gap-1.5'>
+                                                <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
+                                                <Skeleton className='h-3 w-16 rounded' />
+                                            </div>
+                                        </div>
+                                        <div className="before:border-muted-foreground/20 relative py-1.5 pl-5 before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:border-b before:border-l before:content-['']">
+                                            <div className='flex items-center gap-1.5'>
+                                                <Skeleton className='h-3.5 w-3.5 shrink-0 rounded' />
+                                                <Skeleton className='h-3 w-24 rounded' />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </>
-                        )}
+                            )}
+                            {files.isError && (
+                                <div className='p-3 text-xs text-red-600 dark:text-red-400'>
+                                    {files.error?.message ||
+                                        t('api.failedToListFiles')}
+                                </div>
+                            )}
+                            {files.data && files.data.files.length === 0 && (
+                                <div className='text-muted-foreground p-3 text-xs'>
+                                    {t('dashboard.fileExplorerNoFiles')}
+                                </div>
+                            )}
+                            {groupedFiles &&
+                                filteredFiles &&
+                                filteredFiles.length > 0 && (
+                                    <>
+                                        <div className='text-muted-foreground flex items-center gap-1.5 px-3 pb-1 pt-2 text-xs font-medium'>
+                                            <FolderOpenIcon className='h-3.5 w-3.5 shrink-0' />
+                                            {t('dashboard.fileExplorerRoot')}
+                                        </div>
+                                        <div className='ml-[19px]'>
+                                            {folders.map(
+                                                ([dir, dirFiles], index) => {
+                                                    const isLastRootChild =
+                                                        index ===
+                                                            folders.length -
+                                                                1 &&
+                                                        rootFiles.length === 0
+                                                    return (
+                                                        <div key={dir}>
+                                                            <div
+                                                                className={`text-muted-foreground relative flex items-center gap-1.5 py-1.5 pl-5 pr-3 text-xs font-medium ${
+                                                                    isLastRootChild
+                                                                        ? "before:border-muted-foreground/20 before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:border-b before:border-l before:content-['']"
+                                                                        : "before:bg-muted-foreground/20 after:bg-muted-foreground/20 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']"
+                                                                }`}
+                                                            >
+                                                                <FolderOpenIcon className='h-3.5 w-3.5 shrink-0' />
+                                                                {dir}
+                                                            </div>
+                                                            <div
+                                                                className={
+                                                                    !isLastRootChild
+                                                                        ? 'border-muted-foreground/20 border-l'
+                                                                        : ''
+                                                                }
+                                                            >
+                                                                <div className='ml-[19px]'>
+                                                                    {dirFiles.map(
+                                                                        (
+                                                                            file,
+                                                                            fi
+                                                                        ) => (
+                                                                            <button
+                                                                                key={
+                                                                                    file.path
+                                                                                }
+                                                                                onClick={() =>
+                                                                                    handleSelectFile(
+                                                                                        file.path
+                                                                                    )
+                                                                                }
+                                                                                className={`relative flex w-full items-center gap-2 py-1.5 pl-5 pr-3 text-left text-xs transition-colors ${
+                                                                                    fi ===
+                                                                                    dirFiles.length -
+                                                                                        1
+                                                                                        ? "before:border-muted-foreground/20 before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:border-b before:border-l before:content-['']"
+                                                                                        : "before:bg-muted-foreground/20 after:bg-muted-foreground/20 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']"
+                                                                                } ${
+                                                                                    selectedPath ===
+                                                                                    file.path
+                                                                                        ? 'bg-muted text-foreground'
+                                                                                        : 'text-muted-foreground hover:bg-muted hover:text-foreground/80'
+                                                                                }`}
+                                                                            >
+                                                                                {getFileIcon(
+                                                                                    file.fileType,
+                                                                                    getFileIconColor(
+                                                                                        file.fileType
+                                                                                    )
+                                                                                )}
+                                                                                <span className='truncate'>
+                                                                                    {
+                                                                                        file.name
+                                                                                    }
+                                                                                </span>
+                                                                            </button>
+                                                                        )
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                }
+                                            )}
+                                            {rootFiles.map((file, index) => (
+                                                <button
+                                                    key={file.path}
+                                                    onClick={() =>
+                                                        handleSelectFile(
+                                                            file.path
+                                                        )
+                                                    }
+                                                    className={`relative flex w-full items-center gap-2 py-1.5 pl-5 pr-3 text-left text-xs transition-colors ${
+                                                        index ===
+                                                        rootFiles.length - 1
+                                                            ? "before:border-muted-foreground/20 before:absolute before:left-0 before:top-0 before:h-1/2 before:w-3 before:border-b before:border-l before:content-['']"
+                                                            : "before:bg-muted-foreground/20 after:bg-muted-foreground/20 before:absolute before:left-0 before:top-0 before:h-full before:w-px before:content-[''] after:absolute after:left-0 after:top-1/2 after:h-px after:w-3 after:-translate-y-px after:content-['']"
+                                                    } ${
+                                                        selectedPath ===
+                                                        file.path
+                                                            ? 'bg-muted text-foreground'
+                                                            : 'text-muted-foreground hover:bg-muted hover:text-foreground/80'
+                                                    }`}
+                                                >
+                                                    {getFileIcon(
+                                                        file.fileType,
+                                                        getFileIconColor(
+                                                            file.fileType
+                                                        )
+                                                    )}
+                                                    <span className='truncate'>
+                                                        {file.name}
+                                                    </span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
+                            {searchQuery &&
+                                filteredFiles &&
+                                filteredFiles.length === 0 && (
+                                    <div className='text-muted-foreground flex flex-1 flex-col items-center justify-center gap-1.5 text-xs'>
+                                        <FileIcon className='h-6 w-6' />
+                                        {t(
+                                            'dashboard.fileExplorerNoSearchResults'
+                                        )}
+                                    </div>
+                                )}
+                        </div>
                     </div>
 
                     <div className='flex min-w-0 flex-1 flex-col gap-2'>
@@ -540,6 +598,9 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                                             getFileIconColor(fileType)
                                         )}
                                         {selectedFile?.name}
+                                        {hasUnsavedChanges && (
+                                            <span className='h-1.5 w-1.5 shrink-0 rounded-full bg-white/80' />
+                                        )}
                                         {!isEditable && (
                                             <span className='bg-muted text-muted-foreground ml-0.5 rounded-full px-2 py-px text-[10px] lowercase'>
                                                 {t(
@@ -607,6 +668,7 @@ const ClawConfigDialog: FC<ClawFileExplorerDialogProps> = ({
                             !isEditable ||
                             !selectedPath ||
                             !fileContent.data ||
+                            !hasUnsavedChanges ||
                             jsonError ||
                             updateFile.isPending
                         }

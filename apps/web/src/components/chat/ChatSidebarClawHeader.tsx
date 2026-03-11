@@ -2,18 +2,17 @@ import type { FC, ReactNode } from 'react'
 import type {
     ChatSidebarClawHeaderProps,
     ClawCardActions,
-    ElectronWindow,
+    ErrorWithMessage,
     ExportRateLimitError
 } from '@/ts/Interfaces'
 
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
-import { clawProvider, clawStatus } from '@openclaw/shared'
+import { clawStatus, userRole } from '@openclaw/shared'
 import { ClockIcon } from '@phosphor-icons/react'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import { useUIStore } from '@/lib/store'
-import { getBaseDomain, getLocale } from '@/lib'
-import { generateSlug } from '@/lib/claw-utils'
+import { getLocale } from '@/lib'
 import { ClawAvatar } from '@/components'
 import {
     useStartClaw,
@@ -31,6 +30,7 @@ import { api, TRUNCATE_LENGTHS } from '@/lib'
 import {
     ClawCardDropdownMenu,
     ClawCardDialogs,
+    ClawCredentialsDialog,
     ClawDiagnosticsDialog,
     ClawLogsDialog,
     ClawConfigDialog
@@ -38,14 +38,16 @@ import {
 
 const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
     claw,
+    agentCount,
+    isLoadingAgents,
     isReachable: _isReachable,
     isSelected,
     statusConfig,
+    readOnly,
     onOpenClawSettings,
     onCreateAgent: _onCreateAgent
 }): ReactNode => {
     const { showToast } = useUIStore()
-    const [isCopyingCredentials, setIsCopyingCredentials] = useState(false)
     const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [showStopModal, setShowStopModal] = useState(false)
     const [showRestartModal, setShowRestartModal] = useState(false)
@@ -54,6 +56,11 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
     const [showLogs, setShowLogs] = useState(false)
     const [showConfig, setShowConfig] = useState(false)
     const [showReinstallModal, setShowReinstallModal] = useState(false)
+    const [showCredentials, setShowCredentials] = useState(false)
+    const [credentialsPassword, setCredentialsPassword] = useState<
+        string | null
+    >(null)
+    const [isFetchingCredentials, setIsFetchingCredentials] = useState(false)
     const [isExporting, setIsExporting] = useState(false)
 
     const startMutation = useStartClaw()
@@ -79,54 +86,11 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
         reinstallMutation.isPending ||
         cancelPendingMutation.isPending ||
         isExporting ||
-        isCopyingCredentials
+        isFetchingCredentials
 
     const isScheduledForDeletion = !!claw.deletionScheduledAt
     const hasActionItems =
-        claw.status === clawStatus.running ||
-        claw.status === clawStatus.stopped ||
-        claw.status === clawStatus.off
-
-    const copySSHWithKey = () => {
-        const command = `ssh root@${claw.ip}`
-        navigator.clipboard.writeText(command)
-        showToast(t('dashboard.sshCommandCopied'), 'success')
-    }
-
-    const copySSHWithPassword = async () => {
-        setIsCopyingCredentials(true)
-        try {
-            const res = await api.getClawCredentials(claw.id)
-            if (res.rootPassword) {
-                const command = `sshpass -p '${res.rootPassword}' ssh -o StrictHostKeyChecking=no root@${claw.ip}`
-                navigator.clipboard.writeText(command)
-                showToast(t('dashboard.sshCommandWithPasswordCopied'), 'success')
-            } else {
-                copySSHWithKey()
-            }
-        } catch {
-            showToast(t('errors.noPasswordAvailable'), 'error')
-        } finally {
-            setIsCopyingCredentials(false)
-        }
-    }
-
-    const copyPassword = async () => {
-        setIsCopyingCredentials(true)
-        try {
-            const res = await api.getClawCredentials(claw.id)
-            if (!res.rootPassword) {
-                showToast(t('errors.noPasswordAvailable'), 'warning')
-                return
-            }
-            navigator.clipboard.writeText(res.rootPassword)
-            showToast(t('dashboard.passwordCopiedToClipboard'), 'success')
-        } catch {
-            showToast(t('errors.noPasswordAvailable'), 'error')
-        } finally {
-            setIsCopyingCredentials(false)
-        }
-    }
+        claw.status === clawStatus.running || claw.status === clawStatus.stopped
 
     const handleUpdateInstance = () => {
         repairMutation.mutate(claw.id, {
@@ -173,10 +137,30 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
             onSuccess: () => {
                 showToast(t('dashboard.reinstallInstanceSuccess'), 'success')
             },
-            onError: () => {
-                showToast(t('dashboard.reinstallInstanceFailed'), 'error')
+            onError: (err: Error) => {
+                showToast(
+                    err.message || t('dashboard.reinstallInstanceFailed'),
+                    'error'
+                )
             }
         })
+    }
+
+    const handleShowCredentials = async () => {
+        setIsFetchingCredentials(true)
+        try {
+            if (claw.hasRootPassword) {
+                const res = await api.getClawCredentials(claw.id)
+                setCredentialsPassword(res.rootPassword || null)
+            } else {
+                setCredentialsPassword(null)
+            }
+            setShowCredentials(true)
+        } catch {
+            showToast(t('errors.noPasswordAvailable'), 'error')
+        } finally {
+            setIsFetchingCredentials(false)
+        }
     }
 
     const actions: ClawCardActions = {
@@ -189,7 +173,7 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                             : typeof err === 'object' &&
                                 err !== null &&
                                 'message' in err
-                              ? String((err as { message: unknown }).message)
+                              ? String((err as ErrorWithMessage).message)
                               : t('dashboard.startFailed')
                     showToast(message, 'error')
                 }
@@ -204,10 +188,7 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
         onShowConfig: () => setShowConfig(true),
         onUpdateInstance: handleUpdateInstance,
         onShowReinstallModal: () => setShowReinstallModal(true),
-        onCopySSH: claw.hasRootPassword ? copySSHWithPassword : copySSHWithKey,
-        onCopySSHWithKey: copySSHWithKey,
-        onCopySSHWithPassword: copySSHWithPassword,
-        onCopyPassword: copyPassword,
+        onShowCredentials: handleShowCredentials,
         onExport: handleExport,
         onResumeCheckout: () => {
             if (claw.checkoutUrl) {
@@ -224,7 +205,7 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
         <>
             <div
                 onClick={() => onOpenClawSettings(claw.id)}
-                className={`group/header relative mb-1 flex w-full cursor-pointer items-center gap-3 rounded-lg px-2.5 py-1.5 text-left transition-colors ${
+                className={`group/header relative mb-1.5 flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors ${
                     isSelected ? 'bg-foreground/10' : 'hover:bg-foreground/5'
                 }`}
             >
@@ -271,20 +252,14 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                                         weight='fill'
                                     />
                                     <span className='text-muted-foreground truncate text-[11px]'>
-                                        {t(
-                                            'dashboard.scheduledDeletionShort',
-                                            {
-                                                date: new Date(
-                                                    claw.deletionScheduledAt!
-                                                ).toLocaleDateString(
-                                                    getLocale(),
-                                                    {
-                                                        month: 'short',
-                                                        day: 'numeric'
-                                                    }
-                                                )
-                                            }
-                                        )}
+                                        {t('dashboard.scheduledDeletionShort', {
+                                            date: new Date(
+                                                claw.deletionScheduledAt!
+                                            ).toLocaleDateString(getLocale(), {
+                                                month: 'short',
+                                                day: 'numeric'
+                                            })
+                                        })}
                                     </span>
                                 </div>
                             </TooltipTrigger>
@@ -292,97 +267,99 @@ const ChatSidebarClawHeader: FC<ChatSidebarClawHeaderProps> = ({
                                 <p>{t('dashboard.scheduledForDeletion')}</p>
                             </TooltipContent>
                         </Tooltip>
-                    ) : claw.status !== clawStatus.configuring && claw.status !== clawStatus.awaitingPayment ? (
-                        claw.provider === clawProvider.local && claw.subdomain ? (
-                            <button
-                                type='button'
-                                onClick={(e) => {
-                                    e.stopPropagation()
-                                    const url = `https://${claw.subdomain}.clawhost${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`
-                                    const eApi = (window as unknown as ElectronWindow).electronAPI
-                                    if (eApi?.openExternal) {
-                                        eApi.openExternal(url)
-                                    } else {
-                                        window.open(url, '_blank')
-                                    }
-                                }}
-                                className='text-muted-foreground hover:text-foreground/80 block truncate text-[11px] transition-colors'
-                            >
-                                {claw.subdomain}.clawhost
-                            </button>
-                        ) : (
-                            <a
-                                href={`https://${claw.subdomain || generateSlug(claw.id)}.${getBaseDomain()}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`}
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                onClick={(e) => e.stopPropagation()}
-                                className='text-muted-foreground hover:text-foreground/80 block truncate text-[11px] transition-colors'
-                            >
-                                {claw.subdomain || generateSlug(claw.id)}.
-                                {getBaseDomain()}
-                            </a>
-                        )
-                    ) : (
+                    ) : claw.status === clawStatus.creating ||
+                      claw.status === clawStatus.configuring ||
+                      claw.status === clawStatus.awaitingPayment ? (
                         <p className='text-muted-foreground truncate text-[11px]'>
                             {statusConfig.label}
                         </p>
+                    ) : claw.status === clawStatus.stopped ? (
+                        <p className='text-muted-foreground truncate text-[11px]'>
+                            {statusConfig.label}
+                        </p>
+                    ) : isLoadingAgents ? (
+                        <p className='text-muted-foreground truncate text-[11px]'>
+                            {t('playground.loadingAgents')}
+                        </p>
+                    ) : (
+                        <p className='text-muted-foreground truncate text-[11px]'>
+                            {agentCount === 1
+                                ? t('playground.agentCount', {
+                                      count: String(agentCount)
+                                  })
+                                : t('playground.agentCountPlural', {
+                                      count: String(agentCount)
+                                  })}
+                        </p>
                     )}
                 </div>
-                <div
-                    className='flex shrink-0 items-center gap-1'
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <div>
-                        <ClawCardDropdownMenu
-                            claw={claw}
-                            actions={actions}
-                            isLoading={isMutating}
-                            hasActionItems={hasActionItems}
-                            isScheduledForDeletion={isScheduledForDeletion}
-                            isAdmin={profile?.role === 'admin'}
-                            compact
-                        />
+                {!readOnly && (
+                    <div
+                        className='flex shrink-0 items-center gap-1'
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div>
+                            <ClawCardDropdownMenu
+                                claw={claw}
+                                actions={actions}
+                                isLoading={isMutating}
+                                hasActionItems={hasActionItems}
+                                isScheduledForDeletion={isScheduledForDeletion}
+                                isAdmin={profile?.role === userRole.admin}
+                                compact
+                            />
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
-            <ClawCardDialogs
-                clawName={claw.name}
-                showDeleteModal={showDeleteModal}
-                setShowDeleteModal={setShowDeleteModal}
-                showStopModal={showStopModal}
-                setShowStopModal={setShowStopModal}
-                showRestartModal={showRestartModal}
-                setShowRestartModal={setShowRestartModal}
-                showHardDeleteModal={showHardDeleteModal}
-                setShowHardDeleteModal={setShowHardDeleteModal}
-                onDelete={() => deleteMutation.mutate(claw.id)}
-                onStop={() => stopMutation.mutate(claw.id)}
-                onRestart={() => restartMutation.mutate(claw.id)}
-                onHardDelete={() => hardDeleteMutation.mutate(claw.id)}
-                isDeletePending={deleteMutation.isPending}
-                isStopPending={stopMutation.isPending}
-                isRestartPending={restartMutation.isPending}
-                isHardDeletePending={hardDeleteMutation.isPending}
-                showReinstallModal={showReinstallModal}
-                setShowReinstallModal={setShowReinstallModal}
-                onReinstall={handleReinstall}
-                isReinstallPending={reinstallMutation.isPending}
-            />
-            <ClawDiagnosticsDialog
-                clawId={claw.id}
-                open={showDiagnostics}
-                onOpenChange={setShowDiagnostics}
-            />
-            <ClawLogsDialog
-                clawId={claw.id}
-                open={showLogs}
-                onOpenChange={setShowLogs}
-            />
-            <ClawConfigDialog
-                clawId={claw.id}
-                open={showConfig}
-                onOpenChange={setShowConfig}
-            />
+            {!readOnly && (
+                <>
+                    <ClawCardDialogs
+                        clawName={claw.name}
+                        showDeleteModal={showDeleteModal}
+                        setShowDeleteModal={setShowDeleteModal}
+                        showStopModal={showStopModal}
+                        setShowStopModal={setShowStopModal}
+                        showRestartModal={showRestartModal}
+                        setShowRestartModal={setShowRestartModal}
+                        showHardDeleteModal={showHardDeleteModal}
+                        setShowHardDeleteModal={setShowHardDeleteModal}
+                        onDelete={() => deleteMutation.mutate(claw.id)}
+                        onStop={() => stopMutation.mutate(claw.id)}
+                        onRestart={() => restartMutation.mutate(claw.id)}
+                        onHardDelete={() => hardDeleteMutation.mutate(claw.id)}
+                        isDeletePending={deleteMutation.isPending}
+                        isStopPending={stopMutation.isPending}
+                        isRestartPending={restartMutation.isPending}
+                        isHardDeletePending={hardDeleteMutation.isPending}
+                        showReinstallModal={showReinstallModal}
+                        setShowReinstallModal={setShowReinstallModal}
+                        onReinstall={handleReinstall}
+                        isReinstallPending={reinstallMutation.isPending}
+                    />
+                    <ClawDiagnosticsDialog
+                        clawId={claw.id}
+                        open={showDiagnostics}
+                        onOpenChange={setShowDiagnostics}
+                    />
+                    <ClawLogsDialog
+                        clawId={claw.id}
+                        open={showLogs}
+                        onOpenChange={setShowLogs}
+                    />
+                    <ClawConfigDialog
+                        clawId={claw.id}
+                        open={showConfig}
+                        onOpenChange={setShowConfig}
+                    />
+                    <ClawCredentialsDialog
+                        clawIp={claw.ip || ''}
+                        rootPassword={credentialsPassword}
+                        open={showCredentials}
+                        onOpenChange={setShowCredentials}
+                    />
+                </>
+            )}
         </>
     )
 }

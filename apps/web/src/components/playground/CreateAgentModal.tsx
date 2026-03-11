@@ -28,14 +28,15 @@ import {
     TooltipTrigger,
     TooltipContent
 } from '@/components/ui'
-import { api } from '@/lib'
+import { api, copyToClipboard } from '@/lib'
 import { useUIStore } from '@/lib/store'
 import { aiModels, validateAgentName } from '@/lib/claw-utils'
 import { PLAYGROUND_AGENTS_QUERY_KEY } from '@/hooks'
 
 const CreateAgentModal: FC<CreateAgentModalProps> = ({
-    clawId,
-    clawName,
+    clawId: clawIdProp,
+    clawName: clawNameProp,
+    clawsWithAgents,
     open,
     onOpenChange
 }): ReactNode => {
@@ -45,23 +46,38 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
     const [apiKeyValue, setApiKeyValue] = useState('')
     const [showApiKey, setShowApiKey] = useState(false)
     const [copied, setCopied] = useState(false)
+    const [pickedClawId, setPickedClawId] = useState('')
     const { showToast } = useUIStore()
     const queryClient = useQueryClient()
 
+    const needsClawPicker = !clawIdProp && !!clawsWithAgents
+    const effectiveClawId = clawIdProp || pickedClawId || ''
+
+    const reachableClaws = useMemo(() => {
+        if (!clawsWithAgents) return []
+        return clawsWithAgents.filter((c) => c.isReachable)
+    }, [clawsWithAgents])
+
+    const pickedClawName = useMemo(() => {
+        if (clawNameProp) return clawNameProp
+        const found = reachableClaws.find((c) => c.claw.id === pickedClawId)
+        return found?.claw.name || ''
+    }, [clawNameProp, reachableClaws, pickedClawId])
+
     const { data: envData } = useQuery({
-        queryKey: ['claw-env', clawId],
-        queryFn: () => api.getClawEnvVars(clawId),
-        enabled: open,
+        queryKey: ['claw-env', effectiveClawId],
+        queryFn: () => api.getClawEnvVars(effectiveClawId),
+        enabled: open && !!effectiveClawId,
         staleTime: 30000
     })
 
     const existingAgentNames = useMemo(() => {
         const cached = queryClient.getQueryData<ClawAgentsResponse>([
             PLAYGROUND_AGENTS_QUERY_KEY,
-            clawId
+            effectiveClawId
         ])
         return cached?.agents.map((a) => a.name) || []
-    }, [queryClient, clawId])
+    }, [queryClient, effectiveClawId])
 
     const modelsByProvider = useMemo(() => {
         const grouped: Record<string, typeof aiModels> = {}
@@ -96,11 +112,12 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
         setApiKeyValue('')
         setShowApiKey(false)
         setCopied(false)
+        setPickedClawId('')
     }, [])
 
-    const handleCopyApiKey = useCallback(() => {
+    const handleCopyApiKey = useCallback(async () => {
         if (existingKeyValue) {
-            navigator.clipboard.writeText(existingKeyValue)
+            await copyToClipboard(existingKeyValue)
             setCopied(true)
             setTimeout(() => setCopied(false), 2000)
         }
@@ -112,7 +129,7 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
             if (selectedModelOption && apiKeyValue) {
                 envVarsObj[selectedModelOption.envVar] = apiKeyValue
             }
-            return api.createClawAgent(clawId, {
+            return api.createClawAgent(effectiveClawId, {
                 name: finalName,
                 model: selectedModel || null,
                 envVars:
@@ -122,10 +139,12 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
         onSuccess: (response) => {
             showToast(t('playground.addAgentSuccess'), 'success')
             queryClient.setQueryData<ClawAgentsResponse>(
-                [PLAYGROUND_AGENTS_QUERY_KEY, clawId],
+                [PLAYGROUND_AGENTS_QUERY_KEY, effectiveClawId],
                 (old) => {
                     if (!old)
                         return { agents: [response.agent], reachable: true }
+                    if (old.agents.some((a) => a.id === response.agent.id))
+                        return old
                     return {
                         ...old,
                         agents: [...old.agents, response.agent]
@@ -133,7 +152,7 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                 }
             )
             queryClient.invalidateQueries({
-                queryKey: ['claw-env', clawId]
+                queryKey: ['claw-env', effectiveClawId]
             })
             resetForm()
             onOpenChange(false)
@@ -223,6 +242,13 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
         setShowApiKey(false)
     }, [])
 
+    const handleClawChange = useCallback((id: string) => {
+        setPickedClawId(id)
+        setSelectedModel('')
+        setApiKeyValue('')
+        setShowApiKey(false)
+    }, [])
+
     const handleOpenChange = useCallback(
         (isOpen: boolean) => {
             if (!isOpen) {
@@ -239,11 +265,48 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                 <DialogHeader className='p-6 pb-4'>
                     <DialogTitle>{t('playground.addAgentTitle')}</DialogTitle>
                     <DialogDescription>
-                        {t('playground.addAgentDescription', { clawName })}
+                        {pickedClawName
+                            ? t('playground.addAgentDescription', {
+                                  clawName: pickedClawName
+                              })
+                            : t('playground.addAgentDescriptionNoClaw')}
                     </DialogDescription>
                 </DialogHeader>
 
                 <div className='flex-1 space-y-5 overflow-y-auto px-6 pb-6'>
+                    {needsClawPicker && (
+                        <div>
+                            <label className='text-muted-foreground mb-2 block text-xs font-medium'>
+                                {t('playground.addAgentSelectClaw')}
+                                <span className='ml-0.5 text-red-600 dark:text-red-400'>
+                                    *
+                                </span>
+                            </label>
+                            <Select
+                                value={pickedClawId}
+                                onValueChange={handleClawChange}
+                                displayValue={pickedClawName || undefined}
+                            >
+                                <SelectTrigger
+                                    placeholder={t(
+                                        'playground.addAgentSelectClawPlaceholder'
+                                    )}
+                                    className='border-border bg-foreground/5 text-foreground h-9 text-sm'
+                                />
+                                <SelectContent className='max-h-[300px] overflow-y-auto'>
+                                    {reachableClaws.map((c) => (
+                                        <SelectItem
+                                            key={c.claw.id}
+                                            value={c.claw.id}
+                                        >
+                                            {c.claw.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    )}
+
                     <div>
                         <label className='text-muted-foreground mb-2 block text-xs font-medium'>
                             {t('playground.addAgentName')}
@@ -260,7 +323,7 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                                     ? 'border-red-500/50'
                                     : 'border-border'
                             }`}
-                            autoFocus
+                            autoFocus={!needsClawPicker}
                         />
                         {nameError && (
                             <p className='mt-1.5 text-[11px] text-red-600 dark:text-red-400'>
@@ -412,7 +475,11 @@ const CreateAgentModal: FC<CreateAgentModalProps> = ({
                     </button>
                     <button
                         onClick={handleSubmit}
-                        disabled={!!nameError || createMutation.isPending}
+                        disabled={
+                            !!nameError ||
+                            createMutation.isPending ||
+                            (needsClawPicker && !pickedClawId)
+                        }
                         className='flex items-center gap-2 rounded-lg bg-[#ef5350] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
                     >
                         {createMutation.isPending && (

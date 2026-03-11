@@ -12,7 +12,6 @@ const getAgentStatusConfig = (status: string): StatusConfig => {
             }
         case 'stopped':
         case 'idle':
-        case 'off':
             return {
                 color: 'bg-gray-400',
                 bgColor: 'bg-gray-400/10',

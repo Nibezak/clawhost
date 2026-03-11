@@ -6,6 +6,7 @@ import {
     index,
     unique
 } from 'drizzle-orm/pg-core'
+import { userRole } from '@openclaw/shared'
 
 export const users = pgTable('users', {
     id: text('id').primaryKey(),
@@ -13,7 +14,7 @@ export const users = pgTable('users', {
     name: text('name'),
     authMethods: text('auth_methods').array().default([]),
     polarCustomerId: text('polar_customer_id'),
-    role: text('role').notNull().default('user'),
+    role: text('role').notNull().default(userRole.user),
     createdAt: timestamp('created_at', { withTimezone: true })
         .defaultNow()
         .notNull()
@@ -46,6 +47,9 @@ export const claws = pgTable(
         deletionScheduledAt: timestamp('deletion_scheduled_at', {
             withTimezone: true
         }),
+        lastReinstalledAt: timestamp('last_reinstalled_at', {
+            withTimezone: true
+        }),
         createdAt: timestamp('created_at', { withTimezone: true })
             .defaultNow()
             .notNull()
@@ -53,7 +57,8 @@ export const claws = pgTable(
     (table) => [
         index('claws_user_id_idx').on(table.userId),
         index('claws_polar_subscription_id_idx').on(table.polarSubscriptionId),
-        index('claws_subdomain_idx').on(table.subdomain)
+        index('claws_subdomain_idx').on(table.subdomain),
+        index('claws_deletion_scheduled_at_idx').on(table.deletionScheduledAt)
     ]
 )
 
@@ -169,54 +174,5 @@ export const volumes = pgTable(
     (table) => [
         index('volumes_user_id_idx').on(table.userId),
         index('volumes_claw_id_idx').on(table.clawId)
-    ]
-)
-
-export const featureRequests = pgTable(
-    'feature_requests',
-    {
-        id: text('id').primaryKey(),
-        userId: text('user_id')
-            .notNull()
-            .references(() => users.id, { onDelete: 'cascade' }),
-        title: text('title').notNull(),
-        description: text('description').notNull(),
-        status: text('status').notNull().default('awaiting_approval'),
-        rejectionReason: text('rejection_reason'),
-        platforms: text('platforms').array().default([]),
-        upvoteCount: integer('upvote_count').notNull().default(0),
-        createdAt: timestamp('created_at', { withTimezone: true })
-            .defaultNow()
-            .notNull()
-    },
-    (table) => [
-        index('feature_requests_user_id_idx').on(table.userId),
-        index('feature_requests_status_idx').on(table.status),
-        index('feature_requests_upvote_count_idx').on(table.upvoteCount)
-    ]
-)
-
-export const featureUpvotes = pgTable(
-    'feature_upvotes',
-    {
-        id: text('id').primaryKey(),
-        userId: text('user_id')
-            .notNull()
-            .references(() => users.id, { onDelete: 'cascade' }),
-        featureRequestId: text('feature_request_id')
-            .notNull()
-            .references(() => featureRequests.id, { onDelete: 'cascade' }),
-        createdAt: timestamp('created_at', { withTimezone: true })
-            .defaultNow()
-            .notNull()
-    },
-    (table) => [
-        unique('feature_upvotes_user_feature').on(
-            table.userId,
-            table.featureRequestId
-        ),
-        index('feature_upvotes_feature_request_id_idx').on(
-            table.featureRequestId
-        )
     ]
 )

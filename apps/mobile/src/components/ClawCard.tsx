@@ -5,7 +5,7 @@ import type { ClawCardProps } from '@/ts/Interfaces'
 import { useState } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import { CaretDown, ChatCircleDots } from 'phosphor-react-native'
+import { CaretDown, ChatCircleDots, Waveform } from 'phosphor-react-native'
 import { t } from '@openclaw/i18n'
 import { clawStatus } from '@openclaw/shared'
 import { COLORS } from '@/lib/theme'
@@ -20,6 +20,7 @@ import ClawMascot from '@/components/ClawMascot'
 import ProviderIcon from '@/components/ProviderIcon'
 import StatusBadge from '@/components/StatusBadge'
 import CopyableField from '@/components/CopyableField'
+import VoiceChatModal from '@/components/VoiceChatModal'
 
 const GRID_GAP = 8
 const GRID_COLUMNS = 2
@@ -27,6 +28,7 @@ const GRID_COLUMNS = 2
 const ClawCard: FC<ClawCardProps> = ({ claw, plan }): ReactNode => {
     const [fieldWidth, setFieldWidth] = useState(0)
     const [isExpanded, setIsExpanded] = useState(false)
+    const [voiceModalVisible, setVoiceModalVisible] = useState(false)
 
     const handleGridLayout = (e: LayoutChangeEvent): void => {
         const gridWidth = e.nativeEvent.layout.width
@@ -220,24 +222,50 @@ const ClawCard: FC<ClawCardProps> = ({ claw, plan }): ReactNode => {
             )}
 
             {claw.status === clawStatus.running && (
-                <Pressable style={styles.chatButton} onPress={() => {}}>
-                    <LinearGradient
-                        colors={['#ef5350', '#c62828']}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 0 }}
-                        style={styles.chatButtonGradient}
+                <View style={styles.actionRow}>
+                    <Pressable style={styles.chatButton} onPress={() => {}}>
+                        <LinearGradient
+                            colors={['#ef5350', '#c62828']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
+                            style={styles.chatButtonGradient}
+                        >
+                            <ChatCircleDots
+                                size={18}
+                                color={COLORS.white}
+                                weight='fill'
+                            />
+                            <Text style={styles.chatButtonText}>
+                                {t('mobile.chatWithYourClaw')}
+                            </Text>
+                        </LinearGradient>
+                    </Pressable>
+                    <View style={styles.actionSeparator} />
+                    <Pressable
+                        style={styles.voiceButton}
+                        onPress={() => setVoiceModalVisible(true)}
                     >
-                        <ChatCircleDots
-                            size={18}
-                            color={COLORS.white}
-                            weight='fill'
-                        />
-                        <Text style={styles.chatButtonText}>
-                            {t('mobile.chatWithYourClaw')}
-                        </Text>
-                    </LinearGradient>
-                </Pressable>
+                        <LinearGradient
+                            colors={['#ef5350', '#c62828']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
+                            style={styles.voiceButtonGradient}
+                        >
+                            <Waveform
+                                size={20}
+                                color={COLORS.white}
+                                weight='fill'
+                            />
+                        </LinearGradient>
+                    </Pressable>
+                </View>
             )}
+
+            <VoiceChatModal
+                visible={voiceModalVisible}
+                clawName={claw.name}
+                onClose={() => setVoiceModalVisible(false)}
+            />
         </View>
     )
 }
@@ -324,8 +352,14 @@ const styles = StyleSheet.create({
         color: COLORS.textDim,
         marginTop: 2
     },
-    chatButton: {
+    actionRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
         marginTop: 16,
+        gap: 8
+    },
+    chatButton: {
+        flex: 1,
         borderRadius: 10,
         overflow: 'hidden'
     },
@@ -341,6 +375,22 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontFamily: 'Satoshi-Bold',
         color: COLORS.white
+    },
+    actionSeparator: {
+        width: 1,
+        height: 28,
+        backgroundColor: COLORS.border
+    },
+    voiceButton: {
+        borderRadius: 10,
+        overflow: 'hidden'
+    },
+    voiceButtonGradient: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 44,
+        height: 44,
+        borderRadius: 10
     }
 })
 

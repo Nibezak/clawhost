@@ -1,4 +1,5 @@
 import { eq } from 'drizzle-orm'
+import { userRole } from '@openclaw/shared'
 import { db } from '@/db'
 import { users } from '@/db/schema'
 
@@ -9,7 +10,7 @@ const isAdmin = async (userId: string): Promise<boolean> => {
         .where(eq(users.id, userId))
         .limit(1)
 
-    return user[0]?.role === 'admin'
+    return user[0]?.role === userRole.admin
 }
 
 export default isAdmin

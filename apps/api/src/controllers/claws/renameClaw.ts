@@ -2,6 +2,7 @@ import type { RenameClawBody } from '@/ts/Interfaces'
 import type { AuthenticatedContext } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
+import { inputValidation } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { findUserClaw, sanitizeClaw } from '@/controllers/claws/helpers'
@@ -16,8 +17,14 @@ const renameClaw = async (c: AuthenticatedContext) => {
 
         const name = body.name?.trim()
 
-        if (!name || name.length > 50) {
-            return fail(c, t('api.invalidClawName'), 400)
+        if (!name || name.length > inputValidation.CLAW_NAME.MAX) {
+            return fail(
+                c,
+                t('api.invalidClawName', {
+                    max: inputValidation.CLAW_NAME.MAX
+                }),
+                400
+            )
         }
 
         const claw = await findUserClaw(userId, id)
@@ -32,7 +39,7 @@ const renameClaw = async (c: AuthenticatedContext) => {
 
         return ok(c, sanitizeClaw(updated), t('api.clawRenamed'))
     } catch {
-        return fail(c, t('api.missingRequiredFields'), 500)
+        return fail(c, t('api.internalServerError'), 500)
     }
 }
 

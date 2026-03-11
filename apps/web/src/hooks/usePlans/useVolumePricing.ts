@@ -6,7 +6,9 @@ const useVolumePricing = (provider?: string) => {
     return useQuery({
         queryKey: [...VOLUME_PRICING_QUERY_KEY, provider || 'hetzner'],
         queryFn: () => api.getVolumePricing(provider),
-        staleTime: Infinity
+        staleTime: 10_000,
+        refetchInterval: 10_000,
+        retry: false
     })
 }
 

@@ -11,7 +11,7 @@ import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { useAuth } from '@/lib/auth'
 import { useUIStore, usePreferencesStore } from '@/lib/store'
-import { ROUTES } from '@/lib'
+import { ROUTES, copyToClipboard as copyText, getBaseDomain } from '@/lib'
 import {
     useSSHKeys,
     useCreateSSHKey,
@@ -268,8 +268,11 @@ const CreateSSHKeyModal: FC<CreateSSHKeyModalProps> = ({
         }
     }
 
-    const copyToClipboard = (text: string, type: 'command' | 'private') => {
-        navigator.clipboard.writeText(text)
+    const copyToClipboard = async (
+        text: string,
+        type: 'command' | 'private'
+    ) => {
+        await copyText(text)
         setCopied(type)
         setTimeout(() => setCopied(null), 2000)
     }
@@ -616,12 +619,10 @@ const SSHKeys: FC = (): ReactNode => {
     })
 
     const localDisplayName =
-        profile?.name ||
-        cachedProfile?.name ||
-        t('account.noNameSet')
+        profile?.name || cachedProfile?.name || t('account.noNameSet')
     const dropdownFooterLinks = useMemo(() => {
         if (!isLocal) return undefined
-        const BASE_URL = 'https://clawhost.cloud'
+        const BASE_URL = `https://${getBaseDomain()}`
         return [
             { label: t('footer.website'), href: BASE_URL, external: true },
             ...getLegalLinks().map((link) => ({
@@ -654,6 +655,7 @@ const SSHKeys: FC = (): ReactNode => {
             <PageTitle
                 title={t('sshKeys.title')}
                 description={t('sshKeys.description')}
+                noIndex
             />
             {!isLocal && <PageBackground />}
             {isLocal ? (

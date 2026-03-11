@@ -8,11 +8,10 @@ A self-hostable cloud hosting management platform built as a TypeScript monorepo
 openclaw.anywhere/
 ├── apps/
 │   ├── api/              # Hono.js backend API (Node.js)
-│   ├── web/              # React + Vite frontend
-│   └── mobile/           # React Native + Expo mobile app
+│   └── web/              # React + Vite frontend
 ├── packages/
-│   ├── shared/           # @openclaw/shared - HTTP client utility
-│   └── i18n/             # @openclaw/i18n - Internationalization
+│   ├── shared/           # @openclaw/shared - HTTP client, constants, validation
+│   └── i18n/             # @openclaw/i18n - Internationalization (EN, FR, ES, DE)
 ├── scripts/              # Utility scripts
 └── turbo.json            # Turborepo build orchestration
 ```
@@ -23,11 +22,13 @@ openclaw.anywhere/
 
 - **Framework**: Hono.js
 - **Database**: Neon (serverless PostgreSQL) with Drizzle ORM
-- **Authentication**: Firebase Admin SDK + OTP (email-based)
+- **Authentication**: Firebase Admin SDK + OTP (email-based) + OAuth (Google, GitHub)
 - **Email**: Resend + React Email
-- **Payments**: Polar
+- **Payments**: Polar SDK
 - **Cloud Providers**: Hetzner Cloud, DigitalOcean, Vultr
 - **DNS**: Cloudflare
+- **SSH/Terminal**: SSH2 + WebSocket (ws) for remote terminal access
+- **Text-to-Speech**: Piper TTS engine
 - **Runtime**: Node.js 20+ with tsx
 
 ### Frontend (apps/web)
@@ -40,19 +41,15 @@ openclaw.anywhere/
 - **Icons**: Phosphor Icons
 - **Animation**: Framer Motion
 - **Auth**: Firebase
-
-### Mobile (apps/mobile)
-
-- **Framework**: React Native with Expo (~54)
-- **Navigation**: React Navigation (bottom tabs)
-- **Data Fetching**: TanStack React Query
-- **Auth**: Firebase
-- **Icons**: Phosphor Icons
+- **Graph Visualization**: React Flow (playground canvas)
+- **Terminal**: xterm.js (in-browser terminal emulation)
+- **Code Editing**: CodeMirror (file editor)
+- **Blog**: MDX for content authoring
 
 ### Shared Packages
 
-- **@openclaw/shared**: HTTP RequestClient utility
-- **@openclaw/i18n**: Internationalization framework
+- **@openclaw/shared**: HTTP RequestClient, cloud provider/status constants, input validation, user roles, API envelope types
+- **@openclaw/i18n**: Internationalization framework with `t()` function, parameter interpolation, 4 languages
 
 ## Code Conventions
 
@@ -228,21 +225,37 @@ function create(data: CreateUserParams): void {} // USE THIS
 
 **Categories in web Interfaces.ts:**
 
-- API / Data Models: `Claw`, `Plan`, `Location`, `SSHKey`, `Volume`, etc.
+- API / Data Models: `Claw`, `Plan`, `Location`, `SSHKey`, `Volume`, `UserProfile`, `UserStats`, `BillingOrder`, etc.
 - Store Interfaces: `UIState`, `PreferencesState`, `ToastData`
-- Auth Interfaces: `AuthContextType`
-- Component Props: `HeaderProps`, `EmptyStateProps`, `ClawCardProps`, etc.
-- Hook Data Types: `CreateClawData`, `CreateSSHKeyData`, etc.
+- Auth Interfaces: `AuthContextType`, `VerifyOtpResponse`, `CachedProfile`, `ResolveCredentialConflictData`
+- Component Props: `HeaderProps`, `EmptyStateProps`, `ClawCardProps`, `PlaygroundCanvasProps`, `PlaygroundDetailPanelProps`, etc.
+- Hook Data Types: `CreateClawData`, `PurchaseClawData`, `CreateSSHKeyData`, `RenameClawData`, `UpdateClawSubdomainData`, etc.
+- Playground Types: `PlaygroundClawNodeData`, `PlaygroundAgentNodeData`
+- Agent/Chat Types: `ClawAgent`, `ChatMessage`, `ChatAttachment`, `ChatHistoryEntry`, `UseAgentChatParams`, `UseAgentChatReturn`
+- File System Types: `ClawFileEntry`, `ClawFilesResponse`, `ReadClawFileResponse`, `UpdateClawFileData`
+- Channel/Binding Types: `ChannelConfig`, `Binding`, `ClawChannelsResponse`, `ClawBindingsResponse`
+- Skills/ClawHub Types: `BundledSkillInfo`, `ClawSkillsResponse`, `ClawHubSearchResult`, `ClawHubBrowseResponse`
+- Version Types: `ClawVersionResponse`, `ClawVersionsResponse`
+- Blog Types: `BlogPostFrontmatter`, `BlogPostMeta`, `Testimonial`, `Faq`, `CompareCompetitor`, `CompareFeature`
 
 **Categories in api Interfaces.ts:**
 
-- Cloud Provider Interface: `CloudProvider`
-- Hetzner Types: `HetznerServer`, `HetznerVolume`, `ServerStatus`, `LocationInfo`, etc.
+- API Response: `ApiResponse<T>`
+- Cloud Provider Interface: `CloudProvider`, `CreateServerResult`, `ServerStatus`, `ServerTypeInfo`, `LocationInfo`
+- Hetzner Types: `HetznerServer`, `HetznerServerType`, `HetznerLocation`, `HetznerDatacenter`, `HetznerVolume`, `HetznerSSHKey`, etc.
 - DigitalOcean Types: `DigitalOceanDroplet`, `DigitalOceanSize`, `DigitalOceanRegion`, `DigitalOceanSSHKey`, `DigitalOceanVolume`, etc.
 - Vultr Types: `VultrInstance`, `VultrPlan`, `VultrRegion`, `VultrSSHKey`, `VultrVolume`, etc.
-- Polar Types: `CheckoutSession`, `PolarSubscription`, `PolarOrder`, `PolarCustomer`, etc.
-- Webhook Types: `WebhookEvent`, `WebhookHandlers`, `CheckoutWebhookData`, etc.
-- Controller Types: `ProvisionClawParams`, `ClawCleanupData`, etc.
+- Polar/Payment Types: `CheckoutSession`, `PolarSubscription`, `PolarOrder`, `PolarProduct`, `PolarCustomer`, webhook data types
+- Claw Operation Types: `CreateClawBody`, `InitiateClawPurchase`, `ProvisionClawParams`
+- Agent Types: `ClawAgent`, `ClawChannelsResponse`, `ClawSkillsResponse`, `ClawBindingsResponse`
+- Auth Types: `SendOtpBody`, `VerifyOtpBody`, `ResolveCredentialConflictBody`
+- ClawHub Types: `ClawHubSearchResult`, `ClawHubInstalledSkill`, `ClawHubBrowseResultPage`
+- File Types: `ClawFileEntry`, `ReadClawFileBody`, `UpdateClawFileBody`
+- Diagnostics Types: `DiagnosticsStatusResponse`, `DiagnosticsLogsResponse`
+- WhatsApp Types: `WhatsAppPairResponse`, `WhatsAppPairStatusResponse`
+- Cache Types: `CacheEntry<T>`, `SkillsCacheEntry`
+- TTS Types: `PiperVoice`, `PiperSynthesisResult`, `GenerateSpeechBody`
+- DNS Types: `CloudflareDNSRecord`
 - Email Props: `OtpCodeEmailProps`
 
 ### React Component Function Pattern
@@ -306,9 +319,10 @@ const MyComponent = () => { ... }
 
 **API Controllers** (`apps/api/src/controllers/`):
 
-- Group by resource (claws, users, ssh-keys, plans)
+- Group by resource (ai, auth, claws, plans, ssh-keys, users, webhooks)
 - Each controller exports individual functions
 - Use barrel exports in index.ts
+- Claws controller has `helpers/` subdirectory for shared utilities
 
 **API Routes** (`apps/api/src/routes/`):
 
@@ -321,11 +335,17 @@ const MyComponent = () => { ... }
 - One component per page
 - Use PageTitle for document title management
 - Include PageBackground for consistent styling
+- Public pages: Landing, Login, Blog, BlogPost, Compare, Terms, Privacy, Changelog, NotFound
+- Protected pages: Dashboard (with Chat and Playground tabs), Account, SSHKeys, Billing
 
 **Web Components** (`apps/web/src/components/`):
 
 - `ui/` for shadcn/ui primitives
-- Custom components at root level
+- `dashboard/` for dashboard-specific components (CreateClawModal, ClawCard dropdowns/dialogs, diagnostics, logs, terminal, config, file explorer)
+- `chat/` for chat interface (ChatView, ChatSidebar with tree/list views, ChatSidebarItem, ChatEmptyState)
+- `agent-chat/` for agent communication (AgentChat, ChatBubble, ChatInput, ChatMarkdown, VoiceOrb, VoiceModeOverlay, ChatSpeechButton, ChatTypingIndicator)
+- `playground/` for graph visualization (PlaygroundCanvas, ClawNode, AgentNode, DetailPanel, Toolbar, ChannelsContent, VariablesContent, BindingsContent, SkillsContent, ClawHubContent, VersionsContent)
+- Root level for shared components (Header, Footer, Logo, EmptyState, Toast, ProtectedRoute, etc.)
 - Keep components focused and composable
 
 ### Database
@@ -334,12 +354,13 @@ const MyComponent = () => { ... }
 
 **Tables**:
 
-- `users` - Firebase authenticated users
-- `claws` - Cloud server instances (multi-provider: Hetzner, DigitalOcean, Vultr)
-- `pendingClaws` - Claws awaiting payment confirmation
-- `sshKeys` - SSH key management (with per-provider key IDs)
+- `users` - Firebase authenticated users (with authMethods array, polarCustomerId, role)
+- `claws` - Cloud server instances (multi-provider: Hetzner, DigitalOcean, Vultr) with gateway tokens, Polar subscription tracking, deletion scheduling
+- `pendingClaws` - Claws awaiting payment confirmation (with expiry)
+- `sshKeys` - SSH key management (with per-provider key IDs: Hetzner, DigitalOcean, Vultr)
 - `volumes` - Persistent storage volumes
-- `otpCodes` - OTP authentication codes
+- `clawExports` - Exported claw configurations
+- `otpCodes` - OTP authentication codes (hashed, with attempt tracking)
 - `rateLimits` - Rate limiting for auth endpoints
 
 **Migrations**: Use Drizzle Kit
@@ -351,18 +372,104 @@ pnpm --filter api db:migrate   # Run migrations
 
 ### API Structure
 
-**Authentication**: Bearer token middleware validates Firebase tokens
+**Authentication**: Bearer token middleware validates Firebase tokens. Auto-creates/updates user record on first auth. Admin-only routes protected by `adminOnly` middleware.
 
-**Endpoints**:
+**Unauthenticated endpoints** (no token required):
 
-- `POST /api/auth/send-otp` - Send OTP code via email
-- `POST /api/auth/verify-otp` - Verify OTP and get Firebase token
-- `POST /api/auth/magic-link` - Send magic link via email
-- `GET/POST /api/claws` - Instance management
-- `GET/POST/DELETE /api/ssh-keys` - SSH key CRUD
-- `GET/PUT /api/users/me` - User profile
-- `GET /api/plans` - Available plans/locations (supports `?provider=` query)
-- `POST /api/webhooks/polar` - Polar payment webhooks
+- `GET /` - Health check
+- `GET /clawhub/skills` - Public ClawHub skill browsing
+
+**Auth Routes** (`/auth`):
+
+- `POST /send-otp` - Send OTP code via email (rate-limited)
+- `POST /verify-otp` - Verify OTP and get Firebase token
+- `POST /resolve-credential-conflict` - Handle auth method conflicts
+
+**Plans Routes** (`/plans`) - No auth required:
+
+- `GET /` - Available plans by provider
+- `GET /locations` - Deployment locations
+- `GET /volume-pricing` - Storage pricing
+- `GET /availability` - Plan availability by location
+
+**AI Routes** (`/ai`):
+
+- `POST /tts` - Text-to-speech generation (Piper)
+- `GET /voices` - Available TTS voices
+
+**Claws Routes** (`/claws`):
+
+- `GET /` - List user's claws
+- `GET /admin` - List all claws (admin-only)
+- `GET /:id` - Get single claw
+- `POST /` - Create free claw
+- `POST /purchase` - Initiate paid claw purchase
+- `DELETE /pending/:id` - Cancel pending purchase
+- `PATCH /:id` - Rename claw
+- `DELETE /:id` - Soft delete (schedules deletion)
+- `POST /:id/sync` - Sync status with cloud provider
+- `POST /:id/start` - Start server
+- `POST /:id/stop` - Stop server
+- `POST /:id/restart` - Restart server
+- `POST /:id/cancel-deletion` - Cancel scheduled deletion
+- `POST /:id/hard-delete` - Permanent delete (admin-only)
+- `POST /:id/diagnostics/status` - Service diagnostics
+- `POST /:id/diagnostics/logs` - Retrieve logs
+- `POST /:id/diagnostics/repair` - Attempt repair (admin-only)
+- `POST /:id/reinstall` - Reinstall OpenClaw (admin-only)
+- `GET /:id/export` - Export claw configuration
+- `POST /:id/agents` - List agents
+- `POST /:id/agents/create` - Create agent
+- `POST /:id/agents/delete` - Delete agent
+- `POST /:id/agent-config` - Get agent config
+- `PUT /:id/agent-config` - Update agent config
+- `GET /:id/env` - Get environment variables
+- `PUT /:id/env` - Update environment variables
+- `POST /:id/channels` - Get channel configs
+- `PUT /:id/channels` - Update channel configs
+- `POST /:id/channels/whatsapp/pair` - Initiate WhatsApp pairing
+- `POST /:id/channels/whatsapp/pair-status` - Check pairing status
+- `POST /:id/bindings` - Get agent-channel bindings
+- `PUT /:id/bindings` - Update bindings
+- `POST /:id/skills` - Get bundled skills
+- `PUT /:id/skills` - Update bundled skills
+- `POST /:id/agents/:agentId/skills` - Get agent skills
+- `PUT /:id/agents/:agentId/skills` - Update agent skills
+- `POST /:id/files` - List files
+- `POST /:id/files/read` - Read file content
+- `PUT /:id/files` - Update file content
+- `POST /:id/version` - Get current version
+- `POST /:id/versions` - List available versions
+- `POST /:id/install-version` - Install version (admin-only)
+- `POST /:id/credentials` - Get credentials
+- `GET /:id/clawhub/skills` - Browse ClawHub skills
+- `POST /:id/clawhub/installed` - Get installed ClawHub skills
+- `POST /:id/clawhub/install` - Install ClawHub skill
+- `POST /:id/clawhub/remove` - Remove ClawHub skill
+- `POST /:id/clawhub/update` - Update ClawHub skill
+- `POST /:id/clawhub/updates` - Check for skill updates
+- WebSocket: `/:id/terminal` - Real-time terminal access
+
+**SSH Keys Routes** (`/ssh-keys`):
+
+- `GET /` - List SSH keys
+- `POST /` - Create SSH key
+- `DELETE /:id` - Delete SSH key
+
+**Users Routes** (`/users`):
+
+- `GET /me` - Get profile
+- `PUT /me` - Update profile
+- `GET /me/stats` - User statistics
+- `GET /me/billing` - Billing history
+- `GET /me/billing/:orderId/invoice` - Download invoice
+- `POST /me/billing/portal` - Polar customer portal link
+- `POST /me/auth/:method` - Connect auth method (Google, GitHub)
+- `DELETE /me/auth/:method` - Disconnect auth method
+
+**Webhooks Routes** (`/webhooks`):
+
+- `POST /polar` - Polar payment webhook (handles checkout, subscription lifecycle)
 
 ### Cloud Provider Abstraction
 
@@ -373,21 +480,22 @@ All three providers (Hetzner, DigitalOcean, Vultr) implement the `CloudProvider`
 - `getServerTypes`, `getLocations`, `getDatacenters`
 - `createVolume`, `attachVolume`, `detachVolume`, `deleteVolume`, `getVolume`
 
-Use `getProvider(providerType)` from `@/services/provider` to resolve the correct service.
+Use `getProvider(providerType)` from `@/services/provider` to resolve the correct service. The provider resolver includes in-memory caching with TTL (5 min for server types/locations/pricing, 10 sec for individual servers).
 
 ### External Services Setup
 
-- **Firebase**: Enable Authentication (Email/Password). Generate a service account key for the Admin SDK
-- **Cloudflare**: API token needs DNS edit permissions for the zone. Creates A records for each claw subdomain
+- **Firebase**: Enable Authentication with Email/Password, Google, and GitHub sign-in methods. Generate a service account key for the Admin SDK
+- **Cloudflare**: API token needs DNS edit permissions for the zone. Creates A records for each claw subdomain (60s TTL)
 - **Resend**: Verify your sending domain. `FROM_EMAIL` defaults to `OpenClaw <noreply@openclaw.com>`
 - **Polar**: Create an organization, generate an access token, and configure a webhook pointing to `POST /api/webhooks/polar` with the secret
+- **Piper TTS** (optional): Install the Piper binary and download voice models. Set `PIPER_BINARY` and `PIPER_MODELS_DIR` env vars
 
 ### State Management (Web)
 
-**Zustand Stores** (`apps/web/src/lib/store.ts`):
+**Zustand Stores** (`apps/web/src/lib/store/`):
 
-- `useUIStore` - Toast notifications, loading states
-- `usePreferencesStore` - User preferences (persisted)
+- `useUIStore` - Toast notifications, create modal state, ProductHunt banner
+- `usePreferencesStore` - User preferences (persisted): theme, language, admin mode, chat sidebar view mode
 
 ### Naming Conventions
 
@@ -402,7 +510,7 @@ Use `getProvider(providerType)` from `@/services/provider` to resolve the correc
 ### Prerequisites
 
 - **Node.js**: >= 20
-- **pnpm**: 9.14.2 (`corepack enable` or `npm install -g pnpm@9.14.2`)
+- **pnpm**: 10.29.3 (`corepack enable` or `npm install -g pnpm@10.29.3`)
 
 ### Initial Setup
 
@@ -428,8 +536,6 @@ Each command outputs `POLAR_PRODUCT_*` env vars to add to `apps/api/.env`.
 pnpm dev          # Run all apps
 pnpm dev:web      # Run web only (port 1111)
 pnpm dev:api      # Run API only (port 2222)
-pnpm dev:mobile   # Run mobile (Expo)
-
 # Building
 pnpm build        # Build all apps
 
@@ -485,6 +591,10 @@ POLAR_PRODUCT_HETZNER_CX23=...
 POLAR_PRODUCT_DIGITALOCEAN_S_1VCPU_1GB=...
 POLAR_PRODUCT_VULTR_VC2_1C_1GB=...
 # ... (one POLAR_PRODUCT_* per provider/plan, generated by create-polar-products script)
+
+# Piper TTS (optional)
+PIPER_BINARY=piper
+PIPER_MODELS_DIR=./models
 ```
 
 **Web** (apps/web/.env):
@@ -499,42 +609,45 @@ VITE_FIREBASE_MESSAGING_SENDER_ID=...
 VITE_FIREBASE_APP_ID=...
 ```
 
-**Mobile** (apps/mobile/.env):
-
-```
-EXPO_PUBLIC_API_URL=...
-EXPO_PUBLIC_FIREBASE_API_KEY=...
-EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=...
-EXPO_PUBLIC_FIREBASE_PROJECT_ID=...
-EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET=...
-EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=...
-EXPO_PUBLIC_FIREBASE_APP_ID=...
-```
-
 ## Key Files
 
 | Purpose              | Path                                            |
 | -------------------- | ----------------------------------------------- |
 | API Entry            | `apps/api/src/index.ts`                         |
+| API App Setup        | `apps/api/src/app.ts`                           |
 | DB Schema            | `apps/api/src/db/schema.ts`                     |
 | API Routes           | `apps/api/src/routes/index.ts`                  |
+| Admin Middleware     | `apps/api/src/middleware/adminOnly.ts`          |
 | Provider Resolver    | `apps/api/src/services/provider/getProvider.ts` |
 | Hetzner Service      | `apps/api/src/services/hetzner.ts`              |
 | DigitalOcean Service | `apps/api/src/services/digitalocean.ts`         |
 | Vultr Service        | `apps/api/src/services/vultr.ts`                |
+| Cloudflare Service   | `apps/api/src/services/cloudflare.ts`           |
+| SSH Service          | `apps/api/src/services/ssh.ts`                  |
+| Terminal WebSocket   | `apps/api/src/services/terminalSocket.ts`       |
+| Piper TTS Service    | `apps/api/src/services/piper.ts`                |
+| Polar Services       | `apps/api/src/services/polar/`                  |
+| ClawHub Service      | `apps/api/src/services/clawhub/`                |
+| Claw Helpers         | `apps/api/src/controllers/claws/helpers/`       |
 | Web Entry            | `apps/web/src/main.tsx`                         |
 | Web Routes           | `apps/web/src/App.tsx`                          |
-| Auth Context         | `apps/web/src/lib/auth.tsx`                     |
+| Auth Context         | `apps/web/src/lib/auth/`                        |
 | API Client (Web)     | `apps/web/src/lib/api.ts`                       |
 | URL Paths            | `apps/web/src/lib/paths.ts`                     |
 | Web Routes           | `apps/web/src/lib/routes.ts`                    |
-| Stores               | `apps/web/src/lib/store.ts`                     |
-| Mobile Entry         | `apps/mobile/App.tsx`                           |
-| API Client (Mobile)  | `apps/mobile/src/lib/api.ts`                    |
+| Stores               | `apps/web/src/lib/store/`                       |
+| Gateway Client       | `apps/web/src/lib/gateway/`                     |
+| Dashboard Tabs       | `apps/web/src/lib/dashboardTabs.ts`             |
+| Claw Detail Tabs     | `apps/web/src/lib/clawDetailTabs.ts`            |
+| Agent Detail Tabs    | `apps/web/src/lib/agentDetailTabs.ts`           |
+| Blog Utilities       | `apps/web/src/lib/blog/`                        |
+| Claw Utilities       | `apps/web/src/lib/claw-utils/`                  |
 | Types (Web)          | `apps/web/src/ts/Types.ts`                      |
 | Interfaces (Web)     | `apps/web/src/ts/Interfaces.ts`                 |
 | Types (API)          | `apps/api/src/ts/Types.ts`                      |
 | Interfaces (API)     | `apps/api/src/ts/Interfaces.ts`                 |
+| Input Validation     | `packages/shared/src/inputValidation.ts`        |
+| OpenClaw Version     | `packages/shared/src/openclawVersion.ts`        |
 
 ### Internationalization (i18n)
 
@@ -563,15 +676,31 @@ import { t } from '@openclaw/i18n'
 **Translation keys are organized by category:**
 
 - `common.*` - Shared UI text (Save, Cancel, Delete, Loading, etc.)
+- `setup.*` - Initial setup/onboarding
+- `language.*` - Language selection
+- `theme.*` - Theme toggle
 - `nav.*` - Navigation items
 - `footer.*` - Footer content
 - `errors.*` - Error messages
+- `api.*` - API response messages
+- `emails.*` - Email templates
 - `auth.*` - Authentication pages
-- `account.*` - Account page
+- `account.*` - Account management
+- `billing.*` - Billing and payment
 - `dashboard.*` - Dashboard/Claws page
+- `chat.*` - Chat and playground chat interface
 - `createClaw.*` - Create Claw modal
 - `sshKeys.*` - SSH Keys page
 - `landing.*` - Landing page
+- `blog.*` - Blog pages
+- `changelog.*` - Release notes
+- `comparison.*` - Competitor comparison
+- `compare.*` - Full comparison table
+- `privacy.*` - Privacy policy
+- `terms.*` - Terms of service
+- `announcement.*` - Service announcements
+- `productHunt.*` - ProductHunt banner
+- `playground.*` - Playground/agent management
 
 **When adding new features:**
 
@@ -638,8 +767,8 @@ React-specific rules (web app only):
 
 On every commit, Husky runs:
 
-1. `pnpm check` — Runs `tsc --noEmit` and `eslint .` for both api and web
-2. `pnpm version:patch` — Auto-bumps patch version in both `apps/api/package.json` and `apps/web/package.json`
+1. `pnpm check` — Runs `tsc --noEmit` and `eslint .` for api and web
+2. `pnpm version:patch` — Auto-bumps patch version in `apps/api/package.json` and `apps/web/package.json`
 3. Stages the bumped `package.json` files
 
 ### How to Follow These Rules
@@ -710,4 +839,4 @@ pnpm check           # Run tsc + eslint for both api and web
 19. **Full cleanup on feature removal** - When removing a feature, delete ALL related code: components, hooks, store properties, interfaces/types, translation keys, utility functions, data files, barrel exports, API routes/controllers, and constants. Never leave orphaned code behind
 20. **Use PATHS for all URL path segments** - Never hardcode URL path segments like `'/blog'` or `'claws'`. Always use `PATHS` from `@/lib/paths` (or `@/lib`) for path segments and `ROUTES` from `@/lib/routes` (or `@/lib`) for full route strings. When constructing URLs in scripts, components, or SEO metadata, use `PATHS.BLOG`, `PATHS.LOGIN`, etc. To change a URL, update it only in `paths.ts` — everything else derives from it
 21. **Toast punctuation convention** - All toast/notification messages must follow consistent punctuation: success messages end with `.` (period) and error messages end with `!` (exclamation mark). This applies to all four language files. Note: French uses a space before `!` per French typographic rules (e.g., `claw !` not `claw!`)
-22. **Centralized validation constants** - All input validation length limits must be defined in `packages/shared/src/inputValidation.ts` as a single source of truth. Never hardcode min/max lengths in controllers, components, or translation strings. Import `inputValidation` from `@openclaw/shared` and reference the constants (e.g., `inputValidation.FEATURE_REQUEST_TITLE.MIN`). Translation error messages must use `{{min}}`/`{{max}}` interpolation parameters filled from these constants. When adding new validated fields, add the limits to `inputValidation.ts` first, then use them everywhere
+22. **Centralized validation constants** - All input validation length limits must be defined in `packages/shared/src/inputValidation.ts` as a single source of truth. Never hardcode min/max lengths in controllers, components, or translation strings. Import `inputValidation` from `@openclaw/shared` and reference the constants (e.g., `inputValidation.CLAW_NAME.MAX`). Translation error messages must use `{{min}}`/`{{max}}` interpolation parameters filled from these constants. When adding new validated fields, add the limits to `inputValidation.ts` first, then use them everywhere

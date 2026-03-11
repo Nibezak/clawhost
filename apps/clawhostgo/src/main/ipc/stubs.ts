@@ -1,5 +1,3 @@
-import type { UpdateProfileData } from '@/ts/Interfaces'
-
 import { ipcMain } from 'electron'
 import { clawProvider } from '@openclaw/shared'
 import { configStore } from '@/main/services'
@@ -52,77 +50,6 @@ const registerStubHandlers = (): void => {
 
     ipcMain.handle('deleteSSHKey', () => {
         return { success: true }
-    })
-
-    ipcMain.handle('getProfile', () => {
-        const config = configStore.readConfig()
-        return {
-            id: clawProvider.local,
-            email: 'local@clawhostgo',
-            name: config.userName || '',
-            role: 'admin',
-            authMethods: [],
-            createdAt: config.createdAt || new Date().toISOString(),
-            setupComplete: config.setupComplete || false
-        }
-    })
-
-    ipcMain.handle(
-        'updateProfile',
-        (_event: unknown, data: UpdateProfileData) => {
-            if (data?.name !== undefined) {
-                const config = configStore.readConfig()
-                config.userName = data.name
-                if (!config.setupComplete) config.setupComplete = true
-                configStore.writeConfig(config)
-            }
-            const config = configStore.readConfig()
-            return {
-                id: clawProvider.local,
-                email: 'local@clawhostgo',
-                name: config.userName || '',
-                role: 'admin',
-                authMethods: [],
-                createdAt: config.createdAt || new Date().toISOString()
-            }
-        }
-    )
-
-    ipcMain.handle('getUserStats', () => {
-        const config = configStore.readConfig()
-        return {
-            clawCount: config.claws.length,
-            sshKeyCount: 0,
-            orderCount: 0
-        }
-    })
-
-    ipcMain.handle('connectAuthMethod', () => {
-        return { success: true }
-    })
-
-    ipcMain.handle('disconnectAuthMethod', () => {
-        return { success: true }
-    })
-
-    ipcMain.handle('getBillingHistory', () => {
-        return { orders: [], total: 0, page: 1, limit: 20 }
-    })
-
-    ipcMain.handle('getOrderInvoice', () => {
-        return { url: null }
-    })
-
-    ipcMain.handle('getCustomerPortal', () => {
-        return { url: null }
-    })
-
-    ipcMain.handle('sendOtp', () => {
-        return { success: true }
-    })
-
-    ipcMain.handle('verifyOtp', () => {
-        return { customToken: 'local-token' }
     })
 
     ipcMain.handle('purchaseClaw', () => {

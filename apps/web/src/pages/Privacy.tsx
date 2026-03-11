@@ -3,8 +3,15 @@ import type { FC, ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { LEGAL_EMAIL } from '@/lib/links'
-import { BlogCTA, Header, LandingFooter, PageBackground, PageTitle } from '@/components'
 import { PATHS, getBaseDomain } from '@/lib'
+
+import {
+    BlogCTA,
+    Header,
+    LandingFooter,
+    PageBackground,
+    PageTitle
+} from '@/components'
 
 const Privacy: FC = (): ReactNode => {
     return (
@@ -12,6 +19,7 @@ const Privacy: FC = (): ReactNode => {
             <PageTitle
                 title={t('privacy.title')}
                 description={t('privacy.description')}
+                image={`https://${getBaseDomain()}/privacy-policy-thumbnail.webp`}
                 url={`https://${getBaseDomain()}/${PATHS.PRIVACY}`}
             />
             <PageBackground />

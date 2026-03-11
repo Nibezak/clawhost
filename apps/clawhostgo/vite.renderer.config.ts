@@ -17,19 +17,11 @@ export default defineConfig({
     },
     server: {
         watch: {
-            ignored: [
-                '!**/packages/i18n/**',
-                '!**/packages/shared/**'
-            ]
+            ignored: ['!**/packages/i18n/**', '!**/packages/shared/**']
         }
     },
     resolve: {
         alias: {
-            '@/lib/firebase': path.resolve(
-                __dirname,
-                './src/renderer/shims/firebase'
-            ),
-            '@/lib/auth': path.resolve(__dirname, './src/renderer/providers'),
             '@/lib/api': path.resolve(__dirname, './src/renderer/shims/api'),
             '@/components/dashboard/CreateClawModal': path.resolve(
                 __dirname,

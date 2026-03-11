@@ -4,23 +4,25 @@ import type {
 } from '@/ts/Interfaces'
 import type { ProviderType } from '@/ts/Types'
 
+import crypto from 'crypto'
 import { eq } from 'drizzle-orm'
-import { clawStatus } from '@openclaw/shared'
+import { clawStatus, inputValidation } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws, pendingClaws, sshKeys, volumes } from '@/db/schema'
 import { getProvider } from '@/services/provider'
 import cloudflare from '@/services/cloudflare'
 import {
     generateSlug,
+    generateServerName,
     generateToken,
     generateCloudInit,
     DOMAIN
 } from '@/controllers/claws/helpers'
 import { t } from '@openclaw/i18n'
 
-export async function provisionClaw(
+const provisionClaw = async (
     params: ProvisionClawParams
-): Promise<ProvisionClawResponse> {
+): Promise<ProvisionClawResponse> => {
     try {
         const existingClaw = await db
             .select()
@@ -46,8 +48,6 @@ export async function provisionClaw(
         const providerName = (pending.provider || 'hetzner') as ProviderType
         const provider = getProvider(providerName)
 
-        const MIN_MEMORY_GB = 4
-
         const [serverTypes, sshKeyResult] = await Promise.all([
             provider.getServerTypes(),
             pending.sshKeyId
@@ -63,7 +63,10 @@ export async function provisionClaw(
             (st) => st.name === pending.planId
         )
 
-        if (!selectedPlan || selectedPlan.memory < MIN_MEMORY_GB) {
+        if (
+            !selectedPlan ||
+            selectedPlan.memory < inputValidation.MIN_MEMORY_GB.MIN
+        ) {
             return { success: false, error: t('api.planBelowMinimumMemory') }
         }
 
@@ -113,8 +116,9 @@ export async function provisionClaw(
         let ip: string
 
         try {
+            const serverName = generateServerName(pending.name, id)
             const server = await provider.createServer(
-                `${pending.name}-${id.slice(0, 8)}`,
+                serverName,
                 pending.planId,
                 pending.location,
                 pending.rootPassword || undefined,
@@ -145,7 +149,10 @@ export async function provisionClaw(
                 .where(eq(claws.id, id))
         ])
 
-        if (pending.volumeSize && pending.volumeSize >= 10) {
+        if (
+            pending.volumeSize &&
+            pending.volumeSize >= inputValidation.VOLUME_SIZE.MIN
+        ) {
             try {
                 const volumeId = crypto.randomUUID()
                 const providerVolume = await provider.createVolume(
@@ -179,3 +186,5 @@ export async function provisionClaw(
         }
     }
 }
+
+export default provisionClaw

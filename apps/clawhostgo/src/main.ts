@@ -1,6 +1,12 @@
 import { app, BrowserWindow } from 'electron'
 import path from 'path'
-import { configStore, nodeBinary, reverseProxy, dnsResolver, certManager } from '@/main/services'
+import {
+    configStore,
+    nodeBinary,
+    reverseProxy,
+    dnsResolver,
+    certManager
+} from '@/main/services'
 import registerAllHandlers from '@/main/ipc'
 
 declare const MAIN_WINDOW_VITE_DEV_SERVER_URL: string

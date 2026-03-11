@@ -7,7 +7,13 @@ import path from 'path'
 import crypto from 'crypto'
 import os from 'os'
 import { clawProvider, clawStatus } from '@openclaw/shared'
-import { configStore, processManager, versionManager, certManager, reverseProxy } from '@/main/services'
+import {
+    configStore,
+    processManager,
+    versionManager,
+    certManager,
+    reverseProxy
+} from '@/main/services'
 
 const getDeviceIp = (): string => {
     const interfaces = os.networkInterfaces()
@@ -246,7 +252,11 @@ const registerClawHandlers = (): void => {
 
     ipcMain.handle(
         'updateClawSubdomain',
-        (_event: IpcMainInvokeEvent, id: string, data: { subdomain: string }) => {
+        (
+            _event: IpcMainInvokeEvent,
+            id: string,
+            data: { subdomain: string }
+        ) => {
             const claw = configStore.findClaw(id)
             if (!claw) throw new Error('Claw not found')
 

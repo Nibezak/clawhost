@@ -1,3 +1,3 @@
-const THREADS_URL = 'https://threads.net/@clawhost.cloud'
+const THREADS_URL = 'https://threads.net/@tryclawhost'
 
 export default THREADS_URL

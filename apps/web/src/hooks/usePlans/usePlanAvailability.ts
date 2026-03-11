@@ -6,7 +6,9 @@ const usePlanAvailability = (provider?: string) => {
     return useQuery({
         queryKey: [...PLAN_AVAILABILITY_QUERY_KEY, provider || 'hetzner'],
         queryFn: () => api.getPlanAvailability(provider),
-        staleTime: Infinity
+        staleTime: 10_000,
+        refetchInterval: 10_000,
+        retry: false
     })
 }
 

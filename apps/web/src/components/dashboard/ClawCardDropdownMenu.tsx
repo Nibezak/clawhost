@@ -3,6 +3,8 @@ import type { ClawCardDropdownMenuProps } from '@/ts/Interfaces'
 
 import { t } from '@openclaw/i18n'
 import { clawProvider, clawStatus } from '@openclaw/shared'
+import { getBaseDomain } from '@/lib'
+import { generateSlug } from '@/lib/claw-utils'
 import {
     Button,
     DropdownMenu,
@@ -19,7 +21,6 @@ import {
     DotsThreeOutlineIcon,
     TerminalIcon,
     CircleNotchIcon,
-    CopyIcon,
     ClockCountdownIcon,
     FolderSimpleIcon,
     ArrowsClockwiseIcon,
@@ -69,8 +70,7 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                 )}
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end' collisionPadding={8}>
-                {(claw.status === clawStatus.stopped ||
-                    claw.status === clawStatus.off) && (
+                {claw.status === clawStatus.stopped && (
                     <DropdownMenuItem
                         onClick={actions.onStart}
                         disabled={isLoading}
@@ -81,6 +81,22 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                 )}
                 {claw.status === clawStatus.running && (
                     <>
+                        <DropdownMenuItem
+                            onClick={() => {
+                                const subdomain =
+                                    claw.subdomain || generateSlug(claw.id)
+                                const domain =
+                                    claw.provider === clawProvider.local
+                                        ? `${subdomain}.clawhost`
+                                        : `${subdomain}.${getBaseDomain()}`
+                                const url = `https://${domain}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`
+                                window.open(url, '_blank')
+                            }}
+                        >
+                            <ArrowSquareOutIcon className='mr-2 h-4 w-4' />
+                            {t('dashboard.openControlPanel')}
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem
                             onClick={actions.onShowStopModal}
                             disabled={isLoading}
@@ -100,18 +116,10 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                 {claw.provider !== clawProvider.local && claw.ip && (
                     <>
                         {hasActionItems && <DropdownMenuSeparator />}
-                        <DropdownMenuItem onClick={actions.onCopySSH}>
+                        <DropdownMenuItem onClick={actions.onShowCredentials}>
                             <TerminalIcon className='mr-2 h-4 w-4' />
-                            {t('dashboard.connect')}
+                            {t('dashboard.viewServerCredentials')}
                         </DropdownMenuItem>
-                        {claw.hasRootPassword && (
-                            <DropdownMenuItem
-                                onClick={actions.onCopyPassword}
-                            >
-                                <CopyIcon className='mr-2 h-4 w-4' />
-                                {t('dashboard.copyPassword')}
-                            </DropdownMenuItem>
-                        )}
                     </>
                 )}
                 {claw.ip && (
@@ -128,22 +136,22 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                             </DropdownMenuItem>
                         )}
                         {claw.provider !== clawProvider.local && isAdmin && (
-                            <>
-                                <DropdownMenuItem
-                                    onClick={actions.onUpdateInstance}
-                                    disabled={isLoading}
-                                >
-                                    <ArrowsClockwiseIcon className='mr-2 h-4 w-4' />
-                                    {t('dashboard.updateInstance')}
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={actions.onShowReinstallModal}
-                                    disabled={isLoading}
-                                >
-                                    <ArrowCounterClockwiseIcon className='mr-2 h-4 w-4' />
-                                    {t('dashboard.reinstallInstance')}
-                                </DropdownMenuItem>
-                            </>
+                            <DropdownMenuItem
+                                onClick={actions.onUpdateInstance}
+                                disabled={isLoading}
+                            >
+                                <ArrowsClockwiseIcon className='mr-2 h-4 w-4' />
+                                {t('dashboard.updateInstance')}
+                            </DropdownMenuItem>
+                        )}
+                        {claw.provider !== clawProvider.local && (
+                            <DropdownMenuItem
+                                onClick={actions.onShowReinstallModal}
+                                disabled={isLoading}
+                            >
+                                <ArrowCounterClockwiseIcon className='mr-2 h-4 w-4' />
+                                {t('dashboard.reinstallInstance')}
+                            </DropdownMenuItem>
                         )}
                     </>
                 )}
@@ -197,14 +205,31 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                         )}
                     </>
                 ) : (
-                    <DropdownMenuItem
-                        onClick={actions.onShowDeleteModal}
-                        disabled={isLoading}
-                        className='text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400'
-                    >
-                        <TrashIcon className='mr-2 h-4 w-4' />
-                        {t('dashboard.scheduleDeletion')}
-                    </DropdownMenuItem>
+                    <>
+                        {claw.status === clawStatus.creating &&
+                            !claw.id.startsWith('pending-') && (
+                                <>
+                                    <DropdownMenuItem
+                                        onClick={actions.onShowReinstallModal}
+                                        disabled={isLoading}
+                                    >
+                                        <ArrowCounterClockwiseIcon className='mr-2 h-4 w-4' />
+                                        {t('dashboard.reinstallInstance')}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuSeparator />
+                                </>
+                            )}
+                        <DropdownMenuItem
+                            onClick={actions.onShowDeleteModal}
+                            disabled={isLoading}
+                            className='text-red-600 focus:text-red-600 dark:text-red-400 dark:focus:text-red-400'
+                        >
+                            <TrashIcon className='mr-2 h-4 w-4' />
+                            {claw.id.startsWith('pending-')
+                                ? t('common.delete')
+                                : t('dashboard.scheduleDeletion')}
+                        </DropdownMenuItem>
+                    </>
                 )}
             </DropdownMenuContent>
         </DropdownMenu>

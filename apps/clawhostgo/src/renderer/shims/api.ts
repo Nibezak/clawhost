@@ -1,9 +1,81 @@
-import { clawProvider, RequestClient } from '@openclaw/shared'
+import type {
+    AgentConfigResponse,
+    BillingHistoryResponse,
+    ClawEnvVarsResponse,
+    BillingInvoiceResponse,
+    Claw,
+    ClawCredentialsResponse,
+    RenameClawData,
+    UpdateClawSubdomainData,
+    ClawAgentsResponse,
+    ClawChannelsResponse,
+    ClawFilesResponse,
+    ClawSkillsResponse,
+    ClawVersionResponse,
+    ClawVersionsResponse,
+    InstallClawVersionResponse,
+    CreateSSHKeyData,
+    CustomerPortalResponse,
+    DeleteClawResponse,
+    DiagnosticsLogsResponse,
+    DiagnosticsStatusResponse,
+    GetAgentSkillsResponse,
+    Location,
+    PlansResponse,
+    PlanAvailability,
+    PurchaseClawResponse,
+    ReadClawFileResponse,
+    ResolveCredentialConflictData,
+    SSHKey,
+    CreateAgentData,
+    CreateAgentResponse,
+    DeleteAgentData,
+    UpdateAgentConfigData,
+    UpdateAgentSkillsData,
+    UpdateClawChannelsData,
+    WhatsAppPairResponse,
+    WhatsAppPairStatusResponse,
+    BrowseClawHubData,
+    ClawHubSkillActionData,
+    ClawHubUpdateData,
+    ClawHubBrowseResponse,
+    ClawHubInstalledResponse,
+    ClawHubUpdatesResponse,
+    ClawBindingsResponse,
+    UpdateClawBindingsData,
+    UpdateClawEnvVarsData,
+    UpdateClawFileData,
+    UpdateClawSkillsData,
+    UpdateProfileData,
+    UserProfile,
+    UserStats,
+    VerifyOtpResponse,
+    VolumePricing
+} from '@/ts/Interfaces'
 
-const API_BASE = 'https://api.clawhost.cloud'
+import { RequestClient } from '@openclaw/shared'
+import { signOut } from 'firebase/auth'
+import { auth, clearTokenCache, getCachedToken } from '@/lib/firebase'
+
+const BASE_URL = import.meta.env.VITE_API_URL || 'https://api.clawhost.cloud'
+
+const client = new RequestClient({
+    baseUrl: BASE_URL,
+    getHeaders: async (): Promise<Record<string, string>> => {
+        const token = await getCachedToken()
+        return token ? { Authorization: `Bearer ${token}` } : {}
+    },
+    onUnauthorized: async (): Promise<void> => {
+        clearTokenCache()
+        const token = await getCachedToken(true)
+        if (!token) {
+            await signOut(auth)
+        }
+    }
+})
 
 const publicClient = new RequestClient({
-    baseUrl: API_BASE
+    baseUrl: BASE_URL
 })
 
 const invoke = (channel: string, ...args: unknown[]): Promise<unknown> => {
@@ -14,138 +86,168 @@ const invoke = (channel: string, ...args: unknown[]): Promise<unknown> => {
 }
 
 const api = {
-    sendOtp: (_email: string) => Promise.resolve(),
-    verifyOtp: (_email: string, _code: string) =>
-        Promise.resolve({ customToken: 'local-token' }),
+    sendOtp: (email: string) =>
+        publicClient.post<void>('/auth/send-otp', { email }),
+    verifyOtp: (email: string, code: string) =>
+        publicClient.post<VerifyOtpResponse>('/auth/verify-otp', {
+            email,
+            code
+        }),
+    resolveCredentialConflict: (data: ResolveCredentialConflictData) =>
+        publicClient.post<VerifyOtpResponse>(
+            '/auth/resolve-credential-conflict',
+            data
+        ),
 
     getPlans: (_provider?: string) =>
-        Promise.resolve({
-            plans: [
-                {
-                    id: clawProvider.local,
-                    name: 'Local',
-                    cpu: 0,
-                    memory: 0,
-                    disk: 0,
-                    priceMonthly: 0,
-                    architecture: clawProvider.local
-                }
-            ],
-            atCapacity: false
-        }),
+        invoke('getPlans') as Promise<PlansResponse>,
     getLocations: (_provider?: string) =>
-        Promise.resolve([
-            {
-                id: clawProvider.local,
-                name: 'Local',
-                city: 'Local',
-                country: 'Local',
-                disabled: false
-            }
-        ]),
+        invoke('getLocations') as Promise<Location[]>,
     getVolumePricing: (_provider?: string) =>
-        Promise.resolve({ pricePerGbMonthly: 0, minSize: 0, maxSize: 0 }),
-    getPlanAvailability: (_provider?: string) => Promise.resolve([]),
+        invoke('getVolumePricing') as Promise<VolumePricing>,
+    getPlanAvailability: (_provider?: string) =>
+        invoke('getPlanAvailability') as Promise<PlanAvailability>,
 
-    getClaws: () => invoke('getClaws'),
-    getAdminClaws: () => invoke('getClaws'),
-    getClaw: (id: string, _sync?: boolean) => invoke('getClaw', id),
-    syncClaw: (id: string) => invoke('syncClaw', id),
-    createClaw: (data: unknown) => invoke('createClaw', data),
+    getClaws: () => invoke('getClaws') as Promise<Claw[]>,
+    getAdminClaws: () => invoke('getClaws') as Promise<Claw[]>,
+    getClaw: (id: string, _sync?: boolean) =>
+        invoke('getClaw', id) as Promise<Claw>,
+    syncClaw: (id: string) => invoke('syncClaw', id) as Promise<Claw>,
+    createClaw: (data: unknown) => invoke('createClaw', data) as Promise<Claw>,
     purchaseClaw: (_data: unknown) =>
-        Promise.reject(new Error('Purchasing is not available in local mode.')),
-    startClaw: (id: string) => invoke('startClaw', id),
-    stopClaw: (id: string) => invoke('stopClaw', id),
-    restartClaw: (id: string) => invoke('restartClaw', id),
-    deleteClaw: (id: string) => invoke('deleteClaw', id),
-    renameClaw: (id: string, data: unknown) => invoke('renameClaw', id, data),
-    updateClawSubdomain: (id: string, data: unknown) => invoke('updateClawSubdomain', id, data),
-    cancelDeletion: (id: string) => invoke('cancelDeletion', id),
-    hardDeleteClaw: (id: string) => invoke('hardDeleteClaw', id),
-    getClawDiagnostics: (id: string) => invoke('getClawDiagnostics', id),
-    getClawLogs: (id: string) => invoke('getClawLogs', id),
-    repairClaw: (id: string) => invoke('repairClaw', id),
-    reinstallClaw: (id: string) => invoke('reinstallClaw', id),
-    getClawVersion: (id: string) => invoke('getClawVersion', id),
-    getClawVersions: (id: string) => invoke('getClawVersions', id),
+        Promise.reject(
+            new Error('Purchasing is not available in local mode.')
+        ) as Promise<PurchaseClawResponse>,
+    startClaw: (id: string) => invoke('startClaw', id) as Promise<Claw>,
+    stopClaw: (id: string) => invoke('stopClaw', id) as Promise<Claw>,
+    restartClaw: (id: string) => invoke('restartClaw', id) as Promise<Claw>,
+    deleteClaw: (id: string) =>
+        invoke('deleteClaw', id) as Promise<DeleteClawResponse>,
+    renameClaw: (id: string, data: RenameClawData) =>
+        invoke('renameClaw', id, data) as Promise<Claw>,
+    updateClawSubdomain: (id: string, data: UpdateClawSubdomainData) =>
+        invoke('updateClawSubdomain', id, data) as Promise<Claw>,
+    cancelDeletion: (id: string) =>
+        invoke('cancelDeletion', id) as Promise<Claw>,
+    hardDeleteClaw: (id: string) =>
+        invoke('hardDeleteClaw', id) as Promise<void>,
+    getClawDiagnostics: (id: string) =>
+        invoke('getClawDiagnostics', id) as Promise<DiagnosticsStatusResponse>,
+    getClawLogs: (id: string) =>
+        invoke('getClawLogs', id) as Promise<DiagnosticsLogsResponse>,
+    repairClaw: (id: string) => invoke('repairClaw', id) as Promise<void>,
+    reinstallClaw: (id: string) => invoke('reinstallClaw', id) as Promise<void>,
+    getClawCredentials: (id: string) =>
+        invoke('getClawCredentials', id) as Promise<ClawCredentialsResponse>,
+    getClawVersion: (id: string) =>
+        invoke('getClawVersion', id) as Promise<ClawVersionResponse>,
+    getClawVersions: (id: string) =>
+        invoke('getClawVersions', id) as Promise<ClawVersionsResponse>,
     installClawVersion: (id: string, version: string) =>
-        invoke('installClawVersion', id, version),
-    getClawAgents: (id: string) => invoke('getClawAgents', id),
+        invoke(
+            'installClawVersion',
+            id,
+            version
+        ) as Promise<InstallClawVersionResponse>,
+    getClawAgents: (id: string) =>
+        invoke('getClawAgents', id) as Promise<ClawAgentsResponse>,
     getClawAgentConfig: (id: string, agentId: string) =>
-        invoke('getClawAgentConfig', id, { agentId }),
-    updateClawAgentConfig: (id: string, data: unknown) =>
-        invoke('updateClawAgentConfig', id, data),
-    createClawAgent: (id: string, data: unknown) =>
-        invoke('createClawAgent', id, data),
-    deleteClawAgent: (id: string, data: unknown) =>
-        invoke('deleteClawAgent', id, data),
-    getClawChannels: (id: string) => invoke('getClawChannels', id),
-    updateClawChannels: (id: string, data: unknown) =>
-        invoke('updateClawChannels', id, data),
-    pairWhatsApp: (id: string) => invoke('pairWhatsApp', id),
-    pairWhatsAppStatus: (id: string) => invoke('pairWhatsAppStatus', id),
-    getClawBindings: (id: string) => invoke('getClawBindings', id),
-    updateClawBindings: (id: string, data: unknown) =>
-        invoke('updateClawBindings', id, data),
-    getClawSkills: (id: string) => invoke('getClawSkills', id),
-    updateClawSkills: (id: string, data: unknown) =>
-        invoke('updateClawSkills', id, data),
+        invoke('getClawAgentConfig', id, {
+            agentId
+        }) as Promise<AgentConfigResponse>,
+    updateClawAgentConfig: (id: string, data: UpdateAgentConfigData) =>
+        invoke('updateClawAgentConfig', id, data) as Promise<void>,
+    createClawAgent: (id: string, data: CreateAgentData) =>
+        invoke('createClawAgent', id, data) as Promise<CreateAgentResponse>,
+    deleteClawAgent: (id: string, data: DeleteAgentData) =>
+        invoke('deleteClawAgent', id, data) as Promise<void>,
+    getClawChannels: (id: string) =>
+        invoke('getClawChannels', id) as Promise<ClawChannelsResponse>,
+    updateClawChannels: (id: string, data: UpdateClawChannelsData) =>
+        invoke('updateClawChannels', id, data) as Promise<void>,
+    pairWhatsApp: (id: string) =>
+        invoke('pairWhatsApp', id) as Promise<WhatsAppPairResponse>,
+    pairWhatsAppStatus: (id: string) =>
+        invoke('pairWhatsAppStatus', id) as Promise<WhatsAppPairStatusResponse>,
+    getClawBindings: (id: string) =>
+        invoke('getClawBindings', id) as Promise<ClawBindingsResponse>,
+    updateClawBindings: (id: string, data: UpdateClawBindingsData) =>
+        invoke('updateClawBindings', id, data) as Promise<void>,
+    getClawSkills: (id: string) =>
+        invoke('getClawSkills', id) as Promise<ClawSkillsResponse>,
+    updateClawSkills: (id: string, data: UpdateClawSkillsData) =>
+        invoke('updateClawSkills', id, data) as Promise<void>,
     getAgentSkills: (clawId: string, agentId: string) =>
-        invoke('getAgentSkills', clawId, agentId),
-    updateAgentSkills: (clawId: string, agentId: string, data: unknown) =>
-        invoke('updateAgentSkills', clawId, agentId, data),
-    browseClawHubSkills: (_clawId: string, params: Record<string, unknown>) => {
+        invoke(
+            'getAgentSkills',
+            clawId,
+            agentId
+        ) as Promise<GetAgentSkillsResponse>,
+    updateAgentSkills: (
+        clawId: string,
+        agentId: string,
+        data: UpdateAgentSkillsData
+    ) => invoke('updateAgentSkills', clawId, agentId, data) as Promise<void>,
+    browseClawHubSkills: (_clawId: string, params: BrowseClawHubData) => {
         const qs = new URLSearchParams()
-        if (params.query) qs.set('query', String(params.query))
+        if (params.query) qs.set('query', params.query)
         if (params.limit) qs.set('limit', String(params.limit))
-        if (params.cursor) qs.set('cursor', String(params.cursor))
+        if (params.cursor) qs.set('cursor', params.cursor)
         const str = qs.toString()
-        return publicClient.get(`/clawhub/skills${str ? `?${str}` : ''}`)
+        return publicClient.get<ClawHubBrowseResponse>(
+            `/clawhub/skills${str ? `?${str}` : ''}`
+        )
     },
     getClawHubInstalled: (clawId: string, agentId?: string) =>
-        invoke('getClawHubInstalled', clawId, { agentId }),
-    installClawHubSkill: (clawId: string, data: unknown) =>
-        invoke('installClawHubSkill', clawId, data),
-    removeClawHubSkill: (clawId: string, data: unknown) =>
-        invoke('removeClawHubSkill', clawId, data),
-    updateClawHubSkill: (clawId: string, data: unknown) =>
-        invoke('updateClawHubSkill', clawId, data),
+        invoke('getClawHubInstalled', clawId, {
+            agentId
+        }) as Promise<ClawHubInstalledResponse>,
+    installClawHubSkill: (clawId: string, data: ClawHubSkillActionData) =>
+        invoke('installClawHubSkill', clawId, data) as Promise<void>,
+    removeClawHubSkill: (clawId: string, data: ClawHubSkillActionData) =>
+        invoke('removeClawHubSkill', clawId, data) as Promise<void>,
+    updateClawHubSkill: (clawId: string, data: ClawHubUpdateData) =>
+        invoke('updateClawHubSkill', clawId, data) as Promise<void>,
     checkClawHubUpdates: (clawId: string, agentId?: string) =>
-        invoke('checkClawHubUpdates', clawId, { agentId }),
-    getClawEnvVars: (id: string) => invoke('getClawEnvVars', id),
-    updateClawEnvVars: (id: string, data: unknown) =>
-        invoke('updateClawEnvVars', id, data),
+        invoke('checkClawHubUpdates', clawId, {
+            agentId
+        }) as Promise<ClawHubUpdatesResponse>,
+    getClawEnvVars: (id: string) =>
+        invoke('getClawEnvVars', id) as Promise<ClawEnvVarsResponse>,
+    updateClawEnvVars: (id: string, data: UpdateClawEnvVarsData) =>
+        invoke('updateClawEnvVars', id, data) as Promise<void>,
     exportClaw: async (_id: string, _filename: string) => {},
-    listClawFiles: (id: string) => invoke('listClawFiles', id),
+    listClawFiles: (id: string) =>
+        invoke('listClawFiles', id) as Promise<ClawFilesResponse>,
     readClawFile: (id: string, filePath: string) =>
-        invoke('readClawFile', id, { path: filePath }),
-    updateClawFile: (id: string, data: unknown) =>
-        invoke('updateClawFile', id, data),
+        invoke('readClawFile', id, {
+            path: filePath
+        }) as Promise<ReadClawFileResponse>,
+    updateClawFile: (id: string, data: UpdateClawFileData) =>
+        invoke('updateClawFile', id, data) as Promise<void>,
 
-    getSSHKeys: () => Promise.resolve([]),
-    createSSHKey: (_data: unknown) => Promise.resolve({}),
+    getSSHKeys: () => Promise.resolve([] as SSHKey[]),
+    createSSHKey: (_data: CreateSSHKeyData) => Promise.resolve({} as SSHKey),
     deleteSSHKey: (_id: string) => Promise.resolve(),
 
-    getProfile: () => invoke('getProfile'),
-    updateProfile: (data: unknown) => invoke('updateProfile', data),
-    connectAuthMethod: (_method: string) => Promise.resolve(),
-    disconnectAuthMethod: (_method: string) => Promise.resolve(),
-    getUserStats: () => invoke('getUserStats'),
-    getBillingHistory: (_page?: number, _limit?: number) =>
-        Promise.resolve({ orders: [], total: 0, page: 1, limit: 20 }),
-    getOrderInvoice: (_orderId: string) => Promise.resolve({ url: null }),
-    getCustomerPortal: () => Promise.resolve({ url: null }),
-
-    getFeatureRequests: (_sort?: string) =>
-        Promise.resolve({ featureRequests: [], total: 0 }),
-    getFeatureRequestsPublic: (_sort?: string) =>
-        Promise.resolve({ featureRequests: [], total: 0 }),
-    createFeatureRequest: (_data: unknown) => Promise.resolve({}),
-    upvoteFeatureRequest: (_id: string) =>
-        Promise.resolve({ upvoteCount: 0, hasUpvoted: false }),
-    updateFeatureRequestStatus: (_id: string, _data: unknown) =>
-        Promise.resolve(),
-    deleteFeatureRequest: (_id: string) => Promise.resolve()
+    getProfile: () => client.get<UserProfile>('/users/me'),
+    updateProfile: (data: UpdateProfileData) =>
+        client.put<UserProfile>('/users/me', data),
+    connectAuthMethod: (method: string) =>
+        client.post<void>(`/users/me/auth/${method}`),
+    disconnectAuthMethod: (method: string) =>
+        client.delete<void>(`/users/me/auth/${method}`),
+    getUserStats: () => client.get<UserStats>('/users/me/stats'),
+    getBillingHistory: (page: number = 1, limit: number = 10) =>
+        client.get<BillingHistoryResponse>(
+            `/users/me/billing?page=${page}&limit=${limit}`
+        ),
+    getOrderInvoice: (orderId: string) =>
+        client.get<BillingInvoiceResponse>(
+            `/users/me/billing/${orderId}/invoice`
+        ),
+    getCustomerPortal: () =>
+        client.post<CustomerPortalResponse>('/users/me/billing/portal')
 }
 
 export default api

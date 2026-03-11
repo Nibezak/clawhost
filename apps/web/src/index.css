@@ -378,7 +378,8 @@
 }
 
 @keyframes status-breathe {
-    0%, 100% {
+    0%,
+    100% {
         opacity: 1;
         transform: scale(1);
     }
@@ -428,4 +429,12 @@ html {
 
 *::-webkit-scrollbar-thumb:hover {
     background: rgba(161, 161, 170, 0.4);
+}
+
+.xterm {
+    overflow: hidden !important;
+}
+
+.xterm .xterm-viewport {
+    background-color: transparent !important;
 }

@@ -10,7 +10,7 @@ import { clawStatus } from '@openclaw/shared'
 import { db } from '@/db'
 import { claws } from '@/db/schema'
 import { parseWebhook, handleWebhook } from '@/lib/polar'
-import { provisionClaw } from '@/controllers/claws/provisionClaw'
+import provisionClaw from '@/controllers/claws/provisionClaw'
 import { getProvider } from '@/services/provider'
 import { cleanupClaw } from '@/controllers/claws/helpers'
 import { ok, fail } from '@/lib/response'
@@ -41,7 +41,7 @@ const handlePolarWebhook = async (c: Context) => {
                 }
 
                 const existingClaw = await db
-                    .select()
+                    .select({ id: claws.id })
                     .from(claws)
                     .where(eq(claws.polarSubscriptionId, data.id))
                     .limit(1)
@@ -55,16 +55,14 @@ const handlePolarWebhook = async (c: Context) => {
                     return
                 }
 
-                try {
-                    await provisionClaw({
-                        pendingClawId,
-                        subscriptionId: data.id,
-                        customerId: data.customerId,
-                        productId: data.productId
-                    })
-                } catch (err) {
+                provisionClaw({
+                    pendingClawId,
+                    subscriptionId: data.id,
+                    customerId: data.customerId,
+                    productId: data.productId
+                }).catch((err) =>
                     console.error(`Failed to provision claw: ${err}`)
-                }
+                )
             },
 
             onSubscriptionCanceled: async (data: SubscriptionWebhookData) => {
@@ -83,7 +81,13 @@ const handlePolarWebhook = async (c: Context) => {
 
             onSubscriptionRevoked: async (data: SubscriptionWebhookData) => {
                 const claw = await db
-                    .select()
+                    .select({
+                        id: claws.id,
+                        provider: claws.provider,
+                        providerServerId: claws.providerServerId,
+                        subdomain: claws.subdomain,
+                        deletionScheduledAt: claws.deletionScheduledAt
+                    })
                     .from(claws)
                     .where(eq(claws.polarSubscriptionId, data.id))
                     .limit(1)
@@ -93,26 +97,24 @@ const handlePolarWebhook = async (c: Context) => {
                 }
 
                 if (claw[0].deletionScheduledAt) {
-                    try {
-                        await cleanupClaw(claw[0].id, {
-                            provider: (claw[0].provider ||
-                                'hetzner') as ProviderType,
-                            providerServerId: claw[0].providerServerId,
-                            subdomain: claw[0].subdomain
-                        })
-                    } catch (err) {
+                    cleanupClaw(claw[0].id, {
+                        provider: (claw[0].provider ||
+                            'hetzner') as ProviderType,
+                        providerServerId: claw[0].providerServerId,
+                        subdomain: claw[0].subdomain
+                    }).catch((err) => {
                         console.error(
                             `Failed to cleanup claw ${claw[0].id}:`,
                             err
                         )
-                        await db
-                            .update(claws)
+                        db.update(claws)
                             .set({
                                 subscriptionStatus: 'revoked',
                                 status: clawStatus.stopped
                             })
                             .where(eq(claws.id, claw[0].id))
-                    }
+                            .catch(() => {})
+                    })
                     return
                 }
 
@@ -120,7 +122,7 @@ const handlePolarWebhook = async (c: Context) => {
                     const provider = getProvider(
                         (claw[0].provider || 'hetzner') as ProviderType
                     )
-                    await Promise.all([
+                    Promise.all([
                         db
                             .update(claws)
                             .set({ subscriptionStatus: 'revoked' })
@@ -136,12 +138,12 @@ const handlePolarWebhook = async (c: Context) => {
                             .catch((err) =>
                                 console.error(`Failed to stop server: ${err}`)
                             )
-                    ])
+                    ]).catch(() => {})
                 } else {
-                    await db
-                        .update(claws)
+                    db.update(claws)
                         .set({ subscriptionStatus: 'revoked' })
                         .where(eq(claws.id, claw[0].id))
+                        .catch(() => {})
                 }
             },
 

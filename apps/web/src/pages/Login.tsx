@@ -5,6 +5,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
+import { inputValidation } from '@openclaw/shared'
 import { useAuth } from '@/lib/auth'
 import { useUIStore } from '@/lib/store'
 import { ROUTES } from '@/lib'
@@ -15,7 +16,7 @@ import {
     CircleNotchIcon,
     ArrowLeftIcon
 } from '@phosphor-icons/react'
-import { STORAGE_KEYS } from '@/lib/storageKeys'
+import STORAGE_KEYS from '@/lib/storageKeys'
 
 const COOLDOWN_KEY = STORAGE_KEYS.OTP_SENT_AT
 const COOLDOWN_DURATION = 60
@@ -88,7 +89,11 @@ const Login: FC = (): ReactNode => {
         if (loadingMethod || cooldown > 0) return
 
         const trimmed = email.trim()
-        if (!trimmed || !EMAIL_REGEX.test(trimmed) || trimmed.length > 320) {
+        if (
+            !trimmed ||
+            !EMAIL_REGEX.test(trimmed) ||
+            trimmed.length > inputValidation.EMAIL.MAX
+        ) {
             setEmailError(t('auth.invalidEmailFormat'))
             return
         }
@@ -475,9 +480,7 @@ const Login: FC = (): ReactNode => {
                             onClick={() => handleVerifyOtp(code.join(''))}
                             size='lg'
                             className='w-full gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white hover:opacity-90'
-                            disabled={
-                                !!loadingMethod || !isCodeComplete
-                            }
+                            disabled={!!loadingMethod || !isCodeComplete}
                         >
                             {loadingMethod === 'email' && (
                                 <CircleNotchIcon className='h-4 w-4 animate-spin' />

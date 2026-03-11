@@ -1,6 +1,5 @@
 import { Client } from 'ssh2'
-
-const MAX_OUTPUT_SIZE = 5 * 1024 * 1024
+import { inputValidation } from '@openclaw/shared'
 
 const executeSSH = (
     ip: string,
@@ -34,8 +33,8 @@ const executeSSH = (
                 stream.on('data', (data: Buffer) => {
                     if (truncated) return
                     output += data.toString()
-                    if (output.length > MAX_OUTPUT_SIZE) {
-                        output = output.slice(0, MAX_OUTPUT_SIZE)
+                    if (output.length > inputValidation.SSH_OUTPUT.MAX) {
+                        output = output.slice(0, inputValidation.SSH_OUTPUT.MAX)
                         truncated = true
                     }
                 })
@@ -43,8 +42,8 @@ const executeSSH = (
                 stream.stderr.on('data', (data: Buffer) => {
                     if (truncated) return
                     output += data.toString()
-                    if (output.length > MAX_OUTPUT_SIZE) {
-                        output = output.slice(0, MAX_OUTPUT_SIZE)
+                    if (output.length > inputValidation.SSH_OUTPUT.MAX) {
+                        output = output.slice(0, inputValidation.SSH_OUTPUT.MAX)
                         truncated = true
                     }
                 })

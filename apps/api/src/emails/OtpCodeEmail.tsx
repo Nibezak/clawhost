@@ -1,3 +1,4 @@
+import type { FC, ReactNode } from 'react'
 import type { OtpCodeEmailProps } from '@/ts/Interfaces'
 
 import { t } from '@openclaw/i18n'
@@ -44,7 +45,7 @@ const codeStyle = {
     fontFamily: 'monospace'
 }
 
-const OtpCodeEmail = ({ code }: OtpCodeEmailProps) => {
+const OtpCodeEmail: FC<OtpCodeEmailProps> = ({ code }): ReactNode => {
     const formattedCode = code || '000000'
 
     return (
