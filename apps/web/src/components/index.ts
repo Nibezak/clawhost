@@ -4,9 +4,12 @@ import BlogCard from '@/components/BlogCard'
 import BlogCTA from '@/components/BlogCTA'
 import ClawAvatar from '@/components/ClawAvatar'
 import ClawMascot from '@/components/ClawMascot'
+import ComparisonTable from '@/components/ComparisonTable'
 import ClawMascotOutline from '@/components/ClawMascotOutline'
 import EmptyState from '@/components/EmptyState'
 import ErrorState from '@/components/ErrorState'
+import FaqSection from '@/components/FaqSection'
+import FeaturesGrid from '@/components/FeaturesGrid'
 import Footer from '@/components/Footer'
 import Header from '@/components/Header'
 import HeroButtons from '@/components/HeroButtons'
@@ -22,6 +25,7 @@ import PageTitle from '@/components/PageTitle'
 import PanelPlaceholder from '@/components/PanelPlaceholder'
 import PlansSkeleton from '@/components/PlansSkeleton'
 import ProductHuntBanner from '@/components/ProductHuntBanner'
+import ProductSwitcher from '@/components/ProductSwitcher'
 import ProtectedRoute from '@/components/ProtectedRoute'
 import ProviderIcon from '@/components/ProviderIcon'
 import ScrollToBottomButton from '@/components/ScrollToBottomButton'
@@ -38,9 +42,12 @@ export {
     BlogCTA,
     ClawAvatar,
     ClawMascot,
+    ComparisonTable,
     ClawMascotOutline,
     EmptyState,
     ErrorState,
+    FaqSection,
+    FeaturesGrid,
     Footer,
     Header,
     HeroButtons,
@@ -56,6 +63,7 @@ export {
     PanelPlaceholder,
     PlansSkeleton,
     ProductHuntBanner,
+    ProductSwitcher,
     ProtectedRoute,
     ProviderIcon,
     ScrollToBottomButton,

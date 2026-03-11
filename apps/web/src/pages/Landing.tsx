@@ -1,8 +1,7 @@
 import type { FC, ReactNode } from 'react'
 import type {
     Faq,
-    ProviderOption,
-    Testimonial
+    ProviderOption
 } from '@/ts/Interfaces'
 import type { ProviderType } from '@/ts/Types'
 
@@ -24,6 +23,9 @@ import {
     Header,
     LandingFooter,
     HeroButtons,
+    FeaturesGrid,
+    ComparisonTable,
+    FaqSection,
     ProviderIcon,
     PlansSkeleton,
     JsonLd
@@ -47,16 +49,12 @@ import {
     TerminalIcon,
     LockIcon,
     GaugeIcon,
-    HardDrivesIcon,
     CheckIcon,
     SparkleIcon,
-    CaretDownIcon,
-    QuotesIcon,
     CreditCardIcon,
     LinkIcon,
     XIcon,
     PlayCircleIcon,
-    ArrowRightIcon,
     ChatCircleDotsIcon,
     SlidersHorizontalIcon,
     GearSixIcon,
@@ -67,33 +65,6 @@ import {
 } from '@phosphor-icons/react'
 
 const LazyDemoPreview = lazy(() => import('@/components/LandingDemoPreview'))
-
-const getTestimonials = (): Testimonial[] => [
-    {
-        quote: t('landing.testimonial1Quote'),
-        author: t('landing.testimonial1Author'),
-        role: t('landing.testimonial1Role'),
-        avatar: 'AC'
-    },
-    {
-        quote: t('landing.testimonial2Quote'),
-        author: t('landing.testimonial2Author'),
-        role: t('landing.testimonial2Role'),
-        avatar: 'MS'
-    },
-    {
-        quote: t('landing.testimonial3Quote'),
-        author: t('landing.testimonial3Author'),
-        role: t('landing.testimonial3Role'),
-        avatar: 'JW'
-    },
-    {
-        quote: t('landing.testimonial4Quote'),
-        author: t('landing.testimonial4Author'),
-        role: t('landing.testimonial4Role'),
-        avatar: 'SK'
-    }
-]
 
 const getFaqs = (): Faq[] => [
     {
@@ -201,7 +172,6 @@ const Landing: FC = (): ReactNode => {
     const plans = providerPlansMap[pricingProvider]
     const plansLoading = providerLoadingMap[pricingProvider]
 
-    const [openFaq, setOpenFaq] = useState<number | null>(null)
     const [activeSection, setActiveSection] = useState('')
 
     const previewRef = useRef<HTMLDivElement>(null)
@@ -234,9 +204,7 @@ const Landing: FC = (): ReactNode => {
                 'faq',
                 'comparison',
                 'pricing',
-                'testimonials',
-                'features',
-                'how-it-works'
+                'features'
             ]
             for (const section of sections) {
                 const el = document.getElementById(section)
@@ -251,17 +219,7 @@ const Landing: FC = (): ReactNode => {
     }, [])
 
     const navLinks = [
-        {
-            label: t('landing.howItWorks'),
-            href: '#how-it-works',
-            id: 'how-it-works'
-        },
         { label: t('landing.features'), href: '#features', id: 'features' },
-        {
-            label: t('landing.testimonials'),
-            href: '#testimonials',
-            id: 'testimonials'
-        },
         { label: t('landing.pricing'), href: '#pricing', id: 'pricing' },
         {
             label: t('landing.comparison'),
@@ -452,265 +410,88 @@ const Landing: FC = (): ReactNode => {
                     </motion.div>
                 </div>
 
-                <section
-                    id='how-it-works'
-                    className='border-border relative scroll-mt-24 border-t px-6 py-24'
-                >
-                    <div className='mx-auto max-w-6xl'>
-                        <div className='mb-16 text-center'>
-                            <Badge
-                                variant='outline'
-                                className='border-border bg-foreground/5 text-foreground/80 mb-4'
-                            >
-                                {t('landing.howItWorks')}
-                            </Badge>
-                            <h2 className='font-clash from-foreground to-muted-foreground mb-4 bg-gradient-to-b bg-clip-text text-4xl font-bold text-transparent md:text-5xl'>
-                                {t('landing.threeStepsToPrivacy')}
-                            </h2>
-                            <p className='text-muted-foreground mx-auto max-w-xl text-lg'>
-                                {t('landing.howItWorksDescription')}
-                            </p>
-                        </div>
-
-                        <div className='grid gap-6 md:grid-cols-3'>
-                            {[
-                                {
-                                    step: '01',
-                                    icon: HardDrivesIcon,
-                                    title: t('landing.step1Title'),
-                                    description: t('landing.step1Description')
-                                },
-                                {
-                                    step: '02',
-                                    icon: ShieldCheckIcon,
-                                    title: t('landing.step2Title'),
-                                    description: t('landing.step2Description')
-                                },
-                                {
-                                    step: '03',
-                                    icon: TerminalIcon,
-                                    title: t('landing.step3Title'),
-                                    description: t('landing.step3Description')
-                                }
-                            ].map((item) => (
-                                <div
-                                    key={item.step}
-                                    className='border-border bg-foreground/[0.02] relative rounded-xl border p-6'
-                                >
-                                    <div className='font-clash text-foreground/5 absolute -left-1 -top-3 text-6xl font-bold'>
-                                        {item.step}
-                                    </div>
-                                    <div className='relative pt-6'>
-                                        <div className='border-border mb-4 flex h-12 w-12 items-center justify-center rounded-lg border bg-gradient-to-br from-[#ef5350]/20 to-[#c62828]/20'>
-                                            <item.icon className='h-6 w-6 text-[#ef5350]' />
-                                        </div>
-                                        <h3 className='font-clash text-foreground mb-2 text-xl font-semibold'>
-                                            {item.title}
-                                        </h3>
-                                        <p className='text-muted-foreground leading-relaxed'>
-                                            {item.description}
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                <section
-                    id='features'
-                    className='cv-auto border-border relative scroll-mt-24 border-t px-6 py-24'
-                >
-                    <div className='mx-auto max-w-6xl'>
-                        <div className='mb-16 text-center'>
-                            <Badge
-                                variant='outline'
-                                className='border-border bg-foreground/5 text-foreground/80 mb-4'
-                            >
-                                {t('landing.features')}
-                            </Badge>
-                            <h2 className='font-clash from-foreground to-muted-foreground mb-4 bg-gradient-to-b bg-clip-text text-4xl font-bold text-transparent md:text-5xl'>
-                                {t('landing.whyClawHost')}
-                            </h2>
-                            <p className='text-muted-foreground mx-auto max-w-xl text-lg'>
-                                {t('landing.featuresDescription')}
-                            </p>
-                        </div>
-
-                        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
-                            {[
-                                {
-                                    icon: ClockIcon,
-                                    title: t('landing.zeroConfig'),
-                                    description: t(
-                                        'landing.zeroConfigDescription'
-                                    )
-                                },
-                                {
-                                    icon: LockIcon,
-                                    title: t('landing.ownedData'),
-                                    description: t(
-                                        'landing.ownedDataDescription'
-                                    )
-                                },
-                                {
-                                    icon: GaugeIcon,
-                                    title: t('landing.fullSpeed'),
-                                    description: t(
-                                        'landing.fullSpeedDescription'
-                                    )
-                                },
-                                {
-                                    icon: GlobeIcon,
-                                    title: t('landing.globalLocations'),
-                                    description: t(
-                                        'landing.globalLocationsDescription'
-                                    )
-                                },
-                                {
-                                    icon: TerminalIcon,
-                                    title: t('landing.fullSshAccess'),
-                                    description: t(
-                                        'landing.fullSshAccessDescription'
-                                    )
-                                },
-                                {
-                                    icon: CreditCardIcon,
-                                    title: t('landing.payAsYouGo'),
-                                    description: t(
-                                        'landing.payAsYouGoDescription'
-                                    )
-                                },
-                                {
-                                    icon: LinkIcon,
-                                    title: t('landing.customSubdomains'),
-                                    description: t(
-                                        'landing.customSubdomainsDescription'
-                                    )
-                                },
-                                {
-                                    icon: ShieldCheckIcon,
-                                    title: t('landing.secure'),
-                                    description: t('landing.secureDescription')
-                                },
-                                {
-                                    icon: GitBranchIcon,
-                                    title: t('landing.autoUpdates'),
-                                    description: t(
-                                        'landing.autoUpdatesDescription'
-                                    )
-                                },
-                                {
-                                    icon: SlidersHorizontalIcon,
-                                    title: t('landing.openclawControl'),
-                                    description: t(
-                                        'landing.openclawControlDescription'
-                                    )
-                                },
-                                {
-                                    icon: GearSixIcon,
-                                    title: t('landing.clawHostControl'),
-                                    description: t(
-                                        'landing.clawHostControlDescription'
-                                    )
-                                },
-                                {
-                                    icon: PuzzlePieceIcon,
-                                    title: t('landing.skillsMarketplace'),
-                                    description: t(
-                                        'landing.skillsMarketplaceDescription'
-                                    )
-                                },
-                                {
-                                    icon: ChatCircleDotsIcon,
-                                    title: t('landing.directChat'),
-                                    description: t(
-                                        'landing.directChatDescription'
-                                    )
-                                },
-                                {
-                                    icon: UsersThreeIcon,
-                                    title: t('landing.multipleAgents'),
-                                    description: t(
-                                        'landing.multipleAgentsDescription'
-                                    )
-                                },
-                                {
-                                    icon: StackIcon,
-                                    title: t('landing.multipleClaws'),
-                                    description: t(
-                                        'landing.multipleClawsDescription'
-                                    )
-                                }
-                            ].map((feature, i) => (
-                                <div
-                                    key={i}
-                                    className='border-border bg-foreground/[0.02] rounded-xl border p-6'
-                                >
-                                    <feature.icon className='mb-4 h-8 w-8 text-[#ef5350]' />
-                                    <h3 className='font-clash text-foreground mb-2 text-lg font-semibold'>
-                                        {feature.title}
-                                    </h3>
-                                    <p className='text-muted-foreground text-sm leading-relaxed'>
-                                        {feature.description}
-                                    </p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-
-                <section
-                    id='testimonials'
-                    className='cv-auto border-border relative scroll-mt-24 border-t px-6 py-24'
-                >
-                    <div className='mx-auto max-w-6xl'>
-                        <div className='mb-16 text-center'>
-                            <Badge
-                                variant='outline'
-                                className='border-border bg-foreground/5 text-foreground/80 mb-4'
-                            >
-                                {t('landing.testimonials')}
-                            </Badge>
-                            <h2 className='font-clash from-foreground to-muted-foreground mb-4 bg-gradient-to-b bg-clip-text text-4xl font-bold text-transparent md:text-5xl'>
-                                {t('landing.whatPeopleSay')}
-                            </h2>
-                            <p className='text-muted-foreground mx-auto max-w-xl text-lg'>
-                                {t('landing.testimonialsDescription')}
-                            </p>
-                        </div>
-
-                        <div className='grid gap-6 md:grid-cols-2'>
-                            {getTestimonials().map((testimonial, i) => (
-                                <div
-                                    key={i}
-                                    className='border-border bg-foreground/[0.02] rounded-xl border p-6'
-                                >
-                                    <QuotesIcon
-                                        className='mb-4 h-8 w-8 text-[#ef5350]/40'
-                                        weight='fill'
-                                    />
-                                    <p className='text-foreground/80 mb-6 leading-relaxed'>
-                                        "{testimonial.quote}"
-                                    </p>
-                                    <div className='flex items-center gap-3'>
-                                        <div className='flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-[#ef5350] to-[#c62828] text-sm font-medium text-white'>
-                                            {testimonial.avatar}
-                                        </div>
-                                        <div>
-                                            <p className='text-foreground font-medium'>
-                                                {testimonial.author}
-                                            </p>
-                                            <p className='text-muted-foreground text-sm'>
-                                                {testimonial.role}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
+                <FeaturesGrid
+                    badge={t('landing.features')}
+                    heading={t('landing.whyClawHost')}
+                    description={t('landing.featuresDescription')}
+                    features={[
+                        {
+                            icon: ClockIcon,
+                            title: t('landing.zeroConfig'),
+                            description: t('landing.zeroConfigDescription')
+                        },
+                        {
+                            icon: LockIcon,
+                            title: t('landing.ownedData'),
+                            description: t('landing.ownedDataDescription')
+                        },
+                        {
+                            icon: GaugeIcon,
+                            title: t('landing.fullSpeed'),
+                            description: t('landing.fullSpeedDescription')
+                        },
+                        {
+                            icon: GlobeIcon,
+                            title: t('landing.globalLocations'),
+                            description: t('landing.globalLocationsDescription')
+                        },
+                        {
+                            icon: TerminalIcon,
+                            title: t('landing.fullSshAccess'),
+                            description: t('landing.fullSshAccessDescription')
+                        },
+                        {
+                            icon: CreditCardIcon,
+                            title: t('landing.payAsYouGo'),
+                            description: t('landing.payAsYouGoDescription')
+                        },
+                        {
+                            icon: LinkIcon,
+                            title: t('landing.customSubdomains'),
+                            description: t('landing.customSubdomainsDescription')
+                        },
+                        {
+                            icon: ShieldCheckIcon,
+                            title: t('landing.secure'),
+                            description: t('landing.secureDescription')
+                        },
+                        {
+                            icon: GitBranchIcon,
+                            title: t('landing.autoUpdates'),
+                            description: t('landing.autoUpdatesDescription')
+                        },
+                        {
+                            icon: SlidersHorizontalIcon,
+                            title: t('landing.openclawControl'),
+                            description: t('landing.openclawControlDescription')
+                        },
+                        {
+                            icon: GearSixIcon,
+                            title: t('landing.clawHostControl'),
+                            description: t('landing.clawHostControlDescription')
+                        },
+                        {
+                            icon: PuzzlePieceIcon,
+                            title: t('landing.skillsMarketplace'),
+                            description: t('landing.skillsMarketplaceDescription')
+                        },
+                        {
+                            icon: ChatCircleDotsIcon,
+                            title: t('landing.directChat'),
+                            description: t('landing.directChatDescription')
+                        },
+                        {
+                            icon: UsersThreeIcon,
+                            title: t('landing.multipleAgents'),
+                            description: t('landing.multipleAgentsDescription')
+                        },
+                        {
+                            icon: StackIcon,
+                            title: t('landing.multipleClaws'),
+                            description: t('landing.multipleClawsDescription')
+                        }
+                    ]}
+                />
 
                 <section
                     id='pricing'
@@ -836,6 +617,9 @@ const Landing: FC = (): ReactNode => {
                                                 const totalMonthly = Math.round(
                                                     plan.priceMonthly
                                                 )
+                                                const totalYearly = Math.round(
+                                                    plan.priceYearly
+                                                )
                                                 const recommendedPlans: Record<
                                                     string,
                                                     string
@@ -934,17 +718,17 @@ const Landing: FC = (): ReactNode => {
                                                                 {plan.disk} GB
                                                             </td>
                                                             <td className='whitespace-nowrap px-4 py-4 text-center'>
-                                                                <span className='font-clash text-foreground font-bold'>
-                                                                    $
-                                                                    {
-                                                                        totalMonthly
-                                                                    }
-                                                                </span>
-                                                                <span className='text-muted-foreground text-sm'>
-                                                                    {t(
-                                                                        'landing.perMonth'
-                                                                    )}
-                                                                </span>
+                                                                <div className='flex items-baseline justify-center gap-1'>
+                                                                    <span className='font-clash text-foreground font-bold'>
+                                                                        ${totalMonthly}
+                                                                    </span>
+                                                                    <span className='text-muted-foreground text-sm'>
+                                                                        {t('landing.perMonth')}
+                                                                    </span>
+                                                                    <span className='text-muted-foreground/40 text-xs'>
+                                                                        (${Math.round(totalYearly / 12)}{t('landing.perYear')})
+                                                                    </span>
+                                                                </div>
                                                             </td>
                                                             <td className='px-4 py-4 text-right'>
                                                                 <Button
@@ -1035,449 +819,34 @@ const Landing: FC = (): ReactNode => {
                     </div>
                 </section>
 
-                <section
-                    id='comparison'
-                    className='cv-auto border-border relative scroll-mt-24 border-t px-6 py-24'
-                >
-                    <div className='mx-auto max-w-3xl'>
-                        <div className='mb-16 text-center'>
-                            <Badge
-                                variant='outline'
-                                className='border-border bg-foreground/5 text-foreground/80 mb-4'
-                            >
-                                {t('landing.comparison')}
-                            </Badge>
-                            <h2 className='font-clash from-foreground to-muted-foreground mb-4 bg-gradient-to-b bg-clip-text text-4xl font-bold text-transparent md:text-5xl'>
-                                {t('landing.comparisonTitle')}
-                            </h2>
-                            <p className='text-muted-foreground mx-auto max-w-xl text-lg'>
-                                {t('landing.comparisonDescription')}
-                            </p>
-                        </div>
+                <ComparisonTable
+                    badge={t('landing.comparison')}
+                    heading={t('landing.comparisonTitle')}
+                    description={t('landing.comparisonDescription')}
+                    rows={[
+                        { us: t('landing.comparisonOpenClawUs'), others: t('landing.comparisonOpenClawOthers') },
+                        { us: t('landing.comparisonPricingUs'), others: t('landing.comparisonPricingOthers') },
+                        { us: t('landing.comparisonOwnershipUs'), others: t('landing.comparisonOwnershipOthers') },
+                        { us: t('landing.comparisonSubdomainUs'), others: t('landing.comparisonSubdomainOthers') },
+                        { us: t('landing.comparisonInfraUs'), others: t('landing.comparisonInfraOthers') },
+                        { us: t('landing.comparisonDataUs'), others: t('landing.comparisonDataOthers') },
+                        { us: t('landing.comparisonMultipleUs'), others: t('landing.comparisonMultipleOthers') },
+                        { us: t('landing.comparisonAgentsUs'), others: t('landing.comparisonAgentsOthers') },
+                        { us: t('landing.comparisonOpenSourceUs'), others: t('landing.comparisonOpenSourceOthers') },
+                        { us: t('landing.comparisonExportUs'), others: t('landing.comparisonExportOthers') },
+                        { us: t('landing.comparisonProvidersUs'), others: t('landing.comparisonProvidersOthers') },
+                        { us: t('landing.comparisonChatUs'), others: t('landing.comparisonChatOthers') },
+                        { us: t('landing.comparisonVersionUs'), others: t('landing.comparisonVersionOthers') },
+                        { us: t('landing.comparisonTerminalUs'), others: t('landing.comparisonTerminalOthers') }
+                    ]}
+                />
 
-                        <div className='border-border overflow-hidden rounded-xl border'>
-                            <table className='w-full'>
-                                <thead>
-                                    <tr className='border-border bg-foreground/[0.02] border-b'>
-                                        <th className='px-6 py-4'>
-                                            <div className='flex items-center justify-center'>
-                                                <img
-                                                    src='https://cdn.clawhost.cloud/assets/clawhost-logo-light.png'
-                                                    alt={t('common.brandName')}
-                                                    className='h-6'
-                                                    loading='lazy'
-                                                    width={120}
-                                                    height={24}
-                                                />
-                                            </div>
-                                        </th>
-                                        <th className='px-6 py-4 text-center'>
-                                            <span className='text-muted-foreground font-medium'>
-                                                {t('landing.others')}
-                                            </span>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className='divide-border divide-y'>
-                                    <tr>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400' />
-                                                <span className='text-foreground'>
-                                                    {t(
-                                                        'landing.comparisonOpenClawUs'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <XIcon className='h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-400' />
-                                                <span className='text-muted-foreground'>
-                                                    {t(
-                                                        'landing.comparisonOpenClawOthers'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className='bg-foreground/[0.01]'>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400' />
-                                                <span className='text-foreground'>
-                                                    {t(
-                                                        'landing.comparisonPricingUs'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <XIcon className='h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-400' />
-                                                <span className='text-muted-foreground'>
-                                                    {t(
-                                                        'landing.comparisonPricingOthers'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400' />
-                                                <span className='text-foreground'>
-                                                    {t(
-                                                        'landing.comparisonOwnershipUs'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <XIcon className='h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-400' />
-                                                <span className='text-muted-foreground'>
-                                                    {t(
-                                                        'landing.comparisonOwnershipOthers'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className='bg-foreground/[0.01]'>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400' />
-                                                <span className='text-foreground'>
-                                                    {t(
-                                                        'landing.comparisonSubdomainUs'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <XIcon className='h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-400' />
-                                                <span className='text-muted-foreground'>
-                                                    {t(
-                                                        'landing.comparisonSubdomainOthers'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400' />
-                                                <span className='text-foreground'>
-                                                    {t(
-                                                        'landing.comparisonInfraUs'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <XIcon className='h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-400' />
-                                                <span className='text-muted-foreground'>
-                                                    {t(
-                                                        'landing.comparisonInfraOthers'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className='bg-foreground/[0.01]'>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400' />
-                                                <span className='text-foreground'>
-                                                    {t(
-                                                        'landing.comparisonDataUs'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <XIcon className='h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-400' />
-                                                <span className='text-muted-foreground'>
-                                                    {t(
-                                                        'landing.comparisonDataOthers'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400' />
-                                                <span className='text-foreground'>
-                                                    {t(
-                                                        'landing.comparisonMultipleUs'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <XIcon className='h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-400' />
-                                                <span className='text-muted-foreground'>
-                                                    {t(
-                                                        'landing.comparisonMultipleOthers'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className='bg-foreground/[0.01]'>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400' />
-                                                <span className='text-foreground'>
-                                                    {t(
-                                                        'landing.comparisonAgentsUs'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <XIcon className='h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-400' />
-                                                <span className='text-muted-foreground'>
-                                                    {t(
-                                                        'landing.comparisonAgentsOthers'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400' />
-                                                <span className='text-foreground'>
-                                                    {t(
-                                                        'landing.comparisonOpenSourceUs'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <XIcon className='h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-400' />
-                                                <span className='text-muted-foreground'>
-                                                    {t(
-                                                        'landing.comparisonOpenSourceOthers'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400' />
-                                                <span className='text-foreground'>
-                                                    {t(
-                                                        'landing.comparisonExportUs'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <XIcon className='h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-400' />
-                                                <span className='text-muted-foreground'>
-                                                    {t(
-                                                        'landing.comparisonExportOthers'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className='bg-foreground/[0.01]'>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400' />
-                                                <span className='text-foreground'>
-                                                    {t(
-                                                        'landing.comparisonProvidersUs'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <XIcon className='h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-400' />
-                                                <span className='text-muted-foreground'>
-                                                    {t(
-                                                        'landing.comparisonProvidersOthers'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400' />
-                                                <span className='text-foreground'>
-                                                    {t(
-                                                        'landing.comparisonChatUs'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <XIcon className='h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-400' />
-                                                <span className='text-muted-foreground'>
-                                                    {t(
-                                                        'landing.comparisonChatOthers'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400' />
-                                                <span className='text-foreground'>
-                                                    {t(
-                                                        'landing.comparisonVersionUs'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <XIcon className='h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-400' />
-                                                <span className='text-muted-foreground'>
-                                                    {t(
-                                                        'landing.comparisonVersionOthers'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr className='bg-foreground/[0.01]'>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <CheckIcon className='h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400' />
-                                                <span className='text-foreground'>
-                                                    {t(
-                                                        'landing.comparisonTerminalUs'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td className='px-6 py-4'>
-                                            <div className='flex items-center gap-3'>
-                                                <XIcon className='h-5 w-5 flex-shrink-0 text-red-600 dark:text-red-400' />
-                                                <span className='text-muted-foreground'>
-                                                    {t(
-                                                        'landing.comparisonTerminalOthers'
-                                                    )}
-                                                </span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <Link
-                            to={ROUTES.COMPARE}
-                            className='border-border hover:border-foreground/20 bg-foreground/[0.02] mt-6 flex items-center justify-between rounded-xl border px-6 py-5 transition'
-                        >
-                            <div>
-                                <p className='text-foreground font-semibold'>
-                                    {t('landing.seeFullComparison')}
-                                </p>
-                                <p className='text-muted-foreground mt-1 text-sm'>
-                                    {t('landing.comparisonCtaText')}
-                                </p>
-                            </div>
-                            <ArrowRightIcon className='text-foreground h-5 w-5 flex-shrink-0' />
-                        </Link>
-                    </div>
-                </section>
-
-                <section
-                    id='faq'
-                    className='cv-auto border-border relative scroll-mt-24 border-t px-6 py-24'
-                >
-                    <div className='mx-auto max-w-3xl'>
-                        <div className='mb-16 text-center'>
-                            <Badge
-                                variant='outline'
-                                className='border-border bg-foreground/5 text-foreground/80 mb-4'
-                            >
-                                {t('landing.faqTitle')}
-                            </Badge>
-                            <h2 className='font-clash from-foreground to-muted-foreground mb-4 bg-gradient-to-b bg-clip-text text-4xl font-bold text-transparent md:text-5xl'>
-                                {t('landing.frequentlyAskedQuestions')}
-                            </h2>
-                            <p className='text-muted-foreground mx-auto max-w-xl text-lg'>
-                                {t('landing.faqDescription')}
-                            </p>
-                        </div>
-
-                        <div className='space-y-3'>
-                            {getFaqs().map((faq, i) => (
-                                <div
-                                    key={i}
-                                    className='border-border bg-foreground/[0.02] overflow-hidden rounded-xl border'
-                                >
-                                    <button
-                                        onClick={() =>
-                                            setOpenFaq(openFaq === i ? null : i)
-                                        }
-                                        className='hover:bg-foreground/[0.02] flex w-full items-center justify-between p-5 text-left transition-colors'
-                                    >
-                                        <span className='text-foreground pr-4 font-medium'>
-                                            {faq.question}
-                                        </span>
-                                        <CaretDownIcon
-                                            className={`text-muted-foreground h-5 w-5 flex-shrink-0 transition-transform duration-200 ${
-                                                openFaq === i
-                                                    ? 'rotate-180'
-                                                    : ''
-                                            }`}
-                                        />
-                                    </button>
-                                    <AnimatePresence>
-                                        {openFaq === i && (
-                                            <motion.div
-                                                initial={{
-                                                    height: 0,
-                                                    opacity: 0
-                                                }}
-                                                animate={{
-                                                    height: 'auto',
-                                                    opacity: 1
-                                                }}
-                                                exit={{ height: 0, opacity: 0 }}
-                                                transition={{ duration: 0.2 }}
-                                                className='overflow-hidden'
-                                            >
-                                                <div className='px-5 pb-5'>
-                                                    <p className='text-muted-foreground leading-relaxed'>
-                                                        {faq.answer}
-                                                    </p>
-                                                </div>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
+                <FaqSection
+                    badge={t('landing.faqTitle')}
+                    heading={t('landing.frequentlyAskedQuestions')}
+                    description={t('landing.faqDescription')}
+                    faqs={getFaqs()}
+                />
 
                 <section className='border-border relative border-t px-6 py-32'>
                     <div className='mx-auto max-w-4xl text-center'>

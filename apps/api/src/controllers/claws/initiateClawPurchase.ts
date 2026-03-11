@@ -106,11 +106,13 @@ const generateClawName = (): string => {
 
 const getPolarProductId = (
     providerName: string,
-    planId: string
+    planId: string,
+    billingInterval: 'month' | 'year' = 'month'
 ): string | null => {
     const prefix =
         providerName === 'hetzner' ? '' : `${providerName.toUpperCase()}_`
-    const envKey = `POLAR_PRODUCT_${prefix}${planId.toUpperCase().replace(/-/g, '_')}`
+    const suffix = billingInterval === 'year' ? '_YEARLY' : ''
+    const envKey = `POLAR_PRODUCT_${prefix}${planId.toUpperCase().replace(/-/g, '_')}${suffix}`
     const envValue = process.env[envKey]
 
     if (envValue) return envValue
@@ -135,8 +137,11 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
             password,
             sshKeyId,
             volumeSize,
-            priceMonthly
+            priceMonthly,
+            billingInterval: rawBillingInterval
         } = await c.req.json<InitiateClawPurchaseBody>()
+
+        const billingInterval = rawBillingInterval === 'year' ? 'year' : 'month'
 
         if (!planId || !location || !priceMonthly) {
             return fail(c, t('api.missingRequiredFields'), 400)
@@ -280,7 +285,7 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
                 .where(eq(users.id, userId))
         }
 
-        const productId = getPolarProductId(providerName || 'hetzner', planId)
+        const productId = getPolarProductId(providerName || 'hetzner', planId, billingInterval)
         if (!productId) {
             return fail(c, t('api.paymentNotConfigured'), 400)
         }
@@ -298,6 +303,7 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
                 planId,
                 location,
                 name,
+                billingInterval,
                 environment: getEnvironment(c)
             }
         })

@@ -28,7 +28,8 @@ import {
     GearSixIcon,
     CircleNotchIcon,
     TerminalWindowIcon,
-    ArrowSquareOutIcon
+    ArrowSquareOutIcon,
+    ChatsCircleIcon
 } from '@phosphor-icons/react'
 import { ClawAvatar, ClawMascotOutline, ProviderIcon } from '@/components'
 import {
@@ -60,6 +61,11 @@ const tabStateMap: Record<string, PlaygroundDetailTab> = {}
 
 const tabs: PlaygroundTabConfig<PlaygroundDetailTab>[] = [
     { id: CLAW_DETAIL_TABS.INFO, label: 'playground.tabInfo', icon: InfoIcon },
+    {
+        id: CLAW_DETAIL_TABS.CHANNELS,
+        label: 'playground.tabChannels',
+        icon: ChatsCircleIcon
+    },
     {
         id: CLAW_DETAIL_TABS.TERMINAL,
         label: 'playground.tabTerminal',

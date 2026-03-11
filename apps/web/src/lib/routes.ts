@@ -2,6 +2,7 @@ import PATHS from '@/lib/paths'
 
 const ROUTES = {
     HOME: PATHS.HOME,
+    GO: `/${PATHS.GO}`,
     LOGIN: `/${PATHS.LOGIN}`,
     CLAWS: `/${PATHS.CLAWS}`,
     SSH_KEYS: `/${PATHS.SSH_KEYS}`,

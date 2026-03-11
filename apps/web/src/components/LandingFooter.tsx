@@ -26,9 +26,7 @@ import {
 } from '@phosphor-icons/react'
 
 const LANDING_SECTIONS = [
-    'how-it-works',
     'features',
-    'testimonials',
     'pricing',
     'comparison',
     'faq'
@@ -215,17 +213,6 @@ const LandingFooter: FC = (): ReactNode => {
                         <ul className='space-y-3 text-sm'>
                             <li>
                                 <Link
-                                    to={`${ROUTES.HOME}#how-it-works`}
-                                    onClick={(e) =>
-                                        handleHashClick(e, 'how-it-works')
-                                    }
-                                    className={hashClass('how-it-works')}
-                                >
-                                    {t('landing.howItWorks')}
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
                                     to={`${ROUTES.HOME}#features`}
                                     onClick={(e) =>
                                         handleHashClick(e, 'features')
@@ -233,17 +220,6 @@ const LandingFooter: FC = (): ReactNode => {
                                     className={hashClass('features')}
                                 >
                                     {t('landing.features')}
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    to={`${ROUTES.HOME}#testimonials`}
-                                    onClick={(e) =>
-                                        handleHashClick(e, 'testimonials')
-                                    }
-                                    className={hashClass('testimonials')}
-                                >
-                                    {t('landing.testimonials')}
                                 </Link>
                             </li>
                             <li>

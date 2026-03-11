@@ -62,7 +62,77 @@ const en = {
         deployOpenClaw: 'Deploy OpenClaw',
         mainNavigation: 'Main navigation',
         footerNavigation: 'Footer navigation',
-        toggleMenu: 'Toggle menu'
+        toggleMenu: 'Toggle menu',
+        cloud: 'Cloud',
+        go: 'Go'
+    },
+    go: {
+        pageTitle: 'ClawHost Go',
+        heroTitle1: 'Deploy OpenClaw.',
+        heroTitle2: 'Locally. Instantly.',
+        badge: 'Coming Soon',
+        description: 'A lightweight desktop client to manage your OpenClaw instances. Deploy, monitor, and control your claws — right from your machine.',
+        download: 'Download for {{os}}',
+        downloadWindows: 'Windows',
+        downloadMac: 'macOS',
+        selfHostInstead: 'Self Host Instead',
+        features: 'Features',
+        whyClawHostGo: 'All-in-One Features',
+        featuresDescription: 'Why we\'re worth a try, features don\'t lie here.',
+        zeroConfigDescription: 'Install and run. No server setup, no cloud configuration. OpenClaw is ready in seconds.',
+        ownedDataDescription: 'Everything runs on your device. No cloud servers, no third parties, no data leaving your machine.',
+        terminalAccessDescription: 'Access your OpenClaw instance terminal directly from the app. No external SSH clients needed.',
+        simplePricing: 'Simple Pricing',
+        simplePricingDescription: 'One license, unlimited everything. No monthly bills, no usage limits, no hidden fees.',
+        localDomain: 'Custom Local Domain',
+        localDomainDescription: 'Access your OpenClaw through a custom branded local domain. Clean URLs on your own network.',
+        secureDescription: 'Your data never leaves your device. Fully isolated, fully encrypted, fully yours.',
+        pricing: 'Pricing',
+        pricingTitle: 'Simple, One-Time Pricing',
+        pricingDescription: 'No subscriptions, no hidden fees. One license, unlimited use.',
+        pricingPrice: '$49',
+        pricingLabel: 'One-Time Payment',
+        pricingFeature1: 'Lifetime license',
+        pricingFeature2: 'Unlimited claws',
+        pricingFeature3: 'All future updates',
+        pricingFeature4: 'No usage limits',
+        pricingFeature5: 'Priority support',
+        pricingFeature6: 'Custom local domain',
+        pricingCta: 'Get ClawHost Go',
+        comparison: 'Comparison',
+        comparisonTitle: 'Go vs Cloud',
+        comparisonDescription: 'Choose what works for you. Go runs locally, Cloud runs on dedicated servers.',
+        comparisonLocalUs: 'Runs fully on your device',
+        comparisonLocalOthers: 'Runs on remote servers',
+        comparisonPricingUs: 'One-time payment',
+        comparisonPricingOthers: 'Monthly subscription',
+        comparisonDataUs: 'Data stays on your machine',
+        comparisonDataOthers: 'Data on cloud servers',
+        comparisonSetupUs: 'Install and run instantly',
+        comparisonSetupOthers: 'Deploy in one click',
+        comparisonUptimeUs: 'Depends on your device',
+        comparisonUptimeOthers: '24/7 server uptime',
+        comparisonAccessUs: 'Local network access',
+        comparisonAccessOthers: 'Access from anywhere',
+        comparisonUpdatesUs: 'Automatic updates',
+        comparisonUpdatesOthers: 'Automatic updates',
+        comparisonAgentsUs: 'Multiple agents',
+        comparisonAgentsOthers: 'Multiple agents',
+        faqTitle: 'Questions',
+        faqHeading: 'Common Questions',
+        faqDescription: 'Everything you need to know about ClawHost Go.',
+        faq1Question: 'What is ClawHost Go?',
+        faq1Answer: 'ClawHost Go is a lightweight desktop application that lets you run OpenClaw locally on your own machine. No cloud servers needed — install, launch, and start using OpenClaw in seconds.',
+        faq2Question: 'How is Go different from ClawHost Cloud?',
+        faq2Answer: 'ClawHost Cloud deploys OpenClaw on dedicated remote servers with 24/7 uptime and global access. ClawHost Go runs everything locally on your device — great for privacy, offline use, and simple setups.',
+        faq3Question: 'Do I need an internet connection?',
+        faq3Answer: 'ClawHost Go works offline for local usage. An internet connection is only needed for initial setup, updates, and any features that require external API calls.',
+        faq4Question: 'Is the license a one-time payment?',
+        faq4Answer: 'Yes. You pay once and get lifetime access to ClawHost Go, including all future updates. No subscriptions, no recurring fees.',
+        faq5Question: 'What operating systems are supported?',
+        faq5Answer: 'ClawHost Go supports Windows and macOS. Both platforms get the same features and receive updates simultaneously.',
+        faq6Question: 'Can I switch from Go to Cloud later?',
+        faq6Answer: 'Absolutely. You can export your OpenClaw configuration from Go and deploy it on ClawHost Cloud anytime. Both platforms are fully compatible.'
     },
     footer: {
         website: 'Website',
@@ -340,7 +410,9 @@ const en = {
         textRequired: 'Text is required!',
         voiceNotFound: 'Voice model not found!',
         ttsGenerationFailed: 'Failed to generate speech!',
-        voicesFetched: 'Voices fetched successfully.'
+        voicesFetched: 'Voices fetched successfully.',
+        featureEmailsSent: 'Feature emails sent successfully.',
+        featureEmailsFailed: 'Failed to send feature emails!'
     },
     emails: {
         otpSubject: 'Your ClawHost sign-in code',
@@ -354,7 +426,163 @@ const en = {
         changelogButton: 'View Changelog',
         changelogVisitButton: 'Visit ClawHost',
         changelogFooter:
-            "You're receiving this because you have a ClawHost account."
+            "You're receiving this because you have a ClawHost account.",
+        featureFooter:
+            "You're receiving this because you have a ClawHost account.",
+        features: {
+            terminal: {
+                subject: 'Did you know? You have a web terminal',
+                preview: 'Access your server directly from the browser',
+                heading: 'Your server is one click away',
+                description:
+                    'Access your server directly from your browser with our built-in terminal. No SSH client needed — just open ClawHost and start typing commands.',
+                cta: 'Open Terminal'
+            },
+            logs: {
+                subject: 'Did you know? Real-time logs in your dashboard',
+                preview: 'Monitor your server logs without leaving the browser',
+                heading: 'See what your server is doing',
+                description:
+                    'Monitor your server logs in real time from the ClawHost dashboard. Diagnose issues, track deployments, and debug your applications without leaving the browser.',
+                cta: 'View Logs'
+            },
+            channels: {
+                subject: 'Did you know? Connect agents to Discord, Slack & more',
+                preview: 'Bind your AI agents to communication channels',
+                heading: 'Your agents, everywhere',
+                description:
+                    'Connect your AI agents to Discord, Slack, WhatsApp, and more. Configure channels and bind them to agents — all from the ClawHost dashboard.',
+                cta: 'Set Up Channels'
+            },
+            fileExplorer: {
+                subject: 'Did you know? Edit server files from your browser',
+                preview: 'Browse, read, and edit files without SSH',
+                heading: 'Your files, at your fingertips',
+                description:
+                    'Browse, read, and edit files on your server directly from the ClawHost dashboard. Syntax highlighting, search, and instant saves — no SSH needed.',
+                cta: 'Open File Explorer'
+            },
+            playground: {
+                subject: 'Did you know? Visualize your infrastructure',
+                preview: 'See your claws and agents on an interactive canvas',
+                heading: 'See the big picture',
+                description:
+                    'The Playground gives you an interactive graph canvas showing all your claws and agents. Click any node to manage it — a visual command center for your infrastructure.',
+                cta: 'Open Playground'
+            },
+            agentChat: {
+                subject: 'Did you know? Chat with your AI agents',
+                preview: 'Talk to your agents directly from the dashboard',
+                heading: 'Talk to your agents',
+                description:
+                    'Chat with your AI agents directly from the ClawHost dashboard. Send messages, attach images, and see conversation history — all in one place.',
+                cta: 'Start Chatting'
+            },
+            voiceMode: {
+                subject: 'Did you know? Talk to your agents with voice',
+                preview: 'Use speech-to-text and text-to-speech with your agents',
+                heading: 'Speak, don\'t type',
+                description:
+                    'Use voice mode to talk to your AI agents hands-free. Speech-to-text for input, text-to-speech for responses — choose from multiple voices.',
+                cta: 'Try Voice Mode'
+            },
+            skills: {
+                subject: 'Did you know? 5,000+ skills on ClawHub',
+                preview: 'Browse and install community skills with one click',
+                heading: 'Extend your agents instantly',
+                description:
+                    'Browse over 5,000 ready-made skills on ClawHub and install them with a single click. Web search, code execution, image generation, and much more.',
+                cta: 'Browse ClawHub'
+            },
+            bindings: {
+                subject: 'Did you know? Bind agents to specific channels',
+                preview: 'Control which agent responds on which channel',
+                heading: 'One agent per channel',
+                description:
+                    'Bind specific agents to specific channels. Your support agent on Discord, your assistant on WhatsApp — you decide who responds where.',
+                cta: 'Configure Bindings'
+            },
+            envVars: {
+                subject: 'Did you know? Manage environment variables',
+                preview: 'Set API keys and config without SSH',
+                heading: 'Configure without SSH',
+                description:
+                    'Add, edit, and remove environment variables directly from the ClawHost dashboard. Set API keys, secrets, and configuration — no terminal required.',
+                cta: 'Manage Variables'
+            },
+            diagnostics: {
+                subject: 'Did you know? Built-in health checks',
+                preview: 'Monitor your server health from the dashboard',
+                heading: 'Know your server is healthy',
+                description:
+                    'Run diagnostics on your claw to check service status, memory usage, and port availability. Spot issues before they become problems.',
+                cta: 'Run Diagnostics'
+            },
+            sshKeys: {
+                subject: 'Did you know? Manage SSH keys from ClawHost',
+                preview: 'Generate and manage SSH key pairs in the dashboard',
+                heading: 'SSH keys, simplified',
+                description:
+                    'Generate SSH key pairs, copy public keys, and download private keys — all from the ClawHost dashboard. Assign keys to claws for secure access.',
+                cta: 'Manage SSH Keys'
+            },
+            exportConfig: {
+                subject: 'Did you know? Export your claw configuration',
+                preview: 'Download your claw setup as a portable config',
+                heading: 'Take your config with you',
+                description:
+                    'Export your claw configuration and settings as a downloadable file. Back up your setup or use it to replicate your environment.',
+                cta: 'Export Config'
+            },
+            multiProvider: {
+                subject: 'Did you know? Deploy on 3 cloud providers',
+                preview: 'Choose between Hetzner, DigitalOcean, and Vultr',
+                heading: 'Your cloud, your choice',
+                description:
+                    'Deploy your claws on Hetzner, DigitalOcean, or Vultr. Compare pricing, locations, and specs — then pick the provider that fits your needs.',
+                cta: 'Compare Providers'
+            },
+            multiLanguage: {
+                subject: 'Did you know? ClawHost speaks your language',
+                preview: 'Use ClawHost in English, French, Spanish, or German',
+                heading: 'ClawHost in your language',
+                description:
+                    'Switch the entire ClawHost dashboard to English, French, Spanish, or German. Everything from buttons to error messages — fully translated.',
+                cta: 'Change Language'
+            },
+            subdomain: {
+                subject: 'Did you know? Each claw gets its own subdomain',
+                preview: 'Access your claw from anywhere with a custom URL',
+                heading: 'Access from anywhere',
+                description:
+                    'Every claw gets a unique subdomain so you can access your OpenClaw instance from anywhere. No port forwarding, no local networks — just a URL.',
+                cta: 'View Your Subdomain'
+            },
+            darkMode: {
+                subject: 'Did you know? ClawHost has dark mode',
+                preview: 'Switch between light and dark themes',
+                heading: 'Easy on the eyes',
+                description:
+                    'Toggle between light and dark themes in the ClawHost dashboard. Your preference is saved and applied automatically on every visit.',
+                cta: 'Try Dark Mode'
+            },
+            reinstall: {
+                subject: 'Did you know? Reinstall OpenClaw in one click',
+                preview: 'Reset your OpenClaw instance without losing your server',
+                heading: 'Fresh start, same server',
+                description:
+                    'Reinstall the OpenClaw runtime on your existing server with a single click. Your server stays intact — only OpenClaw gets a clean installation.',
+                cta: 'Learn More'
+            },
+            yearlyPlans: {
+                subject: 'Did you know? Save with yearly plans',
+                preview: 'Switch to annual billing and pay less',
+                heading: 'Pay less, get more',
+                description:
+                    'Switch to yearly billing and save on your claw subscription. Same great service, lower price — cancel anytime.',
+                cta: 'View Plans'
+            }
+        }
     },
     auth: {
         signIn: 'Sign In',
@@ -718,7 +946,13 @@ const en = {
         vpsServer: 'VPS Server',
         openClawPreinstalled: 'OpenClaw Pre-installed',
         storageWithSize: 'Storage',
+        billingInterval: 'Billing',
+        monthly: 'Monthly',
+        yearly: 'Yearly',
+        yearlySaveBadge: '2 Months Free',
+        yearlySavings: 'You save',
         totalMonthly: 'Total monthly',
+        totalYearly: 'Total yearly',
         creating: 'Creating...',
         proceedToPayment: 'Pay ${{amount}} to Deploy',
         agreementNotice: 'By deploying, you agree to our',
@@ -908,6 +1142,9 @@ const en = {
         tierHighFrequency: 'High Frequency',
         recommended: 'Recommended',
         perMonth: '/mo',
+        perYear: '/yr',
+        yearlyDiscount: '— 2 months free',
+        billedYearly: 'billed yearly',
         deploy: 'Deploy',
         select: 'Select',
         selectPlanLabel: 'Select {{plan}} plan',

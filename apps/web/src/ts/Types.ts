@@ -33,6 +33,8 @@ export type PlaygroundAgentDetailTab =
 
 export type CompareFeatureStatus = 'yes' | 'no' | 'partial'
 
+export type BillingInterval = 'month' | 'year'
+
 export type ClawAvatarSize = 'sm' | 'md' | 'lg'
 
 export type GatewayConnectionState =

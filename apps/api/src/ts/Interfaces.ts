@@ -637,6 +637,7 @@ export interface InitiateClawPurchaseBody {
     sshKeyId?: string
     volumeSize?: number
     priceMonthly: number
+    billingInterval?: 'month' | 'year'
 }
 
 export interface CloudflareDNSRecord {

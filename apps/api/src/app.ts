@@ -15,6 +15,7 @@ import {
     aiRoutes,
     authRoutes,
     clawsRoutes,
+    cronRoutes,
     plansRoutes,
     sshKeysRoutes,
     usersRoutes,
@@ -58,6 +59,7 @@ app.use('*', async (c, next) => {
 app.get('/', (c) => ok(c, null, t('api.healthOk')))
 
 app.route('/auth', authRoutes)
+app.route('/cron', cronRoutes)
 app.route('/plans', plansRoutes)
 app.route('/webhooks', webhooksRoutes)
 app.get('/clawhub/skills', async (c) => {

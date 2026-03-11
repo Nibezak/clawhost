@@ -1,5 +1,5 @@
 import type { FC, ReactNode } from 'react'
-import type { ClawWithAgents } from '@/ts/Interfaces'
+import type { ClawWithAgents, LandingDemoPreviewProps } from '@/ts/Interfaces'
 import type { DashboardTab } from '@/ts/Types'
 
 import { useState, useEffect, useMemo } from 'react'
@@ -21,7 +21,9 @@ import {
     GraphIcon
 } from '@phosphor-icons/react'
 
-const LandingDemoPreview: FC = (): ReactNode => {
+const LandingDemoPreview: FC<LandingDemoPreviewProps> = ({
+    urlOverride
+}): ReactNode => {
     const [isMobile, setIsMobile] = useState(
         typeof window !== 'undefined' && window.innerWidth < 768
     )
@@ -145,13 +147,17 @@ const LandingDemoPreview: FC = (): ReactNode => {
                     <div className='h-3 w-3 rounded-full bg-[#28c840] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
                 </div>
                 <div className='flex flex-1 justify-center'>
-                    <div className='text-muted-foreground bg-foreground/10 flex items-center gap-2 rounded-lg px-4 py-1.5 text-xs'>
-                        <LockIcon
-                            className='h-3 w-3 text-green-500/70'
-                            weight='fill'
-                        />
-                        <span>{getBaseDomain()}/claws</span>
-                    </div>
+                    {urlOverride ? (
+                        <span className='text-muted-foreground text-xs'>{urlOverride}</span>
+                    ) : (
+                        <div className='text-muted-foreground bg-foreground/10 flex items-center gap-2 rounded-lg px-4 py-1.5 text-xs'>
+                            <LockIcon
+                                className='h-3 w-3 text-green-500/70'
+                                weight='fill'
+                            />
+                            <span>{`${getBaseDomain()}/claws`}</span>
+                        </div>
+                    )}
                 </div>
                 <div className='w-[56px]' />
             </div>

@@ -48,4 +48,6 @@ export type ClawFileType =
 
 export type PiperVoiceQuality = 'low' | 'medium' | 'high'
 
+export type BillingInterval = 'month' | 'year'
+
 export type PolarPriceMap = Record<string, Record<string, number>>

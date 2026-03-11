@@ -5,5 +5,17 @@
             "*": false
         }
     },
-    "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+    "rewrites": [
+        {
+            "source": "/api/cron/:path*",
+            "destination": "https://api.clawhost.cloud/cron/:path*"
+        },
+        { "source": "/(.*)", "destination": "/index.html" }
+    ],
+    "crons": [
+        {
+            "path": "/api/cron/send-feature-emails",
+            "schedule": "0 9 * * *"
+        }
+    ]
 }

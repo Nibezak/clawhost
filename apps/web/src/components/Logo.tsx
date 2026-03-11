@@ -6,8 +6,9 @@ import { t } from '@openclaw/i18n'
 import { ROUTES } from '@/lib'
 
 const Logo: FC<LogoProps> = ({ to }): ReactNode => {
-    const destination = to || ROUTES.HOME
     const { pathname, hash, search } = useLocation()
+    const isGo = pathname.startsWith(ROUTES.GO)
+    const destination = to || (isGo ? ROUTES.GO : ROUTES.HOME)
     const navigate = useNavigate()
     const isSamePage = pathname === destination
 

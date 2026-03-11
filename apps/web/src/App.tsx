@@ -8,6 +8,7 @@ import { TooltipProvider } from '@/components/ui'
 import { ROUTES } from '@/lib'
 import { useThemeEffect, useLanguageEffect } from '@/hooks'
 
+const Go = lazy(() => import('@/pages/Go'))
 const Landing = lazy(() => import('@/pages/Landing'))
 const Login = lazy(() => import('@/pages/Login'))
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
@@ -39,6 +40,7 @@ const App: FC = (): ReactNode => {
                 }>
                     <Routes>
                         <Route path={ROUTES.HOME} element={<Landing />} />
+                        <Route path={ROUTES.GO} element={<Go />} />
                         <Route path={ROUTES.LOGIN} element={<Login />} />
                         <Route path={ROUTES.TERMS} element={<Terms />} />
                         <Route path={ROUTES.PRIVACY} element={<Privacy />} />

@@ -77,6 +77,7 @@ export interface Plan {
     memory: number
     disk: number
     priceMonthly: number
+    priceYearly: number
     architecture: string
     disabled?: boolean
 }
@@ -255,6 +256,23 @@ export interface HeaderProps {
     showNavLinks?: boolean
     navLinks?: NavLink[]
     activeSection?: string
+}
+
+export interface FeatureItem {
+    icon: ElementType
+    title: string
+    description: string
+}
+
+export interface FeaturesGridProps {
+    badge: string
+    heading: string
+    description: string
+    features: FeatureItem[]
+}
+
+export interface LandingDemoPreviewProps {
+    urlOverride?: string
 }
 
 export interface UserDropdownProps {
@@ -463,6 +481,7 @@ export interface PurchaseClawData {
     sshKeyId?: string
     volumeSize?: number
     priceMonthly: number
+    billingInterval?: 'month' | 'year'
 }
 
 export interface DeleteClawResponse {
@@ -674,6 +693,13 @@ export interface Testimonial {
 export interface Faq {
     question: string
     answer: string
+}
+
+export interface FaqSectionProps {
+    badge: string
+    heading: string
+    description: string
+    faqs: Faq[]
 }
 
 export interface ClawAgent {
@@ -1518,4 +1544,18 @@ export interface SitemapRoute {
     path: string
     priority: string
     changefreq: string
+}
+
+export interface ComparisonRow {
+    us: string
+    others: string
+}
+
+export interface ComparisonTableProps {
+    badge: string
+    heading: string
+    description: string
+    rows: ComparisonRow[]
+    showFullComparisonLink?: boolean
+    logoSuffix?: string
 }
