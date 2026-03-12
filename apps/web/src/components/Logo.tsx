@@ -108,7 +108,7 @@ const Logo: FC<LogoProps> = ({ to }): ReactNode => {
         <Link
             to={destination}
             onClick={handleClick}
-            className={`flex items-center gap-2 ${isSamePage ? 'pointer-events-none' : 'transition hover:opacity-80'}`}
+            className='flex items-center gap-2 transition hover:opacity-80'
             aria-label={t('common.brandName')}
         >
             {svg}

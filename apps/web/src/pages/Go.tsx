@@ -5,20 +5,11 @@ import { lazy, Suspense, useRef, useState, useEffect } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { Button } from '@/components/ui'
-import {
-    DropdownMenu,
-    DropdownMenuTrigger,
-    DropdownMenuContent,
-    DropdownMenuItem
-} from '@/components/ui'
 import { PageTitle, Header, LandingFooter, FeaturesGrid, ComparisonTable, FaqSection } from '@/components'
 import { useGitHubStars, GITHUB_REPO_URL } from '@/hooks'
 import {
     SparkleIcon,
-    WindowsLogoIcon,
-    AppleLogoIcon,
     GithubLogoIcon,
-    CaretDownIcon,
     DownloadSimpleIcon,
     ClockIcon,
     LockIcon,
@@ -36,11 +27,6 @@ import {
 } from '@phosphor-icons/react'
 
 const LazyDemoPreview = lazy(() => import('@/components/LandingDemoPreview'))
-
-const getDetectedOS = (): 'windows' | 'mac' => {
-    if (typeof navigator !== 'undefined' && navigator.userAgent.includes('Mac')) return 'mac'
-    return 'windows'
-}
 
 const getGoFeatures = (): FeatureItem[] => [
     {
@@ -134,8 +120,6 @@ const getGoFaqs = (): Faq[] => [
 
 const Go: FC = (): ReactNode => {
     const { data: gitHubStars } = useGitHubStars()
-    const [selectedOS, setSelectedOS] = useState<'windows' | 'mac'>(getDetectedOS)
-    const osLabel = selectedOS === 'mac' ? t('go.downloadMac') : t('go.downloadWindows')
     const [activeSection, setActiveSection] = useState('')
     const previewRef = useRef<HTMLDivElement>(null)
     const { scrollYProgress: previewProgress } = useScroll({
@@ -219,36 +203,14 @@ const Go: FC = (): ReactNode => {
                             </p>
 
                             <div className='mb-16 flex flex-col gap-4 sm:flex-row'>
-                                <div className='flex overflow-hidden rounded-lg bg-gradient-to-r from-[#ef5350] to-[#c62828]'>
-                                    <Button
-                                        size='lg'
-                                        className='gap-2 rounded-none border-0 bg-transparent px-6 font-semibold text-white shadow-none hover:bg-white/10'
-                                    >
-                                        <DownloadSimpleIcon className='h-5 w-5' weight='bold' />
-                                        {t('go.download', { os: osLabel })}
-                                    </Button>
-                                    <div className='w-px bg-white/20' />
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button
-                                                size='lg'
-                                                className='rounded-none border-0 bg-transparent px-3 text-white shadow-none hover:bg-white/10'
-                                            >
-                                                <CaretDownIcon className='h-4 w-4' weight='bold' />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align='end'>
-                                            <DropdownMenuItem className='gap-2' onSelect={() => setSelectedOS('windows')}>
-                                                <WindowsLogoIcon className='h-4 w-4' weight='fill' />
-                                                {t('go.downloadWindows')}
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem className='gap-2' onSelect={() => setSelectedOS('mac')}>
-                                                <AppleLogoIcon className='h-4 w-4' weight='fill' />
-                                                {t('go.downloadMac')}
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </div>
+                                <Button
+                                    size='lg'
+                                    disabled
+                                    className='gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] px-6 font-semibold text-white opacity-70'
+                                >
+                                    <DownloadSimpleIcon className='h-5 w-5' weight='bold' />
+                                    {t('go.comingSoon')}
+                                </Button>
 
                                 <Button
                                     size='lg'
@@ -328,9 +290,10 @@ const Go: FC = (): ReactNode => {
                                     </span>
                                     <Button
                                         size='lg'
-                                        className='w-full border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] font-semibold text-white hover:opacity-90'
+                                        disabled
+                                        className='w-full border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] font-semibold text-white opacity-70'
                                     >
-                                        {t('go.pricingCta')}
+                                        {t('go.comingSoon')}
                                     </Button>
                                 </div>
 
@@ -362,6 +325,7 @@ const Go: FC = (): ReactNode => {
                     description={t('go.comparisonDescription')}
                     logoSuffix='Go'
                     rows={[
+                        { us: t('nav.goSubtitle'), others: t('nav.cloudSubtitle') },
                         { us: t('go.comparisonLocalUs'), others: t('go.comparisonLocalOthers') },
                         { us: t('go.comparisonPricingUs'), others: t('go.comparisonPricingOthers') },
                         { us: t('go.comparisonDataUs'), others: t('go.comparisonDataOthers') },

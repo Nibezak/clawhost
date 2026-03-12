@@ -64,13 +64,16 @@ const en = {
         footerNavigation: 'Footer navigation',
         toggleMenu: 'Toggle menu',
         cloud: 'Cloud',
-        go: 'Go'
+        cloudSubtitle: 'Technical',
+        go: 'Go',
+        goSubtitle: 'Non-technical'
     },
     go: {
         pageTitle: 'ClawHost Go',
         heroTitle1: 'Deploy OpenClaw.',
         heroTitle2: 'Locally. Instantly.',
         badge: 'Coming Soon',
+        comingSoon: 'Coming Soon',
         description: 'A lightweight desktop client to manage your OpenClaw instances. Deploy, monitor, and control your claws — right from your machine.',
         download: 'Download for {{os}}',
         downloadWindows: 'Windows',

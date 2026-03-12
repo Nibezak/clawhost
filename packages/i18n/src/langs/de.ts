@@ -66,13 +66,16 @@ const de: Translations = {
         footerNavigation: 'Fusszeilen-Navigation',
         toggleMenu: 'Menu umschalten',
         cloud: 'Cloud',
-        go: 'Go'
+        cloudSubtitle: 'Technisch',
+        go: 'Go',
+        goSubtitle: 'Nicht-technisch'
     },
     go: {
         pageTitle: 'ClawHost Go',
         heroTitle1: 'OpenClaw bereitstellen.',
         heroTitle2: 'Lokal. Sofort.',
         badge: 'Demnächst verfügbar',
+        comingSoon: 'Demnächst verfügbar',
         description: 'Ein leichtgewichtiger Desktop-Client zur Verwaltung Ihrer OpenClaw-Instanzen. Bereitstellen, überwachen und steuern Sie Ihre Claws — direkt von Ihrem Rechner.',
         download: 'Herunterladen für {{os}}',
         downloadWindows: 'Windows',

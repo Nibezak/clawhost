@@ -824,6 +824,7 @@ const Landing: FC = (): ReactNode => {
                     heading={t('landing.comparisonTitle')}
                     description={t('landing.comparisonDescription')}
                     rows={[
+                        { us: t('nav.cloudSubtitle'), others: t('nav.goSubtitle') },
                         { us: t('landing.comparisonOpenClawUs'), others: t('landing.comparisonOpenClawOthers') },
                         { us: t('landing.comparisonPricingUs'), others: t('landing.comparisonPricingOthers') },
                         { us: t('landing.comparisonOwnershipUs'), others: t('landing.comparisonOwnershipOthers') },

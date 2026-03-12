@@ -16,6 +16,8 @@ import { ScrollToBottomButton } from '@/components'
 import '@xterm/xterm/css/xterm.css'
 
 let connectCounter = 0
+const MAX_RECONNECT_ATTEMPTS = 5
+const RECONNECT_DELAY = 2000
 
 const ClawTerminalContent: FC<ClawTerminalContentProps> = ({
     clawId,
@@ -27,6 +29,8 @@ const ClawTerminalContent: FC<ClawTerminalContentProps> = ({
     const wsRef = useRef<WebSocket | null>(null)
     const observerRef = useRef<ResizeObserver | null>(null)
     const connectIdRef = useRef(0)
+    const reconnectAttemptsRef = useRef(0)
+    const reconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
     const [status, setStatus] = useState<
         'idle' | 'connecting' | 'connected' | 'error' | 'disconnected'
     >('idle')
@@ -34,6 +38,10 @@ const ClawTerminalContent: FC<ClawTerminalContentProps> = ({
 
     const cleanup = useCallback(() => {
         connectIdRef.current = ++connectCounter
+        if (reconnectTimerRef.current) {
+            clearTimeout(reconnectTimerRef.current)
+            reconnectTimerRef.current = null
+        }
         if (observerRef.current) {
             observerRef.current.disconnect()
             observerRef.current = null
@@ -51,6 +59,7 @@ const ClawTerminalContent: FC<ClawTerminalContentProps> = ({
 
     const connect = useCallback(async () => {
         cleanup()
+        reconnectAttemptsRef.current = 0
         if (!containerRef.current) return
 
         const myId = connectIdRef.current
@@ -169,6 +178,7 @@ const ClawTerminalContent: FC<ClawTerminalContentProps> = ({
         ws.onmessage = (event) => {
             if (!connected) {
                 connected = true
+                reconnectAttemptsRef.current = 0
                 setStatus('connected')
                 requestAnimationFrame(() => {
                     terminal.focus()
@@ -178,7 +188,18 @@ const ClawTerminalContent: FC<ClawTerminalContentProps> = ({
         }
 
         ws.onclose = () => {
-            setStatus((prev) => (prev === 'error' ? 'error' : 'disconnected'))
+            if (connectIdRef.current !== myId) return
+            if (connected && reconnectAttemptsRef.current < MAX_RECONNECT_ATTEMPTS) {
+                reconnectAttemptsRef.current++
+                setStatus('connecting')
+                reconnectTimerRef.current = setTimeout(() => {
+                    if (connectIdRef.current === myId) {
+                        connect()
+                    }
+                }, RECONNECT_DELAY)
+            } else {
+                setStatus((prev) => (prev === 'error' ? 'error' : 'disconnected'))
+            }
         }
 
         ws.onerror = () => {
