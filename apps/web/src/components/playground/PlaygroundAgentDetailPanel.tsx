@@ -9,7 +9,7 @@ import type { PlaygroundAgentDetailTab } from '@/ts/Types'
 import type { TranslationKey } from '@openclaw/i18n'
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import AGENT_DETAIL_TABS from '@/lib/agentDetailTabs'
+import { AGENT_DETAIL_TABS } from '@/lib/constants'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { t } from '@openclaw/i18n'

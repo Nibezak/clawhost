@@ -1,9 +1,9 @@
 import type { InitiateClawPurchaseBody } from '@/ts/Interfaces'
-import type { AuthenticatedContext, ProviderType } from '@/ts/Types'
+import type { AuthenticatedContext, BillingInterval, ProviderType } from '@/ts/Types'
 
 import crypto from 'crypto'
 import { eq, and, count, lt } from 'drizzle-orm'
-import { inputValidation, clawProvider } from '@openclaw/shared'
+import { inputValidation, clawProvider, billingInterval } from '@openclaw/shared'
 import { db } from '@/db'
 import { users, sshKeys, claws, pendingClaws } from '@/db/schema'
 import { checkouts, customers } from '@/lib/polar'
@@ -107,11 +107,11 @@ const generateClawName = (): string => {
 const getPolarProductId = (
     providerName: string,
     planId: string,
-    billingInterval: 'month' | 'year' = 'month'
+    interval: BillingInterval = billingInterval.MONTH
 ): string | null => {
     const prefix =
         providerName === 'hetzner' ? '' : `${providerName.toUpperCase()}_`
-    const suffix = billingInterval === 'year' ? '_YEARLY' : ''
+    const suffix = interval === billingInterval.YEAR ? '_YEARLY' : ''
     const envKey = `POLAR_PRODUCT_${prefix}${planId.toUpperCase().replace(/-/g, '_')}${suffix}`
     const envValue = process.env[envKey]
 
@@ -141,7 +141,7 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
             billingInterval: rawBillingInterval
         } = await c.req.json<InitiateClawPurchaseBody>()
 
-        const billingInterval = rawBillingInterval === 'year' ? 'year' : 'month'
+        const billingCycle = rawBillingInterval === billingInterval.YEAR ? billingInterval.YEAR : billingInterval.MONTH
 
         if (!planId || !location || !priceMonthly) {
             return fail(c, t('api.missingRequiredFields'), 400)
@@ -285,7 +285,7 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
                 .where(eq(users.id, userId))
         }
 
-        const productId = getPolarProductId(providerName || 'hetzner', planId, billingInterval)
+        const productId = getPolarProductId(providerName || 'hetzner', planId, billingCycle)
         if (!productId) {
             return fail(c, t('api.paymentNotConfigured'), 400)
         }
@@ -303,7 +303,7 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
                 planId,
                 location,
                 name,
-                billingInterval,
+                billingInterval: billingCycle,
                 environment: getEnvironment(c)
             }
         })

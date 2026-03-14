@@ -93,7 +93,7 @@ const en = {
         pricing: 'Pricing',
         pricingTitle: 'Simple, One-Time Pricing',
         pricingDescription: 'No subscriptions, no hidden fees. One license, unlimited use.',
-        pricingPrice: '$40',
+        pricingPrice: '${{price}}',
         pricingLabel: 'One-Time Payment',
         pricingFeature1: 'Lifetime license',
         pricingFeature2: 'Unlimited claws',
@@ -136,7 +136,7 @@ const en = {
         faq5Answer: 'ClawHost Go supports Windows and macOS. Both platforms get the same features and receive updates simultaneously.',
         faq6Question: 'Can I switch from Go to Cloud later?',
         faq6Answer: 'Absolutely. You can export your OpenClaw configuration from Go and deploy it on ClawHost Cloud anytime. Both platforms are fully compatible.',
-        statsPrice: '$40',
+        statsPrice: '${{price}}',
         statsLifetime: 'Lifetime',
         statsOneTime: 'One-Time',
         statsPayment: 'Payment',
@@ -168,7 +168,7 @@ const en = {
         legalAndMore: 'Others',
         documentation: 'Documentation',
         productDescription:
-            'Production-ready infrastructure with one-click OpenClaw deployment, handled end to end — build, ship, and move faster with AI.',
+            'Deploy OpenClaw agents in the cloud or locally with one click — build, connect, and scale your AI agents faster with ClawHost.',
         downloadAndroid: 'Get it on Google Play',
         downloadIos: 'Download on the App Store',
         ariaGithub: 'GitHub',
@@ -727,7 +727,7 @@ const en = {
         pageDescription: 'Purchase your license for self-hosting OpenClaw instances locally with our Go app.',
         planName: 'ClawHost Go License',
         oneTimePurchase: 'One-time purchase',
-        price: '$39.99',
+        price: '${{price}}',
         priceNote: 'Pay once, own forever.',
         purchaseLicense: 'Purchase License',
         purchasing: 'Redirecting...',
@@ -1045,7 +1045,7 @@ const en = {
         heroTitle1: 'Deploy OpenClaw.',
         heroTitle2: 'One click. Done.',
         heroDescription:
-            'Production-ready infrastructure with one-click OpenClaw deployment, handled end to end — build, ship, and move faster with AI.',
+            'Deploy OpenClaw agents in the cloud or locally with one click — build, connect, and scale your AI agents faster with ClawHost.',
         goToClaws: 'Go to Claws',
         selfHost: 'Open Source',
         startingPrice: 'Starting',
@@ -1290,6 +1290,19 @@ const en = {
         upcomingReleaseFeature9:
             'Voice Mode to interact with the OpenClaw agents hosted on ClawHost (Beta)',
         upcomingReleaseFeature10:
+            'Reinstall OpenClaw on your instance to start fresh, available once per day',
+        upcomingReleaseFeature11:
+            'Landing page for ClawHost Go, local hosting with ClawHost',
+        release12Date: 'March 14, 2026',
+        release12Title: 'Yearly Plans, Voice Mode & More',
+        release12Description:
+            'Yearly subscriptions with 2 months free, voice mode, instance reinstall, and an initial landing page for ClawHost Go.',
+        release12Feature1: 'Landing page for ClawHost Go, local hosting with ClawHost',
+        release12Feature2:
+            'Yearly subscription support with 2 months free when you subscribe annually',
+        release12Feature3:
+            'Voice Mode to interact with the OpenClaw agents hosted on ClawHost',
+        release12Feature4:
             'Reinstall OpenClaw on your instance to start fresh, available once per day',
         release11Date: 'February 28, 2026',
         release11Title: 'Text-to-Speech, Terminal, Chat Tabs & File Explorer',
@@ -1759,7 +1772,7 @@ const en = {
         title: 'Privacy Policy',
         description:
             'Learn how ClawHost collects, uses, and protects your personal data.',
-        lastUpdated: 'Last updated: February 17, 2026',
+        lastUpdated: 'Last updated: March 14, 2026',
         introTitle: '1. Introduction',
         introText:
             'ClawHost ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our Service.',
@@ -1830,7 +1843,7 @@ const en = {
         title: 'Terms of Service',
         description:
             'Read the terms and conditions for using ClawHost services.',
-        lastUpdated: 'Last updated: February 17, 2026',
+        lastUpdated: 'Last updated: March 14, 2026',
         acceptanceTitle: '1. Acceptance of Terms',
         acceptanceText:
             'By accessing and using ClawHost ("Service"), you accept and agree to be bound by the terms and provisions of this agreement. If you do not agree to these terms, please do not use our Service.',
@@ -1866,7 +1879,7 @@ const en = {
             'Any other unlawful or harmful activities that we may determine to be inappropriate at our discretion',
         paymentTitle: '6. Payment and Billing',
         paymentText:
-            'Services are billed on a fixed monthly basis. All payments are non-refundable. When you pay for a server, you have access to it for the full billing period. If you cancel, the cancellation takes effect at the end of the current billing period. Prices are subject to change with reasonable notice. Failure to pay may result in suspension or termination of your account.',
+            'Services are billed on a fixed monthly or yearly basis. You may switch between monthly and yearly billing at any time, with the change taking effect at the start of your next billing period. All payments are non-refundable. When you pay for a server, you have access to it for the full billing period. If you cancel, the cancellation takes effect at the end of the current billing period. Prices are subject to change, but any changes will only apply to newly deployed claws and will not affect already deployed ones. Failure to pay may result in suspension or termination of your account.',
         availabilityTitle: '7. Service Availability',
         availabilityText:
             'We strive to maintain high availability but do not guarantee uninterrupted access to the Service. We reserve the right to modify, suspend, or discontinue any part of the Service at any time with or without notice.',

@@ -2,6 +2,7 @@ import type { FC, ReactNode } from 'react'
 import type { LicenseCardProps } from '@/ts/Interfaces'
 
 import { t } from '@openclaw/i18n'
+import { goLicense } from '@openclaw/shared'
 import { Button } from '@/components/ui'
 import {
     CheckCircleIcon,
@@ -28,7 +29,7 @@ const LicenseCard: FC<LicenseCardProps> = ({ hasLicense, isPurchasing, onPurchas
                         {t('license.planName')}
                     </span>
                     <span className='text-muted-foreground text-sm'>
-                        {t('license.price')}
+                        {t('license.price', { price: goLicense.PRICE })}
                     </span>
                 </div>
                 {!hasLicense && (

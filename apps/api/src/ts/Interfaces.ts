@@ -1,5 +1,6 @@
 import type { ChildProcess } from 'child_process'
 import type {
+    BillingInterval,
     ClawFileType,
     ProviderType,
     SubscriptionStatus,
@@ -504,7 +505,7 @@ export interface CreatePolarProductParams {
     name: string
     description?: string
     priceAmountCents: number
-    recurringInterval?: 'month' | 'year'
+    recurringInterval?: BillingInterval
 }
 
 export interface PolarCustomer {
@@ -637,7 +638,7 @@ export interface InitiateClawPurchaseBody {
     sshKeyId?: string
     volumeSize?: number
     priceMonthly: number
-    billingInterval?: 'month' | 'year'
+    billingInterval?: BillingInterval
 }
 
 export interface CloudflareDNSRecord {

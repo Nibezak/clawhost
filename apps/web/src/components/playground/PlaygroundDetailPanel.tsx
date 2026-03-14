@@ -8,7 +8,7 @@ import type { PlaygroundDetailTab } from '@/ts/Types'
 import type { TranslationKey } from '@openclaw/i18n'
 
 import { useCallback, useState, useMemo, useEffect } from 'react'
-import CLAW_DETAIL_TABS from '@/lib/clawDetailTabs'
+import { CLAW_DETAIL_TABS } from '@/lib/constants'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import {
@@ -17,7 +17,7 @@ import {
     inputValidation,
     OPENCLAW_VERSION
 } from '@openclaw/shared'
-import { getLocale, TRUNCATE_LENGTHS } from '@/lib'
+import { getLocale, getBaseDomain, TRUNCATE_LENGTHS } from '@/lib'
 import {
     XIcon,
     InfoIcon,
@@ -38,7 +38,6 @@ import {
     TooltipTrigger,
     TooltipContent
 } from '@/components/ui'
-import { getBaseDomain } from '@/lib'
 import {
     CopyableField,
     ClawLogsContent,

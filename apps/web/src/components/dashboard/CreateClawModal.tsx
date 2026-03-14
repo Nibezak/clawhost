@@ -8,7 +8,7 @@ import type { BillingInterval, ProviderType } from '@/ts/Types'
 
 import { useState, useEffect } from 'react'
 import { t } from '@openclaw/i18n'
-import { clawProvider } from '@openclaw/shared'
+import { billingInterval, clawProvider } from '@openclaw/shared'
 import { Link } from 'react-router-dom'
 import { useUIStore } from '@/lib/store'
 import { copyToClipboard, ROUTES } from '@/lib'
@@ -167,7 +167,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
     const [showPassword, setShowPassword] = useState(false)
     const [selectedSshKeyId, setSelectedSshKeyId] = useState<string>('')
     const [volumeSize, setVolumeSize] = useState<number>(0)
-    const [billingInterval, setBillingInterval] = useState<BillingInterval>('month')
+    const [billingCycle, setBillingCycle] = useState<BillingInterval>(billingInterval.YEAR)
     const [showAdvanced, setShowAdvanced] = useState(false)
     const [agreedToTerms, setAgreedToTerms] = useState(false)
     const { showToast } = useUIStore()
@@ -230,12 +230,12 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
             return
         }
 
-        const planPrice = billingInterval === 'year'
+        const planPrice = billingCycle === billingInterval.YEAR
             ? selectedPlanData.priceYearly
             : selectedPlanData.priceMonthly
         let totalPrice = planPrice
         if (volumeSize > 0 && volumePricing) {
-            const volumePrice = billingInterval === 'year'
+            const volumePrice = billingCycle === billingInterval.YEAR
                 ? volumeSize * volumePricing.pricePerGbMonthly * 10
                 : volumeSize * volumePricing.pricePerGbMonthly
             totalPrice += volumePrice
@@ -251,7 +251,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                 sshKeyId: selectedSshKeyId || undefined,
                 volumeSize: volumeSize > 0 ? volumeSize : undefined,
                 priceMonthly: totalPrice,
-                billingInterval
+                billingInterval: billingCycle
             },
             {
                 onSuccess: (data) => {
@@ -583,9 +583,9 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                         <div className='bg-muted flex w-fit rounded-lg p-1'>
                             <button
                                 type='button'
-                                onClick={() => setBillingInterval('month')}
+                                onClick={() => setBillingCycle(billingInterval.MONTH)}
                                 className={`rounded-md px-2 py-1 text-xs font-medium transition ${
-                                    billingInterval === 'month'
+                                    billingCycle === billingInterval.MONTH
                                         ? 'bg-background text-foreground shadow-sm'
                                         : 'text-muted-foreground hover:text-foreground'
                                 }`}
@@ -594,9 +594,9 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                             </button>
                             <button
                                 type='button'
-                                onClick={() => setBillingInterval('year')}
+                                onClick={() => setBillingCycle(billingInterval.YEAR)}
                                 className={`flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition ${
-                                    billingInterval === 'year'
+                                    billingCycle === billingInterval.YEAR
                                         ? 'bg-background text-foreground shadow-sm'
                                         : 'text-muted-foreground hover:text-foreground'
                                 }`}
@@ -733,10 +733,10 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                                 </div>
                                                 <span className='text-sm font-semibold'>
                                                     $
-                                                    {billingInterval === 'year'
+                                                    {billingCycle === billingInterval.YEAR
                                                         ? plan.priceYearly.toFixed(2)
                                                         : plan.priceMonthly.toFixed(2)}
-                                                    {billingInterval === 'year'
+                                                    {billingCycle === billingInterval.YEAR
                                                         ? t('landing.perYear')
                                                         : t('landing.perMonth')}
                                                 </span>
@@ -1123,10 +1123,10 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                 </span>
                                 <span>
                                     $
-                                    {billingInterval === 'year'
+                                    {billingCycle === billingInterval.YEAR
                                         ? selectedPlan.priceYearly.toFixed(2)
                                         : selectedPlan.priceMonthly.toFixed(2)}
-                                    {billingInterval === 'year'
+                                    {billingCycle === billingInterval.YEAR
                                         ? t('landing.perYear')
                                         : t('landing.perMonth')}
                                 </span>
@@ -1139,17 +1139,17 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                     </span>
                                     <span>
                                         +$
-                                        {(billingInterval === 'year'
+                                        {(billingCycle === billingInterval.YEAR
                                             ? volumeSize * volumePricing.pricePerGbMonthly * 10
                                             : volumeSize * volumePricing.pricePerGbMonthly
                                         ).toFixed(2)}
-                                        {billingInterval === 'year'
+                                        {billingCycle === billingInterval.YEAR
                                             ? t('landing.perYear')
                                             : t('landing.perMonth')}
                                     </span>
                                 </div>
                             )}
-                            {billingInterval === 'year' && (
+                            {billingCycle === billingInterval.YEAR && (
                                 <div className='flex justify-between text-sm text-emerald-600 dark:text-emerald-400'>
                                     <span>
                                         {t('createClaw.yearlySavings')}
@@ -1167,13 +1167,13 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                             )}
                             <div className='border-border flex justify-between border-t pt-2 text-sm'>
                                 <span className='text-muted-foreground'>
-                                    {billingInterval === 'year'
+                                    {billingCycle === billingInterval.YEAR
                                         ? t('createClaw.totalYearly')
                                         : t('createClaw.totalMonthly')}
                                 </span>
                                 <span className='font-semibold'>
                                     $
-                                    {(billingInterval === 'year'
+                                    {(billingCycle === billingInterval.YEAR
                                         ? selectedPlan.priceYearly +
                                           (volumeSize > 0 && volumePricing
                                               ? volumeSize * volumePricing.pricePerGbMonthly * 10
@@ -1183,7 +1183,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                               ? volumeSize * volumePricing.pricePerGbMonthly
                                               : 0)
                                     ).toFixed(2)}
-                                    {billingInterval === 'year'
+                                    {billingCycle === billingInterval.YEAR
                                         ? t('landing.perYear')
                                         : t('landing.perMonth')}
                                 </span>
@@ -1241,7 +1241,7 @@ const CreateClawModal: FC<CreateClawModalProps> = ({
                                 : !location
                                   ? t('createClaw.selectLocationToContinue')
                                   : t('createClaw.proceedToPayment', {
-                                        amount: (billingInterval === 'year'
+                                        amount: (billingCycle === billingInterval.YEAR
                                             ? selectedPlan.priceYearly +
                                               (volumeSize > 0 && volumePricing
                                                   ? volumeSize * volumePricing.pricePerGbMonthly * 10

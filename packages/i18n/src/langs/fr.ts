@@ -95,7 +95,7 @@ const fr: Translations = {
         pricing: 'Tarifs',
         pricingTitle: 'Tarif unique et simple',
         pricingDescription: 'Pas d\'abonnement, pas de frais cachés. Une licence, utilisation illimitée.',
-        pricingPrice: '40 $',
+        pricingPrice: '{{price}} $',
         pricingLabel: 'Paiement unique',
         pricingFeature1: 'Licence à vie',
         pricingFeature2: 'Claws illimités',
@@ -138,7 +138,7 @@ const fr: Translations = {
         faq5Answer: 'ClawHost Go prend en charge Windows et macOS. Les deux plateformes bénéficient des mêmes fonctionnalités et reçoivent les mises à jour simultanément.',
         faq6Question: 'Puis-je passer de Go à Cloud plus tard ?',
         faq6Answer: 'Absolument. Vous pouvez exporter votre configuration OpenClaw depuis Go et la déployer sur ClawHost Cloud à tout moment. Les deux plateformes sont entièrement compatibles.',
-        statsPrice: '40 $',
+        statsPrice: '{{price}} $',
         statsLifetime: 'À vie',
         statsOneTime: 'Unique',
         statsPayment: 'Paiement',
@@ -170,7 +170,7 @@ const fr: Translations = {
         legalAndMore: 'Autres',
         documentation: 'Documentation',
         productDescription:
-            "Infrastructure prête pour la production avec déploiement OpenClaw en un clic, géré de bout en bout — construisez, livrez et avancez plus vite avec l'IA.",
+            "Déployez vos agents OpenClaw dans le cloud ou en local en un clic — créez, connectez et faites évoluer vos agents IA plus vite avec ClawHost.",
         downloadAndroid: 'Télécharger sur Google Play',
         downloadIos: "Télécharger sur l'App Store",
         ariaGithub: 'GitHub',
@@ -769,7 +769,7 @@ const fr: Translations = {
         pageDescription: 'Achetez votre licence pour auto-héberger des instances OpenClaw localement avec notre application Go.',
         planName: 'Licence ClawHost Go',
         oneTimePurchase: 'Achat unique',
-        price: '39,99 $',
+        price: '{{price}} $',
         priceNote: 'Payez une fois, possédez pour toujours.',
         purchaseLicense: 'Acheter la licence',
         purchasing: 'Redirection...',
@@ -1100,7 +1100,7 @@ const fr: Translations = {
         heroTitle1: 'Déployez OpenClaw.',
         heroTitle2: "Un clic. C'est fait.",
         heroDescription:
-            "Infrastructure prête pour la production avec déploiement OpenClaw en un clic, géré de bout en bout — construisez, livrez et avancez plus vite avec l'IA.",
+            "Déployez vos agents OpenClaw dans le cloud ou en local en un clic — créez, connectez et faites évoluer vos agents IA plus vite avec ClawHost.",
         goToClaws: 'Voir les Claws',
         selfHost: 'Open Source',
         startingPrice: 'À partir de',
@@ -1350,6 +1350,19 @@ const fr: Translations = {
         upcomingReleaseFeature9:
             'Mode vocal pour interagir avec les agents OpenClaw hébergés sur ClawHost (Bêta)',
         upcomingReleaseFeature10:
+            'Réinstaller OpenClaw sur votre instance pour repartir de zéro, disponible une fois par jour',
+        upcomingReleaseFeature11:
+            'Page de présentation de ClawHost Go, hébergement local avec ClawHost',
+        release12Date: '14 mars 2026',
+        release12Title: 'Abonnements annuels, mode vocal & plus',
+        release12Description:
+            'Abonnements annuels avec 2 mois offerts, mode vocal, réinstallation d\'instance et une page de présentation initiale pour ClawHost Go.',
+        release12Feature1: 'Page de présentation de ClawHost Go, hébergement local avec ClawHost',
+        release12Feature2:
+            'Support des abonnements annuels avec 2 mois offerts pour un abonnement annuel',
+        release12Feature3:
+            'Mode vocal pour interagir avec les agents OpenClaw hébergés sur ClawHost',
+        release12Feature4:
             'Réinstaller OpenClaw sur votre instance pour repartir de zéro, disponible une fois par jour',
         release11Date: '28 février 2026',
         release11Title:
@@ -1845,7 +1858,7 @@ const fr: Translations = {
         title: 'Politique de confidentialité',
         description:
             'Découvrez comment ClawHost collecte, utilise et protège vos données personnelles.',
-        lastUpdated: 'Dernière mise à jour : 17 février 2026',
+        lastUpdated: 'Dernière mise à jour : 14 mars 2026',
         introTitle: '1. Introduction',
         introText:
             "ClawHost (« nous », « notre ») s'engage à protéger votre vie privée. Cette Politique de confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous utilisez notre Service.",
@@ -1919,7 +1932,7 @@ const fr: Translations = {
         title: "Conditions d'utilisation",
         description:
             "Lisez les termes et conditions d'utilisation des services ClawHost.",
-        lastUpdated: 'Dernière mise à jour : 17 février 2026',
+        lastUpdated: 'Dernière mise à jour : 14 mars 2026',
         acceptanceTitle: '1. Acceptation des conditions',
         acceptanceText:
             "En accédant et en utilisant ClawHost (« Service »), vous acceptez d'être lié par les termes et dispositions de cet accord. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser notre Service.",
@@ -1956,7 +1969,7 @@ const fr: Translations = {
             'Toute autre activité illicite ou nuisible que nous pourrions juger inappropriée à notre discrétion',
         paymentTitle: '6. Paiement et facturation',
         paymentText:
-            "Les services sont facturés sur une base mensuelle fixe. Tous les paiements sont non remboursables. Lorsque vous payez pour un serveur, vous y avez accès pour toute la période de facturation. Si vous annulez, l'annulation prend effet à la fin de la période de facturation en cours. Les prix sont susceptibles de changer moyennant un préavis raisonnable. Le défaut de paiement peut entraîner la suspension ou la résiliation de votre compte.",
+            "Les services sont facturés sur une base mensuelle ou annuelle fixe. Vous pouvez passer d'une facturation mensuelle à annuelle ou inversement à tout moment, le changement prenant effet au début de votre prochaine période de facturation. Tous les paiements sont non remboursables. Lorsque vous payez pour un serveur, vous y avez accès pour toute la période de facturation. Si vous annulez, l'annulation prend effet à la fin de la période de facturation en cours. Les prix sont susceptibles de changer, mais les modifications ne s'appliqueront qu'aux nouveaux claws déployés et n'affecteront pas ceux déjà en service. Le défaut de paiement peut entraîner la suspension ou la résiliation de votre compte.",
         availabilityTitle: '7. Disponibilité du Service',
         availabilityText:
             'Nous nous efforçons de maintenir une haute disponibilité mais ne garantissons pas un accès ininterrompu au Service. Nous nous réservons le droit de modifier, suspendre ou interrompre tout ou partie du Service à tout moment, avec ou sans préavis.',

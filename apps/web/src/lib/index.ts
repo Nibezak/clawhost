@@ -1,12 +1,14 @@
 import api from '@/lib/api'
 import cn from '@/lib/utils'
 import PATHS from '@/lib/paths'
-import ROUTES from '@/lib/routes'
-import DASHBOARD_TABS from '@/lib/dashboardTabs'
-import AGENT_DETAIL_TABS from '@/lib/agentDetailTabs'
-import CLAW_DETAIL_TABS from '@/lib/clawDetailTabs'
-import THEMES from '@/lib/themes'
-import LANGUAGES from '@/lib/languages'
+import {
+    AGENT_DETAIL_TABS,
+    CLAW_DETAIL_TABS,
+    DASHBOARD_TABS,
+    LANGUAGES,
+    ROUTES,
+    THEMES
+} from '@/lib/constants'
 import getBaseDomain from '@/lib/getBaseDomain'
 import getLocale from '@/lib/getLocale'
 import TRUNCATE_LENGTHS from '@/lib/truncateLengths'

@@ -95,7 +95,7 @@ const de: Translations = {
         pricing: 'Preise',
         pricingTitle: 'Einfacher Einmalpreis',
         pricingDescription: 'Keine Abonnements, keine versteckten Gebühren. Eine Lizenz, unbegrenzte Nutzung.',
-        pricingPrice: '40 $',
+        pricingPrice: '{{price}} $',
         pricingLabel: 'Einmalzahlung',
         pricingFeature1: 'Lebenslange Lizenz',
         pricingFeature2: 'Unbegrenzte Claws',
@@ -138,7 +138,7 @@ const de: Translations = {
         faq5Answer: 'ClawHost Go unterstützt Windows und macOS. Beide Plattformen erhalten die gleichen Funktionen und Updates gleichzeitig.',
         faq6Question: 'Kann ich später von Go zu Cloud wechseln?',
         faq6Answer: 'Absolut. Sie können Ihre OpenClaw-Konfiguration aus Go exportieren und jederzeit auf ClawHost Cloud bereitstellen. Beide Plattformen sind vollständig kompatibel.',
-        statsPrice: '40 $',
+        statsPrice: '{{price}} $',
         statsLifetime: 'Lebenslang',
         statsOneTime: 'Einmalig',
         statsPayment: 'Zahlung',
@@ -170,7 +170,7 @@ const de: Translations = {
         legalAndMore: 'Sonstiges',
         documentation: 'Dokumentation',
         productDescription:
-            'Produktionsreife Infrastruktur mit OpenClaw-Bereitstellung per Klick, vollständig verwaltet – bauen, liefern und schneller vorankommen mit KI.',
+            'OpenClaw-Agenten in der Cloud oder lokal mit einem Klick bereitstellen – erstelle, verbinde und skaliere deine KI-Agenten schneller mit ClawHost.',
         downloadAndroid: 'Jetzt bei Google Play',
         downloadIos: 'Laden im App Store',
         ariaGithub: 'GitHub',
@@ -759,7 +759,7 @@ const de: Translations = {
         pageDescription: 'Kaufe deine Lizenz für das lokale Self-Hosting von OpenClaw-Instanzen mit unserer Go-App.',
         planName: 'ClawHost Go Lizenz',
         oneTimePurchase: 'Einmalkauf',
-        price: '39,99 $',
+        price: '{{price}} $',
         priceNote: 'Einmal zahlen, für immer besitzen.',
         purchaseLicense: 'Lizenz kaufen',
         purchasing: 'Weiterleitung...',
@@ -1090,7 +1090,7 @@ const de: Translations = {
         heroTitle1: 'OpenClaw bereitstellen.',
         heroTitle2: 'Ein Klick. Fertig.',
         heroDescription:
-            'Produktionsreife Infrastruktur mit OpenClaw-Bereitstellung per Klick, vollständig verwaltet – bauen, liefern und schneller vorankommen mit KI.',
+            'OpenClaw-Agenten in der Cloud oder lokal mit einem Klick bereitstellen – erstelle, verbinde und skaliere deine KI-Agenten schneller mit ClawHost.',
         goToClaws: 'Zu Claws',
         selfHost: 'Open Source',
         startingPrice: 'Ab',
@@ -1338,6 +1338,19 @@ const de: Translations = {
         upcomingReleaseFeature9:
             'Sprachmodus zur Interaktion mit den auf ClawHost gehosteten OpenClaw-Agenten (Beta)',
         upcomingReleaseFeature10:
+            'OpenClaw auf Ihrer Instanz neu installieren, um von vorne zu beginnen, einmal pro Tag verfügbar',
+        upcomingReleaseFeature11:
+            'Landingpage für ClawHost Go, lokales Hosting mit ClawHost',
+        release12Date: '14. März 2026',
+        release12Title: 'Jahresabonnements, Sprachmodus & mehr',
+        release12Description:
+            'Jahresabonnements mit 2 Monaten gratis, Sprachmodus, Instanz-Neuinstallation und eine erste Landingpage für ClawHost Go.',
+        release12Feature1: 'Landingpage für ClawHost Go, lokales Hosting mit ClawHost',
+        release12Feature2:
+            'Jahresabonnement-Support mit 2 Monaten gratis bei jährlicher Buchung',
+        release12Feature3:
+            'Sprachmodus zur Interaktion mit den auf ClawHost gehosteten OpenClaw-Agenten',
+        release12Feature4:
             'OpenClaw auf Ihrer Instanz neu installieren, um von vorne zu beginnen, einmal pro Tag verfügbar',
         release11Date: '28. Februar 2026',
         release11Title: 'Text-zu-Sprache, Terminal, Chat-Tabs & Datei-Explorer',
@@ -1827,7 +1840,7 @@ const de: Translations = {
         title: 'Datenschutzerklärung',
         description:
             'Erfahre, wie ClawHost deine personenbezogenen Daten erhebt, verwendet und schützt.',
-        lastUpdated: 'Zuletzt aktualisiert: 17. Februar 2026',
+        lastUpdated: 'Zuletzt aktualisiert: 14. März 2026',
         introTitle: '1. Einleitung',
         introText:
             'ClawHost („wir", „unser" oder „uns") ist dem Schutz deiner Privatsphäre verpflichtet. Diese Datenschutzerklärung erläutert, wie wir deine Daten erheben, verwenden, offenlegen und schützen, wenn du unseren Dienst nutzt.',
@@ -1900,7 +1913,7 @@ const de: Translations = {
         title: 'Nutzungsbedingungen',
         description:
             'Lies die Geschäftsbedingungen für die Nutzung der ClawHost-Dienste.',
-        lastUpdated: 'Zuletzt aktualisiert: 17. Februar 2026',
+        lastUpdated: 'Zuletzt aktualisiert: 14. März 2026',
         acceptanceTitle: '1. Annahme der Bedingungen',
         acceptanceText:
             'Durch den Zugriff auf und die Nutzung von ClawHost („Dienst") akzeptierst du die Bedingungen und Bestimmungen dieser Vereinbarung und erklärst dich damit einverstanden, daran gebunden zu sein. Wenn du diesen Bedingungen nicht zustimmst, nutze bitte unseren Dienst nicht.',
@@ -1937,7 +1950,7 @@ const de: Translations = {
             'Jede andere rechtswidrige oder schädliche Aktivität, die wir nach eigenem Ermessen als unangemessen erachten',
         paymentTitle: '6. Zahlung und Abrechnung',
         paymentText:
-            'Dienste werden monatlich pauschal abgerechnet. Alle Zahlungen sind nicht erstattungsfähig. Wenn du für einen Server zahlst, hast du für den gesamten Abrechnungszeitraum Zugriff darauf. Bei einer Kündigung wird diese am Ende des aktuellen Abrechnungszeitraums wirksam. Preise können mit angemessener Vorankündigung geändert werden. Nichtzahlung kann zur Aussetzung oder Kündigung deines Kontos führen.',
+            'Dienste werden monatlich oder jährlich pauschal abgerechnet. Du kannst jederzeit zwischen monatlicher und jährlicher Abrechnung wechseln, wobei die Änderung zu Beginn deines nächsten Abrechnungszeitraums wirksam wird. Alle Zahlungen sind nicht erstattungsfähig. Wenn du für einen Server zahlst, hast du für den gesamten Abrechnungszeitraum Zugriff darauf. Bei einer Kündigung wird diese am Ende des aktuellen Abrechnungszeitraums wirksam. Preise können sich ändern, jedoch gelten Änderungen nur für neu bereitgestellte Claws und haben keinen Einfluss auf bereits bestehende. Nichtzahlung kann zur Aussetzung oder Kündigung deines Kontos führen.',
         availabilityTitle: '7. Dienstverfügbarkeit',
         availabilityText:
             'Wir bemühen uns um hohe Verfügbarkeit, garantieren jedoch keinen ununterbrochenen Zugang zum Dienst. Wir behalten uns das Recht vor, Teile des Dienstes jederzeit mit oder ohne Vorankündigung zu ändern, auszusetzen oder einzustellen.',

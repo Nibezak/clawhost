@@ -1,11 +1,13 @@
 import type { TranscriptionResult } from '@/ts/Interfaces'
-import type { clawStatus, userRole } from '@openclaw/shared'
-import type AGENT_DETAIL_TABS from '@/lib/agentDetailTabs'
-import type CLAW_DETAIL_TABS from '@/lib/clawDetailTabs'
-import type DASHBOARD_TABS from '@/lib/dashboardTabs'
-import type ROUTES from '@/lib/routes'
-import type THEMES from '@/lib/themes'
-import type LANGUAGES from '@/lib/languages'
+import type { billingInterval, clawStatus, userRole } from '@openclaw/shared'
+import type {
+    AGENT_DETAIL_TABS,
+    CLAW_DETAIL_TABS,
+    DASHBOARD_TABS,
+    ROUTES,
+    THEMES,
+    LANGUAGES
+} from '@/lib/constants'
 
 export type ProviderType = 'hetzner' | 'digitalocean' | 'vultr' | 'local'
 
@@ -33,7 +35,7 @@ export type PlaygroundAgentDetailTab =
 
 export type CompareFeatureStatus = 'yes' | 'no' | 'partial'
 
-export type BillingInterval = 'month' | 'year'
+export type BillingInterval = (typeof billingInterval)[keyof typeof billingInterval]
 
 export type ClawAvatarSize = 'sm' | 'md' | 'lg'
 

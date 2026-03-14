@@ -42,6 +42,7 @@ import StatsRow from '@/components/StatsRow'
 import ThemeToggle from '@/components/ThemeToggle'
 import Toast from '@/components/Toast'
 import TruncateTooltip from '@/components/TruncateTooltip'
+import TrustMrrBadge from '@/components/TrustMrrBadge'
 import UserDropdown from '@/components/UserDropdown'
 import VideoModal from '@/components/VideoModal'
 
@@ -90,6 +91,7 @@ export {
     ThemeToggle,
     Toast,
     TruncateTooltip,
+    TrustMrrBadge,
     UserDropdown,
     VideoModal
 }

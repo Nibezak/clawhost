@@ -1,4 +1,5 @@
 import type { Context } from 'hono'
+import type { billingInterval, userRole } from '@openclaw/shared'
 
 export type ProviderType = 'hetzner' | 'digitalocean' | 'vultr'
 
@@ -31,8 +32,6 @@ export type WebhookEventType =
 
 export type AuthMethod = 'email' | 'google' | 'github'
 
-import type { userRole } from '@openclaw/shared'
-
 export type UserRole = (typeof userRole)[keyof typeof userRole]
 
 export type Environment = 'development' | 'production'
@@ -48,6 +47,6 @@ export type ClawFileType =
 
 export type PiperVoiceQuality = 'low' | 'medium' | 'high'
 
-export type BillingInterval = 'month' | 'year'
+export type BillingInterval = (typeof billingInterval)[keyof typeof billingInterval]
 
 export type PolarPriceMap = Record<string, Record<string, number>>

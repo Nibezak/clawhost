@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
+import { goLicense } from '@openclaw/shared'
 import { useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '@/lib/auth'
 import { useUIStore } from '@/lib/store'
@@ -105,7 +106,7 @@ const License: FC = (): ReactNode => {
                                 <div className='mb-8'>
                                     <div className='flex items-baseline gap-1'>
                                         <span className='font-clash text-5xl font-bold'>
-                                            {t('license.price')}
+                                            {t('license.price', { price: goLicense.PRICE })}
                                         </span>
                                     </div>
                                     <p className='text-muted-foreground mt-1 text-sm'>

@@ -1,7 +1,7 @@
 import type { Language } from '@/ts/Types'
 
 import { getLanguage } from '@openclaw/i18n'
-import LANGUAGES from '@/lib/languages'
+import { LANGUAGES } from '@/lib/constants'
 
 const LOCALE_MAP: Record<Language, string> = {
     [LANGUAGES.EN]: 'en-US',

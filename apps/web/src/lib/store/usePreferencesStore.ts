@@ -3,9 +3,7 @@ import type { PreferencesState } from '@/ts/Interfaces'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { setLanguage as setI18nLanguage } from '@openclaw/i18n'
-import DASHBOARD_TABS from '@/lib/dashboardTabs'
-import THEMES from '@/lib/themes'
-import LANGUAGES from '@/lib/languages'
+import { DASHBOARD_TABS, THEMES, LANGUAGES } from '@/lib/constants'
 import STORAGE_KEYS from '@/lib/storageKeys'
 
 const VALID_TABS = new Set<string>(Object.values(DASHBOARD_TABS))

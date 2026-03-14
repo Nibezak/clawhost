@@ -4,6 +4,7 @@ import type { FeatureItem, Faq } from '@/ts/Interfaces'
 import { useRef, useState, useEffect } from 'react'
 import { useScroll, useTransform } from 'framer-motion'
 import { t } from '@openclaw/i18n'
+import { goLicense } from '@openclaw/shared'
 import { Button } from '@/components/ui'
 import {
     PageTitle,
@@ -211,7 +212,7 @@ const Go: FC = (): ReactNode => {
                             </div>
 
                             <StatsRow stats={[
-                                { value: t('go.statsPrice'), label: t('go.statsLifetime') },
+                                { value: t('go.statsPrice', { price: goLicense.PRICE }), label: t('go.statsLifetime') },
                                 { value: t('go.statsOneTime'), label: t('go.statsPayment') },
                                 { value: t('go.statsLocal'), label: t('go.statsLocally') },
                                 { value: t('go.statsZero'), label: t('go.statsZeroConfig') }
@@ -247,7 +248,7 @@ const Go: FC = (): ReactNode => {
                         </div>
 
                         <GoPricingCard
-                            price={t('go.pricingPrice')}
+                            price={t('go.pricingPrice', { price: goLicense.PRICE })}
                             label={t('go.pricingLabel')}
                             features={[
                                 t('go.pricingFeature1'),
