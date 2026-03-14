@@ -15,9 +15,11 @@ import {
     aiRoutes,
     authRoutes,
     clawsRoutes,
+    cronRoutes,
     plansRoutes,
     sshKeysRoutes,
     usersRoutes,
+    waitlistRoutes,
     webhooksRoutes
 } from '@/routes'
 import { browseSkills } from '@/services/clawhub'
@@ -33,7 +35,8 @@ app.use(
             ? [
                   'https://clawhost.cloud',
                   'https://www.clawhost.cloud',
-                  'http://localhost:1111'
+                  'http://localhost:1111',
+                  'http://localhost:3333'
               ]
             : ['https://clawhost.cloud', 'https://www.clawhost.cloud'],
         allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -57,7 +60,9 @@ app.use('*', async (c, next) => {
 app.get('/', (c) => ok(c, null, t('api.healthOk')))
 
 app.route('/auth', authRoutes)
+app.route('/cron', cronRoutes)
 app.route('/plans', plansRoutes)
+app.route('/waitlist', waitlistRoutes)
 app.route('/webhooks', webhooksRoutes)
 app.get('/clawhub/skills', async (c) => {
     try {

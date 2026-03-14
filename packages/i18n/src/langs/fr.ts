@@ -56,6 +56,7 @@ const fr: Translations = {
         sshKeys: 'Clés SSH',
         account: 'Compte',
         billing: 'Facturation',
+        license: 'Licence',
         signOut: 'Se déconnecter',
         admin: 'Admin',
         login: 'Connexion',
@@ -63,7 +64,92 @@ const fr: Translations = {
         deployOpenClaw: 'Déployer OpenClaw',
         mainNavigation: 'Navigation principale',
         footerNavigation: 'Navigation du pied de page',
-        toggleMenu: 'Ouvrir le menu'
+        toggleMenu: 'Ouvrir le menu',
+        cloud: 'Cloud',
+        cloudSubtitle: 'Technique',
+        go: 'Go',
+        goSubtitle: 'Non-technique'
+    },
+    go: {
+        pageTitle: 'ClawHost Go',
+        heroTitle1: 'Déployez OpenClaw.',
+        heroTitle2: 'Localement. Instantanément.',
+        badge: 'Bientôt disponible',
+        comingSoon: 'Bientôt disponible',
+        description: 'Un client de bureau léger pour gérer vos instances OpenClaw. Déployez, surveillez et contrôlez vos claws — directement depuis votre machine.',
+        download: 'Télécharger pour {{os}}',
+        downloadWindows: 'Windows',
+        downloadMac: 'macOS',
+        selfHostInstead: 'Auto-héberger plutôt',
+        features: 'Fonctionnalités',
+        whyClawHostGo: 'Fonctions tout-en-un',
+        featuresDescription: "Pourquoi nous valons le coup d'essayer, les fonctionnalités parlent d'elles-mêmes.",
+        zeroConfigDescription: 'Installez et lancez. Aucune configuration serveur ni cloud. OpenClaw est prêt en quelques secondes.',
+        ownedDataDescription: 'Tout fonctionne sur votre appareil. Pas de serveurs cloud, pas de tiers, aucune donnée ne quitte votre machine.',
+        terminalAccessDescription: "Accédez au terminal de votre instance OpenClaw directement depuis l'application. Aucun client SSH externe requis.",
+        simplePricing: 'Tarification simple',
+        simplePricingDescription: 'Une licence, tout illimité. Pas de factures mensuelles, pas de limites, pas de frais cachés.',
+        localDomain: 'Domaine local personnalisé',
+        localDomainDescription: 'Accédez à votre OpenClaw via un domaine local personnalisé. Des URLs propres sur votre réseau.',
+        secureDescription: 'Vos données ne quittent jamais votre appareil. Entièrement isolé, entièrement chiffré, entièrement à vous.',
+        pricing: 'Tarifs',
+        pricingTitle: 'Tarif unique et simple',
+        pricingDescription: 'Pas d\'abonnement, pas de frais cachés. Une licence, utilisation illimitée.',
+        pricingPrice: '{{price}} $',
+        pricingLabel: 'Paiement unique',
+        pricingFeature1: 'Licence à vie',
+        pricingFeature2: 'Claws illimités',
+        pricingFeature3: 'Toutes les mises à jour futures',
+        pricingFeature4: 'Aucune limite d\'utilisation',
+        pricingFeature5: 'Support prioritaire',
+        pricingFeature6: 'Domaine local personnalisé',
+        pricingCta: 'Obtenir ClawHost Go',
+        comparison: 'Comparaison',
+        comparisonTitle: 'Go vs Cloud',
+        comparisonDescription: 'Choisissez ce qui vous convient. Go fonctionne localement, Cloud sur des serveurs dédiés.',
+        comparisonLocalUs: 'Fonctionne entièrement sur votre appareil',
+        comparisonLocalOthers: 'Fonctionne sur des serveurs distants',
+        comparisonPricingUs: 'Paiement unique',
+        comparisonPricingOthers: 'Abonnement mensuel',
+        comparisonDataUs: 'Les données restent sur votre machine',
+        comparisonDataOthers: 'Données sur des serveurs cloud',
+        comparisonSetupUs: 'Installer et lancer instantanément',
+        comparisonSetupOthers: 'Déployer en un clic',
+        comparisonUpdatesUs: 'Mises à jour automatiques',
+        comparisonUpdatesOthers: 'Mises à jour automatiques',
+        comparisonAgentsUs: 'Agents multiples',
+        comparisonAgentsOthers: 'Agents multiples',
+        faqTitle: 'Questions',
+        faqHeading: 'Questions fréquentes',
+        faqDescription: 'Tout ce que vous devez savoir sur ClawHost Go.',
+        faq1Question: 'Qu\'est-ce que ClawHost Go ?',
+        faq1Answer: 'ClawHost Go est une application de bureau légère qui vous permet d\'exécuter OpenClaw localement sur votre machine. Pas de serveurs cloud nécessaires — installez, lancez et utilisez OpenClaw en quelques secondes.',
+        faq2Question: 'Quelle est la différence entre Go et ClawHost Cloud ?',
+        faq2Answer: 'ClawHost Cloud déploie OpenClaw sur des serveurs distants dédiés avec une disponibilité 24h/24 et un accès mondial. ClawHost Go fait tout tourner localement sur votre appareil — idéal pour la confidentialité, l\'utilisation hors ligne et les configurations simples.',
+        faq3Question: 'Ai-je besoin d\'une connexion internet ?',
+        faq3Answer: 'ClawHost Go fonctionne hors ligne pour une utilisation locale. Une connexion internet n\'est nécessaire que pour la configuration initiale, les mises à jour et les fonctionnalités nécessitant des appels API externes.',
+        faq4Question: 'La licence est-elle un paiement unique ?',
+        faq4Answer: 'Oui. Vous payez une fois et obtenez un accès à vie à ClawHost Go, y compris toutes les futures mises à jour. Pas d\'abonnement, pas de frais récurrents.',
+        faq5Question: 'Quels systèmes d\'exploitation sont pris en charge ?',
+        faq5Answer: 'ClawHost Go prend en charge Windows et macOS. Les deux plateformes bénéficient des mêmes fonctionnalités et reçoivent les mises à jour simultanément.',
+        faq6Question: 'Puis-je passer de Go à Cloud plus tard ?',
+        faq6Answer: 'Absolument. Vous pouvez exporter votre configuration OpenClaw depuis Go et la déployer sur ClawHost Cloud à tout moment. Les deux plateformes sont entièrement compatibles.',
+        statsPrice: '{{price}} $',
+        statsLifetime: 'À vie',
+        statsOneTime: 'Unique',
+        statsPayment: 'Paiement',
+        statsLocal: 'Local',
+        statsLocally: 'Fonctionne localement',
+        statsZero: 'Zéro',
+        statsZeroConfig: 'Zéro config',
+        ctaTitle: 'Exécutez OpenClaw localement',
+        ctaDescription: 'Paiement unique, licence à vie. Déployez OpenClaw sur votre propre machine — pas de cloud, pas d\'abonnements, pas de limites. Vos données, vos règles.',
+        joinWaitlist: 'Rejoindre la liste d\'attente',
+        joinedWaitlist: 'Inscrit à la liste d\'attente',
+        waitlistJoinedToast: 'Vous avez rejoint la liste d\'attente.',
+        waitlistAlreadyJoinedToast: 'Cet email est déjà sur la liste.',
+        waitlistFailedToast: 'Impossible de rejoindre la liste d\'attente !',
+        waitlistEmailPlaceholder: 'Entrez votre email'
     },
     footer: {
         website: 'Site web',
@@ -86,7 +172,7 @@ const fr: Translations = {
         legalAndMore: 'Autres',
         documentation: 'Documentation',
         productDescription:
-            "Infrastructure prête pour la production avec déploiement OpenClaw en un clic, géré de bout en bout — construisez, livrez et avancez plus vite avec l'IA.",
+            "Déployez vos agents OpenClaw dans le cloud ou en local en un clic — créez, connectez et faites évoluer vos agents IA plus vite avec ClawHost.",
         downloadAndroid: 'Télécharger sur Google Play',
         downloadIos: "Télécharger sur l'App Store",
         ariaGithub: 'GitHub',
@@ -248,6 +334,10 @@ const fr: Translations = {
         otpMaxAttemptsReached:
             'Trop de tentatives échouées. Veuillez demander un nouveau code !',
         otpInvalidCode: 'Code invalide. Veuillez réessayer !',
+        licenseAlreadyPurchased: 'Licence déjà achetée !',
+        licenseNotAvailable: "Le produit de licence n'est pas disponible !",
+        licenseCheckoutCreated: 'Paiement de licence créé.',
+        failedToPurchaseLicense: 'Échec de la création du paiement de licence !',
         internalServerError: 'Une erreur interne est survenue !',
         invalidCredentials: 'Identifiants invalides !',
         accountLinked: 'Compte lié avec succès.',
@@ -369,7 +459,15 @@ const fr: Translations = {
         textRequired: 'Le texte est requis !',
         voiceNotFound: 'Modèle vocal introuvable !',
         ttsGenerationFailed: 'Échec de la génération vocale !',
-        voicesFetched: 'Voix récupérées avec succès.'
+        voicesFetched: 'Voix récupérées avec succès.',
+        featureEmailsSent: 'Emails de fonctionnalités envoyés avec succès.',
+        featureEmailsFailed: 'Échec de l\'envoi des emails de fonctionnalités !',
+        waitlistJoined: 'Inscription à la liste d\'attente réussie.',
+        waitlistAlreadyJoined: 'Déjà inscrit à la liste d\'attente.',
+        waitlistJoinFailed: 'Échec de l\'inscription à la liste d\'attente !',
+        waitlistRateLimited: 'Vous allez trop vite ! Veuillez réessayer dans {{seconds}} secondes.',
+        waitlistStatusFetched: 'Statut de la liste d\'attente récupéré.',
+        waitlistCheckFailed: 'Échec de la vérification du statut de la liste d\'attente !'
     },
     emails: {
         otpSubject: 'Votre code de connexion ClawHost',
@@ -384,7 +482,163 @@ const fr: Translations = {
         changelogButton: 'Voir le changelog',
         changelogVisitButton: 'Visiter ClawHost',
         changelogFooter:
-            'Vous recevez cet email car vous avez un compte ClawHost.'
+            'Vous recevez cet email car vous avez un compte ClawHost.',
+        featureFooter:
+            'Vous recevez cet email car vous avez un compte ClawHost.',
+        features: {
+            terminal: {
+                subject: 'Le saviez-vous ? Vous avez un terminal web',
+                preview: 'Accédez à votre serveur directement depuis le navigateur',
+                heading: 'Votre serveur est à un clic',
+                description:
+                    'Accédez à votre serveur directement depuis votre navigateur avec notre terminal intégré. Pas besoin de client SSH — ouvrez ClawHost et commencez à taper vos commandes.',
+                cta: 'Ouvrir le terminal'
+            },
+            logs: {
+                subject: 'Le saviez-vous ? Des logs en temps réel dans votre tableau de bord',
+                preview: 'Surveillez les logs de votre serveur sans quitter le navigateur',
+                heading: 'Voyez ce que fait votre serveur',
+                description:
+                    'Surveillez les logs de votre serveur en temps réel depuis le tableau de bord ClawHost. Diagnostiquez les problèmes, suivez les déploiements et déboguez vos applications sans quitter le navigateur.',
+                cta: 'Voir les logs'
+            },
+            channels: {
+                subject: 'Le saviez-vous ? Connectez vos agents à Discord, Slack et plus',
+                preview: 'Liez vos agents IA à vos canaux de communication',
+                heading: 'Vos agents, partout',
+                description:
+                    'Connectez vos agents IA à Discord, Slack, WhatsApp et plus encore. Configurez les canaux et liez-les à vos agents — le tout depuis le tableau de bord ClawHost.',
+                cta: 'Configurer les canaux'
+            },
+            fileExplorer: {
+                subject: 'Le saviez-vous ? Modifiez vos fichiers depuis le navigateur',
+                preview: 'Parcourez, lisez et éditez vos fichiers sans SSH',
+                heading: 'Vos fichiers, à portée de main',
+                description:
+                    'Parcourez, lisez et éditez les fichiers de votre serveur directement depuis le tableau de bord ClawHost. Coloration syntaxique, recherche et sauvegarde instantanée — sans SSH.',
+                cta: 'Ouvrir l\'explorateur'
+            },
+            playground: {
+                subject: 'Le saviez-vous ? Visualisez votre infrastructure',
+                preview: 'Voyez vos claws et agents sur un canvas interactif',
+                heading: 'Voyez l\'ensemble',
+                description:
+                    'Le Playground vous offre un canvas interactif montrant tous vos claws et agents. Cliquez sur n\'importe quel nœud pour le gérer — un centre de commande visuel pour votre infrastructure.',
+                cta: 'Ouvrir le Playground'
+            },
+            agentChat: {
+                subject: 'Le saviez-vous ? Chattez avec vos agents IA',
+                preview: 'Parlez à vos agents directement depuis le tableau de bord',
+                heading: 'Parlez à vos agents',
+                description:
+                    'Chattez avec vos agents IA directement depuis le tableau de bord ClawHost. Envoyez des messages, joignez des images et consultez l\'historique — tout en un seul endroit.',
+                cta: 'Commencer à chatter'
+            },
+            voiceMode: {
+                subject: 'Le saviez-vous ? Parlez à vos agents par la voix',
+                preview: 'Utilisez la reconnaissance vocale avec vos agents',
+                heading: 'Parlez, ne tapez pas',
+                description:
+                    'Utilisez le mode vocal pour parler à vos agents IA en mains libres. Reconnaissance vocale en entrée, synthèse vocale en sortie — avec plusieurs voix au choix.',
+                cta: 'Essayer le mode vocal'
+            },
+            skills: {
+                subject: 'Le saviez-vous ? Plus de 5 000 skills sur ClawHub',
+                preview: 'Parcourez et installez des skills communautaires en un clic',
+                heading: 'Étendez vos agents instantanément',
+                description:
+                    'Parcourez plus de 5 000 skills prêts à l\'emploi sur ClawHub et installez-les en un seul clic. Recherche web, exécution de code, génération d\'images et bien plus.',
+                cta: 'Parcourir ClawHub'
+            },
+            bindings: {
+                subject: 'Le saviez-vous ? Liez des agents à des canaux spécifiques',
+                preview: 'Contrôlez quel agent répond sur quel canal',
+                heading: 'Un agent par canal',
+                description:
+                    'Liez des agents spécifiques à des canaux spécifiques. Votre agent support sur Discord, votre assistant sur WhatsApp — vous décidez qui répond où.',
+                cta: 'Configurer les liaisons'
+            },
+            envVars: {
+                subject: 'Le saviez-vous ? Gérez les variables d\'environnement',
+                preview: 'Configurez les clés API et la config sans SSH',
+                heading: 'Configurez sans SSH',
+                description:
+                    'Ajoutez, modifiez et supprimez des variables d\'environnement directement depuis le tableau de bord ClawHost. Clés API, secrets et configuration — sans terminal.',
+                cta: 'Gérer les variables'
+            },
+            diagnostics: {
+                subject: 'Le saviez-vous ? Diagnostics intégrés',
+                preview: 'Surveillez la santé de votre serveur depuis le tableau de bord',
+                heading: 'Vérifiez la santé de votre serveur',
+                description:
+                    'Lancez des diagnostics sur votre claw pour vérifier l\'état des services, l\'utilisation mémoire et la disponibilité des ports. Détectez les problèmes avant qu\'ils ne s\'aggravent.',
+                cta: 'Lancer les diagnostics'
+            },
+            sshKeys: {
+                subject: 'Le saviez-vous ? Gérez les clés SSH depuis ClawHost',
+                preview: 'Générez et gérez vos paires de clés SSH dans le tableau de bord',
+                heading: 'Clés SSH, simplifiées',
+                description:
+                    'Générez des paires de clés SSH, copiez les clés publiques et téléchargez les clés privées — le tout depuis le tableau de bord ClawHost. Assignez des clés à vos claws pour un accès sécurisé.',
+                cta: 'Gérer les clés SSH'
+            },
+            exportConfig: {
+                subject: 'Le saviez-vous ? Exportez la configuration de votre claw',
+                preview: 'Téléchargez votre configuration en fichier portable',
+                heading: 'Emportez votre config',
+                description:
+                    'Exportez la configuration et les paramètres de votre claw sous forme de fichier téléchargeable. Sauvegardez votre setup ou utilisez-le pour répliquer votre environnement.',
+                cta: 'Exporter la config'
+            },
+            multiProvider: {
+                subject: 'Le saviez-vous ? Déployez sur 3 fournisseurs cloud',
+                preview: 'Choisissez entre Hetzner, DigitalOcean et Vultr',
+                heading: 'Votre cloud, votre choix',
+                description:
+                    'Déployez vos claws sur Hetzner, DigitalOcean ou Vultr. Comparez les prix, les emplacements et les specs — puis choisissez le fournisseur qui vous convient.',
+                cta: 'Comparer les fournisseurs'
+            },
+            multiLanguage: {
+                subject: 'Le saviez-vous ? ClawHost parle votre langue',
+                preview: 'Utilisez ClawHost en anglais, français, espagnol ou allemand',
+                heading: 'ClawHost dans votre langue',
+                description:
+                    'Passez l\'intégralité du tableau de bord ClawHost en anglais, français, espagnol ou allemand. Des boutons aux messages d\'erreur — tout est traduit.',
+                cta: 'Changer la langue'
+            },
+            subdomain: {
+                subject: 'Le saviez-vous ? Chaque claw a son propre sous-domaine',
+                preview: 'Accédez à votre claw depuis partout avec une URL personnalisée',
+                heading: 'Accédez depuis partout',
+                description:
+                    'Chaque claw reçoit un sous-domaine unique pour accéder à votre instance OpenClaw depuis n\'importe où. Pas de redirection de port, pas de réseau local — juste une URL.',
+                cta: 'Voir votre sous-domaine'
+            },
+            darkMode: {
+                subject: 'Le saviez-vous ? ClawHost a un mode sombre',
+                preview: 'Basculez entre les thèmes clair et sombre',
+                heading: 'Doux pour les yeux',
+                description:
+                    'Basculez entre les thèmes clair et sombre dans le tableau de bord ClawHost. Votre préférence est sauvegardée et appliquée automatiquement à chaque visite.',
+                cta: 'Essayer le mode sombre'
+            },
+            reinstall: {
+                subject: 'Le saviez-vous ? Réinstallez OpenClaw en un clic',
+                preview: 'Réinitialisez votre instance OpenClaw sans perdre votre serveur',
+                heading: 'Nouveau départ, même serveur',
+                description:
+                    'Réinstallez le runtime OpenClaw sur votre serveur existant en un seul clic. Votre serveur reste intact — seul OpenClaw reçoit une installation propre.',
+                cta: 'En savoir plus'
+            },
+            yearlyPlans: {
+                subject: 'Le saviez-vous ? Économisez avec les plans annuels',
+                preview: 'Passez à la facturation annuelle et payez moins',
+                heading: 'Payez moins, obtenez plus',
+                description:
+                    'Passez à la facturation annuelle et économisez sur votre abonnement claw. Le même excellent service, à un prix réduit — annulez à tout moment.',
+                cta: 'Voir les plans'
+            }
+        }
     },
     auth: {
         signIn: 'Se connecter',
@@ -516,6 +770,32 @@ const fr: Translations = {
         manageBilling: 'Gérer la facturation',
         failedToLoadPortal: "Échec de l'ouverture du portail de facturation !"
     },
+    license: {
+        title: 'Licence',
+        description: 'Gérez votre licence OpenClaw.',
+        pageTitle: 'Licence',
+        pageDescription: 'Achetez votre licence pour auto-héberger des instances OpenClaw localement avec notre application Go.',
+        planName: 'Licence ClawHost Go',
+        oneTimePurchase: 'Achat unique',
+        price: '{{price}} $',
+        priceNote: 'Payez une fois, possédez pour toujours.',
+        purchaseLicense: 'Acheter la licence',
+        purchasing: 'Redirection...',
+        activated: 'Licence active',
+        activatedDescription: 'Votre licence est active. Merci pour votre soutien.',
+        paymentSuccess: 'Paiement réussi. Votre licence est maintenant active.',
+        failedToPurchase: 'Échec du démarrage du paiement !',
+        featureUnlimitedClaws: 'OpenClaws illimités',
+        featureUnlimitedAgents: 'Agents illimités',
+        featureDevices: 'Appareils illimités',
+        featureUpdates: 'Mises à jour à vie',
+        featureSupport: 'Support prioritaire',
+        featureCloud: 'Toutes les fonctionnalités cloud, localement',
+        whatsIncluded: 'Ce qui est inclus',
+        permanentNote: 'Les licences sont permanentes et non révocables. Une fois achetée, elle vous appartient pour toujours.',
+        gateTitle: 'Licence requise',
+        gateDescription: 'Vous avez besoin d\'une licence ClawHost Go pour déployer et gérer des instances OpenClaw localement.'
+    },
     dashboard: {
         title: 'Claws',
         description:
@@ -525,6 +805,7 @@ const fr: Translations = {
         clawCountLabel: '{{count}} claws',
         clawCountLabelSingular: '{{count}} claw',
         newClaw: 'Nouveau Claw',
+        clawActions: 'Actions du claw',
         noClawsYet: 'Aucun Claw',
         noClawsDescription:
             "Aucun claw déployé n'a été trouvé. Mais vous pouvez déployer votre premier claw à tout moment à partir de 25$/mois. Lancez-vous avec l'IA.",
@@ -561,7 +842,7 @@ const fr: Translations = {
         domain: 'Domaine',
         ipAddress: 'Adresse IP',
         port: 'Port',
-        monthlyCost: 'Coût mensuel',
+        planCost: 'Forfait',
         serverId: 'ID du serveur',
         created: 'Créé le',
         sshKey: 'Clé SSH',
@@ -696,7 +977,8 @@ const fr: Translations = {
         notConfigured: 'Non configuré',
         addAgent: 'Ajouter un agent',
         viewTree: 'Vue arborescente',
-        viewList: 'Vue liste'
+        viewList: 'Vue liste',
+        clawSettings: 'Paramètres du claw'
     },
     createClaw: {
         title: 'Déployer OpenClaw',
@@ -726,8 +1008,10 @@ const fr: Translations = {
         advancedOptions: 'Options avancées facultatives',
         rootPassword: 'Mot de passe root',
         rootPasswordPlaceholder: 'Entrez un mot de passe ou générez-en un',
+        autoGenerateGatewayTokenHint:
+            'Optionnel. Pas de jeton si laissé vide.',
         autoGeneratePasswordHint:
-            'Laissez vide pour générer automatiquement un mot de passe sécurisé.',
+            'Optionnel. Pas de mot de passe si laissé vide.',
         regeneratePassword: 'Régénérer le mot de passe',
         sshKeyOptional: 'Clé SSH',
         noSshKeyPasswordOnly: 'Pas de clé SSH (mot de passe uniquement)',
@@ -739,7 +1023,13 @@ const fr: Translations = {
         vpsServer: 'Serveur VPS',
         openClawPreinstalled: 'OpenClaw préinstallé',
         storageWithSize: 'Stockage',
+        billingInterval: 'Facturation',
+        monthly: 'Mensuel',
+        yearly: 'Annuel',
+        yearlySaveBadge: '2 mois offerts',
+        yearlySavings: 'Vous économisez',
         totalMonthly: 'Total mensuel',
+        totalYearly: 'Total annuel',
         creating: 'Création...',
         proceedToPayment: 'Payer {{amount}}$ pour déployer',
         agreementNotice: 'En déployant, vous acceptez nos',
@@ -820,7 +1110,7 @@ const fr: Translations = {
         heroTitle1: 'Déployez OpenClaw.',
         heroTitle2: "Un clic. C'est fait.",
         heroDescription:
-            "Infrastructure prête pour la production avec déploiement OpenClaw en un clic, géré de bout en bout — construisez, livrez et avancez plus vite avec l'IA.",
+            "Déployez vos agents OpenClaw dans le cloud ou en local en un clic — créez, connectez et faites évoluer vos agents IA plus vite avec ClawHost.",
         goToClaws: 'Voir les Claws',
         selfHost: 'Open Source',
         startingPrice: 'À partir de',
@@ -931,8 +1221,13 @@ const fr: Translations = {
         tierHighFrequency: 'Haute fréquence',
         recommended: 'Recommandé',
         perMonth: '/mois',
+        perYear: '/an',
+        yearlyDiscount: '— 2 mois offerts',
+        billedYearly: 'facturé annuellement',
         deploy: 'Déployer',
         select: 'Sélectionner',
+        selectPlanLabel: 'Sélectionner le plan {{plan}}',
+        deployPlanLabel: 'Déployer le plan {{plan}}',
         openClawPreinstalled: 'OpenClaw préinstallé',
         unlimitedBandwidth: 'Bande passante illimitée',
         rootSshAccess: 'Accès root SSH complet',
@@ -1065,6 +1360,19 @@ const fr: Translations = {
         upcomingReleaseFeature9:
             'Mode vocal pour interagir avec les agents OpenClaw hébergés sur ClawHost (Bêta)',
         upcomingReleaseFeature10:
+            'Réinstaller OpenClaw sur votre instance pour repartir de zéro, disponible une fois par jour',
+        upcomingReleaseFeature11:
+            'Page de présentation de ClawHost Go, hébergement local avec ClawHost',
+        release12Date: '14 mars 2026',
+        release12Title: 'Abonnements annuels, mode vocal & plus',
+        release12Description:
+            'Abonnements annuels avec 2 mois offerts, mode vocal, réinstallation d\'instance et une page de présentation initiale pour ClawHost Go.',
+        release12Feature1: 'Page de présentation de ClawHost Go, hébergement local avec ClawHost',
+        release12Feature2:
+            'Support des abonnements annuels avec 2 mois offerts pour un abonnement annuel',
+        release12Feature3:
+            'Mode vocal pour interagir avec les agents OpenClaw hébergés sur ClawHost',
+        release12Feature4:
             'Réinstaller OpenClaw sur votre instance pour repartir de zéro, disponible une fois par jour',
         release11Date: '28 février 2026',
         release11Title:
@@ -1347,9 +1655,10 @@ const fr: Translations = {
         chatConnected: 'Connecté',
         chatInputPlaceholder: 'Écrivez un message...',
         chatInputDisabled: 'Connectez-vous pour discuter avec cet agent',
-        chatSend: 'Envoyer',
+        chatSend: 'Envoyer le message',
         chatAbort: 'Arrêter',
         chatStopProcess: 'Arrêter le processus',
+        chatRemoveAttachment: 'Supprimer la pièce jointe',
         chatThinking: 'Réflexion',
         chatLoadingHistory: 'Chargement des messages...',
         chatNoMessages: 'Aucun message pour le moment.',
@@ -1373,6 +1682,14 @@ const fr: Translations = {
             'Pouvez-vous exécuter la suite de tests et vérifier les échecs ?',
         chatReadOnlyAssistant2:
             'Bien sûr ! Je lance tous les tests maintenant. 3 réussis, 0 échoués. Tout est bon — toutes les assertions passent.',
+        chatReadOnlyGoUser: 'Hey, peux-tu m\'aider à automatiser mon pipeline de déploiement ?',
+        chatReadOnlyGoAssistant:
+            'Absolument ! Je peux configurer un pipeline CI/CD pour toi. Tu veux que je commence par un workflow GitHub Actions qui build, teste et déploie automatiquement ?',
+        chatReadOnlyGoReply:
+            'Ceci est un aperçu ! Obtenez ClawHost Go et exécutez OpenClaw localement — votre machine, vos données, pas de cloud nécessaire.',
+        chatReadOnlyGoUser2: 'Peux-tu surveiller mes services locaux et m\'alerter si quelque chose tombe en panne ?',
+        chatReadOnlyGoAssistant2:
+            'C\'est parti ! Je configure des vérifications de santé pour tous tes services. Surveillance en cours de 4 endpoints — tous en bonne santé et réactifs.',
         chatConnectionFailed: 'Échec de la connexion à cet agent !',
         chatConnectionFailedDescription:
             "Assurez-vous que le Claw est en cours d'exécution et joignable !",
@@ -1559,7 +1876,7 @@ const fr: Translations = {
         title: 'Politique de confidentialité',
         description:
             'Découvrez comment ClawHost collecte, utilise et protège vos données personnelles.',
-        lastUpdated: 'Dernière mise à jour : 17 février 2026',
+        lastUpdated: 'Dernière mise à jour : 14 mars 2026',
         introTitle: '1. Introduction',
         introText:
             "ClawHost (« nous », « notre ») s'engage à protéger votre vie privée. Cette Politique de confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous utilisez notre Service.",
@@ -1633,7 +1950,7 @@ const fr: Translations = {
         title: "Conditions d'utilisation",
         description:
             "Lisez les termes et conditions d'utilisation des services ClawHost.",
-        lastUpdated: 'Dernière mise à jour : 17 février 2026',
+        lastUpdated: 'Dernière mise à jour : 14 mars 2026',
         acceptanceTitle: '1. Acceptation des conditions',
         acceptanceText:
             "En accédant et en utilisant ClawHost (« Service »), vous acceptez d'être lié par les termes et dispositions de cet accord. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser notre Service.",
@@ -1670,7 +1987,7 @@ const fr: Translations = {
             'Toute autre activité illicite ou nuisible que nous pourrions juger inappropriée à notre discrétion',
         paymentTitle: '6. Paiement et facturation',
         paymentText:
-            "Les services sont facturés sur une base mensuelle fixe. Tous les paiements sont non remboursables. Lorsque vous payez pour un serveur, vous y avez accès pour toute la période de facturation. Si vous annulez, l'annulation prend effet à la fin de la période de facturation en cours. Les prix sont susceptibles de changer moyennant un préavis raisonnable. Le défaut de paiement peut entraîner la suspension ou la résiliation de votre compte.",
+            "Les services sont facturés sur une base mensuelle ou annuelle fixe. Vous pouvez passer d'une facturation mensuelle à annuelle ou inversement à tout moment, le changement prenant effet au début de votre prochaine période de facturation. Tous les paiements sont non remboursables. Lorsque vous payez pour un serveur, vous y avez accès pour toute la période de facturation. Si vous annulez, l'annulation prend effet à la fin de la période de facturation en cours. Les prix sont susceptibles de changer, mais les modifications ne s'appliqueront qu'aux nouveaux claws déployés et n'affecteront pas ceux déjà en service. Le défaut de paiement peut entraîner la suspension ou la résiliation de votre compte.",
         availabilityTitle: '7. Disponibilité du Service',
         availabilityText:
             'Nous nous efforçons de maintenir une haute disponibilité mais ne garantissons pas un accès ininterrompu au Service. Nous nous réservons le droit de modifier, suspendre ou interrompre tout ou partie du Service à tout moment, avec ou sans préavis.',

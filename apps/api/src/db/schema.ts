@@ -3,6 +3,7 @@ import {
     text,
     timestamp,
     integer,
+    boolean,
     index,
     unique
 } from 'drizzle-orm/pg-core'
@@ -14,6 +15,7 @@ export const users = pgTable('users', {
     name: text('name'),
     authMethods: text('auth_methods').array().default([]),
     polarCustomerId: text('polar_customer_id'),
+    hasLicense: boolean('has_license').notNull().default(false),
     role: text('role').notNull().default(userRole.user),
     createdAt: timestamp('created_at', { withTimezone: true })
         .defaultNow()
@@ -44,6 +46,7 @@ export const claws = pgTable(
         polarProductId: text('polar_product_id'),
         polarCustomerId: text('polar_customer_id'),
         subscriptionStatus: text('subscription_status').default('pending'),
+        billingInterval: text('billing_interval'),
         deletionScheduledAt: timestamp('deletion_scheduled_at', {
             withTimezone: true
         }),
@@ -80,6 +83,7 @@ export const pendingClaws = pgTable(
         }),
         volumeSize: integer('volume_size'),
         priceMonthly: integer('price_monthly').notNull(),
+        billingInterval: text('billing_interval'),
         createdAt: timestamp('created_at', { withTimezone: true })
             .defaultNow()
             .notNull(),
@@ -150,6 +154,39 @@ export const clawExports = pgTable(
             .notNull()
     },
     (table) => [index('claw_exports_claw_id_idx').on(table.clawId)]
+)
+
+export const emails = pgTable(
+    'emails',
+    {
+        id: text('id').primaryKey(),
+        userId: text('user_id')
+            .notNull()
+            .references(() => users.id, { onDelete: 'cascade' }),
+        feature: text('feature').notNull(),
+        sentAt: timestamp('sent_at', { withTimezone: true })
+            .defaultNow()
+            .notNull()
+    },
+    (table) => [
+        index('emails_user_id_idx').on(table.userId),
+        unique('emails_user_feature').on(table.userId, table.feature)
+    ]
+)
+
+export const waitlist = pgTable(
+    'waitlist',
+    {
+        id: text('id').primaryKey(),
+        email: text('email').notNull().unique(),
+        userId: text('user_id').references(() => users.id, {
+            onDelete: 'set null'
+        }),
+        createdAt: timestamp('created_at', { withTimezone: true })
+            .defaultNow()
+            .notNull()
+    },
+    (table) => [index('waitlist_email_idx').on(table.email)]
 )
 
 export const volumes = pgTable(

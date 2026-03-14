@@ -13,6 +13,7 @@ import {
     LanguageSelector,
     Logo,
     ProductHuntBanner,
+    ProductSwitcher,
     ThemeToggle,
     UserDropdown
 } from '@/components'
@@ -49,8 +50,7 @@ const Header: FC<HeaderProps> = ({
     }, [mobileMenuOpen])
 
     const { data: profile } = useProfile({
-        enabled: !!user,
-        staleTime: 1000 * 60 * 5
+        enabled: !!user
     })
 
     const displayName =
@@ -60,7 +60,7 @@ const Header: FC<HeaderProps> = ({
         cachedProfile?.email ||
         ''
 
-    const isLandingPage = location.pathname === ROUTES.HOME
+    const isLandingPage = location.pathname === ROUTES.HOME || location.pathname === ROUTES.GO
 
     return (
         <>
@@ -76,7 +76,10 @@ const Header: FC<HeaderProps> = ({
                 <AnnouncementBanner />
                 <ProductHuntBanner />
                 <div className='mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4'>
-                    <Logo />
+                    <div className='flex items-center gap-3'>
+                        <Logo />
+                        <ProductSwitcher />
+                    </div>
 
                     {showNavLinks && navLinks.length > 0 ? (
                         <nav

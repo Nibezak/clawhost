@@ -7,17 +7,30 @@ import os from 'os'
 import { clawProvider, clawStatus } from '@openclaw/shared'
 import { configStore, processManager } from '@/main/services'
 
-const ensureClawConfig = (clawDir: string): void => {
+const ensureClawConfig = (clawDir: string, subdomain: string): void => {
     const configPath = path.join(clawDir, 'openclaw.json')
     if (!fs.existsSync(configPath)) return
     try {
         const raw = fs.readFileSync(configPath, 'utf-8')
         const config = JSON.parse(raw)
-        if (!config.gateway?.controlUi?.dangerouslyDisableDeviceAuth) {
-            if (!config.gateway) config.gateway = {}
-            if (!config.gateway.controlUi) config.gateway.controlUi = {}
+        let changed = false
+        if (!config.gateway) config.gateway = {}
+        if (!config.gateway.controlUi) config.gateway.controlUi = {}
+        if (!config.gateway.controlUi.dangerouslyDisableDeviceAuth) {
             config.gateway.controlUi.dangerouslyDisableDeviceAuth = true
             config.gateway.controlUi.allowInsecureAuth = true
+            changed = true
+        }
+        const expectedOrigins = [
+            `https://${subdomain}.clawhost`,
+            `http://${subdomain}.clawhost`
+        ]
+        const current = config.gateway.controlUi.allowedOrigins
+        if (!current || JSON.stringify(current) !== JSON.stringify(expectedOrigins)) {
+            config.gateway.controlUi.allowedOrigins = expectedOrigins
+            changed = true
+        }
+        if (changed) {
             fs.writeFileSync(configPath, JSON.stringify(config, null, 4))
         }
     } catch {}
@@ -49,7 +62,7 @@ const registerClawProcessHandlers = (): void => {
             }
 
             const clawDir = configStore.getClawDir(claw.name)
-            ensureClawConfig(clawDir)
+            ensureClawConfig(clawDir, claw.subdomain)
             try {
                 await processManager.startGateway(
                     claw.id,
@@ -73,6 +86,7 @@ const registerClawProcessHandlers = (): void => {
                 planId: clawProvider.local,
                 location: clawProvider.local,
                 rootPassword: null,
+                hasRootPassword: false,
                 sshKeyId: null,
                 providerServerId: null,
                 subdomain: claw.subdomain,
@@ -106,6 +120,7 @@ const registerClawProcessHandlers = (): void => {
                 planId: clawProvider.local,
                 location: clawProvider.local,
                 rootPassword: null,
+                hasRootPassword: false,
                 sshKeyId: null,
                 providerServerId: null,
                 subdomain: claw.subdomain,
@@ -133,7 +148,7 @@ const registerClawProcessHandlers = (): void => {
             }
 
             const clawDir = configStore.getClawDir(claw.name)
-            ensureClawConfig(clawDir)
+            ensureClawConfig(clawDir, claw.subdomain)
             await processManager.restartGateway(
                 claw.id,
                 clawDir,
@@ -151,6 +166,7 @@ const registerClawProcessHandlers = (): void => {
                 planId: clawProvider.local,
                 location: clawProvider.local,
                 rootPassword: null,
+                hasRootPassword: false,
                 sshKeyId: null,
                 providerServerId: null,
                 subdomain: claw.subdomain,
@@ -211,7 +227,7 @@ const registerClawProcessHandlers = (): void => {
             }
 
             const clawDir = configStore.getClawDir(claw.name)
-            ensureClawConfig(clawDir)
+            ensureClawConfig(clawDir, claw.subdomain)
             await processManager.restartGateway(
                 claw.id,
                 clawDir,
@@ -236,7 +252,7 @@ const registerClawProcessHandlers = (): void => {
 
             if (claw.version) {
                 const clawDir = configStore.getClawDir(claw.name)
-                ensureClawConfig(clawDir)
+                ensureClawConfig(clawDir, claw.subdomain)
                 await processManager.startGateway(
                     claw.id,
                     clawDir,

@@ -8,7 +8,7 @@ import type { ProviderType } from '@/ts/Types'
 import { eq } from 'drizzle-orm'
 import { clawStatus } from '@openclaw/shared'
 import { db } from '@/db'
-import { claws } from '@/db/schema'
+import { claws, users } from '@/db/schema'
 import { parseWebhook, handleWebhook } from '@/lib/polar'
 import provisionClaw from '@/controllers/claws/provisionClaw'
 import { getProvider } from '@/services/provider'
@@ -29,6 +29,20 @@ const handlePolarWebhook = async (c: Context) => {
             onCheckoutUpdated: async (data: CheckoutWebhookData) => {
                 if (data.status !== 'succeeded') {
                     return
+                }
+
+                if (data.metadata?.type === 'license' && data.metadata?.userId) {
+                    const currentEnv = getEnvironment(c)
+                    const eventEnv = data.metadata?.environment || PROD
+
+                    if (eventEnv !== currentEnv) {
+                        return
+                    }
+
+                    await db
+                        .update(users)
+                        .set({ hasLicense: true })
+                        .where(eq(users.id, data.metadata.userId))
                 }
             },
 

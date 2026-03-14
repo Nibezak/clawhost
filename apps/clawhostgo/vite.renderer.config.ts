@@ -16,6 +16,7 @@ export default defineConfig({
         exclude: ['@openclaw/i18n', '@openclaw/shared']
     },
     server: {
+        port: 3333,
         watch: {
             ignored: ['!**/packages/i18n/**', '!**/packages/shared/**']
         }

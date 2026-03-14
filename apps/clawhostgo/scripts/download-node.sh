@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-NODE_VERSION="22.14.0"
+NODE_VERSION="22.16.0"
 OUTPUT_DIR="$(cd "$(dirname "$0")/.." && pwd)/resources/node"
 
 detect_platform() {

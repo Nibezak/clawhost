@@ -1,5 +1,6 @@
 import type { ChildProcess } from 'child_process'
 import type {
+    BillingInterval,
     ClawFileType,
     ProviderType,
     SubscriptionStatus,
@@ -504,7 +505,7 @@ export interface CreatePolarProductParams {
     name: string
     description?: string
     priceAmountCents: number
-    recurringInterval?: 'month' | 'year'
+    recurringInterval?: BillingInterval
 }
 
 export interface PolarCustomer {
@@ -637,6 +638,7 @@ export interface InitiateClawPurchaseBody {
     sshKeyId?: string
     volumeSize?: number
     priceMonthly: number
+    billingInterval?: BillingInterval
 }
 
 export interface CloudflareDNSRecord {
@@ -1101,4 +1103,18 @@ export interface GoogleUserinfoResponse {
 export interface PolarProductMapping {
     provider: string
     planId: string
+}
+
+export interface JoinWaitlistBody {
+    email: string
+}
+
+export interface WaitlistStatusResponse {
+    joined: boolean
+}
+
+export interface FeatureEmailDefinition {
+    key: string
+    subject: string
+    render: () => import('react').ReactNode
 }

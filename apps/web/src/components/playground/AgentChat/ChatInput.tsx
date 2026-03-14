@@ -240,6 +240,7 @@ const ChatInputInner: ForwardRefRenderFunction<
                             )}
                             <button
                                 onClick={() => handleRemoveAttachment(idx)}
+                                aria-label={t('playground.chatRemoveAttachment')}
                                 className='bg-background text-muted-foreground ring-border hover:text-foreground absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full ring-1 transition-colors'
                             >
                                 <XIcon className='h-2.5 w-2.5' weight='bold' />
@@ -255,6 +256,7 @@ const ChatInputInner: ForwardRefRenderFunction<
                             <TooltipTrigger asChild>
                                 <button
                                     onClick={onVoiceMode}
+                                    aria-label={t('playground.chatVoiceMode')}
                                     className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-r from-[#ef5350] to-[#c62828] text-white transition-opacity hover:opacity-90'
                                 >
                                     <WaveformIcon
@@ -273,6 +275,7 @@ const ChatInputInner: ForwardRefRenderFunction<
                 <button
                     onClick={handleAttachClick}
                     disabled={!allowAttach}
+                    aria-label={t('playground.chatAttachFile')}
                     className='border-border bg-foreground/5 text-muted-foreground hover:bg-foreground/10 hover:text-foreground flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors disabled:cursor-not-allowed disabled:opacity-50'
                 >
                     <PaperclipIcon className='h-4 w-4' weight='bold' />
@@ -288,7 +291,7 @@ const ChatInputInner: ForwardRefRenderFunction<
                 <button
                     onClick={toggleVoice}
                     disabled={!allowAttach || isTranscribing}
-                    title={t('playground.chatVoiceInput')}
+                    aria-label={t('playground.chatVoiceInput')}
                     className={`border-border flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
                         isRecording
                             ? 'animate-pulse bg-[#ef5350] text-white'
@@ -317,6 +320,7 @@ const ChatInputInner: ForwardRefRenderFunction<
                         <TooltipTrigger asChild>
                             <button
                                 onClick={onAbort}
+                                aria-label={t('playground.chatStopProcess')}
                                 className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#ef5350] text-white transition-colors hover:bg-[#e53935]'
                             >
                                 <StopCircleIcon
@@ -336,6 +340,7 @@ const ChatInputInner: ForwardRefRenderFunction<
                             !isConnected ||
                             (!input.trim() && attachments.length === 0)
                         }
+                        aria-label={t('playground.chatSend')}
                         className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#ef5350] text-white transition-colors hover:bg-[#e53935] disabled:cursor-not-allowed disabled:opacity-50'
                     >
                         <PaperPlaneRightIcon

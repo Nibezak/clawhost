@@ -8,12 +8,14 @@ import { TooltipProvider } from '@/components/ui'
 import { ROUTES } from '@/lib'
 import { useThemeEffect, useLanguageEffect } from '@/hooks'
 
+const Go = lazy(() => import('@/pages/Go'))
 const Landing = lazy(() => import('@/pages/Landing'))
 const Login = lazy(() => import('@/pages/Login'))
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
 const SSHKeys = lazy(() => import('@/pages/SSHKeys'))
 const Account = lazy(() => import('@/pages/Account'))
 const Billing = lazy(() => import('@/pages/Billing'))
+const License = lazy(() => import('@/pages/License'))
 const Terms = lazy(() => import('@/pages/Terms'))
 const Privacy = lazy(() => import('@/pages/Privacy'))
 const Changelog = lazy(() => import('@/pages/Changelog'))
@@ -31,9 +33,14 @@ const App: FC = (): ReactNode => {
             <AuthProvider>
                 <ScrollToTop />
                 <Toast />
-                <Suspense key={language}>
+                <Suspense key={language} fallback={
+                    <div className='bg-background flex min-h-screen items-center justify-center'>
+                        <div className='h-6 w-6 animate-spin rounded-full border-2 border-current border-t-transparent opacity-50' />
+                    </div>
+                }>
                     <Routes>
                         <Route path={ROUTES.HOME} element={<Landing />} />
+                        <Route path={ROUTES.GO} element={<Go />} />
                         <Route path={ROUTES.LOGIN} element={<Login />} />
                         <Route path={ROUTES.TERMS} element={<Terms />} />
                         <Route path={ROUTES.PRIVACY} element={<Privacy />} />
@@ -73,6 +80,14 @@ const App: FC = (): ReactNode => {
                             element={
                                 <ProtectedRoute>
                                     <Billing />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path={ROUTES.LICENSE}
+                            element={
+                                <ProtectedRoute>
+                                    <License />
                                 </ProtectedRoute>
                             }
                         />

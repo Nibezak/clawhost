@@ -59,11 +59,18 @@ const customPrices: Record<string, Record<string, number>> = {
     }
 }
 
+const ANNUAL_DISCOUNT_MONTHS = 10
+
 async function main() {
     const providerName = (process.argv[2] || 'hetzner') as
         | 'hetzner'
         | 'digitalocean'
         | 'vultr'
+
+    const billingInterval = (process.argv[3] || 'both') as
+        | 'month'
+        | 'year'
+        | 'both'
 
     const prices = customPrices[providerName]
     if (!prices) {
@@ -71,7 +78,7 @@ async function main() {
         process.exit(1)
     }
 
-    console.log(`🚀 Creating Polar products for ${providerName} plans...\n`)
+    console.log(`🚀 Creating Polar products for ${providerName} plans (${billingInterval})...\n`)
 
     const accessToken = process.env.POLAR_ACCESS_TOKEN
 
@@ -96,54 +103,72 @@ async function main() {
         planId: string
         productId: string
         price: number
+        interval: string
     }[] = []
     const envLines: string[] = []
 
+    const intervals: Array<'month' | 'year'> =
+        billingInterval === 'both'
+            ? ['month', 'year']
+            : [billingInterval]
+
     for (const plan of whitelistedPlans) {
         const priceMonthly = prices[plan.name]
-        const priceCents = Math.round(priceMonthly * 100)
 
-        const productName = `Claw - ${plan.description}`
-        const productDescription = `${plan.description} (${plan.cores} vCPU, ${plan.memory}GB RAM, ${plan.disk}GB SSD)`
+        for (const interval of intervals) {
+            const priceCents = interval === 'year'
+                ? Math.round(priceMonthly * ANNUAL_DISCOUNT_MONTHS * 100)
+                : Math.round(priceMonthly * 100)
 
-        console.log(`Creating: ${productName}`)
-        console.log(`   Specs: ${productDescription}`)
-        console.log(`   Price: $${priceMonthly}/mo (${priceCents} cents)`)
+            const intervalLabel = interval === 'year' ? 'Yearly' : 'Monthly'
+            const productName = `Claw - ${plan.description} (${intervalLabel})`
+            const productDescription = `${plan.description} (${plan.cores} vCPU, ${plan.memory}GB RAM, ${plan.disk}GB SSD)`
 
-        try {
-            const product = await polar.products.create({
-                name: productName,
-                description: productDescription,
-                recurringInterval: 'month',
-                prices: [
-                    {
-                        amountType: 'fixed',
-                        priceAmount: priceCents,
-                        priceCurrency: 'usd'
-                    }
-                ]
-            })
+            const displayPrice = interval === 'year'
+                ? `$${(priceMonthly * ANNUAL_DISCOUNT_MONTHS).toFixed(0)}/yr`
+                : `$${priceMonthly}/mo`
 
-            createdProducts.push({
-                planId: plan.name,
-                productId: product.id,
-                price: priceMonthly
-            })
+            console.log(`Creating: ${productName}`)
+            console.log(`   Specs: ${productDescription}`)
+            console.log(`   Price: ${displayPrice} (${priceCents} cents)`)
 
-            const envKey = `POLAR_PRODUCT_${providerName.toUpperCase()}_${plan.name.toUpperCase().replace(/-/g, '_')}`
-            envLines.push(`${envKey}=${product.id}`)
+            try {
+                const product = await polar.products.create({
+                    name: productName,
+                    description: productDescription,
+                    recurringInterval: interval,
+                    prices: [
+                        {
+                            amountType: 'fixed',
+                            priceAmount: priceCents,
+                            priceCurrency: 'usd'
+                        }
+                    ]
+                })
 
-            console.log(`   ✅ Created: ${product.id}\n`)
-        } catch (err) {
-            console.error(
-                `   ❌ Failed: ${err instanceof Error ? err.message : err}\n`
-            )
+                createdProducts.push({
+                    planId: plan.name,
+                    productId: product.id,
+                    price: priceCents / 100,
+                    interval
+                })
+
+                const suffix = interval === 'year' ? '_YEARLY' : '_MONTHLY'
+                const envKey = `POLAR_PRODUCT_${plan.description.toUpperCase().replace(/\s+/g, '')}${suffix}`
+                envLines.push(`${envKey}=${product.id}`)
+
+                console.log(`   ✅ Created: ${product.id}\n`)
+            } catch (err) {
+                console.error(
+                    `   ❌ Failed: ${err instanceof Error ? err.message : err}\n`
+                )
+            }
         }
     }
 
-    console.log('\n' + '='.repeat(60))
+    console.log('\n' + '='.repeat(70))
     console.log('📋 SUMMARY')
-    console.log('='.repeat(60))
+    console.log('='.repeat(70))
     console.log(`\nCreated ${createdProducts.length} products\n`)
 
     if (createdProducts.length > 0) {
@@ -154,15 +179,16 @@ async function main() {
     }
 
     console.log('\nProduct mapping:')
-    console.log('-'.repeat(60))
-    console.log('Plan ID'.padEnd(20) + 'Price'.padEnd(12) + 'Product ID')
-    console.log('-'.repeat(60))
+    console.log('-'.repeat(70))
+    console.log('Plan ID'.padEnd(20) + 'Interval'.padEnd(10) + 'Price'.padEnd(14) + 'Product ID')
+    console.log('-'.repeat(70))
     createdProducts.forEach((p) => {
+        const priceLabel = p.interval === 'year' ? `$${p.price}/yr` : `$${p.price}/mo`
         console.log(
-            p.planId.padEnd(20) + `$${p.price}/mo`.padEnd(12) + p.productId
+            p.planId.padEnd(20) + p.interval.padEnd(10) + priceLabel.padEnd(14) + p.productId
         )
     })
-    console.log('-'.repeat(60))
+    console.log('-'.repeat(70))
 }
 
 main().catch((err) => {

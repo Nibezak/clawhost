@@ -400,6 +400,7 @@ const ChatView: FC<ChatViewProps> = ({
                         <div className='border-border flex shrink-0 items-center rounded-lg border p-0.5'>
                             <button
                                 onClick={() => setChatSidebarView('tree')}
+                                aria-label={t('chat.viewTree')}
                                 className={`flex items-center justify-center rounded-md p-1.5 transition-colors ${
                                     chatSidebarView === 'tree'
                                         ? 'bg-foreground/10 text-foreground'
@@ -417,6 +418,7 @@ const ChatView: FC<ChatViewProps> = ({
                             </button>
                             <button
                                 onClick={() => setChatSidebarView('list')}
+                                aria-label={t('chat.viewList')}
                                 className={`flex items-center justify-center rounded-md p-1.5 transition-colors ${
                                     chatSidebarView === 'list'
                                         ? 'bg-foreground/10 text-foreground'
@@ -441,6 +443,7 @@ const ChatView: FC<ChatViewProps> = ({
                                     onClick={() =>
                                         handleOpenClawSettings(activeClaw.id)
                                     }
+                                    aria-label={t('chat.clawSettings')}
                                     className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground shrink-0 rounded-lg p-1.5 transition-colors'
                                 >
                                     <GearSixIcon
@@ -532,6 +535,7 @@ const ChatView: FC<ChatViewProps> = ({
                                                     activeClaw.id
                                                 )
                                             }
+                                            aria-label={t('chat.clawSettings')}
                                             className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground rounded-md p-1.5 transition-colors'
                                         >
                                             <GearSixIcon

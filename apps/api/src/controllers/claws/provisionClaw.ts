@@ -109,7 +109,8 @@ const provisionClaw = async (
             polarSubscriptionId: params.subscriptionId,
             polarProductId: params.productId,
             polarCustomerId: params.customerId,
-            subscriptionStatus: 'active'
+            subscriptionStatus: 'active',
+            billingInterval: pending.billingInterval
         })
 
         let serverId: number

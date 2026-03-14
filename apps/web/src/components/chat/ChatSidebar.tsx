@@ -72,6 +72,7 @@ const ChatSidebar: FC<ChatSidebarProps> = ({
                         <TooltipTrigger asChild>
                             <button
                                 onClick={() => setChatSidebarView('tree')}
+                                aria-label={t('chat.viewTree')}
                                 className={`flex items-center justify-center rounded-md p-1.5 transition-colors ${
                                     chatSidebarView === 'tree'
                                         ? 'bg-foreground/10 text-foreground'
@@ -96,6 +97,7 @@ const ChatSidebar: FC<ChatSidebarProps> = ({
                         <TooltipTrigger asChild>
                             <button
                                 onClick={() => setChatSidebarView('list')}
+                                aria-label={t('chat.viewList')}
                                 className={`flex items-center justify-center rounded-md p-1.5 transition-colors ${
                                     chatSidebarView === 'list'
                                         ? 'bg-foreground/10 text-foreground'

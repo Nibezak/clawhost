@@ -1,7 +1,6 @@
 import type { FC, ReactNode } from 'react'
 
-import { useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useEffect, useState } from 'react'
 import { CheckIcon, WarningIcon, XIcon, InfoIcon } from '@phosphor-icons/react'
 import { t } from '@openclaw/i18n'
 import { useUIStore } from '@/lib/store'
@@ -31,51 +30,47 @@ const iconColors = {
 
 const Toast: FC = (): ReactNode => {
     const { toast, hideToast } = useUIStore()
+    const [exiting, setExiting] = useState(false)
 
     useEffect(() => {
         if (toast) {
+            setExiting(false)
             const timer = setTimeout(() => {
-                hideToast()
-            }, toast.duration || 5000)
+                setExiting(true)
+                setTimeout(hideToast, 150)
+            }, (toast.duration || 5000) - 150)
             return () => clearTimeout(timer)
         }
+        setExiting(false)
     }, [toast, hideToast])
 
+    if (!toast) return null
+
+    const Icon = icons[toast.type]
+
     return (
-        <AnimatePresence>
-            {toast && (
-                <motion.div
-                    initial={{ opacity: 0, y: -20, x: '-50%' }}
-                    animate={{ opacity: 1, y: 0, x: '-50%' }}
-                    exit={{ opacity: 0, y: -20, x: '-50%' }}
-                    className='fixed left-1/2 top-6 z-[100]'
+        <div
+            className={`fixed left-1/2 top-6 z-[100] ${exiting ? 'animate-toast-out' : 'animate-toast-in'}`}
+        >
+            <div
+                className={`flex items-center gap-3 rounded-lg border px-4 py-3 shadow-lg backdrop-blur-sm ${colors[toast.type]}`}
+            >
+                <Icon
+                    className={`h-5 w-5 ${iconColors[toast.type]}`}
+                    weight='fill'
+                />
+                <span className='text-foreground text-sm font-medium'>
+                    {toast.message}
+                </span>
+                <button
+                    onClick={hideToast}
+                    aria-label={t('common.closeNotification')}
+                    className='text-muted-foreground hover:text-foreground ml-2 transition'
                 >
-                    <div
-                        className={`flex items-center gap-3 rounded-lg border px-4 py-3 shadow-lg backdrop-blur-sm ${colors[toast.type]}`}
-                    >
-                        {(() => {
-                            const Icon = icons[toast.type]
-                            return (
-                                <Icon
-                                    className={`h-5 w-5 ${iconColors[toast.type]}`}
-                                    weight='fill'
-                                />
-                            )
-                        })()}
-                        <span className='text-foreground text-sm font-medium'>
-                            {toast.message}
-                        </span>
-                        <button
-                            onClick={hideToast}
-                            aria-label={t('common.closeNotification')}
-                            className='text-muted-foreground hover:text-foreground ml-2 transition'
-                        >
-                            <XIcon className='h-4 w-4' />
-                        </button>
-                    </div>
-                </motion.div>
-            )}
-        </AnimatePresence>
+                    <XIcon className='h-4 w-4' />
+                </button>
+            </div>
+        </div>
     )
 }
 

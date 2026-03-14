@@ -4,14 +4,17 @@ import type { LogoProps } from '@/ts/Interfaces'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
 import { ROUTES } from '@/lib'
+import usePreferencesStore from '@/lib/store/usePreferencesStore'
 
 const Logo: FC<LogoProps> = ({ to }): ReactNode => {
-    const destination = to || ROUTES.HOME
     const { pathname, hash, search } = useLocation()
+    const product = usePreferencesStore((s) => s.product)
+    const destination = to || (product === 'go' ? ROUTES.GO : ROUTES.HOME)
     const navigate = useNavigate()
+    const isSamePage = pathname === destination
 
     const handleClick = (e: React.MouseEvent) => {
-        if (pathname === destination) {
+        if (isSamePage) {
             e.preventDefault()
             if (hash || search) navigate(destination, { replace: true })
             window.scrollTo({ top: 0, behavior: 'smooth' })

@@ -17,9 +17,10 @@ const extractSubdomain = (host: string | undefined): string | null => {
     return hostname.replace('.clawhost', '')
 }
 
-const resolvePort = (subdomain: string): number | null => {
+const resolveClaw = (subdomain: string): { port: number; gatewayToken: string } | null => {
     const claw = configStore.findClawBySubdomain(subdomain)
-    return claw ? claw.port : null
+    if (!claw) return null
+    return { port: claw.port, gatewayToken: claw.gatewayToken }
 }
 
 const handleRequest = (
@@ -33,24 +34,43 @@ const handleRequest = (
         return
     }
 
-    const port = resolvePort(subdomain)
-    if (!port) {
+    const claw = resolveClaw(subdomain)
+    if (!claw) {
         res.writeHead(404)
         res.end()
         return
     }
 
+    const isHtmlRequest = req.url === '/' || req.url === '' || req.url?.startsWith('/?')
+    const shouldInjectToken = isHtmlRequest && !!claw.gatewayToken
+
     const proxyReq = http.request(
         {
             hostname: '127.0.0.1',
-            port,
+            port: claw.port,
             path: req.url,
             method: req.method,
             headers: req.headers
         },
         (proxyRes) => {
-            res.writeHead(proxyRes.statusCode || 502, proxyRes.headers)
-            proxyRes.pipe(res)
+            const contentType = proxyRes.headers['content-type'] || ''
+            if (shouldInjectToken && contentType.includes('text/html')) {
+                const chunks: Buffer[] = []
+                proxyRes.on('data', (chunk: Buffer) => chunks.push(chunk))
+                proxyRes.on('end', () => {
+                    let html = Buffer.concat(chunks).toString('utf-8')
+                    const tokenScript = `<script>if(!location.hash||!location.hash.includes("token=")){location.hash="token=${claw.gatewayToken}";}</script>`
+                    html = html.replace('<head>', `<head>${tokenScript}`)
+                    const headers = { ...proxyRes.headers }
+                    headers['content-length'] = String(Buffer.byteLength(html))
+                    delete headers['content-encoding']
+                    res.writeHead(proxyRes.statusCode || 200, headers)
+                    res.end(html)
+                })
+            } else {
+                res.writeHead(proxyRes.statusCode || 502, proxyRes.headers)
+                proxyRes.pipe(res)
+            }
         }
     )
 
@@ -73,13 +93,13 @@ const handleUpgrade = (
         return
     }
 
-    const port = resolvePort(subdomain)
-    if (!port) {
+    const claw = resolveClaw(subdomain)
+    if (!claw) {
         socket.destroy()
         return
     }
 
-    const proxySocket = net.connect(port, '127.0.0.1', () => {
+    const proxySocket = net.connect(claw.port, '127.0.0.1', () => {
         const requestLine = `${req.method} ${req.url} HTTP/1.1\r\n`
         let headers = ''
         for (let i = 0; i < req.rawHeaders.length; i += 2) {

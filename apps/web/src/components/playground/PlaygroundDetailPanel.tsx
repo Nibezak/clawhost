@@ -8,7 +8,7 @@ import type { PlaygroundDetailTab } from '@/ts/Types'
 import type { TranslationKey } from '@openclaw/i18n'
 
 import { useCallback, useState, useMemo, useEffect } from 'react'
-import CLAW_DETAIL_TABS from '@/lib/clawDetailTabs'
+import { CLAW_DETAIL_TABS } from '@/lib/constants'
 import { motion } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import {
@@ -17,7 +17,7 @@ import {
     inputValidation,
     OPENCLAW_VERSION
 } from '@openclaw/shared'
-import { getLocale, TRUNCATE_LENGTHS } from '@/lib'
+import { getLocale, getBaseDomain, TRUNCATE_LENGTHS } from '@/lib'
 import {
     XIcon,
     InfoIcon,
@@ -28,7 +28,8 @@ import {
     GearSixIcon,
     CircleNotchIcon,
     TerminalWindowIcon,
-    ArrowSquareOutIcon
+    ArrowSquareOutIcon,
+    ChatsCircleIcon
 } from '@phosphor-icons/react'
 import { ClawAvatar, ClawMascotOutline, ProviderIcon } from '@/components'
 import {
@@ -37,7 +38,6 @@ import {
     TooltipTrigger,
     TooltipContent
 } from '@/components/ui'
-import { getBaseDomain } from '@/lib'
 import {
     CopyableField,
     ClawLogsContent,
@@ -60,6 +60,11 @@ const tabStateMap: Record<string, PlaygroundDetailTab> = {}
 
 const tabs: PlaygroundTabConfig<PlaygroundDetailTab>[] = [
     { id: CLAW_DETAIL_TABS.INFO, label: 'playground.tabInfo', icon: InfoIcon },
+    {
+        id: CLAW_DETAIL_TABS.CHANNELS,
+        label: 'playground.tabChannels',
+        icon: ChatsCircleIcon
+    },
     {
         id: CLAW_DETAIL_TABS.TERMINAL,
         label: 'playground.tabTerminal',
@@ -566,8 +571,12 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                 {claw.provider !== clawProvider.local &&
                                     monthlyPrice && (
                                         <CopyableField
-                                            label={t('dashboard.monthlyCost')}
-                                            value={`$${monthlyPrice.toFixed(0)}${t('landing.perMonth')}`}
+                                            label={t('dashboard.planCost')}
+                                            value={
+                                                claw.billingInterval === 'year' && plan
+                                                    ? `$${plan.priceYearly.toFixed(0)}${t('landing.perYear')}`
+                                                    : `$${monthlyPrice.toFixed(0)}${t('landing.perMonth')}`
+                                            }
                                         />
                                     )}
 
@@ -635,6 +644,14 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                     <CopyableField
                                         label={t('dashboard.gatewayToken')}
                                         value={claw.gatewayToken}
+                                        secret
+                                    />
+                                )}
+
+                                {claw.rootPassword && (
+                                    <CopyableField
+                                        label={t('createClaw.rootPassword')}
+                                        value={claw.rootPassword}
                                         secret
                                     />
                                 )}
