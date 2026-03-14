@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { users, emails } from '@/db/schema'
 import { getResend, FROM_EMAIL } from '@/services/resend'
-import { FEATURE_EMAILS } from '@/lib/featureEmails'
+import FEATURE_EMAILS from '@/lib/featureEmails'
 import { ok, fail } from '@/lib/response'
 import { t } from '@openclaw/i18n'
 

@@ -3,7 +3,7 @@ import fs from 'fs'
 import { app } from 'electron'
 import { execSync } from 'child_process'
 
-const NODE_VERSION = '22.14.0'
+const NODE_VERSION = '22.16.0'
 const MIN_NODE_MAJOR = 22
 
 const getBundledNodeDir = (): string => {

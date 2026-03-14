@@ -983,6 +983,8 @@ const es: Translations = {
         advancedOptions: 'Opciones avanzadas opcionales',
         rootPassword: 'Contraseña root',
         rootPasswordPlaceholder: 'Ingresa una contraseña o genera una',
+        autoGenerateGatewayTokenHint:
+            'Déjalo vacío para generar automáticamente un token seguro.',
         autoGeneratePasswordHint:
             'Deja vacío para generar automáticamente una contraseña segura.',
         regeneratePassword: 'Regenerar contraseña',

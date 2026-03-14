@@ -1104,3 +1104,9 @@ export interface PolarProductMapping {
     provider: string
     planId: string
 }
+
+export interface FeatureEmailDefinition {
+    key: string
+    subject: string
+    render: () => import('react').ReactNode
+}

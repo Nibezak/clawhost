@@ -947,8 +947,10 @@ const en = {
         advancedOptions: 'Advanced Optional Options',
         rootPassword: 'Root Password',
         rootPasswordPlaceholder: 'Enter password or generate one',
+        autoGenerateGatewayTokenHint:
+            'Optional. Auto-generated if left empty.',
         autoGeneratePasswordHint:
-            'Leave empty to auto-generate a secure password.',
+            'Optional. No password auth if left empty.',
         regeneratePassword: 'Regenerate password',
         sshKeyOptional: 'SSH Key',
         noSshKeyPasswordOnly: 'No SSH key (password only)',

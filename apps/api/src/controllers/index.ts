@@ -1,5 +1,7 @@
-export * as auth from '@/controllers/auth'
-export * as users from '@/controllers/users'
-export * as claws from '@/controllers/claws'
-export * as plans from '@/controllers/plans'
-export * as sshKeys from '@/controllers/ssh-keys'
+import * as auth from '@/controllers/auth'
+import * as users from '@/controllers/users'
+import * as claws from '@/controllers/claws'
+import * as plans from '@/controllers/plans'
+import * as sshKeys from '@/controllers/ssh-keys'
+
+export { auth, users, claws, plans, sshKeys }

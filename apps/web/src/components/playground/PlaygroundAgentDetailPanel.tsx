@@ -28,14 +28,10 @@ import {
     ArrowsOutIcon,
     ArrowsInIcon
 } from '@phosphor-icons/react'
-import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui'
 import {
-    AgentChat,
-    PlaygroundSkillsContent,
-    PlaygroundBindingsContent
-} from '@/components/playground'
-import { ClawAvatar, PanelPlaceholder } from '@/components'
-import {
+    Tooltip,
+    TooltipTrigger,
+    TooltipContent,
     Select,
     SelectTrigger,
     SelectContent,
@@ -49,6 +45,12 @@ import {
     Skeleton,
     Checkbox
 } from '@/components/ui'
+import {
+    AgentChat,
+    PlaygroundSkillsContent,
+    PlaygroundBindingsContent
+} from '@/components/playground'
+import { ClawAvatar, PanelPlaceholder } from '@/components'
 import { api, TRUNCATE_LENGTHS, copyToClipboard } from '@/lib'
 import { useUIStore } from '@/lib/store'
 import { aiModels, validateAgentName } from '@/lib/claw-utils'

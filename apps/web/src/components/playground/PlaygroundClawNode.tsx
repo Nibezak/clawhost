@@ -10,7 +10,7 @@ import { useState } from 'react'
 import { t } from '@openclaw/i18n'
 import { clawStatus, clawProvider, userRole } from '@openclaw/shared'
 import { useUIStore } from '@/lib/store'
-import { getLocale, getBaseDomain, TRUNCATE_LENGTHS } from '@/lib'
+import { api, getLocale, getBaseDomain, TRUNCATE_LENGTHS } from '@/lib'
 import {
     useStartClaw,
     useStopClaw,
@@ -23,7 +23,6 @@ import {
     useProfile,
     useCancelPendingClaw
 } from '@/hooks'
-import { api } from '@/lib'
 import { ProviderIcon } from '@/components'
 import { getStatusConfig, generateSlug } from '@/lib/claw-utils'
 import {

@@ -1000,6 +1000,8 @@ const fr: Translations = {
         advancedOptions: 'Options avancées facultatives',
         rootPassword: 'Mot de passe root',
         rootPasswordPlaceholder: 'Entrez un mot de passe ou générez-en un',
+        autoGenerateGatewayTokenHint:
+            'Laissez vide pour générer automatiquement un jeton sécurisé.',
         autoGeneratePasswordHint:
             'Laissez vide pour générer automatiquement un mot de passe sécurisé.',
         regeneratePassword: 'Régénérer le mot de passe',

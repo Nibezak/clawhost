@@ -64,6 +64,7 @@ if (!gotLock) {
         registerAllHandlers()
         reverseProxy.start()
         dnsResolver.startDns()
+        dnsResolver.ensurePortRedirect()
         createWindow()
     })
 

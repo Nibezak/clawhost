@@ -990,6 +990,8 @@ const de: Translations = {
         advancedOptions: 'Erweiterte optionale Optionen',
         rootPassword: 'Root-Passwort',
         rootPasswordPlaceholder: 'Passwort eingeben oder generieren',
+        autoGenerateGatewayTokenHint:
+            'Leer lassen, um automatisch ein sicheres Token zu generieren.',
         autoGeneratePasswordHint:
             'Leer lassen, um ein sicheres Passwort automatisch zu generieren.',
         regeneratePassword: 'Passwort neu generieren',

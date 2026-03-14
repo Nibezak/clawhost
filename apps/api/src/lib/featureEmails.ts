@@ -1,12 +1,6 @@
-import type { ReactNode } from 'react'
+import type { FeatureEmailDefinition } from '@/ts/Interfaces'
 
 import { t } from '@openclaw/i18n'
-
-interface FeatureEmailDefinition {
-    key: string
-    subject: string
-    render: () => ReactNode
-}
 import TerminalEmail from '@/emails/features/TerminalEmail'
 import LogsEmail from '@/emails/features/LogsEmail'
 import ChannelsEmail from '@/emails/features/ChannelsEmail'
@@ -125,4 +119,4 @@ const FEATURE_EMAILS: FeatureEmailDefinition[] = [
     }
 ]
 
-export { FEATURE_EMAILS }
+export default FEATURE_EMAILS

@@ -153,8 +153,8 @@ async function main() {
                     interval
                 })
 
-                const suffix = interval === 'year' ? '_YEARLY' : ''
-                const envKey = `POLAR_PRODUCT_${providerName.toUpperCase()}_${plan.name.toUpperCase().replace(/-/g, '_')}${suffix}`
+                const suffix = interval === 'year' ? '_YEARLY' : '_MONTHLY'
+                const envKey = `POLAR_PRODUCT_${plan.description.toUpperCase().replace(/\s+/g, '')}${suffix}`
                 envLines.push(`${envKey}=${product.id}`)
 
                 console.log(`   ✅ Created: ${product.id}\n`)
