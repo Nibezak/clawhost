@@ -95,7 +95,7 @@ const de: Translations = {
         pricing: 'Preise',
         pricingTitle: 'Einfacher Einmalpreis',
         pricingDescription: 'Keine Abonnements, keine versteckten Gebühren. Eine Lizenz, unbegrenzte Nutzung.',
-        pricingPrice: '49 $',
+        pricingPrice: '40 $',
         pricingLabel: 'Einmalzahlung',
         pricingFeature1: 'Lebenslange Lizenz',
         pricingFeature2: 'Unbegrenzte Claws',
@@ -137,7 +137,17 @@ const de: Translations = {
         faq5Question: 'Welche Betriebssysteme werden unterstützt?',
         faq5Answer: 'ClawHost Go unterstützt Windows und macOS. Beide Plattformen erhalten die gleichen Funktionen und Updates gleichzeitig.',
         faq6Question: 'Kann ich später von Go zu Cloud wechseln?',
-        faq6Answer: 'Absolut. Sie können Ihre OpenClaw-Konfiguration aus Go exportieren und jederzeit auf ClawHost Cloud bereitstellen. Beide Plattformen sind vollständig kompatibel.'
+        faq6Answer: 'Absolut. Sie können Ihre OpenClaw-Konfiguration aus Go exportieren und jederzeit auf ClawHost Cloud bereitstellen. Beide Plattformen sind vollständig kompatibel.',
+        statsPrice: '40 $',
+        statsLifetime: 'Lebenslang',
+        statsOneTime: 'Einmalig',
+        statsPayment: 'Zahlung',
+        statsLocal: 'Lokal',
+        statsLocally: 'Läuft lokal',
+        statsZero: 'Null',
+        statsZeroConfig: 'Null Konfiguration',
+        ctaTitle: 'OpenClaw lokal ausführen',
+        ctaDescription: 'Einmalige Zahlung, lebenslange Lizenz. Stellen Sie OpenClaw auf Ihrem eigenen Gerät bereit — kein Cloud, keine Abonnements, keine Grenzen.'
     },
     footer: {
         website: 'Webseite',

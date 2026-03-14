@@ -1,16 +1,27 @@
 import type { FC, ReactNode } from 'react'
 import type { FeatureItem, Faq } from '@/ts/Interfaces'
 
-import { lazy, Suspense, useRef, useState, useEffect } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { useRef, useState, useEffect } from 'react'
+import { useScroll, useTransform } from 'framer-motion'
 import { t } from '@openclaw/i18n'
 import { Button } from '@/components/ui'
-import { PageTitle, Header, LandingFooter, FeaturesGrid, ComparisonTable, FaqSection } from '@/components'
-import { useGitHubStars, GITHUB_REPO_URL } from '@/hooks'
 import {
-    SparkleIcon,
-    GithubLogoIcon,
-    DownloadSimpleIcon,
+    PageTitle,
+    Header,
+    LandingFooter,
+    FeaturesGrid,
+    ComparisonTable,
+    FaqSection,
+    HeroBadge,
+    HeroTitle,
+    StatsRow,
+    MacosDesktopPreview,
+    GoPricingCard,
+    LandingCTA,
+    SelfHostButton
+} from '@/components'
+import usePreferencesStore from '@/lib/store/usePreferencesStore'
+import {
     ClockIcon,
     LockIcon,
     TerminalIcon,
@@ -23,10 +34,8 @@ import {
     PuzzlePieceIcon,
     ChatCircleDotsIcon,
     UsersThreeIcon,
-    CheckIcon
+    DownloadSimpleIcon
 } from '@phosphor-icons/react'
-
-const LazyDemoPreview = lazy(() => import('@/components/LandingDemoPreview'))
 
 const getGoFeatures = (): FeatureItem[] => [
     {
@@ -119,7 +128,8 @@ const getGoFaqs = (): Faq[] => [
 ]
 
 const Go: FC = (): ReactNode => {
-    const { data: gitHubStars } = useGitHubStars()
+    const setProduct = usePreferencesStore((s) => s.setProduct)
+    useEffect(() => setProduct('go'), [setProduct])
     const [activeSection, setActiveSection] = useState('')
     const previewRef = useRef<HTMLDivElement>(null)
     const { scrollYProgress: previewProgress } = useScroll({
@@ -176,31 +186,13 @@ const Go: FC = (): ReactNode => {
 
                     <div className='animate-hero-fade-in relative mx-auto max-w-6xl'>
                         <div className='flex flex-col items-center text-center'>
-                            <div className='mb-8 flex flex-wrap items-center justify-center gap-3'>
-                                <div className='glow-border border-border bg-foreground/5 inline-flex items-center gap-2 rounded-full border px-4 py-2'>
-                                    <SparkleIcon
-                                        className='h-4 w-4 text-[#ef5350]'
-                                        weight='fill'
-                                    />
-                                    <span className='text-foreground/80 text-sm'>
-                                        {t('go.badge')}
-                                    </span>
-                                </div>
-                            </div>
+                            <HeroBadge label={t('go.badge')} />
 
-                            <h1 className='font-clash mb-6 text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl lg:text-8xl'>
-                                <span className='from-foreground via-foreground to-muted-foreground bg-gradient-to-b bg-clip-text text-transparent'>
-                                    {t('go.heroTitle1')}
-                                </span>
-                                <br />
-                                <span className='animate-gradient bg-gradient-to-r from-[#ef5350] via-[#ff7043] to-[#ffab91] bg-clip-text text-transparent'>
-                                    {t('go.heroTitle2')}
-                                </span>
-                            </h1>
-
-                            <p className='text-muted-foreground mb-10 max-w-2xl text-lg leading-relaxed md:text-xl'>
-                                {t('go.description')}
-                            </p>
+                            <HeroTitle
+                                line1={t('go.heroTitle1')}
+                                line2={t('go.heroTitle2')}
+                                description={t('go.description')}
+                            />
 
                             <div className='mb-16 flex flex-col gap-4 sm:flex-row'>
                                 <Button
@@ -212,51 +204,26 @@ const Go: FC = (): ReactNode => {
                                     {t('go.comingSoon')}
                                 </Button>
 
-                                <Button
-                                    size='lg'
-                                    variant='outline'
-                                    className='border-border bg-foreground/5 text-foreground hover:bg-foreground/10 gap-2 px-6'
-                                    asChild
-                                >
-                                    <a
-                                        href={GITHUB_REPO_URL}
-                                        target='_blank'
-                                        rel='noopener noreferrer'
-                                    >
-                                        <GithubLogoIcon className='h-5 w-5' weight='fill' />
-                                        {t('go.selfHostInstead')}
-
-                                        {gitHubStars && (
-                                            <span className='bg-foreground/10 flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs'>
-                                                {gitHubStars.formatted}
-                                                <span className='text-[12px]'>★</span>
-                                            </span>
-                                        )}
-                                    </a>
-                                </Button>
+                                <SelfHostButton
+                                    label={t('go.selfHostInstead')}
+                                    className='hidden'
+                                />
                             </div>
+
+                            <StatsRow stats={[
+                                { value: t('go.statsPrice'), label: t('go.statsLifetime') },
+                                { value: t('go.statsOneTime'), label: t('go.statsPayment') },
+                                { value: t('go.statsLocal'), label: t('go.statsLocally') },
+                                { value: t('go.statsZero'), label: t('go.statsZeroConfig') }
+                            ]} />
                         </div>
                     </div>
                 </section>
 
-                <div ref={previewRef} className='mx-auto mb-32 max-w-6xl px-6'>
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6 }}
-                        style={{ scale: previewScale }}
-                        className='border-border bg-background flex h-[80vh] flex-col overflow-hidden rounded-2xl border'
-                    >
-                        <Suspense fallback={
-                            <div className='flex flex-1 items-center justify-center'>
-                                <div className='border-border bg-muted/50 h-3 w-3 animate-pulse rounded-full' />
-                            </div>
-                        }>
-                            <LazyDemoPreview urlOverride='ClawHost Go' />
-                        </Suspense>
-                    </motion.div>
-                </div>
+                <MacosDesktopPreview
+                    previewRef={previewRef}
+                    previewScale={previewScale}
+                />
 
                 <FeaturesGrid
                     badge={t('go.features')}
@@ -279,43 +246,18 @@ const Go: FC = (): ReactNode => {
                             </p>
                         </div>
 
-                        <div className='border-border mx-auto max-w-2xl rounded-2xl border bg-gradient-to-b from-white/[0.03] to-transparent p-8'>
-                            <div className='flex flex-col items-center gap-8 md:flex-row md:items-start'>
-                                <div className='flex shrink-0 flex-col items-center md:items-start'>
-                                    <div className='font-clash mb-1 text-5xl font-bold'>
-                                        {t('go.pricingPrice')}
-                                    </div>
-                                    <span className='text-muted-foreground mb-6 text-sm'>
-                                        {t('go.pricingLabel')}
-                                    </span>
-                                    <Button
-                                        size='lg'
-                                        disabled
-                                        className='w-full border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] font-semibold text-white opacity-70'
-                                    >
-                                        {t('go.comingSoon')}
-                                    </Button>
-                                </div>
-
-                                <div className='border-border hidden w-px self-stretch bg-gradient-to-b from-transparent via-white/10 to-transparent md:block' />
-
-                                <div className='grid flex-1 grid-cols-2 gap-x-6 gap-y-3'>
-                                    {[
-                                        t('go.pricingFeature1'),
-                                        t('go.pricingFeature2'),
-                                        t('go.pricingFeature3'),
-                                        t('go.pricingFeature4'),
-                                        t('go.pricingFeature5'),
-                                        t('go.pricingFeature6')
-                                    ].map((feature) => (
-                                        <div key={feature} className='flex items-center gap-2'>
-                                            <CheckIcon className='h-3.5 w-3.5 shrink-0 text-green-600 dark:text-green-400' />
-                                            <span className='text-foreground/80 text-sm'>{feature}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
+                        <GoPricingCard
+                            price={t('go.pricingPrice')}
+                            label={t('go.pricingLabel')}
+                            features={[
+                                t('go.pricingFeature1'),
+                                t('go.pricingFeature2'),
+                                t('go.pricingFeature3'),
+                                t('go.pricingFeature4'),
+                                t('go.pricingFeature5'),
+                                t('go.pricingFeature6')
+                            ]}
+                        />
                     </div>
                 </section>
 
@@ -344,6 +286,24 @@ const Go: FC = (): ReactNode => {
                     description={t('go.faqDescription')}
                     faqs={getGoFaqs()}
                 />
+
+                <LandingCTA
+                    title={t('go.ctaTitle')}
+                    description={t('go.ctaDescription')}
+                >
+                    <Button
+                        size='lg'
+                        disabled
+                        className='gap-2 border-0 bg-gradient-to-r from-[#ef5350] to-[#c62828] px-6 font-semibold text-white opacity-70'
+                    >
+                        <DownloadSimpleIcon className='h-5 w-5' weight='bold' />
+                        {t('go.comingSoon')}
+                    </Button>
+                    <SelfHostButton
+                        label={t('go.selfHostInstead')}
+                        className='hidden'
+                    />
+                </LandingCTA>
             </main>
 
             <LandingFooter />

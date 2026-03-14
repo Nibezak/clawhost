@@ -75,6 +75,8 @@ export type ClawFileType =
 
 export type ChatSidebarViewMode = 'tree' | 'list'
 
+export type Product = 'cloud' | 'go'
+
 export type ChatTypingIndicator = 'thinking' | 'writing' | null
 
 export type TranscriberFunction = (

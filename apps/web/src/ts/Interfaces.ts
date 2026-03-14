@@ -21,7 +21,8 @@ import type {
     ChatTypingIndicator,
     CompareFeatureStatus,
     ToastType,
-    UserRole
+    UserRole,
+    Product
 } from '@/ts/Types'
 
 export interface ApiResponse<T = null> {
@@ -185,6 +186,8 @@ export interface PreferencesState {
     setOpenLinksWindowed: (value: boolean) => void
     chatSidebarView: ChatSidebarViewMode
     setChatSidebarView: (view: ChatSidebarViewMode) => void
+    product: Product
+    setProduct: (product: Product) => void
 }
 
 export interface CachedProfile {
@@ -273,6 +276,7 @@ export interface FeaturesGridProps {
 
 export interface LandingDemoPreviewProps {
     urlOverride?: string
+    hideTitleBar?: boolean
 }
 
 export interface UserDropdownProps {
@@ -859,6 +863,71 @@ export interface HeroButtonsProps {
     githubLabel: string
     showStars: boolean
     large?: boolean
+}
+
+export interface StatItem {
+    value: string
+    label: string
+}
+
+export interface StatsRowProps {
+    stats: StatItem[]
+}
+
+export interface HeroBadgeProps {
+    label: string
+    tutorialBadge?: boolean
+    onTutorialClick?: () => void
+}
+
+export interface HeroTitleProps {
+    line1: string
+    line2: string
+    description: string
+}
+
+export interface DemoPreviewSectionProps {
+    previewRef: React.RefObject<HTMLDivElement>
+    previewScale: import('framer-motion').MotionValue<number>
+}
+
+export interface MacosDesktopPreviewProps {
+    previewRef: React.RefObject<HTMLDivElement>
+    previewScale: import('framer-motion').MotionValue<number>
+}
+
+export interface GoPricingCardProps {
+    price: string
+    label: string
+    features: string[]
+}
+
+export interface SelfHostButtonProps {
+    label: string
+    showStars?: boolean
+    large?: boolean
+    className?: string
+}
+
+export interface LandingCTAProps {
+    title: string
+    description: string
+    children: ReactNode
+}
+
+export interface VideoModalProps {
+    open: boolean
+    onClose: () => void
+    videoUrl: string
+}
+
+export interface PricingSectionProps {
+    plans: Plan[] | undefined
+    plansLoading: boolean
+    allDoneLoading: boolean
+    pricingProvider: ProviderType
+    onProviderChange: (provider: ProviderType) => void
+    isProviderUnavailable: (provider: ProviderType) => boolean
 }
 
 export interface PlaygroundTabConfig<T extends string = string> {

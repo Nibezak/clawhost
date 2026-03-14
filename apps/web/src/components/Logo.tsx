@@ -4,11 +4,12 @@ import type { LogoProps } from '@/ts/Interfaces'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
 import { ROUTES } from '@/lib'
+import usePreferencesStore from '@/lib/store/usePreferencesStore'
 
 const Logo: FC<LogoProps> = ({ to }): ReactNode => {
     const { pathname, hash, search } = useLocation()
-    const isGo = pathname.startsWith(ROUTES.GO)
-    const destination = to || (isGo ? ROUTES.GO : ROUTES.HOME)
+    const product = usePreferencesStore((s) => s.product)
+    const destination = to || (product === 'go' ? ROUTES.GO : ROUTES.HOME)
     const navigate = useNavigate()
     const isSamePage = pathname === destination
 

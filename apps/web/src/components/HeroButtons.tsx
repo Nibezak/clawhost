@@ -3,10 +3,10 @@ import type { HeroButtonsProps } from '@/ts/Interfaces'
 
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui'
+import { SelfHostButton } from '@/components'
 import { useAuth } from '@/lib/auth'
 import { ROUTES } from '@/lib'
-import { useGitHubStars, GITHUB_REPO_URL } from '@/hooks'
-import { LightningIcon, GithubLogoIcon } from '@phosphor-icons/react'
+import { LightningIcon } from '@phosphor-icons/react'
 
 const HeroButtons: FC<HeroButtonsProps> = ({
     deployLabel,
@@ -15,7 +15,6 @@ const HeroButtons: FC<HeroButtonsProps> = ({
     large
 }): ReactNode => {
     const { user } = useAuth()
-    const { data: gitHubStars } = useGitHubStars()
 
     return (
         <>
@@ -35,28 +34,11 @@ const HeroButtons: FC<HeroButtonsProps> = ({
                     {deployLabel}
                 </Link>
             </Button>
-            <Button
-                size='lg'
-                variant='outline'
-                className={`border-border bg-foreground/5 text-foreground hover:bg-foreground/10 gap-2 ${large ? 'px-8 py-6 text-lg' : 'px-6'}`}
-                asChild
-            >
-                <a
-                    href={GITHUB_REPO_URL}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                >
-                    <GithubLogoIcon className='h-5 w-5' weight='fill' />
-                    {githubLabel}
-
-                    {showStars && gitHubStars && (
-                        <span className='bg-foreground/10 flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs'>
-                            {gitHubStars.formatted}
-                            <span className='text-[12px]'>★</span>
-                        </span>
-                    )}
-                </a>
-            </Button>
+            <SelfHostButton
+                label={githubLabel}
+                showStars={showStars}
+                large={large}
+            />
         </>
     )
 }

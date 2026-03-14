@@ -22,7 +22,8 @@ import {
 } from '@phosphor-icons/react'
 
 const LandingDemoPreview: FC<LandingDemoPreviewProps> = ({
-    urlOverride
+    urlOverride,
+    hideTitleBar = false
 }): ReactNode => {
     const [isMobile, setIsMobile] = useState(
         typeof window !== 'undefined' && window.innerWidth < 768
@@ -140,27 +141,29 @@ const LandingDemoPreview: FC<LandingDemoPreviewProps> = ({
 
     return (
         <>
-            <div className='border-border from-muted to-muted/80 pointer-events-none flex items-center gap-3 border-b bg-gradient-to-b px-5 py-3'>
-                <div className='flex items-center gap-2'>
-                    <div className='h-3 w-3 rounded-full bg-[#ff5f57] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
-                    <div className='h-3 w-3 rounded-full bg-[#febc2e] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
-                    <div className='h-3 w-3 rounded-full bg-[#28c840] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
+            {!hideTitleBar && (
+                <div className='border-border from-muted to-muted/80 pointer-events-none flex items-center gap-3 border-b bg-gradient-to-b px-5 py-3'>
+                    <div className='flex items-center gap-2'>
+                        <div className='h-3 w-3 rounded-full bg-[#ff5f57] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
+                        <div className='h-3 w-3 rounded-full bg-[#febc2e] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
+                        <div className='h-3 w-3 rounded-full bg-[#28c840] shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)]' />
+                    </div>
+                    <div className='flex flex-1 justify-center'>
+                        {urlOverride ? (
+                            <span className='text-muted-foreground text-xs'>{urlOverride}</span>
+                        ) : (
+                            <div className='text-muted-foreground bg-foreground/10 flex items-center gap-2 rounded-lg px-4 py-1.5 text-xs'>
+                                <LockIcon
+                                    className='h-3 w-3 text-green-500/70'
+                                    weight='fill'
+                                />
+                                <span>{`${getBaseDomain()}/claws`}</span>
+                            </div>
+                        )}
+                    </div>
+                    <div className='w-[56px]' />
                 </div>
-                <div className='flex flex-1 justify-center'>
-                    {urlOverride ? (
-                        <span className='text-muted-foreground text-xs'>{urlOverride}</span>
-                    ) : (
-                        <div className='text-muted-foreground bg-foreground/10 flex items-center gap-2 rounded-lg px-4 py-1.5 text-xs'>
-                            <LockIcon
-                                className='h-3 w-3 text-green-500/70'
-                                weight='fill'
-                            />
-                            <span>{`${getBaseDomain()}/claws`}</span>
-                        </div>
-                    )}
-                </div>
-                <div className='w-[56px]' />
-            </div>
+            )}
 
             <div className='border-border bg-background/80 flex items-center justify-between border-b px-4 py-2'>
                 <div className='flex items-center gap-2'>
