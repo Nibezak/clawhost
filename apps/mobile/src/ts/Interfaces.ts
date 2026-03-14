@@ -30,6 +30,7 @@ export interface Claw {
     subdomain: string | null
     gatewayToken: string | null
     subscriptionStatus: string | null
+    billingInterval: string | null
     currentPeriodStart: string | null
     currentPeriodEnd: string | null
     volumes?: Volume[]
@@ -45,6 +46,7 @@ export interface Plan {
     memory: number
     disk: number
     priceMonthly: number
+    priceYearly: number
     architecture: string
     disabled?: boolean
 }

@@ -224,6 +224,7 @@ const getClaws = async (c: AuthenticatedContext) => {
                 subdomain: null,
                 gatewayToken: null,
                 subscriptionStatus: null,
+                billingInterval: p.billingInterval || null,
                 currentPeriodStart: null,
                 currentPeriodEnd: null,
                 volumes: [],

@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, shell } from 'electron'
 import path from 'path'
 import {
     configStore,
@@ -36,6 +36,11 @@ if (!gotLock) {
                 nodeIntegration: false,
                 devTools: true
             }
+        })
+
+        mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+            shell.openExternal(url)
+            return { action: 'deny' }
         })
 
         if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {

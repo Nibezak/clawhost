@@ -1105,6 +1105,14 @@ export interface PolarProductMapping {
     planId: string
 }
 
+export interface JoinWaitlistBody {
+    email: string
+}
+
+export interface WaitlistStatusResponse {
+    joined: boolean
+}
+
 export interface FeatureEmailDefinition {
     key: string
     subject: string

@@ -373,6 +373,7 @@ const initiateClawPurchase = async (c: AuthenticatedContext) => {
             sshKeyId: sshKeyId || null,
             volumeSize: volumeSize || null,
             priceMonthly: Math.round(priceMonthly * 100),
+            billingInterval: billingCycle,
             expiresAt
         })
 

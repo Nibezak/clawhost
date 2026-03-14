@@ -113,10 +113,6 @@ const en = {
         comparisonDataOthers: 'Data on cloud servers',
         comparisonSetupUs: 'Install and run instantly',
         comparisonSetupOthers: 'Deploy in one click',
-        comparisonUptimeUs: 'Depends on your device',
-        comparisonUptimeOthers: '24/7 server uptime',
-        comparisonAccessUs: 'Local network access',
-        comparisonAccessOthers: 'Access from anywhere',
         comparisonUpdatesUs: 'Automatic updates',
         comparisonUpdatesOthers: 'Automatic updates',
         comparisonAgentsUs: 'Multiple agents',
@@ -145,7 +141,13 @@ const en = {
         statsZero: 'Zero',
         statsZeroConfig: 'Zero Config',
         ctaTitle: 'Run OpenClaw Locally',
-        ctaDescription: 'One-time payment, lifetime license. Deploy OpenClaw on your own machine — no cloud, no subscriptions, no limits.'
+        ctaDescription: 'One-time payment, lifetime license. Deploy OpenClaw on your own machine — no cloud, no subscriptions, no limits. Your data, your rules.',
+        joinWaitlist: 'Join Waitlist',
+        joinedWaitlist: 'Joined Waitlist',
+        waitlistJoinedToast: 'You\'ve joined the waitlist.',
+        waitlistAlreadyJoinedToast: 'This email is already on the list.',
+        waitlistFailedToast: 'Failed to join waitlist!',
+        waitlistEmailPlaceholder: 'Enter your email'
     },
     footer: {
         website: 'Website',
@@ -425,7 +427,13 @@ const en = {
         ttsGenerationFailed: 'Failed to generate speech!',
         voicesFetched: 'Voices fetched successfully.',
         featureEmailsSent: 'Feature emails sent successfully.',
-        featureEmailsFailed: 'Failed to send feature emails!'
+        featureEmailsFailed: 'Failed to send feature emails!',
+        waitlistJoined: 'Successfully joined the waitlist.',
+        waitlistAlreadyJoined: 'Already on the waitlist.',
+        waitlistJoinFailed: 'Failed to join waitlist!',
+        waitlistRateLimited: 'You\'re going too fast! Please try again in {{seconds}} seconds.',
+        waitlistStatusFetched: 'Waitlist status fetched.',
+        waitlistCheckFailed: 'Failed to check waitlist status!'
     },
     emails: {
         otpSubject: 'Your ClawHost sign-in code',
@@ -792,7 +800,7 @@ const en = {
         domain: 'Domain',
         ipAddress: 'IP Address',
         port: 'Port',
-        monthlyCost: 'Monthly Cost',
+        planCost: 'Plan',
         serverId: 'Server ID',
         created: 'Created',
         sshKey: 'SSH Key',
@@ -948,9 +956,9 @@ const en = {
         rootPassword: 'Root Password',
         rootPasswordPlaceholder: 'Enter password or generate one',
         autoGenerateGatewayTokenHint:
-            'Optional. Auto-generated if left empty.',
+            'Optional. No gateway token if left empty.',
         autoGeneratePasswordHint:
-            'Optional. No password auth if left empty.',
+            'Optional. No password if left empty.',
         regeneratePassword: 'Regenerate password',
         sshKeyOptional: 'SSH Key',
         noSshKeyPasswordOnly: 'No SSH key (password only)',
@@ -1594,6 +1602,14 @@ const en = {
         chatReadOnlyUser2: 'Can you run the test suite and check for failures?',
         chatReadOnlyAssistant2:
             "Sure! I'll run all tests now. 3 passed, 0 failed. Everything looks good — all assertions are passing.",
+        chatReadOnlyGoUser: 'Hey, can you help me automate my deployment pipeline?',
+        chatReadOnlyGoAssistant:
+            'Absolutely! I can set up a CI/CD pipeline for you. Want me to start with a GitHub Actions workflow that builds, tests, and deploys automatically?',
+        chatReadOnlyGoReply:
+            'This is a preview! Get ClawHost Go and run OpenClaw locally — your machine, your data, no cloud needed.',
+        chatReadOnlyGoUser2: 'Can you monitor my local services and alert me if something goes down?',
+        chatReadOnlyGoAssistant2:
+            'On it! I\'ll set up health checks for all your services. Currently monitoring 4 endpoints — all healthy and responding.',
         chatConnectionFailed: 'Failed to connect to this agent!',
         chatConnectionFailedDescription:
             'Make sure the Claw is running and reachable.',

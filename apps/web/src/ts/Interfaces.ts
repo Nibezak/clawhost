@@ -55,6 +55,7 @@ export interface Claw {
     subdomain: string | null
     gatewayToken: string | null
     subscriptionStatus: string | null
+    billingInterval: string | null
     currentPeriodStart: string | null
     currentPeriodEnd: string | null
     volumes?: Volume[]
@@ -1618,6 +1619,15 @@ export interface SitemapRoute {
 export interface ComparisonRow {
     us: string
     others: string
+}
+
+export interface WaitlistStatusResponse {
+    joined: boolean
+}
+
+export interface JoinWaitlistResponse {
+    joined: boolean
+    alreadyJoined: boolean
 }
 
 export interface ComparisonTableProps {

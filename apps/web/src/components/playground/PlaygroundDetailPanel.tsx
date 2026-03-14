@@ -571,8 +571,12 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                 {claw.provider !== clawProvider.local &&
                                     monthlyPrice && (
                                         <CopyableField
-                                            label={t('dashboard.monthlyCost')}
-                                            value={`$${monthlyPrice.toFixed(0)}${t('landing.perMonth')}`}
+                                            label={t('dashboard.planCost')}
+                                            value={
+                                                claw.billingInterval === 'year' && plan
+                                                    ? `$${plan.priceYearly.toFixed(0)}${t('landing.perYear')}`
+                                                    : `$${monthlyPrice.toFixed(0)}${t('landing.perMonth')}`
+                                            }
                                         />
                                     )}
 
@@ -640,6 +644,14 @@ const PlaygroundDetailPanel: FC<PlaygroundDetailPanelProps> = ({
                                     <CopyableField
                                         label={t('dashboard.gatewayToken')}
                                         value={claw.gatewayToken}
+                                        secret
+                                    />
+                                )}
+
+                                {claw.rootPassword && (
+                                    <CopyableField
+                                        label={t('createClaw.rootPassword')}
+                                        value={claw.rootPassword}
                                         secret
                                     />
                                 )}

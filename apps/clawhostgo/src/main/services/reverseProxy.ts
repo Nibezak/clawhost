@@ -17,9 +17,16 @@ const extractSubdomain = (host: string | undefined): string | null => {
     return hostname.replace('.clawhost', '')
 }
 
-const resolvePort = (subdomain: string): number | null => {
+const resolveClaw = (subdomain: string): { port: number; gatewayToken: string } | null => {
     const claw = configStore.findClawBySubdomain(subdomain)
-    return claw ? claw.port : null
+    if (!claw) return null
+    return { port: claw.port, gatewayToken: claw.gatewayToken }
+}
+
+const injectToken = (url: string, token: string): string => {
+    if (!token) return url
+    const separator = url.includes('?') ? '&' : '?'
+    return `${url}${separator}token=${token}`
 }
 
 const handleRequest = (
@@ -33,8 +40,8 @@ const handleRequest = (
         return
     }
 
-    const port = resolvePort(subdomain)
-    if (!port) {
+    const claw = resolveClaw(subdomain)
+    if (!claw) {
         res.writeHead(404)
         res.end()
         return
@@ -43,8 +50,8 @@ const handleRequest = (
     const proxyReq = http.request(
         {
             hostname: '127.0.0.1',
-            port,
-            path: req.url,
+            port: claw.port,
+            path: injectToken(req.url || '/', claw.gatewayToken),
             method: req.method,
             headers: req.headers
         },
@@ -73,14 +80,14 @@ const handleUpgrade = (
         return
     }
 
-    const port = resolvePort(subdomain)
-    if (!port) {
+    const claw = resolveClaw(subdomain)
+    if (!claw) {
         socket.destroy()
         return
     }
 
-    const proxySocket = net.connect(port, '127.0.0.1', () => {
-        const requestLine = `${req.method} ${req.url} HTTP/1.1\r\n`
+    const proxySocket = net.connect(claw.port, '127.0.0.1', () => {
+        const requestLine = `${req.method} ${injectToken(req.url || '/', claw.gatewayToken)} HTTP/1.1\r\n`
         let headers = ''
         for (let i = 0; i < req.rawHeaders.length; i += 2) {
             headers += `${req.rawHeaders[i]}: ${req.rawHeaders[i + 1]}\r\n`

@@ -44,7 +44,7 @@ const ComparisonTable: FC<ComparisonTableProps> = ({ badge, heading, description
                                             height={24}
                                         />
                                         {logoSuffix && (
-                                            <span className='font-clash text-foreground text-lg font-bold'>
+                                            <span className='font-clash text-foreground translate-y-px text-sm font-bold'>
                                                 {logoSuffix}
                                             </span>
                                         )}

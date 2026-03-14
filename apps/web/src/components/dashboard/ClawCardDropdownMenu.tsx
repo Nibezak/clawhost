@@ -93,7 +93,7 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                                     claw.provider === clawProvider.local
                                         ? `${subdomain}.clawhost`
                                         : `${subdomain}.${getBaseDomain()}`
-                                const url = `https://${domain}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`
+                                const url = `https://${domain}${claw.gatewayToken ? `/#token=${claw.gatewayToken}` : ''}`
                                 window.open(url, '_blank')
                             }}
                         >

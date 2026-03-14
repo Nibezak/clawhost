@@ -27,13 +27,17 @@ const getDeviceIp = (): string => {
     return '127.0.0.1'
 }
 
-const DEFAULT_OPENCLAW_CONFIG = (gatewayToken: string, subdomain: string) => ({
+const DEFAULT_OPENCLAW_CONFIG = (subdomain: string, gatewayToken?: string) => ({
     gateway: {
         mode: 'local',
-        auth: {
-            mode: 'token' as string,
-            token: gatewayToken
-        } as Record<string, string>,
+        ...(gatewayToken
+            ? {
+                auth: {
+                    mode: 'token',
+                    token: gatewayToken
+                }
+            }
+            : {}),
         controlUi: {
             allowInsecureAuth: true,
             dangerouslyDisableDeviceAuth: true,
@@ -155,7 +159,7 @@ const registerClawHandlers = (): void => {
 
             const id = crypto.randomUUID()
             const port = configStore.getNextAvailablePort()
-            const gatewayToken = data.gatewayToken || crypto.randomBytes(32).toString('hex')
+            const gatewayToken = data.gatewayToken || ''
             const subdomain = configStore.generateSlug(id)
 
             const clawDir = configStore.getClawDir(data.name)
@@ -164,15 +168,7 @@ const registerClawHandlers = (): void => {
                 recursive: true
             })
 
-            const openclawConfig = DEFAULT_OPENCLAW_CONFIG(gatewayToken, subdomain)
-
-            if (data.password) {
-                openclawConfig.gateway.auth = {
-                    mode: 'password' as const,
-                    token: gatewayToken,
-                    password: data.password
-                }
-            }
+            const openclawConfig = DEFAULT_OPENCLAW_CONFIG(subdomain, gatewayToken || undefined)
             fs.writeFileSync(
                 path.join(clawDir, 'openclaw.json'),
                 JSON.stringify(openclawConfig, null, 4)

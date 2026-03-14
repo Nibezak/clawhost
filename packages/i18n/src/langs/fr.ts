@@ -115,10 +115,6 @@ const fr: Translations = {
         comparisonDataOthers: 'Données sur des serveurs cloud',
         comparisonSetupUs: 'Installer et lancer instantanément',
         comparisonSetupOthers: 'Déployer en un clic',
-        comparisonUptimeUs: 'Dépend de votre appareil',
-        comparisonUptimeOthers: 'Serveur disponible 24h/24',
-        comparisonAccessUs: 'Accès réseau local',
-        comparisonAccessOthers: 'Accès de partout',
         comparisonUpdatesUs: 'Mises à jour automatiques',
         comparisonUpdatesOthers: 'Mises à jour automatiques',
         comparisonAgentsUs: 'Agents multiples',
@@ -147,7 +143,13 @@ const fr: Translations = {
         statsZero: 'Zéro',
         statsZeroConfig: 'Zéro config',
         ctaTitle: 'Exécutez OpenClaw localement',
-        ctaDescription: 'Paiement unique, licence à vie. Déployez OpenClaw sur votre propre machine — pas de cloud, pas d\'abonnements, pas de limites.'
+        ctaDescription: 'Paiement unique, licence à vie. Déployez OpenClaw sur votre propre machine — pas de cloud, pas d\'abonnements, pas de limites. Vos données, vos règles.',
+        joinWaitlist: 'Rejoindre la liste d\'attente',
+        joinedWaitlist: 'Inscrit à la liste d\'attente',
+        waitlistJoinedToast: 'Vous avez rejoint la liste d\'attente.',
+        waitlistAlreadyJoinedToast: 'Cet email est déjà sur la liste.',
+        waitlistFailedToast: 'Impossible de rejoindre la liste d\'attente !',
+        waitlistEmailPlaceholder: 'Entrez votre email'
     },
     footer: {
         website: 'Site web',
@@ -459,7 +461,13 @@ const fr: Translations = {
         ttsGenerationFailed: 'Échec de la génération vocale !',
         voicesFetched: 'Voix récupérées avec succès.',
         featureEmailsSent: 'Emails de fonctionnalités envoyés avec succès.',
-        featureEmailsFailed: 'Échec de l\'envoi des emails de fonctionnalités !'
+        featureEmailsFailed: 'Échec de l\'envoi des emails de fonctionnalités !',
+        waitlistJoined: 'Inscription à la liste d\'attente réussie.',
+        waitlistAlreadyJoined: 'Déjà inscrit à la liste d\'attente.',
+        waitlistJoinFailed: 'Échec de l\'inscription à la liste d\'attente !',
+        waitlistRateLimited: 'Vous allez trop vite ! Veuillez réessayer dans {{seconds}} secondes.',
+        waitlistStatusFetched: 'Statut de la liste d\'attente récupéré.',
+        waitlistCheckFailed: 'Échec de la vérification du statut de la liste d\'attente !'
     },
     emails: {
         otpSubject: 'Votre code de connexion ClawHost',
@@ -834,7 +842,7 @@ const fr: Translations = {
         domain: 'Domaine',
         ipAddress: 'Adresse IP',
         port: 'Port',
-        monthlyCost: 'Coût mensuel',
+        planCost: 'Forfait',
         serverId: 'ID du serveur',
         created: 'Créé le',
         sshKey: 'Clé SSH',
@@ -1001,9 +1009,9 @@ const fr: Translations = {
         rootPassword: 'Mot de passe root',
         rootPasswordPlaceholder: 'Entrez un mot de passe ou générez-en un',
         autoGenerateGatewayTokenHint:
-            'Laissez vide pour générer automatiquement un jeton sécurisé.',
+            'Optionnel. Pas de jeton si laissé vide.',
         autoGeneratePasswordHint:
-            'Laissez vide pour générer automatiquement un mot de passe sécurisé.',
+            'Optionnel. Pas de mot de passe si laissé vide.',
         regeneratePassword: 'Régénérer le mot de passe',
         sshKeyOptional: 'Clé SSH',
         noSshKeyPasswordOnly: 'Pas de clé SSH (mot de passe uniquement)',
@@ -1674,6 +1682,14 @@ const fr: Translations = {
             'Pouvez-vous exécuter la suite de tests et vérifier les échecs ?',
         chatReadOnlyAssistant2:
             'Bien sûr ! Je lance tous les tests maintenant. 3 réussis, 0 échoués. Tout est bon — toutes les assertions passent.',
+        chatReadOnlyGoUser: 'Hey, peux-tu m\'aider à automatiser mon pipeline de déploiement ?',
+        chatReadOnlyGoAssistant:
+            'Absolument ! Je peux configurer un pipeline CI/CD pour toi. Tu veux que je commence par un workflow GitHub Actions qui build, teste et déploie automatiquement ?',
+        chatReadOnlyGoReply:
+            'Ceci est un aperçu ! Obtenez ClawHost Go et exécutez OpenClaw localement — votre machine, vos données, pas de cloud nécessaire.',
+        chatReadOnlyGoUser2: 'Peux-tu surveiller mes services locaux et m\'alerter si quelque chose tombe en panne ?',
+        chatReadOnlyGoAssistant2:
+            'C\'est parti ! Je configure des vérifications de santé pour tous tes services. Surveillance en cours de 4 endpoints — tous en bonne santé et réactifs.',
         chatConnectionFailed: 'Échec de la connexion à cet agent !',
         chatConnectionFailedDescription:
             "Assurez-vous que le Claw est en cours d'exécution et joignable !",

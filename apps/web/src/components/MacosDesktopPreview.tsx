@@ -41,11 +41,11 @@ const MacosDesktopPreview: FC<MacosDesktopPreviewProps> = ({ previewRef, preview
                     <div className='flex items-center justify-between bg-black/30 px-4 py-1 backdrop-blur-xl'>
                         <div className='flex items-center gap-4'>
                             <span className='text-[11px] font-semibold text-white/90'>ClawHost Go</span>
-                            <span className='text-[11px] text-white/60'>File</span>
-                            <span className='text-[11px] text-white/60'>Edit</span>
-                            <span className='text-[11px] text-white/60'>View</span>
-                            <span className='text-[11px] text-white/60'>Window</span>
-                            <span className='text-[11px] text-white/60'>Help</span>
+                            <span className='hidden text-[11px] text-white/60 sm:inline'>File</span>
+                            <span className='hidden text-[11px] text-white/60 sm:inline'>Edit</span>
+                            <span className='hidden text-[11px] text-white/60 sm:inline'>View</span>
+                            <span className='hidden text-[11px] text-white/60 md:inline'>Window</span>
+                            <span className='hidden text-[11px] text-white/60 md:inline'>Help</span>
                         </div>
                         <div className='flex items-center gap-3'>
                             <WifiHighIcon className='h-3.5 w-3.5 text-white/70' weight='bold' />
@@ -81,35 +81,35 @@ const MacosDesktopPreview: FC<MacosDesktopPreviewProps> = ({ previewRef, preview
                     </div>
 
                     <div className='absolute bottom-2 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-2xl border border-white/20 bg-white/10 px-2.5 py-1 backdrop-blur-xl'>
-                        <div className='flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-400 to-blue-600'>
+                        <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-400 to-blue-600'>
                             <GlobeSimpleIcon className='h-5 w-5 text-white' weight='fill' />
                         </div>
-                        <div className='flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600'>
+                        <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600'>
                             <EnvelopeSimpleIcon className='h-5 w-5 text-white' weight='fill' />
                         </div>
-                        <div className='flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-rose-400 to-red-600'>
+                        <div className='hidden h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-rose-400 to-red-600 sm:flex'>
                             <MusicNoteIcon className='h-5 w-5 text-white' weight='fill' />
                         </div>
-                        <div className='flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500'>
+                        <div className='hidden h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-yellow-400 to-orange-500 sm:flex'>
                             <NoteIcon className='h-5 w-5 text-white' weight='fill' />
                         </div>
-                        <div className='flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-green-400 to-emerald-600'>
+                        <div className='hidden h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-green-400 to-emerald-600 md:flex'>
                             <CalendarIcon className='h-5 w-5 text-white' weight='fill' />
                         </div>
-                        <div className='flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-purple-400 to-violet-600'>
+                        <div className='hidden h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-purple-400 to-violet-600 md:flex'>
                             <ImageIcon className='h-5 w-5 text-white' weight='fill' />
                         </div>
-                        <div className='flex h-9 w-9 items-center justify-center rounded-xl bg-[#1e1e1e]'>
+                        <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#1e1e1e]'>
                             <TerminalIcon className='h-5 w-5 text-white' weight='fill' />
                         </div>
-                        <div className='flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-sky-400 to-blue-600'>
+                        <div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-sky-400 to-blue-600'>
                             <FolderIcon className='h-5 w-5 text-white' weight='fill' />
                         </div>
-                        <div className='mx-0.5 h-7 w-px bg-white/20' />
+                        <div className='mx-0.5 h-7 w-px shrink-0 bg-white/20' />
                         <img
                             src='/clawhost-logo.webp'
                             alt='ClawHost Go'
-                            className='h-9 w-9 rounded-xl'
+                            className='h-9 w-9 shrink-0 rounded-xl'
                         />
                     </div>
                 </div>
