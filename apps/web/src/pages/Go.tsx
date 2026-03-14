@@ -205,7 +205,7 @@ const Go: FC = (): ReactNode => {
                 setActiveSection('')
                 return
             }
-            const sections = ['features', 'pricing', 'comparison', 'faq']
+            const sections = ['faq', 'comparison', 'pricing', 'features']
             for (const section of sections) {
                 const el = document.getElementById(section)
                 if (el && window.scrollY >= el.offsetTop - 100) {
@@ -253,14 +253,14 @@ const Go: FC = (): ReactNode => {
 
                             <div className='mb-16 flex flex-col gap-4 sm:flex-row'>
                                 {user && !authLoading ? (
-                                    <div className='flex gap-2'>
+                                    <div className='flex flex-col gap-2 sm:flex-row'>
                                         <div className='relative'>
                                             <EnvelopeSimpleIcon className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40' />
                                             <Input
                                                 type='email'
                                                 readOnly
                                                 value={user.email || ''}
-                                                className='h-10 w-60 rounded-lg border-white/20 bg-white/5 pl-9 text-white placeholder:text-white/40'
+                                                className='h-10 w-full rounded-lg border-white/20 bg-white/5 pl-9 text-white placeholder:text-white/40 sm:w-60'
                                             />
                                         </div>
                                         <Button
@@ -296,7 +296,7 @@ const Go: FC = (): ReactNode => {
                                 ) : !authLoading ? (
                                     <form
                                         onSubmit={handleEmailSubmit}
-                                        className='flex gap-2'
+                                        className='flex flex-col gap-2 sm:flex-row'
                                     >
                                         <div className='relative'>
                                             <EnvelopeSimpleIcon className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40' />
@@ -313,7 +313,7 @@ const Go: FC = (): ReactNode => {
                                                 placeholder={t(
                                                     'go.waitlistEmailPlaceholder'
                                                 )}
-                                                className='h-10 w-60 rounded-lg border-white/20 bg-white/5 pl-9 text-white placeholder:text-white/40'
+                                                className='h-10 w-full rounded-lg border-white/20 bg-white/5 pl-9 text-white placeholder:text-white/40 sm:w-60'
                                             />
                                         </div>
                                         <Button
@@ -464,14 +464,14 @@ const Go: FC = (): ReactNode => {
                     description={t('go.ctaDescription')}
                 >
                     {user && !authLoading ? (
-                        <div className='flex gap-2'>
+                        <div className='flex flex-col gap-2 sm:flex-row'>
                             <div className='relative'>
                                 <EnvelopeSimpleIcon className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40' />
                                 <Input
                                     type='email'
                                     readOnly
                                     value={user.email || ''}
-                                    className='h-10 w-60 rounded-lg border-white/20 bg-white/5 pl-9 text-white placeholder:text-white/40'
+                                    className='h-10 w-full rounded-lg border-white/20 bg-white/5 pl-9 text-white placeholder:text-white/40 sm:w-60'
                                 />
                             </div>
                             <Button
@@ -515,7 +515,7 @@ const Go: FC = (): ReactNode => {
                                     placeholder={t(
                                         'go.waitlistEmailPlaceholder'
                                     )}
-                                    className='h-10 w-60 rounded-lg border-white/20 bg-white/5 pl-9 text-white placeholder:text-white/40'
+                                    className='h-10 w-full rounded-lg border-white/20 bg-white/5 pl-9 text-white placeholder:text-white/40 sm:w-60'
                                 />
                             </div>
                             <Button
