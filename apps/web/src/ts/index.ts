@@ -19,7 +19,8 @@ export type {
     ClawFileType,
     ChatSidebarViewMode,
     UserRole,
-    TranscriberFunction
+    TranscriberFunction,
+    Product
 } from '@/ts/Types'
 
 export type {
@@ -129,5 +130,16 @@ export type {
     ProviderOptionWithIcon,
     ProviderOption,
     TranscriptionResult,
-    AudioContextWithSinkId
+    AudioContextWithSinkId,
+    StatItem,
+    StatsRowProps,
+    HeroBadgeProps,
+    HeroTitleProps,
+    DemoPreviewSectionProps,
+    MacosDesktopPreviewProps,
+    GoPricingCardProps,
+    LandingCTAProps,
+    VideoModalProps,
+    PricingSectionProps,
+    SelfHostButtonProps
 } from '@/ts/Interfaces'

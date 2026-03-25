@@ -21,6 +21,7 @@ import type {
     DiagnosticsLogsResponse,
     DiagnosticsStatusResponse,
     GetAgentSkillsResponse,
+    JoinWaitlistResponse,
     Location,
     PlansResponse,
     PlanAvailability,
@@ -35,6 +36,7 @@ import type {
     UpdateAgentConfigData,
     UpdateAgentSkillsData,
     UpdateClawChannelsData,
+    WaitlistStatusResponse,
     WhatsAppPairResponse,
     WhatsAppPairStatusResponse,
     BrowseClawHubData,
@@ -48,6 +50,7 @@ import type {
     UpdateClawEnvVarsData,
     UpdateClawFileData,
     UpdateClawSkillsData,
+    LicenseCheckoutResponse,
     UpdateProfileData,
     UserProfile,
     UserStats,
@@ -279,7 +282,16 @@ const api = {
             `/users/me/billing/${orderId}/invoice`
         ),
     getCustomerPortal: () =>
-        client.post<CustomerPortalResponse>('/users/me/billing/portal')
+        client.post<CustomerPortalResponse>('/users/me/billing/portal'),
+    purchaseLicense: () =>
+        client.post<LicenseCheckoutResponse>('/users/me/license/checkout'),
+
+    joinWaitlist: (email: string) =>
+        publicClient.post<JoinWaitlistResponse>('/waitlist', { email }),
+    checkWaitlistStatus: (email: string) =>
+        publicClient.get<WaitlistStatusResponse>(
+            `/waitlist/status?email=${encodeURIComponent(email)}`
+        )
 }
 
 export default api

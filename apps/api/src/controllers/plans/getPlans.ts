@@ -99,6 +99,8 @@ const getPlans = async (c: Context) => {
         const atCapacity = servers && limit ? servers.size >= limit : false
         const prices = priceMap[providerName] ?? {}
 
+        const ANNUAL_DISCOUNT_MONTHS = 10
+
         const plans = serverTypes
             .filter(
                 (st) =>
@@ -113,6 +115,7 @@ const getPlans = async (c: Context) => {
                 memory: st.memory,
                 disk: st.disk,
                 priceMonthly: prices[st.name],
+                priceYearly: prices[st.name] * ANNUAL_DISCOUNT_MONTHS,
                 architecture: st.architecture,
                 disabled: atCapacity
             }))

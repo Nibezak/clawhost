@@ -9,6 +9,7 @@ import '@electron/electron.css'
 document.documentElement.setAttribute('data-electron', 'true')
 
 const queryClient = new QueryClient()
+queryClient.clear()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>

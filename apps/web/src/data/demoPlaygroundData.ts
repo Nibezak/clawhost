@@ -24,6 +24,7 @@ const demoClaws: Claw[] = [
         subdomain: 'personal-claw',
         gatewayToken: null,
         subscriptionStatus: 'active',
+        billingInterval: null,
         currentPeriodStart: null,
         currentPeriodEnd: null,
         deletionScheduledAt: null,

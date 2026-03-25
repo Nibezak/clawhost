@@ -98,7 +98,7 @@ const startGateway = async (
                 ...clawEnv,
                 OPENCLAW_CONFIG_PATH: configPath,
                 OPENCLAW_STATE_DIR: clawDir,
-                OPENCLAW_GATEWAY_TOKEN: token,
+                ...(token && { OPENCLAW_GATEWAY_TOKEN: token }),
                 NODE_ENV: 'production'
             },
             stdio: ['ignore', logFd, logFd],

@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, shell } from 'electron'
 import path from 'path'
 import {
     configStore,
@@ -38,6 +38,11 @@ if (!gotLock) {
             }
         })
 
+        mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+            shell.openExternal(url)
+            return { action: 'deny' }
+        })
+
         if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
             mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL)
         } else {
@@ -64,6 +69,7 @@ if (!gotLock) {
         registerAllHandlers()
         reverseProxy.start()
         dnsResolver.startDns()
+        dnsResolver.ensurePortRedirect()
         createWindow()
     })
 

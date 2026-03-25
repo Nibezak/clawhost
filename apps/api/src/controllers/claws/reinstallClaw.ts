@@ -1,5 +1,4 @@
-import type { AuthenticatedContext } from '@/ts/Types'
-import type { ProviderType } from '@/ts/Types'
+import type { AuthenticatedContext, ProviderType } from '@/ts/Types'
 
 import { eq } from 'drizzle-orm'
 import { clawStatus } from '@openclaw/shared'

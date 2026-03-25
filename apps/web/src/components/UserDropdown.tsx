@@ -38,7 +38,6 @@ const UserDropdown: FC<UserDropdownProps> = ({
 }): ReactNode => {
     const navigate = useNavigate()
     const location = useLocation()
-
     const getInitials = (text: string) => {
         if (!text) return '?'
         const parts = text.split(' ')
@@ -125,6 +124,7 @@ const UserDropdown: FC<UserDropdownProps> = ({
                         {t('nav.billing')}
                     </DropdownMenuItem>
                 )}
+
                 {footerLinks && footerLinks.length > 0 && (
                     <>
                         <DropdownMenuSeparator className='bg-border' />

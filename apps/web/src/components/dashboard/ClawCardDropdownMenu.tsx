@@ -43,11 +43,12 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
             <button
                 className='text-muted-foreground shrink-0 rounded-md p-1'
                 disabled
+                aria-label={t('common.loading')}
             >
                 <CircleNotchIcon className='h-3.5 w-3.5 animate-spin' />
             </button>
         ) : (
-            <Button variant='ghost' size='icon' disabled>
+            <Button variant='ghost' size='icon' disabled aria-label={t('common.loading')}>
                 <CircleNotchIcon className='h-5 w-5 animate-spin' />
             </Button>
         )
@@ -57,14 +58,17 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
         <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
                 {compact ? (
-                    <button className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground shrink-0 rounded-md p-1 transition-colors'>
+                    <button
+                        aria-label={t('dashboard.clawActions')}
+                        className='text-muted-foreground hover:bg-foreground/10 hover:text-foreground shrink-0 rounded-md p-1 transition-colors'
+                    >
                         <DotsThreeOutlineIcon
                             className='h-3.5 w-3.5'
                             weight='bold'
                         />
                     </button>
                 ) : (
-                    <Button variant='ghost' size='icon'>
+                    <Button variant='ghost' size='icon' aria-label={t('dashboard.clawActions')}>
                         <DotsThreeOutlineIcon className='h-5 w-5' />
                     </Button>
                 )}
@@ -89,7 +93,7 @@ const ClawCardDropdownMenu: FC<ClawCardDropdownMenuProps> = ({
                                     claw.provider === clawProvider.local
                                         ? `${subdomain}.clawhost`
                                         : `${subdomain}.${getBaseDomain()}`
-                                const url = `https://${domain}${claw.gatewayToken ? `/?token=${claw.gatewayToken}` : ''}`
+                                const url = `https://${domain}${claw.gatewayToken ? `/#token=${claw.gatewayToken}` : ''}`
                                 window.open(url, '_blank')
                             }}
                         >

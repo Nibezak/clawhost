@@ -3,7 +3,7 @@ import type { FC, MouseEvent, ReactNode } from 'react'
 import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { t } from '@openclaw/i18n'
-import { Logo } from '@/components'
+import { Logo, TrustMrrBadge } from '@/components'
 import { ROUTES } from '@/lib'
 import { GITHUB_REPO_URL } from '@/hooks'
 import {
@@ -26,9 +26,7 @@ import {
 } from '@phosphor-icons/react'
 
 const LANDING_SECTIONS = [
-    'how-it-works',
     'features',
-    'testimonials',
     'pricing',
     'comparison',
     'faq'
@@ -81,6 +79,9 @@ const LandingFooter: FC = (): ReactNode => {
                         <p className='text-muted-foreground mt-4 max-w-sm text-[15.5px]'>
                             {t('footer.productDescription')}
                         </p>
+                        <div className='mt-6'>
+                            <TrustMrrBadge />
+                        </div>
                         <div className='mt-6 flex items-center gap-3'>
                             <a
                                 href={GITHUB_REPO_URL}
@@ -215,17 +216,6 @@ const LandingFooter: FC = (): ReactNode => {
                         <ul className='space-y-3 text-sm'>
                             <li>
                                 <Link
-                                    to={`${ROUTES.HOME}#how-it-works`}
-                                    onClick={(e) =>
-                                        handleHashClick(e, 'how-it-works')
-                                    }
-                                    className={hashClass('how-it-works')}
-                                >
-                                    {t('landing.howItWorks')}
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
                                     to={`${ROUTES.HOME}#features`}
                                     onClick={(e) =>
                                         handleHashClick(e, 'features')
@@ -233,17 +223,6 @@ const LandingFooter: FC = (): ReactNode => {
                                     className={hashClass('features')}
                                 >
                                     {t('landing.features')}
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    to={`${ROUTES.HOME}#testimonials`}
-                                    onClick={(e) =>
-                                        handleHashClick(e, 'testimonials')
-                                    }
-                                    className={hashClass('testimonials')}
-                                >
-                                    {t('landing.testimonials')}
                                 </Link>
                             </li>
                             <li>

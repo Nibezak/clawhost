@@ -54,9 +54,21 @@ const setupTerminalSocket = (server: Server) => {
     })
 }
 
+const PING_INTERVAL = 5000
+
 const handleConnection = (ws: WebSocket, ip: string, password: string) => {
     const conn = new Client()
     let sshReady = false
+
+    const pingTimer = setInterval(() => {
+        if (ws.readyState === WebSocket.OPEN) {
+            ws.ping()
+        }
+    }, PING_INTERVAL)
+
+    ws.on('close', () => {
+        clearInterval(pingTimer)
+    })
 
     conn.on('ready', () => {
         sshReady = true

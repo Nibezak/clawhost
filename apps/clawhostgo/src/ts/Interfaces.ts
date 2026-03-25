@@ -16,6 +16,7 @@ interface LocalClawConfig {
     version: string
     gatewayToken: string
     subdomain: string
+    password?: string
     createdAt: string
 }
 
@@ -39,6 +40,8 @@ interface CertPaths {
 
 interface CreateClawData {
     name: string
+    gatewayToken?: string
+    password?: string
 }
 
 interface RenameClawData {

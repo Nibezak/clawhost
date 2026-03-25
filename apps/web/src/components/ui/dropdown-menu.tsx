@@ -4,7 +4,9 @@ import { CheckIcon, CaretRightIcon, CircleIcon } from '@phosphor-icons/react'
 
 import { cn } from '@/lib'
 
-const DropdownMenu = DropdownMenuPrimitive.Root
+const DropdownMenu = (props: React.ComponentProps<typeof DropdownMenuPrimitive.Root>) => (
+    <DropdownMenuPrimitive.Root modal={false} {...props} />
+)
 
 const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
 

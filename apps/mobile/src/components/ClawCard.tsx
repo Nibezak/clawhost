@@ -147,8 +147,12 @@ const ClawCard: FC<ClawCardProps> = ({ claw, plan }): ReactNode => {
 
                         {plan && (
                             <CopyableField
-                                label={t('dashboard.monthlyCost')}
-                                value={`$${plan.priceMonthly.toFixed(0)}/mo`}
+                                label={t('dashboard.planCost')}
+                                value={
+                                    claw.billingInterval === 'year'
+                                        ? `$${plan.priceYearly.toFixed(0)}${t('landing.perYear')}`
+                                        : `$${plan.priceMonthly.toFixed(0)}${t('landing.perMonth')}`
+                                }
                                 width={fieldWidth || undefined}
                             />
                         )}

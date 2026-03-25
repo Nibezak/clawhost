@@ -10,7 +10,7 @@ import { useAuth } from '@/lib/auth'
 import { useUIStore } from '@/lib/store'
 import { ROUTES } from '@/lib'
 import { Button, Input, Label } from '@/components/ui'
-import { Logo, PageBackground, PageTitle } from '@/components'
+import { AnnouncementBanner, Logo, PageBackground, PageTitle } from '@/components'
 import {
     EnvelopeIcon,
     CircleNotchIcon,
@@ -265,7 +265,9 @@ const Login: FC = (): ReactNode => {
     }
 
     return (
-        <div className='bg-background text-foreground relative flex min-h-screen items-center justify-center px-4 pb-24'>
+        <div className='bg-background text-foreground relative min-h-screen'>
+            <AnnouncementBanner />
+            <div className='flex min-h-screen items-center justify-center px-4 pb-24'>
             <PageTitle
                 title={
                     step === 'email'
@@ -505,6 +507,7 @@ const Login: FC = (): ReactNode => {
                     </div>
                 )}
             </motion.div>
+            </div>
         </div>
     )
 }

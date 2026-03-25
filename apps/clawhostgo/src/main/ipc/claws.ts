@@ -27,16 +27,24 @@ const getDeviceIp = (): string => {
     return '127.0.0.1'
 }
 
-const DEFAULT_OPENCLAW_CONFIG = (gatewayToken: string) => ({
+const DEFAULT_OPENCLAW_CONFIG = (subdomain: string, gatewayToken?: string) => ({
     gateway: {
         mode: 'local',
-        auth: {
-            mode: 'token',
-            token: gatewayToken
-        },
+        ...(gatewayToken
+            ? {
+                auth: {
+                    mode: 'token',
+                    token: gatewayToken
+                }
+            }
+            : {}),
         controlUi: {
             allowInsecureAuth: true,
-            dangerouslyDisableDeviceAuth: true
+            dangerouslyDisableDeviceAuth: true,
+            allowedOrigins: [
+                `https://${subdomain}.clawhost`,
+                `http://${subdomain}.clawhost`
+            ]
         },
         trustedProxies: ['127.0.0.1', '::1']
     },
@@ -46,6 +54,10 @@ const DEFAULT_OPENCLAW_CONFIG = (gatewayToken: string) => ({
         discord: {},
         slack: {},
         signal: { dmPolicy: 'open', allowFrom: ['*'] }
+    },
+    commands: {
+        restart: true,
+        bash: true
     },
     agents: {
         defaults: {
@@ -72,7 +84,8 @@ const mapClawToResponse = (claw: ReturnType<typeof configStore.findClaw>) => {
         ip: getDeviceIp(),
         planId: clawProvider.local,
         location: clawProvider.local,
-        rootPassword: null,
+        rootPassword: claw.password || null,
+        hasRootPassword: !!claw.password,
         sshKeyId: null,
         providerServerId: null,
         subdomain: claw.subdomain,
@@ -146,7 +159,7 @@ const registerClawHandlers = (): void => {
 
             const id = crypto.randomUUID()
             const port = configStore.getNextAvailablePort()
-            const gatewayToken = crypto.randomBytes(32).toString('hex')
+            const gatewayToken = data.gatewayToken || ''
             const subdomain = configStore.generateSlug(id)
 
             const clawDir = configStore.getClawDir(data.name)
@@ -155,7 +168,7 @@ const registerClawHandlers = (): void => {
                 recursive: true
             })
 
-            const openclawConfig = DEFAULT_OPENCLAW_CONFIG(gatewayToken)
+            const openclawConfig = DEFAULT_OPENCLAW_CONFIG(subdomain, gatewayToken || undefined)
             fs.writeFileSync(
                 path.join(clawDir, 'openclaw.json'),
                 JSON.stringify(openclawConfig, null, 4)
@@ -169,6 +182,7 @@ const registerClawHandlers = (): void => {
                 version,
                 gatewayToken,
                 subdomain,
+                ...(data.password && { password: data.password }),
                 createdAt: new Date().toISOString()
             }
 

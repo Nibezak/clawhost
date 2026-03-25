@@ -3,7 +3,6 @@ import type { CreateClawModalProps } from '@/ts/Interfaces'
 
 import { useState } from 'react'
 import { t } from '@openclaw/i18n'
-import { clawProvider } from '@openclaw/shared'
 import { useQueryClient } from '@tanstack/react-query'
 import { useUIStore } from '@/lib/store'
 import {
@@ -16,10 +15,41 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import {
+    ArrowClockwiseIcon,
+    EyeIcon,
+    EyeSlashIcon
+} from '@phosphor-icons/react'
 import api from '@/lib/api'
+
+const generateReadablePassword = (): string => {
+    const words = [
+        'sun', 'moon', 'star', 'rain', 'snow', 'wind',
+        'fire', 'wave', 'leaf', 'tree', 'rock', 'bird',
+        'fish', 'bear', 'wolf', 'fox', 'deer', 'hawk',
+        'rose', 'sage', 'mint', 'pine', 'oak', 'elm',
+        'blue', 'red', 'gold', 'jade', 'ruby', 'onyx'
+    ]
+    const pick = () => words[Math.floor(Math.random() * words.length)]
+    const num = Math.floor(Math.random() * 90 + 10)
+    return `${pick()}-${pick()}-${num}`
+}
+
+const generateToken = (): string => {
+    const chars = 'abcdef0123456789'
+    let token = ''
+    for (let i = 0; i < 64; i++) {
+        token += chars[Math.floor(Math.random() * chars.length)]
+    }
+    return token
+}
 
 const CreateClawModal: FC<CreateClawModalProps> = ({ onClose }): ReactNode => {
     const [name, setName] = useState('')
+    const [gatewayToken, setGatewayToken] = useState('')
+    const [password, setPassword] = useState('')
+    const [showToken, setShowToken] = useState(false)
+    const [showPassword, setShowPassword] = useState(false)
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const queryClient = useQueryClient()
@@ -39,10 +69,9 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ onClose }): ReactNode => {
         try {
             await api.createClaw({
                 name,
-                provider: clawProvider.local as never,
-                planId: clawProvider.local,
-                location: clawProvider.local
-            })
+                ...(gatewayToken && { gatewayToken }),
+                ...(password && { password })
+            } as never)
             await queryClient.invalidateQueries({ queryKey: ['claws'] })
             showToast(t('createClaw.clawCreated'), 'success')
             onClose()
@@ -92,6 +121,85 @@ const CreateClawModal: FC<CreateClawModalProps> = ({ onClose }): ReactNode => {
                         />
                         <p className='text-muted-foreground text-xs'>
                             {t('createClaw.clawNameInvalidChars')}
+                        </p>
+                    </div>
+
+                    <div className='space-y-2'>
+                        <Label>{t('dashboard.gatewayToken')}</Label>
+                        <div className='flex gap-2'>
+                            <div className='relative flex-1'>
+                                <Input
+                                    value={gatewayToken}
+                                    onChange={(e) => setGatewayToken(e.target.value)}
+                                    type={showToken ? 'text' : 'password'}
+                                    placeholder='e.g. a1b2c3d4e5f6...'
+                                    className='pr-9'
+                                />
+                                <button
+                                    type='button'
+                                    onClick={() => setShowToken(!showToken)}
+                                    className='text-muted-foreground hover:text-foreground absolute right-2.5 top-1/2 -translate-y-1/2'
+                                >
+                                    {showToken ? (
+                                        <EyeSlashIcon className='h-4 w-4' />
+                                    ) : (
+                                        <EyeIcon className='h-4 w-4' />
+                                    )}
+                                </button>
+                            </div>
+                            <Button
+                                type='button'
+                                variant='outline'
+                                size='icon'
+                                onClick={() => setGatewayToken(generateToken())}
+                                className='h-9 w-9 shrink-0'
+                            >
+                                <ArrowClockwiseIcon className='h-4 w-4' />
+                            </Button>
+                        </div>
+                        <p className='text-muted-foreground text-xs'>
+                            {t('createClaw.autoGenerateGatewayTokenHint')}
+                        </p>
+                    </div>
+
+                    <div className='space-y-2'>
+                        <Label>{t('createClaw.rootPassword')}</Label>
+                        <div className='flex gap-2'>
+                            <div className='relative flex-1'>
+                                <Input
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    type={showPassword ? 'text' : 'password'}
+                                    placeholder='e.g. sun-wolf-42'
+                                    className='pr-9'
+                                />
+                                <button
+                                    type='button'
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className='text-muted-foreground hover:text-foreground absolute right-2.5 top-1/2 -translate-y-1/2'
+                                >
+                                    {showPassword ? (
+                                        <EyeSlashIcon className='h-4 w-4' />
+                                    ) : (
+                                        <EyeIcon className='h-4 w-4' />
+                                    )}
+                                </button>
+                            </div>
+                            <Button
+                                type='button'
+                                variant='outline'
+                                size='icon'
+                                onClick={() => {
+                                    setPassword(generateReadablePassword())
+                                    setShowPassword(true)
+                                }}
+                                className='h-9 w-9 shrink-0'
+                            >
+                                <ArrowClockwiseIcon className='h-4 w-4' />
+                            </Button>
+                        </div>
+                        <p className='text-muted-foreground text-xs'>
+                            {t('createClaw.autoGeneratePasswordHint')}
                         </p>
                     </div>
 

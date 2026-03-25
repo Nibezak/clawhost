@@ -21,7 +21,8 @@ import type {
     ChatTypingIndicator,
     CompareFeatureStatus,
     ToastType,
-    UserRole
+    UserRole,
+    Product
 } from '@/ts/Types'
 
 export interface ApiResponse<T = null> {
@@ -54,6 +55,7 @@ export interface Claw {
     subdomain: string | null
     gatewayToken: string | null
     subscriptionStatus: string | null
+    billingInterval: string | null
     currentPeriodStart: string | null
     currentPeriodEnd: string | null
     volumes?: Volume[]
@@ -77,6 +79,7 @@ export interface Plan {
     memory: number
     disk: number
     priceMonthly: number
+    priceYearly: number
     architecture: string
     disabled?: boolean
 }
@@ -108,7 +111,18 @@ export interface UserProfile {
     name: string | null
     role: UserRole
     authMethods: AuthMethod[]
+    hasLicense: boolean
     createdAt: string
+}
+
+export interface LicenseCheckoutResponse {
+    checkoutUrl: string
+}
+
+export interface LicenseCardProps {
+    hasLicense: boolean
+    isPurchasing: boolean
+    onPurchase: () => void
 }
 
 export interface UserStats {
@@ -173,6 +187,8 @@ export interface PreferencesState {
     setOpenLinksWindowed: (value: boolean) => void
     chatSidebarView: ChatSidebarViewMode
     setChatSidebarView: (view: ChatSidebarViewMode) => void
+    product: Product
+    setProduct: (product: Product) => void
 }
 
 export interface CachedProfile {
@@ -244,6 +260,24 @@ export interface HeaderProps {
     showNavLinks?: boolean
     navLinks?: NavLink[]
     activeSection?: string
+}
+
+export interface FeatureItem {
+    icon: ElementType
+    title: string
+    description: string
+}
+
+export interface FeaturesGridProps {
+    badge: string
+    heading: string
+    description: string
+    features: FeatureItem[]
+}
+
+export interface LandingDemoPreviewProps {
+    urlOverride?: string
+    hideTitleBar?: boolean
 }
 
 export interface UserDropdownProps {
@@ -418,6 +452,10 @@ export interface ProtectedRouteProps {
     children: ReactNode
 }
 
+export interface LicenseGateProps {
+    children: ReactNode
+}
+
 export interface AuthProviderProps {
     children: ReactNode
 }
@@ -448,6 +486,7 @@ export interface PurchaseClawData {
     sshKeyId?: string
     volumeSize?: number
     priceMonthly: number
+    billingInterval?: 'month' | 'year'
 }
 
 export interface DeleteClawResponse {
@@ -642,6 +681,7 @@ export interface ClawFileExplorerDialogProps {
 export interface UseProfileOptions {
     enabled?: boolean
     staleTime?: number
+    refetchInterval?: number | false
 }
 
 export interface UseClawOptions {
@@ -658,6 +698,13 @@ export interface Testimonial {
 export interface Faq {
     question: string
     answer: string
+}
+
+export interface FaqSectionProps {
+    badge: string
+    heading: string
+    description: string
+    faqs: Faq[]
 }
 
 export interface ClawAgent {
@@ -817,6 +864,71 @@ export interface HeroButtonsProps {
     githubLabel: string
     showStars: boolean
     large?: boolean
+}
+
+export interface StatItem {
+    value: string
+    label: string
+}
+
+export interface StatsRowProps {
+    stats: StatItem[]
+}
+
+export interface HeroBadgeProps {
+    label: string
+    tutorialBadge?: boolean
+    onTutorialClick?: () => void
+}
+
+export interface HeroTitleProps {
+    line1: string
+    line2: string
+    description: string
+}
+
+export interface DemoPreviewSectionProps {
+    previewRef: React.RefObject<HTMLDivElement>
+    previewScale: import('framer-motion').MotionValue<number>
+}
+
+export interface MacosDesktopPreviewProps {
+    previewRef: React.RefObject<HTMLDivElement>
+    previewScale: import('framer-motion').MotionValue<number>
+}
+
+export interface GoPricingCardProps {
+    price: string
+    label: string
+    features: string[]
+}
+
+export interface SelfHostButtonProps {
+    label: string
+    showStars?: boolean
+    large?: boolean
+    className?: string
+}
+
+export interface LandingCTAProps {
+    title: string
+    description: string
+    children: ReactNode
+}
+
+export interface VideoModalProps {
+    open: boolean
+    onClose: () => void
+    videoUrl: string
+}
+
+export interface PricingSectionProps {
+    plans: Plan[] | undefined
+    plansLoading: boolean
+    allDoneLoading: boolean
+    pricingProvider: ProviderType
+    onProviderChange: (provider: ProviderType) => void
+    isProviderUnavailable: (provider: ProviderType) => boolean
 }
 
 export interface PlaygroundTabConfig<T extends string = string> {
@@ -1502,4 +1614,27 @@ export interface SitemapRoute {
     path: string
     priority: string
     changefreq: string
+}
+
+export interface ComparisonRow {
+    us: string
+    others: string
+}
+
+export interface WaitlistStatusResponse {
+    joined: boolean
+}
+
+export interface JoinWaitlistResponse {
+    joined: boolean
+    alreadyJoined: boolean
+}
+
+export interface ComparisonTableProps {
+    badge: string
+    heading: string
+    description: string
+    rows: ComparisonRow[]
+    showFullComparisonLink?: boolean
+    logoSuffix?: string
 }
